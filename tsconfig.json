@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "sourceMap": false,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "watch": true
+    },
+    "exclude": [
+        "node_modules",
+        "typings",
+        "definitions",
+        "public",
+        "logs"
+    ]
+}

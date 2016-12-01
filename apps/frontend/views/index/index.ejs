@@ -1,0 +1,126 @@
+<% if (sitejack && sitejack.css) { %>
+<link type="text/css" href="<%= redirectBlobUrl %><%= sitejack.css %>" rel="stylesheet" />
+<% } %>
+<% if (sitejack && sitejack.js) { %>
+<script src="<%= redirectBlobUrl %><%= sitejack.js %>"></script>
+<% } %>
+
+
+<div class="<%= (sitejack && sitejack.className) ? sitejack.className + ' sitejack' : '' %>">
+    <div class="contents">
+        <section class="news">
+            <div class="inner">
+                <div class="title"><a href="<%- url('Information', {}) %>">お知らせ</a><span class="sp-not-view"> | </span></div>
+                <div class="news-list">
+                    <ul class="bxslider">
+                        <% information.forEach((info, index) => { %>
+                        <li><a href="<%- url('Information', {}) %>#<%= info.get('id') %>"><%= info.get('title') %></a></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section class="main-slider">
+            <ul class="bxslider">
+            <% slider.main.forEach((slider, index) => { %>
+                <li><a href="<%= slider.link %>"><img src="<%= slider.image %>" alt="<%= slider.alt %>" /></a></li>
+            <% }) %>
+            </ul>
+        </section>
+        <div class="sub-slider">
+            <ul class="bxslider">
+            <% slider.sub.forEach((slider, index) => { %>
+                <li><a href="<%= slider.link %>"><img src="<%= slider.image %>" alt="<%= slider.alt %>" /></a></li>
+            <% }) %>
+            </ul>
+        </div>
+
+
+        <section class="featured-work">
+            <div class="inner">
+                <h2 class="section-ttl">注目作品</h2>
+                <ul class="clearfix items">
+                    <% for (var film of top6Films) { %>
+                    <%- include('./_item', {film: film}) -%>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
+
+
+        <section class="online-ticket">
+            <div class="inner">
+                <div class="clearfix">
+                    <h2 class="section-ttl">ムビチケオンライン券 販売作品一覧</h2>
+                    <select class="text-center">
+                        <option value="sortByDateRelease">公開日順で並び替え</option>
+                        <option value="sortByDateOnSale">発売日順で並び替え</option>
+                        <option value="">-------------------</option>
+                        <option value="scrollToNextRelease">近日発売を見る</option>
+                    </select>
+                </div>
+
+                
+
+                <ul class="clearfix items sortByDateRelease">
+                    <% for (var film of filmsOnSaleSortByDateRelease) { %>
+                    <%- include('./_item', {film: film}) -%>
+                    <% } %>
+                </ul>
+
+                <ul class="clearfix items sortByDateOnSale" style="display: none;">
+                    <% for (var film of filmsOnSaleSortByDateOnSale) { %>
+                    <%- include('./_item', {film: film}) -%>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
+
+
+        <section class="next-release scrollToNextRelease">
+            <div class="inner">
+                <h2 class="section-ttl">近日発売</h2>
+                <ul class="clearfix items">
+                    <% for (var film of filmsComingSoon) { %>
+                    <%- include('./_item', {film: film}) -%>
+                    <% } %>
+                </ul>
+            </div>
+        </section>
+
+        <section class="information">
+            <div class="inner">
+                <p class="note">※「最大400円OFF」表記は、劇場窓口で当日一般券をお買い求めになる場合との比較です。 </p>
+                <div class="btn-area clearfix js-fix-height-group">
+                    <div class="btn detail-btn">
+                        <a class="js-fix-height" href="<%- url('Guide', {}) %>">
+                            <div class="title red-text">ムビチケをもっと詳しく</div>
+                            <p>
+                                ムビチケのご利用ガイドです。<br>
+                                ムビチケのご購入方法やご利用方法を詳しくご案内いたします。
+                            </p>
+                        </a>
+                    </div>
+                    <div class="btn question-btn">
+                        <a class="js-fix-height" href="<%- url('FAQ', {}) %>">
+                            <div class="title red-text">よくあるご質問</div>
+                            <p>
+                                「よくあるご質問」を掲載しています。<br>
+                                ご不明な点について、こちらに回答や解決方法がないかご一読ください。
+                            </p>
+                        </a>
+                    </div>
+                    <div class="btn gift-btn">
+                        <a class="js-fix-height" href="<%- url('Guide.Mvtkgift', {}) %>">
+                            <div class="title red-text">ムビチケGIFT</div>
+                            <p>
+                                ムビチケオンライン券購入の際にご利用いただけます。<br>
+                                詳細・残高確認などはこちら
+                            </p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+{
+  "name": "sasaki_ticket",
+  "version": "0.0.0",
+  "dependencies": {},
+  "globalDependencies": {
+    "express-form": "file:./definitions/express-form.d.ts",
+    "named-routes": "file:./definitions/named-routes.d.ts"
+  }
+}

@@ -1,0 +1,13 @@
+{
+    "endpoint": "",
+    
+    "redis_host": "",
+    "redis_port": "",
+    "redis_key": "",
+
+    "mongolab_uri": "",
+
+    "sendgrid_username": "",
+    "sendgrid_passwords": "",
+    
+}
