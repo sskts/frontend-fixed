@@ -11,7 +11,7 @@ class BaseController {
         this.req = req;
         this.res = res;
         this.next = next;
-        this.router = this.req.route;
+        this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
     }
     /**
@@ -20,7 +20,7 @@ class BaseController {
      */
     setLocals() {
         this.res.locals.req = this.req;
-        this.res.locals.escapeHtml = this.escapeHtml;
+        // this.res.locals.escapeHtml = this.escapeHtml;
     }
     /**
      * HTMLエスケープ

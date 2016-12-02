@@ -14,7 +14,7 @@ export default session({
     //     pass: conf.get('redis_key')
     // }),
     cookie: {
-        secure: true,
+        // secure: true,
         httpOnly: true,
         maxAge: 60 * 60 * 1000
     }

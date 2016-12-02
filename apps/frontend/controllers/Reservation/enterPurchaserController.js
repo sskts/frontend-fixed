@@ -1,15 +1,41 @@
 "use strict";
-const BaseController_1 = require('../BaseController');
-class EnterPurchaserController extends BaseController_1.default {
+const ReservationController_1 = require('./ReservationController');
+const EnterPurchaserForm_1 = require('../../forms/Reservation/EnterPurchaserForm');
+class EnterPurchaserController extends ReservationController_1.default {
     /**
      * 購入者情報入力
      */
     index() {
+        this.logger.debug('session', this.req.session['reservationInfo']);
+        //購入者情報入力表示
+        this.res.locals['token'] = this.req.session['reservationToken'];
+        this.res.locals['error'] = null;
+        this.res.locals['info'] = null;
+        this.res.locals['moment'] = require('moment');
+        this.res.render('reservation/enterPurchaser');
     }
     /**
      * 購入者情報入力完了
      */
     enterPurchaser() {
+        this.checkToken();
+        //モーションAPI
+        //バリデーション
+        EnterPurchaserForm_1.default(this.req, this.res, () => {
+            if (this.req.form.isValid) {
+                //入力情報をセッションへ
+                this.req.session['reservationInfo'] = this.req.body;
+                //購入者内容確認へ
+                this.res.redirect(this.router.build('reservation.confirmPurchase', {}));
+            }
+            else {
+                this.res.locals['token'] = this.req.body['token'];
+                this.res.locals['error'] = this.req.form.getErrors();
+                this.res.locals['info'] = this.req.body;
+                this.res.locals['moment'] = require('moment');
+                this.res.render('reservation/enterPurchaser');
+            }
+        });
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

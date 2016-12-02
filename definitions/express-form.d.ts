@@ -1,6 +1,6 @@
 declare namespace Express {
     export interface Request {
-       form?: Form;
+       form?: any;
     }
 
     export interface Form {
@@ -11,6 +11,10 @@ declare namespace Express {
         flashErrors(): Object;
         flashErrors(name: string): any;
     }
+
+    // export interface Form2 {
+    //     [key: string]: string;
+    // }
 }
 
 declare module "express-form" {

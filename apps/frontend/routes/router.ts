@@ -4,7 +4,7 @@ import config = require('config');
 
 import SeatSelectController from '../controllers/Reservation/SeatSelectController';
 import EnterPurchaserController from '../controllers/Reservation/EnterPurchaserController';
-import DenominationSelectController from '../controllers/Reservation/DenominationSelectController';
+import TicketTypeSelectController from '../controllers/Reservation/TicketTypeSelectController';
 import ConfirmPurchaseController from '../controllers/Reservation/ConfirmPurchaseController';
 
 /**
@@ -30,16 +30,32 @@ export default (app: any) => {
         new SeatSelectController(req, res, next).index();
     });
 
-    app.get('/reservation/denominationSelect', 'reservation.denominationSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new DenominationSelectController(req, res, next).index();
+    app.post('/reservation/seatSelect', 'reservation.seatSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new SeatSelectController(req, res, next).seatSelect();
+    });
+
+    app.get('/reservation/denominationSelect', 'reservation.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new TicketTypeSelectController(req, res, next).index();
+    });
+
+    app.post('/reservation/denominationSelect', 'reservation.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new TicketTypeSelectController(req, res, next).denominationSelect();
     });
 
     app.get('/reservation/enterPurchaser', 'reservation.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new EnterPurchaserController(req, res, next).index();
     });
 
+    app.post('/reservation/enterPurchaser', 'reservation.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new EnterPurchaserController(req, res, next).enterPurchaser();
+    });
+
     app.get('/reservation/confirmPurchase', 'reservation.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmPurchaseController(req, res, next).index();
+    });
+
+    app.post('/reservation/confirmPurchase', 'reservation.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new ConfirmPurchaseController(req, res, next).purchase();
     });
 
     

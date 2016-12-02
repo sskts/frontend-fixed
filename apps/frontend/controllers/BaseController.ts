@@ -19,7 +19,7 @@ export default class BaseController {
         this.res = res;
         this.next = next;
 
-        this.router = this.req.route;
+        this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
     }
 
@@ -29,7 +29,7 @@ export default class BaseController {
      */
     protected setLocals(): void {
         this.res.locals.req = this.req;
-        this.res.locals.escapeHtml = this.escapeHtml;
+        // this.res.locals.escapeHtml = this.escapeHtml;
     }
 
     /**
@@ -48,7 +48,7 @@ export default class BaseController {
             '"': '&quot;',
             '<': '&lt;',
             '>': '&gt;',
-            }
+            };
             return changeList[match];
         }
         return string.replace(/[&'`"<>]/g, change);
