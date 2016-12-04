@@ -1,0 +1,18 @@
+.confirm-purchaser {
+    .box {
+        dl {
+            dt {
+                font-weight: bold;
+                margin: 0 0 5px;
+            }
+            dd {
+                margin: 0 0 10px;
+            }
+            &:last-child {
+                dd {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}

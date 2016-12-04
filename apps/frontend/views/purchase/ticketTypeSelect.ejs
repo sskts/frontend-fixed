@@ -1,0 +1,31 @@
+<% layout('purchase/layout') -%>
+<div class="ticket-type-select">
+    <h1 class="page-ttl">券種選択</h1>
+    <p class="read">
+        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
+        画面をタッチすると画面がズームしますので座席を選択してください。
+    </p>
+    <ul class="seats box">
+        <li>
+            <dl class="d-table">
+                <dt class="d-td">A-1</dt>
+                <dd class="d-td">
+                    <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+    <div class="total box">
+        <div class="length">購入枚数 <strong class="red-text"></strong></div>
+        <div class="price">合計金額 <strong class="red-text"></strong></div>
+    </div>
+    <form method="post">
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button type="submit">次へ</button></div>
+            <div class="button prev-button white-button"><button onclick="history.back();">戻る</button></div>
+        </div>
+        <input type="hidden" name="token" value="<%= token %>">
+    </form>
+</div>
+
+<%- partial('purchase/modals/ticketType') %>

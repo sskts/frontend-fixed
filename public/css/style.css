@@ -1,0 +1,698 @@
+@charset "UTF-8";
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+body {
+  line-height: 1;
+}
+
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+a {
+  margin: 0;
+  padding: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  background: transparent;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #cccccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+input, select {
+  vertical-align: middle;
+}
+
+ol, ul, li {
+  list-style: none;
+}
+
+img {
+  vertical-align: top;
+  font-size: 0;
+  line-height: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table;
+}
+
+.clearfix:after {
+  clear: both;
+}
+
+.clearfix {
+  *zoom: 1;
+}
+
+body {
+  -webkit-text-size-adjust: 100%;
+  width: 100%;
+  font-family: 'Lucida Grande','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  color: #333;
+  position: relative;
+}
+
+input[type=text],
+input[type=number],
+input[type=password],
+input[type=tel],
+input[type=email],
+input[type=submit],
+textarea,
+select,
+option,
+button,
+label {
+  font-family: 'Lucida Grande','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+  border-radius: 0;
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+input[type=text],
+input[type=number],
+input[type=password],
+input[type=tel],
+input[type=email] {
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  padding: 8px 10px;
+  background-color: #FFF;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  border: 1px solid #d9d9d9;
+  padding: 8px 10px;
+  background-color: #FFF;
+}
+
+p {
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+}
+
+.d-table {
+  display: table;
+  width: 100%;
+}
+
+.d-tr {
+  display: table-row-group;
+}
+
+.d-td {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.device-type-sp {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  .device-type-sp {
+    display: block;
+  }
+  .device-type-pc {
+    display: none;
+  }
+}
+
+.modal-cover {
+  display: none;
+  background-color: #000;
+  opacity: 0.75;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.modal {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 600px;
+  margin-left: -300px;
+}
+
+@media screen and (max-width: 768px) {
+  .modal {
+    width: 300px;
+    margin-left: -150px;
+  }
+}
+
+.modal-cover.active,
+.modal.active {
+  display: block;
+}
+
+.purchase .header {
+  padding: 10px;
+}
+
+.purchase .header .inner {
+  position: relative;
+  width: 980px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 1024px) {
+  .purchase .header .inner {
+    width: auto;
+  }
+}
+
+.purchase .header .logo {
+  width: 80px;
+}
+
+.purchase .header .logo img {
+  width: 100%;
+}
+
+.purchase .header .steps {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  margin-top: -1px;
+  width: 400px;
+  height: 2px;
+  background-color: #ccc;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .header .steps {
+    width: 200px;
+  }
+}
+
+.purchase .header .steps .step {
+  width: 10px;
+  height: 10px;
+  background-color: #aaa;
+  border-radius: 5px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: -5px;
+  margin-left: -5px;
+}
+
+.purchase .header .steps .step-01 {
+  left: 0;
+}
+
+.purchase .header .steps .step-02 {
+  left: 25%;
+}
+
+.purchase .header .steps .step-03 {
+  left: 50%;
+}
+
+.purchase .header .steps .step-04 {
+  left: 75%;
+}
+
+.purchase .header .steps .step-05 {
+  left: 100%;
+}
+
+.purchase .header .steps .active {
+  background-color: #555;
+}
+
+.purchase .footer {
+  background-color: #212121;
+  padding: 20px 10px;
+}
+
+.purchase .footer .inner {
+  position: relative;
+  width: 980px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 1024px) {
+  .purchase .footer .inner {
+    width: auto;
+  }
+}
+
+.purchase .footer ul {
+  margin: 0 0 10px -5px;
+}
+
+.purchase .footer ul li {
+  float: left;
+  padding: 0 5px;
+  border-right: 1px solid #FFF;
+  line-height: 1.5;
+}
+
+.purchase .footer ul li:last-child {
+  border: none;
+  padding-right: 0;
+}
+
+.purchase .footer ul li a {
+  color: #FFF;
+}
+
+.purchase .footer .copyright {
+  color: #FFF;
+}
+
+.purchase .contents {
+  border-top: 1px solid #ccc;
+  padding: 20px 0;
+  width: 980px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 1024px) {
+  .purchase .contents {
+    width: auto;
+    padding: 20px 10px;
+  }
+}
+
+.purchase .red-text {
+  color: #c00017;
+}
+
+.purchase .box {
+  background-color: #eeeef0;
+  padding: 15px 10px;
+  margin: 0 0 20px;
+}
+
+.purchase .box:last-child {
+  margin: 0;
+}
+
+.purchase ul.box > li {
+  border-bottom: 1px solid #d1d1d1;
+  margin: 0 0 10px;
+  padding: 0 0 10px;
+}
+
+.purchase ul.box > li:last-child {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.purchase .page-ttl {
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  margin: 0 0 20px;
+}
+
+.purchase .read {
+  margin: 0 0 20px;
+}
+
+.purchase .button a, .purchase .button button {
+  line-height: 1;
+  display: block;
+  padding: 10px 0;
+  text-align: center;
+  width: 100%;
+  border-radius: 5px;
+  box-shadow: 0 2px 2px #333;
+}
+
+.purchase .blue-button a, .purchase .blue-button button {
+  background-color: #019fe8;
+  color: #FFF;
+}
+
+.purchase .dark-blue-button a, .purchase .dark-blue-button button {
+  background-color: #036db7;
+  color: #FFF;
+}
+
+.purchase .gray-button a, .purchase .gray-button button {
+  background-color: #595758;
+  color: #FFF;
+}
+
+.purchase .white-button a, .purchase .white-button button {
+  background-color: #FFF;
+}
+
+.purchase .button-area {
+  margin: 0 auto;
+  width: 620px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .button-area {
+    width: auto;
+  }
+}
+
+.purchase .next-button {
+  float: right;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .next-button {
+    float: none;
+    margin: 0 0 10px;
+  }
+}
+
+.purchase .next-button a, .purchase .next-button button {
+  font-size: 18px;
+  width: 300px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .next-button a, .purchase .next-button button {
+    width: 100%;
+  }
+}
+
+.purchase .prev-button {
+  float: left;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .prev-button {
+    float: none;
+  }
+}
+
+.purchase .prev-button a, .purchase .prev-button button {
+  font-size: 18px;
+  width: 300px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .prev-button a, .purchase .prev-button button {
+    width: 100%;
+  }
+}
+
+.purchase .section-ttl {
+  margin: 0 0 10px;
+}
+
+.purchase .seat-select .screen {
+  margin: 0 0 20px;
+  background-color: #353535;
+}
+
+.purchase .seat-select .film-info {
+  background-color: #3e3a39;
+  color: #FFF;
+  padding: 15px 10px;
+  margin: 0 0 20px;
+}
+
+.purchase .seat-select .film-info p {
+  margin: 0 0 10px;
+}
+
+.purchase .seat-select .film-info dl dt {
+  margin: 0 0 10px;
+  color: #f0e205;
+}
+
+.purchase .seat-select .film-info dl dd {
+  color: #FFF;
+  padding: 0 0 10px;
+  margin: 0 0 10px;
+  border-bottom: 1px solid #FFF;
+}
+
+.purchase .seat-select .film-info dl dd:last-child {
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.purchase .ticket-type-select .seats {
+  padding: 5px 10px;
+}
+
+.purchase .ticket-type-select .seats li dl {
+  padding: 10px 0;
+}
+
+.purchase .ticket-type-select .seats li dt {
+  width: 50px;
+}
+
+.purchase .ticket-type-select .total {
+  text-align: right;
+}
+
+.purchase .ticket-type-select .total .length {
+  margin: 0 0 10px;
+}
+
+.purchase .enter-purchaser .clearfix dl {
+  width: 50%;
+  float: left;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .enter-purchaser .clearfix dl {
+    width: auto;
+    float: none;
+  }
+}
+
+.purchase .enter-purchaser .clearfix dl:first-child {
+  padding-right: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .enter-purchaser .clearfix dl:first-child {
+    padding-right: 0;
+  }
+}
+
+.purchase .enter-purchaser .clearfix dl:last-child {
+  padding-left: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .enter-purchaser .clearfix dl:last-child {
+    padding-left: 0;
+  }
+}
+
+.purchase .enter-purchaser .box dl dt {
+  font-weight: bold;
+  margin: 0 0 5px;
+}
+
+.purchase .enter-purchaser .box dl dd {
+  margin: 0 0 10px;
+}
+
+.purchase .enter-purchaser .box dl:last-child dd {
+  margin-bottom: 0;
+}
+
+.purchase .enter-purchaser .validation {
+  margin: 5px 0 0;
+  color: #c00017;
+}
+
+.purchase .confirm-purchaser .box dl dt {
+  font-weight: bold;
+  margin: 0 0 5px;
+}
+
+.purchase .confirm-purchaser .box dl dd {
+  margin: 0 0 10px;
+}
+
+.purchase .confirm-purchaser .box dl:last-child dd {
+  margin-bottom: 0;
+}
+
+.screen {
+  position: relative;
+}
+
+@media screen and (max-width: 767px) {
+  .screen {
+    overflow: hidden;
+  }
+}
+
+.screen .transition {
+  transition: all 0.3s;
+}
+
+.screen .screen-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 404px;
+  height: 665px;
+  background-image: url(/images/pc/screen.png);
+}
+
+.screen .seat {
+  width: 13px;
+  height: 19px;
+  position: absolute;
+}
+
+.screen .seat a {
+  box-sizing: border-box;
+  display: block;
+  height: 100%;
+  background-color: #FFF;
+  border: 1px solid #333;
+  border-radius: 2px;
+}
+
+.screen .seat a.active {
+  background-color: #d50000;
+}
+
+.screen .seat a.disabled {
+  background-color: #666;
+}
+
+.screen .left {
+  transform: rotate(10deg);
+}
+
+.screen .right {
+  transform: rotate(-10deg);
+}
+
+.screen .wheelchair a {
+  background-image: url(/images/pc/wheelchair.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.screen .zoom-btn {
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  display: none;
+}
+
+.screen .zoom-btn.active {
+  display: block;
+}
+
+.screen .zoom-btn a {
+  display: block;
+  width: 40px;
+  height: 40px;
+  background-color: #FFF;
+  line-height: 40px;
+  text-align: center;
+  color: #333;
+  text-decoration: none;
+  box-sizing: border-box;
+  border: 2px solid rgba(0, 0, 0, 0.5);
+}
+
+.screen .balloon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  padding: 15px;
+  background-color: #000;
+  background-color: rgba(51, 51, 51, 0.9);
+  color: #FFF;
+}
+
+.screen .balloon::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 4px 10px 4px;
+  border-color: transparent transparent #000 transparent;
+  border-color: transparent transparent rgba(51, 51, 51, 0.9) transparent;
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  margin-left: -4px;
+}
+
+.screen .balloon.active {
+  display: block;
+  animation: fadeIn 0.5s ease 0s 1 normal;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

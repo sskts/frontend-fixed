@@ -41,7 +41,7 @@ export default class BaseController {
             return string;
         }
         let change = (match: string): string =>{
-            let changeList = {
+            let changeList: any = {
             '&': '&amp;',
             "'": '&#x27;',
             '`': '&#x60;',

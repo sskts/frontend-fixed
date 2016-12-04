@@ -1,6 +1,6 @@
 declare namespace Express {
     export interface Request {
-       form?: any;
+       form?: Form;
     }
 
     export interface Form {

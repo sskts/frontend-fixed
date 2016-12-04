@@ -1,0 +1,214 @@
+.purchase {
+    // header
+    .header {
+        padding: 10px;
+        .inner {
+            position: relative;
+            width: 980px;
+            margin: 0 auto;
+            @media screen and (max-width: $tablet){
+                width: auto;
+            }
+        }
+        .logo {
+            width: 80px;
+            img {
+                width: 100%;
+            }
+        }
+        .steps {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            margin-top: -1px;
+            width: 400px;
+            height: 2px;
+            background-color: #ccc;
+            @media screen and (max-width: $mobile){
+                width: 200px;
+            }
+            .step {
+                width: 10px;
+                height: 10px;
+                background-color: #aaa;
+                border-radius: 5px;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                margin-top: -5px;
+                margin-left: -5px;
+            }
+            .step-01 {
+                left: 0;
+            }
+            .step-02 {
+                left: 25%;
+            }
+            .step-03 {
+                left: 50%;
+            }
+            .step-04 {
+                left: 75%;
+            }
+            .step-05 {
+                left: 100%;
+            }
+            .active {
+                background-color: #555;
+            }
+        }
+    }
+    // footer
+    .footer {
+        background-color: #212121;
+        padding: 20px 10px;
+        .inner {
+            position: relative;
+            width: 980px;
+            margin: 0 auto;
+            @media screen and (max-width: $tablet){
+                width: auto;
+            }
+        }
+        ul {
+            margin: 0 0 10px -5px;
+            li {
+                float: left;
+                padding: 0 5px;
+                border-right: 1px solid #FFF;
+                line-height: 1.5;
+                &:last-child {
+                    border: none;
+                    padding-right: 0;
+                }
+                a {
+                    color: #FFF;
+                }
+            }
+        }
+        .copyright {
+            color: #FFF;
+        }
+    }
+    // contents
+    .contents {
+        border-top: 1px solid #ccc;
+        padding: 20px 0;
+        width: 980px;
+        margin: 0 auto;
+        @media screen and (max-width: $tablet){
+            width: auto;
+            padding: 20px 10px;
+        }
+    }
+    .red-text {
+        color: #c00017;
+    }
+    .box {
+        background-color: #eeeef0;
+        padding: 15px 10px;
+        margin: 0 0 20px;
+        &:last-child {
+            margin: 0;
+        }
+    }
+    ul.box {
+        > li {
+            border-bottom: 1px solid #d1d1d1;
+            margin: 0 0 10px;
+            padding: 0 0 10px;
+            &:last-child {
+                border: none;
+                margin: 0;
+                padding: 0;
+            }
+        }
+    }
+    .page-ttl {
+        text-align: center;
+        font-weight: bold;
+        font-size: 20px;
+        margin: 0 0 20px;
+    }
+    .read {
+        margin: 0 0 20px;
+    }
+    .button {
+        a, button {
+            line-height: 1;
+            display: block;
+            padding: 10px 0;
+            text-align: center;
+            width: 100%;
+            border-radius: 5px;
+            box-shadow: 0 2px 2px #333;
+        }
+    }
+    .blue-button {
+        a, button {
+            background-color: #019fe8;
+            color: #FFF;
+        }
+    }
+    .dark-blue-button {
+        a, button {
+            background-color: #036db7;
+            color: #FFF;
+        }
+    }
+    .gray-button {
+        a, button {
+            background-color: #595758;
+            color: #FFF;
+        }
+    }
+    .white-button {
+        a, button {
+            background-color: #FFF;
+        }
+    }
+    .button-area {
+        margin: 0 auto;
+        width: 620px;
+        @media screen and (max-width: $mobile){
+            width: auto;
+        }
+    }
+    .next-button {
+        float: right;
+        @media screen and (max-width: $mobile){
+            float: none;
+            margin: 0 0 10px;
+        }
+        a, button {
+            font-size: 18px;
+            width: 300px;
+            padding: 20px 0;
+            @media screen and (max-width: $mobile){
+                width: 100%;
+            }
+        }
+    }
+    .prev-button {
+        float: left;
+        @media screen and (max-width: $mobile){
+            float: none;
+        }
+        a, button {
+            font-size: 18px;
+            width: 300px;
+            padding: 20px 0;
+            @media screen and (max-width: $mobile){
+                width: 100%;
+            }
+        }
+    }
+    .section-ttl {
+        margin: 0 0 10px;
+    }
+    @import "seatSelect";
+    @import "ticketTypeSelect";
+    @import "enterPurchaser";
+    @import "confirmPurchase";
+}
+

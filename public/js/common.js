@@ -1,5 +1,7 @@
 $(function () {
+    new Modal();
     var url = location.pathname;
-    if (url === '/reservation/seatSelect') {
+    if (url === '/purchase/seatSelect') {
+        new ScreenSeatStatusesMap($('.screen'));
     }
 });

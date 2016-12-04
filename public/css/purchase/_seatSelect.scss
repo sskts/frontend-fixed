@@ -1,0 +1,32 @@
+.seat-select {
+    .screen {
+        margin: 0 0 20px;
+        background-color: #353535;
+    }
+    .film-info {
+        background-color: #3e3a39;
+        color: #FFF;
+        padding: 15px 10px;
+        margin: 0 0 20px;
+        p {
+            margin: 0 0 10px;
+        }
+        dl {
+            dt {
+                margin: 0 0 10px;
+                color: #f0e205;
+            }
+            dd {
+                color: #FFF;
+                padding: 0 0 10px;
+                margin: 0 0 10px;
+                border-bottom: 1px solid #FFF;
+                &:last-child {
+                    padding: 0;
+                    margin: 0;
+                    border: none;
+                }
+            }
+        }
+    }
+}

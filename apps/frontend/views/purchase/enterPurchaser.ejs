@@ -1,0 +1,164 @@
+<% layout('purchase/layout') -%>
+<div class="enter-purchaser">
+    <h1 class="page-ttl">購入者情報入力</h1>
+    <p class="read">
+        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
+        画面をタッチすると画面がズームしますので座席を選択してください。
+    </p>
+
+    <form method="post">
+        <h2 class="section-ttl">お名前（漢字）</h2>
+        <div class="box clearfix">
+            <dl>
+                <dt>姓</dt>
+                <dd>
+                    <input type="text" name="lastNameKanji" value="<%= (info) ? info.lastNameKanji : '' %>">
+                    <% if (error && error.lastNameKanji) { %>
+                    <div class="validation"><%= error.lastNameKanji[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+            <dl>
+                <dt>名</dt>
+                <dd>
+                    <input type="text" name="firstNameKanji" value="<%= (info) ? info.firstNameKanji : '' %>">
+                    <% if (error && error.firstNameKanji) { %>
+                    <div class="validation"><%= error.firstNameKanji[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+
+        <h2 class="section-ttl">お名前（ひらがな）</h2>
+        <div class="box clearfix">
+            <dl>
+                <dt>せい</dt>
+                <dd>
+                    <input type="text" name="lastNameHira" value="<%= (info) ? info.lastNameHira : '' %>">
+                    <% if (error && error.lastNameHira) { %>
+                    <div class="validation"><%= error.lastNameHira[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+            <dl>
+                <dt>めい</dt>
+                <dd>
+                    <input type="text" name="firstNameHira" value="<%= (info) ? info.firstNameHira : '' %>">
+                    <% if (error && error.firstNameHira) { %>
+                    <div class="validation"><%= error.firstNameHira[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+        <h2 class="section-ttl">メールアドレス</h2>
+        <div class="box">
+            <dl>
+                <dd>
+                    <input type="email" name="mail" value="<%= (info) ? info.mail : '' %>">
+                    <% if (error && error.mail) { %>
+                    <div class="validation"><%= error.mail[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+            <dl>
+                <dt>メールアドレス(確認)</dt>
+                <dd>
+                    <input type="text" name="mailConfirm" value="<%= (info) ? info.mailConfirm : '' %>">
+                    <% if (error && error.mailConfirm) { %>
+                    <div class="validation"><%= error.mailConfirm[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+
+        <h2 class="section-ttl">電話番号</h2>
+        <div class="box">
+            <dl>
+                <dd>
+                    <input type="text" name="tel" value="<%= (info) ? info.tel : '' %>">
+                    <% if (error && error.tel) { %>
+                    <div class="validation"><%= error.tel[0] %></div>
+                    <% } %>
+                </dd>
+            </dl>
+        </div>
+
+        <h2 class="section-ttl">お支払情報</h2>
+        <ul class="box">
+            <li>
+                <dl>
+                    <dt>確認</dt>
+                    <dd><strong>￥5,100</strong></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>カード番号</dt>
+                    <dd>
+                        <input type="text" name="creditNumber" maxlength="16" autocomplete="off" value="">
+                        <% if (error && error.creditNumber) { %>
+                        <div class="validation"><%= error.creditNumber[0] %></div>
+                        <% } %>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>カード有効期限</dt>
+                    <dd>
+                        <select name="creditYear">
+                            <%
+                            let choices = {};
+                            let year2digits = moment().format('YY');
+                            for (let i = 0; i < 10; i++) {
+                                let key = (parseInt(year2digits) + i).toString();
+                                choices[key] = `20${key}`;
+                            }
+                            %>
+                            <% for (let key in choices) { %>
+                            <option value="<%- key %>"><%- choices[key] %></option>
+                            <% } %>
+                        </select> 年 
+                        <select name="creditMonth">
+                            <%
+                            for (let i = 0; i < 12; i++) {
+                                let num = i + 1;
+                                let month = (num < 10) ? '0' + String(num) : String(num);
+                            %>
+                                <option value="<%= month %>"><%= month %></option>
+                            <% } %>
+                        </select> 月 
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>カード名義人</dt>
+                    <dd>
+                        <input type="text" name="creditName" value="">
+                        <% if (error && error.creditName) { %>
+                        <div class="validation"><%= error.creditName[0] %></div>
+                        <% } %>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt>セキュリティーコード</dt>
+                    <dd>
+                        <input type="text" name="creditCord" value="">
+                        <% if (error && error.creditCord) { %>
+                        <div class="validation"><%= error.creditCord[0] %></div>
+                        <% } %>
+                    </dd>
+                </dl>
+            </li>
+        </ul>
+
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button type="submit">次へ</button></div>
+            <div class="button prev-button white-button"><button onclick="history.back();">戻る</button></div>
+        </div>
+        <input type="hidden" name="token" value="<%= token %>">
+    </form>
+</div>

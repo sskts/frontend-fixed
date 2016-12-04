@@ -1,0 +1,44 @@
+.enter-purchaser {
+    .clearfix {
+        dl {
+            width: 50%;
+            float: left;
+            @media screen and (max-width: $mobile){
+                width: auto;
+                float: none;
+            }
+            &:first-child {
+                padding-right: 10px;
+                @media screen and (max-width: $mobile){
+                    padding-right: 0;
+                }
+            }
+            &:last-child {
+                padding-left: 10px;
+                @media screen and (max-width: $mobile){
+                    padding-left: 0;
+                }
+            }
+        }
+    }
+    .box {
+        dl {
+            dt {
+                font-weight: bold;
+                margin: 0 0 5px;
+            }
+            dd {
+                margin: 0 0 10px;
+            }
+            &:last-child {
+                dd {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+    .validation {
+        margin: 5px 0 0;
+        color: #c00017;
+    }
+}

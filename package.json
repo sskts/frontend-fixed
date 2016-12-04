@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./index.js"
+    "start": "node ./index.js",
+    "sass": "node-sass public/css/style.scss public/css/style.css --output-style expanded -w"
   },
   "dependencies": {
     "@types/body-parser": "0.0.33",
@@ -15,6 +16,7 @@
     "@types/express-session": "0.0.32",
     "@types/fs-extra": "0.0.35",
     "@types/helmet": "0.0.33",
+    "@types/jquery": "^2.0.34",
     "@types/log4js": "0.0.32",
     "@types/moment": "^2.13.0",
     "body-parser": "^1.15.2",

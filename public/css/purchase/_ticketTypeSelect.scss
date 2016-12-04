@@ -1,0 +1,19 @@
+.ticket-type-select {
+    .seats {
+        padding: 5px 10px;
+        li {
+            dl {
+                padding: 10px 0;
+            }
+            dt {
+                width: 50px;
+            }
+        }
+    }
+    .total {
+        text-align: right;
+        .length {
+            margin: 0 0 10px;
+        }
+    }
+}
