@@ -12,40 +12,28 @@
             <li>
                 <dl>
                     <dt>劇場 / スクリーン</dt>
-                    <dd><%= (film) ? film.theater : '' %> <%= (film) ? film.screen : '' %></dd>
+                    <dd><%= (data) ? data.facilityName : '' %> / <%= (data) ? data.screenName : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt>作品名</dt>
-                    <dd><%= (film) ? film.name : '' %></dd>
+                    <dd><%= (film) ? film.titleOfWork : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt>鑑賞日時</dt>
-                    <dd><%= (film) ? film.schedule : '' %></dd>
+                    <dd><%= (data) ? data.screeningDate : '' %> <%= (data) ? data.screeningStartTime : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>座席</dt>
+                    <dt>座席 / 券種</dt>
                     <dd>
                         <ul>
-                        <% for (let seat of film.seats) { %>
-                        <li><%= seat %></li> 
-                        <% } %>
-                        </ul>
-                    </dd>
-                </dl>
-            </li>
-            <li>
-                <dl>
-                    <dt>券種 / 枚数</dt>
-                    <dd>
-                        <ul>
-                        <% for (let ticket of film.tickets) { %>
-                        <li><%= ticket.type %> <%= ticket.length %>枚</li> 
+                        <% for (let seat of seats) { %>
+                        <li><%= seat.code %> <%= seat.type %></li> 
                         <% } %>
                         </ul>
                     </dd>

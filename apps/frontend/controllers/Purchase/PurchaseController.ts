@@ -7,7 +7,7 @@ export default class PurchaseController extends BaseController {
      * 
      */
     protected checkToken(): void {
-         if (this.req.body['token'] !== this.req.session['purchaseToken']) {
+        if (this.req.body['token'] !== this.req.session['purchaseToken']) {
             this.next(new Error('無効なアクセスです'));
         }
     }

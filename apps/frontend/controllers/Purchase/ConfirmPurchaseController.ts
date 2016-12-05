@@ -6,13 +6,13 @@ export default class ConfirmPurchaseController extends PurchaseController {
      * 購入者内容確認
      */
     public index(): void {
-        this.logger.debug('session', this.req.session)
-        this.logger.debug('seats', this.req.session['purchaseFilm']['seats'])
-        this.logger.debug('tickets', this.req.session['purchaseFilm']['tickets'])
+        this.logger.debug('session', this.req.session);
         //購入者内容確認表示
         this.res.locals['token'] = this.req.session['purchaseToken'];
         this.res.locals['info'] = this.req.session['purchaseInfo'];
-        this.res.locals['film'] = this.req.session['purchaseFilm'];
+        this.res.locals['data'] = this.req.session['purchasePerformanceData'];
+        this.res.locals['film'] = this.req.session['purchasePerformanceFilm'];
+        this.res.locals['seats'] = this.req.session['purchaseSeats'];
         this.res.render('purchase/confirmPurchase');
     }
 

@@ -29,8 +29,10 @@ var Modal = (function () {
         this.modal.attr('data-modal-trigger-index', this.triggerIndex);
     };
     Modal.prototype.close = function () {
-        this.modal.removeClass('active');
-        this.cover.removeClass('active');
+        if (this.modal && this.cover) {
+            this.modal.removeClass('active');
+            this.cover.removeClass('active');
+        }
     };
     return Modal;
 }());

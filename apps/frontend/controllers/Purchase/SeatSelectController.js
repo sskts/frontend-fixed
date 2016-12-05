@@ -62,10 +62,8 @@ class SeatSelectController extends PurchaseController_1.default {
             ]
         };
         //作品情報をセッションへ
-        this.req.session['purchasePerformance'] = {
-            data: data,
-            film: film
-        };
+        this.req.session['purchasePerformanceData'] = data;
+        this.req.session['purchasePerformanceFilm'] = film;
         //座席選択表示
         this.res.locals['data'] = data;
         this.res.locals['film'] = film;
@@ -76,15 +74,13 @@ class SeatSelectController extends PurchaseController_1.default {
      * 座席決定
      */
     seatSelect() {
-        this.logger.debug('seatCodes', this.req.body);
         this.checkToken();
         let seats = [];
-        this.logger.debug('seatCodes', this.req.body.seatCodes);
         let seatCodes = JSON.parse(this.req.body.seatCodes);
         for (let code of seatCodes) {
             seats.push({
                 code: code,
-                type: null
+                type: ''
             });
         }
         //モーションAPI仮抑え

@@ -42,12 +42,11 @@ class TicketTypeSelectController extends PurchaseController_1.default {
      */
     denominationSelect() {
         this.checkToken();
-        let tickets = [
-            { type: '一般', length: 2 },
-            { type: '学生', length: 1 }
-        ];
-        //券種情報をセッションへ
-        this.req.session['purchaseFilm']['tickets'] = tickets;
+        this.logger.debug('request', this.req.body);
+        let seats = JSON.parse(this.req.body.seatCodes);
+        //モーションAPI仮抑え
+        //座席情報をセッションへ
+        this.req.session['purchaseSeats'] = seats;
         //購入者情報入力へ
         this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
     }

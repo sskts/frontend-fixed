@@ -6,7 +6,7 @@ class EnterPurchaserController extends PurchaseController_1.default {
      * 購入者情報入力
      */
     index() {
-        this.logger.debug('session', this.req.session['purchaseInfo']);
+        this.logger.debug('session', this.req.session);
         //購入者情報入力表示
         this.res.locals['token'] = this.req.session['purchaseToken'];
         this.res.locals['error'] = null;
