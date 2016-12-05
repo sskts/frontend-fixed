@@ -6,7 +6,13 @@
                 padding: 10px 0;
             }
             dt {
-                width: 50px;
+                
+            }
+            dd {
+                width: 300px;
+                @media screen and (max-width: $mobile){
+                    width: 150px;
+                }
             }
         }
     }
@@ -14,6 +20,20 @@
         text-align: right;
         .length {
             margin: 0 0 10px;
+        }
+    }
+}
+
+.modal[data-modal="ticket-type"] {
+    li {
+        dt {
+            
+        }
+        dd {
+            width: 300px;
+            @media screen and (max-width: $mobile){
+                width: 150px;
+            }
         }
     }
 }

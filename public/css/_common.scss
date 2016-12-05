@@ -46,6 +46,11 @@ label {
   margin: 0;
 }
 
+input[type=submit],
+button {
+  cursor: pointer;
+}
+
 input[type=text],
 input[type=number],
 input[type=password],
@@ -111,6 +116,7 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 10;
 }
 
 .modal {
@@ -120,6 +126,7 @@ a {
   left: 50%;
   width: 600px;
   margin-left: -300px;
+  z-index: 10;
   @media screen and (max-width: $mobile){
       width: 300px;
       margin-left: -150px;
@@ -129,4 +136,56 @@ a {
 .modal-cover.active,
 .modal.active {
   display: block;
-} 
+}
+
+// header
+.header {
+    padding: 10px;
+    .inner {
+        position: relative;
+        width: 980px;
+        margin: 0 auto;
+        @media screen and (max-width: $tablet){
+            width: auto;
+        }
+    }
+    .logo {
+        width: 80px;
+        img {
+            width: 100%;
+        }
+    }
+}
+// footer
+.footer {
+    background-color: #212121;
+    padding: 20px 10px;
+    .inner {
+        position: relative;
+        width: 980px;
+        margin: 0 auto;
+        @media screen and (max-width: $tablet){
+            width: auto;
+        }
+    }
+    ul {
+        margin: 0 0 10px -5px;
+        li {
+            float: left;
+            padding: 0 5px;
+            border-right: 1px solid #FFF;
+            line-height: 1.5;
+            &:last-child {
+                border: none;
+                padding-right: 0;
+            }
+            a {
+                color: #FFF;
+            }
+        }
+    }
+    .copyright {
+        color: #FFF;
+    }
+}
+

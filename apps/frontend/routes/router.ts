@@ -7,6 +7,8 @@ import EnterPurchaserController from '../controllers/Purchase/EnterPurchaserCont
 import TicketTypeSelectController from '../controllers/Purchase/TicketTypeSelectController';
 import ConfirmPurchaseController from '../controllers/Purchase/ConfirmPurchaseController';
 
+import ErrorController from '../controllers/Error/ErrorController';
+
 /**
  * URLルーティング
  * 
@@ -74,15 +76,17 @@ export default (app: any) => {
 
 
 
-    // app.get('/Error/NotFound', 'Error.NotFound', (req, res, next) => {(new ErrorController(req, res, next)).notFound()});
+    app.get('/Error/NotFound', 'Error.NotFound', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        (new ErrorController(req, res, next)).notFound()}
+    );
 
-    // // 404
-    // app.use((req, res, next) => {
-    //     return res.redirect('/Error/NotFound');
-    // });
+    // 404
+    app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+        return res.redirect('/Error/NotFound');
+    });
 
-    // // error handlers
-    // app.use((err: any, req, res, next) => {
-    //     (new ErrorController(req, res, next)).index(err);
-    // });
+    // error handlers
+    app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+        (new ErrorController(req, res, next)).index(err);
+    });
 }

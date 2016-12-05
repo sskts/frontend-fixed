@@ -111,6 +111,11 @@ label {
   margin: 0;
 }
 
+input[type=submit],
+button {
+  cursor: pointer;
+}
+
 input[type=text],
 input[type=number],
 input[type=password],
@@ -176,6 +181,7 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 10;
 }
 
 .modal {
@@ -185,6 +191,7 @@ a {
   left: 50%;
   width: 600px;
   margin-left: -300px;
+  z-index: 10;
 }
 
 @media screen and (max-width: 768px) {
@@ -199,28 +206,69 @@ a {
   display: block;
 }
 
-.purchase .header {
+.header {
   padding: 10px;
 }
 
-.purchase .header .inner {
+.header .inner {
   position: relative;
   width: 980px;
   margin: 0 auto;
 }
 
 @media screen and (max-width: 1024px) {
-  .purchase .header .inner {
+  .header .inner {
     width: auto;
   }
 }
 
-.purchase .header .logo {
+.header .logo {
   width: 80px;
 }
 
-.purchase .header .logo img {
+.header .logo img {
   width: 100%;
+}
+
+.footer {
+  background-color: #212121;
+  padding: 20px 10px;
+}
+
+.footer .inner {
+  position: relative;
+  width: 980px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 1024px) {
+  .footer .inner {
+    width: auto;
+  }
+}
+
+.footer ul {
+  margin: 0 0 10px -5px;
+}
+
+.footer ul li {
+  float: left;
+  padding: 0 5px;
+  border-right: 1px solid #FFF;
+  line-height: 1.5;
+}
+
+.footer ul li:last-child {
+  border: none;
+  padding-right: 0;
+}
+
+.footer ul li a {
+  color: #FFF;
+}
+
+.footer .copyright {
+  color: #FFF;
 }
 
 .purchase .header .steps {
@@ -275,47 +323,6 @@ a {
   background-color: #555;
 }
 
-.purchase .footer {
-  background-color: #212121;
-  padding: 20px 10px;
-}
-
-.purchase .footer .inner {
-  position: relative;
-  width: 980px;
-  margin: 0 auto;
-}
-
-@media screen and (max-width: 1024px) {
-  .purchase .footer .inner {
-    width: auto;
-  }
-}
-
-.purchase .footer ul {
-  margin: 0 0 10px -5px;
-}
-
-.purchase .footer ul li {
-  float: left;
-  padding: 0 5px;
-  border-right: 1px solid #FFF;
-  line-height: 1.5;
-}
-
-.purchase .footer ul li:last-child {
-  border: none;
-  padding-right: 0;
-}
-
-.purchase .footer ul li a {
-  color: #FFF;
-}
-
-.purchase .footer .copyright {
-  color: #FFF;
-}
-
 .purchase .contents {
   border-top: 1px solid #ccc;
   padding: 20px 0;
@@ -357,10 +364,15 @@ a {
 }
 
 .purchase .page-ttl {
-  text-align: center;
   font-weight: bold;
   font-size: 20px;
   margin: 0 0 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .page-ttl {
+    text-align: center;
+  }
 }
 
 .purchase .read {
@@ -498,8 +510,14 @@ a {
   padding: 10px 0;
 }
 
-.purchase .ticket-type-select .seats li dt {
-  width: 50px;
+.purchase .ticket-type-select .seats li dd {
+  width: 300px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .ticket-type-select .seats li dd {
+    width: 150px;
+  }
 }
 
 .purchase .ticket-type-select .total {
@@ -508,6 +526,16 @@ a {
 
 .purchase .ticket-type-select .total .length {
   margin: 0 0 10px;
+}
+
+.purchase .modal[data-modal="ticket-type"] li dd {
+  width: 300px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .modal[data-modal="ticket-type"] li dd {
+    width: 150px;
+  }
 }
 
 .purchase .enter-purchaser .clearfix dl {

@@ -1,21 +1,5 @@
 .purchase {
-    // header
     .header {
-        padding: 10px;
-        .inner {
-            position: relative;
-            width: 980px;
-            margin: 0 auto;
-            @media screen and (max-width: $tablet){
-                width: auto;
-            }
-        }
-        .logo {
-            width: 80px;
-            img {
-                width: 100%;
-            }
-        }
         .steps {
             position: absolute;
             right: 5px;
@@ -58,38 +42,6 @@
             }
         }
     }
-    // footer
-    .footer {
-        background-color: #212121;
-        padding: 20px 10px;
-        .inner {
-            position: relative;
-            width: 980px;
-            margin: 0 auto;
-            @media screen and (max-width: $tablet){
-                width: auto;
-            }
-        }
-        ul {
-            margin: 0 0 10px -5px;
-            li {
-                float: left;
-                padding: 0 5px;
-                border-right: 1px solid #FFF;
-                line-height: 1.5;
-                &:last-child {
-                    border: none;
-                    padding-right: 0;
-                }
-                a {
-                    color: #FFF;
-                }
-            }
-        }
-        .copyright {
-            color: #FFF;
-        }
-    }
     // contents
     .contents {
         border-top: 1px solid #ccc;
@@ -125,10 +77,12 @@
         }
     }
     .page-ttl {
-        text-align: center;
         font-weight: bold;
         font-size: 20px;
         margin: 0 0 20px;
+        @media screen and (max-width: $mobile){
+            text-align: center;
+        }
     }
     .read {
         margin: 0 0 20px;

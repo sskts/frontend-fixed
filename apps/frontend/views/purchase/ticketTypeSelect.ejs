@@ -6,18 +6,25 @@
         画面をタッチすると画面がズームしますので座席を選択してください。
     </p>
     <ul class="seats box">
-        <li>
-            <dl class="d-table">
-                <dt class="d-td">A-1</dt>
-                <dd class="d-td">
-                    <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
-                </dd>
-            </dl>
-        </li>
+        <% for (let seat of seats) { %>
+            <li>
+                <dl class="d-table">
+                    <dt class="d-td seat-code"><%= seat.code %></dt>
+                    <dd class="d-td" data-seat-type="<%= seat.type %>">
+                        <% if (!seat.type) { %>
+                        <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
+                        <% } else { %>
+                        <div class="button blue-button"><a href="#" data-modal="ticket-type"><%= SALES_TYPE[seat.code] %></a></div>
+                        <% } %>
+                    </dd>
+                </dl>
+            </li>
+        <% } %>
+        
     </ul>
     <div class="total box">
-        <div class="length">購入枚数 <strong class="red-text"></strong></div>
-        <div class="price">合計金額 <strong class="red-text"></strong></div>
+        <div class="length">購入枚数 <strong class="red-text"><%= seats.length %></strong>枚</div>
+        <div class="price">合計金額 <strong class="red-text"></strong>円</div>
     </div>
     <form method="post">
         <div class="button-area clearfix">

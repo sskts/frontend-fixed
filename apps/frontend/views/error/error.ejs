@@ -1,11 +1,6 @@
-<link type="text/css" href="/css/responsive/error.css" rel="stylesheet" />
+<% layout('purchase/layout') -%>
 
-<div class="contents">
-    <h2>ERROR</h2>
-    <div class="message">
-        <p><%= message %></p>
-    </div>
-    <div class="btn-area one-btn clearfix">
-        <div class="btn"><a href="<%- url('Home', {}) %>">TOPへ</a></div>
-    </div>
+<div class="error">
+    <h1 class="page-ttl">ERROR</h1>
+    <p class="read"><%= message %></p>
 </div>
