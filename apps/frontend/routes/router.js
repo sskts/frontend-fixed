@@ -20,19 +20,19 @@ exports.default = (app) => {
         new SeatSelectController_1.default(req, res, next).index();
     });
     app.post('/purchase/seatSelect', 'purchase.seatSelect', (req, res, next) => {
-        new SeatSelectController_1.default(req, res, next).seatSelect();
+        new SeatSelectController_1.default(req, res, next).submit();
     });
-    app.get('/purchase/denominationSelect', 'purchase.ticketTypeSelect', (req, res, next) => {
+    app.get('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req, res, next) => {
         new TicketTypeSelectController_1.default(req, res, next).index();
     });
-    app.post('/purchase/denominationSelect', 'purchase.ticketTypeSelect', (req, res, next) => {
-        new TicketTypeSelectController_1.default(req, res, next).denominationSelect();
+    app.post('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req, res, next) => {
+        new TicketTypeSelectController_1.default(req, res, next).submit();
     });
     app.get('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req, res, next) => {
         new EnterPurchaserController_1.default(req, res, next).index();
     });
     app.post('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req, res, next) => {
-        new EnterPurchaserController_1.default(req, res, next).enterPurchaser();
+        new EnterPurchaserController_1.default(req, res, next).submit();
     });
     app.get('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req, res, next) => {
         new ConfirmPurchaseController_1.default(req, res, next).index();

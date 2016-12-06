@@ -1,4 +1,5 @@
 <% layout('purchase/layout') -%>
+<% block('script').append('<script src="https://pt01.mul-pay.jp/ext/js/token.js"></script>') %>
 <div class="enter-purchaser">
     <h1 class="page-ttl">購入者情報入力</h1>
     <p class="read">
@@ -6,7 +7,7 @@
         画面をタッチすると画面がズームしますので座席を選択してください。
     </p>
 
-    <form method="post">
+    <form id="purchaseform" method="post">
         <h2 class="section-ttl">お名前（漢字）</h2>
         <div class="box clearfix">
             <dl>
@@ -95,10 +96,7 @@
                 <dl>
                     <dt>カード番号</dt>
                     <dd>
-                        <input type="text" name="creditNumber" maxlength="16" autocomplete="off" value="">
-                        <% if (error && error.creditNumber) { %>
-                        <div class="validation"><%= error.creditNumber[0] %></div>
-                        <% } %>
+                        <input type="text" name="cardno" maxlength="16" autocomplete="off" value="">
                     </dd>
                 </dl>
             </li>
@@ -116,7 +114,7 @@
                             }
                             %>
                             <% for (let key in choices) { %>
-                            <option value="<%- key %>"><%- choices[key] %></option>
+                            <option value="20<%- key %>"><%- choices[key] %></option>
                             <% } %>
                         </select> 年 
                         <select name="creditMonth">
@@ -128,6 +126,7 @@
                                 <option value="<%= month %>"><%= month %></option>
                             <% } %>
                         </select> 月 
+                        <input type="hidden" name="expire" value="">
                     </dd>
                 </dl>
             </li>
@@ -135,10 +134,7 @@
                 <dl>
                     <dt>カード名義人</dt>
                     <dd>
-                        <input type="text" name="creditName" value="">
-                        <% if (error && error.creditName) { %>
-                        <div class="validation"><%= error.creditName[0] %></div>
-                        <% } %>
+                        <input type="text" name="holdername" value="">
                     </dd>
                 </dl>
             </li>
@@ -146,19 +142,16 @@
                 <dl>
                     <dt>セキュリティーコード</dt>
                     <dd>
-                        <input type="text" name="creditCord" value="">
-                        <% if (error && error.creditCord) { %>
-                        <div class="validation"><%= error.creditCord[0] %></div>
-                        <% } %>
+                        <input type="text" name="securitycode" value="">
                     </dd>
                 </dl>
             </li>
         </ul>
-
+        <input type="hidden" name="creditToken" value="">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="button prev-button white-button"><button onclick="history.back();">戻る</button></div>
+            <div class="button prev-button white-button"><button onclick="location.href = '<%- url('purchase.ticketTypeSelect') %>';">戻る</button></div>
         </div>
-        <input type="hidden" name="token" value="<%= token %>">
+        <input type="hidden" name="provisionalReservationNumber" value="<%= provisionalReservationNumber %>">
     </form>
 </div>

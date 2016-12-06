@@ -37,15 +37,15 @@ export default (app: any) => {
     });
 
     app.post('/purchase/seatSelect', 'purchase.seatSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new SeatSelectController(req, res, next).seatSelect();
+        new SeatSelectController(req, res, next).submit();
     });
 
-    app.get('/purchase/denominationSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new TicketTypeSelectController(req, res, next).index();
     });
 
-    app.post('/purchase/denominationSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new TicketTypeSelectController(req, res, next).denominationSelect();
+    app.post('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new TicketTypeSelectController(req, res, next).submit();
     });
 
     app.get('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -53,7 +53,7 @@ export default (app: any) => {
     });
 
     app.post('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new EnterPurchaserController(req, res, next).enterPurchaser();
+        new EnterPurchaserController(req, res, next).submit();
     });
 
     app.get('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {

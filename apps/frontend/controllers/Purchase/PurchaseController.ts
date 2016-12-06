@@ -3,12 +3,24 @@ import BaseController from '../BaseController';
 
 export default class PurchaseController extends BaseController {
     /**
-     * トークンチェック
-     * 
+     * 仮予約チェック
      */
-    protected checkToken(): void {
-        if (this.req.body['token'] !== this.req.session['purchaseToken']) {
+    protected checkProvisionalReservationNumber(): void {
+        this.checkSession('provisionalReservationNumber');
+        if (this.req.body['provisionalReservationNumber'] !== this.req.session['provisionalReservationNumber']) {
             this.next(new Error('無効なアクセスです'));
         }
     }
+
+    /**
+     * セッションチェック
+     */
+    protected checkSession(name: string): void {
+        if (!this.req.session[name]) {
+            console.log('無効なアクセスです')
+            this.next(new Error('無効なアクセスです'));
+        }
+        console.log('有効なアクセスです')
+    }
+
 }

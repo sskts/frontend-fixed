@@ -5,20 +5,19 @@ class ConfirmPurchaseController extends PurchaseController_1.default {
      * 購入者内容確認
      */
     index() {
-        this.logger.debug('session', this.req.session);
         //購入者内容確認表示
-        this.res.locals['token'] = this.req.session['purchaseToken'];
+        this.res.locals['provisionalReservationNumber'] = this.req.session['provisionalReservationNumber'];
         this.res.locals['info'] = this.req.session['purchaseInfo'];
         this.res.locals['data'] = this.req.session['purchasePerformanceData'];
         this.res.locals['film'] = this.req.session['purchasePerformanceFilm'];
         this.res.locals['seats'] = this.req.session['purchaseSeats'];
+        this.res.locals['step'] = 3;
         this.res.render('purchase/confirmPurchase');
     }
     /**
      * 購入確定
      */
     purchase() {
-        this.checkToken();
         //モーションAPI仮予約
         //購入完了1もしくは購入完了2の情報を返す
         this.res.json();

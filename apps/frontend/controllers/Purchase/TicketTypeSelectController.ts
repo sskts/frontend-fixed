@@ -6,8 +6,7 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種選択
      */
     public index(): void {
-        this.logger.debug(this.req.body);
-        this.res.locals['token'] = this.req.session['purchaseToken'];
+        this.checkSession('purchaseSeats');
         //コアAPI券種取得
         //販売対象マスター抽出
         let sales = {
@@ -29,12 +28,15 @@ export default class TicketTypeSelectController extends PurchaseController {
             ]
             
         };
+
         this.res.locals['SALES_TYPE'] = {
             '0000': '一般',
             '0001': '中学生・小学生'
         };
         this.res.locals['sales'] = sales;
-        this.res.locals['seats'] = this.req.session['purchaseSeats'];;
+        this.res.locals['seats'] = this.req.session['purchaseSeats'];
+        this.res.locals['step'] = 1;
+        this.res.locals['provisionalReservationNumber'] = this.req.session['provisionalReservationNumber'];
         //券種選択表示
         this.res.render('purchase/ticketTypeSelect');
     }
@@ -42,8 +44,8 @@ export default class TicketTypeSelectController extends PurchaseController {
     /**
      * 券種決定
      */
-    public denominationSelect(): void {
-        this.checkToken();
+    public submit(): void {
+        this.checkProvisionalReservationNumber();
         this.logger.debug('request', this.req.body);
         let seats: {
             code: string,

@@ -14,7 +14,7 @@
                         <% if (!seat.type) { %>
                         <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
                         <% } else { %>
-                        <div class="button blue-button"><a href="#" data-modal="ticket-type"><%= SALES_TYPE[seat.code] %></a></div>
+                        <div class="button blue-button"><a href="#" data-modal="ticket-type"><%= SALES_TYPE[seat.type] %></a></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -24,14 +24,14 @@
     </ul>
     <div class="total box">
         <div class="length">購入枚数 <strong class="red-text"><%= seats.length %></strong>枚</div>
-        <div class="price">合計金額 <strong class="red-text"></strong>円</div>
+        <div class="price">合計金額 <strong class="red-text">5,100</strong>円</div>
     </div>
     <form method="post">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">次へ</button></div>
             <div class="button prev-button white-button"><button onclick="history.back();">戻る</button></div>
         </div>
-        <input type="hidden" name="token" value="<%= token %>">
+        <input type="hidden" name="provisionalReservationNumber" value="<%= provisionalReservationNumber %>">
     </form>
 </div>
 

@@ -14,7 +14,7 @@
             .step {
                 width: 10px;
                 height: 10px;
-                background-color: #aaa;
+                background-color: #ccc;
                 border-radius: 5px;
                 position: absolute;
                 top: 50%;
@@ -43,79 +43,6 @@
         }
     }
     // contents
-    .contents {
-        border-top: 1px solid #ccc;
-        padding: 20px 0;
-        width: 980px;
-        margin: 0 auto;
-        @media screen and (max-width: $tablet){
-            width: auto;
-            padding: 20px 10px;
-        }
-    }
-    .red-text {
-        color: #c00017;
-    }
-    .box {
-        background-color: #eeeef0;
-        padding: 15px 10px;
-        margin: 0 0 20px;
-        &:last-child {
-            margin: 0;
-        }
-    }
-    ul.box {
-        > li {
-            border-bottom: 1px solid #d1d1d1;
-            margin: 0 0 10px;
-            padding: 0 0 10px;
-            &:last-child {
-                border: none;
-                margin: 0;
-                padding: 0;
-            }
-        }
-    }
-    .page-ttl {
-        font-weight: bold;
-        font-size: 20px;
-        margin: 0 0 20px;
-        @media screen and (max-width: $mobile){
-            text-align: center;
-        }
-    }
-    .read {
-        margin: 0 0 20px;
-    }
-    .button {
-        a, button {
-            line-height: 1;
-            display: block;
-            padding: 10px 0;
-            text-align: center;
-            width: 100%;
-            border-radius: 5px;
-            box-shadow: 0 2px 2px #333;
-        }
-    }
-    .blue-button {
-        a, button {
-            background-color: #019fe8;
-            color: #FFF;
-        }
-    }
-    .dark-blue-button {
-        a, button {
-            background-color: #036db7;
-            color: #FFF;
-        }
-    }
-    .gray-button {
-        a, button {
-            background-color: #595758;
-            color: #FFF;
-        }
-    }
     .white-button {
         a, button {
             background-color: #FFF;
