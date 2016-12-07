@@ -1,5 +1,5 @@
 import PurchaseController from './PurchaseController';
-
+import TicketTypeSelectForm from '../../forms/Purchase/TicketTypeSelectForm';
 
 export default class TicketTypeSelectController extends PurchaseController {
     /**
@@ -26,7 +26,7 @@ export default class TicketTypeSelectController extends PurchaseController {
                     salesTargetNameEnglish: '中学生・小学生'
                 }
             ]
-            
+
         };
 
         this.res.locals['SALES_TYPE'] = {
@@ -46,18 +46,22 @@ export default class TicketTypeSelectController extends PurchaseController {
      */
     public submit(): void {
         this.checkProvisionalReservationNumber();
-        this.logger.debug('request', this.req.body);
-        let seats: {
-            code: string,
-            type: string
-        }[] = JSON.parse(this.req.body.seatCodes);
-        
-        //モーションAPI仮抑え
-        
-        //座席情報をセッションへ
-        this.req.session['purchaseSeats'] = seats;
-        //購入者情報入力へ
-        this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
+        //バリデーション
+        TicketTypeSelectForm(this.req, this.res, () => {
+            let seats: {
+                code: string,
+                type: string
+            }[] = JSON.parse(this.req.body.seatCodes);
+
+            //モーションAPI仮抑え
+
+            //座席情報をセッションへ
+            this.req.session['purchaseSeats'] = seats;
+            //購入者情報入力へ
+            this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
+
+        });
+
     }
 
 

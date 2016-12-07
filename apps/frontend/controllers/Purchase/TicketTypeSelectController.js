@@ -1,5 +1,6 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
+const TicketTypeSelectForm_1 = require('../../forms/Purchase/TicketTypeSelectForm');
 class TicketTypeSelectController extends PurchaseController_1.default {
     /**
      * 券種選択
@@ -42,13 +43,15 @@ class TicketTypeSelectController extends PurchaseController_1.default {
      */
     submit() {
         this.checkProvisionalReservationNumber();
-        this.logger.debug('request', this.req.body);
-        let seats = JSON.parse(this.req.body.seatCodes);
-        //モーションAPI仮抑え
-        //座席情報をセッションへ
-        this.req.session['purchaseSeats'] = seats;
-        //購入者情報入力へ
-        this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
+        //バリデーション
+        TicketTypeSelectForm_1.default(this.req, this.res, () => {
+            let seats = JSON.parse(this.req.body.seatCodes);
+            //モーションAPI仮抑え
+            //座席情報をセッションへ
+            this.req.session['purchaseSeats'] = seats;
+            //購入者情報入力へ
+            this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
+        });
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

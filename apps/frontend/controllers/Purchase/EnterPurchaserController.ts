@@ -1,3 +1,4 @@
+import config = require('config');
 import PurchaseController from './PurchaseController';
 import EnterPurchaserForm from '../../forms/Purchase/EnterPurchaserForm';
 
@@ -13,6 +14,8 @@ export default class EnterPurchaserController extends PurchaseController {
         this.res.locals['info'] = null;
         this.res.locals['moment'] = require('moment');
         this.res.locals['step'] = 2;
+        this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
+        this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
         if (process.env.NODE_ENV === 'dev') {
             this.res.locals['info'] = {
                 lastNameKanji: '畑口',
@@ -37,7 +40,7 @@ export default class EnterPurchaserController extends PurchaseController {
 
         //バリデーション
         EnterPurchaserForm(this.req, this.res, () => {
-            if (this.req.form.isValid && this.req.body.creditToken) {
+            if (this.req.form.isValid) {
                 //モーションAPIで仮決済（GMOトークンと予約番号）
 
 
@@ -51,6 +54,8 @@ export default class EnterPurchaserController extends PurchaseController {
                 this.res.locals['info'] = this.req.body;
                 this.res.locals['moment'] = require('moment');
                 this.res.locals['step'] = 2;
+                this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
+                this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
                 this.res.render('purchase/enterPurchaser');
             }
         });

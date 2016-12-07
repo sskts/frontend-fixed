@@ -15,10 +15,8 @@ class PurchaseController extends BaseController_1.default {
      */
     checkSession(name) {
         if (!this.req.session[name]) {
-            console.log('無効なアクセスです');
             this.next(new Error('無効なアクセスです'));
         }
-        console.log('有効なアクセスです');
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

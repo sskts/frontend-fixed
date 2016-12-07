@@ -13,7 +13,7 @@ app.use(logger_1.default); // ロガー
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
 // view engine setup
-app.engine('ejs', require('ejs-mate'));
+app.engine('ejs', require('ejs-locals'));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());

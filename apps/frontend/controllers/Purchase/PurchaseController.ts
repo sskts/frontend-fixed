@@ -17,10 +17,8 @@ export default class PurchaseController extends BaseController {
      */
     protected checkSession(name: string): void {
         if (!this.req.session[name]) {
-            console.log('無効なアクセスです')
             this.next(new Error('無効なアクセスです'));
         }
-        console.log('有効なアクセスです')
     }
 
 }

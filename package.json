@@ -25,7 +25,7 @@
     "connect-redis": "^3.1.0",
     "cookie-parser": "^1.4.3",
     "debug": "^2.3.3",
-    "ejs-mate": "^2.3.0",
+    "ejs-locals": "^1.0.2",
     "express": "^4.14.0",
     "express-ejs-layouts": "^2.2.0",
     "express-form": "^0.12.6",

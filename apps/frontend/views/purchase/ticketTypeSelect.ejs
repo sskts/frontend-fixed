@@ -1,4 +1,5 @@
-<% layout('purchase/layout') -%>
+<% layout('../purchase/layout') -%>
+<% block('script', '<script src="/js/purchase/ticketTypeSelect.js"></script>') -%>
 <div class="ticket-type-select">
     <h1 class="page-ttl">券種選択</h1>
     <p class="read">
@@ -35,4 +36,4 @@
     </form>
 </div>
 
-<%- partial('purchase/modals/ticketType') %>
+<%- partial('modals/ticketType') %>

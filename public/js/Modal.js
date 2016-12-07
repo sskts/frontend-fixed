@@ -1,5 +1,6 @@
-var Modal = (function () {
-    function Modal() {
+"use strict";
+(function () {
+    var Modal = function () {
         this.init();
     }
     Modal.prototype.init = function () {
@@ -34,5 +35,6 @@ var Modal = (function () {
             this.cover.removeClass('active');
         }
     };
-    return Modal;
+    SASAKI = SASAKI || {};
+    SASAKI.Modal = Modal;
 }());

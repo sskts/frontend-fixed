@@ -1,6 +1,6 @@
 "use strict";
-var ScreenSeatStatusesMap = (function () {
-    function ScreenSeatStatusesMap(target) {
+(function () {
+    var ScreenSeatStatusesMap = function (target) {
         this.resizeTimer = null;
         this.target = target;
         this.init();
@@ -216,5 +216,6 @@ var ScreenSeatStatusesMap = (function () {
     };
     ScreenSeatStatusesMap.STATE_DEFAULT = 0;
     ScreenSeatStatusesMap.STATE_ZOOM = 1;
-    return ScreenSeatStatusesMap;
+    SASAKI = SASAKI || {};
+    SASAKI.ScreenSeatStatusesMap = ScreenSeatStatusesMap;
 }());

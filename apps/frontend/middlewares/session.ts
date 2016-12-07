@@ -1,5 +1,5 @@
 import session = require('express-session');
-import conf = require('config');
+import config = require('config');
 
 let RedisStore = require('connect-redis')(session);
 
@@ -9,9 +9,9 @@ export default session({
     rolling: true,
     saveUninitialized: false,
     // store: new RedisStore({
-    //     host: conf.get('redis_host'),
-    //     port: conf.get('redis_port'),
-    //     pass: conf.get('redis_key')
+    //     host: config.get('redis_host'),
+    //     port: config.get('redis_port'),
+    //     pass: config.get('redis_key')
     // }),
     cookie: {
         // secure: true,

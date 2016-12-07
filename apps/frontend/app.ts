@@ -16,7 +16,7 @@ app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
 // view engine setup
-app.engine('ejs', require('ejs-mate'));
+app.engine('ejs', require('ejs-locals'));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
 

@@ -23,5 +23,7 @@ export default form(
     form.field('tel', '電話番号').trim().required('', '%sが未入力です')
         .regex(/^[0-9]+$/, '%sは数字で入力してください'),
 
+    form.field('gmoTokenObject').trim().required()
+
     
 );

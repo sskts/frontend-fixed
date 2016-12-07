@@ -1,5 +1,6 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
+const SeatSelectForm_1 = require('../../forms/Purchase/SeatSelectForm');
 class SeatSelectController extends PurchaseController_1.default {
     /**
      * 座席選択
@@ -71,47 +72,50 @@ class SeatSelectController extends PurchaseController_1.default {
      * 座席決定
      */
     submit() {
-        //変更状態
-        let changetype = this.getChangeType();
-        if (changetype === 0) {
-            //新規
-            //モーションAPI仮予約(仮予約番号発行)
-            let provisionalReservationNumber = '123456789';
-            //仮予約番号をセッションへ
-            this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
-            let seats = [];
-            let seatCodes = JSON.parse(this.req.body.seatCodes);
-            for (let code of seatCodes) {
-                seats.push({
-                    code: code,
-                    type: ''
-                });
+        //バリデーション
+        SeatSelectForm_1.default(this.req, this.res, () => {
+            //変更状態
+            let changetype = this.getChangeType();
+            if (changetype === 0) {
+                //新規
+                //モーションAPI仮予約(仮予約番号発行)
+                let provisionalReservationNumber = '123456789';
+                //仮予約番号をセッションへ
+                this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
+                let seats = [];
+                let seatCodes = JSON.parse(this.req.body.seatCodes);
+                for (let code of seatCodes) {
+                    seats.push({
+                        code: code,
+                        type: ''
+                    });
+                }
+                //座席情報をセッションへ
+                this.req.session['purchaseSeats'] = seats;
             }
-            //座席情報をセッションへ
-            this.req.session['purchaseSeats'] = seats;
-        }
-        else if (changetype === 1) {
-            //変更
-            //モーションAPI仮予約削除
-            //モーションAPI仮予約(仮予約番号発行)
-            let provisionalReservationNumber = '123456789';
-            //仮予約番号をセッションへ
-            this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
-            let seats = [];
-            let seatCodes = JSON.parse(this.req.body.seatCodes);
-            for (let code of seatCodes) {
-                seats.push({
-                    code: code,
-                    type: ''
-                });
+            else if (changetype === 1) {
+                //変更
+                //モーションAPI仮予約削除
+                //モーションAPI仮予約(仮予約番号発行)
+                let provisionalReservationNumber = '123456789';
+                //仮予約番号をセッションへ
+                this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
+                let seats = [];
+                let seatCodes = JSON.parse(this.req.body.seatCodes);
+                for (let code of seatCodes) {
+                    seats.push({
+                        code: code,
+                        type: ''
+                    });
+                }
+                //座席情報をセッションへ
+                this.req.session['purchaseSeats'] = seats;
             }
-            //座席情報をセッションへ
-            this.req.session['purchaseSeats'] = seats;
-        }
-        else {
-        }
-        //券種選択へ
-        this.res.redirect(this.router.build('purchase.ticketTypeSelect', {}));
+            else {
+            }
+            //券種選択へ
+            this.res.redirect(this.router.build('purchase.ticketTypeSelect', {}));
+        });
     }
     /**
      * 変更状態

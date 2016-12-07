@@ -1,4 +1,7 @@
-<% layout('purchase/layout') -%>
+<% layout('../purchase/layout') -%>
+<% block('script', '<script src="/js/purchase/seatSelect.js"></script>') -%>
+<% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
+
 <div class="seat-select">
     <h1 class="page-ttl">座席選択</h1>
     <p class="read">
@@ -7,7 +10,7 @@
     </p>
     
     <div class="screen-limit" style="display: none;" data-limit="<%= (seatReservationStateExtraction) ? seatReservationStateExtraction.reservableRemainingNumberOfSeats : '0' %>"></div>
-    <%- partial('screens/00101') %>
+    <%- partial('../screens/00101') %>
 
     <div class="film-info">
         <p>現在、選択されているチケットは下記のとおりです。</p>

@@ -1,5 +1,7 @@
-<% layout('purchase/layout') -%>
-<% block('script').append('<script src="https://pt01.mul-pay.jp/ext/js/token.js"></script>') %>
+<% layout('../purchase/layout') -%>
+<% block('script', '<script src="/js/purchase/enterPurchaser.js"></script>') -%>
+<script src="<%= gmoModuleUrl %>"></script>
+<script>Multipayment.init('<%= gmoShopId %>'); // トークンを利用するための api キー</script>
 <div class="enter-purchaser">
     <h1 class="page-ttl">購入者情報入力</h1>
     <p class="read">
@@ -147,7 +149,7 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="creditToken" value="">
+        <input type="hidden" name="gmoTokenObject" value="">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">次へ</button></div>
             <div class="button prev-button white-button"><button onclick="location.href = '<%- url('purchase.ticketTypeSelect') %>';">戻る</button></div>
