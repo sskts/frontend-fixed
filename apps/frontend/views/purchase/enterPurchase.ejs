@@ -1,8 +1,8 @@
 <% layout('../purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/enterPurchaser.js"></script>') -%>
+<% block('script', '<script src="/js/purchase/enterPurchase.js"></script>') -%>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>'); // トークンを利用するための api キー</script>
-<div class="enter-purchaser">
+<div class="enter-purchase">
     <h1 class="page-ttl">購入者情報入力</h1>
     <p class="read">
         ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
@@ -152,8 +152,8 @@
         <input type="hidden" name="gmoTokenObject" value="">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="button prev-button white-button"><button onclick="location.href = '<%- url('purchase.ticketTypeSelect') %>';">戻る</button></div>
+            <div class="prev-link"><a href="<%- url('purchase.ticketTypeSelect') %>">戻る</a></div>
         </div>
-        <input type="hidden" name="provisionalReservationNumber" value="<%= provisionalReservationNumber %>">
+        <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>
 </div>

@@ -79,9 +79,9 @@ class SeatSelectController extends PurchaseController_1.default {
             if (changetype === 0) {
                 //新規
                 //モーションAPI仮予約(仮予約番号発行)
-                let provisionalReservationNumber = '123456789';
+                let reservationNo = '123456789';
                 //仮予約番号をセッションへ
-                this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
+                this.req.session['reservationNo'] = reservationNo;
                 let seats = [];
                 let seatCodes = JSON.parse(this.req.body.seatCodes);
                 for (let code of seatCodes) {
@@ -97,9 +97,9 @@ class SeatSelectController extends PurchaseController_1.default {
                 //変更
                 //モーションAPI仮予約削除
                 //モーションAPI仮予約(仮予約番号発行)
-                let provisionalReservationNumber = '123456789';
+                let reservationNo = '123456789';
                 //仮予約番号をセッションへ
-                this.req.session['provisionalReservationNumber'] = provisionalReservationNumber;
+                this.req.session['reservationNo'] = reservationNo;
                 let seats = [];
                 let seatCodes = JSON.parse(this.req.body.seatCodes);
                 for (let code of seatCodes) {
@@ -113,6 +113,7 @@ class SeatSelectController extends PurchaseController_1.default {
             }
             else {
             }
+            this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
             //券種選択へ
             this.res.redirect(this.router.build('purchase.ticketTypeSelect', {}));
         });
@@ -122,7 +123,7 @@ class SeatSelectController extends PurchaseController_1.default {
      */
     getChangeType() {
         let result;
-        if (!this.req.session['provisionalReservationNumber']) {
+        if (!this.req.session['reservationNo']) {
             //新規
             result = 0;
         }

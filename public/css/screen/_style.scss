@@ -1,18 +1,22 @@
 .screen {
   position: relative;
-  @media screen and (max-width: 767px) {
+  @media screen and (max-width: $mobile) {
     overflow: hidden;
   }
   .transition {
     transition: all 0.3s;
   }
   .screen-inner {
-    position: absolute;
-    top: 0;
-    left: 0;
+    margin: 0 auto;
+    position: relative;
     width: 404px;
     height: 665px;
     background-image: url(/images/pc/screen.png);
+    @media screen and (max-width: $mobile) {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
   }
   .seat {
     width: 13px;

@@ -3,7 +3,7 @@ import NamedRoutes = require('named-routes');
 import config = require('config');
 
 import SeatSelectController from '../controllers/Purchase/SeatSelectController';
-import EnterPurchaserController from '../controllers/Purchase/EnterPurchaserController';
+import EnterPurchaseController from '../controllers/Purchase/EnterPurchaseController';
 import TicketTypeSelectController from '../controllers/Purchase/TicketTypeSelectController';
 import ConfirmPurchaseController from '../controllers/Purchase/ConfirmPurchaseController';
 
@@ -48,12 +48,12 @@ export default (app: any) => {
         new TicketTypeSelectController(req, res, next).submit();
     });
 
-    app.get('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new EnterPurchaserController(req, res, next).index();
+    app.get('/purchase/enterPurchase', 'purchase.enterPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new EnterPurchaseController(req, res, next).index();
     });
 
-    app.post('/purchase/enterPurchaser', 'purchase.enterPurchaser', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new EnterPurchaserController(req, res, next).submit();
+    app.post('/purchase/enterPurchase', 'purchase.enterPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new EnterPurchaseController(req, res, next).submit();
     });
 
     app.get('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -92,8 +92,9 @@
         var content = target.find('a').attr('data-seat-code'); //表示テキスト
         balloon.addClass('active');
         balloon.html(content);
+        var parentLeft = parseInt(this.target.find('.screen-inner').css('margin-left'), 10);
         var top = target.position().top + target.height() + 10;
-        var left = target.position().left + target.width() / 2 - balloon.outerWidth() / 2;
+        var left = target.position().left + target.width() / 2 - balloon.outerWidth() / 2 + parentLeft;
         balloon.css({
             top: top,
             left: left

@@ -6,8 +6,11 @@ export default class ConfirmPurchaseController extends PurchaseController {
      * 購入者内容確認
      */
     public index(): void {
+        this.checkGet();
+        this.logger.debug('購入者情報入力表示', this.req.session['reservationNo']);
         //購入者内容確認表示
-        this.res.locals['provisionalReservationNumber'] = this.req.session['provisionalReservationNumber'];
+        this.res.locals['reservationNo'] = this.req.session['reservationNo'];
+        this.res.locals['gmoTokenObject'] = this.req.session['gmoTokenObject'];
         this.res.locals['info'] = this.req.session['purchaseInfo'];
         this.res.locals['data'] = this.req.session['purchasePerformanceData'];
         this.res.locals['film'] = this.req.session['purchasePerformanceFilm'];
@@ -21,10 +24,27 @@ export default class ConfirmPurchaseController extends PurchaseController {
      */
     public purchase(): void {
         
-        //モーションAPI仮予約
+        //モーションAPI仮購入
+        let token = this.req.params.token;
+        let toBeExpiredAt = this.req.params.toBeExpiredAt;
+        let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
+        let reservationNo = this.req.params.reservationNo;
+
+        this.logger.debug('仮購入', {
+            token: token,
+            reservationNo: reservationNo
+        });
+
+        this.deleteSession();
+
+        let purchaseNo = '1234567889';
+
+        this.logger.debug('購入確定', purchaseNo);
 
         //購入完了1もしくは購入完了2の情報を返す
-        this.res.json();
+        this.res.json({
+            purchaseNo: purchaseNo
+        });
     }
 
 

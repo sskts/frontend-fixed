@@ -9,9 +9,10 @@ $(function () {
         var ticketName = $(this).parent().parent().parent().find('dt').text();
         var ticketPrice = $(this).attr('data-ticket-price');
         var triggerIndex = $('.modal[data-modal="ticket-type"]').attr('data-modal-trigger-index');
-        var target = $('.seats li').eq(triggerIndex);
+        var target = modal.getTrigger().parent().parent().parent();
         target.find('dd a').text(ticketName);
         target.find('dd').attr('data-seat-type', ticketType);
+        modal.close();
     });
 
     /**

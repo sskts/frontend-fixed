@@ -212,7 +212,7 @@ a {
 
 .header .inner {
   position: relative;
-  width: 980px;
+  width: 920px;
   margin: 0 auto;
 }
 
@@ -237,7 +237,7 @@ a {
 
 .footer .inner {
   position: relative;
-  width: 980px;
+  width: 920px;
   margin: 0 auto;
 }
 
@@ -274,7 +274,7 @@ a {
 .contents {
   border-top: 1px solid #ccc;
   padding: 20px 0;
-  width: 980px;
+  width: 920px;
   margin: 0 auto;
 }
 
@@ -410,7 +410,6 @@ ul.box > li:last-child {
 
 .purchase .button-area {
   margin: 0 auto;
-  width: 620px;
 }
 
 @media screen and (max-width: 768px) {
@@ -420,13 +419,14 @@ ul.box > li:last-child {
 }
 
 .purchase .next-button {
-  float: right;
+  width: 300px;
+  margin: 0 auto 20px;
 }
 
 @media screen and (max-width: 768px) {
   .purchase .next-button {
-    float: none;
-    margin: 0 0 10px;
+    width: auto;
+    margin: 0 0 20px;
   }
 }
 
@@ -443,12 +443,14 @@ ul.box > li:last-child {
 }
 
 .purchase .prev-button {
-  float: left;
+  width: 300px;
+  margin: 0 auto;
 }
 
 @media screen and (max-width: 768px) {
   .purchase .prev-button {
-    float: none;
+    width: auto;
+    margin: 0;
   }
 }
 
@@ -460,6 +462,22 @@ ul.box > li:last-child {
 
 @media screen and (max-width: 768px) {
   .purchase .prev-button a, .purchase .prev-button button {
+    width: 100%;
+  }
+}
+
+.purchase .prev-link {
+  text-align: center;
+}
+
+.purchase .prev-link a, .purchase .prev-link button {
+  font-size: 18px;
+  width: 300px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .prev-link a, .purchase .prev-link button {
     width: 100%;
   }
 }
@@ -538,66 +556,71 @@ ul.box > li:last-child {
   }
 }
 
-.purchase .enter-purchaser .clearfix dl {
+.purchase .enter-purchase .box dl dt {
+  font-weight: bold;
+  margin: 0 0 5px;
+}
+
+.purchase .enter-purchase .box dl dd {
+  margin: 0 0 10px;
+}
+
+.purchase .enter-purchase .box dl:last-child dd {
+  margin-bottom: 0;
+}
+
+.purchase .enter-purchase .clearfix dl {
   width: 50%;
   float: left;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchaser .clearfix dl {
+  .purchase .enter-purchase .clearfix dl {
     width: auto;
     float: none;
   }
 }
 
-.purchase .enter-purchaser .clearfix dl:first-child {
+.purchase .enter-purchase .clearfix dl:first-child {
   padding-right: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchaser .clearfix dl:first-child {
+  .purchase .enter-purchase .clearfix dl:first-child {
     padding-right: 0;
   }
 }
 
-.purchase .enter-purchaser .clearfix dl:last-child {
+.purchase .enter-purchase .clearfix dl:last-child {
   padding-left: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchaser .clearfix dl:last-child {
+  .purchase .enter-purchase .clearfix dl:last-child {
     padding-left: 0;
   }
 }
 
-.purchase .enter-purchaser .box dl dt {
-  font-weight: bold;
-  margin: 0 0 5px;
-}
-
-.purchase .enter-purchaser .box dl dd {
-  margin: 0 0 10px;
-}
-
-.purchase .enter-purchaser .box dl:last-child dd {
+.purchase .enter-purchase .clearfix dl dd {
   margin-bottom: 0;
 }
 
-.purchase .enter-purchaser .validation {
+.purchase .enter-purchase .validation {
   margin: 5px 0 0;
   color: #c00017;
+  font-weight: bold;
 }
 
-.purchase .confirm-purchaser .box dl dt {
+.purchase .confirm-purchase .box dl dt {
   font-weight: bold;
   margin: 0 0 5px;
 }
 
-.purchase .confirm-purchaser .box dl dd {
+.purchase .confirm-purchase .box dl dd {
   margin: 0 0 10px;
 }
 
-.purchase .confirm-purchaser .box dl:last-child dd {
+.purchase .confirm-purchase .box dl:last-child dd {
   margin-bottom: 0;
 }
 
@@ -605,7 +628,7 @@ ul.box > li:last-child {
   position: relative;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 768px) {
   .screen {
     overflow: hidden;
   }
@@ -616,12 +639,19 @@ ul.box > li:last-child {
 }
 
 .screen .screen-inner {
-  position: absolute;
-  top: 0;
-  left: 0;
+  margin: 0 auto;
+  position: relative;
   width: 404px;
   height: 665px;
   background-image: url(/images/pc/screen.png);
+}
+
+@media screen and (max-width: 768px) {
+  .screen .screen-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
 
 .screen .seat {

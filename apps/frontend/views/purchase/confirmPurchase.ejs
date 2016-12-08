@@ -1,6 +1,6 @@
 <% layout('../purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/confirmPurchaser.js"></script>') -%>
-<div class="confirm-purchaser">
+<% block('script', '<script src="/js/purchase/confirmPurchase.js"></script>') -%>
+<div class="confirm-purchase">
     <h1 class="page-ttl">購入者内容確認</h1>
     <p class="read">
         ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
@@ -10,25 +10,25 @@
     <form method="post">
         <h2 class="section-ttl">作品情報</h2>
         <ul class="box">
-            <li>
+            <li class="theater">
                 <dl>
                     <dt>劇場 / スクリーン</dt>
                     <dd><%= (data) ? data.facilityName : '' %> / <%= (data) ? data.screenName : '' %></dd>
                 </dl>
             </li>
-            <li>
+            <li class="film-name">
                 <dl>
                     <dt>作品名</dt>
                     <dd><%= (film) ? film.titleOfWork : '' %></dd>
                 </dl>
             </li>
-            <li>
+            <li class="date">
                 <dl>
                     <dt>鑑賞日時</dt>
                     <dd><%= (data) ? data.screeningDate : '' %> <%= (data) ? data.screeningStartTime : '' %></dd>
                 </dl>
             </li>
-            <li>
+            <li class="seat">
                 <dl>
                     <dt>座席 / 券種</dt>
                     <dd>
@@ -69,30 +69,26 @@
             <li>
                 <dl>
                     <dt>カード番号</dt>
-                    <dd><%= (info) ? info.creditNumber : '' %></dd>
+                    <dd><%= (gmoTokenObject) ? gmoTokenObject.maskedCardNo : '' %></dd>
                 </dl>
             </li>
-            <li>
-                <dl>
-                    <dt>カード有効期限</dt>
-                    <dd><%= (info) ? info.creditYear : '' %> / <%= (info) ? info.creditMonth : '' %></dd>
-                </dl>
-            </li>
-            <li>
+            <li class="price">
                 <dl>
                     <dt>ご利用金額</dt>
                     <dd>￥5,100</dd>
                 </dl>
             </li>
         </ul>
-        
+        <input type="hidden" name="token" value="<%= (gmoTokenObject) ? gmoTokenObject.token : '' %>">
+        <input type="hidden" name="toBeExpiredAt" value="<%= (gmoTokenObject) ? gmoTokenObject.toBeExpiredAt : '' %>">
+        <input type="hidden" name="isSecurityCodeSet" value="<%= (gmoTokenObject) ? gmoTokenObject.isSecurityCodeSet : '' %>">
         
         
 
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">購入完了</button></div>
-            <div class="button prev-button white-button"><button onclick="history.back();">戻る</button></div>
+            <div class="prev-link"><a href="<%- url('purchase.enterPurchase') %>">戻る</a></div>
         </div>
-        <input type="hidden" name="provisionalReservationNumber" value="<%= provisionalReservationNumber %>">
+        <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>
 </div>

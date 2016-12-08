@@ -54,3 +54,5 @@ export default class BaseController {
         return string.replace(/[&'`"<>]/g, change);
     }
 }
+
+

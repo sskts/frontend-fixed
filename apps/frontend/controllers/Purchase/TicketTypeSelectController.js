@@ -6,7 +6,8 @@ class TicketTypeSelectController extends PurchaseController_1.default {
      * 券種選択
      */
     index() {
-        this.checkSession('purchaseSeats');
+        this.logger.debug('券種選択表示', this.req.session['reservationNo']);
+        this.checkGet();
         //コアAPI券種取得
         //販売対象マスター抽出
         let sales = {
@@ -34,7 +35,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
         this.res.locals['sales'] = sales;
         this.res.locals['seats'] = this.req.session['purchaseSeats'];
         this.res.locals['step'] = 1;
-        this.res.locals['provisionalReservationNumber'] = this.req.session['provisionalReservationNumber'];
+        this.res.locals['reservationNo'] = this.req.session['reservationNo'];
         //券種選択表示
         this.res.render('purchase/ticketTypeSelect');
     }
@@ -42,15 +43,16 @@ class TicketTypeSelectController extends PurchaseController_1.default {
      * 券種決定
      */
     submit() {
-        this.checkProvisionalReservationNumber();
+        this.checkPost();
         //バリデーション
         TicketTypeSelectForm_1.default(this.req, this.res, () => {
             let seats = JSON.parse(this.req.body.seatCodes);
             //モーションAPI仮抑え
             //座席情報をセッションへ
             this.req.session['purchaseSeats'] = seats;
+            this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
             //購入者情報入力へ
-            this.res.redirect(this.router.build('purchase.enterPurchaser', {}));
+            this.res.redirect(this.router.build('purchase.enterPurchase', {}));
         });
     }
 }

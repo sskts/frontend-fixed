@@ -1,6 +1,7 @@
 .purchase {
     .header {
         .steps {
+            
             position: absolute;
             right: 5px;
             top: 50%;
@@ -50,16 +51,16 @@
     }
     .button-area {
         margin: 0 auto;
-        width: 620px;
         @media screen and (max-width: $mobile){
             width: auto;
         }
     }
     .next-button {
-        float: right;
+        width: 300px;
+        margin: 0 auto 20px;
         @media screen and (max-width: $mobile){
-            float: none;
-            margin: 0 0 10px;
+            width: auto;
+            margin: 0 0 20px;
         }
         a, button {
             font-size: 18px;
@@ -71,10 +72,23 @@
         }
     }
     .prev-button {
-        float: left;
+        width: 300px;
+        margin: 0 auto;
         @media screen and (max-width: $mobile){
-            float: none;
+            width: auto;
+            margin: 0;
         }
+        a, button {
+            font-size: 18px;
+            width: 300px;
+            padding: 20px 0;
+            @media screen and (max-width: $mobile){
+                width: 100%;
+            }
+        }
+    }
+    .prev-link {
+        text-align: center;
         a, button {
             font-size: 18px;
             width: 300px;
@@ -89,7 +103,7 @@
     }
     @import "seatSelect";
     @import "ticketTypeSelect";
-    @import "enterPurchaser";
+    @import "enterPurchase";
     @import "confirmPurchase";
 }
 
