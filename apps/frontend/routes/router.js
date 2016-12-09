@@ -40,6 +40,9 @@ exports.default = (app) => {
     app.post('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req, res, next) => {
         new ConfirmPurchaseController_1.default(req, res, next).purchase();
     });
+    app.get('/500', 'index', (req, res, next) => {
+        process.exit(1);
+    });
     app.get('/Error/NotFound', 'Error.NotFound', (req, res, next) => {
         (new ErrorController_1.default(req, res, next)).notFound();
     });

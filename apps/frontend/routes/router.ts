@@ -64,6 +64,10 @@ export default (app: any) => {
         new ConfirmPurchaseController(req, res, next).purchase();
     });
 
+    app.get('/500', 'index', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        process.exit(1);
+    });
+
     
 
 
