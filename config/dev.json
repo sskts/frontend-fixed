@@ -1,9 +1,9 @@
 {
     "endpoint": "",
     
-    "redis_host": "devtiffredis.redis.cache.windows.net",
-    "redis_port": 6380,
-    "redis_key": "WAmLeJlJrH3TPhF5CIdb6Zr6cxaqgTQtKY/OjjWX7Wg=",
+    "redis_host": "devsasakiticketredis.redis.cache.windows.net",
+    //"redis_port": 6379,
+    "redis_key": "YJzhnNphKxke/1WE2PUqeY3MKgIB1JBONA21/u4g+cQ=",
 
     "mongolab_uri": "",
 
