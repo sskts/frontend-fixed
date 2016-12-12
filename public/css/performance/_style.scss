@@ -1,0 +1,23 @@
+.performance {
+    li {
+        dl {
+            margin: 0 0 10px;
+        }
+        dt {
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+        dd {
+            margin: 0 0 10px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        .button {
+            width: 100px;
+            @media screen and (max-width: $mobile){
+                width: auto;
+            }
+        }
+    }
+}

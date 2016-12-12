@@ -1,6 +1,6 @@
 <% layout('../purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/confirmPurchase.js"></script>') -%>
-<div class="confirm-purchase">
+<% block('script', '<script src="/js/purchase/confirm.js"></script>') -%>
+<div class="confirm">
     <h1 class="page-ttl">購入者内容確認</h1>
     <p class="read">
         ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
@@ -10,25 +10,25 @@
     <form method="post">
         <h2 class="section-ttl">作品情報</h2>
         <ul class="box">
-            <li class="theater">
+            <li>
                 <dl>
                     <dt>劇場 / スクリーン</dt>
                     <dd><%= (data) ? data.facilityName : '' %> / <%= (data) ? data.screenName : '' %></dd>
                 </dl>
             </li>
-            <li class="film-name">
+            <li>
                 <dl>
                     <dt>作品名</dt>
                     <dd><%= (film) ? film.titleOfWork : '' %></dd>
                 </dl>
             </li>
-            <li class="date">
+            <li>
                 <dl>
                     <dt>鑑賞日時</dt>
                     <dd><%= (data) ? data.screeningDate : '' %> <%= (data) ? data.screeningStartTime : '' %></dd>
                 </dl>
             </li>
-            <li class="seat">
+            <li>
                 <dl>
                     <dt>座席 / 券種</dt>
                     <dd>
@@ -72,7 +72,7 @@
                     <dd><%= (gmoTokenObject) ? gmoTokenObject.maskedCardNo : '' %></dd>
                 </dl>
             </li>
-            <li class="price">
+            <li>
                 <dl>
                     <dt>ご利用金額</dt>
                     <dd>￥5,100</dd>
@@ -92,3 +92,5 @@
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>
 </div>
+
+<%- partial('finish') %>

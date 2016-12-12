@@ -207,7 +207,13 @@ a {
 }
 
 .header {
-  padding: 10px;
+  padding: 20px 10px;
+}
+
+@media screen and (max-width: 1024px) {
+  .header {
+    padding: 10px;
+  }
 }
 
 .header .inner {
@@ -337,6 +343,10 @@ ul.box > li:last-child {
   box-shadow: 0 2px 2px #333;
 }
 
+.button a:hover, .button button:hover {
+  opacity: 0.75;
+}
+
 .blue-button a, .blue-button button {
   background-color: #019fe8;
   color: #FFF;
@@ -352,12 +362,87 @@ ul.box > li:last-child {
   color: #FFF;
 }
 
+.white-button a, .white-button button {
+  background-color: #FFF;
+}
+
+.button-area {
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 768px) {
+  .button-area {
+    width: auto;
+  }
+}
+
+.next-button {
+  width: 300px;
+  margin: 0 auto 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .next-button {
+    width: auto;
+    margin: 0 0 20px;
+  }
+}
+
+.next-button a, .next-button button {
+  font-size: 18px;
+  width: 300px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .next-button a, .next-button button {
+    width: 100%;
+  }
+}
+
+.prev-button {
+  width: 300px;
+  margin: 0 auto;
+}
+
+@media screen and (max-width: 768px) {
+  .prev-button {
+    width: auto;
+    margin: 0;
+  }
+}
+
+.prev-button a, .prev-button button {
+  font-size: 18px;
+  width: 300px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+  .prev-button a, .prev-button button {
+    width: 100%;
+  }
+}
+
+.prev-link {
+  text-align: center;
+}
+
+.prev-link a, .prev-link button {
+  font-size: 18px;
+  color: #333;
+}
+
+.section-ttl {
+  margin: 0 0 10px;
+}
+
 .purchase .header .steps {
   position: absolute;
-  right: 5px;
+  right: 30px;
   top: 50%;
   margin-top: -1px;
-  width: 400px;
+  width: 500px;
   height: 2px;
   background-color: #ccc;
 }
@@ -365,6 +450,7 @@ ul.box > li:last-child {
 @media screen and (max-width: 768px) {
   .purchase .header .steps {
     width: 200px;
+    right: 0;
   }
 }
 
@@ -372,12 +458,28 @@ ul.box > li:last-child {
   width: 10px;
   height: 10px;
   background-color: #ccc;
+  color: #ccc;
   border-radius: 5px;
   position: absolute;
   top: 50%;
   left: 0;
   margin-top: -5px;
   margin-left: -5px;
+}
+
+.purchase .header .steps .step .text {
+  text-align: center;
+  font-size: 12px;
+  width: 100px;
+  position: absolute;
+  top: -20px;
+  left: -45px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .header .steps .step .text {
+    display: none;
+  }
 }
 
 .purchase .header .steps .step-01 {
@@ -402,88 +504,8 @@ ul.box > li:last-child {
 
 .purchase .header .steps .active {
   background-color: #555;
-}
-
-.purchase .white-button a, .purchase .white-button button {
-  background-color: #FFF;
-}
-
-.purchase .button-area {
-  margin: 0 auto;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .button-area {
-    width: auto;
-  }
-}
-
-.purchase .next-button {
-  width: 300px;
-  margin: 0 auto 20px;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .next-button {
-    width: auto;
-    margin: 0 0 20px;
-  }
-}
-
-.purchase .next-button a, .purchase .next-button button {
-  font-size: 18px;
-  width: 300px;
-  padding: 20px 0;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .next-button a, .purchase .next-button button {
-    width: 100%;
-  }
-}
-
-.purchase .prev-button {
-  width: 300px;
-  margin: 0 auto;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .prev-button {
-    width: auto;
-    margin: 0;
-  }
-}
-
-.purchase .prev-button a, .purchase .prev-button button {
-  font-size: 18px;
-  width: 300px;
-  padding: 20px 0;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .prev-button a, .purchase .prev-button button {
-    width: 100%;
-  }
-}
-
-.purchase .prev-link {
-  text-align: center;
-}
-
-.purchase .prev-link a, .purchase .prev-link button {
-  font-size: 18px;
-  width: 300px;
-  padding: 20px 0;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .prev-link a, .purchase .prev-link button {
-    width: 100%;
-  }
-}
-
-.purchase .section-ttl {
-  margin: 0 0 10px;
+  font-weight: bold;
+  color: #555;
 }
 
 .purchase .seat-select .screen {
@@ -611,17 +633,21 @@ ul.box > li:last-child {
   font-weight: bold;
 }
 
-.purchase .confirm-purchase .box dl dt {
+.purchase .confirm .box dl dt {
   font-weight: bold;
   margin: 0 0 5px;
 }
 
-.purchase .confirm-purchase .box dl dd {
+.purchase .confirm .box dl dd {
   margin: 0 0 10px;
 }
 
-.purchase .confirm-purchase .box dl:last-child dd {
+.purchase .confirm .box dl:last-child dd {
   margin-bottom: 0;
+}
+
+.purchase .finish {
+  display: none;
 }
 
 .screen {
@@ -752,5 +778,32 @@ ul.box > li:last-child {
   }
   100% {
     opacity: 1;
+  }
+}
+
+.performance li dl {
+  margin: 0 0 10px;
+}
+
+.performance li dt {
+  font-weight: bold;
+  margin: 0 0 10px;
+}
+
+.performance li dd {
+  margin: 0 0 10px;
+}
+
+.performance li dd:last-child {
+  margin-bottom: 0;
+}
+
+.performance li .button {
+  width: 100px;
+}
+
+@media screen and (max-width: 768px) {
+  .performance li .button {
+    width: auto;
   }
 }

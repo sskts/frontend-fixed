@@ -1,9 +1,10 @@
 "use strict";
 const NamedRoutes = require('named-routes');
+const PerformanceController_1 = require('..//controllers/Performance/PerformanceController');
 const SeatSelectController_1 = require('../controllers/Purchase/SeatSelectController');
 const EnterPurchaseController_1 = require('../controllers/Purchase/EnterPurchaseController');
 const TicketTypeSelectController_1 = require('../controllers/Purchase/TicketTypeSelectController');
-const ConfirmPurchaseController_1 = require('../controllers/Purchase/ConfirmPurchaseController');
+const ConfirmController_1 = require('../controllers/Purchase/ConfirmController');
 const ErrorController_1 = require('../controllers/Error/ErrorController');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
@@ -11,10 +12,13 @@ exports.default = (app) => {
     router.extendExpress(app);
     router.registerAppHelpers(app);
     app.get('/', 'index', (req, res, next) => {
-        res.redirect(router.build('purchase.seatSelect', {}));
+        res.redirect(router.build('performance', {}));
+    });
+    app.get('/performance', 'performance', (req, res, next) => {
+        new PerformanceController_1.default(req, res, next).index();
     });
     app.get('/purchase', 'purchase', (req, res, next) => {
-        res.redirect(router.build('purchase.seatSelect', {}));
+        res.redirect(router.build('performance', {}));
     });
     app.get('/purchase/seatSelect', 'purchase.seatSelect', (req, res, next) => {
         new SeatSelectController_1.default(req, res, next).index();
@@ -34,24 +38,21 @@ exports.default = (app) => {
     app.post('/purchase/enterPurchase', 'purchase.enterPurchase', (req, res, next) => {
         new EnterPurchaseController_1.default(req, res, next).submit();
     });
-    app.get('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req, res, next) => {
-        new ConfirmPurchaseController_1.default(req, res, next).index();
+    app.get('/purchase/confirm', 'purchase.confirmPurchase', (req, res, next) => {
+        new ConfirmController_1.default(req, res, next).index();
     });
-    app.post('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req, res, next) => {
-        new ConfirmPurchaseController_1.default(req, res, next).purchase();
+    app.post('/purchase/confirm', 'purchase.confirm', (req, res, next) => {
+        new ConfirmController_1.default(req, res, next).purchase();
     });
-    app.get('/500', 'index', (req, res, next) => {
+    app.get('/500', '500', (req, res, next) => {
         process.exit(1);
-    });
-    app.get('/Error/NotFound', 'Error.NotFound', (req, res, next) => {
-        (new ErrorController_1.default(req, res, next)).notFound();
-    });
-    // 404
-    app.use((req, res, next) => {
-        return res.redirect('/Error/NotFound');
     });
     // error handlers
     app.use((err, req, res, next) => {
-        (new ErrorController_1.default(req, res, next)).index(err);
+        new ErrorController_1.default(req, res, next).index(err);
+    });
+    // 404
+    app.use((req, res, next) => {
+        new ErrorController_1.default(req, res, next).notFound();
     });
 };

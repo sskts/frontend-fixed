@@ -1,27 +1,39 @@
 .purchase {
     .header {
         .steps {
-            
             position: absolute;
-            right: 5px;
+            right: 30px;
             top: 50%;
             margin-top: -1px;
-            width: 400px;
+            width: 500px;
             height: 2px;
             background-color: #ccc;
             @media screen and (max-width: $mobile){
                 width: 200px;
+                right: 0;
             }
             .step {
                 width: 10px;
                 height: 10px;
                 background-color: #ccc;
+                color: #ccc;
                 border-radius: 5px;
                 position: absolute;
                 top: 50%;
                 left: 0;
                 margin-top: -5px;
                 margin-left: -5px;
+                .text {
+                    text-align: center;
+                    font-size: 12px;
+                    width: 100px;
+                    position: absolute;
+                    top: -20px;
+                    left: -45px;
+                    @media screen and (max-width: $mobile){
+                        display: none;                    
+                    }
+                }
             }
             .step-01 {
                 left: 0;
@@ -40,70 +52,17 @@
             }
             .active {
                 background-color: #555;
+                font-weight: bold;
+                color: #555;
             }
         }
     }
     // contents
-    .white-button {
-        a, button {
-            background-color: #FFF;
-        }
-    }
-    .button-area {
-        margin: 0 auto;
-        @media screen and (max-width: $mobile){
-            width: auto;
-        }
-    }
-    .next-button {
-        width: 300px;
-        margin: 0 auto 20px;
-        @media screen and (max-width: $mobile){
-            width: auto;
-            margin: 0 0 20px;
-        }
-        a, button {
-            font-size: 18px;
-            width: 300px;
-            padding: 20px 0;
-            @media screen and (max-width: $mobile){
-                width: 100%;
-            }
-        }
-    }
-    .prev-button {
-        width: 300px;
-        margin: 0 auto;
-        @media screen and (max-width: $mobile){
-            width: auto;
-            margin: 0;
-        }
-        a, button {
-            font-size: 18px;
-            width: 300px;
-            padding: 20px 0;
-            @media screen and (max-width: $mobile){
-                width: 100%;
-            }
-        }
-    }
-    .prev-link {
-        text-align: center;
-        a, button {
-            font-size: 18px;
-            width: 300px;
-            padding: 20px 0;
-            @media screen and (max-width: $mobile){
-                width: 100%;
-            }
-        }
-    }
-    .section-ttl {
-        margin: 0 0 10px;
-    }
+    
     @import "seatSelect";
     @import "ticketTypeSelect";
     @import "enterPurchase";
-    @import "confirmPurchase";
+    @import "confirm";
+    @import "finish";
 }
 

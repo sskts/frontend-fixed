@@ -2,10 +2,12 @@ import express = require('express');
 import NamedRoutes = require('named-routes');
 import config = require('config');
 
+import PerformanceController from '..//controllers/Performance/PerformanceController';
+
 import SeatSelectController from '../controllers/Purchase/SeatSelectController';
 import EnterPurchaseController from '../controllers/Purchase/EnterPurchaseController';
 import TicketTypeSelectController from '../controllers/Purchase/TicketTypeSelectController';
-import ConfirmPurchaseController from '../controllers/Purchase/ConfirmPurchaseController';
+import ConfirmController from '../controllers/Purchase/ConfirmController';
 
 import ErrorController from '../controllers/Error/ErrorController';
 
@@ -25,11 +27,15 @@ export default (app: any) => {
     router.registerAppHelpers(app);
 
     app.get('/', 'index', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        res.redirect(router.build('purchase.seatSelect', {}));
+        res.redirect(router.build('performance', {}));
+    });
+
+    app.get('/performance', 'performance', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new PerformanceController(req, res, next).index();
     });
 
     app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        res.redirect(router.build('purchase.seatSelect', {}));
+        res.redirect(router.build('performance', {}));
     });
 
     app.get('/purchase/seatSelect', 'purchase.seatSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -56,41 +62,32 @@ export default (app: any) => {
         new EnterPurchaseController(req, res, next).submit();
     });
 
-    app.get('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new ConfirmPurchaseController(req, res, next).index();
+    app.get('/purchase/confirm', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new ConfirmController(req, res, next).index();
     });
 
-    app.post('/purchase/confirmPurchase', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new ConfirmPurchaseController(req, res, next).purchase();
+    app.post('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new ConfirmController(req, res, next).purchase();
     });
 
-    app.get('/500', 'index', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/500', '500', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         process.exit(1);
     });
 
-    
 
 
 
 
-
-
-
-
-
-
-
-    app.get('/Error/NotFound', 'Error.NotFound', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        (new ErrorController(req, res, next)).notFound()}
-    );
-
-    // 404
-    app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-        return res.redirect('/Error/NotFound');
-    });
 
     // error handlers
     app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-        (new ErrorController(req, res, next)).index(err);
+        new ErrorController(req, res, next).index(err);
     });
+
+    // 404
+    app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new ErrorController(req, res, next).notFound();
+    });
+
+    
 }

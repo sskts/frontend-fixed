@@ -140,7 +140,10 @@ a {
 
 // header
 .header {
-    padding: 10px;
+    padding: 20px 10px;
+    @media screen and (max-width: $tablet){
+        padding: 10px;
+    }
     .inner {
         position: relative;
         width: 920px;
@@ -244,6 +247,9 @@ ul.box {
         width: 100%;
         border-radius: 5px;
         box-shadow: 0 2px 2px #333;
+        &:hover {
+            opacity: 0.75;
+        }
     }
 }
 .blue-button {
@@ -263,4 +269,57 @@ ul.box {
         background-color: #595758;
         color: #FFF;
     }
+}
+.white-button {
+    a, button {
+        background-color: #FFF;
+    }
+}
+.button-area {
+    margin: 0 auto;
+    @media screen and (max-width: $mobile){
+        width: auto;
+    }
+}
+.next-button {
+    width: 300px;
+    margin: 0 auto 20px;
+    @media screen and (max-width: $mobile){
+        width: auto;
+        margin: 0 0 20px;
+    }
+    a, button {
+        font-size: 18px;
+        width: 300px;
+        padding: 20px 0;
+        @media screen and (max-width: $mobile){
+            width: 100%;
+        }
+    }
+}
+.prev-button {
+    width: 300px;
+    margin: 0 auto;
+    @media screen and (max-width: $mobile){
+        width: auto;
+        margin: 0;
+    }
+    a, button {
+        font-size: 18px;
+        width: 300px;
+        padding: 20px 0;
+        @media screen and (max-width: $mobile){
+            width: 100%;
+        }
+    }
+}
+.prev-link {
+    text-align: center;
+    a, button {
+        font-size: 18px;
+        color: #333;
+    }
+}
+.section-ttl {
+    margin: 0 0 10px;
 }

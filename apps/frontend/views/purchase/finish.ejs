@@ -1,0 +1,61 @@
+<div class="finish">
+    <h1 class="page-ttl">購入完了</h1>
+    <p class="read">
+        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br> 画面をタッチすると画面がズームしますので座席を選択してください。
+    </p>
+
+    <ul class="box">
+        <li>
+            <dl>
+                <dt>劇場 / スクリーン</dt>
+                <dd>
+                    <%= (data) ? data.facilityName : '' %> /
+                        <%= (data) ? data.screenName : '' %>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt>作品名</dt>
+                <dd>
+                    <%= (film) ? film.titleOfWork : '' %>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt>鑑賞日時</dt>
+                <dd>
+                    <%= (data) ? data.screeningDate : '' %>
+                        <%= (data) ? data.screeningStartTime : '' %>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt>座席 / 券種</dt>
+                <dd>
+                    <ul>
+                        <% for (let seat of seats) { %>
+                            <li>
+                                <%= seat.code %>
+                                    <%= seat.type %>
+                            </li>
+                            <% } %>
+                    </ul>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt>ご利用金額</dt>
+                <dd>￥5,100</dd>
+            </dl>
+        </li>
+    </ul>
+
+    <div class="button-area clearfix">
+        <div class="prev-link"><a href="<%- url('index') %>">TOPへ戻る</a></div>
+    </div>
+
+</div>

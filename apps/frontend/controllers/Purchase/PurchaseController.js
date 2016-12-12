@@ -2,41 +2,24 @@
 const BaseController_1 = require('../BaseController');
 class PurchaseController extends BaseController_1.default {
     /**
-     * 仮予約チェック（POST）
-     */
-    checkPost() {
-        let target = 'reservationNo';
-        if (this.req.body[target] !== this.req.session[target]) {
-            this.next(new Error('無効なアクセスです'));
-        }
-    }
-    /**
-     * 仮予約チェック（GET）
-     */
-    checkGet() {
-        let target = 'reservationNo';
-        if (!this.req.session[target]) {
-            this.next(new Error('無効なアクセスです'));
-        }
-    }
-    /**
      * セッションチェック
      */
     checkSession(name) {
         if (!this.req.session[name]) {
-            this.next(new Error('無効なアクセスです'));
+            return false;
         }
+        return true;
     }
     /**
      * セッション削除
      */
     deleteSession() {
-        this.req.session['reservationNo'] = null;
-        this.req.session['gmoTokenObject'] = null;
-        this.req.session['purchaseInfo'] = null;
-        this.req.session['purchasePerformanceData'] = null;
-        this.req.session['purchasePerformanceFilm'] = null;
-        this.req.session['purchaseSeats'] = null;
+        delete this.req.session['reservationNo'];
+        delete this.req.session['gmoTokenObject'];
+        delete this.req.session['purchaseInfo'];
+        delete this.req.session['purchasePerformanceData'];
+        delete this.req.session['purchasePerformanceFilm'];
+        delete this.req.session['purchaseSeats'];
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
