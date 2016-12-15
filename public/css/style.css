@@ -83,9 +83,10 @@ img {
 }
 
 body {
+  font-weight: 500;
   -webkit-text-size-adjust: 100%;
   width: 100%;
-  font-family: 'Lucida Grande','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+  font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
   font-size: 14px;
   color: #333;
   position: relative;
@@ -102,7 +103,8 @@ select,
 option,
 button,
 label {
-  font-family: 'Lucida Grande','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+  font-weight: 500;
+  font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
   border-radius: 0;
   appearance: none;
   border: none;
