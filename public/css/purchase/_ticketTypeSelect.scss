@@ -1,13 +1,6 @@
 .ticket-type-select {
     .seats {
-        padding: 5px 10px;
         li {
-            dl {
-                padding: 10px 0;
-            }
-            dt {
-                
-            }
             dd {
                 width: 300px;
                 @media screen and (max-width: $mobile){

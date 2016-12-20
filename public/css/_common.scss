@@ -16,6 +16,11 @@
     *zoom: 1;
 }
 
+html {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
 
 body {
     font-weight: 500;
@@ -24,7 +29,6 @@ body {
     font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
     font-size: 14px;
     color: #333;
-    position: relative;
 }
 
 input[type=text],
@@ -124,7 +128,7 @@ a {
 .modal {
     display: none;
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 50%;
     width: 600px;
     margin-left: -300px;
@@ -135,6 +139,10 @@ a {
     }
 }
 
+.modal.scroll {
+    overflow-y: scroll;
+}
+
 .modal-cover.active,
 .modal.active {
     display: block;
@@ -143,6 +151,7 @@ a {
 // header
 .header {
     padding: 20px 10px;
+    border-bottom: 1px solid #ccc;
     @media screen and (max-width: $tablet){
         padding: 10px;
     }
@@ -197,7 +206,6 @@ a {
 
 //contents
 .contents {
-    border-top: 1px solid #ccc;
     padding: 20px 0;
     width: 920px;
     margin: 0 auto;
@@ -211,7 +219,7 @@ a {
 }
 .box {
     background-color: #eeeef0;
-    padding: 15px 10px;
+    padding: 20px;
     margin: 0 0 20px;
     &:last-child {
         margin: 0;
@@ -220,8 +228,8 @@ a {
 ul.box {
     > li {
         border-bottom: 1px solid #d1d1d1;
-        margin: 0 0 10px;
-        padding: 0 0 10px;
+        margin: 0 0 20px;
+        padding: 0 0 20px;
         &:last-child {
             border: none;
             margin: 0;
@@ -244,12 +252,13 @@ ul.box {
     a, button {
         line-height: 1;
         display: block;
-        padding: 10px 0;
+        padding: 15px 0;
         text-align: center;
         width: 100%;
         border-radius: 5px;
         box-shadow: 0 2px 2px #333;
         &:hover {
+            transition: opacity 0.5s;
             opacity: 0.75;
         }
     }

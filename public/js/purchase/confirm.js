@@ -21,11 +21,11 @@ $(function () {
         }).done(function (res) {
             $('.confirm').remove();
             var dom = '<li><dl><dt>購入番号</dt><dd>'+ res.purchaseNo +'</dd></dl></li>';
-            $('.finish ul').prepend(dom);
-            $('.finish').show();
+            $('.complete ul').prepend(dom);
+            $('.complete').show();
         }).fail(function (jqxhr, textStatus, error) {
             $('.confirm').remove();
-            $('.finish').show();
+            $('.complete').show();
         }).always(function () {
             //step変更
             $('.steps li').removeClass('active');

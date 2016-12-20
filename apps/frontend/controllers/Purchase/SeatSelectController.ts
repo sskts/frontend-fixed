@@ -6,6 +6,7 @@ export default class SeatSelectController extends PurchaseController {
      * 座席選択
      */
     public index(): void {
+        console.log(this.req.session)
 
         //コアAPIから作品、座席データ取得
         let data: any = {

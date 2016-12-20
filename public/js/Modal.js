@@ -20,11 +20,16 @@
             _this.trigger = $(this);
             _this.open();
         });
+        $(window).on('resize', function (event) {
+            if (_this.isOpen()) {
+                _this.resize();
+            } 
+        });
     };
     Modal.prototype.open = function () {
         this.cover.addClass('active');
         this.modal.addClass('active');
-        this.modal.css('top', $(window).scrollTop() + 100);
+        this.resize();
     };
     Modal.prototype.close = function () {
         if (this.modal && this.cover) {
@@ -34,6 +39,27 @@
     };
     Modal.prototype.getTrigger = function () {
         return this.trigger;
+    };
+    Modal.prototype.isOpen = function () {
+        var result = false;
+        if (this.modal && this.modal.is(':visible')) {
+            result = true;
+        }
+        return result;
+    };
+    Modal.prototype.resize = function () {
+        this.modal.removeClass('scroll');
+        this.modal.height('auto');
+        var height = this.modal.height();
+        var top = height / 2;
+        var fixHeight = 40;
+        if (height > $(window).height() - fixHeight) {
+            this.modal.addClass('scroll');
+            this.modal.height($(window).height() - fixHeight);
+            height = this.modal.height();
+            top = height / 2;
+        }
+        this.modal.css('marginTop', top * -1);
     };
     SASAKI = SASAKI || {};
     SASAKI.Modal = Modal;

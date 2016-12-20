@@ -6,6 +6,7 @@ class SeatSelectController extends PurchaseController_1.default {
      * 座席選択
      */
     index() {
+        console.log(this.req.session);
         //コアAPIから作品、座席データ取得
         let data = {
             facilityCode: '0000',
