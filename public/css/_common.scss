@@ -100,6 +100,11 @@ a {
     vertical-align: middle;
 }
 
+.d-ib {
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .device-type-sp {
     display: none;
 }
@@ -217,6 +222,9 @@ a {
 .red-text {
     color: #c00017;
 }
+.small-text {
+    font-size: 12px;
+}
 .box {
     background-color: #eeeef0;
     padding: 20px;
@@ -247,6 +255,13 @@ ul.box {
 }
 .read {
     margin: 0 0 20px;
+}
+.text-icon-dark-blue {
+    background-color: #036db7;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 5px;
+    color: #FFF;
 }
 .button {
     a, button {

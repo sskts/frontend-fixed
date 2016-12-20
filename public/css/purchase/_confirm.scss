@@ -3,13 +3,11 @@
         dl {
             dt {
                 font-weight: bold;
-                margin: 0 0 5px;
+                margin: 0 0 10px;
             }
             dd {
                 margin: 0 0 10px;
-            }
-            &:last-child {
-                dd {
+                &:last-child {
                     margin-bottom: 0;
                 }
             }

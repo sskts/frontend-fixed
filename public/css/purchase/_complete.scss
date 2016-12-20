@@ -1,3 +1,55 @@
 .complete {
     display: none;
+    .info {
+        dl {
+            dt {
+                font-weight: bold;
+                margin: 0 0 10px;
+            }
+            dd {
+                margin: 0 0 10px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+    .entry-method {
+        dl {
+            dt {
+                margin: 0 0 10px;
+                span {
+                    margin-right: 5px;
+                }
+            }
+            dd {
+                position: relative;
+                padding: 0 0 0 220px;
+                min-height: 145px; 
+                @media screen and (max-width: $mobile){
+                    padding: 0;
+                    min-height: 0; 
+                }
+                p {
+                    margin: 0 0 20px;
+                }
+                .image {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 200px;
+                    @media screen and (max-width: $mobile){
+                        width: auto;
+                        position: static;
+                    }
+                }
+                .button {
+                    width: 250px;
+                    @media screen and (max-width: $mobile){
+                        width: auto;
+                    }
+                }
+            }
+        }
+    }
 }

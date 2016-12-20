@@ -14,12 +14,12 @@ class PurchaseController extends BaseController_1.default {
      * セッション削除
      */
     deleteSession() {
-        delete this.req.session['reservationNo'];
-        delete this.req.session['gmoTokenObject'];
-        delete this.req.session['purchaseInfo'];
-        delete this.req.session['purchasePerformanceData'];
-        delete this.req.session['purchasePerformanceFilm'];
-        delete this.req.session['purchaseSeats'];
+        // delete this.req.session['reservationNo'];
+        // delete this.req.session['gmoTokenObject'];
+        // delete this.req.session['purchaseInfo'];
+        // delete this.req.session['purchasePerformanceData'];
+        // delete this.req.session['purchasePerformanceFilm'];
+        // delete this.req.session['purchaseSeats'];
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

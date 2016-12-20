@@ -166,6 +166,11 @@ a {
   vertical-align: middle;
 }
 
+.d-ib {
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .device-type-sp {
   display: none;
 }
@@ -306,6 +311,10 @@ a {
   color: #c00017;
 }
 
+.small-text {
+  font-size: 12px;
+}
+
 .box {
   background-color: #eeeef0;
   padding: 20px;
@@ -342,6 +351,14 @@ ul.box > li:last-child {
 
 .read {
   margin: 0 0 20px;
+}
+
+.text-icon-dark-blue {
+  background-color: #036db7;
+  display: inline-block;
+  vertical-align: middle;
+  padding: 5px;
+  color: #FFF;
 }
 
 .button a, .button button {
@@ -639,19 +656,81 @@ ul.box > li:last-child {
 
 .purchase .confirm .box dl dt {
   font-weight: bold;
-  margin: 0 0 5px;
+  margin: 0 0 10px;
 }
 
 .purchase .confirm .box dl dd {
   margin: 0 0 10px;
 }
 
-.purchase .confirm .box dl:last-child dd {
+.purchase .confirm .box dl dd:last-child {
   margin-bottom: 0;
 }
 
 .purchase .complete {
   display: none;
+}
+
+.purchase .complete .info dl dt {
+  font-weight: bold;
+  margin: 0 0 10px;
+}
+
+.purchase .complete .info dl dd {
+  margin: 0 0 10px;
+}
+
+.purchase .complete .info dl dd:last-child {
+  margin-bottom: 0;
+}
+
+.purchase .complete .entry-method dl dt {
+  margin: 0 0 10px;
+}
+
+.purchase .complete .entry-method dl dt span {
+  margin-right: 5px;
+}
+
+.purchase .complete .entry-method dl dd {
+  position: relative;
+  padding: 0 0 0 220px;
+  min-height: 145px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .complete .entry-method dl dd {
+    padding: 0;
+    min-height: 0;
+  }
+}
+
+.purchase .complete .entry-method dl dd p {
+  margin: 0 0 20px;
+}
+
+.purchase .complete .entry-method dl dd .image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .complete .entry-method dl dd .image {
+    width: auto;
+    position: static;
+  }
+}
+
+.purchase .complete .entry-method dl dd .button {
+  width: 250px;
+}
+
+@media screen and (max-width: 768px) {
+  .purchase .complete .entry-method dl dd .button {
+    width: auto;
+  }
 }
 
 .screen {
