@@ -213,7 +213,7 @@ a {
 .contents {
     padding: 20px 0;
     width: 920px;
-    margin: 0 auto;
+    margin: 0 auto 60px;
     @media screen and (max-width: $tablet){
         width: auto;
         padding: 20px 10px;
@@ -225,12 +225,40 @@ a {
 .small-text {
     font-size: 12px;
 }
-.box {
+
+.large-text {
+    font-size: 22px;
+}
+
+.bg-white {
+    background-color: #FFF;
+}
+
+.bg-light-gray {
     background-color: #eeeef0;
+}
+
+.border-bottom-dot {
+    border-bottom: 1px dotted #ccc;
+}
+
+.box {
     padding: 20px;
-    margin: 0 0 20px;
+    margin: 0 0 40px;
     &:last-child {
-        margin: 0;
+        margin-bottom: 0;
+    }
+    dl {
+        dt {
+            font-weight: bold;
+            margin: 0 0 10px;
+        }
+        dd {
+            margin: 0 0 10px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
     }
 }
 ul.box {

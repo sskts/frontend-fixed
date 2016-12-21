@@ -43,6 +43,15 @@ class BaseController {
         };
         return string.replace(/[&'`"<>]/g, change);
     }
+    /**
+     * セッションチェック
+     */
+    checkSession(name) {
+        if (!this.req.session[name]) {
+            return false;
+        }
+        return true;
+    }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = BaseController;

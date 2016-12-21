@@ -5,6 +5,9 @@ const SeatSelectController_1 = require('../controllers/Purchase/SeatSelectContro
 const EnterPurchaseController_1 = require('../controllers/Purchase/EnterPurchaseController');
 const TicketTypeSelectController_1 = require('../controllers/Purchase/TicketTypeSelectController');
 const ConfirmController_1 = require('../controllers/Purchase/ConfirmController');
+const InquiryController_1 = require('../controllers/Inquiry/InquiryController');
+const InquiryConfirmController_1 = require('../controllers/Inquiry/InquiryConfirmController');
+const MethodController_1 = require('../controllers/Method/MethodController');
 const ErrorController_1 = require('../controllers/Error/ErrorController');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
@@ -38,11 +41,23 @@ exports.default = (app) => {
     app.post('/purchase/enterPurchase', 'purchase.enterPurchase', (req, res, next) => {
         new EnterPurchaseController_1.default(req, res, next).submit();
     });
-    app.get('/purchase/confirm', 'purchase.confirmPurchase', (req, res, next) => {
+    app.get('/purchase/confirm', 'purchase.confirm', (req, res, next) => {
         new ConfirmController_1.default(req, res, next).index();
     });
     app.post('/purchase/confirm', 'purchase.confirm', (req, res, next) => {
         new ConfirmController_1.default(req, res, next).purchase();
+    });
+    app.get('/inquiry', 'inquiry', (req, res, next) => {
+        new InquiryController_1.default(req, res, next).index();
+    });
+    app.post('/inquiry', 'inquiry', (req, res, next) => {
+        new InquiryController_1.default(req, res, next).inquiry();
+    });
+    app.get('/inquiry/confirm', 'inquiry.confirm', (req, res, next) => {
+        new InquiryConfirmController_1.default(req, res, next).index();
+    });
+    app.get('/method/ticketing', 'method.ticketing', (req, res, next) => {
+        new MethodController_1.default(req, res, next).ticketing();
     });
     app.get('/500', '500', (req, res, next) => {
         process.exit(1);

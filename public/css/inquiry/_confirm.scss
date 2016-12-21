@@ -1,0 +1,67 @@
+.inquiry-confirm {
+    
+    .ticket {
+        margin: 0 0 20px;
+        border: 2px solid #019fe8;
+        border-radius: 5px;
+        .ticket-info {
+            padding: 10px;
+            position: relative;
+        }
+        .ticket-qr {
+            padding: 10px;
+            p {
+                padding: 30px 0;
+                text-align: center;
+                font-weight: bold;
+            }
+        }
+        .ticket-film {
+            padding: 10px;
+        }
+        .copy-button {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            margin-top: -25px;
+            a {
+                width: 50px;
+                height: 50px;
+                border-radius: 25px;
+                box-shadow: 0 0 0;
+                padding: 0;
+            }
+        }
+        .ticket-id {
+            
+        }
+        .ticket-seat {
+            font-weight: bold;
+            font-size: 26px;
+            margin: 0 0 5px;
+        }
+        .ticket-type {
+            font-size: 14px;
+            vertical-align: middle;
+            margin-left: 10px;
+        }
+        .ticket-date {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 5px;
+        }
+        .ticket-theater {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 5px;
+        }
+        .ticket-screen {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0 0 5px;
+        }
+        .ticket-title {
+            font-size: 12px;
+        }
+    }
+}

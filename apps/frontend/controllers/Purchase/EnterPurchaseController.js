@@ -63,7 +63,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                         gmo: this.req.session['gmoTokenObject']
                     });
                     //購入者内容確認へ
-                    this.res.redirect(this.router.build('purchase.confirmPurchase', {}));
+                    this.res.redirect(this.router.build('purchase.confirm', {}));
                 }
                 else {
                     this.res.locals['reservationNo'] = this.req.session['reservationNo'];

@@ -9,6 +9,11 @@ import EnterPurchaseController from '../controllers/Purchase/EnterPurchaseContro
 import TicketTypeSelectController from '../controllers/Purchase/TicketTypeSelectController';
 import ConfirmController from '../controllers/Purchase/ConfirmController';
 
+import InquiryController from '../controllers/Inquiry/InquiryController';
+import InquiryConfirmController from '../controllers/Inquiry/InquiryConfirmController';
+
+import MethodController from '../controllers/Method/MethodController';
+
 import ErrorController from '../controllers/Error/ErrorController';
 
 /**
@@ -62,13 +67,31 @@ export default (app: any) => {
         new EnterPurchaseController(req, res, next).submit();
     });
 
-    app.get('/purchase/confirm', 'purchase.confirmPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmController(req, res, next).index();
     });
 
     app.post('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmController(req, res, next).purchase();
     });
+
+    app.get('/inquiry', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryController(req, res, next).index();
+    });
+
+    app.post('/inquiry', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryController(req, res, next).inquiry();
+    });
+
+    app.get('/inquiry/confirm', 'inquiry.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryConfirmController(req, res, next).index();
+    });
+
+    app.get('/method/ticketing', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MethodController(req, res, next).ticketing();
+    });
+
+    
 
     app.get('/500', '500', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         process.exit(1);

@@ -49,6 +49,43 @@ export default class ConfirmController extends PurchaseController {
         let purchaseNo = '1234567889';
 
         this.logger.debug('購入確定', purchaseNo);
+        
+        this.logger.debug('照会情報取得');
+        this.req.session['inquiry'] = {
+            purchaseNo: purchaseNo,
+            tickets: [
+                {
+                    id: '123456A1',
+                    seat: 'A-1',
+                    type: '一般',
+                    date: '2016/12/1（木） 15:00〜',
+                    theater: 'シネマサンシャイン池袋',
+                    screen: 'スクリーン3',
+                    title: 'ファンタスティック・ビーストと魔法使いの旅',
+                    password: '1q2w3e4r5t'
+                },
+                {
+                    id: '123456A1',
+                    seat: 'A-1',
+                    type: '一般',
+                    date: '2016/12/1（木） 15:00〜',
+                    theater: 'シネマサンシャイン池袋',
+                    screen: 'スクリーン3',
+                    title: 'ファンタスティック・ビーストと魔法使いの旅',
+                    password: '1q2w3e4r5t'
+                },
+                {
+                    id: '123456A1',
+                    seat: 'A-1',
+                    type: '一般',
+                    date: '2016/12/1（木） 15:00〜',
+                    theater: 'シネマサンシャイン池袋',
+                    screen: 'スクリーン3',
+                    title: 'ファンタスティック・ビーストと魔法使いの旅',
+                    password: '1q2w3e4r5t'
+                }
+            ]
+        };
 
         //購入完了情報を返す
         this.res.json({

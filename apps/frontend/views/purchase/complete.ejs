@@ -5,7 +5,7 @@
         購入者情報入力画面で入力していただいたメールアドレス宛に購入完了メールを送信しました。ご鑑賞方法に関してはページ下部をご確認ください。<br>
     </p>
 
-    <ul class="box info">
+    <ul class="box bg-light-gray info">
         <li>
             <dl>
                 <dt>劇場 / スクリーン</dt>
@@ -61,7 +61,7 @@
         以下をお読み頂きいずれかの方法でご入場ください。
     </p>
 
-    <ul class="box entry-method">
+    <ul class="box bg-light-gray entry-method">
         <li>
             <dl>
                 <dt><span class="text-icon-dark-blue small-text">入場方法1</span><strong>劇場発券機で発券し入場</strong></dt>
@@ -71,7 +71,7 @@
                     </p>
                     <div class="image"><img src="" alt=""></div>
                     <div class="button blue-button">
-                        <a href="#">発券方法はこちら</a>
+                        <a href="<%- url('method.ticketing') %>" target="_blank">発券方法はこちら</a>
                     </div>
                 </dd>
             </dl>
@@ -86,7 +86,7 @@
                     </p>
                     <div class="image"><img src="" alt=""></div>
                     <div class="button blue-button">
-                        <a href="#">QRコード発券情報確認</a>
+                        <a href="<%- url('inquiry.confirm') %>" target="_blank">QRコード発券情報確認</a>
                     </div>
                 </dd>
             </dl>
@@ -94,7 +94,7 @@
     </ul>
 
     <div class="button-area clearfix">
-        <div class="prev-link"><a href="<%- url('index') %>">TOPへ戻る</a></div>
+        <div class="prev-link"><a href="<%- url('index') %>">劇場TOPへ戻る</a></div>
     </div>
 
 </div>

@@ -1,23 +1,11 @@
 .complete {
     display: none;
     .info {
-        dl {
-            dt {
-                font-weight: bold;
-                margin: 0 0 10px;
-            }
-            dd {
-                margin: 0 0 10px;
-                &:last-child {
-                    margin-bottom: 0;
-                }
-            }
-        }
+        
     }
     .entry-method {
         dl {
             dt {
-                margin: 0 0 10px;
                 span {
                     margin-right: 5px;
                 }

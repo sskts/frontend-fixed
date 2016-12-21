@@ -53,6 +53,16 @@ export default class BaseController {
         }
         return string.replace(/[&'`"<>]/g, change);
     }
+
+    /**
+     * セッションチェック
+     */
+    protected checkSession(name: string): boolean {
+        if (!this.req.session[name]) {
+            return false;
+        }
+        return true;
+    }
 }
 
 
