@@ -9,13 +9,13 @@ log4js.configure({
     appenders: [
         {
             category: 'access',
-            type: 'dateFile',
+            type: 'console',
             filename: `${logDir}/access.log`,
             pattern: '-yyyy-MM-dd',
         },
         {
             category: 'system',
-            type: 'dateFile',
+            type: 'console',
             filename: `${logDir}/system.log`,
             pattern: '-yyyy-MM-dd',
         },
