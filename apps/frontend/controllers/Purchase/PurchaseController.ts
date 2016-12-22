@@ -10,8 +10,7 @@ export default class PurchaseController extends BaseController {
         delete this.req.session['reservationNo'];
         delete this.req.session['gmoTokenObject'];
         delete this.req.session['purchaseInfo'];
-        delete this.req.session['purchasePerformanceData'];
-        delete this.req.session['purchasePerformanceFilm'];
+        delete this.req.session['performance'];
         delete this.req.session['purchaseSeats'];
     }
 

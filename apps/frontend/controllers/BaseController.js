@@ -1,5 +1,6 @@
 "use strict";
 const log4js = require('log4js');
+const moment = require('moment');
 /**
  * ベースコントローラー
  *
@@ -13,6 +14,7 @@ class BaseController {
         this.next = next;
         this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
+        this.setLocals();
     }
     /**
      * テンプレート変数へ渡す
@@ -20,7 +22,8 @@ class BaseController {
      */
     setLocals() {
         this.res.locals.req = this.req;
-        // this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.moment = moment;
     }
     /**
      * HTMLエスケープ

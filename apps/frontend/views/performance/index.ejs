@@ -6,19 +6,25 @@
 
     <div>
         <ul class="box bg-light-gray">
-            <% for (let i = 0; i < 5; i++) { %>
+            <% for (let performance of performances) { %>
                 <li>
                     <dl>
-                        <dt>鑑賞日時 / スクリーン</dt>
-                        <dd>20161205 1230 / シネマサンシャイン池袋 スクリーン2</dd>
+                        <dt>鑑賞日 / スクリーン</dt>
+                        <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> / <%= performance.theater_name.ja %> <%= performance.screen_name.ja %></dd>
                         <dt>作品名</dt>
-                        <dd>君の名は</dd>
+                        <dd><%= performance.film.name.ja %></dd>
                     </dl>
-                    <div class="button blue-button">
-                        <a href="<%- url('purchase.seatSelect') %>">選択</a>
-                    </div>
+                    <ul class="clearfix ">
+                        <% for (let performance2 of performance.performances) { %>
+                        <li class="button blue-button">
+                            <a href="<%- url('purchase.seatSelect') + '?id=' + performance2._id %>"><%= moment(performance2.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance2.time_end, 'hmm').format('HH:mm') %></a>
+                        </li>
+                        <% } %>
+                    </ul>
+                    
                 </li>
-                <% } %>
+            <% } %>
+            
         </ul>
     </div>
 </div>

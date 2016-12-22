@@ -774,7 +774,7 @@ ul.box > li:last-child {
 }
 
 .screen .seat a.active {
-  background-color: #d50000;
+  background-color: #019fe8;
 }
 
 .screen .seat a.disabled {
@@ -877,12 +877,16 @@ ul.box > li:last-child {
 }
 
 .performance li .button {
-  width: 100px;
+  float: left;
+  width: 150px;
+  margin: 0 10px 0 0;
 }
 
 @media screen and (max-width: 768px) {
   .performance li .button {
+    float: none;
     width: auto;
+    margin: 0;
   }
 }
 

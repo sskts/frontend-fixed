@@ -1,73 +1,25 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
 const SeatSelectForm_1 = require('../../forms/Purchase/SeatSelectForm');
+const request = require('request');
+const config = require('config');
 class SeatSelectController extends PurchaseController_1.default {
     /**
      * 座席選択
      */
     index() {
-        console.log(this.req.session);
-        //コアAPIから作品、座席データ取得
-        let data = {
-            facilityCode: '0000',
-            screeningDate: '20161205',
-            workCode: '12345',
-            workBranchNumber: 12,
-            screeningStartTime: '1230',
-            screenCode: '0000',
-        };
-        //劇場名、スクリーン名取得
-        data['facilityName'] = 'シネマサンシャイン池袋';
-        data['screenName'] = 'スクリーン2';
-        //スケジュールマスター抽出
-        let film = {
-            status: '0',
-            message: 'メッセージ',
-            facilityCode: '0000',
-            workCode: '12345',
-            workBranchNumber: '12345',
-            titleOfWork: '君の名は',
-            titleKana: '君の名は',
-            titleOfWorkTitleEnglish: '君の名は',
-            titleShortName: '君の名は',
-            titleAbbreviationKana: '君の名は',
-            titleOmittedEnglish: '君の名は',
-            originalTitle: '君の名は',
-            originalTitleKana: '君の名は',
-            ageRestrictionPictureClassification: 'PG!"',
-            videoClassification: '2D',
-            screeningMethodClassification: 'IMAX',
-            subtitleDubbingClassification: '字幕',
-            screeningTime: 120,
-            scheduledStartDateOfThePerformance: '20161201',
-            scheduledEndDateOfThePerformance: '20161230' // 公演終了予定日
-        };
-        // 座席予約状態抽出
-        let seatReservationStateExtraction = {
-            status: '0',
-            message: 'メッセージ',
-            reservableRemainingNumberOfSeats: 5,
-            seatRowNumber: 10,
-            seatList: [
-                {
-                    seatSection: '0',
-                    vacancyList: [
-                        {
-                            seatingNumber: 'A-1' // 座席番号
-                        },
-                    ]
-                },
-            ]
-        };
-        //作品情報をセッションへ
-        this.req.session['purchasePerformanceData'] = data;
-        this.req.session['purchasePerformanceFilm'] = film;
-        //座席選択表示
-        this.res.locals['seatReservationStateExtraction'] = seatReservationStateExtraction;
-        this.res.locals['data'] = data;
-        this.res.locals['film'] = film;
-        this.res.locals['step'] = 0;
-        this.res.render('purchase/seatSelect');
+        if (this.req.query && this.req.query['id']) {
+            //パフォーマンス取得
+            this.getPerformance(this.req.query['id'], (performance) => {
+                this.req.session['performance'] = performance;
+                this.res.locals['performance'] = performance;
+                this.res.locals['step'] = 0;
+                this.res.render('purchase/seatSelect');
+            });
+        }
+        else {
+            return this.next(new Error('不適切なアクセスです'));
+        }
     }
     /**
      * 座席決定
@@ -134,6 +86,27 @@ class SeatSelectController extends PurchaseController_1.default {
             result = 1;
         }
         return result;
+    }
+    /**
+     * パフォーマンス取得
+     */
+    getPerformance(performancesId, cb) {
+        let endpoint = config.get('endpoint');
+        let method = 'performance';
+        let options = {
+            url: `${endpoint}/${method}/${performancesId}`,
+            method: 'GET',
+            json: true,
+        };
+        request.get(options, (error, response, body) => {
+            if (error) {
+                return this.next(new Error('サーバーエラー'));
+            }
+            if (!body.success) {
+                return this.next(new Error('サーバーエラー'));
+            }
+            cb(body.performance);
+        });
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

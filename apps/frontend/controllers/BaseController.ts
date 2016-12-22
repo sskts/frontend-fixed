@@ -1,6 +1,6 @@
 import express = require('express');
 import log4js = require('log4js');
-
+import moment = require('moment');
 /**
  * ベースコントローラー
  * 
@@ -21,6 +21,7 @@ export default class BaseController {
 
         this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
+        this.setLocals();
     }
 
     /**
@@ -29,7 +30,8 @@ export default class BaseController {
      */
     protected setLocals(): void {
         this.res.locals.req = this.req;
-        // this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.moment = moment;
     }
 
     /**

@@ -7,8 +7,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
      */
     index() {
         if (this.checkSession('reservationNo')
-            && this.checkSession('purchasePerformanceData')
-            && this.checkSession('purchasePerformanceFilm')
+            && this.checkSession('performance')
             && this.checkSession('purchaseSeats')) {
             this.logger.debug('券種選択表示', this.req.session['reservationNo']);
             //コアAPI券種取得

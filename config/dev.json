@@ -1,5 +1,5 @@
 {
-    "endpoint": "",
+    "endpoint": "https://devsasakiticketapiprototypewebapp.azurewebsites.net",
     
     "redis_host": "devsasakiticketredis.redis.cache.windows.net",
     "redis_port": 6380,

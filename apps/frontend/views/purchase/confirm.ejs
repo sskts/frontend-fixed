@@ -13,19 +13,19 @@
             <li>
                 <dl>
                     <dt>劇場 / スクリーン</dt>
-                    <dd><%= (data) ? data.facilityName : '' %> / <%= (data) ? data.screenName : '' %></dd>
+                    <dd><%= performance.theater_name.ja %> / <%= performance.screen_name.ja %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt>作品名</dt>
-                    <dd><%= (film) ? film.titleOfWork : '' %></dd>
+                    <dd><%= performance.film_name.ja %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt>鑑賞日時</dt>
-                    <dd><%= (data) ? data.screeningDate : '' %> <%= (data) ? data.screeningStartTime : '' %></dd>
+                    <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
                 </dl>
             </li>
             <li>

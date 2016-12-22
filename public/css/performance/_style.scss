@@ -14,9 +14,13 @@
             }
         }
         .button {
-            width: 100px;
+            float: left;
+            width: 150px;
+            margin: 0 10px 0 0;
             @media screen and (max-width: $mobile){
+                float: none;
                 width: auto;
+                margin: 0;
             }
         }
     }

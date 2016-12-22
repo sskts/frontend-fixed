@@ -8,8 +8,7 @@ export default class EnterPurchaseController extends PurchaseController {
      */
     public index(): void {
         if (this.checkSession('reservationNo')
-        && this.checkSession('purchasePerformanceData')
-        && this.checkSession('purchasePerformanceFilm')
+        && this.checkSession('performance')
         && this.checkSession('purchaseSeats')) {
         this.logger.debug('購入者情報入力表示', this.req.session['reservationNo']);
         //購入者情報入力表示
