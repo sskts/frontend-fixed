@@ -34,7 +34,8 @@ export default class PerformanceController extends BaseController {
      * 購入者情報入力完了
      */
     public index(): void {
-        this.getPerformances((performances: performance[]) => {
+        let day: string = moment().format('YYYYMMDD');
+        this.getPerformances(day, (performances: performance[]) => {
             let result = [];
             let count = 0;
             for (let performance of performances) {
@@ -73,12 +74,12 @@ export default class PerformanceController extends BaseController {
     /**
      * パフォーマンスリスト取得
      */
-    private getPerformances(cb: Function): void {
+    private getPerformances(day: string, cb: Function): void {
         let endpoint: string = config.get<string>('endpoint');
         let method: string = 'performances';
 
         let options: request.Options = {
-            url: `${endpoint}/${method}/?day=${moment().format('YYYYMMDD')}`,
+            url: `${endpoint}/${method}/?day=${day}`,
             method: 'GET',
             json: true,
         };
