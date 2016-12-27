@@ -30,7 +30,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     tel: '09040007648'
                 };
             }
-            this.res.render('purchase/enterPurchase');
+            this.res.render('purchase/input');
         }
         else {
             return this.next(new Error('無効なアクセスです'));

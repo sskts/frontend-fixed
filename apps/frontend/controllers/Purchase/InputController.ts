@@ -22,17 +22,17 @@ export default class EnterPurchaseController extends PurchaseController {
         
         if (process.env.NODE_ENV === 'dev') {
             this.res.locals['info'] = {
-                lastNameKanji: '畑口',
-                firstNameKanji: '晃人',
-                lastNameHira: 'はたぐち',
-                firstNameHira: 'あきと',
+                last_name_kanji: '畑口',
+                first_name_kanji: '晃人',
+                last_name_hira: 'はたぐち',
+                first_name_hira: 'あきと',
                 mail: 'hataguchi@motionpicture.jp',
-                mailConfirm: 'hataguchi@motionpicture.jp',
+                mail_confirm: 'hataguchi@motionpicture.jp',
                 tel: '09040007648'
             }
         }
 
-        this.res.render('purchase/enterPurchase');
+        this.res.render('purchase/input');
         } else {
             return this.next(new Error('無効なアクセスです'));
         }
@@ -54,18 +54,18 @@ export default class EnterPurchaseController extends PurchaseController {
 
                     //入力情報をセッションへ
                     this.req.session['purchaseInfo'] = {
-                        lastNameKanji: this.req.body.lastNameKanji,
-                        firstNameKanji: this.req.body.firstNameKanji,
-                        lastNameHira: this.req.body.lastNameHira,
-                        firstNameHira: this.req.body.firstNameHira,
+                        last_name_kanji: this.req.body.last_name_kanji,
+                        first_name_kanji: this.req.body.first_name_kanji,
+                        last_name_hira: this.req.body.last_name_hira,
+                        first_name_hira: this.req.body.first_name_hira,
                         mail: this.req.body.mail,
                         tel: this.req.body.tel,
                     };
                     //決済情報をセッションへ
-                    this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmoTokenObject);
+                    this.req.session['gmo_token_object'] = JSON.parse(this.req.body.gmo_token_object);
                     this.logger.debug('購入者情報入力完了', {
                         info: this.req.session['purchaseInfo'],
-                        gmo: this.req.session['gmoTokenObject']
+                        gmo: this.req.session['gmo_token_object']
                     });
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('purchase.confirm', {}));

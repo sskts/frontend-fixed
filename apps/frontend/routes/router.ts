@@ -4,13 +4,12 @@ import config = require('config');
 
 import PerformanceController from '..//controllers/Performance/PerformanceController';
 
-import SeatSelectController from '../controllers/Purchase/SeatSelectController';
-import EnterPurchaseController from '../controllers/Purchase/EnterPurchaseController';
-import TicketTypeSelectController from '../controllers/Purchase/TicketTypeSelectController';
+import SeatController from '../controllers/Purchase/SeatController';
+import InputController from '../controllers/Purchase/InputController';
+import TicketController from '../controllers/Purchase/TicketController';
 import ConfirmController from '../controllers/Purchase/ConfirmController';
 
 import InquiryController from '../controllers/Inquiry/InquiryController';
-import InquiryConfirmController from '../controllers/Inquiry/InquiryConfirmController';
 
 import MethodController from '../controllers/Method/MethodController';
 
@@ -43,30 +42,34 @@ export default (app: any) => {
         res.redirect(router.build('performance', {}));
     });
 
-    app.get('/purchase/seatSelect', 'purchase.seatSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new SeatSelectController(req, res, next).index();
+    //座席選択
+    app.get('/purchase/seat', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new SeatController(req, res, next).index();
     });
 
-    app.post('/purchase/seatSelect', 'purchase.seatSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new SeatSelectController(req, res, next).submit();
+    app.post('/purchase/seat', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new SeatController(req, res, next).select();
     });
 
-    app.get('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new TicketTypeSelectController(req, res, next).index();
+    //券種選択
+    app.get('/purchase/ticket', 'purchase.ticket', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new TicketController(req, res, next).index();
     });
 
-    app.post('/purchase/ticketTypeSelect', 'purchase.ticketTypeSelect', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new TicketTypeSelectController(req, res, next).submit();
+    app.post('/purchase/ticket', 'purchase.ticket', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new TicketController(req, res, next).select();
     });
 
-    app.get('/purchase/enterPurchase', 'purchase.enterPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new EnterPurchaseController(req, res, next).index();
+    //購入者情報入力
+    app.get('/purchase/input', 'purchase.input', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InputController(req, res, next).index();
     });
 
-    app.post('/purchase/enterPurchase', 'purchase.enterPurchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new EnterPurchaseController(req, res, next).submit();
+    app.post('/purchase/input', 'purchase.input', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InputController(req, res, next).submit();
     });
 
+    //購入内容確認
     app.get('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmController(req, res, next).index();
     });
@@ -75,18 +78,31 @@ export default (app: any) => {
         new ConfirmController(req, res, next).purchase();
     });
 
+    //チケット照会ログイン
+    app.get('/inquiry/login', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryController(req, res, next).login();
+    });
+
+    app.post('/inquiry/login', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryController(req, res, next).auth();
+    });
+
+    //チケット照会
     app.get('/inquiry', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new InquiryController(req, res, next).index();
     });
 
-    app.post('/inquiry', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new InquiryController(req, res, next).inquiry();
+    //チケット照会(QRコード発行印刷ページ)
+    app.get('/inquiry/print', 'inquiry.print', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new InquiryController(req, res, next).print();
     });
 
-    app.get('/inquiry/confirm', 'inquiry.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new InquiryConfirmController(req, res, next).index();
+    //入場方法説明
+    app.get('/method/entry', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MethodController(req, res, next).entry();
     });
 
+    //発券方法説明
     app.get('/method/ticketing', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new MethodController(req, res, next).ticketing();
     });

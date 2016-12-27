@@ -291,6 +291,11 @@ ul.box {
     padding: 5px;
     color: #FFF;
 }
+
+.no-shadow {
+    box-shadow: 0 0 0 transparent !important;
+}
+
 .button {
     a, button {
         line-height: 1;
@@ -326,7 +331,9 @@ ul.box {
 }
 .white-button {
     a, button {
+        border: 1px solid #019fe8;
         background-color: #FFF;
+        color: #019fe8;
     }
 }
 .button-area {

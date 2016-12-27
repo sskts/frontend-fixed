@@ -1,8 +1,8 @@
 <% layout('../purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/enterPurchase.js"></script>') -%>
+<% block('script', '<script src="/js/purchase/input.js"></script>') -%>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>'); // トークンを利用するための api キー</script>
-<div class="enter-purchase">
+<div class="purchase-input">
     <h1 class="page-ttl">購入者情報入力</h1>
     <p class="read">
         ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
@@ -15,18 +15,18 @@
             <dl>
                 <dt>姓</dt>
                 <dd>
-                    <input type="text" name="lastNameKanji" value="<%= (info) ? info.lastNameKanji : '' %>">
-                    <% if (error && error.lastNameKanji) { %>
-                    <div class="validation"><%= error.lastNameKanji[0] %></div>
+                    <input type="text" name="last_name_kanji" value="<%= (info) ? info.last_name_kanji : '' %>">
+                    <% if (error && error.last_name_kanji) { %>
+                    <div class="validation"><%= error.last_name_kanji[0] %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
                 <dt>名</dt>
                 <dd>
-                    <input type="text" name="firstNameKanji" value="<%= (info) ? info.firstNameKanji : '' %>">
-                    <% if (error && error.firstNameKanji) { %>
-                    <div class="validation"><%= error.firstNameKanji[0] %></div>
+                    <input type="text" name="first_name_kanji" value="<%= (info) ? info.first_name_kanji : '' %>">
+                    <% if (error && error.first_name_kanji) { %>
+                    <div class="validation"><%= error.first_name_kanji[0] %></div>
                     <% } %>
                 </dd>
             </dl>
@@ -37,18 +37,18 @@
             <dl>
                 <dt>せい</dt>
                 <dd>
-                    <input type="text" name="lastNameHira" value="<%= (info) ? info.lastNameHira : '' %>">
-                    <% if (error && error.lastNameHira) { %>
-                    <div class="validation"><%= error.lastNameHira[0] %></div>
+                    <input type="text" name="last_name_hira" value="<%= (info) ? info.last_name_hira : '' %>">
+                    <% if (error && error.last_name_hira) { %>
+                    <div class="validation"><%= error.last_name_hira[0] %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
                 <dt>めい</dt>
                 <dd>
-                    <input type="text" name="firstNameHira" value="<%= (info) ? info.firstNameHira : '' %>">
-                    <% if (error && error.firstNameHira) { %>
-                    <div class="validation"><%= error.firstNameHira[0] %></div>
+                    <input type="text" name="first_name_hira" value="<%= (info) ? info.first_name_hira : '' %>">
+                    <% if (error && error.first_name_hira) { %>
+                    <div class="validation"><%= error.first_name_hira[0] %></div>
                     <% } %>
                 </dd>
             </dl>
@@ -66,9 +66,9 @@
             <dl>
                 <dt>メールアドレス(確認)</dt>
                 <dd>
-                    <input type="text" name="mailConfirm" value="<%= (info) ? info.mailConfirm : '' %>">
-                    <% if (error && error.mailConfirm) { %>
-                    <div class="validation"><%= error.mailConfirm[0] %></div>
+                    <input type="text" name="mail_confirm" value="<%= (info) ? info.mail_confirm : '' %>">
+                    <% if (error && error.mail_confirm) { %>
+                    <div class="validation"><%= error.mail_confirm[0] %></div>
                     <% } %>
                 </dd>
             </dl>
@@ -106,7 +106,7 @@
                 <dl>
                     <dt>カード有効期限</dt>
                     <dd>
-                        <select name="creditYear">
+                        <select name="credit_year">
                             <%
                             let choices = {};
                             let year2digits = moment().format('YY');
@@ -119,7 +119,7 @@
                             <option value="20<%- key %>"><%- choices[key] %></option>
                             <% } %>
                         </select> 年 
-                        <select name="creditMonth">
+                        <select name="credit_month">
                             <%
                             for (let i = 0; i < 12; i++) {
                                 let num = i + 1;
@@ -149,10 +149,10 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="gmoTokenObject" value="">
+        <input type="hidden" name="gmo_token_object" value="">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="prev-link"><a href="<%- url('purchase.ticketTypeSelect') %>">戻る</a></div>
+            <div class="prev-link"><a href="<%- url('purchase.ticket') %>">戻る</a></div>
         </div>
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>

@@ -17,7 +17,7 @@
                     <ul class="clearfix ">
                         <% for (let performance2 of performance.performances) { %>
                         <li class="button blue-button">
-                            <a href="<%- url('purchase.seatSelect') + '?id=' + performance2._id %>"><%= moment(performance2.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance2.time_end, 'hmm').format('HH:mm') %></a>
+                            <a href="<%- url('purchase.seat') + '?id=' + performance2._id %>"><%= moment(performance2.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance2.time_end, 'hmm').format('HH:mm') %></a>
                         </li>
                         <% } %>
                     </ul>

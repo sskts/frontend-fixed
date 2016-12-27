@@ -36,20 +36,24 @@ export default class SeatSelectController extends PurchaseController {
             //パフォーマンス取得
             this.getPerformance(this.req.query['id'], (performance: performance) => {
                 this.req.session['performance'] = performance;
-                
+
                 this.res.locals['performance'] = performance;
                 this.res.locals['step'] = 0;
-                this.res.render('purchase/seatSelect');
+                this.res.render('purchase/seat');
             });
+        }else if(this.checkSession('performance')) {
+            this.res.locals['performance'] = this.req.session['performance'];
+            this.res.locals['step'] = 0;
+            this.res.render('purchase/seat');
         } else {
             return this.next(new Error('不適切なアクセスです'));
-        }        
+        }
     }
 
     /**
      * 座席決定
      */
-    public submit(): void {
+    public select(): void {
 
         //バリデーション
         SeatSelectForm(this.req, this.res, () => {
@@ -68,8 +72,8 @@ export default class SeatSelectController extends PurchaseController {
                     type: string
                 }[] = [];
 
-                let seatCodes = JSON.parse(this.req.body.seatCodes);
-                for (let code of seatCodes) {
+                let seat_codes = JSON.parse(this.req.body.seat_codes);
+                for (let code of seat_codes) {
                     seats.push({
                         code: code,
                         type: ''
@@ -90,8 +94,8 @@ export default class SeatSelectController extends PurchaseController {
                     type: string
                 }[] = [];
 
-                let seatCodes = JSON.parse(this.req.body.seatCodes);
-                for (let code of seatCodes) {
+                let seat_codes = JSON.parse(this.req.body.seat_codes);
+                for (let code of seat_codes) {
                     seats.push({
                         code: code,
                         type: ''
@@ -107,7 +111,7 @@ export default class SeatSelectController extends PurchaseController {
 
             this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
             //券種選択へ
-            this.res.redirect(this.router.build('purchase.ticketTypeSelect', {}));
+            this.res.redirect(this.router.build('purchase.ticket', {}));
 
         });
     }

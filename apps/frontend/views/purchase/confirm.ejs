@@ -1,6 +1,6 @@
 <% layout('../purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/confirm.js"></script>') -%>
-<div class="confirm">
+<div class="purchase-confirm">
     <h1 class="page-ttl">購入者内容確認</h1>
     <p class="read">
         ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
@@ -47,7 +47,7 @@
             <li>
                 <dl>
                     <dt>お名前（ひらがな）</dt>
-                    <dd><%= (info) ? info.lastNameHira : '' %> <%= (info) ? info.firstNameHira : '' %></dd>
+                    <dd><%= (info) ? info.last_name_hira : '' %> <%= (info) ? info.first_name_hira : '' %></dd>
                 </dl>
             </li>
             <li>
@@ -69,7 +69,7 @@
             <li>
                 <dl>
                     <dt>カード番号</dt>
-                    <dd><%= (gmoTokenObject) ? gmoTokenObject.maskedCardNo : '' %></dd>
+                    <dd><%= (gmo_token_object) ? gmo_token_object.maskedCardNo : '' %></dd>
                 </dl>
             </li>
             <li>
@@ -79,15 +79,15 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="token" value="<%= (gmoTokenObject) ? gmoTokenObject.token : '' %>">
-        <input type="hidden" name="toBeExpiredAt" value="<%= (gmoTokenObject) ? gmoTokenObject.toBeExpiredAt : '' %>">
-        <input type="hidden" name="isSecurityCodeSet" value="<%= (gmoTokenObject) ? gmoTokenObject.isSecurityCodeSet : '' %>">
+        <input type="hidden" name="token" value="<%= (gmo_token_object) ? gmo_token_object.token : '' %>">
+        <input type="hidden" name="toBeExpiredAt" value="<%= (gmo_token_object) ? gmo_token_object.toBeExpiredAt : '' %>">
+        <input type="hidden" name="isSecurityCodeSet" value="<%= (gmo_token_object) ? gmo_token_object.isSecurityCodeSet : '' %>">
         
         
 
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit">購入完了</button></div>
-            <div class="prev-link"><a href="<%- url('purchase.enterPurchase') %>">戻る</a></div>
+            <div class="prev-link"><a href="<%- url('purchase.input') %>">戻る</a></div>
         </div>
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>

@@ -10,7 +10,7 @@ $(function () {
         }
 
         var cardno = $('input[name=cardno]').val();
-        var expire = $('select[name=creditYear]').val() + $('select[name=creditMonth]').val();
+        var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
         var securitycode = $('input[name=securitycode]').val();
         var holdername = $('input[name=holdername]').val();
         var sendParam = {
@@ -32,12 +32,12 @@ function someCallbackFunction(response) {
     } else {
         //カード情報は念のため値を除去
         $('input[name=cardno]').val('');
-        $('select[name=creditYear]').val('');
-        $('select[name=creditMonth]').val('');
+        $('select[name=credit_year]').val('');
+        $('select[name=credit_month]').val('');
         $('input[name=securitycode]').val('');
         $('input[name=holdername]').val('');
         //予め購入フォームに用意した token フィールドに、値を設定
-        $('input[name=gmoTokenObject]').val(JSON.stringify(response.tokenObject));
+        $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
         document.getElementById('purchaseform').submit();
     }
@@ -50,16 +50,16 @@ function validation() {
     $('.validation').remove();
 
     var validationList = [
-        { name: 'lastNameKanji', label: '姓', required: true, maxLength: 15 },
-        { name: 'firstNameKanji', label: '名', required: true, maxLength: 15 },
-        { name: 'lastNameHira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
-        { name: 'firstNameHira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
+        { name: 'last_name_kanji', label: '姓', required: true, maxLength: 15 },
+        { name: 'first_name_kanji', label: '名', required: true, maxLength: 15 },
+        { name: 'last_name_hira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
+        { name: 'first_name_hira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
         { name: 'mail', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'] },
-        { name: 'mailConfirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'], equals: 'mail' },
+        { name: 'mail_confirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'], equals: 'mail' },
         { name: 'tel', label: '電話番号', required: true, regex: [/^[0-9]+$/, 'は不適切です'] },
         { name: 'cardno', label: 'クレジットカード番号', required: true, regex: [/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[0-9]{15})$/, 'は不適切です'] },
-        { name: 'creditMonth', label: '有効期限（月）', required: true },
-        { name: 'creditYear', label: '有効期限（年）', required: true },
+        { name: 'credit_month', label: '有効期限（月）', required: true },
+        { name: 'credit_year', label: '有効期限（年）', required: true },
         { name: 'holdername', label: 'カード名義人', required: true, regex: [/^[A-Z]+[\s|　]+[A-Z]+[\s|　]*[A-Z]+$/, 'は不適切です'] },
         { name: 'securitycode', label: 'セキュリティーコード', required: true, regex: [/^[0-9]{3,4}$/, 'は不適切です'] },
     ];

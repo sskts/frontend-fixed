@@ -39,7 +39,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
             this.res.locals['step'] = 1;
             this.res.locals['reservationNo'] = this.req.session['reservationNo'];
             //券種選択表示
-            this.res.render('purchase/ticketTypeSelect');
+            this.res.render('purchase/ticket');
         }
         else {
             return this.next(new Error('無効なアクセスです'));
@@ -48,7 +48,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
     /**
      * 券種決定
      */
-    submit() {
+    select() {
         if (this.checkSession('reservationNo')) {
             //バリデーション
             TicketTypeSelectForm_1.default(this.req, this.res, () => {
@@ -58,7 +58,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
                 this.req.session['purchaseSeats'] = seats;
                 this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
                 //購入者情報入力へ
-                this.res.redirect(this.router.build('purchase.enterPurchase', {}));
+                this.res.redirect(this.router.build('purchase.input', {}));
             });
         }
         else {

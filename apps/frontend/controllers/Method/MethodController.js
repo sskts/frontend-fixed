@@ -7,6 +7,12 @@ class MethodController extends BaseController_1.default {
     ticketing() {
         this.res.render('method/ticketing');
     }
+    /**
+     * 入場方法説明ページ表示
+     */
+    entry() {
+        this.res.render('method/entry');
+    }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MethodController;

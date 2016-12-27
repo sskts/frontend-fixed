@@ -389,6 +389,10 @@ ul.box > li:last-child {
   color: #FFF;
 }
 
+.no-shadow {
+  box-shadow: 0 0 0 transparent !important;
+}
+
 .button a, .button button {
   line-height: 1;
   display: block;
@@ -420,7 +424,9 @@ ul.box > li:last-child {
 }
 
 .white-button a, .white-button button {
+  border: 1px solid #019fe8;
   background-color: #FFF;
+  color: #019fe8;
 }
 
 .button-area {
@@ -565,55 +571,55 @@ ul.box > li:last-child {
   color: #555;
 }
 
-.purchase .seat-select .screen {
+.purchase .purchase-seat .screen {
   margin: 0 0 20px;
   background-color: #353535;
 }
 
-.purchase .seat-select .film-info {
+.purchase .purchase-seat .film-info {
   background-color: #3e3a39;
   color: #FFF;
   padding: 15px 10px;
   margin: 0 0 20px;
 }
 
-.purchase .seat-select .film-info p {
+.purchase .purchase-seat .film-info p {
   margin: 0 0 10px;
 }
 
-.purchase .seat-select .film-info dl dt {
+.purchase .purchase-seat .film-info dl dt {
   margin: 0 0 10px;
   color: #f0e205;
 }
 
-.purchase .seat-select .film-info dl dd {
+.purchase .purchase-seat .film-info dl dd {
   color: #FFF;
   padding: 0 0 10px;
   margin: 0 0 10px;
   border-bottom: 1px solid #FFF;
 }
 
-.purchase .seat-select .film-info dl dd:last-child {
+.purchase .purchase-seat .film-info dl dd:last-child {
   padding: 0;
   margin: 0;
   border: none;
 }
 
-.purchase .ticket-type-select .seats li dd {
+.purchase .purchase-ticket .seats li dd {
   width: 300px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .ticket-type-select .seats li dd {
+  .purchase .purchase-ticket .seats li dd {
     width: 150px;
   }
 }
 
-.purchase .ticket-type-select .total {
+.purchase .purchase-ticket .total {
   text-align: right;
 }
 
-.purchase .ticket-type-select .total .length {
+.purchase .purchase-ticket .total .length {
   margin: 0 0 10px;
 }
 
@@ -627,84 +633,84 @@ ul.box > li:last-child {
   }
 }
 
-.purchase .enter-purchase .box dl {
+.purchase .purchase-input .box dl {
   margin-bottom: 20px;
 }
 
-.purchase .enter-purchase .box dl:last-child {
+.purchase .purchase-input .box dl:last-child {
   margin-bottom: 0;
 }
 
-.purchase .enter-purchase .clearfix dl {
+.purchase .purchase-input .clearfix dl {
   width: 50%;
   float: left;
   margin-bottom: 0;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchase .clearfix dl {
+  .purchase .purchase-input .clearfix dl {
     width: auto;
     float: none;
     margin-bottom: 20px;
   }
 }
 
-.purchase .enter-purchase .clearfix dl:first-child {
+.purchase .purchase-input .clearfix dl:first-child {
   padding-right: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchase .clearfix dl:first-child {
+  .purchase .purchase-input .clearfix dl:first-child {
     padding-right: 0;
   }
 }
 
-.purchase .enter-purchase .clearfix dl:last-child {
+.purchase .purchase-input .clearfix dl:last-child {
   padding-left: 10px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .enter-purchase .clearfix dl:last-child {
+  .purchase .purchase-input .clearfix dl:last-child {
     padding-left: 0;
   }
 }
 
-.purchase .enter-purchase .clearfix dl dd {
+.purchase .purchase-input .clearfix dl dd {
   margin-bottom: 0;
 }
 
-.purchase .enter-purchase .validation {
+.purchase .purchase-input .validation {
   margin: 5px 0 0;
   color: #c00017;
   font-weight: bold;
 }
 
-.purchase .complete {
+.purchase .purchase-complete {
   display: none;
 }
 
-.purchase .complete .entry-method dl dt span {
+.purchase .purchase-complete .entry-method dl dt span {
   margin-right: 5px;
 }
 
-.purchase .complete .entry-method dl dd {
+.purchase .purchase-complete .entry-method dl dd {
   position: relative;
   padding: 0 0 0 220px;
   min-height: 145px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .complete .entry-method dl dd {
+  .purchase .purchase-complete .entry-method dl dd {
     padding: 0;
     min-height: 0;
   }
 }
 
-.purchase .complete .entry-method dl dd p {
+.purchase .purchase-complete .entry-method dl dd p {
   margin: 0 0 20px;
 }
 
-.purchase .complete .entry-method dl dd .image {
+.purchase .purchase-complete .entry-method dl dd .image {
   position: absolute;
   top: 0;
   left: 0;
@@ -712,18 +718,18 @@ ul.box > li:last-child {
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .complete .entry-method dl dd .image {
+  .purchase .purchase-complete .entry-method dl dd .image {
     width: auto;
     position: static;
   }
 }
 
-.purchase .complete .entry-method dl dd .button {
+.purchase .purchase-complete .entry-method dl dd .button {
   width: 250px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .complete .entry-method dl dd .button {
+  .purchase .purchase-complete .entry-method dl dd .button {
     width: auto;
   }
 }
@@ -890,39 +896,39 @@ ul.box > li:last-child {
   }
 }
 
-.inquiry-confirm .ticket {
+.inquiry .ticket {
   margin: 0 0 20px;
   border: 2px solid #019fe8;
   border-radius: 5px;
 }
 
-.inquiry-confirm .ticket .ticket-info {
+.inquiry .ticket .ticket-info {
   padding: 10px;
   position: relative;
 }
 
-.inquiry-confirm .ticket .ticket-qr {
+.inquiry .ticket .ticket-qr {
   padding: 10px;
 }
 
-.inquiry-confirm .ticket .ticket-qr p {
+.inquiry .ticket .ticket-qr p {
   padding: 30px 0;
   text-align: center;
   font-weight: bold;
 }
 
-.inquiry-confirm .ticket .ticket-film {
+.inquiry .ticket .ticket-film {
   padding: 10px;
 }
 
-.inquiry-confirm .ticket .copy-button {
+.inquiry .ticket .copy-button {
   position: absolute;
   top: 50%;
   right: 10px;
   margin-top: -25px;
 }
 
-.inquiry-confirm .ticket .copy-button a {
+.inquiry .ticket .copy-button a {
   width: 50px;
   height: 50px;
   border-radius: 25px;
@@ -930,36 +936,36 @@ ul.box > li:last-child {
   padding: 0;
 }
 
-.inquiry-confirm .ticket .ticket-seat {
+.inquiry .ticket .ticket-seat {
   font-weight: bold;
   font-size: 26px;
   margin: 0 0 5px;
 }
 
-.inquiry-confirm .ticket .ticket-type {
+.inquiry .ticket .ticket-type {
   font-size: 14px;
   vertical-align: middle;
   margin-left: 10px;
 }
 
-.inquiry-confirm .ticket .ticket-date {
+.inquiry .ticket .ticket-date {
   font-size: 16px;
   font-weight: bold;
   margin: 0 0 5px;
 }
 
-.inquiry-confirm .ticket .ticket-theater {
+.inquiry .ticket .ticket-theater {
   font-size: 16px;
   font-weight: bold;
   margin: 0 0 5px;
 }
 
-.inquiry-confirm .ticket .ticket-screen {
+.inquiry .ticket .ticket-screen {
   font-size: 16px;
   font-weight: bold;
   margin: 0 0 5px;
 }
 
-.inquiry-confirm .ticket .ticket-title {
+.inquiry .ticket .ticket-title {
   font-size: 12px;
 }

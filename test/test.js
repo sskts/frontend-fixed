@@ -66,24 +66,24 @@ function ticketTypeSelect() {
 //enterPurchase
 function enterPurchase() {
     console.log('enterPurchase');
-    driver.findElement(webdriver.By.name('lastNameKanji')).clear();
-    driver.findElement(webdriver.By.name('firstNameKanji')).clear();
-    driver.findElement(webdriver.By.name('lastNameHira')).clear();
-    driver.findElement(webdriver.By.name('firstNameHira')).clear();
+    driver.findElement(webdriver.By.name('last_name_kanji')).clear();
+    driver.findElement(webdriver.By.name('first_name_kanji')).clear();
+    driver.findElement(webdriver.By.name('last_name_hira')).clear();
+    driver.findElement(webdriver.By.name('first_name_hira')).clear();
     driver.findElement(webdriver.By.name('mail')).clear();
-    driver.findElement(webdriver.By.name('mailConfirm')).clear();
+    driver.findElement(webdriver.By.name('mail_confirm')).clear();
     driver.findElement(webdriver.By.name('tel')).clear();
 
-    driver.findElement(webdriver.By.name('lastNameKanji')).sendKeys('モーション');
-    driver.findElement(webdriver.By.name('firstNameKanji')).sendKeys('ピクチャー');
-    driver.findElement(webdriver.By.name('lastNameHira')).sendKeys('もーしょん');
-    driver.findElement(webdriver.By.name('firstNameHira')).sendKeys('ぴくちゃー');
+    driver.findElement(webdriver.By.name('last_name_kanji')).sendKeys('モーション');
+    driver.findElement(webdriver.By.name('first_name_kanji')).sendKeys('ピクチャー');
+    driver.findElement(webdriver.By.name('last_name_hira')).sendKeys('もーしょん');
+    driver.findElement(webdriver.By.name('first_name_hira')).sendKeys('ぴくちゃー');
     driver.findElement(webdriver.By.name('mail')).sendKeys('hataguchi@motionpicture.jp');
-    driver.findElement(webdriver.By.name('mailConfirm')).sendKeys('hataguchi@motionpicture.jp');
+    driver.findElement(webdriver.By.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
     driver.findElement(webdriver.By.name('tel')).sendKeys('0362778824');
     driver.findElement(webdriver.By.name('cardno')).sendKeys('4111111111111111');
-    driver.findElement(webdriver.By.name('creditYear')).sendKeys('2017');
-    driver.findElement(webdriver.By.name('creditMonth')).sendKeys('10');
+    driver.findElement(webdriver.By.name('credit_year')).sendKeys('2017');
+    driver.findElement(webdriver.By.name('credit_month')).sendKeys('10');
     driver.findElement(webdriver.By.name('holdername')).sendKeys('TEST TEST');
     driver.findElement(webdriver.By.name('securitycode')).sendKeys('123');
     nextClick();

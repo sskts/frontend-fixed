@@ -7,14 +7,14 @@ export default class ConfirmController extends PurchaseController {
      */
     public index(): void {
         if (this.checkSession('reservationNo')
-        && this.checkSession('gmoTokenObject')
+        && this.checkSession('gmo_token_object')
         && this.checkSession('purchaseInfo')
         && this.checkSession('performance')
         && this.checkSession('purchaseSeats')) {
             this.logger.debug('購入者情報入力表示', this.req.session['reservationNo']);
             //購入者内容確認表示
             this.res.locals['reservationNo'] = this.req.session['reservationNo'];
-            this.res.locals['gmoTokenObject'] = this.req.session['gmoTokenObject'];
+            this.res.locals['gmo_token_object'] = this.req.session['gmo_token_object'];
             this.res.locals['info'] = this.req.session['purchaseInfo'];
             this.res.locals['performance'] = this.req.session['performance'];
             this.res.locals['seats'] = this.req.session['purchaseSeats'];

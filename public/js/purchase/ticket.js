@@ -33,13 +33,13 @@ $(function () {
                 flag = false;
             }
         });
-
-        if (!flag) {
+        var mvtk = $('input[name=mvtk]').val();
+        if (!flag && !mvtk) {
             alert('未選択');
         } else {
             // location.hrefにpostする
             var form = $('form');
-            var dom = $('<input type="hidden" name="seatCodes">').val(JSON.stringify(result));
+            var dom = $('<input type="hidden" name="seat_codes">').val(JSON.stringify(result));
             form.append(dom);
             form.submit();
         }

@@ -26,16 +26,16 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         // 座席コードリストを取得
-        var seatCodes = $('.screen .seat a.active').map(function () {
+        var seat_codes = $('.screen .seat a.active').map(function () {
             return $(this).attr('data-seat-code')
         }).get();
 
-        if (seatCodes.length < 1) {
+        if (seat_codes.length < 1) {
             alert('未選択');
         } else {
             // location.hrefにpostする
             var form = $('form');
-            var dom = $('<input type="hidden" name="seatCodes">').val(JSON.stringify(seatCodes));
+            var dom = $('<input type="hidden" name="seat_codes">').val(JSON.stringify(seat_codes));
             form.append(dom);
             form.submit();
         }

@@ -59,11 +59,12 @@
     }
     // contents
     
-    @import "seatSelect";
-    @import "ticketTypeSelect";
-    @import "enterPurchase";
+    @import "seat";
+    @import "ticket";
+    @import "input";
     @import "confirm";
     @import "complete";
+    
     
 }
 

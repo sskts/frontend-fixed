@@ -14,8 +14,13 @@ class SeatSelectController extends PurchaseController_1.default {
                 this.req.session['performance'] = performance;
                 this.res.locals['performance'] = performance;
                 this.res.locals['step'] = 0;
-                this.res.render('purchase/seatSelect');
+                this.res.render('purchase/seat');
             });
+        }
+        else if (this.checkSession('performance')) {
+            this.res.locals['performance'] = this.req.session['performance'];
+            this.res.locals['step'] = 0;
+            this.res.render('purchase/seat');
         }
         else {
             return this.next(new Error('不適切なアクセスです'));
@@ -24,7 +29,7 @@ class SeatSelectController extends PurchaseController_1.default {
     /**
      * 座席決定
      */
-    submit() {
+    select() {
         //バリデーション
         SeatSelectForm_1.default(this.req, this.res, () => {
             //変更状態
@@ -68,7 +73,7 @@ class SeatSelectController extends PurchaseController_1.default {
             }
             this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
             //券種選択へ
-            this.res.redirect(this.router.build('purchase.ticketTypeSelect', {}));
+            this.res.redirect(this.router.build('purchase.ticket', {}));
         });
     }
     /**
