@@ -9,6 +9,10 @@ import InputController from '../controllers/Purchase/InputController';
 import TicketController from '../controllers/Purchase/TicketController';
 import ConfirmController from '../controllers/Purchase/ConfirmController';
 
+import MvtkInputController from '../controllers/Purchase/Mvtk/MvtkInputController';
+import MvtkAuthController from '../controllers/Purchase/Mvtk/MvtkAuthController';
+import MvtkConfirmController from '../controllers/Purchase/Mvtk/MvtkConfirmController';
+
 import InquiryController from '../controllers/Inquiry/InquiryController';
 
 import MethodController from '../controllers/Method/MethodController';
@@ -76,6 +80,33 @@ export default (app: any) => {
 
     app.post('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmController(req, res, next).purchase();
+    });
+
+    //ムビチケ券入力
+    app.get('/purchase/mvtk', 'purchase.mvtk', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkInputController(req, res, next).index();
+    });
+
+    app.post('/purchase/mvtk', 'purchase.mvtk', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkInputController(req, res, next).auth();
+    });
+
+    //ムビチケ券認証
+    app.get('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkAuthController(req, res, next).index();
+    });
+
+    app.post('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkAuthController(req, res, next).submit();
+    });
+
+    //ムビチケ券適用確認
+    app.get('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkConfirmController(req, res, next).index();
+    });
+
+    app.post('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new MvtkConfirmController(req, res, next).submit();
     });
 
     //チケット照会ログイン

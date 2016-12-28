@@ -1,6 +1,6 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
-const SeatSelectForm_1 = require('../../forms/Purchase/SeatSelectForm');
+const SeatForm_1 = require('../../forms/Purchase/SeatForm');
 const request = require('request');
 const config = require('config');
 class SeatSelectController extends PurchaseController_1.default {
@@ -31,7 +31,7 @@ class SeatSelectController extends PurchaseController_1.default {
      */
     select() {
         //バリデーション
-        SeatSelectForm_1.default(this.req, this.res, () => {
+        SeatForm_1.default(this.req, this.res, () => {
             //変更状態
             let changetype = this.getChangeType();
             if (changetype === 0) {
@@ -41,8 +41,8 @@ class SeatSelectController extends PurchaseController_1.default {
                 //仮予約番号をセッションへ
                 this.req.session['reservationNo'] = reservationNo;
                 let seats = [];
-                let seatCodes = JSON.parse(this.req.body.seatCodes);
-                for (let code of seatCodes) {
+                let seat_codes = JSON.parse(this.req.body.seat_codes);
+                for (let code of seat_codes) {
                     seats.push({
                         code: code,
                         type: ''
@@ -59,8 +59,8 @@ class SeatSelectController extends PurchaseController_1.default {
                 //仮予約番号をセッションへ
                 this.req.session['reservationNo'] = reservationNo;
                 let seats = [];
-                let seatCodes = JSON.parse(this.req.body.seatCodes);
-                for (let code of seatCodes) {
+                let seat_codes = JSON.parse(this.req.body.seat_codes);
+                for (let code of seat_codes) {
                     seats.push({
                         code: code,
                         type: ''

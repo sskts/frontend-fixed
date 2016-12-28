@@ -11,7 +11,7 @@
 
     <form id="purchaseform" method="post">
         <h2 class="section-ttl">お名前（漢字）</h2>
-        <div class="box bg-light-gray clearfix">
+        <div class="box bg-light-gray">
             <dl>
                 <dt>姓</dt>
                 <dd>
@@ -20,8 +20,6 @@
                     <div class="validation"><%= error.last_name_kanji[0] %></div>
                     <% } %>
                 </dd>
-            </dl>
-            <dl>
                 <dt>名</dt>
                 <dd>
                     <input type="text" name="first_name_kanji" value="<%= (info) ? info.first_name_kanji : '' %>">
@@ -33,7 +31,7 @@
         </div>
 
         <h2 class="section-ttl">お名前（ひらがな）</h2>
-        <div class="box bg-light-gray clearfix">
+        <div class="box bg-light-gray">
             <dl>
                 <dt>せい</dt>
                 <dd>
@@ -42,8 +40,6 @@
                     <div class="validation"><%= error.last_name_hira[0] %></div>
                     <% } %>
                 </dd>
-            </dl>
-            <dl>
                 <dt>めい</dt>
                 <dd>
                     <input type="text" name="first_name_hira" value="<%= (info) ? info.first_name_hira : '' %>">

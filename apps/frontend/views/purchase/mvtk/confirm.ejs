@@ -1,0 +1,21 @@
+<% layout('../purchase/layout') -%>
+<% block('script', '<script src="/js/purchase/mvtk/confirm.js"></script>') -%>
+<div class="purchase-mvtk-confirm">
+    <h1 class="page-ttl">券種選択</h1>
+    <p class="read">
+        ご希望の券種と枚数を選択して次へボタンを押してください。<br>
+        追加したムビチケ券のご利用も可能です。
+    </p>
+
+    <form method="post">
+        
+        
+        
+
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button type="submit">購入者情報入力</button></div>
+            <div class="prev-link"><a href="<%- url('purchase.mvtk.auth') %>">戻る</a></div>
+        </div>
+        <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
+    </form>
+</div>

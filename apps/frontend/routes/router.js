@@ -5,6 +5,9 @@ const SeatController_1 = require('../controllers/Purchase/SeatController');
 const InputController_1 = require('../controllers/Purchase/InputController');
 const TicketController_1 = require('../controllers/Purchase/TicketController');
 const ConfirmController_1 = require('../controllers/Purchase/ConfirmController');
+const MvtkInputController_1 = require('../controllers/Purchase/Mvtk/MvtkInputController');
+const MvtkAuthController_1 = require('../controllers/Purchase/Mvtk/MvtkAuthController');
+const MvtkConfirmController_1 = require('../controllers/Purchase/Mvtk/MvtkConfirmController');
 const InquiryController_1 = require('../controllers/Inquiry/InquiryController');
 const MethodController_1 = require('../controllers/Method/MethodController');
 const ErrorController_1 = require('../controllers/Error/ErrorController');
@@ -49,6 +52,27 @@ exports.default = (app) => {
     });
     app.post('/purchase/confirm', 'purchase.confirm', (req, res, next) => {
         new ConfirmController_1.default(req, res, next).purchase();
+    });
+    //ムビチケ券入力
+    app.get('/purchase/mvtk', 'purchase.mvtk', (req, res, next) => {
+        new MvtkInputController_1.default(req, res, next).index();
+    });
+    app.post('/purchase/mvtk', 'purchase.mvtk', (req, res, next) => {
+        new MvtkInputController_1.default(req, res, next).auth();
+    });
+    //ムビチケ券認証
+    app.get('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req, res, next) => {
+        new MvtkAuthController_1.default(req, res, next).index();
+    });
+    app.post('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req, res, next) => {
+        new MvtkAuthController_1.default(req, res, next).submit();
+    });
+    //ムビチケ券適用確認
+    app.get('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req, res, next) => {
+        new MvtkConfirmController_1.default(req, res, next).index();
+    });
+    app.post('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req, res, next) => {
+        new MvtkConfirmController_1.default(req, res, next).submit();
     });
     //チケット照会ログイン
     app.get('/inquiry/login', 'inquiry', (req, res, next) => {

@@ -1,26 +1,22 @@
 .purchase-seat {
     .screen {
-        margin: 0 0 20px;
         background-color: #353535;
     }
     .film-info {
         background-color: #3e3a39;
         color: #FFF;
         padding: 15px 10px;
-        margin: 0 0 20px;
-        p {
-            margin: 0 0 10px;
-        }
+        
         dl {
             dt {
-                margin: 0 0 10px;
                 color: #f0e205;
+                margin-bottom: 10px;
             }
             dd {
                 color: #FFF;
                 padding: 0 0 10px;
-                margin: 0 0 10px;
                 border-bottom: 1px solid #FFF;
+                margin-bottom: 10px;
                 &:last-child {
                     padding: 0;
                     margin: 0;

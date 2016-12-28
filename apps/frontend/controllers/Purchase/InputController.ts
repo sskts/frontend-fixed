@@ -1,6 +1,6 @@
 import config = require('config');
 import PurchaseController from './PurchaseController';
-import EnterPurchaseForm from '../../forms/Purchase/EnterPurchaseForm';
+import InputForm from '../../forms/Purchase/InputForm';
 
 export default class EnterPurchaseController extends PurchaseController {
     /**
@@ -47,7 +47,7 @@ export default class EnterPurchaseController extends PurchaseController {
             //モーションAPI
 
             //バリデーション
-            EnterPurchaseForm(this.req, this.res, () => {
+            InputForm(this.req, this.res, () => {
                 if (this.req.form.isValid) {
                     //モーションAPIで仮決済（GMOトークンと予約番号）
 

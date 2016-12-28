@@ -1,6 +1,6 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
-const TicketTypeSelectForm_1 = require('../../forms/Purchase/TicketTypeSelectForm');
+const TicketForm_1 = require('../../forms/Purchase/TicketForm');
 class TicketTypeSelectController extends PurchaseController_1.default {
     /**
      * 券種選択
@@ -51,14 +51,20 @@ class TicketTypeSelectController extends PurchaseController_1.default {
     select() {
         if (this.checkSession('reservationNo')) {
             //バリデーション
-            TicketTypeSelectForm_1.default(this.req, this.res, () => {
-                let seats = JSON.parse(this.req.body.seatCodes);
+            TicketForm_1.default(this.req, this.res, () => {
+                let seats = JSON.parse(this.req.body.seat_codes);
                 //モーションAPI仮抑え
                 //座席情報をセッションへ
                 this.req.session['purchaseSeats'] = seats;
                 this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
-                //購入者情報入力へ
-                this.res.redirect(this.router.build('purchase.input', {}));
+                if (this.req.body['mvtk']) {
+                    //購入者情報入力へ
+                    this.res.redirect(this.router.build('purchase.mvtk', {}));
+                }
+                else {
+                    //購入者情報入力へ
+                    this.res.redirect(this.router.build('purchase.input', {}));
+                }
             });
         }
         else {

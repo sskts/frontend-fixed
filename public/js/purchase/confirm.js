@@ -19,10 +19,10 @@ $(function () {
 
             }
         }).done(function (res) {
-            $('.confirm').remove();
+            $('.purchase-confirm').remove();
             var dom = '<li><dl><dt>購入番号</dt><dd class="red-text"><strong>'+ res.purchaseNo +'</strong></dd><dd class="small-text">※チケットの発行等に必要な番号となりますので必ず忘れないようにしてください。</dd></dl></li>';
-            $('.complete .info').prepend(dom);
-            $('.complete').show();
+            $('.purchase-complete .info').prepend(dom);
+            $('.purchase-complete').show();
         }).fail(function (jqxhr, textStatus, error) {
             $('.confirm').remove();
             $('.complete').show();

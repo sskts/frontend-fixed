@@ -6,7 +6,7 @@ class PurchaseController extends BaseController_1.default {
      */
     deleteSession() {
         delete this.req.session['reservationNo'];
-        delete this.req.session['gmoTokenObject'];
+        delete this.req.session['gmo_token_object'];
         delete this.req.session['purchaseInfo'];
         delete this.req.session['performance'];
         delete this.req.session['purchaseSeats'];

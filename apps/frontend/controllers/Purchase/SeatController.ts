@@ -1,5 +1,5 @@
 import PurchaseController from './PurchaseController';
-import SeatSelectForm from '../../forms/Purchase/SeatSelectForm';
+import SeatForm from '../../forms/Purchase/SeatForm';
 import request = require('request');
 import config = require('config');
 
@@ -56,7 +56,7 @@ export default class SeatSelectController extends PurchaseController {
     public select(): void {
 
         //バリデーション
-        SeatSelectForm(this.req, this.res, () => {
+        SeatForm(this.req, this.res, () => {
             //変更状態
             let changetype = this.getChangeType();
 

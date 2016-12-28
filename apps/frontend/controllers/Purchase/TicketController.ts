@@ -1,5 +1,5 @@
 import PurchaseController from './PurchaseController';
-import TicketTypeSelectForm from '../../forms/Purchase/TicketTypeSelectForm';
+import TicketForm from '../../forms/Purchase/TicketForm';
 
 export default class TicketTypeSelectController extends PurchaseController {
     /**
@@ -54,7 +54,7 @@ export default class TicketTypeSelectController extends PurchaseController {
     public select(): void {
         if (this.checkSession('reservationNo')) {
             //バリデーション
-            TicketTypeSelectForm(this.req, this.res, () => {
+            TicketForm(this.req, this.res, () => {
                 let seats: {
                     code: string,
                     type: string
@@ -65,8 +65,15 @@ export default class TicketTypeSelectController extends PurchaseController {
                 //座席情報をセッションへ
                 this.req.session['purchaseSeats'] = seats;
                 this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
-                //購入者情報入力へ
-                this.res.redirect(this.router.build('purchase.input', {}));
+                
+                if (this.req.body['mvtk']) {
+                    //購入者情報入力へ
+                    this.res.redirect(this.router.build('purchase.mvtk', {}));
+                } else {
+                    //購入者情報入力へ
+                    this.res.redirect(this.router.build('purchase.input', {}));
+                }
+                
 
             });
         } else {

@@ -10,6 +10,9 @@ $(function () {
         var ticketPrice = $(this).attr('data-ticket-price');
         var triggerIndex = $('.modal[data-modal="ticket-type"]').attr('data-modal-trigger-index');
         var target = modal.getTrigger().parent().parent().parent();
+        target.find('.button')
+            .removeClass('button')
+            .addClass('ghost-button')
         target.find('dd a').text(ticketName);
         target.find('dd').attr('data-seat-type', ticketType);
         modal.close();
@@ -33,8 +36,8 @@ $(function () {
                 flag = false;
             }
         });
-        var mvtk = $('input[name=mvtk]').val();
-        if (!flag && !mvtk) {
+
+        if (!flag && !$('input[name=mvtk]').is(':checked')) {
             alert('未選択');
         } else {
             // location.hrefにpostする

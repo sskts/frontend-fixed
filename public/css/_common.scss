@@ -188,7 +188,7 @@ a {
         }
     }
     ul {
-        margin: 0 0 10px -5px;
+        margin: 0 0 0 -5px;
         li {
             float: left;
             padding: 0 5px;
@@ -213,21 +213,59 @@ a {
 .contents {
     padding: 20px 0;
     width: 920px;
-    margin: 0 auto 60px;
+    margin: 0 auto;
     @media screen and (max-width: $tablet){
         width: auto;
         padding: 20px 10px;
     }
 }
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
 .red-text {
     color: #c00017;
 }
+
 .small-text {
     font-size: 12px;
 }
 
 .large-text {
     font-size: 22px;
+}
+
+.mb-xx-large {
+    margin-bottom: 50px;
+}
+
+.mb-x-large {
+    margin-bottom: 40px;
+}
+
+.mb-large {
+    margin-bottom: 30px;
+}
+
+.mb-medium {
+    margin-bottom: 20px;
+}
+
+.mb-small {
+    margin-bottom: 15px;
+}
+
+.mb-x-small {
+    margin-bottom: 10px;
+}
+
+.mb-xx-small {
+    margin-bottom: 5px;
 }
 
 .bg-white {
@@ -243,57 +281,54 @@ a {
 }
 
 .box {
+    overflow: hidden;
     padding: 20px;
-    margin: 0 0 40px;
+    border-radius: 5px;
     &:last-child {
         margin-bottom: 0;
     }
-    dl {
-        dt {
-            font-weight: bold;
-            margin: 0 0 10px;
-        }
-        dd {
-            margin: 0 0 10px;
-            &:last-child {
-                margin-bottom: 0;
-            }
+    .box-ttl {
+        background-color: #B2B2B2;
+        color: #FFF;
+        padding: 10px;
+        margin: 0 -20px 20px;
+        &:first-child {
+            margin-top: -20px;
         }
     }
-}
-ul.box {
-    > li {
+    li {
         border-bottom: 1px solid #d1d1d1;
-        margin: 0 0 20px;
         padding: 0 0 20px;
+        margin-bottom: 20px;
         &:last-child {
             border: none;
             margin: 0;
             padding: 0;
         }
     }
-}
-.page-ttl {
-    font-weight: bold;
-    font-size: 20px;
-    margin: 0 0 20px;
-    @media screen and (max-width: $mobile){
-        text-align: center;
+    dl {
+        margin-bottom: 10px;
+        dt {
+            margin-bottom: 10px;
+        }
+        dd {
+            margin-bottom: 10px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
     }
 }
-.read {
-    margin: 0 0 20px;
-}
+
 .text-icon-dark-blue {
     background-color: #036db7;
     display: inline-block;
     vertical-align: middle;
     padding: 5px;
     color: #FFF;
-}
-
-.no-shadow {
-    box-shadow: 0 0 0 transparent !important;
 }
 
 .button {
@@ -304,40 +339,74 @@ ul.box {
         text-align: center;
         width: 100%;
         border-radius: 5px;
-        box-shadow: 0 2px 2px #333;
         &:hover {
             transition: opacity 0.5s;
             opacity: 0.75;
         }
     }
+    &.blue-button {
+        a, button {
+            background-color: #019fe8;
+            color: #FFF;
+        }
+    }
+    &.dark-blue-button {
+        a, button {
+            background-color: #036db7;
+            color: #FFF;
+        }
+    }
+    &.gray-button {
+        a, button {
+            background-color: #595758;
+            color: #FFF;
+        }
+    }
+    &.white-button {
+        a, button {
+            background-color: #FFF;
+        }
+    }
 }
-.blue-button {
+
+.ghost-button {
     a, button {
-        background-color: #019fe8;
+        line-height: 1;
+        display: block;
+        padding: 15px 0;
+        text-align: center;
+        width: 100%;
+        border-radius: 5px;
+        border: 1px solid #FFF;
         color: #FFF;
+        &:hover {
+            transition: opacity 0.5s;
+            opacity: 0.75;
+        }
+    }
+    &.blue-button {
+        a, button {
+            border-color: #019fe8;
+            color: #019fe8;
+        }
+    }
+    &.dark-blue-button {
+        a, button {
+            border-color: #036db7;
+            color: #036db7;
+        }
+    }
+    &.gray-button {
+        a, button {
+            border-color: #595758;
+            color: #595758;
+        }
     }
 }
-.dark-blue-button {
-    a, button {
-        background-color: #036db7;
-        color: #FFF;
-    }
-}
-.gray-button {
-    a, button {
-        background-color: #595758;
-        color: #FFF;
-    }
-}
-.white-button {
-    a, button {
-        border: 1px solid #019fe8;
-        background-color: #FFF;
-        color: #019fe8;
-    }
-}
+
+
 .button-area {
-    margin: 0 auto;
+    margin: 40px auto;
     @media screen and (max-width: $mobile){
         width: auto;
     }
@@ -381,6 +450,21 @@ ul.box {
         color: #333;
     }
 }
+
+.page-ttl {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 20px; 
+    @media screen and (max-width: $mobile){
+        text-align: center;
+    }
+}
+
+.read {
+    margin-bottom: 20px; 
+}
+
 .section-ttl {
+    font-weight: bold;
     margin: 0 0 10px;
 }
