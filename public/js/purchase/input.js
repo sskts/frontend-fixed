@@ -5,7 +5,7 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         validation();
-        if ($('.validation').length > 0) {
+        if ($('.validation-text').length > 0) {
             return;
         }
 
@@ -47,7 +47,8 @@ function someCallbackFunction(response) {
  * バリデーション
  */
 function validation() {
-    $('.validation').remove();
+    $('.validation').removeClass('validation');
+    $('.validation-text').remove();
 
     var validationList = [
         { name: 'last_name_kanji', label: '姓', required: true, maxLength: 15 },
@@ -73,16 +74,20 @@ function validation() {
         if (validation.required
             && !value
             && value == '') {
-            target.after('<div class="validation">' + validation.label + 'が未入力です</div>');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + 'が未入力です</div>');
         } else if (validation.maxLength
             && value.length > validation.maxLength) {
-            target.after('<div class="validation">' + validation.label + 'は' + validation.maxLength + '文字以内で入力してください</div>');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + 'は' + validation.maxLength + '文字以内で入力してください</div>');
         } else if (validation.regex
             && !value.match(validation.regex[0])) {
-            target.after('<div class="validation">' + validation.label + validation.regex[1] + '</div>');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
         } else if (validation.equals
             && value !== $('input[name=' + validation.equals + '], select[name=' + validation.equals + ']').val()) {
-            target.after('<div class="validation">' + validation.label + 'が一致しません</div>');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + 'が一致しません</div>');
         }
     });
 

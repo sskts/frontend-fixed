@@ -1,12 +1,9 @@
-<% layout('../purchase/layout') -%>
+<% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/ticket.js"></script>') -%>
 <div class="purchase-ticket">
     <form method="post">
-        <h1 class="page-ttl">券種選択</h1>
-        <p class="read">
-            ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
-            画面をタッチすると画面がズームしますので座席を選択してください。
-        </p>
+        <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
+        <p class="read"><%- __('purchase.ticket.read') %></p>
         <ul class="seats box bg-light-gray mb-medium">
             <% for (let seat of seats) { %>
                 <li>
@@ -30,17 +27,17 @@
         </div>
 
         <div class="total box bg-light-gray">
-            <div class="length mb-x-small">購入枚数 <strong class="red-text"><%= seats.length %></strong>枚</div>
-            <div class="price">合計金額 <strong class="red-text">5,100</strong>円</div>
+            <div class="length mb-x-small"><%- __('common.purchase_number') %> <strong class="red-text"><%= seats.length %></strong>枚</div>
+            <div class="price"><%- __('common.total_fee') %> <strong class="red-text">5,100</strong>円</div>
         </div>
     
     
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="prev-link"><a href="<%- url('purchase.seat') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
+            <div class="prev-link"><a href="<%- url('purchase.seat') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>
 </div>
 
-<%- partial('modals/ticketType') %>
+<%- partial('modals/ticket') %>

@@ -1,5 +1,5 @@
 "use strict";
-const MvtkController_1 = require('./MvtkController');
+const MvtkController_1 = require("./MvtkController");
 class MvtkInputController extends MvtkController_1.default {
     /**
      * ムビチケ券入力ページ表示
@@ -13,7 +13,7 @@ class MvtkInputController extends MvtkController_1.default {
             this.res.locals['reservationNo'] = this.req.session['reservationNo'];
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
-            this.res.render('purchase/mvtk/confirm');
+            this.res.render('purchase/mvtk/input');
         }
         else {
             return this.next(new Error('無効なアクセスです'));
@@ -23,7 +23,7 @@ class MvtkInputController extends MvtkController_1.default {
      * 認証
      */
     auth() {
-        this.res.redirect(this.router.build('purchase.mvtk.auth', {}));
+        this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

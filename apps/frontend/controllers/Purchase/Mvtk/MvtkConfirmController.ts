@@ -15,8 +15,8 @@ export default class MvtkConfirmController extends MvtkController {
             this.res.locals['reservationNo'] = this.req.session['reservationNo'];
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
-
-            this.res.render('purchase/mvtk/this.res.render('purchase/mvtk/confirm');');
+            
+            this.res.render('purchase/mvtk/confirm');
         } else {
             return this.next(new Error('無効なアクセスです'));
         }

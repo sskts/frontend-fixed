@@ -1,17 +1,27 @@
 "use strict";
-const NamedRoutes = require('named-routes');
-const PerformanceController_1 = require('..//controllers/Performance/PerformanceController');
-const SeatController_1 = require('../controllers/Purchase/SeatController');
-const InputController_1 = require('../controllers/Purchase/InputController');
-const TicketController_1 = require('../controllers/Purchase/TicketController');
-const ConfirmController_1 = require('../controllers/Purchase/ConfirmController');
-const MvtkInputController_1 = require('../controllers/Purchase/Mvtk/MvtkInputController');
-const MvtkAuthController_1 = require('../controllers/Purchase/Mvtk/MvtkAuthController');
-const MvtkConfirmController_1 = require('../controllers/Purchase/Mvtk/MvtkConfirmController');
-const InquiryController_1 = require('../controllers/Inquiry/InquiryController');
-const MethodController_1 = require('../controllers/Method/MethodController');
-const ErrorController_1 = require('../controllers/Error/ErrorController');
+const NamedRoutes = require("named-routes");
+const PerformanceController_1 = require("..//controllers/Performance/PerformanceController");
+const SeatController_1 = require("../controllers/Purchase/SeatController");
+const InputController_1 = require("../controllers/Purchase/InputController");
+const TicketController_1 = require("../controllers/Purchase/TicketController");
+const ConfirmController_1 = require("../controllers/Purchase/ConfirmController");
+const MvtkInputController_1 = require("../controllers/Purchase/Mvtk/MvtkInputController");
+const MvtkAuthController_1 = require("../controllers/Purchase/Mvtk/MvtkAuthController");
+const MvtkConfirmController_1 = require("../controllers/Purchase/Mvtk/MvtkConfirmController");
+const InquiryController_1 = require("../controllers/Inquiry/InquiryController");
+const MethodController_1 = require("../controllers/Method/MethodController");
+const ErrorController_1 = require("../controllers/Error/ErrorController");
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * URLルーティング
+ *
+ * app.get(パス, ルーティング名称, メソッド);
+ * といった形でルーティングを登録する
+ * ルーティング名称は、ejs側やコントローラーでURLを生成する際に用いたりするので、意識的にページ一意な値を定めること
+ *
+ * リクエスト毎に、req,res,nextでコントローラーインスタンスを生成して、URLに応じたメソッドを実行する、という考え方
+ *
+ */
 exports.default = (app) => {
     let router = new NamedRoutes();
     router.extendExpress(app);

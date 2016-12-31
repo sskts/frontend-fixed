@@ -1,7 +1,23 @@
 .purchase-input {
-    .validation {
-        margin: 5px 0 0;
-        color: #c00017;
-        font-weight: bold;
+    .text-icon-red {
+        margin-left: 5px;
+    }
+    input[type=text],
+    input[type=number],
+    input[type=password],
+    input[type=tel],
+    input[type=email],
+    textarea {
+        margin: 0 0 5px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    textarea {
+        resize: vertical;
+        height: 300px;
+        @media screen and (max-width: $mobile) {
+            height: 100px;
+        }
     }
 }

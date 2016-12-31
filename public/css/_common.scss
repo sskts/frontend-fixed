@@ -61,11 +61,13 @@ input[type=text],
 input[type=number],
 input[type=password],
 input[type=tel],
-input[type=email] {
+input[type=email],
+textarea {
     width: 100%;
     border: 1px solid #d9d9d9;
     padding: 8px 10px;
     background-color: #FFF;
+    border-radius: 3px;
 }
 
 select::-ms-expand {
@@ -76,6 +78,7 @@ select {
     border: 1px solid #d9d9d9;
     padding: 8px 10px;
     background-color: #FFF;
+    border-radius: 3px;
 }
 
 p {
@@ -153,72 +156,7 @@ a {
     display: block;
 }
 
-// header
-.header {
-    padding: 20px 10px;
-    border-bottom: 1px solid #ccc;
-    @media screen and (max-width: $tablet){
-        padding: 10px;
-    }
-    .inner {
-        position: relative;
-        width: 920px;
-        margin: 0 auto;
-        @media screen and (max-width: $tablet){
-            width: auto;
-        }
-    }
-    .logo {
-        width: 80px;
-        img {
-            width: 100%;
-        }
-    }
-}
-// footer
-.footer {
-    background-color: #212121;
-    padding: 20px 10px;
-    .inner {
-        position: relative;
-        width: 920px;
-        margin: 0 auto;
-        @media screen and (max-width: $tablet){
-            width: auto;
-        }
-    }
-    ul {
-        margin: 0 0 0 -5px;
-        li {
-            float: left;
-            padding: 0 5px;
-            border-right: 1px solid #FFF;
-            line-height: 1.5;
-            &:last-child {
-                border: none;
-                padding-right: 0;
-            }
-            a {
-                color: #FFF;
-            }
-        }
-    }
-    .copyright {
-        color: #FFF;
-    }
-}
 
-
-//contents
-.contents {
-    padding: 20px 0;
-    width: 920px;
-    margin: 0 auto;
-    @media screen and (max-width: $tablet){
-        width: auto;
-        padding: 20px 10px;
-    }
-}
 
 .text-right {
     text-align: right;
@@ -229,7 +167,7 @@ a {
 }
 
 .red-text {
-    color: #c00017;
+    color: #C30D23;
 }
 
 .small-text {
@@ -284,6 +222,9 @@ a {
     overflow: hidden;
     padding: 20px;
     border-radius: 5px;
+    @media screen and (max-width: $mobile) {
+        padding: 20px 10px;
+    }
     &:last-child {
         margin-bottom: 0;
     }
@@ -329,6 +270,18 @@ a {
     vertical-align: middle;
     padding: 5px;
     color: #FFF;
+    font-weight: normal;
+    border-radius: 5px;
+}
+
+.text-icon-red {
+    background-color: #C30D23;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 5px;
+    color: #FFF;
+    font-weight: normal;
+    border-radius: 5px;
 }
 
 .button {
@@ -467,4 +420,89 @@ a {
 .section-ttl {
     font-weight: bold;
     margin: 0 0 10px;
+}
+
+.validation {
+    border-color: #C30D23 !important;
+    background-color: #ffe8eb !important;
+}
+
+.validation-text {
+    margin: 0 0 5px;
+    color: #C30D23;
+    font-weight: bold;
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+
+// header
+.header {
+    padding: 20px 10px;
+    border-bottom: 1px solid #ccc;
+    @media screen and (max-width: $tablet){
+        padding: 20px 15px;
+    }
+    @media screen and (max-width: $mobile){
+        padding: 10px 15px;
+    }
+    .inner {
+        position: relative;
+        width: 920px;
+        margin: 0 auto;
+        @media screen and (max-width: $tablet){
+            width: auto;
+        }
+    }
+    .logo {
+        width: 60px;
+        img {
+            width: 100%;
+        }
+    }
+}
+// footer
+.footer {
+    background-color: #212121;
+    padding: 20px 10px;
+    .inner {
+        position: relative;
+        width: 920px;
+        margin: 0 auto;
+        @media screen and (max-width: $tablet){
+            width: auto;
+        }
+    }
+    ul {
+        margin: 0 0 0 -5px;
+        li {
+            float: left;
+            padding: 0 5px;
+            border-right: 1px solid #FFF;
+            line-height: 1.5;
+            &:last-child {
+                border: none;
+                padding-right: 0;
+            }
+            a {
+                color: #FFF;
+            }
+        }
+    }
+    .copyright {
+        color: #FFF;
+    }
+}
+
+
+//contents
+.contents {
+    padding: 20px 0;
+    width: 920px;
+    margin: 0 auto;
+    @media screen and (max-width: $tablet){
+        width: auto;
+        padding: 20px 15px;
+    }
 }

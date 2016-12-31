@@ -1,36 +1,33 @@
-<% layout('../purchase/layout') -%>
+<% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/confirm.js"></script>') -%>
 <div class="purchase-confirm">
-    <h1 class="page-ttl">購入者内容確認</h1>
-    <p class="read">
-        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
-        画面をタッチすると画面がズームしますので座席を選択してください。
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.confirm.read') %></p>
 
     <form method="post">
-        <h2 class="section-ttl">作品情報</h2>
-        <ul class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.film') %></h2>
+        <ul class="box bg-light-gray mb-medium">
             <li>
                 <dl>
-                    <dt>劇場 / スクリーン</dt>
-                    <dd><%= performance.theater_name.ja %> / <%= performance.screen_name.ja %></dd>
+                    <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
+                    <dd><%= performance.theater_name[__('lang')] %> / <%= performance.screen_name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>作品名</dt>
-                    <dd><%= performance.film_name.ja %></dd>
+                    <dt><%- __('common.film_title') %></dt>
+                    <dd><%= performance.film_name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>鑑賞日時</dt>
+                    <dt><%- __('common.appreciation_date') %></dt>
                     <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>座席 / 券種</dt>
+                    <dt><%- __('common.seat') %> / <%- __('common.ticket') %></dt>
                     <dd>
                         <ul>
                         <% for (let seat of seats) { %>
@@ -42,39 +39,39 @@
             </li>
         </ul>       
         
-        <h2 class="section-ttl">予約情報</h2>
-        <ul class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.reservation') %></h2>
+        <ul class="box bg-light-gray mb-medium">
             <li>
                 <dl>
-                    <dt>お名前（ひらがな）</dt>
+                    <dt><%- __('common.name_hira') %></dt>
                     <dd><%= (info) ? info.last_name_hira : '' %> <%= (info) ? info.first_name_hira : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>メールアドレス</dt>
+                    <dt><%- __('common.mail') %></dt>
                     <dd><%= (info) ? info.mail : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>電話番号</dt>
+                    <dt><%- __('common.tel') %></dt>
                     <dd><%= (info) ? info.tel : '' %></dd>
                 </dl>
             </li>
         </ul>        
         
-        <h2 class="section-ttl">支払情報</h2>
-        <ul class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.payment') %></h2>
+        <ul class="box bg-light-gray mb-medium">
             <li>
                 <dl>
-                    <dt>カード番号</dt>
+                    <dt><%- __('common.cardno') %></dt>
                     <dd><%= (gmo_token_object) ? gmo_token_object.maskedCardNo : '' %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>ご利用金額</dt>
+                    <dt><%- __('common.amount_spent') %></dt>
                     <dd>￥5,100</dd>
                 </dl>
             </li>
@@ -86,8 +83,8 @@
         
 
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button type="submit">購入完了</button></div>
-            <div class="prev-link"><a href="<%- url('purchase.input') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button type="submit"><%- __('purchase.confirm.next') %></button></div>
+            <div class="prev-link"><a href="<%- url('purchase.input') %>"><%- __('purchase.confirm.prev') %></a></div>
         </div>
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>

@@ -4,7 +4,10 @@
         <% for (let salesTarget of sales.salesTargetList) { %>
         <li>
             <dl class="d-table">
-                <dt class="d-td"><%= salesTarget.salesTargetName %></dt>
+                <dt class="d-td">
+                    <%= salesTarget.salesTargetName %><br>
+                    <span class="small-text">※ご入場の際に学生証をご提示下さい</span>
+                </dt>
                 <dd class="d-td">
                     <div class="button blue-button ticket-type-select"><a href="#" data-ticket-type="<%= salesTarget.salesTargetCode %>" data-ticket-price="1800">選択</a></div>
                 </dd>

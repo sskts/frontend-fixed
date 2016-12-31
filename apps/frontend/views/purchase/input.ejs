@@ -1,98 +1,96 @@
-<% layout('../purchase/layout') -%>
+<% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/input.js"></script>') -%>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>'); // トークンを利用するための api キー</script>
 <div class="purchase-input">
-    <h1 class="page-ttl">購入者情報入力</h1>
-    <p class="read">
-        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
-        画面をタッチすると画面がズームしますので座席を選択してください。
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.input.read') %></p>
 
     <form id="purchaseform" method="post">
-        <h2 class="section-ttl">お名前（漢字）</h2>
-        <div class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.name_kanji') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
+        <div class="box bg-light-gray mb-medium">
             <dl>
-                <dt>姓</dt>
+                <dt><%- __('common.last_name_kanji') %></dt>
                 <dd>
-                    <input type="text" name="last_name_kanji" value="<%= (info) ? info.last_name_kanji : '' %>">
+                    <input type="text" name="last_name_kanji" placeholder="<%- __('common.placeholder.last_name_kanji') %>" value="<%= (info) ? info.last_name_kanji : '' %>">
                     <% if (error && error.last_name_kanji) { %>
-                    <div class="validation"><%= error.last_name_kanji[0] %></div>
+                    <div class="validation-text"><%= error.last_name_kanji[0] %></div>
                     <% } %>
                 </dd>
-                <dt>名</dt>
+                <dt><%- __('common') %></dt>
                 <dd>
-                    <input type="text" name="first_name_kanji" value="<%= (info) ? info.first_name_kanji : '' %>">
+                    <input type="text" name="first_name_kanji" placeholder="<%- __('common.placeholder.first_name_kanji') %>" value="<%= (info) ? info.first_name_kanji : '' %>">
                     <% if (error && error.first_name_kanji) { %>
-                    <div class="validation"><%= error.first_name_kanji[0] %></div>
+                    <div class="validation-text"><%= error.first_name_kanji[0] %></div>
                     <% } %>
                 </dd>
             </dl>
         </div>
 
-        <h2 class="section-ttl">お名前（ひらがな）</h2>
-        <div class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.name_hira') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
+        <div class="box bg-light-gray mb-medium">
             <dl>
-                <dt>せい</dt>
+                <dt><%- __('common.last_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="last_name_hira" value="<%= (info) ? info.last_name_hira : '' %>">
+                    <input type="text" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= (info) ? info.last_name_hira : '' %>">
                     <% if (error && error.last_name_hira) { %>
-                    <div class="validation"><%= error.last_name_hira[0] %></div>
+                    <div class="validation-text"><%= error.last_name_hira[0] %></div>
                     <% } %>
                 </dd>
-                <dt>めい</dt>
+                <dt><%- __('common.first_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="first_name_hira" value="<%= (info) ? info.first_name_hira : '' %>">
+                    <input type="text" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= (info) ? info.first_name_hira : '' %>">
                     <% if (error && error.first_name_hira) { %>
-                    <div class="validation"><%= error.first_name_hira[0] %></div>
+                    <div class="validation-text"><%= error.first_name_hira[0] %></div>
                     <% } %>
                 </dd>
             </dl>
         </div>
-        <h2 class="section-ttl">メールアドレス</h2>
-        <div class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.mail') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
+        <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="email" name="mail" value="<%= (info) ? info.mail : '' %>">
+                    <input type="email" name="mail" placeholder="<%- __('common.placeholder.mail') %>" value="<%= (info) ? info.mail : '' %>">
                     <% if (error && error.mail) { %>
-                    <div class="validation"><%= error.mail[0] %></div>
+                    <div class="validation-text"><%= error.mail[0] %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
-                <dt>メールアドレス(確認)</dt>
+                <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="text" name="mail_confirm" value="<%= (info) ? info.mail_confirm : '' %>">
+                    <input type="text" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= (info) ? info.mail_confirm : '' %>">
                     <% if (error && error.mail_confirm) { %>
-                    <div class="validation"><%= error.mail_confirm[0] %></div>
+                    <div class="validation-text"><%= error.mail_confirm[0] %></div>
                     <% } %>
+                    <p class="small-text"><%- __('common.note.mail') %></p>
                 </dd>
             </dl>
         </div>
 
-        <h2 class="section-ttl">電話番号</h2>
-        <div class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.tel') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
+        <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="text" name="tel" value="<%= (info) ? info.tel : '' %>">
+                    <input type="text" name="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= (info) ? info.tel : '' %>">
                     <% if (error && error.tel) { %>
-                    <div class="validation"><%= error.tel[0] %></div>
+                    <div class="validation-text"><%= error.tel[0] %></div>
                     <% } %>
                 </dd>
             </dl>
         </div>
 
-        <h2 class="section-ttl">お支払情報</h2>
-        <ul class="box bg-light-gray">
+        <h2 class="section-ttl"><%- __('common.payment') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
+        <ul class="box bg-light-gray mb-medium">
             <li>
                 <dl>
-                    <dt>確認</dt>
+                    <dt><%- __('common.confirm') %></dt>
                     <dd><strong>￥5,100</strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>カード番号</dt>
+                    <dt><%- __('common.cardno') %></dt>
                     <dd>
                         <input type="text" name="cardno" maxlength="16" autocomplete="off" value="">
                     </dd>
@@ -100,7 +98,7 @@
             </li>
             <li>
                 <dl>
-                    <dt>カード有効期限</dt>
+                    <dt><%- __('common.expire') %></dt>
                     <dd>
                         <select name="credit_year">
                             <%
@@ -114,7 +112,7 @@
                             <% for (let key in choices) { %>
                             <option value="20<%- key %>"><%- choices[key] %></option>
                             <% } %>
-                        </select> 年 
+                        </select> <%- __('common.year') %> 
                         <select name="credit_month">
                             <%
                             for (let i = 0; i < 12; i++) {
@@ -123,14 +121,14 @@
                             %>
                                 <option value="<%= month %>"><%= month %></option>
                             <% } %>
-                        </select> 月 
+                        </select> <%- __('common.month') %> 
                         <input type="hidden" name="expire" value="">
                     </dd>
                 </dl>
             </li>
             <li>
                 <dl>
-                    <dt>カード名義人</dt>
+                    <dt><%- __('common.holdername') %></dt>
                     <dd>
                         <input type="text" name="holdername" value="">
                     </dd>
@@ -138,17 +136,32 @@
             </li>
             <li>
                 <dl>
-                    <dt>セキュリティーコード</dt>
+                    <dt><%- __('common.securitycode') %></dt>
                     <dd>
                         <input type="text" name="securitycode" value="">
                     </dd>
                 </dl>
             </li>
         </ul>
+
+        <h2 class="section-ttl">オンライン規約</h2>
+        <textarea class="bg-light-gray mb-medium">前文	
+佐々木興業株式会社(以下、｢当社｣とします)は、「ｵﾝﾗｲﾝ先売りﾁｹｯﾄｻｰﾋﾞｽ」（以下「本ｻｰﾋﾞｽ」とします)をご利用いただく際に、次の利用規約(以下「本規約」とします)を設けております。本規約をご承諾の上、本ｻｰﾋﾞｽをご利用ください。
+第1条　本ｻｰﾋﾞｽの内容と利用条件	
+・本ｻｰﾋﾞｽは、当社が運営する映画館で上映を行う映画の観賞ﾁｹｯﾄを当社が運営しているｻｲﾄ(以下、｢当ｻｲﾄ｣とします)にて事前予約販売するものです。
+
+・本ｻｰﾋﾞｽをご利用頂くには本規約への同意が必要となります。
+
+・お客様が本規約のすべての条項に同意されない場合は本ｻｰﾋﾞｽをご利用頂けません。
+
+また、お客様が本規約に違反した場合にはご利用をお断りすることがあります。
+
+・お客様自身の責任においてｺﾝﾋﾟｭｰﾀｰ・携帯電話の操作およびｲﾝﾀｰﾈｯﾄ利用ができ、本ｻｰﾋﾞｽを利用するために必要なｲﾝﾀｰﾈｯﾄ環境の適切な設定、文字(日本語表示)やﾒｰﾙ等の諸設定がなされている方を対象にしています。また上記条件を満たしていても、誤操作やﾈｯﾄ環境の事情によって本ｻｰﾋﾞｽが正常に動作しない場合、それらがもたらす諸影響について当社は一切責任を負いません。</textarea>
+
         <input type="hidden" name="gmo_token_object" value="">
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="prev-link"><a href="<%- url('purchase.ticket') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button type="submit"><%- __('purchase.input.next') %></button></div>
+            <div class="prev-link"><a href="<%- url('purchase.ticket') %>"><%- __('purchase.input.prev') %></a></div>
         </div>
         <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
     </form>

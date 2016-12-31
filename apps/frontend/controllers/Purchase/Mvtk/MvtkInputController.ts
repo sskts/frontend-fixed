@@ -16,7 +16,7 @@ export default class MvtkInputController extends MvtkController {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
 
-            this.res.render('purchase/mvtk/confirm');
+            this.res.render('purchase/mvtk/input');
         } else {
             return this.next(new Error('無効なアクセスです'));
         }
@@ -27,7 +27,7 @@ export default class MvtkInputController extends MvtkController {
      * 認証
      */
     public auth() {
-        this.res.redirect(this.router.build('purchase.mvtk.auth', {}));
+        this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 
 

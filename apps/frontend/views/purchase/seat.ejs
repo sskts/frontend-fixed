@@ -1,13 +1,10 @@
-<% layout('../purchase/layout') -%>
+<% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/seat.js"></script>') -%>
 <% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
 
 <div class="purchase-seat">
-    <h1 class="page-ttl">座席選択</h1>
-    <p class="read">
-        ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>
-        画面をタッチすると画面がズームしますので座席を選択してください。
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.seat.read') %></p>
     
     <div>
         <div class="screen-limit" style="display: none;" data-limit="5"></div>
@@ -17,17 +14,17 @@
         <div class="film-info">
             <p>現在、選択されているチケットは下記のとおりです。</p>
             <dl>
-                <dt>鑑賞日時 / スクリーン</dt>
+                <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
                 <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
-                <dt>作品名</dt>
-                <dd><%= performance.film_name.ja %></dd>
+                <dt><%- __('common.film_title') %></dt>
+                <dd><%= performance.film_name[__('lang')] %></dd>
             </dl>
         </div>
     </div>
     <form method="post">
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button type="submit">次へ</button></div>
-            <div class="prev-link"><a href="<%- url('index') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
+            <div class="prev-link"><a href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
     </form>
 </div>

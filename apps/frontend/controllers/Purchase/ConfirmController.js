@@ -1,5 +1,5 @@
 "use strict";
-const PurchaseController_1 = require('./PurchaseController');
+const PurchaseController_1 = require("./PurchaseController");
 class ConfirmController extends PurchaseController_1.default {
     /**
      * 購入者内容確認

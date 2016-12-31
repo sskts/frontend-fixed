@@ -1,6 +1,6 @@
 "use strict";
-const PurchaseController_1 = require('./PurchaseController');
-const TicketForm_1 = require('../../forms/Purchase/TicketForm');
+const PurchaseController_1 = require("./PurchaseController");
+const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 class TicketTypeSelectController extends PurchaseController_1.default {
     /**
      * 券種選択

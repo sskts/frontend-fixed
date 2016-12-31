@@ -7,6 +7,7 @@ import benchmarks from './middlewares/benchmarks';
 import session from './middlewares/session';
 import config = require('config');
 import router from './routes/router';
+import language from './middlewares/language';
 
 let app: express.Application = express();
 
@@ -14,6 +15,7 @@ app.use(helmet()); //HTTP ヘッダー
 app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
+
 
 // view engine setup
 app.engine('ejs', require('ejs-locals'));
@@ -27,6 +29,16 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'dev') {
     app.use(express.static(`${__dirname}/../../public`));
 }
+
+//言語
+app.use(language.init);
+// sessionで切り替え
+app.use((req, res, next)=> {
+    if (req.session['locale']) {
+        language.setLocale(req, req.session['locale']);
+    }
+    next();
+});
 
 // ルーティング
 router(app);

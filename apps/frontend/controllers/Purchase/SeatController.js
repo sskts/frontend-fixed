@@ -1,8 +1,8 @@
 "use strict";
-const PurchaseController_1 = require('./PurchaseController');
-const SeatForm_1 = require('../../forms/Purchase/SeatForm');
-const request = require('request');
-const config = require('config');
+const PurchaseController_1 = require("./PurchaseController");
+const SeatForm_1 = require("../../forms/Purchase/SeatForm");
+const request = require("request");
+const config = require("config");
 class SeatSelectController extends PurchaseController_1.default {
     /**
      * 座席選択

@@ -1,4 +1,4 @@
-<% layout('../layout') -%>
+<% layout('../layouts/layout') -%>
 <% block('script', '<script src="/js/inquiry/inquiry.js"></script>') -%>
 <div class="inquiry-confirm">
     <h1 class="page-ttl">QRコード発券情報確認</h1>
@@ -20,7 +20,6 @@
             <div class="ticket-info border-bottom-dot">
                 <div class="ticket-seat"><%= ticket.seat %><span class="ticket-type">[<%= ticket.type %>]</span></div>
                 <div class="ticket-id">発券コード : <%= ticket.id %></div>
-                <div class="copy-button button blue-button"><a href="#"></a></div>
             </div>
             <div class="ticket-qr border-bottom-dot">
                 <p>鑑賞当日はこの部分にQRコードが表示されます。</p>

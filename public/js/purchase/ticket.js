@@ -37,7 +37,7 @@ $(function () {
             }
         });
 
-        if (!flag && !$('input[name=mvtk]').is(':checked')) {
+        if (!flag) {
             alert('未選択');
         } else {
             // location.hrefにpostする

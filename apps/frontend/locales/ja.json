@@ -1,0 +1,78 @@
+{
+	"lang": "ja",
+	"purchase": {
+		"seat": {
+			"page_ttl": "座席選択",
+			"read": "ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>画面をタッチすると画面がズームしますので座席を選択してください。",
+            "next": "次へ",
+            "prev": "戻る"
+        },
+        "ticket": {
+			"page_ttl": "券種選択",
+			"read": "ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>画面をタッチすると画面がズームしますので座席を選択してください。",
+            "next": "次へ",
+            "prev": "戻る"
+        },
+        "input": {
+			"page_ttl": "購入者情報入力",
+			"read": "購入する方のお名前(ひらがな)とメールアドレスと電話番号とお支払い方法を入力し、オンライン規約をご確認頂き問題ないようでしたらオンライン規約に同意し次へボタンを押してください。",
+            "next": "次へ",
+            "prev": "戻る"
+        },
+        "confirm": {
+			"page_ttl": "購入者内容確認",
+			"read": "ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>画面をタッチすると画面がズームしますので座席を選択してください。",
+            "next": "購入完了",
+            "prev": "戻る"
+        },
+        "complete": {
+			"page_ttl": "購入完了",
+			"read": "ご購入ありがとうございました。<br>購入者情報入力画面で入力していただいたメールアドレス宛に購入完了メールを送信しました。ご鑑賞方法に関してはページ下部をご確認ください。",
+            "next": "",
+            "prev": "劇場TOPへ戻る"
+        }
+	},
+	"common": {
+        "purchase_number": "購入枚数",
+        "total_fee": "合計金額",
+		"theater": "劇場",
+		"screen": "スクリーン",
+        "appreciation_date": "鑑賞日時",
+        "seat": "座席",
+        "ticket": "券種",
+        "film": "作品情報",
+        "reservation": "予約情報",
+        "payment": "お支払情報",
+        "amount_spent": "ご利用金額",
+		"film_title": "作品名",
+        "required": "必須",
+        "name_kanji": "お名前（漢字）",
+        "last_name_kanji": "姓",
+        "first_name_kanji": "名",
+        "name_hira": "お名前（ひらがな）",
+        "last_name_hira": "せい",
+        "first_name_hira": "めい",
+        "mail": "メールアドレス",
+        "mail_confirm": "確認のためもう一度ご入力ください",
+        "tel": "電話番号",
+        "confirm": "確認",
+        "cardno": "カード番号",
+        "expire": "カード有効期限",
+        "year": "年",
+        "month": "月",
+        "holdername": "カード名義人",
+        "securitycode": "セキュリティーコード",
+        "placeholder": {
+            "last_name_kanji": "(例)しねま",
+            "first_name_kanji": "(例)たろう",
+            "last_name_hira": "(例)しねま",
+            "first_name_hira": "(例)たろう",
+            "mail": "(例)info@cinemasunshine.co.jp",
+            "mail_confirm": "(例)info@cinemasunshine.co.jp",
+            "tel": "(例)08012345678"
+        },
+        "note": {
+            "mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。"
+        }
+	}
+}

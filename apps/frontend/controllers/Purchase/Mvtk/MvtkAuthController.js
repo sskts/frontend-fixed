@@ -1,5 +1,5 @@
 "use strict";
-const MvtkController_1 = require('./MvtkController');
+const MvtkController_1 = require("./MvtkController");
 class MvtkAuthController extends MvtkController_1.default {
     /**
      * ムビチケ券認証ページ表示

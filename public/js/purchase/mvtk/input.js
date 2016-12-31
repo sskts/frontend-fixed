@@ -10,7 +10,7 @@ function addTicket() {
     if($('.ticket-list li').length > 2) {
         $('.add-button').remove();
     } else {
-        var dom = '<li>' +
+        var dom = '<li class="box bg-light-gray mb-small">' +
             '<dl>' +
                 '<dt>ムビチケ購入番号(10桁)</dt>' +
                 '<dd>' +

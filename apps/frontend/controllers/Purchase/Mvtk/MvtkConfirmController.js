@@ -1,5 +1,5 @@
 "use strict";
-const MvtkController_1 = require('./MvtkController');
+const MvtkController_1 = require("./MvtkController");
 class MvtkConfirmController extends MvtkController_1.default {
     /**
      * ムビチケ券適用確認ページ表示
@@ -13,7 +13,7 @@ class MvtkConfirmController extends MvtkController_1.default {
             this.res.locals['reservationNo'] = this.req.session['reservationNo'];
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
-            this.res.render('purchase/mvtk/this.res.render(', purchase / mvtk / confirm, ');');
+            this.res.render('purchase/mvtk/confirm');
         }
         else {
             return this.next(new Error('無効なアクセスです'));

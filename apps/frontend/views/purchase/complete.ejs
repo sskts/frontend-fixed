@@ -1,32 +1,29 @@
 <div class="purchase-complete">
-    <h1 class="page-ttl">購入完了</h1>
-    <p class="read">
-        ご購入ありがとうございました。<br>
-        購入者情報入力画面で入力していただいたメールアドレス宛に購入完了メールを送信しました。ご鑑賞方法に関してはページ下部をご確認ください。<br>
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.complete.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.complete.read') %></p>
 
     <ul class="box bg-light-gray info mb-medium">
         <li>
             <dl>
-                <dt>劇場 / スクリーン</dt>
-                <dd><%= performance.theater_name.ja %> / <%= performance.screen_name.ja %></dd>
+                <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
+                <dd><%= performance.theater_name[__('lang')] %> / <%= performance.screen_name[__('lang')] %></dd>
             </dl>
         </li>
         <li>
             <dl>
-                <dt>作品名</dt>
-                <dd><%= performance.film_name.ja %></dd>
+                <dt><%- __('common.film_title') %></dt>
+                <dd><%= performance.film_name[__('lang')] %></dd>
             </dl>
         </li>
         <li>
             <dl>
-                <dt>鑑賞日時</dt>
+                <dt><%- __('common.appreciation_date') %></dt>
                 <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
             </dl>
         </li>
         <li>
             <dl>
-                <dt>座席 / 券種</dt>
+                <dt><%- __('common.seat') %> / <%- __('common.ticket') %></dt>
                 <dd>
                     <ul>
                         <% for (let seat of seats) { %>
@@ -41,7 +38,7 @@
         </li>
         <li>
             <dl>
-                <dt>ご利用金額</dt>
+                <dt><%- __('common.amount_spent') %></dt>
                 <dd>￥5,100</dd>
             </dl>
         </li>
@@ -86,7 +83,7 @@
     </ul>
 
     <div class="button-area clearfix">
-        <div class="prev-link"><a href="<%- url('index') %>">劇場TOPへ戻る</a></div>
+        <div class="prev-link"><a href="<%- url('index') %>"><%- __('purchase.complete.prev') %></a></div>
     </div>
 
 </div>
