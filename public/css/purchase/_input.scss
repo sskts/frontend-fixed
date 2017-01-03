@@ -13,7 +13,8 @@
             margin-bottom: 0;
         }
     }
-    textarea {
+    .scroll {
+        overflow-y: scroll;
         resize: vertical;
         height: 300px;
         @media screen and (max-width: $mobile) {

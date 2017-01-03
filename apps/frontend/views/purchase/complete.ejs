@@ -44,38 +44,36 @@
         </li>
     </ul>
 
-    <h2 class="page-ttl">入場方法</h2>
-    <p class="read">
-        シネマサンシャインでは2通りの入場方法をお選びいただけます。<br>
-        以下をお読み頂きいずれかの方法でご入場ください。
-    </p>
+    <h2 class="page-ttl"><%- __('purchase.complete.entry') %></h2>
+    <p class="read"><%- __('purchase.complete.entry_read') %></p>
 
     <ul class="box bg-light-gray entry-method">
         <li>
             <dl>
-                <dt><span class="text-icon-dark-blue small-text">入場方法1</span><strong>劇場発券機で発券し入場</strong></dt>
+                <dt>
+                    <span class="text-icon-dark-blue small-text"><%- __('purchase.complete.entry') %>1</span>
+                    <strong><%- __('purchase.complete.entry_01_title') %></strong>
+                </dt>
                 <dd>
-                    <p>
-                        劇場に設置されている発券機にて発券頂きます。購入番号をお控えの上、劇場までお越し頂きご利用ください。
-                    </p>
+                    <p><%- __('purchase.complete.entry_01_read') %></p>
                     <div class="image"><img src="" alt=""></div>
                     <div class="button blue-button">
-                        <a href="<%- url('method.ticketing') %>" target="_blank">発券方法はこちら</a>
+                        <a href="<%- url('method.ticketing') %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
                     </div>
                 </dd>
             </dl>
         </li>
         <li>
             <dl>
-                <dt><span class="text-icon-dark-blue small-text">入場方法2</span><strong>入場用QRコードで入場</strong></dt>
+                <dt>
+                    <span class="text-icon-dark-blue small-text"><%- __('purchase.complete.entry') %>2</span>
+                    <strong><%- __('purchase.complete.entry_02_title') %></strong>
+                </dt>
                 <dd>
-                    <p>
-                        入場用QRコードは鑑賞日当日に発行されます。入場の際は劇場に設置されている発券機もしくはチケット照会ページより発券してください。<br>
-                        以下のQRコード発券情報確認ボタンをクリックしていただき発券に必要な情報を取得してください。
-                    </p>
+                    <p><%- __('purchase.complete.entry_02_read') %></p>
                     <div class="image"><img src="" alt=""></div>
                     <div class="button blue-button">
-                        <a href="<%- url('inquiry') %>" target="_blank">QRコード発券情報確認</a>
+                        <a href="<%- url('inquiry') %>" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
                     </div>
                 </dd>
             </dl>

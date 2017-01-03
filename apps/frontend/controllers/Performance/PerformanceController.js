@@ -9,7 +9,7 @@ class PerformanceController extends BaseController_1.default {
      */
     index() {
         let day = moment().format('YYYYMMDD');
-        day = '20161220';
+        day = '20170101';
         this.getPerformances(day, (performances) => {
             let result = [];
             let count = 0;

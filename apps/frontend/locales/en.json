@@ -1,3 +1,56 @@
 {
-    "test": "test2"
+	"lang": "en",
+	"purchase": {
+		"input": {
+			"page_ttl": "purchase.input.page_ttl",
+			"read": "purchase.input.read",
+			"agreement": "purchase.input.agreement",
+			"agreement_text": "purchase.input.agreement_text",
+			"next": "purchase.input.next",
+			"prev": "purchase.input.prev"
+		},
+		"seat": {
+			"page_ttl": "purchase.seat.page_ttl"
+		},
+		"ticket": {
+			"page_ttl": "purchase.ticket.page_ttl"
+		},
+		"confirm": {
+			"page_ttl": "purchase.confirm.page_ttl"
+		},
+		"complete": {
+			"page_ttl": "purchase.complete.page_ttl"
+		}
+	},
+	"common": {
+		"name_kanji": "common.name_kanji",
+		"required": "common.required",
+		"last_name_kanji": "common.last_name_kanji",
+		"placeholder": {
+			"last_name_kanji": "common.placeholder.last_name_kanji",
+			"first_name_kanji": "common.placeholder.first_name_kanji",
+			"last_name_hira": "common.placeholder.last_name_hira",
+			"first_name_hira": "common.placeholder.first_name_hira",
+			"mail": "common.placeholder.mail",
+			"mail_confirm": "common.placeholder.mail_confirm",
+			"tel": "common.placeholder.tel"
+		},
+		"name_hira": "common.name_hira",
+		"last_name_hira": "common.last_name_hira",
+		"first_name_hira": "common.first_name_hira",
+		"mail": "common.mail",
+		"mail_confirm": "common.mail_confirm",
+		"note": {
+			"mail": "common.note.mail"
+		},
+		"tel": "common.tel",
+		"payment": "common.payment",
+		"confirm": "common.confirm",
+		"cardno": "common.cardno",
+		"expire": "common.expire",
+		"year": "common.year",
+		"month": "common.month",
+		"holdername": "common.holdername",
+		"securitycode": "common.securitycode"
+	}
 }

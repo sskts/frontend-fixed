@@ -763,13 +763,14 @@ a {
   margin-bottom: 0;
 }
 
-.purchase .purchase-input textarea {
+.purchase .purchase-input .scroll {
+  overflow-y: scroll;
   resize: vertical;
   height: 300px;
 }
 
 @media screen and (max-width: 768px) {
-  .purchase .purchase-input textarea {
+  .purchase .purchase-input .scroll {
     height: 100px;
   }
 }

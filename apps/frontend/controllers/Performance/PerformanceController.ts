@@ -35,7 +35,7 @@ export default class PerformanceController extends BaseController {
      */
     public index(): void {
         let day: string = moment().format('YYYYMMDD');
-        day = '20161220';
+        day = '20170101';
         this.getPerformances(day, (performances: performance[]) => {
             let result: any = [];
             let count = 0;
