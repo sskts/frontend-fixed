@@ -17,7 +17,7 @@
                     <div class="validation-text"><%= error.last_name_kanji[0] %></div>
                     <% } %>
                 </dd>
-                <dt><%- __('common') %></dt>
+                <dt><%- __('common.first_name_kanji') %></dt>
                 <dd>
                     <input type="text" name="first_name_kanji" placeholder="<%- __('common.placeholder.first_name_kanji') %>" value="<%= (info) ? info.first_name_kanji : '' %>">
                     <% if (error && error.first_name_kanji) { %>
