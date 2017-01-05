@@ -9,11 +9,11 @@
                 <li>
                     <dl class="d-table">
                         <dt class="d-td seat-code"><%= seat.code %></dt>
-                        <dd class="d-td" data-seat-type="<%= seat.type %>">
-                            <% if (!seat.type) { %>
+                        <dd class="d-td" data-ticket="<%= (seat.ticket) ? JSON.stringify(seat.ticket) : '' %>">
+                            <% if (!seat.ticket) { %>
                             <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
                             <% } else { %>
-                            <div class="ghost-button blue-button"><a href="#" data-modal="ticket-type"><%= SALES_TYPE[seat.type] %></a></div>
+                            <div class="ghost-button blue-button"><a href="#" data-modal="ticket-type"><%= seat.ticket.ticket_name_kana %></a></div>
                             <% } %>
                         </dd>
                     </dl>
@@ -22,13 +22,14 @@
             
         </ul>
 
-        <div class="mvtk-button mb-medium">
-            <label><input type="checkbox" name="mvtk" value="true">ムビチケを使う</label>
+        <div class="mvtk-button mb-medium ghost-button  yellow-button">
+            <input type="checkbox" name="mvtk" value="true" id="mvtk">
+            <label for="mvtk"><%- __('purchase.ticket.mvtk') %></label>
         </div>
 
         <div class="total box bg-light-gray">
             <div class="length mb-x-small"><%- __('common.purchase_number') %> <strong class="red-text"><%= seats.length %></strong>枚</div>
-            <div class="price"><%- __('common.total_fee') %> <strong class="red-text">5,100</strong>円</div>
+            <div class="price"><%- __('common.total_fee') %> <strong class="red-text">0</strong>円</div>
         </div>
     
     
@@ -36,7 +37,7 @@
             <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
             <div class="prev-link"><a href="<%- url('purchase.seat') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
-        <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
+        
     </form>
 </div>
 

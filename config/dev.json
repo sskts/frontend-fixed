@@ -1,5 +1,5 @@
 {
-    "endpoint": "https://devsasakiticketapiprototypewebapp.azurewebsites.net",
+    "mp_api_endpoint": "https://devsasakiticketapiprototypewebapp.azurewebsites.net",
     
     "redis_host": "devsasakiticketredis.redis.cache.windows.net",
     "redis_port": 6380,
@@ -11,6 +11,9 @@
     "sendgrid_passwords": "",
 
     "gmo_module_url": "https://pt01.mul-pay.jp/ext/js/token.js",
-    "gmo_shop_id": "tshop00026096"
+    "gmo_shop_id": "tshop00026096",
+
+    "coa_api_endpoint": "http://coacinema.aa0.netvolante.jp",
+    "coa_api_refresh_token": "eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkX2F0IjoxNDc5MjYwODQ4LCJhdXRoX2lkIjoiMzMxNSJ9.jx-w7D3YLP7UbY4mzJYC9xr368FiKWcpR2_L9mZfehQ"
     
 }

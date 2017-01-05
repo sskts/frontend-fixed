@@ -1,15 +1,14 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
-const request = require("request");
-const config = require("config");
-const moment = require("moment");
+const BaseController_1 = require('../BaseController');
+const request = require('request');
+const config = require('config');
+const moment = require('moment');
 class PerformanceController extends BaseController_1.default {
     /**
      * 購入者情報入力完了
      */
     index() {
         let day = moment().format('YYYYMMDD');
-        day = '20170101';
         this.getPerformances(day, (performances) => {
             let result = [];
             let count = 0;
@@ -51,7 +50,7 @@ class PerformanceController extends BaseController_1.default {
      * パフォーマンスリスト取得
      */
     getPerformances(day, cb) {
-        let endpoint = config.get('endpoint');
+        let endpoint = config.get('mp_api_endpoint');
         let method = 'performances';
         let options = {
             url: `${endpoint}/${method}/?day=${day}`,

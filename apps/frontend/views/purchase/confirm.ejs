@@ -31,7 +31,7 @@
                     <dd>
                         <ul>
                         <% for (let seat of seats) { %>
-                        <li><%= seat.code %> <%= seat.type %></li> 
+                        <li><%= seat.code %> <%= seat.ticket.ticket_name_kana %></li> 
                         <% } %>
                         </ul>
                     </dd>
@@ -86,7 +86,7 @@
             <div class="button next-button blue-button"><button type="submit"><%- __('purchase.confirm.next') %></button></div>
             <div class="prev-link"><a href="<%- url('purchase.input') %>"><%- __('purchase.confirm.prev') %></a></div>
         </div>
-        <input type="hidden" name="reservationNo" value="<%= reservationNo %>">
+        
     </form>
 </div>
 

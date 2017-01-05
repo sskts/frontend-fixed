@@ -1,18 +1,15 @@
 "use strict";
-const PurchaseController_1 = require("./PurchaseController");
+const PurchaseController_1 = require('./PurchaseController');
 class ConfirmController extends PurchaseController_1.default {
     /**
      * 購入者内容確認
      */
     index() {
-        if (this.checkSession('reservationNo')
-            && this.checkSession('gmo_token_object')
+        if (this.checkSession('gmo_token_object')
             && this.checkSession('purchaseInfo')
             && this.checkSession('performance')
             && this.checkSession('purchaseSeats')) {
-            this.logger.debug('購入者情報入力表示', this.req.session['reservationNo']);
             //購入者内容確認表示
-            this.res.locals['reservationNo'] = this.req.session['reservationNo'];
             this.res.locals['gmo_token_object'] = this.req.session['gmo_token_object'];
             this.res.locals['info'] = this.req.session['purchaseInfo'];
             this.res.locals['performance'] = this.req.session['performance'];
@@ -32,10 +29,8 @@ class ConfirmController extends PurchaseController_1.default {
         let token = this.req.params.token;
         let toBeExpiredAt = this.req.params.toBeExpiredAt;
         let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
-        let reservationNo = this.req.params.reservationNo;
         this.logger.debug('仮購入', {
-            token: token,
-            reservationNo: reservationNo
+            token: token
         });
         this.deleteSession();
         let purchaseNo = '1234567889';

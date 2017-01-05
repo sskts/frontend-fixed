@@ -364,40 +364,42 @@ a {
   border-radius: 5px;
 }
 
-.button a, .button button {
+.button a, .button button, .button label {
   line-height: 1;
   display: block;
   padding: 15px 0;
   text-align: center;
   width: 100%;
   border-radius: 5px;
+  position: relative;
+  cursor: pointer;
 }
 
-.button a:hover, .button button:hover {
-  transition: opacity 0.5s;
+.button a:hover, .button button:hover, .button label:hover {
+  transition: opacity 0.25s;
   opacity: 0.75;
 }
 
-.button.blue-button a, .button.blue-button button {
+.button.blue-button a, .button.blue-button button, .button.blue-button label {
   background-color: #019fe8;
   color: #FFF;
 }
 
-.button.dark-blue-button a, .button.dark-blue-button button {
+.button.dark-blue-button a, .button.dark-blue-button button, .button.dark-blue-button label {
   background-color: #036db7;
   color: #FFF;
 }
 
-.button.gray-button a, .button.gray-button button {
+.button.gray-button a, .button.gray-button button, .button.gray-button label {
   background-color: #595758;
   color: #FFF;
 }
 
-.button.white-button a, .button.white-button button {
+.button.white-button a, .button.white-button button, .button.white-button label {
   background-color: #FFF;
 }
 
-.ghost-button a, .ghost-button button {
+.ghost-button a, .ghost-button button, .ghost-button label {
   line-height: 1;
   display: block;
   padding: 15px 0;
@@ -406,26 +408,33 @@ a {
   border-radius: 5px;
   border: 1px solid #FFF;
   color: #FFF;
+  position: relative;
+  cursor: pointer;
 }
 
-.ghost-button a:hover, .ghost-button button:hover {
-  transition: opacity 0.5s;
+.ghost-button a:hover, .ghost-button button:hover, .ghost-button label:hover {
+  transition: opacity 0.25s;
   opacity: 0.75;
 }
 
-.ghost-button.blue-button a, .ghost-button.blue-button button {
+.ghost-button.blue-button a, .ghost-button.blue-button button, .ghost-button.blue-button label {
   border-color: #019fe8;
   color: #019fe8;
 }
 
-.ghost-button.dark-blue-button a, .ghost-button.dark-blue-button button {
+.ghost-button.dark-blue-button a, .ghost-button.dark-blue-button button, .ghost-button.dark-blue-button label {
   border-color: #036db7;
   color: #036db7;
 }
 
-.ghost-button.gray-button a, .ghost-button.gray-button button {
+.ghost-button.gray-button a, .ghost-button.gray-button button, .ghost-button.gray-button label {
   border-color: #595758;
   color: #595758;
+}
+
+.ghost-button.yellow-button a, .ghost-button.yellow-button button, .ghost-button.yellow-button label {
+  border-color: #C4C43A;
+  color: #333;
 }
 
 .button-area {
@@ -729,6 +738,45 @@ a {
   .purchase .purchase-ticket .seats li dd {
     width: 150px;
   }
+}
+
+.purchase .purchase-ticket .mvtk-button input {
+  width: 0;
+  height: 0;
+}
+
+.purchase .purchase-ticket .mvtk-button label:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  margin-top: -10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.purchase .purchase-ticket .mvtk-button label:after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  margin-top: -10px;
+  background-color: #019fe8;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.purchase .purchase-ticket .mvtk-button input:checked + label:after {
+  opacity: 1;
+}
+
+.purchase .purchase-ticket .mvtk-button img {
+  width: 91px;
+  vertical-align: text-bottom;
 }
 
 .purchase .modal[data-modal="ticket-type"] li dd {

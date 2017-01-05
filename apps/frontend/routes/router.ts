@@ -55,6 +55,10 @@ export default (app: any) => {
         new SeatController(req, res, next).select();
     });
 
+    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new SeatController(req, res, next).getScreenStateReserve();
+    });
+
     //券種選択
     app.get('/purchase/ticket', 'purchase.ticket', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new TicketController(req, res, next).index();

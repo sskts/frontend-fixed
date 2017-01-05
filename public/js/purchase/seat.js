@@ -1,5 +1,7 @@
+var screenSeatStatusesMap;
 $(function () {
-    var screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap($('.screen'));
+    getScreenStateReserve();
+    screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap($('.screen'));
     /**
      * 座席クリックイベント
      */
@@ -8,7 +10,7 @@ $(function () {
         if (screenSeatStatusesMap.isDeviceType('sp') && !screenSeatStatusesMap.isZoomState()) {
             return;
         }
-        var limit = Number($('.screen-limit').attr('data-limit'));
+        var limit = Number($('.screen-cover').attr('data-limit'));
         // 座席数上限チェック
         if (!$(this).hasClass('active')) {
             if ($('.screen .seat a.active').length > limit - 1) {
@@ -19,7 +21,7 @@ $(function () {
 
         $(this).toggleClass('active');
     });
-    
+
     /**
      * 次へクリックイベント
      */
@@ -41,3 +43,39 @@ $(function () {
         }
     });
 });
+
+
+/**
+ * スクリーン状態取得
+ */
+function getScreenStateReserve() {
+    var target = $('.screen-cover');
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/getScreenStateReserve',
+        type: 'POST',
+        timeout: 100000,
+        data: {
+            /** 施設コード */
+            theater_code: target.attr('data-theater'),
+            /** 上映日 */
+            date_jouei: target.attr('data-day'),
+            /** 作品コード */
+            title_code: target.attr('data-film'),
+            /** 作品枝番 */
+            title_branch_num: target.attr('data-film-branch-code'),
+            /** 上映時刻 */
+            time_begin: target.attr('data-time-start'),
+        },
+        beforeSend: function () {}
+    }).done(function (res) {
+        console.log(res)
+        if (res.err) {
+            alert('スケジュール取得失敗');
+        } else {
+            console.log(res.result)
+        }
+    }).fail(function (jqxhr, textStatus, error) {
+        alert('スケジュール取得失敗');
+    }).always(function () {});
+}

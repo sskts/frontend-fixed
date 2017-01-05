@@ -35,7 +35,6 @@ export default class PerformanceController extends BaseController {
      */
     public index(): void {
         let day: string = moment().format('YYYYMMDD');
-        day = '20170101';
         this.getPerformances(day, (performances: performance[]) => {
             let result: any = [];
             let count = 0;
@@ -76,7 +75,7 @@ export default class PerformanceController extends BaseController {
      * パフォーマンスリスト取得
      */
     private getPerformances(day: string, cb: Function): void {
-        let endpoint: string = config.get<string>('endpoint');
+        let endpoint: string = config.get<string>('mp_api_endpoint');
         let method: string = 'performances';
 
         let options: request.Options = {

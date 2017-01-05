@@ -1,21 +1,21 @@
 $(function () {
+    totalPrice();
     var modal = new SASAKI.Modal();
     /**
          * 券種クリックイベント
          */
     $(document).on('click', '.modal[data-modal="ticket-type"] a', function (event) {
         event.preventDefault();
-        var ticketType = $(this).attr('data-ticket-type');
-        var ticketName = $(this).parent().parent().parent().find('dt').text();
-        var ticketPrice = $(this).attr('data-ticket-price');
+        var ticket = $(this).attr('data-ticket');
         var triggerIndex = $('.modal[data-modal="ticket-type"]').attr('data-modal-trigger-index');
         var target = modal.getTrigger().parent().parent().parent();
         target.find('.button')
             .removeClass('button')
-            .addClass('ghost-button')
-        target.find('dd a').text(ticketName);
-        target.find('dd').attr('data-seat-type', ticketType);
+            .addClass('ghost-button');
+        target.find('dd').attr('data-ticket', ticket)
+        target.find('dd a').text(JSON.parse(ticket).ticket_name_kana);
         modal.close();
+        totalPrice();
     });
 
     /**
@@ -27,12 +27,12 @@ $(function () {
         var flag = true;
         $('.seats li').each(function (index, elm) {
             var code = $(elm).find('dt').text();
-            var type = $(elm).find('dd').attr('data-seat-type');
+            var ticket = ($(elm).find('dd').attr('data-ticket')) ? JSON.parse($(elm).find('dd').attr('data-ticket')) : null;
             result.push({
                 code: code,
-                type: type
+                ticket: ticket
             });
-            if (!code || !type) {
+            if (!code || !ticket) {
                 flag = false;
             }
         });
@@ -48,3 +48,14 @@ $(function () {
         }
     });
 })
+
+function totalPrice() {
+    var price = 0;
+    $('.seats li').each(function (index, elm) {
+        if ($(elm).find('dd').attr('data-ticket')) {
+            var data = JSON.parse($(elm).find('dd').attr('data-ticket'));
+            price += data.sale_price;
+        }
+    });
+    $('.total .price strong').text(price);
+}

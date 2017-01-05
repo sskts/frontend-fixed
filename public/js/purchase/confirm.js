@@ -10,7 +10,6 @@ $(function () {
             type: 'POST',
             timeout: 100000,
             data: {
-                reservationNo: $('input[reservationNo]').val(),
                 token: $('input[token]').val(),
                 toBeExpiredAt: $('input[toBeExpiredAt]').val(),
                 isSecurityCodeSet: $('input[isSecurityCodeSet]').val(),

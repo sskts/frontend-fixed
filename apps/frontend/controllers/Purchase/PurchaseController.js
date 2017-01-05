@@ -1,11 +1,10 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
+const BaseController_1 = require('../BaseController');
 class PurchaseController extends BaseController_1.default {
     /**
      * セッション削除
      */
     deleteSession() {
-        delete this.req.session['reservationNo'];
         delete this.req.session['gmo_token_object'];
         delete this.req.session['purchaseInfo'];
         delete this.req.session['performance'];

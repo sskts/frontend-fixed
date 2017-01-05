@@ -7,7 +7,7 @@ import benchmarks from './middlewares/benchmarks';
 import session from './middlewares/session';
 import config = require('config');
 import router from './routes/router';
-import language from './middlewares/language';
+import locales from './middlewares/locales';
 
 let app: express.Application = express();
 
@@ -31,11 +31,11 @@ if (process.env.NODE_ENV === 'dev') {
 }
 
 //言語
-app.use(language.init);
+app.use(locales.init);
 // sessionで切り替え
 app.use((req, res, next)=> {
     if (req.session['locale']) {
-        language.setLocale(req, req.session['locale']);
+        locales.setLocale(req, req.session['locale']);
     }
     next();
 });

@@ -285,45 +285,47 @@ a {
 }
 
 .button {
-    a, button {
+    a, button, label {
         line-height: 1;
         display: block;
         padding: 15px 0;
         text-align: center;
         width: 100%;
         border-radius: 5px;
+        position: relative;
+        cursor: pointer;
         &:hover {
-            transition: opacity 0.5s;
+            transition: opacity 0.25s;
             opacity: 0.75;
         }
     }
     &.blue-button {
-        a, button {
+        a, button, label {
             background-color: #019fe8;
             color: #FFF;
         }
     }
     &.dark-blue-button {
-        a, button {
+        a, button, label {
             background-color: #036db7;
             color: #FFF;
         }
     }
     &.gray-button {
-        a, button {
+        a, button, label {
             background-color: #595758;
             color: #FFF;
         }
     }
     &.white-button {
-        a, button {
+        a, button, label {
             background-color: #FFF;
         }
     }
 }
 
 .ghost-button {
-    a, button {
+    a, button, label {
         line-height: 1;
         display: block;
         padding: 15px 0;
@@ -332,27 +334,35 @@ a {
         border-radius: 5px;
         border: 1px solid #FFF;
         color: #FFF;
+        position: relative;
+        cursor: pointer;
         &:hover {
-            transition: opacity 0.5s;
+            transition: opacity 0.25s;
             opacity: 0.75;
         }
     }
     &.blue-button {
-        a, button {
+        a, button, label {
             border-color: #019fe8;
             color: #019fe8;
         }
     }
     &.dark-blue-button {
-        a, button {
+        a, button, label {
             border-color: #036db7;
             color: #036db7;
         }
     }
     &.gray-button {
-        a, button {
+        a, button, label {
             border-color: #595758;
             color: #595758;
+        }
+    }
+    &.yellow-button {
+        a, button, label {
+            border-color: #C4C43A;
+            color: #333;
         }
     }
 }

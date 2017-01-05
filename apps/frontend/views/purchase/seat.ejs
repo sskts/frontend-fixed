@@ -5,11 +5,18 @@
 <div class="purchase-seat">
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
-    
+
     <div>
-        <div class="screen-limit" style="display: none;" data-limit="5"></div>
-        <% //partial('../screens/' + performance.theater + performance.screen) %>
-        <%- partial('../screens/00101') %>
+        <div class="screen-cover" 
+        data-limit="5" 
+        data-theater="<%= performance.theater %>" 
+        data-day="<%= performance.day %>" 
+        data-film="<%= performance.film %>"
+        data-film-branch-code="<%= performance.film_branch_code %>"
+        data-time-start="<%= performance.time_start %>">
+            <% //partial('../screens/' + performance.theater + performance.screen) %>
+            <%- partial('../screens/00101') %>
+        </div>
 
         <div class="film-info">
             <p>現在、選択されているチケットは下記のとおりです。</p>
