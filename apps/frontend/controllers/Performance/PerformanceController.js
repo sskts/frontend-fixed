@@ -4,9 +4,6 @@ const request = require('request');
 const config = require('config');
 const moment = require('moment');
 class PerformanceController extends BaseController_1.default {
-    /**
-     * 購入者情報入力完了
-     */
     index() {
         let day = moment().format('YYYYMMDD');
         this.getPerformances(day, (performances) => {
@@ -46,9 +43,6 @@ class PerformanceController extends BaseController_1.default {
             this.res.render('performance');
         });
     }
-    /**
-     * パフォーマンスリスト取得
-     */
     getPerformances(day, cb) {
         let endpoint = config.get('mp_api_endpoint');
         let method = 'performances';
@@ -61,7 +55,7 @@ class PerformanceController extends BaseController_1.default {
             if (error) {
                 return this.next(new Error('サーバーエラー'));
             }
-            if (!body.success) {
+            if (!response || !body.success) {
                 return this.next(new Error('サーバーエラー'));
             }
             cb(body.performances);

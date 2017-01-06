@@ -35,7 +35,7 @@
     
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="prev-link"><a href="<%- url('purchase.seat') %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="prev-link"><a href="<%- url('purchase.seat') %>?id=<%= performance._id %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         
     </form>

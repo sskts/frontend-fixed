@@ -2,6 +2,8 @@ import express = require('express');
 import log4js = require('log4js');
 
 export default (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    //TODO
+    res
     if (process.env.NODE_ENV === 'dev') {
         let startMemory = process.memoryUsage();
         let startTime = process.hrtime();

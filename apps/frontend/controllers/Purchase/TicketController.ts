@@ -1,32 +1,33 @@
 import PurchaseController from './PurchaseController';
 import TicketForm from '../../forms/Purchase/TicketForm';
-import * as COA from "../../../../lib/coa/coa";
+// import * as COA from "../../../../lib/coa/coa";
 
 export default class TicketTypeSelectController extends PurchaseController {
     /**
      * 券種選択
      */
     public index(): void {
-        if (this.checkSession('performance')
-            && this.checkSession('purchaseSeats')) {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (this.req.session['performance']
+            && this.req.session['purchaseSeats']) {
             console.log(this.req.session['purchaseSeats']);
             //コアAPI券種取得
-            let performance = this.req.session['performance'];
-            let args: COA.salesTicketInterface.Args = {
-                /** 施設コード */
-                theater_code: performance.theater,
-                /** 上映日 */
-                date_jouei: performance.day,
-                /** 作品コード */
-                title_code: performance.film,
-                /** 作品枝番 */
-                title_branch_num: performance.film_branch_code,
-                /** 上映時刻 */
-                time_begin: performance.time_start,
-            };
-            COA.salesTicketInterface.call(args, (err: Error, result: COA.salesTicketInterface.Result) => {
+            // let performance = this.req.session['performance'];
+            // let args: COA.salesTicketInterface.Args = {
+            //     /** 施設コード */
+            //     theater_code: performance.theater,
+            //     /** 上映日 */
+            //     date_jouei: performance.day,
+            //     /** 作品コード */
+            //     title_code: performance.film,
+            //     /** 作品枝番 */
+            //     title_branch_num: performance.film_branch_code,
+            //     /** 上映時刻 */
+            //     time_begin: performance.time_start,
+            // };
+            // COA.salesTicketInterface.call(args, (err, result) => {
 
-            });
+            // });
 
             
 
@@ -74,6 +75,9 @@ export default class TicketTypeSelectController extends PurchaseController {
                     ticket_note: 'チケット備考(注意事項等)',
                 }
             ]
+            
+
+            this.res.locals['performance'] = this.req.session['performance'];
             this.res.locals['seats'] = this.req.session['purchaseSeats'];
             this.res.locals['step'] = 1;
             //券種選択表示
@@ -88,8 +92,10 @@ export default class TicketTypeSelectController extends PurchaseController {
      */
     public select(): void {
         //バリデーション
-        console.log(this.req.body.seat_codes)
+        
         TicketForm(this.req, this.res, () => {
+            if (!this.req.session) return this.next(new Error('session is undefined'));
+            if (!this.router) return this.next(new Error('router is undefined'));
             let seats: {
                 code: string,
                 tikcet: any

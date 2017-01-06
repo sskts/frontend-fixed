@@ -7,8 +7,9 @@ export default class MvtkConfirmController extends MvtkController {
      * ムビチケ券適用確認ページ表示
      */
     public index() {
-        if (this.checkSession('performance')
-            && this.checkSession('purchaseSeats')) {
+        if (this.req.session
+        && this.req.session['performance']
+        && this.req.session['purchaseSeats']) {
 
             //購入者情報入力表示
             this.res.locals['error'] = null;
@@ -25,6 +26,7 @@ export default class MvtkConfirmController extends MvtkController {
      * 購入者情報入力へ
      */
     public submit() {
+        if (!this.router) return this.next(new Error('router is undefined'));
         this.res.redirect(this.router.build('purchase.input', {}));
     }
 

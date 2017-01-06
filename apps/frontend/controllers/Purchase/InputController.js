@@ -3,13 +3,11 @@ const config = require('config');
 const PurchaseController_1 = require('./PurchaseController');
 const InputForm_1 = require('../../forms/Purchase/InputForm');
 class EnterPurchaseController extends PurchaseController_1.default {
-    /**
-     * 購入者情報入力
-     */
     index() {
-        if (this.checkSession('performance')
-            && this.checkSession('purchaseSeats')) {
-            //購入者情報入力表示
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
+        if (this.req.session['performance']
+            && this.req.session['purchaseSeats']) {
             this.res.locals['error'] = null;
             this.res.locals['info'] = null;
             this.res.locals['moment'] = require('moment');
@@ -33,16 +31,13 @@ class EnterPurchaseController extends PurchaseController_1.default {
             return this.next(new Error('無効なアクセスです'));
         }
     }
-    /**
-     * 購入者情報入力完了
-     */
     submit() {
-        //モーションAPI
-        //バリデーション
         InputForm_1.default(this.req, this.res, () => {
+            if (!this.req.session)
+                return this.next(new Error('session is undefined'));
             if (this.req.form.isValid) {
-                //モーションAPIで仮決済（GMOトークンと予約番号）
-                //入力情報をセッションへ
+                if (!this.router)
+                    return this.next(new Error('router is undefined'));
                 this.req.session['purchaseInfo'] = {
                     last_name_kanji: this.req.body.last_name_kanji,
                     first_name_kanji: this.req.body.first_name_kanji,
@@ -51,13 +46,11 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     mail: this.req.body.mail,
                     tel: this.req.body.tel,
                 };
-                //決済情報をセッションへ
                 this.req.session['gmo_token_object'] = JSON.parse(this.req.body.gmo_token_object);
                 this.logger.debug('購入者情報入力完了', {
                     info: this.req.session['purchaseInfo'],
                     gmo: this.req.session['gmo_token_object']
                 });
-                //購入者内容確認へ
                 this.res.redirect(this.router.build('purchase.confirm', {}));
             }
             else {

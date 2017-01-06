@@ -1,15 +1,13 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
 class ConfirmController extends PurchaseController_1.default {
-    /**
-     * 購入者内容確認
-     */
     index() {
-        if (this.checkSession('gmo_token_object')
-            && this.checkSession('purchaseInfo')
-            && this.checkSession('performance')
-            && this.checkSession('purchaseSeats')) {
-            //購入者内容確認表示
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
+        if (this.req.session['gmo_token_object']
+            && this.req.session['purchaseInfo']
+            && this.req.session['performance']
+            && this.req.session['purchaseSeats']) {
             this.res.locals['gmo_token_object'] = this.req.session['gmo_token_object'];
             this.res.locals['info'] = this.req.session['purchaseInfo'];
             this.res.locals['performance'] = this.req.session['performance'];
@@ -21,14 +19,10 @@ class ConfirmController extends PurchaseController_1.default {
             return this.next(new Error('無効なアクセスです'));
         }
     }
-    /**
-     * 購入確定
-     */
     purchase() {
-        //モーションAPI仮購入
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
         let token = this.req.params.token;
-        let toBeExpiredAt = this.req.params.toBeExpiredAt;
-        let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
         this.logger.debug('仮購入', {
             token: token
         });
@@ -71,7 +65,6 @@ class ConfirmController extends PurchaseController_1.default {
                 }
             ]
         };
-        //購入完了情報を返す
         this.res.json({
             purchaseNo: purchaseNo
         });

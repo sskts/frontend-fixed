@@ -7,8 +7,9 @@ export default class EnterPurchaseController extends PurchaseController {
      * 購入者情報入力
      */
     public index(): void {
-        if (this.checkSession('performance')
-        && this.checkSession('purchaseSeats')) {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (this.req.session['performance']
+        && this.req.session['purchaseSeats']) {
 
         //購入者情報入力表示
         this.res.locals['error'] = null;
@@ -40,11 +41,14 @@ export default class EnterPurchaseController extends PurchaseController {
      * 購入者情報入力完了
      */
     public submit(): void {
+        
         //モーションAPI
 
         //バリデーション
         InputForm(this.req, this.res, () => {
+            if (!this.req.session) return this.next(new Error('session is undefined'));
             if (this.req.form.isValid) {
+                if (!this.router) return this.next(new Error('router is undefined'));
                 //モーションAPIで仮決済（GMOトークンと予約番号）
 
 
@@ -74,6 +78,8 @@ export default class EnterPurchaseController extends PurchaseController {
                 this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
                 this.res.render('purchase/enterPurchase');
             }
+            
+            
         });
     }
 

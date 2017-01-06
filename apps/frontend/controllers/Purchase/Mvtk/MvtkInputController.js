@@ -1,13 +1,10 @@
 "use strict";
 const MvtkController_1 = require('./MvtkController');
 class MvtkInputController extends MvtkController_1.default {
-    /**
-     * ムビチケ券入力ページ表示
-     */
     index() {
-        if (this.checkSession('performance')
-            && this.checkSession('purchaseSeats')) {
-            //購入者情報入力表示
+        if (this.req.session
+            && this.req.session['performance']
+            && this.req.session['purchaseSeats']) {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
             this.res.render('purchase/mvtk/input');
@@ -16,10 +13,9 @@ class MvtkInputController extends MvtkController_1.default {
             return this.next(new Error('無効なアクセスです'));
         }
     }
-    /**
-     * 認証
-     */
     auth() {
+        if (!this.router)
+            return this.next(new Error('router is undefined'));
         this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 }

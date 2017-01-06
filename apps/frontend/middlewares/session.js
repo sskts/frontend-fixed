@@ -2,7 +2,6 @@
 const session = require('express-session');
 const config = require('config');
 const connectRedis = require('connect-redis');
-// import redis = require('redis');
 const redis = require('redis');
 let redisClient = redis.createClient(config.get('redis_port'), config.get('redis_host'), {
     password: config.get('redis_key'),
@@ -22,7 +21,6 @@ exports.default = session({
         client: redisClient
     }),
     cookie: {
-        // secure: true,
         httpOnly: true,
         maxAge: 60 * 60 * 1000
     }

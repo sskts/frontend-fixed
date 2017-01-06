@@ -3,29 +3,7 @@ import request = require('request');
 import config = require('config');
 import moment = require('moment');
 
-interface name {
-    'en': string,
-    'ja': string
-}
 
-interface performance {
-    '__v': number,
-    '_id': string,
-    'created_at': Date,
-    'day': string,
-    'film': {
-        '_id': string,
-        'minutes': number,
-        'name': name
-    },
-    'screen': string,
-    'screen_name': name,
-    'theater': string,
-    'theater_name': name,
-    'time_end': string,
-    'time_start': string,
-    'updated_at': Date
-}
 
 export default class PerformanceController extends BaseController {
 
@@ -35,7 +13,7 @@ export default class PerformanceController extends BaseController {
      */
     public index(): void {
         let day: string = moment().format('YYYYMMDD');
-        this.getPerformances(day, (performances: performance[]) => {
+        this.getPerformances(day, (performances: any[]) => {
             let result: any = [];
             let count = 0;
             for (let performance of performances) {
@@ -88,7 +66,7 @@ export default class PerformanceController extends BaseController {
             if (error) {
                 return this.next(new Error('サーバーエラー'));
             }
-            if (!body.success) {
+            if (!response || !body.success) {
                 return this.next(new Error('サーバーエラー'));
             }
             cb(body.performances);

@@ -1,6 +1,7 @@
 import express = require('express');
 import log4js = require('log4js');
 import moment = require('moment');
+import locales from '../middlewares/locales';
 /**
  * ベースコントローラー
  * 
@@ -11,7 +12,7 @@ export default class BaseController {
     protected req: express.Request;
     protected res: express.Response;
     protected next: express.NextFunction;
-    protected router: Express.NamedRoutes;
+    protected router: Express.NamedRoutes | undefined;
     protected logger: any;
 
     constructor(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -21,6 +22,9 @@ export default class BaseController {
 
         this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
+        if (this.req.session && this.req.session['locale']) {
+            locales.setLocale(this.req, this.req.session['locale']);
+        }
         this.setLocals();
     }
 
@@ -56,15 +60,7 @@ export default class BaseController {
         return string.replace(/[&'`"<>]/g, change);
     }
 
-    /**
-     * セッションチェック
-     */
-    protected checkSession(name: string): boolean {
-        if (!this.req.session[name]) {
-            return false;
-        }
-        return true;
-    }
+    
 }
 
 

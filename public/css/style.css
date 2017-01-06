@@ -869,6 +869,7 @@ a {
 }
 
 .screen {
+  display: none;
   position: relative;
 }
 

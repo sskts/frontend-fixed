@@ -1,7 +1,6 @@
 import express = require('express');
 import NamedRoutes = require('named-routes');
-import config = require('config');
-
+import BaseController from '../controllers/BaseController';
 import PerformanceController from '..//controllers/Performance/PerformanceController';
 
 import SeatController from '../controllers/Purchase/SeatController';
@@ -29,12 +28,13 @@ import ErrorController from '../controllers/Error/ErrorController';
  * リクエスト毎に、req,res,nextでコントローラーインスタンスを生成して、URLに応じたメソッドを実行する、という考え方
  * 
  */
-export default (app: any) => {
+export default (app: express.Application | any) => {
     let router: Express.NamedRoutes = new NamedRoutes();
     router.extendExpress(app);
     router.registerAppHelpers(app);
 
     app.get('/', 'index', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new BaseController(req, res, next);
         res.redirect(router.build('performance', {}));
     });
 
@@ -43,6 +43,7 @@ export default (app: any) => {
     });
 
     app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new BaseController(req, res, next);
         res.redirect(router.build('performance', {}));
     });
 
@@ -145,6 +146,7 @@ export default (app: any) => {
     
 
     app.get('/500', '500', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new BaseController(req, res, next);
         process.exit(1);
     });
 

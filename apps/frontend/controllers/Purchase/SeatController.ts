@@ -14,17 +14,19 @@ export default class SeatSelectController extends PurchaseController {
         if (this.req.query && this.req.query['id']) {
             //パフォーマンス取得
             this.getPerformance(this.req.query['id'], (performance: any) => {
+                if (!this.req.session) return this.next(new Error('session is undefined'));
                 console.log(performance)
                 this.req.session['performance'] = performance;
 
                 this.res.locals['performance'] = performance;
                 this.res.locals['step'] = 0;
+                this.res.locals['reserveSeats'] = null;
+                if (this.req.session['reserveSeats']) {
+                    this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
+                    console.log(this.res.locals['reserveSeats'])
+                }
                 this.res.render('purchase/seat');
             });
-        } else if (this.checkSession('performance')) {
-            this.res.locals['performance'] = this.req.session['performance'];
-            this.res.locals['step'] = 0;
-            this.res.render('purchase/seat');
         } else {
             return this.next(new Error('不適切なアクセスです'));
         }
@@ -37,45 +39,32 @@ export default class SeatSelectController extends PurchaseController {
 
         //バリデーション
         SeatForm(this.req, this.res, () => {
+            if (!this.req.session) return this.next(new Error('session is undefined'));
+            
 
+            let seats = JSON.parse(this.req.body.seat_codes);
+            
 
-            //新規
-            //モーションAPI仮予約(仮予約番号発行)
-            // TODO
-            // //予約番号あり(仮予約削除=>仮予約)
-            // this.deleteTmpReserve((result: COA.deleteTmpReserveInterface.Result) => {
-            //     this.reserveSeatsTemporarily((result: COA.reserveSeatsTemporarilyInterface.Result) => {
+            if (this.req.session['reserveSeats']) {
+                // //予約番号あり(仮予約削除=>仮予約)
+                // this.deleteTmpReserve((result: COA.deleteTmpReserveInterface.Result) => {
+                //     this.reserveSeatsTemporarily((result: COA.reserveSeatsTemporarilyInterface.Result) => {
 
-            //     });
-            // });
-
-
-            // //予約番号なし(仮予約)
-            // this.reserveSeatsTemporarily((result: COA.reserveSeatsTemporarilyInterface.Result) => {
-
-            // });
-
-
-
-
-            let seats: {
-                code: string,
-                ticket: any
-            }[] = [];
-
-            let seat_codes = JSON.parse(this.req.body.seat_codes);
-            for (let code of seat_codes) {
-                seats.push({
-                    code: code,
-                    ticket: null
-                })
+                //     });
+                // });
+            } else {
+                // //予約番号なし(仮予約)
+                this.reserveSeatsTemporarily(seats, (result: COA.reserveSeatsTemporarilyInterface.Result) => {
+                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                    if (!this.router) return this.next(new Error('router is undefined'));
+                    //予約情報をセッションへ
+                    this.req.session['reserveSeats'] = result;
+                    this.logger.debug('購入者情報入力完了', this.req.session['reserveSeats']);
+                    //券種選択へ
+                    this.res.redirect(this.router.build('purchase.ticket', {}));
+                });
             }
-            //座席情報をセッションへ
-            this.req.session['purchaseSeats'] = seats;
 
-            this.logger.debug('購入者情報入力完了', this.req.session['purchaseSeats']);
-            //券種選択へ
-            this.res.redirect(this.router.build('purchase.ticket', {}));
 
         });
     }
@@ -98,7 +87,7 @@ export default class SeatSelectController extends PurchaseController {
             if (error) {
                 return this.next(new Error('サーバーエラー'));
             }
-            if (!body.success) {
+            if (!response || !body.success) {
                 return this.next(new Error('サーバーエラー'));
             }
 
@@ -120,50 +109,54 @@ export default class SeatSelectController extends PurchaseController {
     }
 
     /**
-     * 仮予約
-     */
-    private deleteTmpReserve(cb: Function): void {
-        let performance = this.req.session['performance'];
-        let args: COA.deleteTmpReserveInterface.Args = {
-            /** 施設コード */
-            theater_code: performance.theater,
-            /** 上映日 */
-            date_jouei: performance.day,
-            /** 作品コード */
-            title_code: performance.film,
-            /** 作品枝番 */
-            title_branch_num: performance.film_branch_code,
-            /** 上映時刻 */
-            time_begin: performance.time_start,
-            /** 座席チケット仮予約番号 */
-            tmp_reserve_num: '1233458844',
-        }
-        COA.deleteTmpReserveInterface.call(args, (err: Error, result: boolean) => {
-            if (err) return this.next(new Error('サーバーエラー'));
-            cb(result);
-        });
-    }
-
-    /**
      * 仮予約削除
      */
-    private reserveSeatsTemporarily(cb: Function): void {
+    // private deleteTmpReserve(cb: Function): void {
+    //     if (!this.req.session) return this.next(new Error('session is undefined'));
+    //     let performance = this.req.session['performance'];
+    //     let args: COA.deleteTmpReserveInterface.Args = {
+    //         /** 施設コード */
+    //         theater_code: performance.theater,
+    //         /** 上映日 */
+    //         date_jouei: performance.day,
+    //         /** 作品コード */
+    //         title_code: performance.film,
+    //         /** 作品枝番 */
+    //         title_branch_num: performance.film_branch_code,
+    //         /** 上映時刻 */
+    //         time_begin: performance.time_start,
+    //         /** 座席チケット仮予約番号 */
+    //         tmp_reserve_num: '1233458844',
+    //     }
+    //     COA.deleteTmpReserveInterface.call(args, (err: Error, result: boolean) => {
+    //         if (err) return this.next(new Error('サーバーエラー'));
+    //         cb(result);
+    //     });
+    // }
+
+    /**
+     * 仮予約
+     */
+    private reserveSeatsTemporarily(seats: any, cb: Function): void {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
         let performance = this.req.session['performance'];
         let args: COA.reserveSeatsTemporarilyInterface.Args = {
             /** 施設コード */
-            theater_code: performance.theater,
+            theater_code: performance.theater._id,
             /** 上映日 */
             date_jouei: performance.day,
             /** 作品コード */
-            title_code: performance.film,
+            title_code: performance.film.coa_title_code,
             /** 作品枝番 */
-            title_branch_num: performance.film_branch_code,
+            title_branch_num: performance.film.coa_title_branch_num,
             /** 上映時刻 */
             time_begin: performance.time_start,
             /** 予約座席数 */
             // cnt_reserve_seat: number,
+            /** スクリーンコード */
+            screen_code: performance.screen._id,
             /** 予約座席リスト */
-            list_seat: []
+            list_seat: seats
         }
         // {
         //     /** 座席セクション */
@@ -172,7 +165,7 @@ export default class SeatSelectController extends PurchaseController {
         //     seat_num: string,
         // }
         COA.reserveSeatsTemporarilyInterface.call(args, (err: Error, result: COA.reserveSeatsTemporarilyInterface.Result) => {
-            if (err) return this.next(new Error('サーバーエラー'));
+            if (err) return this.next(new Error(err.message));
             cb(result);
         });
     }

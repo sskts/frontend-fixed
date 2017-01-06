@@ -1,4 +1,5 @@
 .screen {
+  display: none;
   position: relative;
   @media screen and (max-width: $mobile) {
     overflow: hidden;

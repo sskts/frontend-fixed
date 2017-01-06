@@ -9,11 +9,10 @@ const session_1 = require('./middlewares/session');
 const router_1 = require('./routes/router');
 const locales_1 = require('./middlewares/locales');
 let app = express();
-app.use(helmet()); //HTTP ヘッダー
-app.use(logger_1.default); // ロガー
-app.use(benchmarks_1.default); // ベンチマーク的な
-app.use(session_1.default); // セッション
-// view engine setup
+app.use(helmet());
+app.use(logger_1.default);
+app.use(benchmarks_1.default);
+app.use(session_1.default);
 app.engine('ejs', require('ejs-locals'));
 app.set('views', `${__dirname}/views`);
 app.set('view engine', 'ejs');
@@ -23,15 +22,8 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'dev') {
     app.use(express.static(`${__dirname}/../../public`));
 }
-//言語
-app.use(locales_1.default.init);
-// sessionで切り替え
 app.use((req, res, next) => {
-    if (req.session['locale']) {
-        locales_1.default.setLocale(req, req.session['locale']);
-    }
-    next();
+    locales_1.default.init(req, res, next);
 });
-// ルーティング
 router_1.default(app);
 module.exports = app;

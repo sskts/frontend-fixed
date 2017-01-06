@@ -23,7 +23,7 @@ export default class InquiryController extends BaseController {
      * 照会確認ページ表示
      */
     public index(): void {
-        if (this.checkSession('inquiry')) {
+        if (this.req.session && this.req.session['inquiry']) {
             this.res.locals['inquiry'] = this.req.session['inquiry'];
             this.res.render('inquiry/confirm');
         } else {

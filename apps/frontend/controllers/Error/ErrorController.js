@@ -1,9 +1,6 @@
 "use strict";
 const BaseController_1 = require('../BaseController');
 class ErrorController extends BaseController_1.default {
-    /**
-     * Not Found
-     */
     notFound() {
         let status = 404;
         if (this.req.xhr) {
@@ -14,9 +11,6 @@ class ErrorController extends BaseController_1.default {
             this.res.render('error/notFound');
         }
     }
-    /**
-     * エラーページ
-     */
     index(err) {
         this.logger.error(err.stack);
         let status = 500;

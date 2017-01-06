@@ -5,7 +5,6 @@ import bodyParser = require('body-parser');
 import logger from './middlewares/logger';
 import benchmarks from './middlewares/benchmarks';
 import session from './middlewares/session';
-import config = require('config');
 import router from './routes/router';
 import locales from './middlewares/locales';
 
@@ -31,13 +30,8 @@ if (process.env.NODE_ENV === 'dev') {
 }
 
 //言語
-app.use(locales.init);
-// sessionで切り替え
 app.use((req, res, next)=> {
-    if (req.session['locale']) {
-        locales.setLocale(req, req.session['locale']);
-    }
-    next();
+    locales.init(req, res, next);
 });
 
 // ルーティング

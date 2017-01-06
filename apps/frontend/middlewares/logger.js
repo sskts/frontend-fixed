@@ -1,7 +1,6 @@
 "use strict";
 const log4js = require('log4js');
 let env = process.env.NODE_ENV || 'dev';
-// ディレクトリなければ作成(初回アクセス時だけ)
 let fs = require('fs-extra');
 let logDir = `${__dirname}/../../../logs/${env}/frontend`;
 fs.mkdirsSync(logDir);

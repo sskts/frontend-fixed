@@ -25,9 +25,9 @@ $(function () {
         event.preventDefault();
         var result = [];
         var flag = true;
-        $('.seats li').each(function (index, elm) {
-            var code = $(elm).find('dt').text();
-            var ticket = ($(elm).find('dd').attr('data-ticket')) ? JSON.parse($(elm).find('dd').attr('data-ticket')) : null;
+        $('.seats li').each(function (index, elem) {
+            var code = $(elem).find('dt').text();
+            var ticket = ($(elem).find('dd').attr('data-ticket')) ? JSON.parse($(elem).find('dd').attr('data-ticket')) : null;
             result.push({
                 code: code,
                 ticket: ticket
@@ -51,9 +51,9 @@ $(function () {
 
 function totalPrice() {
     var price = 0;
-    $('.seats li').each(function (index, elm) {
-        if ($(elm).find('dd').attr('data-ticket')) {
-            var data = JSON.parse($(elm).find('dd').attr('data-ticket'));
+    $('.seats li').each(function (index, elem) {
+        if ($(elem).find('dd').attr('data-ticket')) {
+            var data = JSON.parse($(elem).find('dd').attr('data-ticket'));
             price += data.sale_price;
         }
     });
