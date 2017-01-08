@@ -7,6 +7,9 @@ import benchmarks from './middlewares/benchmarks';
 import session from './middlewares/session';
 import router from './routes/router';
 import locales from './middlewares/locales';
+import config = require('config');
+import COA = require("@motionpicture/coa-service");
+
 
 let app: express.Application = express();
 
@@ -32,6 +35,12 @@ if (process.env.NODE_ENV === 'dev') {
 //言語
 app.use((req, res, next)=> {
     locales.init(req, res, next);
+});
+
+//サービス初期化
+COA.initialize({
+    endpoint: config.get<string>("coa_api_endpoint"),
+    refresh_token: config.get<string>("coa_api_refresh_token")
 });
 
 // ルーティング

@@ -7,15 +7,16 @@ export default class ConfirmController extends PurchaseController {
      */
     public index(): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (this.req.session['gmo_token_object']
-            && this.req.session['purchaseInfo']
+        if (this.req.session['purchaseInfo']
             && this.req.session['performance']
-            && this.req.session['purchaseSeats']) {
+            && this.req.session['reserveSeats']
+            && this.req.session['reserveTickets']) {
             //購入者内容確認表示
-            this.res.locals['gmo_token_object'] = this.req.session['gmo_token_object'];
+            this.res.locals['gmoTokenObject'] = (this.req.session['gmoTokenObject']) ? this.req.session['gmoTokenObject'] : null;
             this.res.locals['info'] = this.req.session['purchaseInfo'];
             this.res.locals['performance'] = this.req.session['performance'];
-            this.res.locals['seats'] = this.req.session['purchaseSeats'];
+            this.res.locals['reserveSeats'] = this.req.session['reserveSeats'];
+            this.res.locals['reserveTickets'] = this.req.session['reserveTickets'];
             this.res.locals['step'] = 3;
             this.res.render('purchase/confirm');
         } else {

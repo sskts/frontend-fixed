@@ -10,13 +10,13 @@
             <li>
                 <dl>
                     <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                    <dd><%= performance.theater_name[__('lang')] %> / <%= performance.screen_name[__('lang')] %></dd>
+                    <dd><%= performance.theater.name[__('lang')] %> / <%= performance.screen.name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.film_title') %></dt>
-                    <dd><%= performance.film_name[__('lang')] %></dd>
+                    <dd><%= performance.film.name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
@@ -44,19 +44,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><%= (info) ? info.last_name_hira : '' %> <%= (info) ? info.first_name_hira : '' %></dd>
+                    <dd><%= info.last_name_hira %> <%= info.first_name_hira %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail') %></dt>
-                    <dd><%= (info) ? info.mail : '' %></dd>
+                    <dd><%= info.mail %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel') %></dt>
-                    <dd><%= (info) ? info.tel : '' %></dd>
+                    <dd><%= info.tel %></dd>
                 </dl>
             </li>
         </ul>        
@@ -66,7 +66,7 @@
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
-                    <dd><%= (gmo_token_object) ? gmo_token_object.maskedCardNo : '' %></dd>
+                    <dd><%= gmoTokenObject.maskedCardNo %></dd>
                 </dl>
             </li>
             <li>
@@ -76,9 +76,9 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="token" value="<%= (gmo_token_object) ? gmo_token_object.token : '' %>">
-        <input type="hidden" name="toBeExpiredAt" value="<%= (gmo_token_object) ? gmo_token_object.toBeExpiredAt : '' %>">
-        <input type="hidden" name="isSecurityCodeSet" value="<%= (gmo_token_object) ? gmo_token_object.isSecurityCodeSet : '' %>">
+        <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
+        <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
+        <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
         
         
 

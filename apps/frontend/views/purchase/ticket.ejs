@@ -5,17 +5,23 @@
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
         <p class="read"><%- __('purchase.ticket.read') %></p>
         <ul class="seats box bg-light-gray mb-medium">
-            <% for (let seat of seats) { %>
+            <% for (let seat of reserveSeats.list_tmp_reserve) { %>
                 <li>
                     <dl class="d-table">
-                        <dt class="d-td seat-code"><%= seat.code %></dt>
-                        <dd class="d-td" data-ticket="<%= (seat.ticket) ? JSON.stringify(seat.ticket) : '' %>">
-                            <% if (!seat.ticket) { %>
-                            <div class="button blue-button"><a href="#" data-modal="ticket-type">選択してください</a></div>
-                            <% } else { %>
-                            <div class="ghost-button blue-button"><a href="#" data-modal="ticket-type"><%= seat.ticket.ticket_name_kana %></a></div>
-                            <% } %>
-                        </dd>
+                        <dt class="d-td seat-code"><%= seat.seat_num %></dt>
+                        <% if (reserveTickets) { %>
+                            <dd class="d-td" data-ticket="<%= JSON.stringify(reserveTickets[seat.seat_num]) %>">                                
+                                <div class="ghost-button blue-button">
+                                    <a href="#" data-modal="ticket-type"><%= reserveTickets[seat.seat_num].ticket_name %></a>
+                                </div>
+                            </dd>
+                        <% } else { %>
+                            <dd class="d-td" data-ticket="">
+                                <div class="button blue-button">
+                                    <a href="#" data-modal="ticket-type">選択してください</a>
+                                </div>
+                            </dd>
+                        <% } %>
                     </dl>
                 </li>
             <% } %>
@@ -28,7 +34,7 @@
         </div>
 
         <div class="total box bg-light-gray">
-            <div class="length mb-x-small"><%- __('common.purchase_number') %> <strong class="red-text"><%= seats.length %></strong>枚</div>
+            <div class="length mb-x-small"><%- __('common.purchase_number') %> <strong class="red-text"><%= reserveSeats.list_tmp_reserve.length %></strong>枚</div>
             <div class="price"><%- __('common.total_fee') %> <strong class="red-text">0</strong>円</div>
         </div>
     

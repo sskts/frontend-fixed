@@ -2,12 +2,18 @@
   "name": "sasaki_ticket",
   "version": "1.0.0",
   "private": true,
+  "config": {
+    "username": "motionpicture",
+    "password": "M0P!Xmopix",
+    "email": "yamazaki@motionpicture.jp"
+  },
   "scripts": {
     "start": "node ./index.js",
-    "test": "node test/test.js",
+    "test": "node ./test/test.js",
     "sass": "node-sass public/css/style.scss public/css/style.css --output-style expanded -w"
   },
   "dependencies": {
+    "@motionpicture/coa-service": "^1.1.1",
     "@types/body-parser": "0.0.33",
     "@types/config": "0.0.30",
     "@types/connect-redis": "0.0.5",

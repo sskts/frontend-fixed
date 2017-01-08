@@ -13,7 +13,7 @@ $(function () {
             .removeClass('button')
             .addClass('ghost-button');
         target.find('dd').attr('data-ticket', ticket)
-        target.find('dd a').text(JSON.parse(ticket).ticket_name_kana);
+        target.find('dd a').text(JSON.parse(ticket).ticket_name);
         modal.close();
         totalPrice();
     });
@@ -23,15 +23,12 @@ $(function () {
      */
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
-        var result = [];
+        var result = {};
         var flag = true;
         $('.seats li').each(function (index, elem) {
             var code = $(elem).find('dt').text();
             var ticket = ($(elem).find('dd').attr('data-ticket')) ? JSON.parse($(elem).find('dd').attr('data-ticket')) : null;
-            result.push({
-                code: code,
-                ticket: ticket
-            });
+            result[code] = ticket;
             if (!code || !ticket) {
                 flag = false;
             }
@@ -42,7 +39,7 @@ $(function () {
         } else {
             // location.hrefにpostする
             var form = $('form');
-            var dom = $('<input type="hidden" name="seat_codes">').val(JSON.stringify(result));
+            var dom = $('<input type="hidden" name="reserve_tickets">').val(JSON.stringify(result));
             form.append(dom);
             form.submit();
         }

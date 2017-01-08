@@ -2,8 +2,7 @@ import PurchaseController from './PurchaseController';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import request = require('request');
 import config = require('config');
-import * as COA from "../../../../lib/coa/coa";
-
+import COA = require("@motionpicture/coa-service");
 
 
 export default class SeatSelectController extends PurchaseController {
@@ -15,16 +14,16 @@ export default class SeatSelectController extends PurchaseController {
             //パフォーマンス取得
             this.getPerformance(this.req.query['id'], (performance: any) => {
                 if (!this.req.session) return this.next(new Error('session is undefined'));
-                console.log(performance)
-                this.req.session['performance'] = performance;
-
                 this.res.locals['performance'] = performance;
                 this.res.locals['step'] = 0;
                 this.res.locals['reserveSeats'] = null;
-                if (this.req.session['reserveSeats']) {
+                //仮予約中
+                if (this.req.session['reserveSeats']
+                && this.req.session['performance']._id === this.req.query['id']) {
                     this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
                     console.log(this.res.locals['reserveSeats'])
                 }
+                this.req.session['performance'] = performance;
                 this.res.render('purchase/seat');
             });
         } else {
@@ -39,27 +38,22 @@ export default class SeatSelectController extends PurchaseController {
 
         //バリデーション
         SeatForm(this.req, this.res, () => {
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-            
+            if (!this.req.session) return this.next(new Error('session is undefined'));            
 
-            let seats = JSON.parse(this.req.body.seat_codes);
-            
-
-            if (this.req.session['reserveSeats']) {
-                // //予約番号あり(仮予約削除=>仮予約)
-                // this.deleteTmpReserve((result: COA.deleteTmpReserveInterface.Result) => {
-                //     this.reserveSeatsTemporarily((result: COA.reserveSeatsTemporarilyInterface.Result) => {
-
-                //     });
+            if (this.req.session['reserveSeats']
+            && this.req.session['performance']._id === this.req.query['id']) {
+                //予約番号あり(仮予約削除=>仮予約)
+                // this.deleteTmpReserve(() => {
+                    this.reserveSeatsTemporarily(() => {
+                        if (!this.router) return this.next(new Error('router is undefined'));
+                        //券種選択へ
+                        this.res.redirect(this.router.build('purchase.ticket', {}));
+                    });
                 // });
             } else {
-                // //予約番号なし(仮予約)
-                this.reserveSeatsTemporarily(seats, (result: COA.reserveSeatsTemporarilyInterface.Result) => {
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                //予約番号なし(仮予約)
+                this.reserveSeatsTemporarily(() => {
                     if (!this.router) return this.next(new Error('router is undefined'));
-                    //予約情報をセッションへ
-                    this.req.session['reserveSeats'] = result;
-                    this.logger.debug('購入者情報入力完了', this.req.session['reserveSeats']);
                     //券種選択へ
                     this.res.redirect(this.router.build('purchase.ticket', {}));
                 });
@@ -90,7 +84,7 @@ export default class SeatSelectController extends PurchaseController {
             if (!response || !body.success) {
                 return this.next(new Error('サーバーエラー'));
             }
-
+            this.logger.debug('performance', body.performance);
             cb(body.performance);
         });
     }
@@ -100,7 +94,7 @@ export default class SeatSelectController extends PurchaseController {
      */
     public getScreenStateReserve(): void {
         let args: COA.getStateReserveSeatInterface.Args = this.req.body;
-        COA.getStateReserveSeatInterface.call(args, (err: Error, result: COA.getStateReserveSeatInterface.Result) => {
+        COA.getStateReserveSeatInterface.call(args, (err, result) => {
             this.res.json({
                 err: err,
                 result: result
@@ -111,33 +105,35 @@ export default class SeatSelectController extends PurchaseController {
     /**
      * 仮予約削除
      */
-    // private deleteTmpReserve(cb: Function): void {
-    //     if (!this.req.session) return this.next(new Error('session is undefined'));
-    //     let performance = this.req.session['performance'];
-    //     let args: COA.deleteTmpReserveInterface.Args = {
-    //         /** 施設コード */
-    //         theater_code: performance.theater,
-    //         /** 上映日 */
-    //         date_jouei: performance.day,
-    //         /** 作品コード */
-    //         title_code: performance.film,
-    //         /** 作品枝番 */
-    //         title_branch_num: performance.film_branch_code,
-    //         /** 上映時刻 */
-    //         time_begin: performance.time_start,
-    //         /** 座席チケット仮予約番号 */
-    //         tmp_reserve_num: '1233458844',
-    //     }
-    //     COA.deleteTmpReserveInterface.call(args, (err: Error, result: boolean) => {
-    //         if (err) return this.next(new Error('サーバーエラー'));
-    //         cb(result);
-    //     });
-    // }
+    private deleteTmpReserve(cb: Function): void {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        let performance = this.req.session['performance'];
+        let reserveSeats = this.req.session['reserveSeats'];
+        let args: COA.deleteTmpReserveInterface.Args = {
+            /** 施設コード */
+            theater_code: performance.theater._id,
+            /** 上映日 */
+            date_jouei: performance.day,
+            /** 作品コード */
+            title_code: performance.film.coa_title_code,
+            /** 作品枝番 */
+            title_branch_num: performance.film.coa_title_branch_num,
+            /** 上映時刻 */
+            time_begin: performance.time_start,
+            /** 座席チケット仮予約番号 */
+            tmp_reserve_num: reserveSeats.tmp_reserve_num,
+        }
+        COA.deleteTmpReserveInterface.call(args, (err, result) => {
+            if (err) return this.next(new Error(err.message));
+            if (!result) return this.next(new Error('サーバーエラー'));
+            cb();
+        });
+    }
 
     /**
      * 仮予約
      */
-    private reserveSeatsTemporarily(seats: any, cb: Function): void {
+    private reserveSeatsTemporarily(cb: Function): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         let performance = this.req.session['performance'];
         let args: COA.reserveSeatsTemporarilyInterface.Args = {
@@ -156,17 +152,40 @@ export default class SeatSelectController extends PurchaseController {
             /** スクリーンコード */
             screen_code: performance.screen._id,
             /** 予約座席リスト */
-            list_seat: seats
+            list_seat: JSON.parse(this.req.body.seats),
         }
-        // {
-        //     /** 座席セクション */
-        //     seat_section: string,
-        //     /** 座席番号 */
-        //     seat_num: string,
-        // }
-        COA.reserveSeatsTemporarilyInterface.call(args, (err: Error, result: COA.reserveSeatsTemporarilyInterface.Result) => {
+        
+        COA.reserveSeatsTemporarilyInterface.call(args, (err, result) => {
+            err = null;
+            result = {
+                /** 座席チケット仮予約番号 */
+                tmp_reserve_num: 12345678,
+                /** 仮予約結果リスト(仮予約失敗時の座席毎の仮予約状況) */
+                list_tmp_reserve: [
+                    {
+                        /** 座席セクション */
+                        seat_section: '0',
+                        /** 座席番号 */
+                        seat_num: 'A-1',
+                        /** 仮予約ステータス */
+                        sts_tmp_reserve: '0',
+                    },
+                    {
+                        /** 座席セクション */
+                        seat_section: '0',
+                        /** 座席番号 */
+                        seat_num: 'A-2',
+                        /** 仮予約ステータス */
+                        sts_tmp_reserve: '0',
+                    }
+                ]
+            }
             if (err) return this.next(new Error(err.message));
-            cb(result);
+            if (!this.req.session) return this.next(new Error('session is undefined'));
+            //予約情報をセッションへ
+            this.req.session['reserveSeats'] = result;
+            this.logger.debug('仮予約完了', this.req.session['reserveSeats']);
+            cb();
         });
     }
 

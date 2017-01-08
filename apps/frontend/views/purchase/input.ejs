@@ -12,14 +12,14 @@
             <dl>
                 <dt><%- __('common.last_name_kanji') %></dt>
                 <dd>
-                    <input type="text" name="last_name_kanji" placeholder="<%- __('common.placeholder.last_name_kanji') %>" value="<%= (info) ? info.last_name_kanji : '' %>">
+                    <input type="text" name="last_name_kanji" placeholder="<%- __('common.placeholder.last_name_kanji') %>" value="<%= info.last_name_kanji %>">
                     <% if (error && error.last_name_kanji) { %>
                     <div class="validation-text"><%= error.last_name_kanji[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.first_name_kanji') %></dt>
                 <dd>
-                    <input type="text" name="first_name_kanji" placeholder="<%- __('common.placeholder.first_name_kanji') %>" value="<%= (info) ? info.first_name_kanji : '' %>">
+                    <input type="text" name="first_name_kanji" placeholder="<%- __('common.placeholder.first_name_kanji') %>" value="<%= info.first_name_kanji %>">
                     <% if (error && error.first_name_kanji) { %>
                     <div class="validation-text"><%= error.first_name_kanji[0] %></div>
                     <% } %>
@@ -32,14 +32,14 @@
             <dl>
                 <dt><%- __('common.last_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= (info) ? info.last_name_hira : '' %>">
+                    <input type="text" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= info.last_name_hira %>">
                     <% if (error && error.last_name_hira) { %>
                     <div class="validation-text"><%= error.last_name_hira[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.first_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= (info) ? info.first_name_hira : '' %>">
+                    <input type="text" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= info.first_name_hira %>">
                     <% if (error && error.first_name_hira) { %>
                     <div class="validation-text"><%= error.first_name_hira[0] %></div>
                     <% } %>
@@ -50,7 +50,7 @@
         <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="email" name="mail" placeholder="<%- __('common.placeholder.mail') %>" value="<%= (info) ? info.mail : '' %>">
+                    <input type="email" name="mail" placeholder="<%- __('common.placeholder.mail') %>" value="<%= info.mail %>">
                     <% if (error && error.mail) { %>
                     <div class="validation-text"><%= error.mail[0] %></div>
                     <% } %>
@@ -59,7 +59,7 @@
             <dl>
                 <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="text" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= (info) ? info.mail_confirm : '' %>">
+                    <input type="text" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= info.mail_confirm %>">
                     <% if (error && error.mail_confirm) { %>
                     <div class="validation-text"><%= error.mail_confirm[0] %></div>
                     <% } %>
@@ -72,7 +72,7 @@
         <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="text" name="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= (info) ? info.tel : '' %>">
+                    <input type="text" name="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= info.tel %>">
                     <% if (error && error.tel) { %>
                     <div class="validation-text"><%= error.tel[0] %></div>
                     <% } %>

@@ -1,13 +1,15 @@
 "use strict";
-const config = require('config');
-const PurchaseController_1 = require('./PurchaseController');
-const InputForm_1 = require('../../forms/Purchase/InputForm');
+const config = require("config");
+const PurchaseController_1 = require("./PurchaseController");
+const InputForm_1 = require("../../forms/Purchase/InputForm");
+const COA = require("@motionpicture/coa-service");
 class EnterPurchaseController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         if (this.req.session['performance']
-            && this.req.session['purchaseSeats']) {
+            && this.req.session['reserveSeats']
+            && this.req.session['reserveTickets']) {
             this.res.locals['error'] = null;
             this.res.locals['info'] = null;
             this.res.locals['moment'] = require('moment');
@@ -35,9 +37,9 @@ class EnterPurchaseController extends PurchaseController_1.default {
         InputForm_1.default(this.req, this.res, () => {
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
+            if (!this.req.form)
+                return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
-                if (!this.router)
-                    return this.next(new Error('router is undefined'));
                 this.req.session['purchaseInfo'] = {
                     last_name_kanji: this.req.body.last_name_kanji,
                     first_name_kanji: this.req.body.first_name_kanji,
@@ -46,12 +48,12 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     mail: this.req.body.mail,
                     tel: this.req.body.tel,
                 };
-                this.req.session['gmo_token_object'] = JSON.parse(this.req.body.gmo_token_object);
-                this.logger.debug('購入者情報入力完了', {
-                    info: this.req.session['purchaseInfo'],
-                    gmo: this.req.session['gmo_token_object']
+                this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
+                this.updateReserve(() => {
+                    if (!this.router)
+                        return this.next(new Error('router is undefined'));
+                    this.res.redirect(this.router.build('purchase.confirm', {}));
                 });
-                this.res.redirect(this.router.build('purchase.confirm', {}));
             }
             else {
                 this.res.locals['error'] = this.req.form.getErrors();
@@ -62,6 +64,51 @@ class EnterPurchaseController extends PurchaseController_1.default {
                 this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
                 this.res.render('purchase/enterPurchase');
             }
+        });
+    }
+    updateReserve(cb) {
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
+        let performance = this.req.session['performance'];
+        let reserveSeats = this.req.session['reserveSeats'];
+        let purchaseInfo = this.req.session['purchaseInfo'];
+        let reserveTickets = this.req.session['reserveTickets'];
+        let tickets = [];
+        let price = 0;
+        reserveTickets.forEach((value, key) => {
+            tickets.push({
+                ticket_code: value.ticket_code,
+                std_price: value.std_price,
+                add_price: value.add_price,
+                dis_price: value.dis_price,
+                sale_price: value.sale_price,
+                ticket_count: value.ticket_count,
+                seat_num: key,
+            });
+            price += value.sale_price;
+        });
+        let args = {
+            theater_code: performance.theater._id,
+            date_jouei: performance.day,
+            title_code: performance.film.coa_title_code,
+            title_branch_num: performance.film.coa_title_branch_num,
+            time_begin: performance.time_start,
+            tmp_reserve_num: reserveSeats.tmp_reserve_num,
+            reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
+            reserve_name_kana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
+            tel_num: purchaseInfo.tel,
+            mail_addr: purchaseInfo.mail,
+            reserve_amount: price,
+            list_ticket: tickets,
+        };
+        COA.updateReserveInterface.call(args, (err, result) => {
+            if (err)
+                return this.next(new Error(err.message));
+            if (!this.req.session)
+                return this.next(new Error('session is undefined'));
+            this.req.session['updateReserve'] = result;
+            this.logger.debug('本予約完了', this.req.session['updateReserve']);
+            cb();
         });
     }
 }

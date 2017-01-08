@@ -5,7 +5,7 @@ $(function () {
         //席状態変更
         // $('.seat a').addClass('disabled');
         
-        var purchaseSeats = ($('input[name=seat_codes]').val()) ? JSON.parse($('input[name=seat_codes]').val()) : '';
+        var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
         if (purchaseSeats) {
             //予約している席設定
             for (var i = 0, len = purchaseSeats.length; i < len; i++) {
@@ -15,7 +15,7 @@ $(function () {
                 seat.addClass('active');
             }
         }
-        if (result.cnt_reserve_free > 0) {
+        if (result && result.cnt_reserve_free > 0) {
             //空いている座席設定
             var freeSeats = result.list_seat[0].list_free_seat;
             for (var i = 0, len = freeSeats.length; i < len; i++) {
@@ -61,19 +61,19 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         // 座席コードリストを取得
-        var seat_codes = $('.screen .seat a.active').map(function () {
+        var seats = $('.screen .seat a.active').map(function () {
             return {
                 seat_num: $(this).attr('data-seat-code'),
                 seat_section: '0'
             }
         }).get();
 
-        if (seat_codes.length < 1) {
+        if (seats.length < 1) {
             alert('未選択');
         } else {
             // location.hrefにpostする
             var form = $('form');
-            $('input[name=seat_codes]').val(JSON.stringify(seat_codes));
+            $('input[name=seats]').val(JSON.stringify(seats));
             form.submit();
         }
     });
@@ -106,12 +106,8 @@ function getScreenStateReserve(cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        if (res.err) {
-            alert('スケジュール取得失敗');
-        } else {
-            console.log(res.result)
-            cb(res.result);
-        }
+        console.log(res)
+        cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
     }).always(function () { });

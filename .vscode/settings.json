@@ -4,6 +4,7 @@
     "files.exclude": {
         "app/**/*.js": true,
         "lib/**/*.js": true,
+        "bin/**/*.js": true,
         "*.js": true
     }
 }

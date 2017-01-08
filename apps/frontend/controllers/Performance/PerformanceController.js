@@ -1,8 +1,8 @@
 "use strict";
-const BaseController_1 = require('../BaseController');
-const request = require('request');
-const config = require('config');
-const moment = require('moment');
+const BaseController_1 = require("../BaseController");
+const request = require("request");
+const config = require("config");
+const moment = require("moment");
 class PerformanceController extends BaseController_1.default {
     index() {
         let day = moment().format('YYYYMMDD');
