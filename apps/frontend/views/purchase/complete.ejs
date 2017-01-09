@@ -25,14 +25,9 @@
             <dl>
                 <dt><%- __('common.seat') %> / <%- __('common.ticket') %></dt>
                 <dd>
-                    <ul>
-                        <% for (let seat of seats) { %>
-                            <li>
-                                <%= seat.code %>
-                                    <%= seat.ticket.ticket_name_kana %>
-                            </li>
-                            <% } %>
-                    </ul>
+                    <% for (let seat of updateReserve.list_qr) { %>
+                    <p><%= seat.seat_num %> <%= reserveTickets[seat.seat_num].ticket_name %></p> 
+                    <% } %>
                 </dd>
             </dl>
         </li>

@@ -62,14 +62,14 @@ export default class EnterPurchaseController extends PurchaseController {
                 };
                 //決済情報をセッションへ
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
-                
 
-                this.updateReserve(()=>{
+
+                this.updateReserve(() => {
                     if (!this.router) return this.next(new Error('router is undefined'));
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('purchase.confirm', {}));
                 });
-                
+
             } else {
                 this.res.locals['error'] = this.req.form.getErrors();
                 this.res.locals['info'] = this.req.body;
@@ -95,25 +95,28 @@ export default class EnterPurchaseController extends PurchaseController {
         let reserveTickets = this.req.session['reserveTickets'];
         let tickets: any[] = [];
         let price = 0;
-        reserveTickets.forEach((value: any, key: string) => {
+
+        for (let seat of reserveSeats.list_tmp_reserve) {
+            let ticket = reserveTickets[seat['seat_num']];
             tickets.push({
                 /** チケットコード */
-                ticket_code: value.ticket_code,
+                ticket_code: ticket.ticket_code,
                 /** 標準単価 */
-                std_price: value.std_price,
+                std_price: ticket.std_price,
                 /** 加算単価 */
-                add_price: value.add_price,
+                add_price: ticket.add_price,
                 /** 割引額 */
-                dis_price: value.dis_price,
+                dis_price: ticket.dis_price,
                 /** 金額 */
-                sale_price: value.sale_price,
+                sale_price: ticket.sale_price,
                 /** 枚数 */
-                ticket_count: value.ticket_count,
+                ticket_count: ticket.ticket_count,
                 /** 座席番号 */
-                seat_num: key,
+                seat_num: seat['seat_num'],
             });
-            price += value.sale_price;
-        });
+            price += ticket.sale_price;
+        }
+        
         let args: COA.updateReserveInterface.Args = {
             /** 施設コード */
             theater_code: performance.theater._id,
@@ -141,7 +144,32 @@ export default class EnterPurchaseController extends PurchaseController {
             list_ticket: tickets,
         };
         COA.updateReserveInterface.call(args, (err, result) => {
-            if (err) return this.next(new Error(err.message));
+            //TODO
+            err = null;
+            result = {
+                /** 座席チケット購入番号 */
+                reserve_num: '12345678',
+                /** 入場QRリスト */
+                list_qr: [
+                    {
+                        /** 座席セクション */
+                        seat_section: '0',
+                        /** 座席番号 */
+                        seat_num: 'A-1',
+                        /** 座席入場QRコード */
+                        seat_qrcode: '',
+                    },
+                    {
+                        /** 座席セクション */
+                        seat_section: '0',
+                        /** 座席番号 */
+                        seat_num: 'A-2',
+                        /** 座席入場QRコード */
+                        seat_qrcode: '',
+                    }
+                ]
+            }
+            // if (err) return this.next(new Error(err.message));
             if (!this.req.session) return this.next(new Error('session is undefined'));
             //予約情報をセッションへ
             this.req.session['updateReserve'] = result;

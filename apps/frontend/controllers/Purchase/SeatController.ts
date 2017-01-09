@@ -156,6 +156,7 @@ export default class SeatSelectController extends PurchaseController {
         }
         
         COA.reserveSeatsTemporarilyInterface.call(args, (err, result) => {
+            //TODO
             err = null;
             result = {
                 /** 座席チケット仮予約番号 */
@@ -180,7 +181,7 @@ export default class SeatSelectController extends PurchaseController {
                     }
                 ]
             }
-            if (err) return this.next(new Error(err.message));
+            // if (err) return this.next(new Error(err.message));
             if (!this.req.session) return this.next(new Error('session is undefined'));
             //予約情報をセッションへ
             this.req.session['reserveSeats'] = result;

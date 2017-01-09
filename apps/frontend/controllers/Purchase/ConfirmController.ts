@@ -10,13 +10,15 @@ export default class ConfirmController extends PurchaseController {
         if (this.req.session['purchaseInfo']
             && this.req.session['performance']
             && this.req.session['reserveSeats']
-            && this.req.session['reserveTickets']) {
+            && this.req.session['reserveTickets']
+            && this.req.session['updateReserve']) {
             //購入者内容確認表示
             this.res.locals['gmoTokenObject'] = (this.req.session['gmoTokenObject']) ? this.req.session['gmoTokenObject'] : null;
             this.res.locals['info'] = this.req.session['purchaseInfo'];
             this.res.locals['performance'] = this.req.session['performance'];
             this.res.locals['reserveSeats'] = this.req.session['reserveSeats'];
             this.res.locals['reserveTickets'] = this.req.session['reserveTickets'];
+            this.res.locals['updateReserve'] = this.req.session['updateReserve'];
             this.res.locals['step'] = 3;
             this.res.render('purchase/confirm');
         } else {

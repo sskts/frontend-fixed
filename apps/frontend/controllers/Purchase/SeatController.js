@@ -126,8 +126,6 @@ class SeatSelectController extends PurchaseController_1.default {
                     }
                 ]
             };
-            if (err)
-                return this.next(new Error(err.message));
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['reserveSeats'] = result;
