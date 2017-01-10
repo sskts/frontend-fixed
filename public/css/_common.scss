@@ -286,6 +286,24 @@ a {
     border-radius: 5px;
 }
 
+.small-button {
+    a, button, label {
+        width: 54px;
+    }
+}
+
+.medium-button {
+    a, button, label {
+        width: 190px;
+    }
+}
+
+.large-button {
+    a, button, label {
+        width: 300px;
+    }
+}
+
 .button {
     a, button, label {
         line-height: 1;

@@ -366,6 +366,18 @@ a {
   border-radius: 5px;
 }
 
+.small-button a, .small-button button, .small-button label {
+  width: 54px;
+}
+
+.medium-button a, .medium-button button, .medium-button label {
+  width: 190px;
+}
+
+.large-button a, .large-button button, .large-button label {
+  width: 300px;
+}
+
 .button a, .button button, .button label {
   line-height: 1;
   display: block;
