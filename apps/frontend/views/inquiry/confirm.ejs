@@ -17,26 +17,19 @@
     <ul>
         <% for (let ticket of inquiry.tickets) { %>
         <li class="ticket">
-            <div class="ticket-info border-bottom-dot">
-                <div class="ticket-seat"><%= ticket.seat %><span class="ticket-type">[<%= ticket.type %>]</span></div>
-                <div class="ticket-id">発券コード : <%= ticket.id %></div>
+            <div class="border-bottom-dot">
+                <div class="mb-x-small"><%= ticket.seat %></div>
+                <div>発券コード : <%= ticket.id %></div>
             </div>
-            <div class="ticket-qr border-bottom-dot">
+            <div class="border-bottom-dot">
                 <p>鑑賞当日はこの部分にQRコードが表示されます。</p>
             </div>
-            <div class="ticket-film bg-light-gray">
-                <div class="ticket-date"><%= ticket.date %></div>
-                <div class="ticket-theater"><%= ticket.theater %></div>
-                <div class="ticket-screen"><%= ticket.screen %></div>
-                <div class="ticket-title"><%= ticket.title %></div>
+            <div class="bg-light-gray">
+                <div class="mb-x-small"><%= ticket.date %></div>
+                <div class="mb-x-small"><%= ticket.theater %></div>
+                <div class="mb-x-small"><%= ticket.screen %></div>
+                <div><%= ticket.title %></div>
             </div>
-            <input type="hidden" name="copy" value="座席: <%= ticket.seat %>[<%= ticket.type %>]
-発券コード : <%= ticket.id %>
-認証コード : <%= ticket.password %>
-鑑賞日: <%= ticket.date %>
-劇場: <%= ticket.theater %>
-スクリーン: <%= ticket.screen %>
-作品名: <%= ticket.title %>">
         </li>
         <% } %>
     </ul>

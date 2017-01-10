@@ -50,9 +50,9 @@
         <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="email" name="mail" placeholder="<%- __('common.placeholder.mail') %>" value="<%= info.mail %>">
-                    <% if (error && error.mail) { %>
-                    <div class="validation-text"><%= error.mail[0] %></div>
+                    <input type="email" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="<%= info.mail_addr %>">
+                    <% if (error && error.mail_addr) { %>
+                    <div class="validation-text"><%= error.mail_addr[0] %></div>
                     <% } %>
                 </dd>
             </dl>
@@ -72,9 +72,9 @@
         <div class="box bg-light-gray mb-medium">
             <dl>
                 <dd>
-                    <input type="text" name="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= info.tel %>">
-                    <% if (error && error.tel) { %>
-                    <div class="validation-text"><%= error.tel[0] %></div>
+                    <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= info.tel_num %>">
+                    <% if (error && error.tel_num) { %>
+                    <div class="validation-text"><%= error.tel_num[0] %></div>
                     <% } %>
                 </dd>
             </dl>

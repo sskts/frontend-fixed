@@ -84,6 +84,7 @@ img {
 
 html {
   width: 100%;
+  min-width: 320px;
   height: 100%;
   position: relative;
 }
@@ -201,7 +202,7 @@ a {
 
 .modal {
   display: none;
-  position: absolute;
+  position: fixed;
   top: 50%;
   left: 50%;
   width: 600px;
@@ -304,7 +305,7 @@ a {
 .box .box-ttl {
   background-color: #B2B2B2;
   color: #FFF;
-  padding: 10px;
+  padding: 10px 20px;
   margin: 0 -20px 20px;
 }
 

@@ -22,9 +22,9 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     first_name_kanji: '晃人',
                     last_name_hira: 'はたぐち',
                     first_name_hira: 'あきと',
-                    mail: 'hataguchi@motionpicture.jp',
+                    mail_addr: 'hataguchi@motionpicture.jp',
                     mail_confirm: 'hataguchi@motionpicture.jp',
-                    tel: '09040007648'
+                    tel_num: '09040007648'
                 };
             }
             this.res.render('purchase/input');
@@ -45,8 +45,8 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     first_name_kanji: this.req.body.first_name_kanji,
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
-                    mail: this.req.body.mail,
-                    tel: this.req.body.tel,
+                    mail_addr: this.req.body.mail_addr,
+                    tel_num: this.req.body.tel_num,
                 };
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
                 this.updateReserve(() => {
@@ -97,8 +97,8 @@ class EnterPurchaseController extends PurchaseController_1.default {
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
             reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
             reserve_name_kana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
-            tel_num: purchaseInfo.tel,
-            mail_addr: purchaseInfo.mail,
+            tel_num: purchaseInfo.tel_num,
+            mail_addr: purchaseInfo.mail_addr,
             reserve_amount: price,
             list_ticket: tickets,
         };

@@ -76,10 +76,10 @@ exports.default = (app) => {
     app.post('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req, res, next) => {
         new MvtkConfirmController_1.default(req, res, next).submit();
     });
-    app.get('/inquiry/login', 'inquiry', (req, res, next) => {
+    app.get('/inquiry/login', 'inquiry.login', (req, res, next) => {
         new InquiryController_1.default(req, res, next).login();
     });
-    app.post('/inquiry/login', 'inquiry', (req, res, next) => {
+    app.post('/inquiry/login', 'inquiry.login', (req, res, next) => {
         new InquiryController_1.default(req, res, next).auth();
     });
     app.get('/inquiry', 'inquiry', (req, res, next) => {

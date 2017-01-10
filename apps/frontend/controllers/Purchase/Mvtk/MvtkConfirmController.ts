@@ -7,9 +7,10 @@ export default class MvtkConfirmController extends MvtkController {
      * ムビチケ券適用確認ページ表示
      */
     public index() {
-        if (this.req.session
-        && this.req.session['performance']
-        && this.req.session['purchaseSeats']) {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (this.req.session['performance']
+            && this.req.session['reserveSeats']
+            && this.req.session['reserveTickets']) {
 
             //購入者情報入力表示
             this.res.locals['error'] = null;

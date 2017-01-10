@@ -27,9 +27,9 @@ export default class EnterPurchaseController extends PurchaseController {
                     first_name_kanji: '晃人',
                     last_name_hira: 'はたぐち',
                     first_name_hira: 'あきと',
-                    mail: 'hataguchi@motionpicture.jp',
+                    mail_addr: 'hataguchi@motionpicture.jp',
                     mail_confirm: 'hataguchi@motionpicture.jp',
-                    tel: '09040007648'
+                    tel_num: '09040007648'
                 }
             }
 
@@ -57,8 +57,8 @@ export default class EnterPurchaseController extends PurchaseController {
                     first_name_kanji: this.req.body.first_name_kanji,
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
-                    mail: this.req.body.mail,
-                    tel: this.req.body.tel,
+                    mail_addr: this.req.body.mail_addr,
+                    tel_num: this.req.body.tel_num,
                 };
                 //決済情報をセッションへ
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
@@ -135,9 +135,9 @@ export default class EnterPurchaseController extends PurchaseController {
             /** 予約者名（かな） */
             reserve_name_kana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
             /** 電話番号 */
-            tel_num: purchaseInfo.tel,
+            tel_num: purchaseInfo.tel_num,
             /** メールアドレス */
-            mail_addr: purchaseInfo.mail,
+            mail_addr: purchaseInfo.mail_addr,
             /** 予約金額 */
             reserve_amount: price,
             /** 価格情報リスト */

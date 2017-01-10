@@ -59,10 +59,25 @@
             }
         }
 	},
+	"inquiry": {
+		"login": {
+			"page_ttl": "QRコード発券情報認証",
+			"read": "当日、こちらの発券情報を使用して劇場にある発券機もしくはチケット照会ページより入場用QRコードを発券してください。<br> 発券情報をコピーするボタンを押してメールの本文などに貼付けることもできます。",
+			"next": "認証",
+			"prev": "TOPへ戻る"
+		},
+		"confirm": {
+			"page_ttl": "QRコード発券情報認証",
+			"read": "当日、こちらの発券情報を使用して劇場にある発券機もしくはチケット照会ページより入場用QRコードを発券してください。<br> 発券情報をコピーするボタンを押してメールの本文などに貼付けることもできます。",
+			"next": "",
+			"prev": "閉じる"
+		}
+	},
 	"common": {
-		"purchase_number": "購入枚数",
+		"purchase_length": "購入枚数",
 		"total_fee": "合計金額",
 		"theater": "劇場",
+		"theater_code": "劇場コード",
 		"screen": "スクリーン",
 		"appreciation_date": "鑑賞日時",
 		"seat": "座席",
@@ -89,6 +104,8 @@
 		"month": "月",
 		"holdername": "カード名義人",
 		"securitycode": "セキュリティーコード",
+		"purchase_number": "購入番号",
+		"password": "パスワード",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
@@ -96,7 +113,9 @@
 			"first_name_hira": "(例)たろう",
 			"mail": "(例)info@cinemasunshine.co.jp",
 			"mail_confirm": "(例)info@cinemasunshine.co.jp",
-			"tel": "(例)08012345678"
+			"tel": "(例)08012345678",
+			"purchase_number": "(例)12345678",
+			"theater_code": "(例)1234"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。"
