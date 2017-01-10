@@ -1,40 +1,52 @@
 <% layout('../layouts/layout') -%>
 <% block('script', '<script src="/js/inquiry/inquiry.js"></script>') -%>
 <div class="inquiry-confirm">
-    <h1 class="page-ttl">QRコード発券情報確認</h1>
-    <p class="read">
-        当日、こちらの発券情報を使用して劇場にある発券機もしくはチケット照会ページより入場用QRコードを発券してください。<br> 発券情報をコピーするボタンを押してメールの本文などに貼付けることもできます。
-    </p>
+    <h1 class="page-ttl"><%- __('inquiry.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('inquiry.confirm.read') %></p>
 
-    <div class="box bg-light-gray">
+    <div class="ghost-button black-button mb-medium">
+        <a href="#"><%- __('inquiry.confirm.ticket_button') %></a>
+    </div>
+
+    <div class="box bg-light-gray mb-medium">
+        <div class="section-ttl"><%- __('inquiry.confirm.section_ttl') %></div>
+        <p class="small-text mb-small"><%- __('inquiry.confirm.section_text') %></p>
+        <div class="small-text mb-small"><img src="" alt=""></div>
+        <div class="ghost-button blue-button">
+            <a href="#"><%- __('inquiry.confirm.section_button') %></a>
+        </div>
+    </div>
+
+    <div class="box bg-light-gray mb-medium">
         <dl>
-            <dt>購入番号</dt>
+            <dt><%- __('common.purchase_number') %></dt>
             <dd class="red-text"><strong><%= inquiry.purchaseNo %></strong></dd>
-            <dd class="small-text">※チケットの発行・照会等に必要な番号となりますので必ずお控えください。</dd>
+            <dd class="small-text red-text">※チケットの発行・照会等に必要な番号となりますので必ずお控えください。</dd>
         </dl>
     </div>
     
     <ul>
         <% for (let ticket of inquiry.tickets) { %>
         <li class="ticket">
-            <div class="border-bottom-dot">
-                <div class="mb-x-small"><%= ticket.seat %></div>
-                <div>発券コード : <%= ticket.id %></div>
+            <div class="border-bottom-dot box">
+                <div class="mb-x-small"><strong class="large-text">A-1</strong><span>[一般]</span></div>
+                <div><%- __('common.ticket_code') %> : 123456A1</div>
             </div>
-            <div class="border-bottom-dot">
-                <p>鑑賞当日はこの部分にQRコードが表示されます。</p>
+            <div class="border-bottom-dot not-qr">
+                <p class="text-center"><%- __('inquiry.confirm.ticket_text') %></p>
             </div>
-            <div class="bg-light-gray">
-                <div class="mb-x-small"><%= ticket.date %></div>
-                <div class="mb-x-small"><%= ticket.theater %></div>
-                <div class="mb-x-small"><%= ticket.screen %></div>
-                <div><%= ticket.title %></div>
+            <div class="bg-light-gray box">
+                <div class="mb-x-small">2016/12/1（木）15:00-</div>
+                <div class="mb-x-small">シネマサンシャイン池袋</div>
+                <div class="mb-x-small">スクリーン3</div>
+                <div>ファンタスティック・ビーストと魔法使いの旅</div>
             </div>
         </li>
         <% } %>
     </ul>
     <div class="button-area clearfix">
-        <div class="prev-link close-button"><a href="#">閉じる</a></div>
+        <div class="button next-button blue-button"><a href="<%- url('method.ticketing') %>"><%- __('inquiry.confirm.next') %></a></div>
+        <div class="prev-link close-button"><a href="#"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>

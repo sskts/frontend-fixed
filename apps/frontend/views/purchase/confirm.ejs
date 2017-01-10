@@ -27,18 +27,64 @@
             </li>
             <li>
                 <dl>
-                    <dt><%- __('common.seat') %> / <%- __('common.ticket') %></dt>
+                    <dt><%- __('common.seat') %></dt>
                     <dd>
-                        <% for (let seat of updateReserve.list_qr) { %>
-                        <p><%= seat.seat_num %> <%= reserveTickets[seat.seat_num].ticket_name %></p> 
-                        <% } %>
+                        <% 
+                        let seats = [];
+                        for (let seat of updateReserve.list_qr) { 
+                            seats.push(seat.seat_num);
+                        } 
+                        %>
+                        <p><%= seats.join('、') %></p> 
+                    </dd>
+                    <dd class="column-02">
+                        <div class="clearfix">
+                            <div class="ghost-button blue-button">
+                                <a href="#"><%- __('common.seat') %><%- __('common.confirm') %></a>
+                            </div>
+                            <div class="ghost-button black-button">
+                                <a href="#"><%- __('common.seat') %><%- __('common.change') %></a>
+                            </div>
+                        </div>
                     </dd>
                 </dl>
             </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.ticket') %></dt>
+                    <dd>
+                        <%
+                        let tikcetObj = {};
+                        for (let seat of updateReserve.list_qr) {
+                            let code = reserveTickets[seat.seat_num].ticket_code;
+                            if (tikcetObj[code]) {
+                                tikcetObj[code].length++;
+                            } else {
+                                tikcetObj[code] = {
+                                    length: 1,
+                                    name: reserveTickets[seat.seat_num].ticket_name
+                                };
+                            }
+                        }
+                        let tikcets = [];
+                        for (let key in tikcetObj) { 
+                            tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
+                        }
+                        %>
+                        <p><%= tikcets.join('、') %></p>
+                    </dd>
+                    <dd>
+                        <div class="ghost-button black-button">
+                            <a href="#"><%- __('common.ticket') %><%- __('common.change') %></a>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+            
         </ul>       
         
         <h2 class="section-ttl"><%- __('common.reservation') %></h2>
-        <ul class="box bg-light-gray mb-medium">
+        <ul class="box bg-light-gray mb-small">
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
@@ -57,10 +103,13 @@
                     <dd><%= info.tel_num %></dd>
                 </dl>
             </li>
-        </ul>        
+        </ul>
+        <div class="ghost-button black-button mb-medium">
+            <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
+        </div>
         
         <h2 class="section-ttl"><%- __('common.payment') %></h2>
-        <ul class="box bg-light-gray mb-medium">
+        <ul class="box bg-light-gray mb-small">
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
@@ -74,6 +123,10 @@
                 </dl>
             </li>
         </ul>
+        <div class="ghost-button black-button mb-medium">
+            <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
+        </div>
+
         <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
         <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
         <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">

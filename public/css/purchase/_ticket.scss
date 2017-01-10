@@ -1,13 +1,6 @@
 .purchase-ticket {
     .seats {
-        li {
-            dd {
-                width: 300px;
-                @media screen and (max-width: $mobile){
-                    width: 150px;
-                }
-            }
-        }
+        
     }
     .mvtk-button {
         
@@ -53,15 +46,5 @@
 }
 
 .modal[data-modal="ticket-type"] {
-    li {
-        dt {
-            
-        }
-        dd {
-            width: 300px;
-            @media screen and (max-width: $mobile){
-                width: 150px;
-            }
-        }
-    }
+    
 }

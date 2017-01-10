@@ -218,6 +218,10 @@ a {
   }
 }
 
+.modal .box {
+  border-radius: 0;
+}
+
 .modal.scroll {
   overflow-y: scroll;
 }
@@ -275,6 +279,36 @@ a {
   margin-bottom: 5px;
 }
 
+.width-small {
+  width: 108px;
+}
+
+@media screen and (max-width: 768px) {
+  .width-small {
+    width: 54px;
+  }
+}
+
+.width-medium {
+  width: 380px;
+}
+
+@media screen and (max-width: 768px) {
+  .width-medium {
+    width: 190px;
+  }
+}
+
+.width-large {
+  width: 600px;
+}
+
+@media screen and (max-width: 768px) {
+  .width-large {
+    width: 300px;
+  }
+}
+
 .bg-white {
   background-color: #FFF;
 }
@@ -315,7 +349,7 @@ a {
 }
 
 .box li {
-  border-bottom: 1px solid #d1d1d1;
+  border-bottom: 1px dotted #d1d1d1;
   padding: 0 0 20px;
   margin-bottom: 20px;
 }
@@ -366,16 +400,14 @@ a {
   border-radius: 5px;
 }
 
-.small-button a, .small-button button, .small-button label {
-  width: 54px;
+.column-02 .clearfix {
+  margin: 0 -10px;
 }
 
-.medium-button a, .medium-button button, .medium-button label {
-  width: 190px;
-}
-
-.large-button a, .large-button button, .large-button label {
-  width: 300px;
+.column-02 .button, .column-02 .ghost-button {
+  float: left;
+  width: 50%;
+  padding: 0 10px;
 }
 
 .button a, .button button, .button label {
@@ -448,6 +480,11 @@ a {
 
 .ghost-button.yellow-button a, .ghost-button.yellow-button button, .ghost-button.yellow-button label {
   border-color: #C4C43A;
+  color: #333;
+}
+
+.ghost-button.black-button a, .ghost-button.black-button button, .ghost-button.black-button label {
+  border-color: #333;
   color: #333;
 }
 
@@ -573,7 +610,7 @@ a {
 
 .header .inner {
   position: relative;
-  width: 920px;
+  width: 800px;
   margin: 0 auto;
 }
 
@@ -598,7 +635,7 @@ a {
 
 .footer .inner {
   position: relative;
-  width: 920px;
+  width: 800px;
   margin: 0 auto;
 }
 
@@ -634,7 +671,7 @@ a {
 
 .contents {
   padding: 20px 0;
-  width: 920px;
+  width: 800px;
   margin: 0 auto;
 }
 
@@ -744,16 +781,6 @@ a {
   border: none;
 }
 
-.purchase .purchase-ticket .seats li dd {
-  width: 300px;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .purchase-ticket .seats li dd {
-    width: 150px;
-  }
-}
-
 .purchase .purchase-ticket .mvtk-button input {
   width: 0;
   height: 0;
@@ -791,16 +818,6 @@ a {
 .purchase .purchase-ticket .mvtk-button img {
   width: 91px;
   vertical-align: text-bottom;
-}
-
-.purchase .modal[data-modal="ticket-type"] li dd {
-  width: 300px;
-}
-
-@media screen and (max-width: 768px) {
-  .purchase .modal[data-modal="ticket-type"] li dd {
-    width: 150px;
-  }
 }
 
 .purchase .purchase-input .text-icon-red {
@@ -1030,76 +1047,12 @@ a {
   margin-bottom: 0;
 }
 
-.inquiry .ticket {
+.inquiry-confirm .ticket {
   margin: 0 0 20px;
   border: 2px solid #019fe8;
   border-radius: 5px;
 }
 
-.inquiry .ticket .ticket-info {
-  padding: 10px;
-  position: relative;
-}
-
-.inquiry .ticket .ticket-qr {
-  padding: 10px;
-}
-
-.inquiry .ticket .ticket-qr p {
-  padding: 30px 0;
-  text-align: center;
-  font-weight: bold;
-}
-
-.inquiry .ticket .ticket-film {
-  padding: 10px;
-}
-
-.inquiry .ticket .copy-button {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  margin-top: -25px;
-}
-
-.inquiry .ticket .copy-button a {
-  width: 50px;
-  height: 50px;
-  border-radius: 25px;
-  box-shadow: 0 0 0;
-  padding: 0;
-}
-
-.inquiry .ticket .ticket-seat {
-  font-weight: bold;
-  font-size: 26px;
-  margin: 0 0 5px;
-}
-
-.inquiry .ticket .ticket-type {
-  font-size: 14px;
-  vertical-align: middle;
-  margin-left: 10px;
-}
-
-.inquiry .ticket .ticket-date {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 5px;
-}
-
-.inquiry .ticket .ticket-theater {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 5px;
-}
-
-.inquiry .ticket .ticket-screen {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 0 0 5px;
-}
-
-.inquiry .ticket .ticket-title {
-  font-size: 12px;
+.inquiry-confirm .ticket .not-qr {
+  padding: 25px;
 }
