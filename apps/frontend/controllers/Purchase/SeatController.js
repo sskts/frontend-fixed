@@ -14,6 +14,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 this.res.locals['step'] = 0;
                 this.res.locals['reserveSeats'] = null;
                 if (this.req.session['reserveSeats']
+                    && this.req.session['performance']
                     && this.req.session['performance']._id === this.req.query['id']) {
                     this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
                     console.log(this.res.locals['reserveSeats']);
