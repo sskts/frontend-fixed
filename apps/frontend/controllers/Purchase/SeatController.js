@@ -1,8 +1,8 @@
 "use strict";
-const PurchaseController_1 = require("./PurchaseController");
-const SeatForm_1 = require("../../forms/Purchase/SeatForm");
-const request = require("request");
-const config = require("config");
+const PurchaseController_1 = require('./PurchaseController');
+const SeatForm_1 = require('../../forms/Purchase/SeatForm');
+const request = require('request');
+const config = require('config');
 const COA = require("@motionpicture/coa-service");
 class SeatSelectController extends PurchaseController_1.default {
     index() {

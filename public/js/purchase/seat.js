@@ -106,7 +106,8 @@ function getScreenStateReserve(cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        console.log(res)
+        //TODO
+        console.log(res.result.cnt_reserve_free)
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');

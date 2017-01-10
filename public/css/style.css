@@ -1001,14 +1001,12 @@ a {
 }
 
 .performance li .button {
-  float: left;
   width: 150px;
   margin-right: 10px;
 }
 
 @media screen and (max-width: 768px) {
   .performance li .button {
-    float: none;
     width: auto;
     margin-right: 0;
   }

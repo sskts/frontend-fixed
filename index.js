@@ -1,7 +1,7 @@
 "use strict";
-const app = require("./apps/frontend/app");
-const debugModule = require("debug");
-const http = require("http");
+const app = require('./apps/frontend/app');
+const debugModule = require('debug');
+const http = require('http');
 let debug = debugModule('app:server');
 let port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);

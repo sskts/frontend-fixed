@@ -1,49 +1,12 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
-const request = require("request");
-const config = require("config");
-const moment = require("moment");
+const BaseController_1 = require('../BaseController');
+const request = require('request');
+const config = require('config');
 class PerformanceController extends BaseController_1.default {
     index() {
-        let day = moment().format('YYYYMMDD');
-        this.getPerformances(day, (performances) => {
-            let result = [];
-            let count = 0;
-            for (let performance of performances) {
-                if (result.length > 0) {
-                    if (result[count].film.name.ja === performance.film.name.ja
-                        && result[count].theater === performance.theater
-                        && result[count].screen === performance.screen) {
-                        result[count].performances.push(performance);
-                    }
-                    else {
-                        result.push({
-                            theater: performance.theater,
-                            theater_name: performance.theater_name,
-                            screen: performance.screen,
-                            screen_name: performance.screen_name,
-                            film: performance.film,
-                            performances: [performance]
-                        });
-                        count++;
-                    }
-                }
-                else {
-                    result.push({
-                        theater: performance.theater,
-                        theater_name: performance.theater_name,
-                        screen: performance.screen,
-                        screen_name: performance.screen_name,
-                        film: performance.film,
-                        performances: [performance]
-                    });
-                }
-            }
-            this.res.locals['performances'] = result;
-            this.res.render('performance');
-        });
+        this.res.render('performance');
     }
-    getPerformances(day, cb) {
+    getPerformances(day) {
         let endpoint = config.get('mp_api_endpoint');
         let method = 'performances';
         let options = {
@@ -52,13 +15,11 @@ class PerformanceController extends BaseController_1.default {
             json: true,
         };
         request.get(options, (error, response, body) => {
-            if (error) {
-                return this.next(new Error('サーバーエラー'));
-            }
-            if (!response || !body.success) {
-                return this.next(new Error('サーバーエラー'));
-            }
-            cb(body.performances);
+            this.res.json({
+                error: error,
+                response: response,
+                result: body
+            });
         });
     }
 }

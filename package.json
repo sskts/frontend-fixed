@@ -13,7 +13,7 @@
     "sass": "node-sass public/css/style.scss public/css/style.css --output-style expanded -w"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^1.1.1",
+    "@motionpicture/coa-service": "^1.1.2",
     "@types/body-parser": "0.0.33",
     "@types/config": "0.0.30",
     "@types/connect-redis": "0.0.5",

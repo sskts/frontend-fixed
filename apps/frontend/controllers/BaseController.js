@@ -1,7 +1,7 @@
 "use strict";
-const log4js = require("log4js");
-const moment = require("moment");
-const locales_1 = require("../middlewares/locales");
+const log4js = require('log4js');
+const moment = require('moment');
+const locales_1 = require('../middlewares/locales');
 class BaseController {
     constructor(req, res, next) {
         this.req = req;

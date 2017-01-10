@@ -1,5 +1,5 @@
 "use strict";
-const PurchaseController_1 = require("./PurchaseController");
+const PurchaseController_1 = require('./PurchaseController');
 class ConfirmController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
@@ -25,10 +25,6 @@ class ConfirmController extends PurchaseController_1.default {
     purchase() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
-        let token = this.req.params.token;
-        this.logger.debug('仮購入', {
-            token: token
-        });
         this.deleteSession();
         let purchaseNo = '1234567889';
         this.logger.debug('購入確定', purchaseNo);

@@ -42,6 +42,10 @@ export default (app: express.Application | any) => {
         new PerformanceController(req, res, next).index();
     });
 
+    app.post('/performance', 'performance', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new PerformanceController(req, res, next).getPerformances(req.body.day);
+    });
+
     app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new BaseController(req, res, next);
         res.redirect(router.build('performance', {}));

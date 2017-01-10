@@ -1,29 +1,22 @@
 <% layout('../layouts/layout') -%>
-
+<% block('script', '<script src="/js/moment.js"></script>') -%>
+<% block('script', '<script src="/js/performance.js"></script>') -%>
 <div class="performance">
     <h1 class="page-ttl">performance</h1>
     <p class="read">選択してください</p>
-
-    <div>
-        <ul class="box bg-light-gray">
-            <% for (let performance of performances) { %>
-                <li>
-                    <dl>
-                        <dt>鑑賞日 / スクリーン</dt>
-                        <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> / <%= performance.theater_name.ja %> <%= performance.screen_name.ja %></dd>
-                        <dt>作品名</dt>
-                        <dd><%= performance.film.name.ja %></dd>
-                    </dl>
-                    <ul class="clearfix ">
-                        <% for (let performance2 of performance.performances) { %>
-                        <li class="button blue-button mb-x-small">
-                            <a href="<%- url('purchase.seat') + '?id=' + performance2._id %>"><%= moment(performance2.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance2.time_end, 'hmm').format('HH:mm') %></a>
-                        </li>
-                        <% } %>
-                    </ul>
-                </li>
+    <div class="mb-medium date">
+        <select>
+            <% for (let i = 0; i < 10; i++) { %>
+            <% if (moment().add((i - 5), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
+            <option selected value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>
+            <% } else { %>
+            <option value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>
             <% } %>
-            
-        </ul>
+            <% } %>
+        </select>
+    </div>
+    <div class="mb-medium search button blue-button"><a href="#">検索</a></div>
+    <div>
+        <ul class="box bg-light-gray performances"></ul>
     </div>
 </div>

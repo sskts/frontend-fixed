@@ -1,17 +1,17 @@
 "use strict";
-const NamedRoutes = require("named-routes");
-const BaseController_1 = require("../controllers/BaseController");
-const PerformanceController_1 = require("..//controllers/Performance/PerformanceController");
-const SeatController_1 = require("../controllers/Purchase/SeatController");
-const InputController_1 = require("../controllers/Purchase/InputController");
-const TicketController_1 = require("../controllers/Purchase/TicketController");
-const ConfirmController_1 = require("../controllers/Purchase/ConfirmController");
-const MvtkInputController_1 = require("../controllers/Purchase/Mvtk/MvtkInputController");
-const MvtkAuthController_1 = require("../controllers/Purchase/Mvtk/MvtkAuthController");
-const MvtkConfirmController_1 = require("../controllers/Purchase/Mvtk/MvtkConfirmController");
-const InquiryController_1 = require("../controllers/Inquiry/InquiryController");
-const MethodController_1 = require("../controllers/Method/MethodController");
-const ErrorController_1 = require("../controllers/Error/ErrorController");
+const NamedRoutes = require('named-routes');
+const BaseController_1 = require('../controllers/BaseController');
+const PerformanceController_1 = require('..//controllers/Performance/PerformanceController');
+const SeatController_1 = require('../controllers/Purchase/SeatController');
+const InputController_1 = require('../controllers/Purchase/InputController');
+const TicketController_1 = require('../controllers/Purchase/TicketController');
+const ConfirmController_1 = require('../controllers/Purchase/ConfirmController');
+const MvtkInputController_1 = require('../controllers/Purchase/Mvtk/MvtkInputController');
+const MvtkAuthController_1 = require('../controllers/Purchase/Mvtk/MvtkAuthController');
+const MvtkConfirmController_1 = require('../controllers/Purchase/Mvtk/MvtkConfirmController');
+const InquiryController_1 = require('../controllers/Inquiry/InquiryController');
+const MethodController_1 = require('../controllers/Method/MethodController');
+const ErrorController_1 = require('../controllers/Error/ErrorController');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
     let router = new NamedRoutes();
@@ -23,6 +23,9 @@ exports.default = (app) => {
     });
     app.get('/performance', 'performance', (req, res, next) => {
         new PerformanceController_1.default(req, res, next).index();
+    });
+    app.post('/performance', 'performance', (req, res, next) => {
+        new PerformanceController_1.default(req, res, next).getPerformances(req.body.day);
     });
     app.get('/purchase', 'purchase', (req, res, next) => {
         new BaseController_1.default(req, res, next);

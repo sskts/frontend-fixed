@@ -33,13 +33,9 @@ export default class ConfirmController extends PurchaseController {
     public purchase(): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         //モーションAPI仮購入
-        let token = this.req.params.token;
         // let toBeExpiredAt = this.req.params.toBeExpiredAt;
         // let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
 
-        this.logger.debug('仮購入', {
-            token: token
-        });
 
         this.deleteSession();
 
