@@ -753,10 +753,6 @@ a {
   color: #555;
 }
 
-.purchase .purchase-seat .screen {
-  background-color: #353535;
-}
-
 .purchase .purchase-seat .film-info {
   background-color: #3e3a39;
   color: #FFF;
@@ -784,6 +780,7 @@ a {
 .purchase .purchase-ticket .mvtk-button input {
   width: 0;
   height: 0;
+  opacity: 0;
 }
 
 .purchase .purchase-ticket .mvtk-button label:before {
@@ -902,94 +899,75 @@ a {
 .screen {
   display: none;
   position: relative;
-}
-
-@media screen and (max-width: 768px) {
-  .screen {
-    overflow: hidden;
-  }
+  background-color: #EEEDEE;
+  overflow: hidden;
 }
 
 .screen .transition {
   transition: all 0.3s;
 }
 
-.screen .screen-inner {
-  margin: 0 auto;
-  position: relative;
-  width: 404px;
-  height: 665px;
-  background-image: url(/images/pc/screen.png);
+.screen .screen-scroll {
+  transition: all 0.2s;
 }
 
-@media screen and (max-width: 768px) {
-  .screen .screen-inner {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
+.screen .screen-inner {
+  position: relative;
+  width: 1600px;
+  height: 1400px;
 }
 
 .screen .seat {
-  width: 13px;
-  height: 19px;
   position: absolute;
+  text-align: center;
 }
 
 .screen .seat a {
-  box-sizing: border-box;
+  width: 40px;
+  height: 50px;
   display: block;
-  height: 100%;
-  background-color: #FFF;
-  border: 1px solid #333;
-  border-radius: 2px;
+  color: #9D9E9E;
+  border: 2px solid #9D9E9E;
 }
 
 .screen .seat a.active {
+  border: none;
+  color: #FFF;
   background-color: #019fe8;
 }
 
 .screen .seat a.disabled {
-  background-color: #666;
+  border: none;
+  color: #FFF;
+  background-color: #9D9E9E;
 }
 
-.screen .left {
-  transform: rotate(10deg);
-}
-
-.screen .right {
-  transform: rotate(-10deg);
-}
-
-.screen .wheelchair a {
-  background-image: url(/images/pc/wheelchair.png);
-  background-position: center;
-  background-repeat: no-repeat;
+.screen .seat a span {
+  display: none;
 }
 
 .screen .zoom-btn {
-  position: fixed;
-  left: 10px;
-  bottom: 10px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
   z-index: 2;
   display: none;
 }
 
-.screen .zoom-btn.active {
-  display: block;
+@media screen and (max-width: 768px) {
+  .screen .zoom-btn {
+    display: block;
+  }
 }
 
 .screen .zoom-btn a {
   display: block;
   width: 40px;
   height: 40px;
-  background-color: #FFF;
+  background-color: #000;
+  border-radius: 20px;
   line-height: 40px;
-  text-align: center;
-  color: #333;
-  text-decoration: none;
-  box-sizing: border-box;
-  border: 2px solid rgba(0, 0, 0, 0.5);
+  color: #FFF;
 }
 
 .screen .balloon {
@@ -1020,6 +998,14 @@ a {
 .screen .balloon.active {
   display: block;
   animation: fadeIn 0.5s ease 0s 1 normal;
+}
+
+.zoom .screen-scroll {
+  overflow: auto;
+}
+
+.zoom .seat a span {
+  display: block;
 }
 
 @keyframes fadeIn {

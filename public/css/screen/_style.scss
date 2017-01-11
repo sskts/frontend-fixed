@@ -1,132 +1,104 @@
 .screen {
-  display: none;
-  position: relative;
-  @media screen and (max-width: $mobile) {
-    overflow: hidden;
-  }
-  .transition {
-    transition: all 0.3s;
-  }
-  .screen-inner {
-    margin: 0 auto;
+    display: none;
     position: relative;
-    width: 404px;
-    height: 665px;
-    background-image: url(/images/pc/screen.png);
-    @media screen and (max-width: $mobile) {
-      position: absolute;
-      top: 0;
-      left: 0;
+    background-color: #EEEDEE;
+    overflow: hidden;
+    .transition {
+        transition: all 0.3s;
     }
-  }
-  .seat {
-    width: 13px;
-    height: 19px;
-    position: absolute;
-    a {
-      box-sizing: border-box;
-      display: block;
-      height: 100%;
-      background-color: #FFF;
-      border: 1px solid #333;
-      border-radius: 2px;
-      &.active {
-        background-color: #019fe8;
-      }
-      &.disabled {
-        background-color: #666;
-      }
+    .screen-scroll {
+        transition: all 0.2s;
     }
-  }
-  .front {
-    a {
-      
+    .screen-inner {
+        position: relative;
+        width: 1600px;
+        height: 1400px;
     }
-  }
-  .middle {
-    a {
-      
+    .seat {
+        position: absolute;
+        text-align: center;
+        a {
+            width: 40px;
+            height: 50px;
+            display: block;
+            color: #9D9E9E;
+            border: 2px solid #9D9E9E;
+            &.active {
+                border: none;
+                color: #FFF;
+                background-color: #019fe8;
+            }
+            &.disabled {
+                border: none;
+                color: #FFF;
+                background-color: #9D9E9E;
+            }
+            span {
+                display: none;
+            }
+        }
     }
-  }
-  .back {
-    a {
-      
+
+    .zoom-btn {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 2;
+        display: none;
+        @media screen and (max-width: $mobile){
+            display: block;
+        }
+        a {
+            display: block;
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            border-radius: 20px;
+            line-height: 40px;
+            color: #FFF;
+        }
     }
-  }
-  .left {
-    transform: rotate(10deg);
-    a {
-      
+    .balloon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        padding: 15px;
+        background-color: #000;
+        background-color: rgba(51, 51, 51, 0.9);
+        color: #FFF;
+        &::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 4px 10px 4px;
+            border-color: transparent transparent #000 transparent;
+            border-color: transparent transparent rgba(51, 51, 51, 0.9) transparent;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            margin-left: -4px;
+        }
+        &.active {
+            display: block;
+            animation: fadeIn 0.5s ease 0s 1 normal;
+        }
     }
-  }
-  .center {
-    a {
-      
+}
+.zoom {
+    .screen-scroll {
+        overflow: auto;
     }
-  }
-  .right {
-    transform: rotate(-10deg);
-    a {
-      
+    .seat {
+        a {
+            span {
+                display: block;
+            }
+        }
     }
-  }
-  .wheelchair a {
-    background-image: url(/images/pc/wheelchair.png);
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  .zoom-btn {
-    position: fixed;
-    left: 10px;
-    bottom: 10px;
-    z-index: 2;
-    display: none;
-    &.active {
-      display: block;
-    }
-    
-    a {
-      display: block;
-      width: 40px;
-      height: 40px;
-      background-color: #FFF;
-      line-height: 40px;
-      text-align: center;
-      color: #333;
-      text-decoration: none;
-      box-sizing: border-box;
-      border: 2px solid rgba(0, 0, 0, 0.5);
-    }
-  }
-  .balloon {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: none;
-    padding: 15px;
-    background-color: #000;
-    background-color: rgba(51, 51, 51, 0.9);
-    color: #FFF;
-    &::after {
-      content: '';
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 0 4px 10px 4px;
-      border-color: transparent transparent #000 transparent;
-      border-color: transparent transparent rgba(51, 51, 51, 0.9) transparent;
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      margin-left: -4px;
-    }
-    &.active {
-      display: block;
-      animation: fadeIn 0.5s ease 0s 1 normal;
-    }
-  }
 }
 @keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
+    0% {opacity: 0;}
+    100% {opacity: 1;}
 }

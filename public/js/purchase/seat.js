@@ -36,8 +36,8 @@ $(function () {
      * 座席クリックイベント
      */
     $('.screen').on('click', '.seat a', function () {
-        // スマホで拡大操作
-        if (screenSeatStatusesMap.isDeviceType('sp') && !screenSeatStatusesMap.isZoomState()) {
+        //スマホで拡大操作
+        if ($('.device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
             return;
         }
         var limit = Number($('.screen-cover').attr('data-limit'));
@@ -89,7 +89,7 @@ function getScreenStateReserve(cb) {
         dataType: 'json',
         url: '/purchase/getScreenStateReserve',
         type: 'POST',
-        timeout: 100000,
+        timeout: 1000,
         data: {
             /** 施設コード */
             theater_code: target.attr('data-theater'),
@@ -107,10 +107,14 @@ function getScreenStateReserve(cb) {
         beforeSend: function () { }
     }).done(function (res) {
         //TODO
-        console.log(res.result.cnt_reserve_free)
+        // console.log(res.result.cnt_reserve_free)
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
+        //TODO
+        var screen = $('.screen');
+        screen.show();
+        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
     }).always(function () { });
 }
 
