@@ -522,6 +522,17 @@ a {
   }
 }
 
+.next-button a:before, .next-button button:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  background-image: url(/images/common/icon_next.svg);
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
+}
+
 .prev-button {
   width: 300px;
   margin: 0 auto;
@@ -553,6 +564,19 @@ a {
 .prev-link a, .prev-link button {
   font-size: 18px;
   color: #333;
+  position: relative;
+  padding-left: 15px;
+}
+
+.prev-link a:before, .prev-link button:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-image: url(/images/common/icon_prev.svg);
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
 }
 
 .page-ttl {
@@ -813,7 +837,7 @@ a {
 }
 
 .purchase .purchase-ticket .mvtk-button img {
-  width: 91px;
+  width: 100px;
   vertical-align: text-bottom;
 }
 

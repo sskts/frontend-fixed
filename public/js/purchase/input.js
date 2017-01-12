@@ -6,6 +6,9 @@ $(function () {
         event.preventDefault();
         validation();
         if ($('.validation-text').length > 0) {
+            var target = $('.validation').eq(0).parents('.box li');
+            var top = target.offset().top - 20;
+            $('html,body').animate({scrollTop: top}, 300);
             return;
         }
 
