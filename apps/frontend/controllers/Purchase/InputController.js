@@ -16,6 +16,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
             this.res.locals['step'] = 2;
             this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
             this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
+            this.res.locals['price'] = this.getPrice(this.req.session);
             if (process.env.NODE_ENV === 'dev') {
                 this.res.locals['info'] = {
                     last_name_kanji: '畑口',
@@ -62,6 +63,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                 this.res.locals['step'] = 2;
                 this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
+                this.res.locals['price'] = this.getPrice(this.req.session);
                 this.res.render('purchase/enterPurchase');
             }
         });
@@ -74,19 +76,17 @@ class EnterPurchaseController extends PurchaseController_1.default {
         let purchaseInfo = this.req.session['purchaseInfo'];
         let reserveTickets = this.req.session['reserveTickets'];
         let tickets = [];
-        let price = 0;
         for (let seat of reserveSeats.list_tmp_reserve) {
             let ticket = reserveTickets[seat['seat_num']];
             tickets.push({
                 ticket_code: ticket.ticket_code,
                 std_price: ticket.std_price,
                 add_price: ticket.add_price,
-                dis_price: ticket.dis_price,
+                dis_price: ticket.dis_price || 0,
                 sale_price: ticket.sale_price,
-                ticket_count: ticket.ticket_count,
+                ticket_count: ticket.limit_count,
                 seat_num: seat['seat_num'],
             });
-            price += ticket.sale_price;
         }
         let args = {
             theater_code: performance.theater._id,
@@ -96,35 +96,31 @@ class EnterPurchaseController extends PurchaseController_1.default {
             time_begin: performance.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
             reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
-            reserve_name_kana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
+            reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
             tel_num: purchaseInfo.tel_num,
             mail_addr: purchaseInfo.mail_addr,
-            reserve_amount: price,
+            reserve_amount: this.getPrice(this.req.session),
             list_ticket: tickets,
         };
         COA.updateReserveInterface.call(args, (err, result) => {
-            err = null;
-            result = {
-                reserve_num: '12345678',
-                list_qr: [
-                    {
-                        seat_section: '0',
-                        seat_num: 'A-1',
-                        seat_qrcode: '',
-                    },
-                    {
-                        seat_section: '0',
-                        seat_num: 'A-2',
-                        seat_qrcode: '',
-                    }
-                ]
-            };
+            if (err)
+                return this.next(new Error(err.message));
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['updateReserve'] = result;
             this.logger.debug('本予約完了', this.req.session['updateReserve']);
             cb();
         });
+    }
+    getPrice(session) {
+        let reserveSeats = session['reserveSeats'];
+        let reserveTickets = session['reserveTickets'];
+        let price = 0;
+        for (let seat of reserveSeats.list_tmp_reserve) {
+            let ticket = reserveTickets[seat['seat_num']];
+            price += ticket.sale_price;
+        }
+        return price;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

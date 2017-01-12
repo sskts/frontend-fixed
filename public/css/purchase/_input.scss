@@ -14,7 +14,7 @@
         }
     }
     .scroll {
-        overflow-y: scroll;
+        overflow-y: auto;
         resize: vertical;
         height: 300px;
         @media screen and (max-width: $mobile) {

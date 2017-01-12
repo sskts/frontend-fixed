@@ -9,7 +9,7 @@
                 <li>
                     <dl class="d-table">
                         <dt class="d-td seat-code"><%= seat.seat_num %></dt>
-                        <% if (reserveTickets) { %>
+                        <% if (reserveTickets && reserveTickets[seat.seat_num]) { %>
                             <dd class="d-td width-medium" data-ticket="<%= JSON.stringify(reserveTickets[seat.seat_num]) %>">                                
                                 <div class="ghost-button blue-button">
                                     <a href="#" data-modal="ticket-type"><%= reserveTickets[seat.seat_num].ticket_name %></a>

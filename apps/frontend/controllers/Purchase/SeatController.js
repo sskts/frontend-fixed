@@ -1,8 +1,6 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
 const SeatForm_1 = require('../../forms/Purchase/SeatForm');
-const request = require('request');
-const config = require('config');
 const COA = require("@motionpicture/coa-service");
 class SeatSelectController extends PurchaseController_1.default {
     index() {
@@ -17,7 +15,6 @@ class SeatSelectController extends PurchaseController_1.default {
                     && this.req.session['performance']
                     && this.req.session['performance']._id === this.req.query['id']) {
                     this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
-                    console.log(this.res.locals['reserveSeats']);
                 }
                 this.req.session['performance'] = performance;
                 this.res.render('purchase/seat');
@@ -33,10 +30,12 @@ class SeatSelectController extends PurchaseController_1.default {
                 return this.next(new Error('session is undefined'));
             if (this.req.session['reserveSeats']
                 && this.req.session['performance']._id === this.req.query['id']) {
-                this.reserveSeatsTemporarily(() => {
-                    if (!this.router)
-                        return this.next(new Error('router is undefined'));
-                    this.res.redirect(this.router.build('purchase.ticket', {}));
+                this.deleteTmpReserve(() => {
+                    this.reserveSeatsTemporarily(() => {
+                        if (!this.router)
+                            return this.next(new Error('router is undefined'));
+                        this.res.redirect(this.router.build('purchase.ticket', {}));
+                    });
                 });
             }
             else {
@@ -46,25 +45,6 @@ class SeatSelectController extends PurchaseController_1.default {
                     this.res.redirect(this.router.build('purchase.ticket', {}));
                 });
             }
-        });
-    }
-    getPerformance(performancesId, cb) {
-        let endpoint = config.get('mp_api_endpoint');
-        let method = 'performance';
-        let options = {
-            url: `${endpoint}/${method}/${performancesId}`,
-            method: 'GET',
-            json: true,
-        };
-        request.get(options, (error, response, body) => {
-            if (error) {
-                return this.next(new Error('サーバーエラー'));
-            }
-            if (!response || !body.success) {
-                return this.next(new Error('サーバーエラー'));
-            }
-            this.logger.debug('performance', body.performance);
-            cb(body.performance);
         });
     }
     getScreenStateReserve() {
@@ -94,6 +74,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 return this.next(new Error(err.message));
             if (!result)
                 return this.next(new Error('サーバーエラー'));
+            this.logger.debug('仮予約削除');
             cb();
         });
     }
@@ -107,26 +88,12 @@ class SeatSelectController extends PurchaseController_1.default {
             title_code: performance.film.coa_title_code,
             title_branch_num: performance.film.coa_title_branch_num,
             time_begin: performance.time_start,
-            screen_code: performance.screen._id,
+            screen_code: performance.screen.coa_screen_code,
             list_seat: JSON.parse(this.req.body.seats),
         };
         COA.reserveSeatsTemporarilyInterface.call(args, (err, result) => {
-            err = null;
-            result = {
-                tmp_reserve_num: 12345678,
-                list_tmp_reserve: [
-                    {
-                        seat_section: '0',
-                        seat_num: 'A-1',
-                        sts_tmp_reserve: '0',
-                    },
-                    {
-                        seat_section: '0',
-                        seat_num: 'A-2',
-                        sts_tmp_reserve: '0',
-                    }
-                ]
-            };
+            if (err)
+                return this.next(new Error(err.message));
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['reserveSeats'] = result;

@@ -13,9 +13,16 @@
             for (let x = 0; x < 26; x++) { 
                 let top = 120 + (50 + 10) * y;
                 let left = 150 + (40 + 10) * x;
+                
+                let toFullWidth = (value)=> {
+                    return value.replace(/./g, (s) => {
+                        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
+                    });
+                }
+                let codeStr = toFullWidth(labels[y]) + '－' + toFullWidth(String(x + 1));
             %>
             <div class="seat seat-normal" style="top:<%- top %>px; left:<%- left %>px">
-                <a href="javascript:void(0)" data-seat-code="<%= labels[y] %>-<%= (x + 1) %>"><span><%= labels[y] %><%= (x + 1) %></span></a>
+                <a href="javascript:void(0)" data-seat-code="<%= codeStr %>"><span><%= labels[y] %><%= (x + 1) %></span></a>
             </div>
             <% 
             }

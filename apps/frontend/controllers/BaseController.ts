@@ -2,6 +2,8 @@ import express = require('express');
 import log4js = require('log4js');
 import moment = require('moment');
 import locales from '../middlewares/locales';
+import request = require('request');
+import config = require('config');
 /**
  * ベースコントローラー
  * 
@@ -60,6 +62,46 @@ export default class BaseController {
         return string.replace(/[&'`"<>]/g, change);
     }
 
+    /**
+     * 
+     * パフォーマンスID取得
+     */
+    protected getPerformanceId(
+        theaterCode: string, 
+        day: string, 
+        titleCode: string, 
+        titleBranchNum: string,
+        screenCode: string,
+        timeBegin: string
+    ): string  {
+        return `${theaterCode}${day}${titleCode}${titleBranchNum}${screenCode}${timeBegin}`;
+    }
+
+    /**
+     * TODO
+     * パフォーマンス取得
+     */
+    protected getPerformance(performancesId: string, cb: Function): void {
+        let endpoint: string = config.get<string>('mp_api_endpoint');
+        let method: string = 'performance';
+
+        let options: request.Options = {
+            url: `${endpoint}/${method}/${performancesId}`,
+            method: 'GET',
+            json: true,
+        };
+
+        request.get(options, (error, response, body) => {
+            if (error) {
+                return this.next(new Error(error.message));
+            }
+            if (!response || !body.success) {
+                return this.next(new Error('response is null or body.success is false'));
+            }
+            this.logger.debug('performance', body.performance);
+            cb(body.performance);
+        });
+    }
     
 }
 

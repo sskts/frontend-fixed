@@ -14,7 +14,7 @@
         data-coa-title-code="<%= performance.film.coa_title_code %>"
         data-coa-title-branch-num="<%= performance.film.coa_title_branch_num %>"
         data-time-start="<%= performance.time_start %>"
-        data-screen-code="<%= performance.screen._id %>">
+        data-screen-code="<%= performance.screen.coa_screen_code %>">
             <% //partial('../screens/' + performance.theater + performance.screen) %>
             <%- partial('../screens/00101') %>
         </div>
@@ -34,6 +34,6 @@
             <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
             <div class="prev-link"><a href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
-        <input type="hidden" name="seats" value="">
+        <input type="hidden" name="seats" value="<%= reserveSeats %>">
     </form>
 </div>

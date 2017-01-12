@@ -8,21 +8,21 @@
             <dl>
                 <dt><%- __('common.theater_code') %></dt>
                 <dd>
-                    <input type="text" name="theater_code" placeholder="<%- __('common.placeholder.theater_code') %>" value="">
+                    <input type="text" name="theater_code" placeholder="<%- __('common.placeholder.theater_code') %>" value="001">
                     <% if (error && error.theater_code) { %>
                     <div class="validation-text"><%= error.theater_code[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <input type="text" name="reserve_num" placeholder="<%- __('common.placeholder.purchase_number') %>" value="">
+                    <input type="text" name="reserve_num" placeholder="<%- __('common.placeholder.purchase_number') %>" value="5836">
                     <% if (error && error.reserve_num) { %>
                     <div class="validation-text"><%= error.reserve_num[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.tel') %></dt>
                 <dd>
-                    <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="">
+                    <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="0849273550">
                     <% if (error && error.tel_num) { %>
                     <div class="validation-text"><%= error.tel_num[0] %></div>
                     <% } %>

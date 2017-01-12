@@ -20,16 +20,13 @@ log4js.configure({
             type: 'console',
             filename: `${logDir}/system.log`,
             pattern: '-yyyy-MM-dd',
-        },
-        {
-            type: 'console'
         }
     ],
     levels: {
         access: log4js.levels.ALL.toString(),
         system: (env === 'prod') ? log4js.levels.INFO.toString() : log4js.levels.ALL.toString()
     },
-    replaceConsole: (env === 'prod') ? false : true
+    replaceConsole: (env === 'prod') ? false : false
 });
 
 export default log4js.connectLogger(log4js.getLogger('access'), {});

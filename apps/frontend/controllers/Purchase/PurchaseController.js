@@ -4,10 +4,11 @@ class PurchaseController extends BaseController_1.default {
     deleteSession() {
         if (!this.req.session)
             return;
-        delete this.req.session['gmo_token_object'];
         delete this.req.session['purchaseInfo'];
-        delete this.req.session['performance'];
-        delete this.req.session['purchaseSeats'];
+        delete this.req.session['reserveSeats'];
+        delete this.req.session['reserveTickets'];
+        delete this.req.session['updateReserve'];
+        delete this.req.session['gmoTokenObject'];
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

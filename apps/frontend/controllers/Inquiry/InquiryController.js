@@ -17,7 +17,7 @@ class InquiryController extends BaseController_1.default {
                 this.stateReserve(() => {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
-                    this.res.redirect(this.router.build('purchase.confirm', {}));
+                    this.res.redirect(this.router.build('inquiry.confirm', {}));
                 });
             }
             else {
@@ -36,10 +36,16 @@ class InquiryController extends BaseController_1.default {
         COA.stateReserveInterface.call(args, (err, result) => {
             if (err)
                 return this.next(new Error(err.message));
-            if (!this.req.session)
-                return this.next(new Error('session is undefined'));
-            this.req.session['inquiry'] = result;
-            cb();
+            if (!result)
+                return this.next(new Error('result is null'));
+            let performanceId = this.getPerformanceId(this.req.body.theater_code, result.date_jouei, result.title_code, result.title_branch_num, '0012', result.time_begin);
+            this.getPerformance(performanceId, (performance) => {
+                if (!this.req.session)
+                    return this.next(new Error('session is undefined'));
+                this.req.session['inquiry'] = result;
+                this.req.session['performance'] = performance;
+                cb();
+            });
         });
     }
     index() {

@@ -20,6 +20,7 @@ export default class EnterPurchaseController extends PurchaseController {
             this.res.locals['step'] = 2;
             this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
             this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
+            this.res.locals['price'] = this.getPrice(this.req.session);
 
             if (process.env.NODE_ENV === 'dev') {
                 this.res.locals['info'] = {
@@ -77,6 +78,7 @@ export default class EnterPurchaseController extends PurchaseController {
                 this.res.locals['step'] = 2;
                 this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
+                this.res.locals['price'] = this.getPrice(this.req.session);
                 this.res.render('purchase/enterPurchase');
             }
 
@@ -94,7 +96,6 @@ export default class EnterPurchaseController extends PurchaseController {
         let purchaseInfo = this.req.session['purchaseInfo'];
         let reserveTickets = this.req.session['reserveTickets'];
         let tickets: any[] = [];
-        let price = 0;
 
         for (let seat of reserveSeats.list_tmp_reserve) {
             let ticket = reserveTickets[seat['seat_num']];
@@ -106,17 +107,16 @@ export default class EnterPurchaseController extends PurchaseController {
                 /** 加算単価 */
                 add_price: ticket.add_price,
                 /** 割引額 */
-                dis_price: ticket.dis_price,
+                dis_price: ticket.dis_price || 0,
                 /** 金額 */
                 sale_price: ticket.sale_price,
                 /** 枚数 */
-                ticket_count: ticket.ticket_count,
+                ticket_count: ticket.limit_count,
                 /** 座席番号 */
                 seat_num: seat['seat_num'],
             });
-            price += ticket.sale_price;
         }
-        
+
         let args: COA.updateReserveInterface.Args = {
             /** 施設コード */
             theater_code: performance.theater._id,
@@ -133,49 +133,35 @@ export default class EnterPurchaseController extends PurchaseController {
             /** 予約者名 */
             reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
             /** 予約者名（かな） */
-            reserve_name_kana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
+            reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
             /** 電話番号 */
             tel_num: purchaseInfo.tel_num,
             /** メールアドレス */
             mail_addr: purchaseInfo.mail_addr,
             /** 予約金額 */
-            reserve_amount: price,
+            reserve_amount: this.getPrice(this.req.session),
             /** 価格情報リスト */
             list_ticket: tickets,
         };
         COA.updateReserveInterface.call(args, (err, result) => {
-            //TODO
-            err = null;
-            result = {
-                /** 座席チケット購入番号 */
-                reserve_num: '12345678',
-                /** 入場QRリスト */
-                list_qr: [
-                    {
-                        /** 座席セクション */
-                        seat_section: '0',
-                        /** 座席番号 */
-                        seat_num: 'A-1',
-                        /** 座席入場QRコード */
-                        seat_qrcode: '',
-                    },
-                    {
-                        /** 座席セクション */
-                        seat_section: '0',
-                        /** 座席番号 */
-                        seat_num: 'A-2',
-                        /** 座席入場QRコード */
-                        seat_qrcode: '',
-                    }
-                ]
-            }
-            // if (err) return this.next(new Error(err.message));
+            if (err) return this.next(new Error(err.message));
             if (!this.req.session) return this.next(new Error('session is undefined'));
             //予約情報をセッションへ
             this.req.session['updateReserve'] = result;
             this.logger.debug('本予約完了', this.req.session['updateReserve']);
             cb();
         });
+    }
+
+    private getPrice(session: Express.Session): number {
+        let reserveSeats = session['reserveSeats'];
+        let reserveTickets = session['reserveTickets'];
+        let price = 0;
+        for (let seat of reserveSeats.list_tmp_reserve) {
+            let ticket = reserveTickets[seat['seat_num']];
+            price += ticket.sale_price;
+        }
+        return price;
     }
 
 

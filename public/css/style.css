@@ -213,8 +213,8 @@ a {
 
 @media screen and (max-width: 768px) {
   .modal {
-    width: 300px;
-    margin-left: -150px;
+    width: 90%;
+    margin-left: -45%;
   }
 }
 
@@ -223,7 +223,7 @@ a {
 }
 
 .modal.scroll {
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .modal-cover.active,
@@ -840,7 +840,7 @@ a {
 }
 
 .purchase .purchase-input .scroll {
-  overflow-y: scroll;
+  overflow-y: auto;
   resize: vertical;
   height: 300px;
 }
@@ -927,19 +927,19 @@ a {
   height: 50px;
   display: block;
   color: #9D9E9E;
-  border: 2px solid #9D9E9E;
+  padding-top: 14px;
+  background-image: url(/images/screen/seat.svg);
+  background-size: 120px 50px;
 }
 
 .screen .seat a.active {
-  border: none;
   color: #FFF;
-  background-color: #019fe8;
+  background-position: -40px 0;
 }
 
 .screen .seat a.disabled {
-  border: none;
   color: #FFF;
-  background-color: #9D9E9E;
+  background-position: -80px 0;
 }
 
 .screen .seat a span {

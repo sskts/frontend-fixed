@@ -3,15 +3,16 @@ $(function () {
     getScreenStateReserve(function (result) {
         var screen = $('.screen');
         //席状態変更
-        // $('.seat a').addClass('disabled');
+        $('.seat a').addClass('disabled');
         
         var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
         if (purchaseSeats) {
             //予約している席設定
-            for (var i = 0, len = purchaseSeats.length; i < len; i++) {
-                var purchaseSeat = purchaseSeats[i];
-                var seatNum = purchaseSeat.code;
+            for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
+                var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
+                var seatNum = purchaseSeat.seat_num;
                 var seat = $('.seat a[data-seat-code='+ seatNum +']');
+                seat.removeClass('disabled');
                 seat.addClass('active');
             }
         }
@@ -20,8 +21,8 @@ $(function () {
             var freeSeats = result.list_seat[0].list_free_seat;
             for (var i = 0, len = freeSeats.length; i < len; i++) {
                 var freeSeat = freeSeats[i];
-                var seatNum = replaceHalfSize(freeSeat.seat_num);
-                var seat = $('.seat a[data-seat-code='+ seatNum +']');
+                // var seatNum = replaceHalfSize(freeSeat.seat_num);
+                var seat = $('.seat a[data-seat-code='+ freeSeat.seat_num +']');
                 if (seat && !seat.hasClass('active')) {
                     seat.removeClass('disabled');
                 }
@@ -30,6 +31,7 @@ $(function () {
         
         screen.show();
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
+        
     });
 
     /**
@@ -107,14 +109,10 @@ function getScreenStateReserve(cb) {
         beforeSend: function () { }
     }).done(function (res) {
         //TODO
-        // console.log(res.result.cnt_reserve_free)
+        console.log(res)
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
-        //TODO
-        var screen = $('.screen');
-        screen.show();
-        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
     }).always(function () { });
 }
 

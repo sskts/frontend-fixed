@@ -22,16 +22,16 @@
             height: 50px;
             display: block;
             color: #9D9E9E;
-            border: 2px solid #9D9E9E;
+            padding-top: 14px;
+            background-image: url(/images/screen/seat.svg);
+            background-size: 120px 50px;
             &.active {
-                border: none;
                 color: #FFF;
-                background-color: #019fe8;
+                background-position: -40px 0;
             }
             &.disabled {
-                border: none;
                 color: #FFF;
-                background-color: #9D9E9E;
+                background-position: -80px 0;
             }
             span {
                 display: none;
