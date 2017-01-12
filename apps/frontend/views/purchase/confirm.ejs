@@ -10,19 +10,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                    <dd><%= performance.theater.name[__('lang')] %> / <%= performance.screen.name[__('lang')] %></dd>
+                    <dd><strong><%= performance.theater.name[__('lang')] %> / <%= performance.screen.name[__('lang')] %></strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.film_title') %></dt>
-                    <dd><%= performance.film.name[__('lang')] %></dd>
+                    <dd><strong><%= performance.film.name[__('lang')] %></strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.appreciation_date') %></dt>
-                    <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
+                    <dd><strong><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></strong></dd>
                 </dl>
             </li>
             <li>
@@ -35,7 +35,7 @@
                             seats.push(seat.seat_num);
                         } 
                         %>
-                        <p><%= seats.join('、') %></p> 
+                        <p><strong><%= seats.join('、') %></strong></p> 
                     </dd>
                     <dd class="column-02">
                         <div class="clearfix">
@@ -71,7 +71,7 @@
                             tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
                         }
                         %>
-                        <p><%= tikcets.join('、') %></p>
+                        <p><strong><%= tikcets.join('、') %></strong></p>
                     </dd>
                     <dd>
                         <div class="ghost-button black-button">
@@ -88,19 +88,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><%= info.last_name_hira %> <%= info.first_name_hira %></dd>
+                    <dd><strong><%= info.last_name_hira %> <%= info.first_name_hira %></strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail') %></dt>
-                    <dd><%= info.mail_addr %></dd>
+                    <dd><strong><%= info.mail_addr %></strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel') %></dt>
-                    <dd><%= info.tel_num %></dd>
+                    <dd><strong><%= info.tel_num %></strong></dd>
                 </dl>
             </li>
         </ul>
@@ -113,13 +113,13 @@
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
-                    <dd><%= gmoTokenObject.maskedCardNo %></dd>
+                    <dd><strong><%= gmoTokenObject.maskedCardNo %></strong></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>
-                    <dd>￥5,100</dd>
+                    <dd><strong>￥5,100</strong></dd>
                 </dl>
             </li>
         </ul>

@@ -18,7 +18,7 @@
                         <% } else { %>
                             <dd class="d-td width-medium" data-ticket="">
                                 <div class="button blue-button">
-                                    <a href="#" data-modal="ticket-type">選択してください</a>
+                                    <a href="#" data-modal="ticket-type"><%- __('purchase.ticket.ticket_select') %></a>
                                 </div>
                             </dd>
                         <% } %>
@@ -28,15 +28,18 @@
             
         </ul>
 
+        <div class="total box bg-light-gray mb-medium">
+            <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text"><%= reserveSeats.list_tmp_reserve.length %></strong>枚</div>
+            <div class="price"><%- __('common.total_fee') %> <strong class="red-text">0</strong>円</div>
+        </div>
+
+        <p class="small-text mb-small"><%- __('purchase.ticket.note') %></p>
         <div class="mvtk-button mb-medium ghost-button  yellow-button">
             <input type="checkbox" name="mvtk" value="true" id="mvtk">
             <label for="mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk') %></label>
         </div>
 
-        <div class="total box bg-light-gray">
-            <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text"><%= reserveSeats.list_tmp_reserve.length %></strong>枚</div>
-            <div class="price"><%- __('common.total_fee') %> <strong class="red-text">0</strong>円</div>
-        </div>
+        
     
     
         <div class="button-area clearfix">

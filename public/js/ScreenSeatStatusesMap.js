@@ -36,11 +36,11 @@
                         y: pos.y/ _this.scale - _this.screen.height() / 2,
                     }
                     _this.scaleUp();
-                    _this.screen.find('.screen-scroll').scrollLeft(scrollPos.x);
-                    _this.screen.find('.screen-scroll').scrollTop(scrollPos.y);
-                    // _this.screen.find('.screen-scroll').animate({
-                    //     scrollLeft: scrollPos.x, scrollTop: scrollPos.y
-                    // }, 200);
+                    // _this.screen.find('.screen-scroll').scrollLeft(scrollPos.x);
+                    // _this.screen.find('.screen-scroll').scrollTop(scrollPos.y);
+                    _this.screen.find('.screen-scroll').animate({
+                        scrollLeft: scrollPos.x, scrollTop: scrollPos.y
+                    }, 300);
                 }
             });
             $(window).on('resize', function() {

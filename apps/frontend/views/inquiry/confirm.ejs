@@ -8,10 +8,10 @@
         <a href="#"><%- __('inquiry.confirm.ticket_button') %></a>
     </div>
 
-    <div class="box bg-light-gray mb-medium">
+    <div class="box bg-ultra-light-gray mb-medium">
         <div class="section-ttl"><%- __('inquiry.confirm.section_ttl') %></div>
         <p class="small-text mb-small"><%- __('inquiry.confirm.section_text') %></p>
-        <div class="small-text mb-small"><img src="" alt=""></div>
+        <div class="small-text mb-small bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
         <div class="ghost-button blue-button">
             <a href="#"><%- __('inquiry.confirm.section_button') %></a>
         </div>
@@ -26,7 +26,7 @@
     </div>
     
     <ul>
-        <% for (let i = 0; i < inquiry.list_reserve_seat.length; i++) { %>
+        <% for (let i = 0; i < inquiry.list_reserve_seat.length - 1; i++) { %>
         <li class="ticket">
             <div class="border-bottom-dot box">
                 <div class="mb-x-small">
@@ -49,7 +49,7 @@
     </ul>
     <div class="button-area clearfix">
         <div class="button next-button blue-button"><a href="<%- url('method.ticketing') %>"><%- __('inquiry.confirm.next') %></a></div>
-        <div class="prev-link close-button"><a href="#"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="close-link close-button"><a href="#"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>
