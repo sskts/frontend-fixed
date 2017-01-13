@@ -2,11 +2,8 @@
     display: none;
     position: relative;
     overflow: hidden;
-    .transition {
-        transition: all 0.3s;
-    }
     .screen-scroll {
-        transition: all 0.2s;
+        
     }
     .screen-inner {
         position: absolute;
@@ -43,6 +40,7 @@
 .zoom {
     .screen-scroll {
         overflow: auto;
+        transition: transform 0.2s;
     }
     .seat {
         a {

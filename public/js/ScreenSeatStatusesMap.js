@@ -47,7 +47,10 @@
             this.state = ScreenSeatStatusesMap.STATE_ZOOM;
             this.screen.addClass('zoom');
             this.scale = 1;
-            scroll.css({transform:'scale('+ this.scale +')'});
+            scroll.css({
+                transformOrigin: '50% 50%',
+                transform:'scale('+ this.scale +')'
+            });
         },
         //縮小
         scaleDown: function () {

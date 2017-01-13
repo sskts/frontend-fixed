@@ -1061,14 +1061,6 @@ a {
   overflow: hidden;
 }
 
-.screen .transition {
-  transition: all 0.3s;
-}
-
-.screen .screen-scroll {
-  transition: all 0.2s;
-}
-
 .screen .screen-inner {
   position: absolute;
   width: 1600px;
@@ -1106,6 +1098,7 @@ a {
 
 .zoom .screen-scroll {
   overflow: auto;
+  transition: transform 0.2s;
 }
 
 .zoom .seat a span {
