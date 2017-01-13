@@ -29,6 +29,8 @@ $(function () {
             }
         }
         
+        
+
         screen.show();
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
         
@@ -37,9 +39,32 @@ $(function () {
     /**
      * 座席クリックイベント
      */
+    $(document).on('click', '.zoom-btn a', function(event) {
+        event.preventDefault();
+        if (screenSeatStatusesMap.isZoom()) {
+            screenSeatStatusesMap.scaleDown();
+        } else {
+            var scroll = screenSeatStatusesMap.screen.find('.screen-scroll');
+            var pos = {
+                x: screenSeatStatusesMap.screen.width() / 2,
+                y: screenSeatStatusesMap.screen.height() / 2
+            };                    
+            var scrollPos = {
+                x: pos.x / screenSeatStatusesMap.scale - screenSeatStatusesMap.screen.width() / 2,
+                y: pos.y/ screenSeatStatusesMap.scale - screenSeatStatusesMap.screen.height() / 2,
+            }
+            screenSeatStatusesMap.scaleUp();
+            scroll.scrollLeft(scrollPos.x);
+            scroll.scrollTop(scrollPos.y);
+        }
+    });
+
+    /**
+     * 座席クリックイベント
+     */
     $('.screen').on('click', '.seat a', function () {
         //スマホで拡大操作
-        if ($('.device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
+        if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
             return;
         }
         var limit = Number($('.screen-cover').attr('data-limit'));

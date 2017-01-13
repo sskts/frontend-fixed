@@ -1,38 +1,29 @@
-<div class="screen" id="TohoRoppongiScreen1">
-    <div class="screen-scroll">
-        <div class="screen-inner">
-            <% 
-            //40*50
-            let labels = [];
-            for (let i = 65; i < 91; i++) {
-                labels.push(String.fromCharCode(i));
-            }
-            %>
-            <% 
-            for (let y = 0; y < 20; y++) {
-            for (let x = 0; x < 26; x++) { 
-                let top = 120 + (50 + 10) * y;
-                let left = 150 + (40 + 10) * x;
-                
-                let toFullWidth = (value)=> {
-                    return value.replace(/./g, (s) => {
-                        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
-                    });
-                }
-                let codeStr = toFullWidth(labels[y]) + '－' + toFullWidth(String(x + 1));
-            %>
-            <div class="seat seat-normal" style="top:<%- top %>px; left:<%- left %>px">
-                <a href="javascript:void(0)" data-seat-code="<%= codeStr %>"><span><%= labels[y] %><%= (x + 1) %></span></a>
-            </div>
-            <% 
-            }
-            } 
-            %>
-        </div>
+<div class="screen-inner">
+    <% 
+    //40*50
+    let labels = [];
+    for (let i = 65; i < 91; i++) {
+        labels.push(String.fromCharCode(i));
+    }
+    %>
+    <% 
+    for (let y = 0; y < 20; y++) {
+    for (let x = 0; x < 26; x++) { 
+        let top = 120 + (50 + 10) * y;
+        let left = 150 + (40 + 10) * x;
+        
+        let toFullWidth = (value)=> {
+            return value.replace(/./g, (s) => {
+                return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
+            });
+        }
+        let codeStr = toFullWidth(labels[y]) + '－' + toFullWidth(String(x + 1));
+    %>
+    <div class="seat seat-normal" style="top:<%- top %>px; left:<%- left %>px">
+        <a href="javascript:void(0)" data-seat-code="<%= codeStr %>"><span><%= labels[y] %><%= (x + 1) %></span></a>
     </div>
-    <div class="zoom-btn"><a href="javascript:void(0)">zoom</a></div>
-    <div class="balloon"></div>
+    <% 
+    }
+    } 
+    %>
 </div>
-
-<div class="device-type-pc"></div>
-<div class="device-type-sp"></div>

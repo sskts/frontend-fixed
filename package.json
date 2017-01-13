@@ -2,11 +2,6 @@
   "name": "sasaki_ticket",
   "version": "1.0.0",
   "private": true,
-  "config": {
-    "username": "motionpicture",
-    "password": "M0P!Xmopix",
-    "email": "yamazaki@motionpicture.jp"
-  },
   "scripts": {
     "start": "node ./index.js",
     "test": "node ./test/test.js",
