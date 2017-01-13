@@ -23,11 +23,41 @@
         </li>
         <li>
             <dl>
-                <dt><%- __('common.seat') %> / <%- __('common.ticket') %></dt>
+                <dt><%- __('common.seat') %></dt>
                 <dd>
-                    <% for (let seat of updateReserve.list_qr) { %>
-                    <p><strong><%= seat.seat_num %> <%= reserveTickets[seat.seat_num].ticket_name %></strong></p> 
-                    <% } %>
+                    <% 
+                    let seats = [];
+                    for (let seat of updateReserve.list_qr) { 
+                        seats.push(seat.seat_num);
+                    } 
+                    %>
+                    <p><strong><%= seats.join('、') %></strong></p> 
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt><%- __('common.ticket') %></dt>
+                <dd>
+                    <%
+                    let tikcetObj = {};
+                    for (let seat of updateReserve.list_qr) {
+                        let code = reserveTickets[seat.seat_num].ticket_code;
+                        if (tikcetObj[code]) {
+                            tikcetObj[code].length++;
+                        } else {
+                            tikcetObj[code] = {
+                                length: 1,
+                                name: reserveTickets[seat.seat_num].ticket_name
+                            };
+                        }
+                    }
+                    let tikcets = [];
+                    for (let key in tikcetObj) { 
+                        tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
+                    }
+                    %>
+                    <p><strong><%= tikcets.join('、') %></strong></p>
                 </dd>
             </dl>
         </li>
@@ -50,10 +80,10 @@
                     <strong><%- __('purchase.complete.entry_01_title') %></strong>
                 </dt>
                 <dd>
-                    <p><%- __('purchase.complete.entry_01_read') %></p>
-                    <div class="image"><img src="" alt=""></div>
+                    <p class="mb-small"><%- __('purchase.complete.entry_01_read') %></p>
+                    <div class="image"><img src="/images/common/test.svg" alt=""></div>
                     <div class="button blue-button">
-                        <a href="<%- url('method.ticketing') %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
+                        <a class="icon-next" href="<%- url('method.ticketing') %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
                     </div>
                 </dd>
             </dl>
@@ -65,10 +95,10 @@
                     <strong><%- __('purchase.complete.entry_02_title') %></strong>
                 </dt>
                 <dd>
-                    <p><%- __('purchase.complete.entry_02_read') %></p>
-                    <div class="image"><img src="" alt=""></div>
+                    <p class="mb-small"><%- __('purchase.complete.entry_02_read') %></p>
+                    <div class="image"><img src="/images/common/test.svg" alt=""></div>
                     <div class="button blue-button">
-                        <a href="<%- url('inquiry') %>" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
+                        <a class="icon-next" href="<%- url('inquiry') %>" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
                     </div>
                 </dd>
             </dl>
@@ -76,7 +106,7 @@
     </ul>
 
     <div class="button-area clearfix">
-        <div class="prev-link"><a href="<%- url('index') %>"><%- __('purchase.complete.prev') %></a></div>
+        <div class="prev-link"><a class="icon-prev"href="<%- url('index') %>"><%- __('purchase.complete.prev') %></a></div>
     </div>
 
 </div>

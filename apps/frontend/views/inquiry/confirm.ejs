@@ -5,7 +5,7 @@
     <p class="read"><%- __('inquiry.confirm.read') %></p>
 
     <div class="ghost-button black-button mb-medium">
-        <a href="#"><%- __('inquiry.confirm.ticket_button') %></a>
+        <a class="icon-ticket" href="#"><%- __('inquiry.confirm.ticket_button') %></a>
     </div>
 
     <div class="box bg-ultra-light-gray mb-medium">
@@ -38,7 +38,7 @@
             <div class="border-bottom-dot not-qr">
                 <p class="text-center"><%- __('inquiry.confirm.ticket_text') %></p>
             </div>
-            <div class="bg-light-gray box">
+            <div class="bg-light-gray box not-radius">
                 <div class="mb-x-small"><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %>-</div>
                 <div class="mb-x-small"><%= performance.theater.name[__('lang')] %></div>
                 <div class="mb-x-small"><%= performance.screen.name[__('lang')] %></div>
@@ -49,7 +49,7 @@
     </ul>
     <div class="button-area clearfix">
         <div class="button next-button blue-button"><a href="<%- url('method.ticketing') %>"><%- __('inquiry.confirm.next') %></a></div>
-        <div class="close-link close-button"><a href="#"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="close-link close-link"><a class="close-link" href="#"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>

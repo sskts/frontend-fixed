@@ -15,14 +15,20 @@
         data-coa-title-branch-num="<%= performance.film.coa_title_branch_num %>"
         data-time-start="<%= performance.time_start %>"
         data-screen-code="<%= performance.screen.coa_screen_code %>">
-            <div class="screen" id="TohoRoppongiScreen1">
+            <div class="screen bg-light-gray" id="TohoRoppongiScreen1">
                 <div class="screen-scroll">
                     <%- partial('../screens/00101') %>
                 </div>
                 <div class="device-type-pc"></div>
                 <div class="device-type-sp"></div>
             </div>
-            <div class="seat-info mb-medium">座席の種類</div>
+            <div class="seat-info bg-light-gray mb-medium">
+                <div class="box bg-white">
+                    <div class="seat"><strong>空席</strong></div>
+                    <div class="seat active"><strong>選択した席</strong></div>
+                    <div class="seat disabled"><strong>選択不可の席</strong></div>
+                </div>
+            </div>
             <div class="zoom-btn ghost-button black-button mb-medium"><a href="javascript:void(0)">zoom</a></div>
         </div>
 
@@ -40,8 +46,8 @@
     </div>
     <form method="post">
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="prev-link"><a href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.seat.next') %></button></div>
+            <div class="prev-link"><a class="icon-prev"href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
     </form>

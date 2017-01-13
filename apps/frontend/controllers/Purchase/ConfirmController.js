@@ -26,7 +26,6 @@ class ConfirmController extends PurchaseController_1.default {
     purchase() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
-        this.deleteSession();
         let purchaseNo = '1234567889';
         this.logger.debug('購入確定', purchaseNo);
         this.logger.debug('照会情報取得');

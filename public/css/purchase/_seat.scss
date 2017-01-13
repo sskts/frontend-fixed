@@ -1,6 +1,54 @@
 .purchase-seat {
     .screen {
     }
+    .zoom-btn {
+        display: none;
+        @media screen and (max-width: $mobile){
+            display: block;
+        }
+    }
+    .seat-info {
+        padding: 20px;
+        @media screen and (max-width: $mobile) {
+            padding: 20px 10px;
+        }
+        .box {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+        }
+        .seat {
+            margin: 0 10px;
+            position: relative;
+            padding-left: 24px;
+            @media screen and (max-width: $mobile) {
+                margin: 0 2px;
+            }
+            &:before {
+                width: 16px;
+                height: 20px;
+                content: '';
+                display: block;
+                background-image: url(/images/screen/seat.svg);
+                background-size: 48px 20px;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                margin-top: -10px;
+            } 
+        }
+        .active {
+            &:before {
+                background-position: -16px 0;
+            }
+        }
+        .disabled {
+            &:before {
+                background-position: -32px 0;
+            }
+        }  
+    }
     .film-info {
         background-color: #3e3a39;
         color: #FFF;

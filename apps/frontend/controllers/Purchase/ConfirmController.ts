@@ -38,7 +38,7 @@ export default class ConfirmController extends PurchaseController {
         // let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
 
 
-        this.deleteSession();
+        // this.deleteSession();
 
         let purchaseNo = '1234567889';
 

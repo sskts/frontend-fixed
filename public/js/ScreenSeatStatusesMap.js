@@ -26,7 +26,7 @@
                     };                    
                     var scrollPos = {
                         x: pos.x / _this.scale - _this.screen.width() / 2,
-                        y: pos.y/ _this.scale - _this.screen.height() / 2,
+                        y: pos.y / _this.scale - _this.screen.height() / 2,
                     }
                     _this.scaleUp();
                     scroll.scrollLeft(scrollPos.x);
