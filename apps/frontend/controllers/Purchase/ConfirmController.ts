@@ -37,14 +37,10 @@ export default class ConfirmController extends PurchaseController {
         // let toBeExpiredAt = this.req.params.toBeExpiredAt;
         // let isSecurityCodeSet = this.req.params.isSecurityCodeSet;
 
-
-        // this.deleteSession();
-
-        let purchaseNo = '1234567889';
-
-        this.logger.debug('購入確定', purchaseNo);
+        this.deleteSession();
 
         this.logger.debug('照会情報取得');
+        //TODO スクリーンコード未追加
         this.req.session['inquiry'] = { 
             status: 0,
             message: '',
@@ -72,6 +68,9 @@ export default class ConfirmController extends PurchaseController {
             date_jouei: '20161215' 
         };
 
+        let purchaseNo = '1234567889';
+
+        this.logger.debug('購入確定', purchaseNo);
         //購入完了情報を返す
         this.res.json({
             purchaseNo: purchaseNo

@@ -46,7 +46,6 @@ label {
     font-weight: 500;
     font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
     border-radius: 0;
-    appearance: none;
     border: none;
     background: none;
     padding: 0;
@@ -77,10 +76,28 @@ select::-ms-expand {
 }
 
 select {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    overflow: hidden;
     border: 1px solid #d9d9d9;
-    padding: 8px 10px;
-    background-color: #FFF;
+    padding: 0 48px 0 10px;
+    height: 38px;
     border-radius: 3px;
+    position: relative;
+    background-color: #FFF;
+    background-image: url(/images/common/select_box.svg);
+    background-repeat: no-repeat;
+    background-size: 38px;
+    background-position: right center;
+}
+
+/*　IE11,IE10　*/
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    select:not(:target) {
+        padding-right: 10px;
+        background-image: none;
+    }
 }
 
 p {
@@ -499,7 +516,7 @@ a {
         position: absolute;
         top: 50%;
         right: 20px;
-        background-image: url(/images/common/icon_next.svg);
+        background-image: url(/images/common/icon/icon_next.svg);
         background-size: 15px;
         width: 15px;
         height: 15px;
@@ -513,7 +530,7 @@ a {
         position: absolute;
         top: 50%;
         left: 0;
-        background-image: url(/images/common/icon_prev.svg);
+        background-image: url(/images/common/icon/icon_prev.svg);
         background-size: 15px;
         width: 15px;
         height: 15px;
@@ -527,7 +544,7 @@ a {
         position: absolute;
         top: 50%;
         left: 0;
-        background-image: url(/images/common/icon_close.svg);
+        background-image: url(/images/common/icon/icon_close.svg);
         background-size: 15px;
         width: 15px;
         height: 15px;
@@ -541,7 +558,7 @@ a {
         position: absolute;
         top: 50%;
         right: 20px;
-        background-image: url(/images/common/icon_add.svg);
+        background-image: url(/images/common/icon/icon_add.svg);
         background-size: 15px;
         width: 15px;
         height: 15px;
@@ -555,7 +572,7 @@ a {
         position: absolute;
         top: 50%;
         left: 20px;
-        background-image: url(/images/common/icon_ticket.svg);
+        background-image: url(/images/common/icon/icon_ticket.svg);
         background-size: 25px 15px;
         width: 25px;
         height: 15px;

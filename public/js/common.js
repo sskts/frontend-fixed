@@ -9,7 +9,7 @@ $(function () {
  * 全角=>半角
  */
 function toHalfWidth(value) {
-    return value.replace(/./g, (s) => {
+    return value.replace(/./g, function (s) {
         return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
     });
 }
@@ -18,7 +18,7 @@ function toHalfWidth(value) {
  * 半角=>全角
  */
 function toFullWidth(value) {
-    return value.replace(/./g, (s) => {
+    return value.replace(/./g, function (s) {
         return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
     });
 }

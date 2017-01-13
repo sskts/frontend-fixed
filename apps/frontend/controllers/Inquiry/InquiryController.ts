@@ -50,7 +50,7 @@ export default class InquiryController extends BaseController {
         COA.stateReserveInterface.call(args, (err, result)=>{
             if (err) return this.next(new Error(err.message));
             if (!result) return this.next(new Error('result is null'));
-            //TODO スクリーンコード
+            //TODO スクリーンコード未追加
             
             if (!this.req.session) return this.next(new Error('session is undefined'));
             //予約情報をセッションへ
