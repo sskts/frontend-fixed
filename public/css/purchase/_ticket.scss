@@ -3,41 +3,12 @@
         
     }
     .mvtk-button {
-        
-        input {
-            width: 0;
-            height: 0;
-            opacity: 0;
-        }
         label {
             &:before {
-                content: '';
-                width: 20px;
-                height: 20px;
-                position: absolute;
-                top: 50%;
                 left: 15px;
-                margin-top: -10px;
-                border: 1px solid #ccc;
-                box-sizing: border-box;
             }
             &:after {
-                content: '';
-                width: 20px;
-                height: 20px;
-                position: absolute;
-                top: 50%;
                 left: 15px;
-                margin-top: -10px;
-                background-image: url(/images/common/icon_check.svg);
-                background-size: 20px 20px;
-                opacity: 0;
-                transition: opacity 0.25s;
-            }
-        }
-        input:checked+label {
-            &:after {
-                opacity: 1;
             }
         }
         img {

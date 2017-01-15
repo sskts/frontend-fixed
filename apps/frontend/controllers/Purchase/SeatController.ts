@@ -8,6 +8,8 @@ export default class SeatSelectController extends PurchaseController {
      * 座席選択
      */
     public index(): void {
+        //TODO Session削除
+        this.deleteSession();
         if (this.req.query && this.req.query['id']) {
             //パフォーマンス取得
             //TODO performance type any

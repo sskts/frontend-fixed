@@ -1,5 +1,5 @@
 "use strict";
-const log4js = require('log4js');
+const log4js = require("log4js");
 let env = process.env.NODE_ENV || 'dev';
 let fs = require('fs-extra');
 let logDir = `${__dirname}/../../../logs/${env}/frontend`;

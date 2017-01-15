@@ -22,9 +22,90 @@
         }
     }
     .credit-image {
+        display: inline-block;
+        @media screen and (max-width: $mobile) {
+            display: block;
+        }
         img {
-            width: 100%;
-            max-width: 262px;
+            width: auto;
+            height: 22px;
+            @media screen and (max-width: $mobile) {
+                width: 100%;
+                max-width: 262px;
+                height: auto;
+            }
+        }
+    }
+    dl {
+        dt {
+
+        }
+        dd {
+            max-width: 706px;
+        }
+    }
+    .column-02 {
+        overflow: hidden;
+        display: -ms-flexbox;
+        display: flex; 
+        max-width: 706px;
+        -ms-flex-pack: justify;
+        justify-content: space-between; 
+        
+        @media screen and (max-width: $mobile) {
+            display: block;
+        } 
+        dl {
+            margin-bottom: 0;
+            display: -ms-flexbox;
+            display: flex;
+            width: 338px;
+            @media screen and (max-width: $tablet) {
+                max-width: 290px;
+                width: 50%;
+            }
+            @media screen and (max-width: $mobile) {
+                display: block;
+                width: auto;
+                max-width: 100%;
+                margin-bottom: 10px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+            dt {
+                line-height: 44px;
+                margin-bottom: 0;
+                width: 38px;
+                @media screen and (max-width: $mobile) {
+                    line-height: 1;
+                    width: auto;
+                    margin-bottom: 10px;
+                }
+            }
+            dd {
+                width: 300px;
+                @media screen and (max-width: $mobile) {
+                    width: auto;
+                }
+            }
+        }
+    }
+    .credit {         
+        dl {
+            dt {
+                line-height: 44px;
+                @media screen and (max-width: $mobile) {
+                    line-height: 1;
+                }
+            }
+        }
+        .price {
+            dl {
+                dt {
+                    line-height: 1;
+                }
+            }
         }
     }
 }

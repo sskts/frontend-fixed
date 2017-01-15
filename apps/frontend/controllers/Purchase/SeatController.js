@@ -1,9 +1,10 @@
 "use strict";
-const PurchaseController_1 = require('./PurchaseController');
-const SeatForm_1 = require('../../forms/Purchase/SeatForm');
+const PurchaseController_1 = require("./PurchaseController");
+const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const COA = require("@motionpicture/coa-service");
 class SeatSelectController extends PurchaseController_1.default {
     index() {
+        this.deleteSession();
         if (this.req.query && this.req.query['id']) {
             this.getPerformance(this.req.query['id'], (performance) => {
                 if (!this.req.session)

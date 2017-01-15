@@ -2,7 +2,16 @@
     <h1 class="page-ttl"><%- __('purchase.complete.page_ttl') %></h1>
     <p class="read"><%- __('purchase.complete.read') %></p>
 
-    <ul class="box bg-light-gray info mb-medium">
+    <ul class="box bg-light-gray info mb-medium form-layout">
+        <li>
+            <dl>
+                <dt><%- __('common.purchase_number') %></dt>
+                <dd>
+                    <strong class="red-text"><%= updateReserve.reserve_num %></strong>
+                    <p class="small-text">※チケットの発行等に必要な番号となりますので必ず忘れないようにしてください。</p>
+                </dd>
+            </dl>
+        </li>
         <li>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
@@ -31,7 +40,7 @@
                         seats.push(seat.seat_num);
                     } 
                     %>
-                    <p><strong><%= seats.join('、') %></strong></p> 
+                    <div><strong><%= seats.join('、') %></strong></div> 
                 </dd>
             </dl>
         </li>
@@ -57,7 +66,7 @@
                         tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
                     }
                     %>
-                    <p><strong><%= tikcets.join('、') %></strong></p>
+                    <div><strong><%= tikcets.join('、') %></strong></div>
                 </dd>
             </dl>
         </li>

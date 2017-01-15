@@ -27,9 +27,19 @@ body {
     font-weight: 500;
     -webkit-text-size-adjust: 100%;
     width: 100%;
-    font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+    font-family: $font-family;
     font-size: 14px;
     color: #333;
+    background-color: #E2E1E0;
+    padding: 30px 0;
+    @media screen and (max-width: $tablet){
+        width: auto;
+        padding: 30px 15px;
+    }
+    @media screen and (max-width: $mobile){
+        width: auto;
+        padding: 10px;
+    }
 }
 
 input[type=text],
@@ -44,7 +54,7 @@ option,
 button,
 label {
     font-weight: 500;
-    font-family: 'Lucida Grande','游ゴシック','ヒラギノ角ゴ ProN W3','Hiragino Kaku Gothic ProN','メイリオ',Meiryo,Helvetica,Arial,sans-serif;
+    font-family: $font-family;
     border-radius: 0;
     border: none;
     background: none;
@@ -81,14 +91,14 @@ select {
     appearance: none;
     overflow: hidden;
     border: 1px solid #d9d9d9;
-    padding: 0 48px 0 10px;
-    height: 38px;
+    padding: 0 54px 0 10px;
+    height: 44px;
     border-radius: 3px;
     position: relative;
     background-color: #FFF;
     background-image: url(/images/common/select_box.svg);
     background-repeat: no-repeat;
-    background-size: 38px;
+    background-size: 44px;
     background-position: right center;
 }
 
@@ -97,6 +107,45 @@ select {
     select:not(:target) {
         padding-right: 10px;
         background-image: none;
+    }
+}
+
+input[type=checkbox] {
+    width: 0;
+    height: 0;
+    opacity: 0;
+}
+label {
+    position: relative;
+    padding-left: 20px;
+    &:before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -10px;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+    }
+    &:after {
+        content: '';
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        margin-top: -10px;
+        background-image: url(/images/common/icon/icon_check.svg);
+        background-size: 20px 20px;
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+}
+input:checked+label {
+    &:after {
+        opacity: 1;
     }
 }
 
@@ -194,10 +243,16 @@ a {
 
 .small-text {
     font-size: 12px;
+    @media screen and (max-width: $mobile){
+        font-size: 12px;
+    }
 }
 
 .large-text {
-    font-size: 22px;
+    font-size: 18px;
+    @media screen and (max-width: $mobile){
+        font-size: 18px;
+    }
 }
 
 .mb-xx-large {
@@ -317,6 +372,9 @@ a {
     }
     dl {
         margin-bottom: 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
         dt {
             margin-bottom: 10px;
         }
@@ -326,8 +384,39 @@ a {
                 margin-bottom: 0;
             }
         }
-        &:last-child {
+        
+    }
+}
+
+.form-layout {
+    
+    dl {
+        margin-bottom: 0;
+        display: -ms-flexbox;
+        display: flex;
+        @media screen and (max-width: $mobile) {
+            display: block;
+            width: auto;
+            max-width: 100%;
+            margin-bottom: 10px;
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+        dt {
             margin-bottom: 0;
+            width: 150px;
+            @media screen and (max-width: $mobile) {
+                line-height: 1;
+                width: auto;
+                margin-bottom: 10px;
+            }
+        }
+        dd {
+            width: 300px;
+            @media screen and (max-width: $mobile) {
+                width: auto;
+            }
         }
     }
 }
@@ -361,6 +450,14 @@ a {
     } 
 }
 
+.center-button {
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    @media screen and (max-width: $mobile) {
+        width: auto;
+    }
+}
 
 .button {
     a, button, label {
@@ -453,7 +550,7 @@ a {
 
 
 .button-area {
-    margin: 40px auto;
+    margin: 40px auto 0;
     @media screen and (max-width: $mobile){
         width: auto;
     }
@@ -468,7 +565,7 @@ a {
     a, button {
         font-size: 18px;
         width: 300px;
-        padding: 20px 0;
+        padding: 22px 0;
         @media screen and (max-width: $mobile){
             width: 100%;
         }
@@ -596,6 +693,7 @@ a {
 
 .section-ttl {
     line-height: 1;
+    font-size: 18px;
     font-weight: bold;
     margin: 0 0 10px;
 }
@@ -614,27 +712,33 @@ a {
     }
 }
 
+//wrapper
+.wrapper {
+    width: 940px;
+    margin: 0 auto;
+    background-color: #FFF;
+    @media screen and (max-width: $tablet){
+        width: auto;
+    }
+}
+
 
 // header
 .header {
-    padding: 20px 10px;
-    border-bottom: 1px solid #ccc;
-    @media screen and (max-width: $tablet){
-        padding: 20px 15px;
-    }
+    padding: 25px 40px;
+    border-bottom: 1px solid #E2E1E0;
+    
     @media screen and (max-width: $mobile){
         padding: 10px 15px;
     }
     .inner {
         position: relative;
-        width: 800px;
-        margin: 0 auto;
-        @media screen and (max-width: $tablet){
-            width: auto;
-        }
     }
     .logo {
-        width: 60px;
+        width: 70px;
+        @media screen and (max-width: $mobile){
+            width: 60px;
+        }
         img {
             width: 100%;
         }
@@ -643,14 +747,12 @@ a {
 // footer
 .footer {
     background-color: #212121;
-    padding: 20px 10px;
+    padding: 25px 40px;
+    @media screen and (max-width: $mobile){
+        padding: 20px 15px;
+    }
     .inner {
         position: relative;
-        width: 800px;
-        margin: 0 auto;
-        @media screen and (max-width: $tablet){
-            width: auto;
-        }
     }
     ul {
         margin: 0 0 0 -5px;
@@ -676,11 +778,8 @@ a {
 
 //contents
 .contents {
-    padding: 20px 0;
-    width: 800px;
-    margin: 0 auto;
-    @media screen and (max-width: $tablet){
-        width: auto;
+    padding: 40px;
+    @media screen and (max-width: $mobile){
         padding: 20px 15px;
     }
 }

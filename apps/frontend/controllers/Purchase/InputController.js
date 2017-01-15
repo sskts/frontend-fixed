@@ -1,7 +1,7 @@
 "use strict";
-const config = require('config');
-const PurchaseController_1 = require('./PurchaseController');
-const InputForm_1 = require('../../forms/Purchase/InputForm');
+const config = require("config");
+const PurchaseController_1 = require("./PurchaseController");
+const InputForm_1 = require("../../forms/Purchase/InputForm");
 const COA = require("@motionpicture/coa-service");
 class EnterPurchaseController extends PurchaseController_1.default {
     index() {
@@ -19,8 +19,6 @@ class EnterPurchaseController extends PurchaseController_1.default {
             this.res.locals['price'] = this.getPrice(this.req.session);
             if (process.env.NODE_ENV === 'dev') {
                 this.res.locals['info'] = {
-                    last_name_kanji: '畑口',
-                    first_name_kanji: '晃人',
                     last_name_hira: 'はたぐち',
                     first_name_hira: 'あきと',
                     mail_addr: 'hataguchi@motionpicture.jp',
@@ -42,8 +40,6 @@ class EnterPurchaseController extends PurchaseController_1.default {
                 return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
                 this.req.session['purchaseInfo'] = {
-                    last_name_kanji: this.req.body.last_name_kanji,
-                    first_name_kanji: this.req.body.first_name_kanji,
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
                     mail_addr: this.req.body.mail_addr,

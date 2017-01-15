@@ -13,9 +13,9 @@
             padding: 20px 10px;
         }
         .box {
-            display: -webkit-flex;
+            display: -ms-flexbox;
             display: flex;
-            -webkit-justify-content: center;
+            -ms-flex-pack: center;
             justify-content: center;
         }
         .seat {

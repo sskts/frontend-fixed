@@ -1,6 +1,6 @@
 "use strict";
-const PurchaseController_1 = require('./PurchaseController');
-const TicketForm_1 = require('../../forms/Purchase/TicketForm');
+const PurchaseController_1 = require("./PurchaseController");
+const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const COA = require("@motionpicture/coa-service");
 class TicketTypeSelectController extends PurchaseController_1.default {
     index() {

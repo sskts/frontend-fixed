@@ -20,7 +20,7 @@ $(function () {
             cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
             expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
             securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
-            holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+            // holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
         }
         Multipayment.getToken(sendParam, someCallbackFunction);
     });
@@ -54,8 +54,9 @@ function validation() {
     $('.validation-text').remove();
 
     var validationList = [
-        { name: 'last_name_kanji', label: '姓', required: true, maxLength: 15 },
-        { name: 'first_name_kanji', label: '名', required: true, maxLength: 15 },
+        //TODO　項目確認
+        // { name: 'last_name_kanji', label: '姓', required: true, maxLength: 15 },
+        // { name: 'first_name_kanji', label: '名', required: true, maxLength: 15 },
         { name: 'last_name_hira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
         { name: 'first_name_hira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
         { name: 'mail_addr', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'] },
@@ -64,7 +65,7 @@ function validation() {
         { name: 'cardno', label: 'クレジットカード番号', required: true, regex: [/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[0-9]{15})$/, 'は不適切です'] },
         { name: 'credit_month', label: '有効期限（月）', required: true },
         { name: 'credit_year', label: '有効期限（年）', required: true },
-        { name: 'holdername', label: 'カード名義人', required: true, regex: [/^[A-Z]+[\s|　]+[A-Z]+[\s|　]*[A-Z]+$/, 'は不適切です'] },
+        // { name: 'holdername', label: 'カード名義人', required: true, regex: [/^[A-Z]+[\s|　]+[A-Z]+[\s|　]*[A-Z]+$/, 'は不適切です'] },
         { name: 'securitycode', label: 'セキュリティーコード', required: true, regex: [/^[0-9]{3,4}$/, 'は不適切です'] },
     ];
 

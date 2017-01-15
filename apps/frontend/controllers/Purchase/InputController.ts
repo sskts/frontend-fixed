@@ -24,8 +24,9 @@ export default class EnterPurchaseController extends PurchaseController {
 
             if (process.env.NODE_ENV === 'dev') {
                 this.res.locals['info'] = {
-                    last_name_kanji: '畑口',
-                    first_name_kanji: '晃人',
+                    //TODO　項目確認
+                    // last_name_kanji: '畑口',
+                    // first_name_kanji: '晃人',
                     last_name_hira: 'はたぐち',
                     first_name_hira: 'あきと',
                     mail_addr: 'hataguchi@motionpicture.jp',
@@ -54,8 +55,9 @@ export default class EnterPurchaseController extends PurchaseController {
             if (this.req.form.isValid) {
                 //入力情報をセッションへ
                 this.req.session['purchaseInfo'] = {
-                    last_name_kanji: this.req.body.last_name_kanji,
-                    first_name_kanji: this.req.body.first_name_kanji,
+                    //TODO　項目確認
+                    // last_name_kanji: this.req.body.last_name_kanji,
+                    // first_name_kanji: this.req.body.first_name_kanji,
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
                     mail_addr: this.req.body.mail_addr,

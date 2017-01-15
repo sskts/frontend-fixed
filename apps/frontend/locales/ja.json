@@ -95,7 +95,7 @@
 		"payment": "お支払情報",
 		"amount_spent": "ご利用金額",
 		"film_title": "作品名",
-		"required": "必須",
+		"required": "入力必須",
 		"name_kanji": "お名前（漢字）",
 		"last_name_kanji": "姓",
 		"first_name_kanji": "名",
@@ -124,11 +124,14 @@
 			"mail_confirm": "(例)info@cinemasunshine.co.jp",
 			"tel": "(例)08012345678",
 			"purchase_number": "(例)12345678",
-			"theater_code": "(例)1234"
+			"theater_code": "(例)1234",
+			"cardno": "(例)4111111111111111",
+			"securitycode": "(例)123"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
-			"credit": "クレジットカード決済の必要事項をご記入ください。"
+			"credit": "クレジットカード決済の必要事項をご記入ください。",
+			"tel": "※半角数字、ハイフン「-」なしで入力してください"
 		}
 	}
 }

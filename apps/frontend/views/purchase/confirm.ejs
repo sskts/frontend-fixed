@@ -4,7 +4,7 @@
     <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
     <p class="read"><%- __('purchase.confirm.read') %></p>
 
-    <form method="post">
+    <form class="form-layout" method="post">
         <h2 class="section-ttl"><%- __('common.film') %></h2>
         <ul class="box bg-light-gray mb-medium">
             <li>
@@ -35,18 +35,19 @@
                             seats.push(seat.seat_num);
                         } 
                         %>
-                        <p><strong><%= seats.join('、') %></strong></p> 
-                    </dd>
-                    <dd class="column-02">
-                        <div class="clearfix">
-                            <div class="ghost-button blue-button">
-                                <a href="#"><%- __('common.seat') %><%- __('common.confirm') %></a>
-                            </div>
-                            <div class="ghost-button black-button">
-                                <a href="#"><%- __('common.seat') %><%- __('common.change') %></a>
+                        <div class="mb-small"><strong><%= seats.join('、') %></strong></div>
+                        <div class="column-02">
+                            <div class="clearfix">
+                                <div class="ghost-button blue-button">
+                                    <a href="#"><%- __('common.seat') %><%- __('common.confirm') %></a>
+                                </div>
+                                <div class="ghost-button black-button">
+                                    <a href="#"><%- __('common.seat') %><%- __('common.change') %></a>
+                                </div>
                             </div>
                         </div>
                     </dd>
+                    
                 </dl>
             </li>
             <li>
@@ -71,9 +72,7 @@
                             tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
                         }
                         %>
-                        <p><strong><%= tikcets.join('、') %></strong></p>
-                    </dd>
-                    <dd>
+                        <div class="mb-small"><strong><%= tikcets.join('、') %></strong></div>
                         <div class="ghost-button black-button">
                             <a href="#"><%- __('common.ticket') %><%- __('common.change') %></a>
                         </div>
@@ -104,7 +103,7 @@
                 </dl>
             </li>
         </ul>
-        <div class="ghost-button black-button mb-medium">
+        <div class="ghost-button black-button mb-medium center-button">
             <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
         </div>
         
@@ -123,7 +122,7 @@
                 </dl>
             </li>
         </ul>
-        <div class="ghost-button black-button mb-medium">
+        <div class="ghost-button black-button mb-medium center-button">
             <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
         </div>
 

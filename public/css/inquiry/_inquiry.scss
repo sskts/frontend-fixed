@@ -7,10 +7,30 @@
             max-width: 360px;
         }
     }
+    .tickets {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-pack: justify;
+        -ms-flex-align: stretch;
+        justify-content: space-between stretch;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+    }
     .ticket {
-        margin: 0 0 20px;
-        border: 2px solid #019fe8;
-        border-radius: 5px;
+        width: 33.3%;
+        @media screen and (max-width: $tablet){
+            width: 50%;
+        }
+        @media screen and (max-width: $mobile){
+            width: 100%;
+        }
+        .inner {
+            border: 2px solid #019fe8;
+            border-radius: 5px;
+            margin: 0 10px 20px;
+        }
+        
         .box {
             overflow: visible;
         }
