@@ -18,22 +18,24 @@
             var _this = this;
             this.screen.on('click', '.screen-inner', function(event) {
                 event.preventDefault();
+                
                 if (!_this.isZoom() && $('.screen .device-type-sp').is(':visible')) {
                     var scroll = _this.screen.find('.screen-scroll');
+                    
                     var pos = {
-                        x: event.clientX - scroll.offset().left,
-                        y: event.clientY - scroll.offset().top
-                    };                    
+                        x: event.pageX - scroll.offset().left,
+                        y: event.pageY - scroll.offset().top
+                    };            
+                      
                     var scrollPos = {
                         x: pos.x / _this.scale - _this.screen.width() / 2,
                         y: pos.y / _this.scale - _this.screen.height() / 2,
                     }
+                    
                     _this.scaleUp();
                     scroll.scrollLeft(scrollPos.x);
                     scroll.scrollTop(scrollPos.y);
-                    // _this.screen.find('.screen-scroll').animate({
-                    //     scrollLeft: scrollPos.x, scrollTop: scrollPos.y
-                    // }, 300);
+                    
                 }
             });
             $(window).on('resize', function() {

@@ -1,16 +1,143 @@
-<div class="screen-inner">
+<div class="screen-inner" style="
+    width: 1346px; 
+    height: 1411px;
+">
+<div class="object" style="
+    width: 1148px; 
+    height: 126px;
+    top: 90px; 
+    left: 100px;
+    background-image: url(/images/screen/screen.svg);
+    background-size: 1148px 126px;
+"></div>
+<div class="object" style="
+    width: 126px; 
+    height: 490px;
+    top: 312px; 
+    left: 1140px;
+    background-image: url(/images/screen/theater_ent.svg);
+    background-size: 126px 490px;
+"></div>
     <% 
     //40*50
+    let seat = {
+        w: 40, 
+        h: 50,
+        x: 26, 
+        y: 14
+    };
+    let margin = {
+        w: 2, h: 20
+    };
+    let start = {
+        x: 80, y: 312
+    };
+    
     let labels = [];
     for (let i = 65; i < 91; i++) {
         labels.push(String.fromCharCode(i));
     }
+    
     %>
     <% 
-    for (let y = 0; y < 20; y++) {
-    for (let x = 0; x < 26; x++) { 
-        let top = 120 + (50 + 10) * y;
-        let left = 150 + (40 + 10) * x;
+    let pos = {
+        x: start.x,
+        y: start.y
+    };
+    for (let y = 0; y < seat.y; y++) {
+        //通路
+        if (y === 0) {
+            pos.y = start.y;
+        } else if (y === 7) {
+            pos.y += seat.h + 58;
+        } else {
+            pos.y += seat.h + margin.h;
+        }
+    for (let x = 0; x < seat.x; x++) {
+        
+        
+        //通路
+        if (x === 0) {
+            pos.x = start.x;
+        } else if (x === 4 || x === 23) {
+            pos.x += seat.w + 50;
+        } else {
+            pos.x += seat.w + margin.w;
+        }
+
+        let top = pos.y;
+        let left = pos.x;
+        
+    %>
+    <% if (y === 0) { %>
+    <div class="object label-object" style="top:<%- top - 50 %>px; left:<%- left %>px"><%= x + 1 %></div>
+    <% } %>
+    <% if (x === 0) { %>
+    <div class="object label-object" style="top:<%- top %>px; left:<%- left - 50 %>px"><%= labels[y] %></div>
+    <% } %>
+    <% 
+    }
+    } 
+    %>
+
+    <%
+    for (let y = 0; y < seat.y; y++) {
+        //通路
+        if (y === 0) {
+            pos.y = start.y;
+        } else if (y === 7) {
+            pos.y += seat.h + 58;
+        } else {
+            pos.y += seat.h + margin.h;
+        }
+    for (let x = 0; x < seat.x; x++) {
+        //階段
+        if (y < 7 && x > 22) {
+            break;
+        } else if (y === 0 && x > 18) {
+            break;
+        } else if (y === 11 && x > 15) {
+            break;
+        } else if (y === 12 && x > 13) {
+            break;
+        } else if (y === 13 && x > 9) {
+            break;
+        }
+
+        
+        //通路
+        if (x === 0) {
+            pos.x = start.x;
+        } else if (y !== 13 && (x === 4 || x === 23)) {
+            pos.x += seat.w + 50;
+        } else {
+            pos.x += seat.w + margin.w;
+        }
+
+        if (y === 0 && x === 11) {
+            pos.x += (seat.w + margin.w) * 4;
+        } else if (y === 11) {
+            if (x === 7) {
+                pos.x += (seat.w + margin.w) * 10;
+            } else if (x === 13) {
+                pos.x -= seat.w + margin.w;
+                pos.x += seat.w + 50;
+            }
+        } else if (y === 12) {
+            if (x === 6) {
+                pos.x += (seat.w + margin.w) * 12;
+            } else if (x === 11) {
+                pos.x -= seat.w + margin.w;
+                pos.x += seat.w + 50;
+            }
+        } else if (y === 13) {
+            if (x === 7) {
+                pos.x += (seat.w + margin.w) * 17 + 52;
+            }
+        }
+
+        let top = pos.y;
+        let left = pos.x;
         
         let toFullWidth = (value)=> {
             return value.replace(/./g, (s) => {
