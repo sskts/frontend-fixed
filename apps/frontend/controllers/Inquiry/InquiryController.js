@@ -1,6 +1,6 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
-const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
+const BaseController_1 = require('../BaseController');
+const LoginForm_1 = require('../../forms/Inquiry/LoginForm');
 const COA = require("@motionpicture/coa-service");
 class InquiryController extends BaseController_1.default {
     login() {

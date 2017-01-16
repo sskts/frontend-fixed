@@ -1,7 +1,7 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
-const request = require("request");
-const config = require("config");
+const BaseController_1 = require('../BaseController');
+const request = require('request');
+const config = require('config');
 class PerformanceController extends BaseController_1.default {
     index() {
         this.res.render('performance');

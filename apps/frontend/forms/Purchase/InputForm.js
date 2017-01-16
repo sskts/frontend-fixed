@@ -1,5 +1,5 @@
 "use strict";
-const form = require("express-form");
+const form = require('express-form');
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = form(form.field('last_name_hira', 'せい').trim().required('', '%sが未入力です')
     .maxLength(30, '%sは30文字以内で入力してください')

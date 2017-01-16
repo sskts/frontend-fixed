@@ -1,9 +1,8 @@
 "use strict";
-const log4js = require("log4js");
-const moment = require("moment");
-const locales_1 = require("../middlewares/locales");
-const request = require("request");
-const config = require("config");
+const log4js = require('log4js');
+const moment = require('moment');
+const locales_1 = require('../middlewares/locales');
+const config = require('config');
 class BaseController {
     constructor(req, res, next) {
         this.req = req;
@@ -44,21 +43,41 @@ class BaseController {
     getPerformance(performancesId, cb) {
         let endpoint = config.get('mp_api_endpoint');
         let method = 'performance';
-        let options = {
-            url: `${endpoint}/${method}/${performancesId}`,
-            method: 'GET',
-            json: true,
-        };
-        request.get(options, (error, response, body) => {
-            if (error) {
-                return this.next(new Error(error.message));
-            }
-            if (!response || !body.success) {
-                return this.next(new Error('response is null or body.success is false'));
-            }
-            this.logger.debug('performance', body.performance);
-            cb(body.performance);
-        });
+        console.log(performancesId, endpoint, method);
+        cb({
+            "__v": 0,
+            "_id": "001201701018513021010",
+            "canceled": false,
+            "created_at": "2017-01-01T08:57:31.643Z",
+            "day": "20170101",
+            "film": {
+                "_id": "00185130",
+                "coa_title_branch_num": "0",
+                "coa_title_code": "8513",
+                "minutes": 107,
+                "name": {
+                    "en": "",
+                    "ja": "君の名は。"
+                }
+            },
+            "theater": {
+                "_id": "001",
+                "name": {
+                    "en": "CoaCimema",
+                    "ja": "コア・シネマ"
+                }
+            },
+            "screen": {
+                "_id": "0012",
+                "coa_screen_code": "2",
+                "name": {
+                    "en": "Cinema2",
+                    "ja": "シネマ２"
+                }
+            },
+            "time_end": "1205",
+            "time_start": "1010",
+            "updated_at": "2017-01-15T07:27:57.170Z" });
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

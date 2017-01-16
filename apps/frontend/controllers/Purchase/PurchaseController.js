@@ -1,5 +1,5 @@
 "use strict";
-const BaseController_1 = require("../BaseController");
+const BaseController_1 = require('../BaseController');
 class PurchaseController extends BaseController_1.default {
     deleteSession() {
         if (!this.req.session)
