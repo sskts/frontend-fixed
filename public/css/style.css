@@ -132,7 +132,7 @@ label {
   background: none;
   padding: 0;
   margin: 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 input[type=submit],
@@ -144,7 +144,16 @@ input[type=text],
 input[type=number],
 input[type=password],
 input[type=tel],
-input[type=email],
+input[type=email] {
+  width: 100%;
+  border: 1px solid #d9d9d9;
+  padding: 0 10px;
+  background-color: #FFF;
+  border-radius: 3px;
+  line-height: 44px;
+  outline: none;
+}
+
 textarea {
   width: 100%;
   border: 1px solid #d9d9d9;
@@ -231,6 +240,11 @@ a {
   text-decoration: none;
 }
 
+p a {
+  color: #019fe8;
+  text-decoration: underline;
+}
+
 .d-table {
   display: table;
   width: 100%;
@@ -283,6 +297,8 @@ a {
   width: 600px;
   margin-left: -300px;
   z-index: 10;
+  overflow: "hidden";
+  border-radius: 5px;
 }
 
 @media screen and (max-width: 767px) {
@@ -292,7 +308,7 @@ a {
   }
 }
 
-.modal .box {
+.modal > .box {
   border-radius: 0;
 }
 
@@ -328,7 +344,7 @@ a {
 }
 
 .large-text {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 @media screen and (max-width: 767px) {
@@ -338,31 +354,31 @@ a {
 }
 
 .mb-xx-large {
-  margin-bottom: 50px;
+  margin-bottom: 50px !important;
 }
 
 .mb-x-large {
-  margin-bottom: 40px;
+  margin-bottom: 40px !important;
 }
 
 .mb-large {
-  margin-bottom: 30px;
+  margin-bottom: 30px !important;
 }
 
 .mb-medium {
-  margin-bottom: 20px;
+  margin-bottom: 20px !important;
 }
 
 .mb-small {
-  margin-bottom: 15px;
+  margin-bottom: 15px !important;
 }
 
 .mb-x-small {
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
 }
 
 .mb-xx-small {
-  margin-bottom: 5px;
+  margin-bottom: 5px !important;
 }
 
 .width-small {
@@ -459,15 +475,31 @@ a {
 }
 
 .box li {
-  border-bottom: 1px dotted #d1d1d1;
   padding: 0 0 20px;
   margin-bottom: 20px;
+  position: relative;
+}
+
+.box li:after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-image: url(/images/common/line_dotte.svg);
+  background-size: contain;
 }
 
 .box li:last-child {
   border: none;
   margin: 0;
   padding: 0;
+}
+
+.box li:last-child:after {
+  background-image: none;
 }
 
 .box dl {
@@ -511,6 +543,7 @@ a {
 .form-layout dl dt {
   margin-bottom: 0;
   width: 150px;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 767px) {
@@ -522,7 +555,7 @@ a {
 }
 
 .form-layout dl dd {
-  width: 300px;
+  width: calc(100% - 150px);
 }
 
 @media screen and (max-width: 767px) {
@@ -547,16 +580,6 @@ a {
   padding: 5px;
   color: #FFF;
   font-weight: normal;
-}
-
-.column-02 .clearfix {
-  margin: 0 -10px;
-}
-
-.column-02 .button, .column-02 .ghost-button {
-  float: left;
-  width: 50%;
-  padding: 0 10px;
 }
 
 .center-button {
@@ -609,7 +632,7 @@ a {
 .ghost-button a, .ghost-button button, .ghost-button label {
   line-height: 1;
   display: block;
-  padding: 10px 0;
+  padding: 15px 0;
   text-align: center;
   width: 100%;
   border-radius: 5px;
@@ -673,8 +696,9 @@ a {
 
 .next-button a, .next-button button {
   font-size: 18px;
+  font-weight: bold;
   width: 300px;
-  padding: 22px 0;
+  padding: 24px 0 23px;
 }
 
 @media screen and (max-width: 767px) {
@@ -713,9 +737,11 @@ a {
 
 .prev-link a, .prev-link button {
   font-size: 18px;
+  font-weight: bold;
   color: #333;
   position: relative;
   padding-left: 20px;
+  text-decoration: underline;
 }
 
 .close-link {
@@ -724,9 +750,11 @@ a {
 
 .close-link a, .close-link button {
   font-size: 18px;
+  font-weight: bold;
   color: #333;
   position: relative;
   padding-left: 20px;
+  text-decoration: underline;
 }
 
 .icon-next:before {
@@ -832,6 +860,7 @@ a {
   width: 940px;
   margin: 0 auto;
   background-color: #FFF;
+  border-radius: 5px 5px 0 0;
 }
 
 @media screen and (max-width: 1024px) {
@@ -872,6 +901,7 @@ a {
 .footer {
   background-color: #212121;
   padding: 25px 40px;
+  font-size: 10px;
 }
 
 @media screen and (max-width: 767px) {
@@ -885,11 +915,14 @@ a {
 }
 
 .footer ul {
-  margin: 0 0 0 -5px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: center;
+  justify-content: center;
+  margin-bottom: 10px;
 }
 
 .footer ul li {
-  float: left;
   padding: 0 5px;
   border-right: 1px solid #FFF;
   line-height: 1.5;
@@ -905,6 +938,7 @@ a {
 }
 
 .footer .copyright {
+  text-align: center;
   color: #FFF;
 }
 
@@ -936,16 +970,26 @@ a {
 }
 
 .purchase .header .steps .step {
-  width: 10px;
-  height: 10px;
+  width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  margin-top: -7px;
+  margin-left: -7px;
   background-color: #ccc;
   color: #ccc;
-  border-radius: 5px;
   position: absolute;
   top: 50%;
   left: 0;
-  margin-top: -5px;
-  margin-left: -5px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .header .steps .step {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    margin-top: -5px;
+    margin-left: -5px;
+  }
 }
 
 .purchase .header .steps .step .text {
@@ -954,7 +998,7 @@ a {
   width: 100px;
   position: absolute;
   top: -20px;
-  left: -45px;
+  left: -43px;
 }
 
 @media screen and (max-width: 767px) {
@@ -1086,6 +1130,10 @@ a {
   vertical-align: text-bottom;
 }
 
+.purchase .modal[data-modal="ticket-type"] dl dt {
+  padding-right: 10px;
+}
+
 .purchase .purchase-input .text-icon-red {
   margin-left: 5px;
 }
@@ -1192,6 +1240,7 @@ a {
   line-height: 44px;
   margin-bottom: 0;
   width: 38px;
+  font-weight: bold;
 }
 
 @media screen and (max-width: 767px) {
@@ -1222,8 +1271,50 @@ a {
   }
 }
 
+.purchase .purchase-input .credit dl dd {
+  width: 300px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-input .credit dl dd {
+    width: auto;
+  }
+}
+
 .purchase .purchase-input .credit .price dl dt {
   line-height: 1;
+}
+
+.purchase .modal[data-modal=securitycode] dl dd img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px;
+}
+
+.purchase .purchase-confirm .form-layout dl dd .ghost-button a {
+  width: 120px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-confirm .form-layout dl dd .ghost-button a {
+    width: auto;
+  }
+}
+
+.purchase .purchase-confirm .form-layout dl dd .column-02 .clearfix {
+  margin: 0 -10px;
+}
+
+.purchase .purchase-confirm .form-layout dl dd .column-02 .ghost-button {
+  float: left;
+  padding: 0 10px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-confirm .form-layout dl dd .column-02 .ghost-button {
+    width: 50%;
+  }
 }
 
 .purchase .purchase-complete {
@@ -1268,6 +1359,22 @@ a {
 
 @media screen and (max-width: 767px) {
   .purchase .purchase-complete .entry-method dl dd .button {
+    width: auto;
+  }
+}
+
+.purchase .purchase-mvtk-input .clone {
+  display: none;
+}
+
+.purchase .purchase-mvtk-input dl dt {
+  line-height: 44px;
+  width: 200px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-mvtk-input dl dt {
+    line-height: 1;
     width: auto;
   }
 }

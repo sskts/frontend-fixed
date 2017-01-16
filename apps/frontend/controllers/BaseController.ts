@@ -37,6 +37,7 @@ export default class BaseController {
     protected setLocals(): void {
         this.res.locals.req = this.req;
         this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.formatPrice = this.formatPrice;
         this.res.locals.moment = moment;
     }
 
@@ -44,7 +45,7 @@ export default class BaseController {
      * HTMLエスケープ
      * 
      */
-    private escapeHtml(string: string): string {
+    public escapeHtml(string: string): string {
         if(typeof string !== 'string') {
             return string;
         }
@@ -60,6 +61,14 @@ export default class BaseController {
             return changeList[match];
         }
         return string.replace(/[&'`"<>]/g, change);
+    }
+
+    /**
+     * カンマ区切りへ変換
+     * 
+     */
+    public formatPrice(price: number): string {
+        return String(price).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
     }
 
     /**

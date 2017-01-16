@@ -18,6 +18,7 @@ class BaseController {
     setLocals() {
         this.res.locals.req = this.req;
         this.res.locals.escapeHtml = this.escapeHtml;
+        this.res.locals.formatPrice = this.formatPrice;
         this.res.locals.moment = moment;
     }
     escapeHtml(string) {
@@ -36,6 +37,9 @@ class BaseController {
             return changeList[match];
         };
         return string.replace(/[&'`"<>]/g, change);
+    }
+    formatPrice(price) {
+        return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
     }
     getPerformanceId(theaterCode, day, titleCode, titleBranchNum, screenCode, timeBegin) {
         return `${theaterCode}${day}${titleCode}${titleBranchNum}${screenCode}${timeBegin}`;

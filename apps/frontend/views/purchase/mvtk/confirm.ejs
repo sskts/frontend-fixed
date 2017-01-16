@@ -11,7 +11,7 @@
         <ul class="box bg-light-gray mb-medium">
             <li>
                 <dl class="d-table">
-                    <dt class="d-td">A-1</dt>
+                    <dt class="d-td">Ａ－１</dt>
                     <dd class="d-td width-medium">
                         <div class="button gray-button">
                             <a href="#">
@@ -32,16 +32,16 @@
                 <li>
                     <div class="d-table">
                         <div class="d-td">一般</div>
-                        <div class="d-td text-right"><strong>2枚</strong> → <strong class="red-text">1枚</strong></div>
+                        <div class="d-td text-right  large-text"><strong><%- __n('%s ticket', 2) %></strong> → <strong class="red-text"><%- __n('%s ticket', 1) %></strong></div>
                     </div>
                 </li>
             </ul>
         </div>
         
         <div class="box bg-light-gray mb-small">
-            <div class="text-right mb-x-small">購入枚数 <span class="red-text">0枚</span></div>
-            <div class="text-right mb-x-small">3D上映差額分 <span class="red-text">1200円</span></div>
-            <div class="text-right">合計金額 <span class="red-text">1200円</span></div>
+            <div class="text-right mb-x-small">購入枚数 <strong class="red-text large-text"><%- __n('%s ticket', 0) %></strong></div>
+            <div class="text-right mb-x-small">3D上映差額分 <strong class="red-text large-text"><%= formatPrice(1200) %>円</strong></div>
+            <div class="text-right">合計金額 <strong class="red-text large-text"><%= formatPrice(1200) %>円</strong></div>
         </div>
 
         <p class="small-text">※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。</p>

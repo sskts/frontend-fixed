@@ -46,6 +46,9 @@ $(function () {
     });
 })
 
+/**
+ * 合計金額計算
+ */
 function totalPrice() {
     var price = 0;
     $('.seats li').each(function (index, elem) {
@@ -54,5 +57,6 @@ function totalPrice() {
             price += data.sale_price;
         }
     });
-    $('.total .price strong').text(price);
+    $('.total .price strong span').text(formatPrice(price));
 }
+

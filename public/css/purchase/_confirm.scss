@@ -1,2 +1,29 @@
 .purchase-confirm {
+    .form-layout {
+        dl {
+            dd {
+                .ghost-button {
+                    a {
+                        width: 120px;
+                        @media screen and (max-width: $mobile){
+                            width: auto;      
+                        }
+                    }
+                } 
+                .column-02 {
+                    .clearfix {
+                        margin: 0 -10px;
+                    }
+                    .ghost-button {
+                        float: left;
+                        padding: 0 10px;
+                        @media screen and (max-width: $mobile){
+                            width: 50%;
+                        }
+                    } 
+                }
+            }
+        }
+        
+    }
 }

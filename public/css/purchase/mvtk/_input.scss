@@ -1,2 +1,15 @@
 .purchase-mvtk-input {
+    .clone {
+        display: none;
+    }
+    dl {
+        dt {
+            line-height: 44px;
+            width: 200px;
+            @media screen and (max-width: $mobile) {
+                line-height: 1;
+                width: auto;
+            }
+        }
+    }
 }

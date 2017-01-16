@@ -10,19 +10,22 @@
             <li>
                 <dl>
                     <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                    <dd><strong><%= performance.theater.name[__('lang')] %> / <%= performance.screen.name[__('lang')] %></strong></dd>
+                    <dd><%= performance.theater.name[__('lang')] %> / <%= performance.screen.name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.film_title') %></dt>
-                    <dd><strong><%= performance.film.name[__('lang')] %></strong></dd>
+                    <dd><%= performance.film.name[__('lang')] %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.appreciation_date') %></dt>
-                    <dd><strong><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></strong></dd>
+                    <dd>
+                        <div class="mb-xx-small"><strong class="red-text"><%= moment(performance.day).format('YYYY年MM月DD日') %><%=moment(performance.day).format('(ddd)')%> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></strong></div>
+                        <p class="small-text red-text"><%- __('purchase.confirm.date_note') %></p>
+                    </dd>
                 </dl>
             </li>
             <li>
@@ -35,7 +38,7 @@
                             seats.push(seat.seat_num);
                         } 
                         %>
-                        <div class="mb-small"><strong><%= seats.join('、') %></strong></div>
+                        <div class="mb-small"><%= seats.join('、') %></div>
                         <div class="column-02">
                             <div class="clearfix">
                                 <div class="ghost-button blue-button">
@@ -69,10 +72,10 @@
                         }
                         let tikcets = [];
                         for (let key in tikcetObj) { 
-                            tikcets.push(tikcetObj[key].name + '×' + tikcetObj[key].length + '枚');
+                            tikcets.push(tikcetObj[key].name + '×' + __n('%s ticket', tikcetObj[key].length));
                         }
                         %>
-                        <div class="mb-small"><strong><%= tikcets.join('、') %></strong></div>
+                        <div class="mb-small"><%= tikcets.join('、') %></div>
                         <div class="ghost-button black-button">
                             <a href="#"><%- __('common.ticket') %><%- __('common.change') %></a>
                         </div>
@@ -87,19 +90,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><strong><%= info.last_name_hira %> <%= info.first_name_hira %></strong></dd>
+                    <dd><%= info.last_name_hira %> <%= info.first_name_hira %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail') %></dt>
-                    <dd><strong><%= info.mail_addr %></strong></dd>
+                    <dd><%= info.mail_addr %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel') %></dt>
-                    <dd><strong><%= info.tel_num %></strong></dd>
+                    <dd><%= info.tel_num %></dd>
                 </dl>
             </li>
         </ul>
@@ -112,18 +115,18 @@
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
-                    <dd><strong><%= gmoTokenObject.maskedCardNo %></strong></dd>
+                    <dd><%= gmoTokenObject.maskedCardNo %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>
-                    <dd><strong>￥5,100</strong></dd>
+                    <dd>￥<%= formatPrice(price) %></dd>
                 </dl>
             </li>
         </ul>
         <div class="ghost-button black-button mb-medium center-button">
-            <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
+            <a href="#"><%- __('common.payment') %><%- __('common.change') %></a>
         </div>
 
         <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">

@@ -22,13 +22,27 @@
 			"next": "規約に同意して次へ",
 			"prev": "戻る",
 			"agreement": "オンライン規約",
-			"agreement_text": ""
+			"agreement_text": "",
+			"modal": {
+				"securitycode": {
+					"read": "※カード会社により表示箇所および名称が異なります。",
+					"back": {
+						"ttl": "VISA / MASTER / DINERS / JCBの場合",
+						"text": "【カード裏面】セキュリティーコード(末尾3桁)"
+					},
+					"front": {
+						"ttl": "AMEXの場合",
+						"text": "【カード表面】セキュリティーコード(4桁)"
+					}
+				}
+			}
 		},
 		"confirm": {
 			"page_ttl": "購入者内容確認",
 			"read": "ご購入内容を確認頂き「購入確定」ボタンを押して購入を確定してください。",
 			"next": "購入完了",
-			"prev": "戻る"
+			"prev": "戻る",
+			"date_note": "※上映日時を必ずご確認ください。"
 		},
 		"complete": {
 			"page_ttl": "購入完了",
@@ -81,6 +95,7 @@
 		}
 	},
 	"common": {
+		"close": "閉じる",
 		"purchase_length": "購入枚数",
 		"total_fee": "合計金額",
 		"theater": "劇場",
@@ -131,7 +146,16 @@
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
 			"credit": "クレジットカード決済の必要事項をご記入ください。",
-			"tel": "※半角数字、ハイフン「-」なしで入力してください"
+			"tel": "※半角数字、ハイフン「-」なしで入力してください",
+			"securitycode": "セキュリティーコードについて"
 		}
+	},
+	"%s ticket": {
+		"one": "%s枚",
+		"other": "%s枚"
+	},
+	"%s seat": {
+		"one": "%s席",
+		"other": "%s席"
 	}
 }

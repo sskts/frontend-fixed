@@ -60,7 +60,7 @@ label {
     background: none;
     padding: 0;
     margin: 0;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 input[type=submit],
@@ -72,7 +72,16 @@ input[type=text],
 input[type=number],
 input[type=password],
 input[type=tel],
-input[type=email],
+input[type=email] {
+    width: 100%;
+    border: 1px solid #d9d9d9;
+    padding: 0 10px;
+    background-color: #FFF;
+    border-radius: 3px;
+    line-height: 44px;
+    outline: none;
+}
+
 textarea {
     width: 100%;
     border: 1px solid #d9d9d9;
@@ -157,6 +166,13 @@ a {
     text-decoration: none;
 }
 
+p {
+    a {
+        color: #019fe8;
+        text-decoration: underline;
+    }
+}
+
 .d-table {
     display: table;
     width: 100%;
@@ -209,11 +225,13 @@ a {
     width: 600px;
     margin-left: -300px;
     z-index: 10;
+    overflow: "hidden";
+    border-radius: 5px;
     @media screen and (max-width: $mobile){
         width: 90%;
         margin-left: -45%;
     }
-    .box {
+    >.box {
         border-radius: 0;
     }
 }
@@ -249,38 +267,38 @@ a {
 }
 
 .large-text {
-    font-size: 18px;
+    font-size: 20px;
     @media screen and (max-width: $mobile){
         font-size: 18px;
     }
 }
 
 .mb-xx-large {
-    margin-bottom: 50px;
+    margin-bottom: 50px !important;
 }
 
 .mb-x-large {
-    margin-bottom: 40px;
+    margin-bottom: 40px !important;
 }
 
 .mb-large {
-    margin-bottom: 30px;
+    margin-bottom: 30px !important;
 }
 
 .mb-medium {
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
 }
 
 .mb-small {
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
 }
 
 .mb-x-small {
-    margin-bottom: 10px;
+    margin-bottom: 10px !important;
 }
 
 .mb-xx-small {
-    margin-bottom: 5px;
+    margin-bottom: 5px !important;
 }
 
 .width-small {
@@ -361,13 +379,28 @@ a {
         }
     }
     li {
-        border-bottom: 1px dotted #d1d1d1;
+        // border-bottom: 1px dotted #d1d1d1;
         padding: 0 0 20px;
         margin-bottom: 20px;
+        position: relative;
+        &:after {
+            content: '';
+            display: block;
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-image: url(/images/common/line_dotte.svg);
+            background-size: contain;
+        }
         &:last-child {
             border: none;
             margin: 0;
             padding: 0;
+            &:after {
+                background-image: none;
+            }
         }
     }
     dl {
@@ -389,7 +422,6 @@ a {
 }
 
 .form-layout {
-    
     dl {
         margin-bottom: 0;
         display: -ms-flexbox;
@@ -406,6 +438,7 @@ a {
         dt {
             margin-bottom: 0;
             width: 150px;
+            font-weight: bold;
             @media screen and (max-width: $mobile) {
                 line-height: 1;
                 width: auto;
@@ -413,9 +446,9 @@ a {
             }
         }
         dd {
-            width: 300px;
-            @media screen and (max-width: $mobile) {
-                width: auto;
+            width: calc(100% - 150px);
+            @media screen and (max-width: $mobile){
+                width: auto;      
             }
         }
     }
@@ -439,16 +472,7 @@ a {
     font-weight: normal;
 }
 
-.column-02 {
-    .clearfix {
-        margin: 0 -10px;
-    }
-    .button, .ghost-button {
-        float: left;
-        width: 50%;
-        padding: 0 10px;
-    } 
-}
+
 
 .center-button {
     margin-left: auto;
@@ -503,7 +527,7 @@ a {
     a, button, label {
         line-height: 1;
         display: block;
-        padding: 10px 0;
+        padding: 15px 0;
         text-align: center;
         width: 100%;
         border-radius: 5px;
@@ -564,8 +588,9 @@ a {
     }
     a, button {
         font-size: 18px;
+        font-weight: bold;
         width: 300px;
-        padding: 22px 0;
+        padding: 24px 0 23px;
         @media screen and (max-width: $mobile){
             width: 100%;
         }
@@ -591,9 +616,11 @@ a {
     text-align: center;
     a, button {
         font-size: 18px;
+        font-weight: bold;
         color: #333;
         position: relative;
         padding-left: 20px;
+        text-decoration: underline;
     }
 }
 
@@ -601,9 +628,11 @@ a {
     text-align: center;
     a, button {
         font-size: 18px;
+        font-weight: bold;
         color: #333;
         position: relative;
         padding-left: 20px;
+        text-decoration: underline;
     }
 }
 
@@ -717,6 +746,7 @@ a {
     width: 940px;
     margin: 0 auto;
     background-color: #FFF;
+    border-radius: 5px 5px 0 0;
     @media screen and (max-width: $tablet){
         width: auto;
     }
@@ -748,6 +778,7 @@ a {
 .footer {
     background-color: #212121;
     padding: 25px 40px;
+    font-size: 10px;
     @media screen and (max-width: $mobile){
         padding: 20px 15px;
     }
@@ -755,9 +786,12 @@ a {
         position: relative;
     }
     ul {
-        margin: 0 0 0 -5px;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-pack: center;
+        justify-content: center;
+        margin-bottom: 10px;
         li {
-            float: left;
             padding: 0 5px;
             border-right: 1px solid #FFF;
             line-height: 1.5;
@@ -771,6 +805,7 @@ a {
         }
     }
     .copyright {
+        text-align: center;
         color: #FFF;
     }
 }

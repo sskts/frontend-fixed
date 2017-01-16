@@ -1,4 +1,7 @@
 $(function () {
+
+    var modal = new SASAKI.Modal();
+
     /**
      * 次へクリックイベント
      */

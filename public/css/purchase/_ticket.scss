@@ -19,5 +19,9 @@
 }
 
 .modal[data-modal="ticket-type"] {
-    
+    dl {
+        dt {
+            padding-right: 10px;
+        }
+    }
 }
