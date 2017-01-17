@@ -1369,6 +1369,10 @@ p a {
   }
 }
 
+.purchase .purchase-confirm .form-layout dl dd .right {
+  right: 0;
+}
+
 @media screen and (max-width: 767px) {
   .purchase .purchase-confirm .form-layout dl dd .right {
     top: -5px;
@@ -1379,8 +1383,14 @@ p a {
 .purchase .purchase-confirm .right {
   position: absolute;
   top: 50%;
-  right: 0;
   margin-top: -11px;
+  right: 20px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-confirm .right {
+    right: 10px;
+  }
 }
 
 .purchase .purchase-confirm .change-button {
