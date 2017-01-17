@@ -59,7 +59,7 @@
             margin-bottom: 0;
             display: -ms-flexbox;
             display: flex;
-            width: 338px;
+            width: 318px;
             @media screen and (max-width: $tablet) {
                 max-width: 290px;
                 width: 50%;
@@ -85,7 +85,7 @@
                 }
             }
             dd {
-                width: 300px;
+                width: 280px;
                 @media screen and (max-width: $mobile) {
                     width: auto;
                 }

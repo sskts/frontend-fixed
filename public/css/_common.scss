@@ -225,13 +225,13 @@ p {
     width: 600px;
     margin-left: -300px;
     z-index: 10;
-    border-radius: 5px;
     @media screen and (max-width: $mobile){
         width: 88%;
         margin-left: -44%;
     }
     .inner {
-        overflow: visible;
+        overflow: hidden;
+        border-radius: 5px;
         >.box {
             border-radius: 0;
         }
@@ -578,6 +578,7 @@ p {
         a, button, label {
             border-color: #019fe8;
             color: #019fe8;
+            background-color: #FFF;
         }
     }
     &.dark-blue-button {
@@ -851,7 +852,10 @@ p {
 
 //contents
 .contents {
-    padding: 40px;
+    padding: 40px 120px;
+    @media screen and (max-width: $tablet){
+        padding: 40px 60px;
+    }
     @media screen and (max-width: $mobile){
         padding: 20px 15px;
     }

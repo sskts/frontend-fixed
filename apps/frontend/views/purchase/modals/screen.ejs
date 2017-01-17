@@ -16,16 +16,10 @@
                 <div class="device-type-pc"></div>
                 <div class="device-type-sp"></div>
             </div>
-            <div class="seat-info bg-light-gray mb-medium">
-                <div class="box bg-white">
-                    <div class="seat"><strong>空席</strong></div>
-                    <div class="seat active"><strong>選択した席</strong></div>
-                    <div class="seat disabled"><strong>選択不可の席</strong></div>
-                </div>
-            </div>
         </div>
     </div>
     <div class="close-button">
         <a class="modal-close" href="#"></a>
     </div>
+    <div style="display: none" data-seats="<%= JSON.stringify(reserveSeats) %>"></div>
 </div>

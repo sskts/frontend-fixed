@@ -297,7 +297,6 @@ p a {
   width: 600px;
   margin-left: -300px;
   z-index: 10;
-  border-radius: 5px;
 }
 
 @media screen and (max-width: 767px) {
@@ -308,7 +307,8 @@ p a {
 }
 
 .modal .inner {
-  overflow: visible;
+  overflow: hidden;
+  border-radius: 5px;
 }
 
 .modal .inner > .box {
@@ -683,6 +683,7 @@ p a {
 .ghost-button.blue-button a, .ghost-button.blue-button button, .ghost-button.blue-button label {
   border-color: #019fe8;
   color: #019fe8;
+  background-color: #FFF;
 }
 
 .ghost-button.dark-blue-button a, .ghost-button.dark-blue-button button, .ghost-button.dark-blue-button label {
@@ -980,7 +981,13 @@ p a {
 }
 
 .contents {
-  padding: 40px;
+  padding: 40px 120px;
+}
+
+@media screen and (max-width: 1024px) {
+  .contents {
+    padding: 40px 60px;
+  }
 }
 
 @media screen and (max-width: 767px) {
@@ -1069,8 +1076,18 @@ p a {
   color: #C30D23;
 }
 
+.purchase .purchase-seat .sp-text {
+  display: none;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-seat .sp-text {
+    display: block;
+  }
+}
+
 .purchase .purchase-seat .screen-cover {
-  padding: 0 140px;
+  padding: 0 80px;
 }
 
 @media screen and (max-width: 1024px) {
@@ -1260,7 +1277,7 @@ p a {
   margin-bottom: 0;
   display: -ms-flexbox;
   display: flex;
-  width: 338px;
+  width: 318px;
 }
 
 @media screen and (max-width: 1024px) {
@@ -1298,7 +1315,7 @@ p a {
 }
 
 .purchase .purchase-input .column-02 dl dd {
-  width: 300px;
+  width: 280px;
 }
 
 @media screen and (max-width: 767px) {

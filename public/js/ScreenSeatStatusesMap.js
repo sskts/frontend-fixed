@@ -3,6 +3,7 @@
     var ScreenSeatStatusesMap = function (target) {
         this.screen = target;
         this.scale = 0;
+        this.permission = true;
         this.init();
         this.setEvent();
     }
@@ -18,7 +19,7 @@
             var _this = this;
             this.screen.on('click', '.screen-inner', function(event) {
                 event.preventDefault();
-                
+                if (!_this.permission) return;
                 if (!_this.isZoom() && $('.screen .device-type-sp').is(':visible')) {
                     var scroll = _this.screen.find('.screen-scroll');
                     
@@ -72,6 +73,10 @@
             var result = false;
             if (this.state === ScreenSeatStatusesMap.STATE_ZOOM) result = true;
             return result;
+        },
+        //拡大許可
+        setPermission: function(value) {
+            this.permission = value;
         }
     };
     

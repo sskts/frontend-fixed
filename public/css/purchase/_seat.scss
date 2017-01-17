@@ -1,6 +1,12 @@
 .purchase-seat {
+    .sp-text {
+        display: none;
+        @media screen and (max-width: $mobile){
+            display: block;
+        }
+    }
     .screen-cover {
-        padding: 0 140px;
+        padding: 0 80px;
         @media screen and (max-width: $tablet){
             padding: 0;
         }
