@@ -20,7 +20,10 @@ export default class ConfirmController extends PurchaseController {
             this.res.locals['reserveTickets'] = this.req.session['reserveTickets'];
             this.res.locals['updateReserve'] = this.req.session['updateReserve'];
             this.res.locals['step'] = 3;
-            this.res.locals['price'] = this.getPrice(this.req.session);
+            this.res.locals['price'] = this.getPrice({
+                reserveTickets: this.req.session['reserveTickets'],
+                reserveSeats: this.req.session['reserveSeats']
+            });
             this.res.render('purchase/confirm');
         } else {
             return this.next(new Error('無効なアクセスです'));
@@ -79,16 +82,7 @@ export default class ConfirmController extends PurchaseController {
 
     }
 
-    private getPrice(session: Express.Session): number {
-        let reserveSeats = session['reserveSeats'];
-        let reserveTickets = session['reserveTickets'];
-        let price = 0;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            price += ticket.sale_price;
-        }
-        return price;
-    }
+    
 
 
 }

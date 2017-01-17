@@ -1,29 +1,37 @@
 .purchase-confirm {
     .form-layout {
         dl {
+            position: relative;
             dd {
-                .ghost-button {
-                    a {
-                        width: 120px;
-                        @media screen and (max-width: $mobile){
-                            width: auto;      
-                        }
-                    }
-                } 
-                .column-02 {
-                    .clearfix {
-                        margin: 0 -10px;
-                    }
-                    .ghost-button {
-                        float: left;
-                        padding: 0 10px;
-                        @media screen and (max-width: $mobile){
-                            width: 50%;
-                        }
-                    } 
+                position: relative;
+                @media screen and (max-width: $mobile){
+                    position: static; 
                 }
+                .right {
+                    @media screen and (max-width: $mobile){
+                        top: -5px;
+                        margin-top: 0;
+                    } 
+                }              
             }
         }
-        
     }
+    .right {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-top: -11px;
+    }
+    .change-button {
+        display: inline-block;
+        margin-left: 10px;
+        a {
+            width: 70px;
+            padding: 5px 0;
+            font-size: 12px;
+            box-shadow: 0 0 0 transparent;
+            font-weight: 500;
+            
+        }
+    } 
 }

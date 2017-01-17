@@ -12,6 +12,15 @@ export default class PerformanceController extends BaseController {
      * 購入者情報入力完了
      */
     public index(): void {
+        //TODO Session削除
+        if (!this.req.session) return;
+        delete this.req.session['purchaseInfo']
+        // delete this.req.session['performance']
+        delete this.req.session['reserveSeats']
+        delete this.req.session['reserveTickets']
+        delete this.req.session['updateReserve']
+        delete this.req.session['gmoTokenObject'];
+        
         this.res.render('performance');
     }
 

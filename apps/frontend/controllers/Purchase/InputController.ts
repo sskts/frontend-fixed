@@ -67,8 +67,16 @@ export default class EnterPurchaseController extends PurchaseController {
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
 
 
-                this.updateReserve(() => {
+                this.updateReserve({
+                    performance: this.req.session['performance'],
+                    reserveSeats: this.req.session['reserveSeats'],
+                    purchaseInfo: this.req.session['purchaseInfo'],
+                    reserveTickets: this.req.session['reserveTickets']
+                }, (result: COA.updateReserveInterface.Result) => {
                     if (!this.router) return this.next(new Error('router is undefined'));
+                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                    //予約情報をセッションへ
+                    this.req.session['updateReserve'] = result;
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('purchase.confirm', {}));
                 });
@@ -88,83 +96,7 @@ export default class EnterPurchaseController extends PurchaseController {
         });
     }
 
-    /**
-     * 座席本予約
-     */
-    private updateReserve(cb: Function): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
-        let performance = this.req.session['performance'];
-        let reserveSeats = this.req.session['reserveSeats'];
-        let purchaseInfo = this.req.session['purchaseInfo'];
-        let reserveTickets = this.req.session['reserveTickets'];
-        let tickets: any[] = [];
-
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            tickets.push({
-                /** チケットコード */
-                ticket_code: ticket.ticket_code,
-                /** 標準単価 */
-                std_price: ticket.std_price,
-                /** 加算単価 */
-                add_price: ticket.add_price,
-                /** 割引額 */
-                dis_price: ticket.dis_price || 0,
-                /** 金額 */
-                sale_price: ticket.sale_price,
-                /** 枚数 */
-                ticket_count: ticket.limit_count,
-                /** 座席番号 */
-                seat_num: seat['seat_num'],
-            });
-        }
-
-        let args: COA.updateReserveInterface.Args = {
-            /** 施設コード */
-            theater_code: performance.theater._id,
-            /** 上映日 */
-            date_jouei: performance.day,
-            /** 作品コード */
-            title_code: performance.film.coa_title_code,
-            /** 作品枝番 */
-            title_branch_num: performance.film.coa_title_branch_num,
-            /** 上映時刻 */
-            time_begin: performance.time_start,
-            /** 座席チケット仮予約番号 */
-            tmp_reserve_num: reserveSeats.tmp_reserve_num,
-            /** 予約者名 */
-            reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
-            /** 予約者名（かな） */
-            reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
-            /** 電話番号 */
-            tel_num: purchaseInfo.tel_num,
-            /** メールアドレス */
-            mail_addr: purchaseInfo.mail_addr,
-            /** 予約金額 */
-            reserve_amount: this.getPrice(this.req.session),
-            /** 価格情報リスト */
-            list_ticket: tickets,
-        };
-        COA.updateReserveInterface.call(args, (err, result) => {
-            if (err) return this.next(new Error(err.message));
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-            //予約情報をセッションへ
-            this.req.session['updateReserve'] = result;
-            this.logger.debug('本予約完了', this.req.session['updateReserve']);
-            cb();
-        });
-    }
-
-    private getPrice(session: Express.Session): number {
-        let reserveSeats = session['reserveSeats'];
-        let reserveTickets = session['reserveTickets'];
-        let price = 0;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            price += ticket.sale_price;
-        }
-        return price;
-    }
+    
 
 
 }

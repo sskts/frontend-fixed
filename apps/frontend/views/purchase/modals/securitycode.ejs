@@ -1,22 +1,27 @@
-<div class="modal-cover"></div>
+<div class="modal-cover" onclick=""></div>
 <div class="modal" data-modal="securitycode">
-    <div class="box bg-white">
-        <div class="modal-ttl mb-xx-small"><%- __('common.note.securitycode') %></div>
-        <p class="mb-medium small-text"><%- __('purchase.input.modal.securitycode.read') %></p>
-        <div class="box bg-light-gray mb-medium">
-            <dl class="mb-medium">
-                <dt><strong><%- __('purchase.input.modal.securitycode.back.ttl') %></strong></dt>
-                <dd><%- __('purchase.input.modal.securitycode.back.text') %></dd>
-                <dd><img src="/images/common/credit_back.svg" alt=""></dd>
-            </dl>
-            <dl>
-                <dt><strong><%- __('purchase.input.modal.securitycode.front.ttl') %></strong></dt>
-                <dd><%- __('purchase.input.modal.securitycode.front.text') %></dd>
-                <dd><img src="/images/common/credit_front.svg" alt=""></dd>
-            </dl>
+    <div class="inner">
+        <div class="box bg-white">
+            <div class="modal-ttl mb-xx-small text-center"><%- __('common.note.securitycode') %></div>
+            <p class="mb-medium small-text text-center"><%- __('purchase.input.modal.securitycode.read') %></p>
+            <div class="box bg-light-gray mb-medium">
+                <dl class="mb-medium">
+                    <dt><strong><%- __('purchase.input.modal.securitycode.back.ttl') %></strong></dt>
+                    <dd><%- __('purchase.input.modal.securitycode.back.text') %></dd>
+                    <dd><img src="/images/common/credit_back.svg" alt=""></dd>
+                </dl>
+                <dl>
+                    <dt><strong><%- __('purchase.input.modal.securitycode.front.ttl') %></strong></dt>
+                    <dd><%- __('purchase.input.modal.securitycode.front.text') %></dd>
+                    <dd><img src="/images/common/credit_front.svg" alt=""></dd>
+                </dl>
+            </div>
+            <div class="close-link">
+                <a class="icon-close modal-close" href="#"><%- __('common.close') %></a>
+            </div>
         </div>
-        <div class="close-link">
-            <a class="icon-close modal-close" href="#"><%- __('common.close') %></a>
-        </div>
+    </div>
+    <div class="close-button">
+        <a class="modal-close" href="#"></a>
     </div>
 </div>

@@ -4,6 +4,13 @@ const request = require('request');
 const config = require('config');
 class PerformanceController extends BaseController_1.default {
     index() {
+        if (!this.req.session)
+            return;
+        delete this.req.session['purchaseInfo'];
+        delete this.req.session['reserveSeats'];
+        delete this.req.session['reserveTickets'];
+        delete this.req.session['updateReserve'];
+        delete this.req.session['gmoTokenObject'];
         this.res.render('performance');
     }
     getPerformances(day) {

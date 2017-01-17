@@ -31,7 +31,7 @@ function getPerformance() {
                 dom += '<li>' +
                     '<dl>' +
                         '<dt>鑑賞日 / スクリーン</dt>' +
-                        '<dd>' + moment(performance.day).format('YYYY年MM月DD日') + ' / ' + performance.theater_name.ja + ' ' + performance.screen_name.ja + '</dd>' +
+                        '<dd>' + moment(performance.day).format('YYYY年MM月DD日') + ' / ' + performance.theater.name.ja + ' ' + performance.screen.name.ja + '</dd>' +
                         '<dt>作品名</dt>' +
                         '<dd>' + performance.film.name.ja + '</dd>' +
                         '<dd>' +

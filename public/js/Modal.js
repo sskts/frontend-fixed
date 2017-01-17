@@ -13,6 +13,7 @@
         },
         setEvent: function () {
             var _this = this;
+            //トリガー
             $(document).on('click', 'a[data-modal]', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -21,11 +22,17 @@
                 _this.trigger = $(this);
                 _this.open();
             });
-
+            //閉じる
             $(document).on('click', '.modal .modal-close', function (event) {
                 event.preventDefault();
                 _this.close();
             });
+            //カバー閉じる
+            $(document).on('click', '.modal-cover', function (event) {
+                event.preventDefault();
+                _this.close();
+            });
+            //リサイズ
             $(window).on('resize', function (event) {
                 if (_this.isOpen()) {
                     _this.resize();
@@ -55,14 +62,14 @@
         },
         resize: function () {
             this.modal.removeClass('scroll');
-            this.modal.height('auto');
-            var height = this.modal.height();
+            this.modal.find('.inner').height('auto');
+            var height = this.modal.find('.inner').height();
             var top = height / 2;
-            var fixHeight = 40;
+            var fixHeight = 80;
             if (height > $(window).height() - fixHeight) {
                 this.modal.addClass('scroll');
-                this.modal.height($(window).height() - fixHeight);
-                height = this.modal.height();
+                this.modal.find('.inner').height($(window).height() - fixHeight);
+                height = this.modal.find('.inner').height();
                 top = height / 2;
             }
             this.modal.css('marginTop', top * -1);

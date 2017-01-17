@@ -13,7 +13,8 @@ $(function () {
             .removeClass('button')
             .addClass('ghost-button');
         target.find('dd').attr('data-ticket', ticket)
-        target.find('dd a').text(JSON.parse(ticket).ticket_name);
+        var ticketData = JSON.parse(ticket);
+        target.find('dd a').text(ticketData.ticket_name + ' ￥' + ticketData.sale_price);
         modal.close();
         totalPrice();
     });

@@ -27,5 +27,24 @@ function toFullWidth(value) {
  * カンマ区切りへ変換
  */
 function formatPrice(price) {
-    return String(price).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+    return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+}
+
+/**
+ * 高さ統一
+ */
+function heightFix() {
+    $('.heighfix-group').each(function (index, elem) {
+        var h = 0;
+        $('.heighfix').each(function (index2, elem2) {
+            $(elem2).height('auto');
+            var tmpH = $(elem2).height();
+            if (h < tmpH) {
+                h = tmpH;
+            }
+        });
+        $(elem).find('.heighfix').height(h);
+    });
+
+    
 }

@@ -146,7 +146,7 @@ input[type=password],
 input[type=tel],
 input[type=email] {
   width: 100%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #989898;
   padding: 0 10px;
   background-color: #FFF;
   border-radius: 3px;
@@ -156,7 +156,7 @@ input[type=email] {
 
 textarea {
   width: 100%;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #989898;
   padding: 8px 10px;
   background-color: #FFF;
   border-radius: 3px;
@@ -171,7 +171,7 @@ select {
   -webkit-appearance: none;
   appearance: none;
   overflow: hidden;
-  border: 1px solid #d9d9d9;
+  border: 1px solid #989898;
   padding: 0 54px 0 10px;
   height: 44px;
   border-radius: 3px;
@@ -297,22 +297,49 @@ p a {
   width: 600px;
   margin-left: -300px;
   z-index: 10;
-  overflow: "hidden";
   border-radius: 5px;
 }
 
 @media screen and (max-width: 767px) {
   .modal {
-    width: 90%;
-    margin-left: -45%;
+    width: 88%;
+    margin-left: -44%;
   }
 }
 
-.modal > .box {
+.modal .inner {
+  overflow: visible;
+}
+
+.modal .inner > .box {
   border-radius: 0;
 }
 
-.modal.scroll {
+.modal .close-button {
+  position: absolute;
+  top: -30px;
+  right: 0px;
+}
+
+.modal .close-button a {
+  display: block;
+  width: 25px;
+  height: 25px;
+}
+
+.modal .close-button a:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  background-image: url(/images/common/modal_close.svg);
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+  margin-top: -50%;
+}
+
+.modal.scroll .inner {
   overflow-y: auto;
 }
 
@@ -431,10 +458,10 @@ p a {
   content: '';
   display: block;
   position: absolute;
-  bottom: -2px;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 4px;
+  height: 2px;
   background-image: url(/images/common/line_dotte.svg);
   background-size: contain;
 }
@@ -484,10 +511,10 @@ p a {
   content: '';
   display: block;
   position: absolute;
-  bottom: -2px;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 3px;
+  height: 2px;
   background-image: url(/images/common/line_dotte.svg);
   background-size: contain;
 }
@@ -613,6 +640,7 @@ p a {
 .button.blue-button a, .button.blue-button button, .button.blue-button label {
   background-color: #019fe8;
   color: #FFF;
+  box-shadow: 0 3px 0 #0084b2;
 }
 
 .button.dark-blue-button a, .button.dark-blue-button button, .button.dark-blue-button label {
@@ -622,6 +650,11 @@ p a {
 
 .button.gray-button a, .button.gray-button button, .button.gray-button label {
   background-color: #595758;
+  color: #FFF;
+}
+
+.button.light-gray-button a, .button.light-gray-button button, .button.light-gray-button label {
+  background-color: #aeaeae;
   color: #FFF;
 }
 
@@ -698,7 +731,7 @@ p a {
   font-size: 18px;
   font-weight: bold;
   width: 300px;
-  padding: 24px 0 23px;
+  padding: 22px 0;
 }
 
 @media screen and (max-width: 767px) {
@@ -822,16 +855,19 @@ p a {
   font-weight: bold;
   font-size: 20px;
   margin-bottom: 20px;
-}
-
-@media screen and (max-width: 767px) {
-  .page-ttl {
-    text-align: center;
-  }
+  text-align: center;
+  position: relative;
 }
 
 .read {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+@media screen and (max-width: 767px) {
+  .read {
+    text-align: left;
+  }
 }
 
 .section-ttl {
@@ -839,6 +875,7 @@ p a {
   font-size: 18px;
   font-weight: bold;
   margin: 0 0 10px;
+  position: relative;
 }
 
 .validation {
@@ -956,9 +993,8 @@ p a {
   position: absolute;
   right: 30px;
   top: 50%;
-  margin-top: -1px;
-  width: 500px;
-  height: 2px;
+  width: 300px;
+  height: 1px;
   background-color: #ccc;
 }
 
@@ -994,7 +1030,7 @@ p a {
 
 .purchase .header .steps .step .text {
   text-align: center;
-  font-size: 12px;
+  font-size: 10px;
   width: 100px;
   position: absolute;
   top: -20px;
@@ -1031,6 +1067,16 @@ p a {
   background-color: #C30D23;
   font-weight: bold;
   color: #C30D23;
+}
+
+.purchase .purchase-seat .screen-cover {
+  padding: 0 140px;
+}
+
+@media screen and (max-width: 1024px) {
+  .purchase .purchase-seat .screen-cover {
+    padding: 0;
+  }
 }
 
 .purchase .purchase-seat .zoom-btn {
@@ -1292,75 +1338,78 @@ p a {
   max-width: 300px;
 }
 
-.purchase .purchase-confirm .form-layout dl dd .ghost-button a {
-  width: 120px;
+.purchase .purchase-confirm .form-layout dl {
+  position: relative;
+}
+
+.purchase .purchase-confirm .form-layout dl dd {
+  position: relative;
 }
 
 @media screen and (max-width: 767px) {
-  .purchase .purchase-confirm .form-layout dl dd .ghost-button a {
-    width: auto;
+  .purchase .purchase-confirm .form-layout dl dd {
+    position: static;
   }
-}
-
-.purchase .purchase-confirm .form-layout dl dd .column-02 .clearfix {
-  margin: 0 -10px;
-}
-
-.purchase .purchase-confirm .form-layout dl dd .column-02 .ghost-button {
-  float: left;
-  padding: 0 10px;
 }
 
 @media screen and (max-width: 767px) {
-  .purchase .purchase-confirm .form-layout dl dd .column-02 .ghost-button {
-    width: 50%;
+  .purchase .purchase-confirm .form-layout dl dd .right {
+    top: -5px;
+    margin-top: 0;
   }
+}
+
+.purchase .purchase-confirm .right {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  margin-top: -11px;
+}
+
+.purchase .purchase-confirm .change-button {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.purchase .purchase-confirm .change-button a {
+  width: 70px;
+  padding: 5px 0;
+  font-size: 12px;
+  box-shadow: 0 0 0 transparent;
+  font-weight: 500;
 }
 
 .purchase .purchase-complete {
   display: none;
 }
 
+.purchase .purchase-complete .entry-method {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+}
+
+.purchase .purchase-complete .entry-method li {
+  width: 50%;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-complete .entry-method li {
+    width: 100%;
+  }
+}
+
+.purchase .purchase-complete .entry-method dl {
+  height: 100%;
+  margin: 0 10px;
+}
+
 .purchase .purchase-complete .entry-method dl dt span {
   margin-right: 5px;
-}
-
-.purchase .purchase-complete .entry-method dl dd {
-  position: relative;
-  padding: 0 0 0 220px;
-  min-height: 145px;
-}
-
-@media screen and (max-width: 767px) {
-  .purchase .purchase-complete .entry-method dl dd {
-    padding: 0;
-    min-height: 0;
-  }
-}
-
-.purchase .purchase-complete .entry-method dl dd .image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 200px;
-}
-
-@media screen and (max-width: 767px) {
-  .purchase .purchase-complete .entry-method dl dd .image {
-    width: auto;
-    position: static;
-    margin-bottom: 10px;
-  }
-}
-
-.purchase .purchase-complete .entry-method dl dd .button {
-  width: 250px;
-}
-
-@media screen and (max-width: 767px) {
-  .purchase .purchase-complete .entry-method dl dd .button {
-    width: auto;
-  }
 }
 
 .purchase .purchase-mvtk-input .clone {
@@ -1404,6 +1453,7 @@ p a {
   padding-top: 14px;
   background-image: url(/images/screen/seat.svg);
   background-size: 120px 50px;
+  background-repeat: no-repeat;
 }
 
 .screen .seat a.active {
@@ -1483,7 +1533,8 @@ p a {
   display: flex;
   -ms-flex-pack: justify;
   -ms-flex-align: stretch;
-  justify-content: space-between stretch;
+  justify-content: space-between;
+  align-items: stretch;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   margin: 0 -10px;

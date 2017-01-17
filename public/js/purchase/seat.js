@@ -7,6 +7,7 @@ $(function () {
         
         var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
         if (purchaseSeats) {
+            console.log(purchaseSeats)
             //予約している席設定
             for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
                 var purchaseSeat = purchaseSeats.list_tmp_reserve[i];

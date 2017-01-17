@@ -1,4 +1,10 @@
 .purchase-seat {
+    .screen-cover {
+        padding: 0 140px;
+        @media screen and (max-width: $tablet){
+            padding: 0;
+        }
+    }
     .screen {
     }
     .zoom-btn {

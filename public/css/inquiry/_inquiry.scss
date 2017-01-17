@@ -12,7 +12,8 @@
         display: flex;
         -ms-flex-pack: justify;
         -ms-flex-align: stretch;
-        justify-content: space-between stretch;
+        justify-content: space-between;
+        align-items: stretch;
         -ms-flex-wrap: wrap;
         flex-wrap: wrap;
         margin: 0 -10px;

@@ -5,8 +5,8 @@
     <p class="read"><%- __('purchase.confirm.read') %></p>
 
     <form class="form-layout" method="post">
-        <h2 class="section-ttl"><%- __('common.film') %></h2>
-        <ul class="box bg-light-gray mb-medium">
+        <h2 class="section-ttl"><%- __('common.film_info') %></h2>
+        <ul class="box bg-light-gray mb-large">
             <li>
                 <dl>
                     <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
@@ -38,16 +38,10 @@
                             seats.push(seat.seat_num);
                         } 
                         %>
-                        <div class="mb-small"><%= seats.join('、') %></div>
-                        <div class="column-02">
-                            <div class="clearfix">
-                                <div class="ghost-button blue-button">
-                                    <a href="#"><%- __('common.seat') %><%- __('common.confirm') %></a>
-                                </div>
-                                <div class="ghost-button black-button">
-                                    <a href="#"><%- __('common.seat') %><%- __('common.change') %></a>
-                                </div>
-                            </div>
+                        <div><%= seats.join('、') %></div>
+                        <div class="right">
+                            <div class="button dark-blue-button change-button"><a href="#" data-modal="screen"><%- __('common.confirm') %></a></div><!--
+                            --><div class="button light-gray-button change-button"><a href="#"><%- __('common.change') %></a></div>
                         </div>
                     </dd>
                     
@@ -76,8 +70,10 @@
                         }
                         %>
                         <div class="mb-small"><%= tikcets.join('、') %></div>
-                        <div class="ghost-button black-button">
-                            <a href="#"><%- __('common.ticket') %><%- __('common.change') %></a>
+                        <div class="right">
+                            <div class="button light-gray-button change-button">
+                                <a href="#"><%- __('common.change') %></a>
+                            </div>
                         </div>
                     </dd>
                 </dl>
@@ -85,8 +81,15 @@
             
         </ul>       
         
-        <h2 class="section-ttl"><%- __('common.reservation') %></h2>
-        <ul class="box bg-light-gray mb-small">
+        <h2 class="section-ttl">
+            <%- __('common.purchase_info') %>
+            <div class="right">
+                <div class="button light-gray-button change-button">
+                    <a href="#"><%- __('common.change') %></a>
+                </div>
+            </div>
+        </h2>
+        <ul class="box bg-light-gray mb-large">
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
@@ -105,13 +108,6 @@
                     <dd><%= info.tel_num %></dd>
                 </dl>
             </li>
-        </ul>
-        <div class="ghost-button black-button mb-medium center-button">
-            <a href="#"><%- __('common.reservation') %><%- __('common.change') %></a>
-        </div>
-        
-        <h2 class="section-ttl"><%- __('common.payment') %></h2>
-        <ul class="box bg-light-gray mb-small">
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
@@ -125,9 +121,7 @@
                 </dl>
             </li>
         </ul>
-        <div class="ghost-button black-button mb-medium center-button">
-            <a href="#"><%- __('common.payment') %><%- __('common.change') %></a>
-        </div>
+        
 
         <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
         <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
@@ -142,5 +136,7 @@
         
     </form>
 </div>
+
+<%- partial('modals/screen') %>
 
 <%- partial('complete') %>

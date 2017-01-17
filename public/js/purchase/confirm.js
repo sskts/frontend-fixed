@@ -1,4 +1,5 @@
 $(function () {
+    var modal = new SASAKI.Modal();
     /**
      * 次へクリックイベント
      */
@@ -22,10 +23,21 @@ $(function () {
             $('.steps li:last-child').addClass('active');
             $('.purchase-confirm').remove();
             $('.purchase-complete').show();
+            heightFix();
         }).fail(function (jqxhr, textStatus, error) {
             
         }).always(function () {
             
         });
+    });
+
+    var timer = false;
+    $(window).on('resize', function () {
+        if (timer !== false) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(function () {
+            heightFix();
+        }, 200);
     });
 });

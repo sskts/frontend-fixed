@@ -4,37 +4,25 @@
         
     }
     .entry-method {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        margin: 0 -10px;
+        li {
+            width: 50%;
+            @media screen and (max-width: $mobile){
+                width: 100%;
+            }
+        }
         dl {
+            height: 100%;
+            margin: 0 10px;
             dt {
                 span {
                     margin-right: 5px;
-                }
-            }
-            dd {
-                position: relative;
-                padding: 0 0 0 220px;
-                min-height: 145px; 
-                @media screen and (max-width: $mobile){
-                    padding: 0;
-                    min-height: 0; 
-                }
-                
-                .image {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 200px;
-                    @media screen and (max-width: $mobile){
-                        width: auto;
-                        position: static;
-                        margin-bottom: 10px;
-                    }
-                }
-                .button {
-                    width: 250px;
-                    @media screen and (max-width: $mobile){
-                        width: auto;
-                    }
                 }
             }
         }

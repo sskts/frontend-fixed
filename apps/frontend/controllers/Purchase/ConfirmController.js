@@ -16,7 +16,10 @@ class ConfirmController extends PurchaseController_1.default {
             this.res.locals['reserveTickets'] = this.req.session['reserveTickets'];
             this.res.locals['updateReserve'] = this.req.session['updateReserve'];
             this.res.locals['step'] = 3;
-            this.res.locals['price'] = this.getPrice(this.req.session);
+            this.res.locals['price'] = this.getPrice({
+                reserveTickets: this.req.session['reserveTickets'],
+                reserveSeats: this.req.session['reserveSeats']
+            });
             this.res.render('purchase/confirm');
         }
         else {
@@ -57,16 +60,6 @@ class ConfirmController extends PurchaseController_1.default {
         this.res.json({
             purchaseNo: purchaseNo
         });
-    }
-    getPrice(session) {
-        let reserveSeats = session['reserveSeats'];
-        let reserveTickets = session['reserveTickets'];
-        let price = 0;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            price += ticket.sale_price;
-        }
-        return price;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
