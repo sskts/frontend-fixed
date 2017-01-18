@@ -280,7 +280,7 @@ p a {
 .modal-cover {
   display: none;
   background-color: #000;
-  opacity: 0.75;
+  opacity: 0.7;
   position: fixed;
   top: 0;
   left: 0;
@@ -297,6 +297,7 @@ p a {
   width: 600px;
   margin-left: -300px;
   z-index: 10;
+  animation: fadein 0.3s both;
 }
 
 @media screen and (max-width: 767px) {
@@ -348,6 +349,14 @@ p a {
   display: block;
 }
 
+.blur {
+  -webkit-filter: blur(5px);
+  -moz-filter: blur(5px);
+  -ms-filter: blur(5px);
+  filter: blur(5px);
+  transition: all 0.4s;
+}
+
 .text-right {
   text-align: right;
 }
@@ -378,6 +387,10 @@ p a {
   .large-text {
     font-size: 18px;
   }
+}
+
+.large-x-text {
+  font-size: 24px;
 }
 
 .mb-xx-large {
@@ -654,7 +667,7 @@ p a {
 }
 
 .button.light-gray-button a, .button.light-gray-button button, .button.light-gray-button label {
-  background-color: #aeaeae;
+  background-color: #727272;
   color: #FFF;
 }
 
@@ -770,7 +783,7 @@ p a {
 }
 
 .prev-link a, .prev-link button {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #333;
   position: relative;
@@ -996,6 +1009,24 @@ p a {
   }
 }
 
+@keyframes zoom {
+  0% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .purchase .header .steps {
   position: absolute;
   right: 30px;
@@ -1178,6 +1209,10 @@ p a {
   padding: 0;
   margin: 0;
   border: none;
+}
+
+.purchase .purchase-ticket .mvtk-button label {
+  border: 1px solid #d82918;
 }
 
 .purchase .purchase-ticket .mvtk-button label:before {

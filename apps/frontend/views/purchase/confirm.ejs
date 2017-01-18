@@ -24,7 +24,7 @@
                 <dl>
                     <dt><%- __('common.appreciation_date') %></dt>
                     <dd>
-                        <div class="mb-xx-small"><strong class="red-text"><%= moment(performance.day).format('YYYY年MM月DD日') %><%=moment(performance.day).format('(ddd)')%> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></strong></div>
+                        <div class="mb-xx-small"><strong class="red-text"><%= moment(performance.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.day).format('ddd') + ']') %>) <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></strong></div>
                         <p class="small-text red-text"><%- __('purchase.confirm.date_note') %></p>
                     </dd>
                 </dl>
@@ -138,6 +138,8 @@
     </form>
 </div>
 
-<%- partial('modals/screen') %>
+
 
 <%- partial('complete') %>
+
+<% block('modals', partial('modals/screen')) -%>

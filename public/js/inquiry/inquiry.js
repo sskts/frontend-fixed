@@ -22,4 +22,15 @@ $(function () {
         textArea.remove();
         alert('コピーしました');
     });
+
+    /**
+     * チケット情報へ移動
+     */
+    $(document).on('click', '.ticket-scroll-button a', function(event) {
+        event.preventDefault();
+        var target = $('.tickets');
+        var top = target.offset().top - 20;
+        $('html,body').animate({scrollTop: top}, 300);
+    });
 });
+            

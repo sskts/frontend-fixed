@@ -7,7 +7,7 @@
             <dl>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <strong class="red-text"><%= updateReserve.reserve_num %></strong>
+                    <strong class="red-text large-x-text"><%= updateReserve.reserve_num %></strong>
                     <p class="small-text">※チケットの発行等に必要な番号となりますので必ず忘れないようにしてください。</p>
                 </dd>
             </dl>
@@ -27,7 +27,7 @@
         <li>
             <dl>
                 <dt><%- __('common.appreciation_date') %></dt>
-                <dd><%= moment(performance.day).format('YYYY年MM月DD日') %> <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
+                <dd><%= moment(performance.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.day).format('ddd') + ']') %>) <%= moment(performance.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.time_end, 'hmm').format('HH:mm') %></dd>
             </dl>
         </li>
         <li>

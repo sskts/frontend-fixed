@@ -42,12 +42,14 @@
         open: function () {
             this.cover.addClass('active');
             this.modal.addClass('active');
+            $('.wrapper').addClass('blur');
             this.resize();
         },
         close: function () {
             if (this.modal && this.cover) {
                 this.modal.removeClass('active');
                 this.cover.removeClass('active');
+                $('.wrapper').removeClass('blur');
             }
         },
         getTrigger: function () {

@@ -25,6 +25,7 @@ $(function () {
             $('.steps li:last-child').addClass('active');
             $('.purchase-confirm').remove();
             $('.purchase-complete').show();
+            $(window).scrollTop(0);
             heightFix();
         }).fail(function (jqxhr, textStatus, error) {
 
