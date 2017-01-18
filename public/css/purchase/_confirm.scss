@@ -39,3 +39,13 @@
         }
     } 
 }
+
+.modal[data-modal=screen] {
+    .screen {
+        .seat {
+            a {
+                cursor: default;
+            }
+        }
+    }
+}

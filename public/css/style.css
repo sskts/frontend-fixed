@@ -1406,6 +1406,10 @@ p a {
   font-weight: 500;
 }
 
+.purchase .modal[data-modal=screen] .screen .seat a {
+  cursor: default;
+}
+
 .purchase .purchase-complete {
   display: none;
 }
