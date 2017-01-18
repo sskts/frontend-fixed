@@ -12,7 +12,11 @@ class InquiryController extends BaseController_1.default {
             if (!this.req.form)
                 return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
-                this.stateReserve(() => {
+                this.stateReserve({
+                    theater_code: this.req.body.theater_code,
+                    reserve_num: this.req.body.reserve_num,
+                    tel_num: this.req.body.tel_num,
+                }, () => {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
                     this.res.redirect(this.router.build('inquiry', {}));
@@ -25,17 +29,8 @@ class InquiryController extends BaseController_1.default {
             }
         });
     }
-    stateReserve(cb) {
-        let args = {
-            theater_code: this.req.body.theater_code,
-            reserve_num: this.req.body.reserve_num,
-            tel_num: this.req.body.tel_num,
-        };
-        COA.stateReserveInterface.call(args, (err, result) => {
-            if (err)
-                return this.next(new Error(err.message));
-            if (!result)
-                return this.next(new Error('result is null'));
+    stateReserve(args, cb) {
+        COA.stateReserveInterface.call(args).then((result) => {
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['inquiry'] = result;
@@ -62,6 +57,8 @@ class InquiryController extends BaseController_1.default {
                 time_end: '1205'
             };
             cb();
+        }, (err) => {
+            return this.next(new Error(err.message));
         });
     }
     index() {

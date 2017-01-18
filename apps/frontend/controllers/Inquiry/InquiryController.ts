@@ -19,7 +19,14 @@ export default class InquiryController extends BaseController {
         LoginForm(this.req, this.res, () => {
             if (!this.req.form) return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
-                this.stateReserve(() => {
+                this.stateReserve({
+                    /** 施設コード */
+                    theater_code: this.req.body.theater_code,
+                    /** 座席チケット購入番号 */
+                    reserve_num: this.req.body.reserve_num,
+                    /** 電話番号 */
+                    tel_num: this.req.body.tel_num,
+                }, () => {
                     if (!this.router) return this.next(new Error('router is undefined'));
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('inquiry', {}));
@@ -37,21 +44,9 @@ export default class InquiryController extends BaseController {
     /**
      * 購入チケット内容抽出
      */
-    private stateReserve(cb: Function): void {
-        let args : COA.stateReserveInterface.Args = {
-            /** 施設コード */
-            theater_code: this.req.body.theater_code,
-            /** 座席チケット購入番号 */
-            reserve_num: this.req.body.reserve_num,
-            /** 電話番号 */
-            tel_num: this.req.body.tel_num,
-        };
-
-        COA.stateReserveInterface.call(args, (err, result)=>{
-            if (err) return this.next(new Error(err.message));
-            if (!result) return this.next(new Error('result is null'));
+    private stateReserve(args: COA.stateReserveInterface.Args, cb: Function): void {
+        COA.stateReserveInterface.call(args).then((result)=>{
             //TODO スクリーンコード未追加
-            
             if (!this.req.session) return this.next(new Error('session is undefined'));
             //予約情報をセッションへ
             this.req.session['inquiry'] = result;
@@ -95,9 +90,9 @@ export default class InquiryController extends BaseController {
             //     this.req.session['performance'] = performance;
             //     cb();
             // });
-            
-        })
-        
+        }, (err)=>{
+            return this.next(new Error(err.message));
+        });        
     }
 
     /**

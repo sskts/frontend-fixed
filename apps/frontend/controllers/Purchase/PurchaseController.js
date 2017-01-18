@@ -12,11 +12,15 @@ class PurchaseController extends BaseController_1.default {
         delete this.req.session['gmoTokenObject'];
     }
     getScreenStateReserve() {
-        let args = this.req.body;
-        COA.getStateReserveSeatInterface.call(args, (err, result) => {
+        COA.getStateReserveSeatInterface.call(this.req.body).then((result) => {
+            this.res.json({
+                err: null,
+                result: result
+            });
+        }, (err) => {
             this.res.json({
                 err: err,
-                result: result
+                result: null
             });
         });
     }
@@ -32,11 +36,11 @@ class PurchaseController extends BaseController_1.default {
             title_branch_num: performance.film.coa_title_branch_num,
             time_begin: performance.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
-        }, (err, result) => {
-            if (err)
-                return this.next(new Error(err.message));
+        }).then((result) => {
             this.logger.debug('仮予約削除', result);
             cb(result);
+        }, (err) => {
+            return this.next(new Error(err.message));
         });
     }
     reserveSeatsTemporarily(args, cb) {
@@ -52,11 +56,11 @@ class PurchaseController extends BaseController_1.default {
             time_begin: performance.time_start,
             screen_code: performance.screen.coa_screen_code,
             list_seat: seats,
-        }, (err, result) => {
-            if (err)
-                return this.next(new Error(err.message));
+        }).then((result) => {
             this.logger.debug('仮予約完了', result);
             cb(result);
+        }, (err) => {
+            return this.next(new Error(err.message));
         });
     }
     getSalesTicket(args, cb) {
@@ -69,10 +73,11 @@ class PurchaseController extends BaseController_1.default {
             title_code: performance.film.coa_title_code,
             title_branch_num: performance.film.coa_title_branch_num,
             time_begin: performance.time_start,
-        }, (err, result) => {
-            if (err)
-                return this.next(new Error(err.message));
+        }).then((result) => {
+            this.logger.debug('券種取得', result);
             cb(result);
+        }, (err) => {
+            return this.next(new Error(err.message));
         });
     }
     updateReserve(args, cb) {
@@ -112,13 +117,11 @@ class PurchaseController extends BaseController_1.default {
             mail_addr: purchaseInfo.mail_addr,
             reserve_amount: amount,
             list_ticket: tickets,
-        }, (err, result) => {
-            if (err)
-                return this.next(new Error(err.message));
-            if (!this.req.session)
-                return this.next(new Error('session is undefined'));
+        }).then((result) => {
             this.logger.debug('本予約完了', result);
             cb(result);
+        }, (err) => {
+            return this.next(new Error(err.message));
         });
     }
     getPrice(args) {

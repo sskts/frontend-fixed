@@ -3,6 +3,7 @@ import NamedRoutes = require('named-routes');
 import BaseController from '../controllers/BaseController';
 import PerformanceController from '..//controllers/Performance/PerformanceController';
 
+import PurchaseController from '../controllers/Purchase/PurchaseController';
 import SeatController from '../controllers/Purchase/SeatController';
 import InputController from '../controllers/Purchase/InputController';
 import TicketController from '../controllers/Purchase/TicketController';
@@ -60,10 +61,6 @@ export default (app: express.Application | any) => {
 
     app.post('/purchase/seat', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new SeatController(req, res, next).select();
-    });
-
-    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new SeatController(req, res, next).getScreenStateReserve();
     });
 
     //券種選択
@@ -147,6 +144,11 @@ export default (app: express.Application | any) => {
     //発券方法説明
     app.get('/method/ticketing', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new MethodController(req, res, next).ticketing();
+    });
+
+    //座席状態取得
+    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new PurchaseController(req, res, next).getScreenStateReserve();
     });
 
     

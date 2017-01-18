@@ -2,6 +2,7 @@
 const NamedRoutes = require('named-routes');
 const BaseController_1 = require('../controllers/BaseController');
 const PerformanceController_1 = require('..//controllers/Performance/PerformanceController');
+const PurchaseController_1 = require('../controllers/Purchase/PurchaseController');
 const SeatController_1 = require('../controllers/Purchase/SeatController');
 const InputController_1 = require('../controllers/Purchase/InputController');
 const TicketController_1 = require('../controllers/Purchase/TicketController');
@@ -36,9 +37,6 @@ exports.default = (app) => {
     });
     app.post('/purchase/seat', 'purchase.seat', (req, res, next) => {
         new SeatController_1.default(req, res, next).select();
-    });
-    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req, res, next) => {
-        new SeatController_1.default(req, res, next).getScreenStateReserve();
     });
     app.get('/purchase/ticket', 'purchase.ticket', (req, res, next) => {
         new TicketController_1.default(req, res, next).index();
@@ -93,6 +91,9 @@ exports.default = (app) => {
     });
     app.get('/method/ticketing', 'method.ticketing', (req, res, next) => {
         new MethodController_1.default(req, res, next).ticketing();
+    });
+    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req, res, next) => {
+        new PurchaseController_1.default(req, res, next).getScreenStateReserve();
     });
     app.get('/500', '500', (req, res, next) => {
         new BaseController_1.default(req, res, next);

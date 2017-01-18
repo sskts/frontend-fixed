@@ -22,11 +22,15 @@ export default class PurchaseController extends BaseController {
      * スクリーン状態取得
      */
     public getScreenStateReserve(): void {
-        let args: COA.getStateReserveSeatInterface.Args = this.req.body;
-        COA.getStateReserveSeatInterface.call(args, (err, result) => {
+        COA.getStateReserveSeatInterface.call(this.req.body).then((result)=>{
+            this.res.json({
+                err: null,
+                result: result
+            });
+        }, (err)=>{
             this.res.json({
                 err: err,
-                result: result
+                result: null
             });
         });
     }
@@ -52,11 +56,13 @@ export default class PurchaseController extends BaseController {
             time_begin: performance.time_start,
             /** 座席チケット仮予約番号 */
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
-        }, (err, result) => {
-            if (err) return this.next(new Error(err.message));
+        }).then((result)=>{
             this.logger.debug('仮予約削除', result);
             cb(result);
+        }, (err)=>{
+            return this.next(new Error(err.message));
         });
+        
     }
 
     /**
@@ -84,10 +90,11 @@ export default class PurchaseController extends BaseController {
             screen_code: performance.screen.coa_screen_code,
             /** 予約座席リスト */
             list_seat: seats,
-        }, (err, result) => {
-            if (err) return this.next(new Error(err.message));
+        }).then((result)=>{
             this.logger.debug('仮予約完了', result);
             cb(result);
+        }, (err)=>{
+            return this.next(new Error(err.message));
         });
     }
 
@@ -110,9 +117,11 @@ export default class PurchaseController extends BaseController {
             time_begin: performance.time_start,
             /** スクリーンコード */
             // screen_code: performance.screen._id,
-        }, (err, result) => {
-            if (err) return this.next(new Error(err.message));
+        }).then((result)=>{
+            this.logger.debug('券種取得', result);
             cb(result);
+        }, (err)=>{
+            return this.next(new Error(err.message));
         });
     }
 
@@ -178,12 +187,13 @@ export default class PurchaseController extends BaseController {
             reserve_amount: amount,
             /** 価格情報リスト */
             list_ticket: tickets,
-        }, (err, result) => {
-            if (err) return this.next(new Error(err.message));
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+        }).then((result)=>{
             this.logger.debug('本予約完了', result);
             cb(result);
+        }, (err)=>{
+            return this.next(new Error(err.message));
         });
+        
     }
 
     /**
