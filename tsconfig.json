@@ -40,7 +40,6 @@
         "typings",
         "definitions",
         "logs",
-        "public",
-        "test"
+        "public"
     ]
 }

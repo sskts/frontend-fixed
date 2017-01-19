@@ -1,6 +1,6 @@
 import PurchaseController from './PurchaseController';
 import SeatForm from '../../forms/Purchase/SeatForm';
-import config = require('config');
+// import config = require('config');
 import COA = require('@motionpicture/coa-service');
 import MP = require('../../../../libs/MP');
 
