@@ -1,15 +1,22 @@
 "use strict";
 const PurchaseController_1 = require('./PurchaseController');
 const TicketForm_1 = require('../../forms/Purchase/TicketForm');
+const COA = require("@motionpicture/coa-service");
 class TicketTypeSelectController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         if (this.req.session['performance']
             && this.req.session['reserveSeats']) {
-            this.getSalesTicket({
-                performance: this.req.session['performance']
-            }, (result) => {
+            let performance = this.req.session['performance'];
+            COA.salesTicketInterface.call({
+                theater_code: performance.theater._id,
+                date_jouei: performance.day,
+                title_code: performance.film.coa_title_code,
+                title_branch_num: performance.film.coa_title_branch_num,
+                time_begin: performance.time_start,
+            }).then((result) => {
+                this.logger.debug('券種取得', result);
                 if (!this.req.session)
                     return this.next(new Error('session is undefined'));
                 this.res.locals['tickets'] = result.list_ticket;
@@ -18,6 +25,8 @@ class TicketTypeSelectController extends PurchaseController_1.default {
                 this.res.locals['reserveTickets'] = (this.req.session['reserveTickets']) ? this.req.session['reserveTickets'] : null;
                 this.res.locals['step'] = 1;
                 this.res.render('purchase/ticket');
+            }, (err) => {
+                return this.next(new Error(err.message));
             });
         }
         else {

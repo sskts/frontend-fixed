@@ -45,19 +45,9 @@ class EnterPurchaseController extends PurchaseController_1.default {
                     tel_num: this.req.body.tel_num,
                 };
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
-                this.updateReserve({
-                    performance: this.req.session['performance'],
-                    reserveSeats: this.req.session['reserveSeats'],
-                    purchaseInfo: this.req.session['purchaseInfo'],
-                    reserveTickets: this.req.session['reserveTickets']
-                }, (result) => {
-                    if (!this.router)
-                        return this.next(new Error('router is undefined'));
-                    if (!this.req.session)
-                        return this.next(new Error('session is undefined'));
-                    this.req.session['updateReserve'] = result;
-                    this.res.redirect(this.router.build('purchase.confirm', {}));
-                });
+                if (!this.router)
+                    return this.next(new Error('router is undefined'));
+                this.res.redirect(this.router.build('purchase.confirm', {}));
             }
             else {
                 this.res.locals['error'] = this.req.form.getErrors();

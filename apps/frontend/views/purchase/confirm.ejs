@@ -35,7 +35,7 @@
                     <dd>
                         <% 
                         let seats = [];
-                        for (let seat of updateReserve.list_qr) { 
+                        for (let seat of reserveSeats.list_tmp_reserve) { 
                             seats.push(seat.seat_num);
                         } 
                         %>
@@ -54,7 +54,7 @@
                     <dd>
                         <%
                         let tikcetObj = {};
-                        for (let seat of updateReserve.list_qr) {
+                        for (let seat of reserveSeats.list_tmp_reserve) {
                             let code = reserveTickets[seat.seat_num].ticket_code;
                             if (tikcetObj[code]) {
                                 tikcetObj[code].length++;

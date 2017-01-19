@@ -20,9 +20,12 @@ $(function () {
 
             }
         }).done(function (res) {
+            //購入番号
+            $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);
             //step変更
             $('.steps li').removeClass('active');
             $('.steps li:last-child').addClass('active');
+            //コンテンツ切り替え
             $('.purchase-confirm').remove();
             $('.purchase-complete').show();
             $(window).scrollTop(0);

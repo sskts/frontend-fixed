@@ -1,7 +1,7 @@
 import config = require('config');
 import PurchaseController from './PurchaseController';
 import InputForm from '../../forms/Purchase/InputForm';
-import COA = require("@motionpicture/coa-service");
+
 
 export default class EnterPurchaseController extends PurchaseController {
     /**
@@ -65,21 +65,12 @@ export default class EnterPurchaseController extends PurchaseController {
                 };
                 //決済情報をセッションへ
                 this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
+                
+                if (!this.router) return this.next(new Error('router is undefined'));
+                //購入者内容確認へ
+                this.res.redirect(this.router.build('purchase.confirm', {}));
 
-
-                this.updateReserve({
-                    performance: this.req.session['performance'],
-                    reserveSeats: this.req.session['reserveSeats'],
-                    purchaseInfo: this.req.session['purchaseInfo'],
-                    reserveTickets: this.req.session['reserveTickets']
-                }, (result: COA.updateReserveInterface.Result) => {
-                    if (!this.router) return this.next(new Error('router is undefined'));
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
-                    //予約情報をセッションへ
-                    this.req.session['updateReserve'] = result;
-                    //購入者内容確認へ
-                    this.res.redirect(this.router.build('purchase.confirm', {}));
-                });
+                
 
             } else {
                 this.res.locals['error'] = this.req.form.getErrors();

@@ -35,49 +35,76 @@ export default class SeatSelectController extends PurchaseController {
      * 座席決定
      */
     public select(): void {
-
         //バリデーション
         SeatForm(this.req, this.res, () => {
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-
-            if (this.req.session['reserveSeats']
-                && this.req.session['performance']._id === this.req.query['id']) {
-                //予約番号あり(仮予約削除=>仮予約)
-                this.deleteTmpReserve({
-                    performance: this.req.session['performance'],
-                    reserveSeats: this.req.session['reserveSeats']
-                }, (result: COA.deleteTmpReserveInterface.Result) => {
-                    if (!result) return this.next(new Error('仮予約失敗'));
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
-                    this.reserveSeatsTemporarily({
-                        performance: this.req.session['performance'],
-                        seats: JSON.parse(this.req.body.seats)
-                    }, (result: COA.reserveSeatsTemporarilyInterface.Result) => {
-                        if (!this.router) return this.next(new Error('router is undefined'));
-                        if (!this.req.session) return this.next(new Error('session is undefined'));
-                        //予約情報をセッションへ
-                        this.req.session['reserveSeats'] = result;
-                        //券種選択へ
-                        this.res.redirect(this.router.build('purchase.ticket', {}));
-                    });
-                });
-            } else {
-                //予約番号なし(仮予約)
-                this.reserveSeatsTemporarily({
-                    performance: this.req.session['performance'],
-                    seats: JSON.parse(this.req.body.seats)
-                }, (result: COA.reserveSeatsTemporarilyInterface.Result) => {
-                    if (!this.router) return this.next(new Error('router is undefined'));
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
-                    //予約情報をセッションへ
-                    this.req.session['reserveSeats'] = result;
-                    //券種選択へ
-                    this.res.redirect(this.router.build('purchase.ticket', {}));
-                });
-            }
-
-
+            this.reserve().then((result)=>{
+                if (!this.router) return this.next(new Error('router is undefined'));
+                if (!this.req.session) return this.next(new Error('session is undefined'));
+                //予約情報をセッションへ
+                this.req.session['reserveSeats'] = result;
+                //券種選択へ
+                this.res.redirect(this.router.build('purchase.ticket', {}));
+            }, (err)=>{
+                return this.next(new Error(err.message));
+            });
         });
+    }
+
+    /**
+     * 座席仮予約
+     */
+    private async reserve(): Promise<void | COA.reserveSeatsTemporarilyInterface.Result> {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+
+        //予約中
+        if (this.req.session['reserveSeats']
+        && this.req.session['performance']._id === this.req.query['id']) {
+            let performance = this.req.session['performance'];
+            let reserveSeats = this.req.session['reserveSeats'];
+            //仮予約削除
+            await COA.deleteTmpReserveInterface.call({
+                /** 施設コード */
+                theater_code: performance.theater._id,
+                /** 上映日 */
+                date_jouei: performance.day,
+                /** 作品コード */
+                title_code: performance.film.coa_title_code,
+                /** 作品枝番 */
+                title_branch_num: performance.film.coa_title_branch_num,
+                /** 上映時刻 */
+                time_begin: performance.time_start,
+                /** 座席チケット仮予約番号 */
+                tmp_reserve_num: reserveSeats.tmp_reserve_num,
+            });
+
+            this.logger.debug('仮予約削除');
+        }
+        
+        //仮予約
+        let performance = this.req.session['performance'];
+        let seats = JSON.parse(this.req.body.seats);
+
+        let reserveSeatsTemporarilyResult = await COA.reserveSeatsTemporarilyInterface.call({
+            /** 施設コード */
+            theater_code: performance.theater._id,
+            /** 上映日 */
+            date_jouei: performance.day,
+            /** 作品コード */
+            title_code: performance.film.coa_title_code,
+            /** 作品枝番 */
+            title_branch_num: performance.film.coa_title_branch_num,
+            /** 上映時刻 */
+            time_begin: performance.time_start,
+            /** 予約座席数 */
+            // cnt_reserve_seat: number,
+            /** スクリーンコード */
+            screen_code: performance.screen.coa_screen_code,
+            /** 予約座席リスト */
+            list_seat: seats,
+        });
+        this.logger.debug('仮予約', reserveSeatsTemporarilyResult);
+
+        return reserveSeatsTemporarilyResult; 
     }
 
 }

@@ -12,9 +12,22 @@ export default class TicketTypeSelectController extends PurchaseController {
             && this.req.session['reserveSeats']) {
 
             //コアAPI券種取得
-            this.getSalesTicket({
-                performance: this.req.session['performance']
-            }, (result: COA.salesTicketInterface.Result) => {
+            let performance = this.req.session['performance'];
+            COA.salesTicketInterface.call({
+                /** 施設コード */
+                theater_code: performance.theater._id,
+                /** 上映日 */
+                date_jouei: performance.day,
+                /** 作品コード */
+                title_code: performance.film.coa_title_code,
+                /** 作品枝番 */
+                title_branch_num: performance.film.coa_title_branch_num,
+                /** 上映時刻 */
+                time_begin: performance.time_start,
+                /** スクリーンコード */
+                // screen_code: performance.screen._id,
+            }).then((result)=>{
+                this.logger.debug('券種取得', result);
                 if (!this.req.session) return this.next(new Error('session is undefined'));
                 this.res.locals['tickets'] = result.list_ticket;
                 this.res.locals['performance'] = this.req.session['performance'];
@@ -23,9 +36,9 @@ export default class TicketTypeSelectController extends PurchaseController {
                 this.res.locals['step'] = 1;
                 //券種選択表示
                 this.res.render('purchase/ticket');
+            }, (err)=>{
+                return this.next(new Error(err.message));
             });
-
-
         } else {
             return this.next(new Error('無効なアクセスです'));
         }

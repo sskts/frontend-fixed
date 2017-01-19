@@ -3,11 +3,11 @@
     <p class="read"><%- __('purchase.complete.read') %></p>
 
     <ul class="box bg-light-gray info mb-large form-layout">
-        <li>
+        <li class="purchase-number">
             <dl>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <strong class="red-text large-x-text"><%= updateReserve.reserve_num %></strong>
+                    <strong class="red-text large-x-text"></strong>
                     <p class="small-text">※チケットの発行等に必要な番号となりますので必ず忘れないようにしてください。</p>
                 </dd>
             </dl>
@@ -36,7 +36,7 @@
                 <dd>
                     <% 
                     let seats = [];
-                    for (let seat of updateReserve.list_qr) { 
+                    for (let seat of reserveSeats.list_tmp_reserve) { 
                         seats.push(seat.seat_num);
                     } 
                     %>
@@ -50,7 +50,7 @@
                 <dd>
                     <%
                     let tikcetObj = {};
-                    for (let seat of updateReserve.list_qr) {
+                    for (let seat of reserveSeats.list_tmp_reserve) {
                         let code = reserveTickets[seat.seat_num].ticket_code;
                         if (tikcetObj[code]) {
                             tikcetObj[code].length++;
