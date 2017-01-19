@@ -9,7 +9,7 @@ import router from './routes/router';
 import locales from './middlewares/locales';
 import config = require('config');
 import COA = require("@motionpicture/coa-service");
-
+import GMO = require("@motionpicture/gmo-service");
 
 let app: express.Application = express();
 
@@ -37,10 +37,14 @@ app.use((req, res, next)=> {
     locales.init(req, res, next);
 });
 
-//サービス初期化
+//COAサービス初期化
 COA.initialize({
     endpoint: config.get<string>("coa_api_endpoint"),
     refresh_token: config.get<string>("coa_api_refresh_token")
+});
+//GMOサービス初期化
+GMO.initialize({
+    endpoint: config.get<string>("gmo_api_endpoint"),
 });
 
 // ルーティング

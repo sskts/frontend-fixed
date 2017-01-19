@@ -9,14 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const PurchaseController_1 = require('./PurchaseController');
 const SeatForm_1 = require('../../forms/Purchase/SeatForm');
-const COA = require("@motionpicture/coa-service");
+const COA = require('@motionpicture/coa-service');
+const MP = require('../../../../libs/MP');
 class SeatSelectController extends PurchaseController_1.default {
     index() {
         if (this.req.query && this.req.query['id']) {
-            this.getPerformance(this.req.query['id'], (performance) => {
+            MP.getPerformance.call({
+                id: this.req.query['id']
+            }).then((result) => {
                 if (!this.req.session)
                     return this.next(new Error('session is undefined'));
-                this.res.locals['performance'] = performance;
+                this.res.locals['performance'] = result.performance;
                 this.res.locals['step'] = 0;
                 this.res.locals['reserveSeats'] = null;
                 if (this.req.session['reserveSeats']
@@ -24,8 +27,10 @@ class SeatSelectController extends PurchaseController_1.default {
                     && this.req.session['performance']._id === this.req.query['id']) {
                     this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
                 }
-                this.req.session['performance'] = performance;
+                this.req.session['performance'] = result.performance;
                 this.res.render('purchase/seat');
+            }, (err) => {
+                return this.next(new Error(err.message));
             });
         }
         else {

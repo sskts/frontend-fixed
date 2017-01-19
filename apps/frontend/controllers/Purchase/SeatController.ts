@@ -1,7 +1,8 @@
 import PurchaseController from './PurchaseController';
 import SeatForm from '../../forms/Purchase/SeatForm';
-import COA = require("@motionpicture/coa-service");
-
+import config = require('config');
+import COA = require('@motionpicture/coa-service');
+import MP = require('../../../../libs/MP');
 
 export default class SeatSelectController extends PurchaseController {
     /**
@@ -10,22 +11,25 @@ export default class SeatSelectController extends PurchaseController {
     public index(): void {
         if (this.req.query && this.req.query['id']) {
             //パフォーマンス取得
-            //TODO performance type any
-            this.getPerformance(this.req.query['id'], (performance: any) => {
+            MP.getPerformance.call({
+                id: this.req.query['id']
+            }).then((result)=>{
                 if (!this.req.session) return this.next(new Error('session is undefined'));
-                this.res.locals['performance'] = performance;
+                this.res.locals['performance'] = result.performance;
                 this.res.locals['step'] = 0;
                 this.res.locals['reserveSeats'] = null;
-                //console.log(this.req.session['reserveSeats'], this.req.session['performance']._id, this.req.query['id'])
                 //仮予約中
                 if (this.req.session['reserveSeats']
                     && this.req.session['performance']
                     && this.req.session['performance']._id === this.req.query['id']) {
                     this.res.locals['reserveSeats'] = JSON.stringify(this.req.session['reserveSeats']);
                 }
-                this.req.session['performance'] = performance;
+                this.req.session['performance'] = result.performance;
                 this.res.render('purchase/seat');
+            }, (err)=>{
+                return this.next(new Error(err.message));
             });
+
         } else {
             return this.next(new Error('不適切なアクセスです'));
         }
@@ -37,14 +41,14 @@ export default class SeatSelectController extends PurchaseController {
     public select(): void {
         //バリデーション
         SeatForm(this.req, this.res, () => {
-            this.reserve().then((result)=>{
+            this.reserve().then((result) => {
                 if (!this.router) return this.next(new Error('router is undefined'));
                 if (!this.req.session) return this.next(new Error('session is undefined'));
                 //予約情報をセッションへ
                 this.req.session['reserveSeats'] = result;
                 //券種選択へ
                 this.res.redirect(this.router.build('purchase.ticket', {}));
-            }, (err)=>{
+            }, (err) => {
                 return this.next(new Error(err.message));
             });
         });
@@ -54,14 +58,14 @@ export default class SeatSelectController extends PurchaseController {
      * 座席仮予約
      */
     private async reserve(): Promise<void | COA.reserveSeatsTemporarilyInterface.Result> {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(new Error('session is undefined'));        
 
         //予約中
         if (this.req.session['reserveSeats']
-        && this.req.session['performance']._id === this.req.query['id']) {
+            && this.req.session['performance']._id === this.req.query['id']) {
             let performance = this.req.session['performance'];
             let reserveSeats = this.req.session['reserveSeats'];
-            //仮予約削除
+            //COA仮予約削除
             await COA.deleteTmpReserveInterface.call({
                 /** 施設コード */
                 theater_code: performance.theater._id,
@@ -79,9 +83,21 @@ export default class SeatSelectController extends PurchaseController {
 
             this.logger.debug('仮予約削除');
         }
-        
-        //仮予約
-        let performance = this.req.session['performance'];
+
+        //TODO
+        // // 一般所有者作成
+        // let owner = await MP.ownerAnonymousCreate.call();
+        // this.req.session['owner'] = owner;
+
+        // // 取引開始
+        // let transaction = await MP.transactionStart.call({
+        //     owners: [config.get<string>('admin_id'), owner._id]
+        // });
+
+        // this.req.session['transaction'] = transaction;
+
+        //COA仮予約
+        let performance: MP.performance = this.req.session['performance'];
         let seats = JSON.parse(this.req.body.seats);
 
         let reserveSeatsTemporarilyResult = await COA.reserveSeatsTemporarilyInterface.call({
@@ -104,7 +120,7 @@ export default class SeatSelectController extends PurchaseController {
         });
         this.logger.debug('仮予約', reserveSeatsTemporarilyResult);
 
-        return reserveSeatsTemporarilyResult; 
+        return reserveSeatsTemporarilyResult;
     }
 
 }

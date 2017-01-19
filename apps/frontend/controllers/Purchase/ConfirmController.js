@@ -34,45 +34,47 @@ class ConfirmController extends PurchaseController_1.default {
         }
     }
     updateReserve() {
-        if (!this.req.session)
-            throw new Error('session is undefined');
-        let performance = this.req.session['performance'];
-        let reserveSeats = this.req.session['reserveSeats'];
-        let purchaseInfo = this.req.session['purchaseInfo'];
-        let reserveTickets = this.req.session['reserveTickets'];
-        let tickets = [];
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            tickets.push({
-                ticket_code: ticket.ticket_code,
-                std_price: ticket.std_price,
-                add_price: ticket.add_price,
-                dis_price: ticket.dis_price || 0,
-                sale_price: ticket.sale_price,
-                ticket_count: ticket.limit_count,
-                seat_num: seat['seat_num'],
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.req.session)
+                throw new Error('session is undefined');
+            let performance = this.req.session['performance'];
+            let reserveSeats = this.req.session['reserveSeats'];
+            let reserveTickets = this.req.session['reserveTickets'];
+            let purchaseInfo = this.req.session['purchaseInfo'];
+            let tickets = [];
+            for (let seat of reserveSeats.list_tmp_reserve) {
+                let ticket = reserveTickets[seat['seat_num']];
+                tickets.push({
+                    ticket_code: ticket.ticket_code,
+                    std_price: ticket.std_price,
+                    add_price: ticket.add_price,
+                    dis_price: ticket.dis_price || 0,
+                    sale_price: ticket.sale_price,
+                    ticket_count: ticket.limit_count,
+                    seat_num: seat['seat_num'],
+                });
+            }
+            let amount = this.getPrice({
+                reserveSeats: reserveSeats,
+                reserveTickets: reserveTickets
             });
-        }
-        let amount = this.getPrice({
-            reserveSeats: reserveSeats,
-            reserveTickets: reserveTickets
+            let updateReserve = COA.updateReserveInterface.call({
+                theater_code: performance.theater._id,
+                date_jouei: performance.day,
+                title_code: performance.film.coa_title_code,
+                title_branch_num: performance.film.coa_title_branch_num,
+                time_begin: performance.time_start,
+                tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
+                reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
+                tel_num: purchaseInfo.tel_num,
+                mail_addr: purchaseInfo.mail_addr,
+                reserve_amount: amount,
+                list_ticket: tickets,
+            });
+            this.logger.debug('本予約完了', updateReserve);
+            return updateReserve;
         });
-        let updateReserve = COA.updateReserveInterface.call({
-            theater_code: performance.theater._id,
-            date_jouei: performance.day,
-            title_code: performance.film.coa_title_code,
-            title_branch_num: performance.film.coa_title_branch_num,
-            time_begin: performance.time_start,
-            tmp_reserve_num: reserveSeats.tmp_reserve_num,
-            reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
-            reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
-            tel_num: purchaseInfo.tel_num,
-            mail_addr: purchaseInfo.mail_addr,
-            reserve_amount: amount,
-            list_ticket: tickets,
-        });
-        this.logger.debug('本予約完了', updateReserve);
-        return updateReserve;
     }
     purchase() {
         return __awaiter(this, void 0, void 0, function* () {

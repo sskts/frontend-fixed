@@ -10,6 +10,7 @@ const router_1 = require('./routes/router');
 const locales_1 = require('./middlewares/locales');
 const config = require('config');
 const COA = require("@motionpicture/coa-service");
+const GMO = require("@motionpicture/gmo-service");
 let app = express();
 app.use(helmet());
 app.use(logger_1.default);
@@ -30,6 +31,9 @@ app.use((req, res, next) => {
 COA.initialize({
     endpoint: config.get("coa_api_endpoint"),
     refresh_token: config.get("coa_api_refresh_token")
+});
+GMO.initialize({
+    endpoint: config.get("gmo_api_endpoint"),
 });
 router_1.default(app);
 module.exports = app;

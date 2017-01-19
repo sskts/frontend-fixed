@@ -1,5 +1,6 @@
 import PurchaseController from './PurchaseController';
 import COA = require("@motionpicture/coa-service");
+import MP = require('../../../../libs/MP');
 
 export default class ConfirmController extends PurchaseController {
     /**
@@ -32,13 +33,13 @@ export default class ConfirmController extends PurchaseController {
     /**
      * 座席本予約
      */
-    private updateReserve(): Promise<COA.updateReserveInterface.Result> {
+    private async updateReserve(): Promise<COA.updateReserveInterface.Result> {
         if (!this.req.session) throw new Error('session is undefined');
 
-        let performance = this.req.session['performance'];
-        let reserveSeats = this.req.session['reserveSeats'];
-        let purchaseInfo = this.req.session['purchaseInfo'];
+        let performance: MP.performance = this.req.session['performance'];
+        let reserveSeats: COA.reserveSeatsTemporarilyInterface.Result = this.req.session['reserveSeats'];
         let reserveTickets = this.req.session['reserveTickets'];
+        let purchaseInfo = this.req.session['purchaseInfo'];
         let tickets: any[] = [];
 
         for (let seat of reserveSeats.list_tmp_reserve) {
@@ -61,7 +62,6 @@ export default class ConfirmController extends PurchaseController {
             });
         }
 
-        /** 予約金額 */
         let amount: number = this.getPrice({
             reserveSeats: reserveSeats,
             reserveTickets: reserveTickets
@@ -80,7 +80,7 @@ export default class ConfirmController extends PurchaseController {
             /** 上映時刻 */
             time_begin: performance.time_start,
             /** 座席チケット仮予約番号 */
-            tmp_reserve_num: reserveSeats.tmp_reserve_num,
+            tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
             /** 予約者名 */
             reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
             /** 予約者名（かな） */

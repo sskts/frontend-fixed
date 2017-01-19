@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@motionpicture/coa-service": "^1.1.5",
+    "@motionpicture/gmo-service": "^1.0.3",
     "@types/body-parser": "0.0.33",
     "@types/config": "0.0.30",
     "@types/connect-redis": "0.0.5",
@@ -39,7 +40,8 @@
     "log4js": "^1.0.1",
     "moment": "^2.17.1",
     "named-routes": "^2.0.6",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "request-promise-native": "^1.0.3"
   },
   "main": "index.js",
   "devDependencies": {},
