@@ -1257,7 +1257,7 @@ p a {
 .purchase .purchase-input .scroll {
   overflow-y: auto;
   resize: vertical;
-  height: 300px;
+  height: 150px;
 }
 
 @media screen and (max-width: 767px) {

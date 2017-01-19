@@ -26,6 +26,7 @@ $(function () {
                 var seat = $('.seat a[data-seat-code='+ freeSeat.seat_num +']');
                 if (seat && !seat.hasClass('active')) {
                     seat.removeClass('disabled');
+                    seat.addClass('default');
                 }
             }
         }
