@@ -2,61 +2,60 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const PurchaseController_1 = require('./PurchaseController');
-const InputForm_1 = require('../../forms/Purchase/InputForm');
-const config = require('config');
+const PurchaseController_1 = require("./PurchaseController");
+const InputForm_1 = require("../../forms/Purchase/InputForm");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
 class EnterPurchaseController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
-        if (this.req.session['performance']
-            && this.req.session['reserveSeats']
-            && this.req.session['reserveTickets']) {
-            this.res.locals['error'] = null;
-            this.res.locals['info'] = null;
-            this.res.locals['moment'] = require('moment');
-            this.res.locals['step'] = 2;
-            this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
-            this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
-            this.res.locals['price'] = this.getPrice(this.req.session);
-            if (process.env.NODE_ENV === 'dev') {
-                this.res.locals['info'] = {
-                    last_name_hira: 'はたぐち',
-                    first_name_hira: 'あきと',
-                    mail_addr: 'hataguchi@motionpicture.jp',
-                    mail_confirm: 'hataguchi@motionpicture.jp',
-                    tel_num: '09040007648'
-                };
-            }
-            this.res.render('purchase/input');
+        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE, this.next);
+        this.res.locals['error'] = null;
+        this.res.locals['info'] = this.purchaseModel.input;
+        this.res.locals['moment'] = require('moment');
+        this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
+        this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
+        this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
+        this.res.locals['price'] = this.purchaseModel.getReserveAmount();
+        if (process.env.NODE_ENV === 'dev') {
+            this.res.locals['info'] = {
+                last_name_hira: 'はたぐち',
+                first_name_hira: 'あきと',
+                mail_addr: 'hataguchi@motionpicture.jp',
+                mail_confirm: 'hataguchi@motionpicture.jp',
+                tel_num: '09040007648'
+            };
         }
-        else {
-            return this.next(new Error('無効なアクセスです'));
-        }
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
+        this.purchaseModel.upDate(this.req.session['purchase']);
+        this.res.render('purchase/input');
     }
     submit() {
         InputForm_1.default(this.req, this.res, () => {
-            if (!this.req.session)
-                return this.next(new Error('session is undefined'));
             if (!this.req.form)
                 return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
-                this.req.session['purchaseInfo'] = {
+                this.purchaseModel.input = {
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
                     mail_addr: this.req.body.mail_addr,
                     tel_num: this.req.body.tel_num,
                 };
-                this.req.session['gmoTokenObject'] = JSON.parse(this.req.body.gmo_token_object);
+                this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);
                 this.addAuthorization().then(() => {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
+                    if (!this.req.session)
+                        return this.next(new Error('session is undefined'));
+                    this.purchaseModel.upDate(this.req.session['purchase']);
                     this.res.redirect(this.router.build('purchase.confirm', {}));
                 }, (err) => {
                     return this.next(new Error(err.message));
@@ -69,7 +68,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                 this.res.locals['step'] = 2;
                 this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
-                this.res.locals['price'] = this.getPrice(this.req.session);
+                this.res.locals['price'] = this.purchaseModel.getReserveAmount();
                 this.res.render('purchase/enterPurchase');
             }
         });
@@ -78,13 +77,10 @@ class EnterPurchaseController extends PurchaseController_1.default {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.req.session)
                 throw new Error('session is undefined');
-            let reserveSeats = this.req.session['reserveSeats'];
-            let reserveTickets = this.req.session['reserveTickets'];
-            let gmoTokenObject = this.req.session['gmoTokenObject'];
-            let amount = this.getPrice({
-                reserveSeats: reserveSeats,
-                reserveTickets: reserveTickets
-            });
+            let gmo = this.purchaseModel.gmo;
+            if (!gmo)
+                throw new Error('gmo is undefined');
+            let amount = this.purchaseModel.getReserveAmount();
             let orderId = Date.now().toString();
             let entryTranResult = yield GMO.CreditService.entryTranInterface.call({
                 shop_id: config.get('gmo_shop_id'),
@@ -99,7 +95,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                 access_pass: entryTranResult.access_pass,
                 order_id: orderId,
                 method: "1",
-                token: gmoTokenObject.token
+                token: gmo.token
             });
             this.logger.debug('GMO決済', execTranResult);
         });

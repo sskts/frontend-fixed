@@ -38,6 +38,7 @@ export default class PerformanceController extends BaseController {
         };
 
         request.get(options, (error, response, body) => {
+            
             this.res.json({
                 error: error,
                 response: response,

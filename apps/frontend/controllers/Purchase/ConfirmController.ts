@@ -1,32 +1,30 @@
 import PurchaseController from './PurchaseController';
+import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import COA = require("@motionpicture/coa-service");
-import MP = require('../../../../libs/MP');
+// import MP = require('../../../../libs/MP');
 
 export default class ConfirmController extends PurchaseController {
     /**
      * 購入者内容確認
      */
     public index(): void {
+        
+        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE, this.next);
+        
+        //購入者内容確認表示
+        this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
+        this.res.locals['info'] = this.purchaseModel.input;
+        this.res.locals['performance'] = this.purchaseModel.performance;
+        this.res.locals['reserveSeats'] = this.purchaseModel.reserveSeats;
+        this.res.locals['reserveTickets'] = this.purchaseModel.reserveTickets;
+        this.res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+        this.res.locals['price'] = this.purchaseModel.getReserveAmount();
+
+        //セッション更新
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (this.req.session['purchaseInfo']
-            && this.req.session['performance']
-            && this.req.session['reserveSeats']
-            && this.req.session['reserveTickets']) {
-            //購入者内容確認表示
-            this.res.locals['gmoTokenObject'] = (this.req.session['gmoTokenObject']) ? this.req.session['gmoTokenObject'] : null;
-            this.res.locals['info'] = this.req.session['purchaseInfo'];
-            this.res.locals['performance'] = this.req.session['performance'];
-            this.res.locals['reserveSeats'] = this.req.session['reserveSeats'];
-            this.res.locals['reserveTickets'] = this.req.session['reserveTickets'];
-            this.res.locals['step'] = 3;
-            this.res.locals['price'] = this.getPrice({
-                reserveTickets: this.req.session['reserveTickets'],
-                reserveSeats: this.req.session['reserveSeats']
-            });
-            this.res.render('purchase/confirm');
-        } else {
-            return this.next(new Error('無効なアクセスです'));
-        }
+        this.purchaseModel.upDate(this.req.session['purchase']);
+
+        this.res.render('purchase/confirm');
 
     }
 
@@ -34,65 +32,43 @@ export default class ConfirmController extends PurchaseController {
      * 座席本予約
      */
     private async updateReserve(): Promise<COA.updateReserveInterface.Result> {
-        if (!this.req.session) throw new Error('session is undefined');
+        if (!this.purchaseModel.performance) throw new Error('purchaseModel.performance is undefined');
+        if (!this.purchaseModel.reserveSeats) throw new Error('purchaseModel.reserveSeats is undefined');
+        if (!this.purchaseModel.input) throw new Error('purchaseModel.input is undefined');
 
-        let performance: MP.performance = this.req.session['performance'];
-        let reserveSeats: COA.reserveSeatsTemporarilyInterface.Result = this.req.session['reserveSeats'];
-        let reserveTickets = this.req.session['reserveTickets'];
-        let purchaseInfo = this.req.session['purchaseInfo'];
-        let tickets: any[] = [];
+        let performance = this.purchaseModel.performance;
+        let reserveSeats = this.purchaseModel.reserveSeats;
+        let input = this.purchaseModel.input;
 
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            tickets.push({
-                /** チケットコード */
-                ticket_code: ticket.ticket_code,
-                /** 標準単価 */
-                std_price: ticket.std_price,
-                /** 加算単価 */
-                add_price: ticket.add_price,
-                /** 割引額 */
-                dis_price: ticket.dis_price || 0,
-                /** 金額 */
-                sale_price: ticket.sale_price,
-                /** 枚数 */
-                ticket_count: ticket.limit_count,
-                /** 座席番号 */
-                seat_num: seat['seat_num'],
-            });
-        }
 
-        let amount: number = this.getPrice({
-            reserveSeats: reserveSeats,
-            reserveTickets: reserveTickets
-        });
+        let amount: number = this.purchaseModel.getReserveAmount();
 
 
         let updateReserve = COA.updateReserveInterface.call({
             /** 施設コード */
-            theater_code: performance.theater._id,
+            theater_code: performance.attributes.theater._id,
             /** 上映日 */
-            date_jouei: performance.day,
+            date_jouei: performance.attributes.day,
             /** 作品コード */
-            title_code: performance.film.coa_title_code,
+            title_code: performance.attributes.film.coa_title_code,
             /** 作品枝番 */
-            title_branch_num: performance.film.coa_title_branch_num,
+            title_branch_num: performance.attributes.film.coa_title_branch_num,
             /** 上映時刻 */
-            time_begin: performance.time_start,
+            time_begin: performance.attributes.time_start,
             /** 座席チケット仮予約番号 */
             tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
             /** 予約者名 */
-            reserve_name: purchaseInfo.last_name_kanji + purchaseInfo.first_name_kanji,
+            reserve_name: input.last_name_hira + input.first_name_hira,
             /** 予約者名（かな） */
-            reserve_name_jkana: purchaseInfo.last_name_hira + purchaseInfo.first_name_hira,
+            reserve_name_jkana: input.last_name_hira + input.first_name_hira,
             /** 電話番号 */
-            tel_num: purchaseInfo.tel_num,
+            tel_num: input.tel_num,
             /** メールアドレス */
-            mail_addr: purchaseInfo.mail_addr,
+            mail_addr: input.mail_addr,
             /** 予約金額 */
             reserve_amount: amount,
             /** 価格情報リスト */
-            list_ticket: tickets,
+            list_ticket: this.purchaseModel.getTicketList(),
         });
 
         this.logger.debug('本予約完了', updateReserve);
@@ -105,13 +81,18 @@ export default class ConfirmController extends PurchaseController {
      */
     public async purchase() {
         this.updateReserve().then((result) => {
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+            
             //予約情報をセッションへ
-            this.req.session['updateReserve'] = result;
+            this.purchaseModel.updateReserve = result;
+            //セッション更新
+            if (!this.req.session) return this.next(new Error('session is undefined'));
+            this.purchaseModel.upDate(this.req.session['purchase']);
+            
             this.deleteSession();
 
             this.logger.debug('照会情報取得');
             //TODO スクリーンコード未追加
+            if (!this.req.session) return this.next(new Error('session is undefined'));
             this.req.session['inquiry'] = {
                 status: 0,
                 message: '',

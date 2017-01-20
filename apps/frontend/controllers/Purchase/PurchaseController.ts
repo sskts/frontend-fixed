@@ -1,9 +1,25 @@
 import BaseController from '../BaseController';
+import express = require('express');
 import COA = require("@motionpicture/coa-service");
+import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 /**
  * TODO any type
  */
 export default class PurchaseController extends BaseController {
+    protected purchaseModel: PurchaseSession.PurchaseModel;
+
+    constructor(req: express.Request, res: express.Response, next: express.NextFunction) {
+        super(req, res, next);
+        this.init();
+    }
+
+    /**
+     * 初期化
+     */
+    private init(): void {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
+    }
 
     /**
      * セッション削除
@@ -33,21 +49,5 @@ export default class PurchaseController extends BaseController {
                 result: null
             });
         });
-    }
-
-    
-
-    /**
-     * 金額取得
-     */
-    protected getPrice(args: any): number {
-        let reserveSeats = args.reserveSeats;
-        let reserveTickets = args.reserveTickets;
-        let price = 0;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            price += ticket.sale_price;
-        }
-        return price;
     }
 }

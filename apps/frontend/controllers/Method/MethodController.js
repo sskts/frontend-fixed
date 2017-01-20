@@ -1,5 +1,5 @@
 "use strict";
-const BaseController_1 = require('../BaseController');
+const BaseController_1 = require("../BaseController");
 class MethodController extends BaseController_1.default {
     ticketing() {
         this.res.render('method/ticketing');

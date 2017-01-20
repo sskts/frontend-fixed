@@ -1,7 +1,7 @@
 "use strict";
-const session = require('express-session');
-const config = require('config');
-const connectRedis = require('connect-redis');
+const session = require("express-session");
+const config = require("config");
+const connectRedis = require("connect-redis");
 const redis = require('redis');
 let redisClient = redis.createClient(config.get('redis_port'), config.get('redis_host'), {
     password: config.get('redis_key'),

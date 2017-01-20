@@ -85,13 +85,17 @@ export interface film {
  */
 export interface performance {
     _id: string,
-    canceled: boolean,
-    day: string,
-    film: film,
-    screen: screen,
-    theater: theater,
-    time_end: string,
-    time_start: string
+    attributes: {
+        canceled: boolean,
+        day: string,
+        film: film,
+        screen: screen,
+        theater: theater,
+        time_end: string,
+        time_start: string
+    },
+    type: string
+
 }
 
 /**
@@ -102,22 +106,19 @@ export namespace getPerformance {
         id: string
     }
     export interface Result {
-        message: string,
-        performance: performance,
-        success: boolean
+        data: performance,
     }
     export async function call(args: Args): Promise<Result> {
-        let body = await request.get({
-            url: `${endPoint}/performance/${args.id}`,
+        let response = await request.get({
+            url: `${endPoint}/performances/${args.id}`,
             body: {},
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
-        let performance = body;
-        console.log('performance:', performance);
-
-        return performance;
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+        console.log('performances:', response.body);
+        return response.body;
     }
 }
 
@@ -128,7 +129,7 @@ export namespace getPerformance {
 export namespace ownerAnonymousCreate {
     export interface Args {
     }
-    export interface Result { 
+    export interface Result {
         _id: string,
         group: string,
         name_first: string,
@@ -138,16 +139,17 @@ export namespace ownerAnonymousCreate {
         $setOnInsert: { __v: string }
     }
     export async function call(): Promise<Result> {
-        let body = await request.post({
+        let response = await request.post({
             url: `${endPoint}/config/owner/anonymous/create`,
             body: {
                 group: 'ANONYMOUS',
             },
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
-        let owner = body.owner;
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+        let owner = response.body;
         console.log('owner:', owner);
 
         return owner;
@@ -179,16 +181,17 @@ export namespace transactionStart {
         access_pass: string,
     }
     export async function call(args: Args): Promise<Result> {
-        let body = await request.post({
+        let response = await request.post({
             url: `${endPoint}/transaction/start`,
             body: {
                 owners: args.owners
             },
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
-        let transaction = body.transaction;
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+        let transaction = response.body;
         console.log('transaction:', transaction);
 
         return transaction;
@@ -208,7 +211,7 @@ export namespace addCOAAuthorization {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let body = await request.post({
+        let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
             body: {
                 transaction_password: args.transaction.password,
@@ -225,10 +228,11 @@ export namespace addCOAAuthorization {
             },
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
+        if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log('addCOAAuthorization result:', body);
+        console.log('addCOAAuthorization result');
     }
 }
 
@@ -246,7 +250,7 @@ export namespace addGMOAuthorization {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let body = await request.post({
+        let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
             body: {
                 transaction_password: args.transaction.password,
@@ -262,10 +266,11 @@ export namespace addGMOAuthorization {
             },
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
+        if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log("addGMOAuthorization result:", body);
+        console.log("addGMOAuthorization result:");
     }
 }
 
@@ -279,15 +284,16 @@ export namespace transactionClose {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let body = await request.post({
+        let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/close`,
             body: {
                 password: args.transaction.password
             },
             json: true,
             simple: false,
+            resolveWithFullResponse: true,
         });
-        if (!body.success) throw new Error(body.message);
-        console.log('close result:', body);
+        if (response.statusCode !== 204) throw new Error(response.body.message);
+        console.log('close result:');
     }
 }

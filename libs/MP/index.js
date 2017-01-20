@@ -2,30 +2,30 @@
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
         function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments)).next());
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const request = require('request-promise-native');
-const config = require('config');
+const request = require("request-promise-native");
+const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
 const endPoint = config.get('mp_api_endpoint');
 var getPerformance;
 (function (getPerformance) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.get({
-                url: `${endPoint}/performance/${args.id}`,
+            let response = yield request.get({
+                url: `${endPoint}/performances/${args.id}`,
                 body: {},
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            let performance = body;
-            console.log('performance:', performance);
-            return performance;
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            console.log('performances:', response.body);
+            return response.body;
         });
     }
     getPerformance.call = call;
@@ -34,17 +34,18 @@ var ownerAnonymousCreate;
 (function (ownerAnonymousCreate) {
     function call() {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.post({
+            let response = yield request.post({
                 url: `${endPoint}/config/owner/anonymous/create`,
                 body: {
                     group: 'ANONYMOUS',
                 },
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            let owner = body.owner;
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            let owner = response.body;
             console.log('owner:', owner);
             return owner;
         });
@@ -55,17 +56,18 @@ var transactionStart;
 (function (transactionStart) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.post({
+            let response = yield request.post({
                 url: `${endPoint}/transaction/start`,
                 body: {
                     owners: args.owners
                 },
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            let transaction = body.transaction;
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            let transaction = response.body;
             console.log('transaction:', transaction);
             return transaction;
         });
@@ -76,7 +78,7 @@ var addCOAAuthorization;
 (function (addCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.post({
+            let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
                 body: {
                     transaction_password: args.transaction.password,
@@ -93,10 +95,11 @@ var addCOAAuthorization;
                 },
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            console.log('addCOAAuthorization result:', body);
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log('addCOAAuthorization result');
         });
     }
     addCOAAuthorization.call = call;
@@ -105,7 +108,7 @@ var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.post({
+            let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
                 body: {
                     transaction_password: args.transaction.password,
@@ -121,10 +124,11 @@ var addGMOAuthorization;
                 },
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            console.log("addGMOAuthorization result:", body);
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log("addGMOAuthorization result:");
         });
     }
     addGMOAuthorization.call = call;
@@ -133,17 +137,18 @@ var transactionClose;
 (function (transactionClose) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let body = yield request.post({
+            let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/close`,
                 body: {
                     password: args.transaction.password
                 },
                 json: true,
                 simple: false,
+                resolveWithFullResponse: true,
             });
-            if (!body.success)
-                throw new Error(body.message);
-            console.log('close result:', body);
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log('close result:');
         });
     }
     transactionClose.call = call;

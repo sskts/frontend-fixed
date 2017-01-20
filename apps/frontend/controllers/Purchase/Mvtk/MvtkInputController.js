@@ -1,5 +1,5 @@
 "use strict";
-const MvtkController_1 = require('./MvtkController');
+const MvtkController_1 = require("./MvtkController");
 class MvtkInputController extends MvtkController_1.default {
     index() {
         if (!this.req.session)

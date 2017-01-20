@@ -24,10 +24,11 @@ function getPerformance() {
         if (res.error) {
 
         } else {
-            var performances = res.result.performances;
+            console.log(res)
+            var performances = res.result.data;
             var dom = '';
             for (var i = 0, len = performances.length; i < len; i++) {
-                var performance = performances[i];
+                var performance = performances[i].attributes;
                 dom += '<li>' +
                     '<dl>' +
                         '<dt>鑑賞日 / スクリーン</dt>' +

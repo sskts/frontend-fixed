@@ -25,12 +25,17 @@ $(function () {
      */
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
-        var result = {};
+        var result = {
+            tickets: []
+        };
         var flag = true;
         $('.seats li').each(function (index, elem) {
             var code = $(elem).find('dt').text();
             var ticket = ($(elem).find('dd').attr('data-ticket')) ? JSON.parse($(elem).find('dd').attr('data-ticket')) : null;
-            result[code] = ticket;
+            result.tickets.push({
+                seat_num: code,
+                info: ticket
+            });
             if (!code || !ticket) {
                 flag = false;
             }

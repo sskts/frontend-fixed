@@ -1,7 +1,17 @@
 "use strict";
-const BaseController_1 = require('../BaseController');
+const BaseController_1 = require("../BaseController");
 const COA = require("@motionpicture/coa-service");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 class PurchaseController extends BaseController_1.default {
+    constructor(req, res, next) {
+        super(req, res, next);
+        this.init();
+    }
+    init() {
+        if (!this.req.session)
+            return this.next(new Error('session is undefined'));
+        this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
+    }
     deleteSession() {
         if (!this.req.session)
             return;
@@ -23,16 +33,6 @@ class PurchaseController extends BaseController_1.default {
                 result: null
             });
         });
-    }
-    getPrice(args) {
-        let reserveSeats = args.reserveSeats;
-        let reserveTickets = args.reserveTickets;
-        let price = 0;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            let ticket = reserveTickets[seat['seat_num']];
-            price += ticket.sale_price;
-        }
-        return price;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
