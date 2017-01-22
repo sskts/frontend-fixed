@@ -19,19 +19,21 @@ export default class SeatSelectController extends PurchaseController {
             id: this.req.query['id']
         }).then((result) => {
             this.res.locals['performance'] = result.data;
-            this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
+            this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
             this.res.locals['reserveSeats'] = null;
+            
             //仮予約中
             if (this.purchaseModel.reserveSeats
                 && this.purchaseModel.performance
                 && this.purchaseModel.performance._id === this.req.query['id']) {
+                this.logger.debug('仮予約中')
                 this.res.locals['reserveSeats'] = JSON.stringify(this.purchaseModel.reserveSeats);
             }
             this.purchaseModel.performance = result.data;
-
+            
             //セッション更新
             if (!this.req.session) return this.next(new Error('session is undefined'));
-            this.purchaseModel.upDate(this.req.session['purchase']);
+            this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
             this.res.render('purchase/seat');
         }, (err) => {
@@ -52,7 +54,7 @@ export default class SeatSelectController extends PurchaseController {
                 this.purchaseModel.reserveSeats = result;
                 //セッション更新
                 if (!this.req.session) return this.next(new Error('session is undefined'));
-                this.purchaseModel.upDate(this.req.session['purchase']);
+                this.req.session['purchase'] = this.purchaseModel.formatToSession();
                 //券種選択へ
                 this.res.redirect(this.router.build('purchase.ticket', {}));
             }, (err) => {
@@ -65,7 +67,7 @@ export default class SeatSelectController extends PurchaseController {
      * 座席仮予約
      */
     private async reserve(): Promise<void | COA.reserveSeatsTemporarilyInterface.Result> {
-
+        // console.log('------------------', this.purchaseModel)
         let performance = this.purchaseModel.performance;
         if (!performance) return this.next(new Error('performance is undefined'));
         //予約中

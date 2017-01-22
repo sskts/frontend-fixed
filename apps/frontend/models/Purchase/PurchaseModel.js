@@ -1,6 +1,9 @@
 "use strict";
 class PurchaseModel {
     constructor(purchaseSession) {
+        if (!purchaseSession) {
+            purchaseSession = {};
+        }
         this.performance = (purchaseSession.performance) ? purchaseSession.performance : null;
         this.reserveSeats = (purchaseSession.reserveSeats) ? purchaseSession.reserveSeats : null;
         this.reserveTickets = (purchaseSession.reserveTickets) ? purchaseSession.reserveTickets : null;
@@ -8,13 +11,15 @@ class PurchaseModel {
         this.gmo = (purchaseSession.gmo) ? purchaseSession.gmo : null;
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
     }
-    upDate(purchaseSession) {
-        purchaseSession.performance = this.performance;
-        purchaseSession.reserveSeats = this.reserveSeats;
-        purchaseSession.reserveTickets = this.reserveTickets;
-        purchaseSession.input = this.input;
-        purchaseSession.gmo = this.gmo;
-        purchaseSession.updateReserve = this.updateReserve;
+    formatToSession() {
+        return {
+            performance: (this.performance) ? this.performance : null,
+            reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
+            reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
+            input: (this.input) ? this.input : null,
+            gmo: (this.gmo) ? this.gmo : null,
+            updateReserve: (this.updateReserve) ? this.updateReserve : null,
+        };
     }
     checkAccess(value, next) {
         let result = false;

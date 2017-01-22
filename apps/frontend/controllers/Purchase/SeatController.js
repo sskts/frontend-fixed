@@ -20,17 +20,18 @@ class SeatSelectController extends PurchaseController_1.default {
             id: this.req.query['id']
         }).then((result) => {
             this.res.locals['performance'] = result.data;
-            this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
+            this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
             this.res.locals['reserveSeats'] = null;
             if (this.purchaseModel.reserveSeats
                 && this.purchaseModel.performance
                 && this.purchaseModel.performance._id === this.req.query['id']) {
+                this.logger.debug('仮予約中');
                 this.res.locals['reserveSeats'] = JSON.stringify(this.purchaseModel.reserveSeats);
             }
             this.purchaseModel.performance = result.data;
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
-            this.purchaseModel.upDate(this.req.session['purchase']);
+            this.req.session['purchase'] = this.purchaseModel.formatToSession();
             this.res.render('purchase/seat');
         }, (err) => {
             return this.next(new Error(err.message));
@@ -46,7 +47,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 this.purchaseModel.reserveSeats = result;
                 if (!this.req.session)
                     return this.next(new Error('session is undefined'));
-                this.purchaseModel.upDate(this.req.session['purchase']);
+                this.req.session['purchase'] = this.purchaseModel.formatToSession();
                 this.res.redirect(this.router.build('purchase.ticket', {}));
             }, (err) => {
                 return this.next(new Error(err.message));

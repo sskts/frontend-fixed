@@ -26,24 +26,20 @@ export default class PurchaseController extends BaseController {
      */
     protected deleteSession(): void {
         if (!this.req.session) return;
-        delete this.req.session['purchaseInfo']
-        // delete this.req.session['performance']
-        delete this.req.session['reserveSeats']
-        delete this.req.session['reserveTickets']
-        delete this.req.session['updateReserve']
-        delete this.req.session['gmoTokenObject'];
+        delete this.req.session['purchase'];
     }
 
     /**
      * スクリーン状態取得
      */
     public getScreenStateReserve(): void {
-        COA.getStateReserveSeatInterface.call(this.req.body).then((result)=>{
+        
+        COA.getStateReserveSeatInterface.call(this.req.body).then((result) => {
             this.res.json({
                 err: null,
                 result: result
             });
-        }, (err)=>{
+        }, (err) => {
             this.res.json({
                 err: err,
                 result: null

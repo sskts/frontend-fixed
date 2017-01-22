@@ -15,11 +15,7 @@ class PurchaseController extends BaseController_1.default {
     deleteSession() {
         if (!this.req.session)
             return;
-        delete this.req.session['purchaseInfo'];
-        delete this.req.session['reserveSeats'];
-        delete this.req.session['reserveTickets'];
-        delete this.req.session['updateReserve'];
-        delete this.req.session['gmoTokenObject'];
+        delete this.req.session['purchase'];
     }
     getScreenStateReserve() {
         COA.getStateReserveSeatInterface.call(this.req.body).then((result) => {

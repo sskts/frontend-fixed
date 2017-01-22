@@ -1,4 +1,15 @@
 .inquiry-confirm {
+    input[type=text],
+    input[type=number],
+    input[type=password],
+    input[type=tel],
+    input[type=email],
+    textarea {
+        margin: 0 0 5px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
     .bookmark {
         text-align: center;
         padding: 0 10px;

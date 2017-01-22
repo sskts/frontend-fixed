@@ -12,20 +12,20 @@ const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
-class EnterPurchaseController extends PurchaseController_1.default {
+class InputController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE, this.next);
         this.res.locals['error'] = null;
-        this.res.locals['info'] = this.purchaseModel.input;
+        this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['moment'] = require('moment');
         this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
         this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
         this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
         if (process.env.NODE_ENV === 'dev') {
-            this.res.locals['info'] = {
+            this.res.locals['input'] = {
                 last_name_hira: 'はたぐち',
                 first_name_hira: 'あきと',
                 mail_addr: 'hataguchi@motionpicture.jp',
@@ -35,7 +35,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
         }
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
-        this.purchaseModel.upDate(this.req.session['purchase']);
+        this.req.session['purchase'] = this.purchaseModel.formatToSession();
         this.res.render('purchase/input');
     }
     submit() {
@@ -55,7 +55,7 @@ class EnterPurchaseController extends PurchaseController_1.default {
                         return this.next(new Error('router is undefined'));
                     if (!this.req.session)
                         return this.next(new Error('session is undefined'));
-                    this.purchaseModel.upDate(this.req.session['purchase']);
+                    this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     this.res.redirect(this.router.build('purchase.confirm', {}));
                 }, (err) => {
                     return this.next(new Error(err.message));
@@ -63,13 +63,13 @@ class EnterPurchaseController extends PurchaseController_1.default {
             }
             else {
                 this.res.locals['error'] = this.req.form.getErrors();
-                this.res.locals['info'] = this.req.body;
+                this.res.locals['input'] = this.req.body;
                 this.res.locals['moment'] = require('moment');
                 this.res.locals['step'] = 2;
                 this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
                 this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-                this.res.render('purchase/enterPurchase');
+                this.res.render('purchase/input');
             }
         });
     }
@@ -102,4 +102,4 @@ class EnterPurchaseController extends PurchaseController_1.default {
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = EnterPurchaseController;
+exports.default = InputController;

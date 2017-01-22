@@ -1,12 +1,21 @@
 import BaseController from '../BaseController';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import COA = require("@motionpicture/coa-service");
+import MP = require('../../../../libs/MP');
 
 export default class InquiryController extends BaseController {
     /**
      * 照会認証ページ表示
      */
     public login(): void {
+        this.res.locals['theater_code'] = '';
+        this.res.locals['reserve_num'] = '';
+        this.res.locals['tel_num'] = '';
+        if (process.env.NODE_ENV === 'dev') {
+            this.res.locals['theater_code'] = '001';
+            this.res.locals['reserve_num'] = '5836';
+            this.res.locals['tel_num'] = '0849273550';
+        }
         this.res.locals['error'] = null;
         this.res.render('inquiry/login');
     }
@@ -15,94 +24,73 @@ export default class InquiryController extends BaseController {
     /**
      * 照会認証
      */
-    public auth(): void {
+    public auth() {
         LoginForm(this.req, this.res, () => {
             if (!this.req.form) return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
-                this.stateReserve({
-                    /** 施設コード */
-                    theater_code: this.req.body.theater_code,
-                    /** 座席チケット購入番号 */
-                    reserve_num: this.req.body.reserve_num,
-                    /** 電話番号 */
-                    tel_num: this.req.body.tel_num,
-                }, () => {
+                this.getStateReserve().then(()=>{
                     if (!this.router) return this.next(new Error('router is undefined'));
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('inquiry', {}));
+                }, (err)=>{
+                    return this.next(new Error(err.message));
                 });
 
             } else {
+                
                 this.res.locals['error'] = this.req.form.getErrors();
                 this.res.render('inquiry/login');
-                this.res.render('purchase/enterPurchase');
             }
         });
         
     }
 
     /**
-     * 購入チケット内容抽出
+     * 照会情報取得
      */
-    private stateReserve(args: COA.stateReserveInterface.Args, cb: Function): void {
-        COA.stateReserveInterface.call(args).then((result)=>{
-            //TODO スクリーンコード未追加
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-            //予約情報をセッションへ
-            this.req.session['inquiry'] = result;
-            //TODO
-            this.req.session['performance'] = { 
-                _id: '001201701128513021010',
-                screen: { 
-                    _id: '0012',
-                    name: { ja: 'シネマ２', en: 'Cinema2' },
-                    coa_screen_code: '2' 
-                },
-                theater: { 
-                    _id: '001', 
-                    name: { ja: 'コア・シネマ', en: 'CoaCimema' } 
-                },
-                film: { 
-                    _id: '00185130',
-                    name: { ja: '君の名は。', en: '' },
-                    minutes: 107,
-                    coa_title_code: '8513',
-                    coa_title_branch_num: '0' 
-                },
-                day: '20170112',
-                time_start: '1010',
-                time_end: '1205' 
-            };
-            cb();
-            //TODO performance type any
-            // let performanceId: string =  this.getPerformanceId(
-            //     this.req.body.theater_code, 
-            //     result.date_jouei, 
-            //     result.title_code, 
-            //     result.title_branch_num,
-            //     '2',
-            //     result.time_begin
-            // );
-            // this.getPerformance(performanceId, (performance: any)=>{
-            //     if (!this.req.session) return this.next(new Error('session is undefined'));
-            //     //予約情報をセッションへ
-            //     this.req.session['inquiry'] = result;
-            //     this.req.session['performance'] = performance;
-            //     cb();
-            // });
-        }, (err)=>{
-            return this.next(new Error(err.message));
-        });        
+    private async getStateReserve(): Promise<void> {
+        let stateReserve = await COA.stateReserveInterface.call({
+            theater_code: this.req.body.theater_code, /** 施設コード */                    
+            reserve_num: this.req.body.reserve_num, /** 座席チケット購入番号 */
+            tel_num: this.req.body.tel_num, /** 電話番号 */
+        });
+
+        let performanceId = '001201701018513021010';
+        //TODO情報不足
+        // this.getPerformanceId({
+        //     theaterCode: string, 
+        //     day: string, 
+        //     titleCode: string, 
+        //     titleBranchNum: string,
+        //     screenCode: string, 
+        //     timeBegin: string
+        // }) 
+        let performance = await MP.getPerformance.call({
+            id: performanceId
+        });
+
+        if (!this.req.session) throw new Error('session is undefined');
+        this.req.session['inquiry'] = {
+            stateReserve: stateReserve,
+            performance: performance,
+            reserve_num: this.req.body.reserve_num
+        };
+        
     }
+
+    
 
     /**
      * 照会確認ページ表示
      */
     public index(): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (this.req.session['inquiry']) {
-            this.res.locals['inquiry'] = this.req.session['inquiry'];
-            this.res.locals['performance'] = this.req.session['performance'];
+        if (this.req.session['inquiry'] 
+        && this.req.session['inquiry'].stateReserve
+        && this.req.session['inquiry'].performance) {
+            this.res.locals['stateReserve'] = this.req.session['inquiry'].stateReserve;
+            this.res.locals['performance'] = this.req.session['inquiry'].performance.data;
+            this.res.locals['reserve_num'] = this.req.session['inquiry'].reserve_num;
             this.res.render('inquiry/confirm');
         } else {
             if (!this.router) return this.next(new Error('router is undefined'));

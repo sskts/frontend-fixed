@@ -42,7 +42,7 @@
                         <div><%= seats.join('、') %></div>
                         <div class="right">
                             <div class="button dark-blue-button change-button"><a href="#" data-modal="screen"><%- __('common.confirm') %></a></div><!--
-                            --><div class="button light-gray-button change-button"><a href="#"><%- __('common.change') %></a></div>
+                            --><div class="button light-gray-button change-button"><a href="<%- url('purchase.seat') %>?id=<%= performance._id %>"><%- __('common.change') %></a></div>
                         </div>
                     </dd>
                     
@@ -53,27 +53,27 @@
                     <dt><%- __('common.ticket') %></dt>
                     <dd>
                         <%
-                        let tikcetObj = {};
-                        for (let seat of reserveSeats.list_tmp_reserve) {
-                            let code = reserveTickets[seat.seat_num].ticket_code;
-                            if (tikcetObj[code]) {
-                                tikcetObj[code].length++;
-                            } else {
-                                tikcetObj[code] = {
-                                    length: 1,
-                                    name: reserveTickets[seat.seat_num].ticket_name
-                                };
+                        let ticketObj = {};
+                        let tickets = [];
+                        for (let ticket of reserveTickets.tickets) {
+                            if (ticketObj[ticket.info.ticket_code]) {
+                                ticketObj[ticket.info.ticket_code].length++;
+                            }　else {
+                                ticketObj[ticket.info.ticket_code] = {
+                                    name: ticket.info.ticket_name,
+                                    length: 1
+                                }
                             }
                         }
-                        let tikcets = [];
-                        for (let key in tikcetObj) { 
-                            tikcets.push(tikcetObj[key].name + '×' + __n('%s ticket', tikcetObj[key].length));
+                        for (let key in ticketObj) {
+                            let ticket = ticketObj[key];
+                            tickets.push(`${ticket.name} × ${ticket.length}`);
                         }
                         %>
-                        <div class="mb-small"><%= tikcets.join('、') %></div>
+                        <div><%= tickets.join('、') %></div>
                         <div class="right">
                             <div class="button light-gray-button change-button">
-                                <a href="#"><%- __('common.change') %></a>
+                                <a href="<%- url('purchase.ticket') %>"><%- __('common.change') %></a>
                             </div>
                         </div>
                     </dd>
@@ -86,7 +86,7 @@
             <%- __('common.purchase_info') %>
             <div class="right">
                 <div class="button light-gray-button change-button">
-                    <a href="#"><%- __('common.change') %></a>
+                    <a href="<%- url('purchase.input') %>"><%- __('common.change') %></a>
                 </div>
             </div>
         </h2>
@@ -94,19 +94,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><%= info.last_name_hira %> <%= info.first_name_hira %></dd>
+                    <dd><%= input.last_name_hira %> <%= input.first_name_hira %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail') %></dt>
-                    <dd><%= info.mail_addr %></dd>
+                    <dd><%= input.mail_addr %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel') %></dt>
-                    <dd><%= info.tel_num %></dd>
+                    <dd><%= input.tel_num %></dd>
                 </dl>
             </li>
             <li>

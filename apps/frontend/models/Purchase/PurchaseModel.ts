@@ -65,27 +65,45 @@ export class PurchaseModel {
     public reserveTickets: ReserveTickets | null;
     public input: Input | null;
     public gmo: GMO | null;
-    public updateReserve: COA.updateReserveInterface.Result
+    public updateReserve: COA.updateReserveInterface.Result | null;
 
     constructor(purchaseSession: any) {
+        if (!purchaseSession) {
+            purchaseSession = {};
+        }
+
         this.performance = (purchaseSession.performance) ? purchaseSession.performance : null;
         this.reserveSeats = (purchaseSession.reserveSeats) ? purchaseSession.reserveSeats : null;
         this.reserveTickets = (purchaseSession.reserveTickets) ? purchaseSession.reserveTickets : null;
         this.input = (purchaseSession.input) ? purchaseSession.input : null;
         this.gmo = (purchaseSession.gmo) ? purchaseSession.gmo : null;
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
+
     }
 
     /**
-     * 更新
+     * 保存
      */
-    public upDate(purchaseSession: any): void {
-        purchaseSession.performance = this.performance;
-        purchaseSession.reserveSeats = this.reserveSeats;
-        purchaseSession.reserveTickets = this.reserveTickets;
-        purchaseSession.input = this.input;
-        purchaseSession.gmo = this.gmo;
-        purchaseSession.updateReserve = this.updateReserve;
+    public formatToSession(): {
+        performance: MP.performance | null,
+        reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null,
+        reserveTickets: ReserveTickets | null,
+        input: Input | null,
+        gmo: GMO | null,
+        updateReserve: COA.updateReserveInterface.Result | null
+    } {
+
+        return {
+            performance: (this.performance) ? this.performance : null,
+            reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
+            reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
+            input: (this.input) ? this.input : null,
+            gmo: (this.gmo) ? this.gmo : null,
+            updateReserve: (this.updateReserve) ? this.updateReserve : null,
+        }
+
+
+
     }
 
 

@@ -13,7 +13,7 @@ export default class ConfirmController extends PurchaseController {
         
         //購入者内容確認表示
         this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
-        this.res.locals['info'] = this.purchaseModel.input;
+        this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['performance'] = this.purchaseModel.performance;
         this.res.locals['reserveSeats'] = this.purchaseModel.reserveSeats;
         this.res.locals['reserveTickets'] = this.purchaseModel.reserveTickets;
@@ -22,7 +22,7 @@ export default class ConfirmController extends PurchaseController {
 
         //セッション更新
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        this.purchaseModel.upDate(this.req.session['purchase']);
+        this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
         this.res.render('purchase/confirm');
 
@@ -32,6 +32,7 @@ export default class ConfirmController extends PurchaseController {
      * 座席本予約
      */
     private async updateReserve(): Promise<COA.updateReserveInterface.Result> {
+        if (!this.req.session) throw new Error('session is undefined');
         if (!this.purchaseModel.performance) throw new Error('purchaseModel.performance is undefined');
         if (!this.purchaseModel.reserveSeats) throw new Error('purchaseModel.reserveSeats is undefined');
         if (!this.purchaseModel.input) throw new Error('purchaseModel.input is undefined');
@@ -44,7 +45,7 @@ export default class ConfirmController extends PurchaseController {
         let amount: number = this.purchaseModel.getReserveAmount();
 
 
-        let updateReserve = COA.updateReserveInterface.call({
+        let updateReserve = await COA.updateReserveInterface.call({
             /** 施設コード */
             theater_code: performance.attributes.theater._id,
             /** 上映日 */
@@ -72,6 +73,10 @@ export default class ConfirmController extends PurchaseController {
         });
 
         this.logger.debug('本予約完了', updateReserve);
+        //予約情報をセッションへ
+        this.purchaseModel.updateReserve = updateReserve;
+        this.req.session['purchase'] = this.purchaseModel.formatToSession();
+
         return updateReserve;
     }
 
@@ -79,54 +84,11 @@ export default class ConfirmController extends PurchaseController {
     /**
      * 購入確定
      */
-    public async purchase() {
+    public purchase() {
         this.updateReserve().then((result) => {
-            
-            //予約情報をセッションへ
-            this.purchaseModel.updateReserve = result;
-            //セッション更新
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-            this.purchaseModel.upDate(this.req.session['purchase']);
-            
+            //Session削除
             this.deleteSession();
 
-            this.logger.debug('照会情報取得');
-            //TODO スクリーンコード未追加
-            if (!this.req.session) return this.next(new Error('session is undefined'));
-            this.req.session['inquiry'] = {
-                status: 0,
-                message: '',
-                list_reserve_seat:
-                [{ seat_num: 'Ｊ－７' },
-                { seat_num: 'Ｊ－８' },
-                { seat_num: 'Ｊ－９' },
-                { seat_num: 'Ｊ－１０' }],
-                title_branch_num: '0',
-                title_code: '8570',
-                list_ticket:
-                [{
-                    ticket_count: 2,
-                    ticket_name: '一般',
-                    ticket_price: 1800,
-                    ticket_code: '10'
-                },
-                {
-                    ticket_count: 1,
-                    ticket_name: '大･高生',
-                    ticket_price: 1500,
-                    ticket_code: '30'
-                },
-                {
-                    ticket_code: '80',
-                    ticket_price: 1000,
-                    ticket_count: 1,
-                    ticket_name: 'シニア'
-                }],
-                time_begin: '2130',
-                date_jouei: '20161215'
-            };
-
-            this.logger.debug('購入確定', result);
             //購入完了情報を返す
             this.res.json({
                 err: null,

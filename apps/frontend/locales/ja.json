@@ -170,5 +170,18 @@
 	"week[Thu]": "木",
 	"week[Fri]": "金",
 	"week[Sat]": "土",
-	"week[Sun]": "日"
+	"week[Sun]": "日",
+	"stateReserve": {
+		"confirm": {
+			"page_ttl": "stateReserve.confirm.page_ttl",
+			"read": "stateReserve.confirm.read",
+			"ticket_button": "stateReserve.confirm.ticket_button",
+			"section_ttl": "stateReserve.confirm.section_ttl",
+			"section_text": "stateReserve.confirm.section_text",
+			"section_button": "stateReserve.confirm.section_button",
+			"ticket_text": "stateReserve.confirm.ticket_text",
+			"next": "stateReserve.confirm.next",
+			"prev": "stateReserve.confirm.prev"
+		}
+	}
 }

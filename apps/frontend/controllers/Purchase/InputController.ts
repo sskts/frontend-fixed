@@ -6,7 +6,7 @@ import config = require('config');
 import GMO = require("@motionpicture/gmo-service");
 //import MP = require('../../../../libs/MP');
 
-export default class EnterPurchaseController extends PurchaseController {
+export default class InputController extends PurchaseController {
     /**
      * 購入者情報入力
      */
@@ -17,7 +17,7 @@ export default class EnterPurchaseController extends PurchaseController {
         
         //購入者情報入力表示
         this.res.locals['error'] = null;
-        this.res.locals['info'] = this.purchaseModel.input;
+        this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['moment'] = require('moment');
         this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
         this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
@@ -25,7 +25,7 @@ export default class EnterPurchaseController extends PurchaseController {
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
 
         if (process.env.NODE_ENV === 'dev') {
-            this.res.locals['info'] = {
+            this.res.locals['input'] = {
                 last_name_hira: 'はたぐち',
                 first_name_hira: 'あきと',
                 mail_addr: 'hataguchi@motionpicture.jp',
@@ -36,7 +36,7 @@ export default class EnterPurchaseController extends PurchaseController {
 
         //セッション更新
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        this.purchaseModel.upDate(this.req.session['purchase']);
+        this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
         this.res.render('purchase/input');
     }
@@ -65,7 +65,7 @@ export default class EnterPurchaseController extends PurchaseController {
                     if (!this.router) return this.next(new Error('router is undefined'));
                     //セッション更新
                     if (!this.req.session) return this.next(new Error('session is undefined'));
-                    this.purchaseModel.upDate(this.req.session['purchase']);
+                    this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('purchase.confirm', {}));
                 }, (err)=>{
@@ -73,13 +73,13 @@ export default class EnterPurchaseController extends PurchaseController {
                 }); 
             } else {
                 this.res.locals['error'] = this.req.form.getErrors();
-                this.res.locals['info'] = this.req.body;
+                this.res.locals['input'] = this.req.body;
                 this.res.locals['moment'] = require('moment');
                 this.res.locals['step'] = 2;
                 this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
                 this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-                this.res.render('purchase/enterPurchase');
+                this.res.render('purchase/input');
             }
 
         });

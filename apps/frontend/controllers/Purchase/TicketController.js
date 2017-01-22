@@ -26,7 +26,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
             this.res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
-            this.purchaseModel.upDate(this.req.session['purchase']);
+            this.req.session['purchase'] = this.purchaseModel.formatToSession();
             this.res.render('purchase/ticket');
         }, (err) => {
             return this.next(new Error(err.message));
@@ -40,7 +40,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
             this.logger.debug('券種決定完了', this.purchaseModel.reserveTickets);
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
-            this.purchaseModel.upDate(this.req.session['purchase']);
+            this.req.session['purchase'] = this.purchaseModel.formatToSession();
             if (this.req.body['mvtk']) {
                 this.res.redirect(this.router.build('purchase.mvtk', {}));
             }

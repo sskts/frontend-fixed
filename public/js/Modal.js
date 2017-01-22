@@ -40,15 +40,23 @@
             });
         },
         open: function () {
-            this.cover.addClass('active');
-            this.modal.addClass('active');
+            this.cover
+                .addClass('active')
+                .removeClass('disabled');
+            this.modal
+                .addClass('active')
+                .removeClass('disabled');
             $('.wrapper').addClass('blur');
             this.resize();
         },
         close: function () {
             if (this.modal && this.cover) {
-                this.modal.removeClass('active');
-                this.cover.removeClass('active');
+                this.modal
+                    .removeClass('active')
+                    .addClass('disabled');
+                this.cover
+                    .removeClass('active')
+                    .addClass('disabled');
                 $('.wrapper').removeClass('blur');
             }
         },
