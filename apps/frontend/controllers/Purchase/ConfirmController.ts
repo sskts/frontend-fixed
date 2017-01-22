@@ -9,8 +9,9 @@ export default class ConfirmController extends PurchaseController {
      */
     public index(): void {
         
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE, this.next);
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return this.next(new Error('無効なアクセスです'));
         
+
         //購入者内容確認表示
         this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
         this.res.locals['input'] = this.purchaseModel.input;

@@ -12,7 +12,8 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
 class ConfirmController extends PurchaseController_1.default {
     index() {
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE, this.next);
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE))
+            return this.next(new Error('無効なアクセスです'));
         this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
         this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['performance'] = this.purchaseModel.performance;

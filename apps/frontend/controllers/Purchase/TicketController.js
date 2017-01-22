@@ -5,9 +5,8 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
 class TicketTypeSelectController extends PurchaseController_1.default {
     index() {
-        if (!this.req.session)
-            return this.next(new Error('session is undefined'));
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE, this.next);
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE))
+            return this.next(new Error('無効なアクセスです'));
         if (!this.purchaseModel.performance)
             return this.next(new Error('purchaseModel.performance is undefined'));
         let performance = this.purchaseModel.performance;

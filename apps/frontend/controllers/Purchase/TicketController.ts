@@ -8,9 +8,8 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種選択
      */
     public index(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
-        
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE, this.next);
+                
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error('無効なアクセスです'));
         if (!this.purchaseModel.performance) return this.next(new Error('purchaseModel.performance is undefined'));
 
         //コアAPI券種取得

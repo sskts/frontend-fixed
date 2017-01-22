@@ -110,7 +110,7 @@ export class PurchaseModel {
     /**
      * ステータス確認
      */
-    public checkAccess(value: number, next: express.NextFunction): void {
+    public checkAccess(value: number): void {
         let result: boolean = false;
         if (value === PurchaseModel.SEAT_STATE) {
             result = true;
@@ -123,9 +123,7 @@ export class PurchaseModel {
         } else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
         }
-        if (!result) {
-            return next(new Error('無効なアクセスです'));
-        }
+        
     }
 
     /**

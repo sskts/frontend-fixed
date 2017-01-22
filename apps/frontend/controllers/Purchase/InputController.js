@@ -14,9 +14,8 @@ const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
 class InputController extends PurchaseController_1.default {
     index() {
-        if (!this.req.session)
-            return this.next(new Error('session is undefined'));
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE, this.next);
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE))
+            return this.next(new Error('無効なアクセスです'));
         this.res.locals['error'] = null;
         this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['moment'] = require('moment');

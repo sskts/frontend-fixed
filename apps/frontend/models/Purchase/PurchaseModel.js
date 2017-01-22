@@ -21,7 +21,7 @@ class PurchaseModel {
             updateReserve: (this.updateReserve) ? this.updateReserve : null,
         };
     }
-    checkAccess(value, next) {
+    checkAccess(value) {
         let result = false;
         if (value === PurchaseModel.SEAT_STATE) {
             result = true;
@@ -40,9 +40,6 @@ class PurchaseModel {
         }
         else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
-        }
-        if (!result) {
-            return next(new Error('無効なアクセスです'));
         }
     }
     getReserveAmount() {

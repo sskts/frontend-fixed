@@ -11,8 +11,8 @@ export default class InputController extends PurchaseController {
      * 購入者情報入力
      */
     public index(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
-        this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE, this.next);
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE)) return this.next(new Error('無効なアクセスです'));
+        
        
         
         //購入者情報入力表示
