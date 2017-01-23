@@ -8,7 +8,7 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種選択
      */
     public index(): void {
-                
+        console.log('券種選択', PurchaseSession.PurchaseModel.TICKET_STATE,this.purchaseModel)
         if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error('無効なアクセスです'));
         if (!this.purchaseModel.performance) return this.next(new Error('purchaseModel.performance is undefined'));
 

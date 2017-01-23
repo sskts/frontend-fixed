@@ -1,6 +1,7 @@
 import COA = require("@motionpicture/coa-service");
 import MP = require('../../../../libs/MP');
-import express = require('express');
+import GMO = require("@motionpicture/gmo-service");
+
 
 export interface Args {
     id: string
@@ -60,12 +61,30 @@ export class PurchaseModel {
     public static CONFIRM_STATE = 3;
     public static COMPLETE_STATE = 4;
 
+    /**パフォーマンス */
     public performance: MP.performance | null;
+    /**COA仮予約 */
     public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
+    /**予約チケット */
     public reserveTickets: ReserveTickets | null;
+    /**入力情報 */
     public input: Input | null;
+    /**GMO TOKEN情報 */
     public gmo: GMO | null;
+    /**COA本予約 */
     public updateReserve: COA.updateReserveInterface.Result | null;
+    /**取引MP */
+    public transactionMP: MP.transactionStart.Result | null;
+    /**取引GMO */
+    public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
+    /**パフォーマンス */
+    public owners: MP.ownerAnonymousCreate.Result | null;
+    /**オーナー */
+    public authorizationCOA: MP.addCOAAuthorization.Result | null;
+    /**GMOオーソリ */
+    public authorizationGMO: MP.addGMOAuthorization.Result | null;
+    /**オーダーID */
+    public orderId: string | null;
 
     constructor(purchaseSession: any) {
         if (!purchaseSession) {
@@ -78,11 +97,19 @@ export class PurchaseModel {
         this.input = (purchaseSession.input) ? purchaseSession.input : null;
         this.gmo = (purchaseSession.gmo) ? purchaseSession.gmo : null;
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
+        this.transactionMP = (purchaseSession.transactionMP) ? purchaseSession.transactionMP : null;
+        this.transactionGMO = (purchaseSession.transactionGMO) ? purchaseSession.transactionGMO : null;
+        this.owners = (purchaseSession.owners) ? purchaseSession.owners : null;
+        this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
+        this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
+        this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
+        
+
 
     }
 
     /**
-     * 保存
+     * セッションObjectへ変換
      */
     public formatToSession(): {
         performance: MP.performance | null,
@@ -90,7 +117,13 @@ export class PurchaseModel {
         reserveTickets: ReserveTickets | null,
         input: Input | null,
         gmo: GMO | null,
-        updateReserve: COA.updateReserveInterface.Result | null
+        updateReserve: COA.updateReserveInterface.Result | null,
+        transactionMP: MP.transactionStart.Result | null,
+        transactionGMO: GMO.CreditService.entryTranInterface.Result | null,
+        owners: MP.ownerAnonymousCreate.Result | null,
+        authorizationCOA: MP.addCOAAuthorization.Result | null,
+        authorizationGMO: MP.addGMOAuthorization.Result | null,
+        orderId: string | null,
     } {
 
         return {
@@ -100,30 +133,33 @@ export class PurchaseModel {
             input: (this.input) ? this.input : null,
             gmo: (this.gmo) ? this.gmo : null,
             updateReserve: (this.updateReserve) ? this.updateReserve : null,
-        }
-
-
-
+            transactionMP: (this.transactionMP) ? this.transactionMP : null,
+            transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
+            owners: (this.owners) ? this.owners : null,
+            authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
+            authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
+            orderId: (this.orderId) ? this.orderId : null,
+        };
     }
 
 
     /**
      * ステータス確認
      */
-    public checkAccess(value: number): void {
+    public checkAccess(value: number): boolean {
         let result: boolean = false;
         if (value === PurchaseModel.SEAT_STATE) {
             result = true;
         } else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.performance && this.reserveSeats) result = true;
+            if (this.transactionMP && this.owners && this.performance && this.reserveSeats) result = true;
         } else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.performance && this.reserveSeats && this.reserveTickets) result = true;
+            if (this.transactionMP && this.owners && this.performance && this.reserveSeats && this.reserveTickets) result = true;
         } else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
+            if (this.transactionMP && this.owners && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
         } else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
         }
-        
+        return result;
     }
 
     /**

@@ -5,6 +5,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
 class TicketTypeSelectController extends PurchaseController_1.default {
     index() {
+        console.log('券種選択', PurchaseSession.PurchaseModel.TICKET_STATE, this.purchaseModel);
         if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE))
             return this.next(new Error('無効なアクセスです'));
         if (!this.purchaseModel.performance)

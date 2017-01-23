@@ -45,7 +45,7 @@ var ownerAnonymousCreate;
             });
             if (response.statusCode !== 200)
                 throw new Error(response.body.message);
-            let owner = response.body;
+            let owner = response.body.data;
             console.log('owner:', owner);
             return owner;
         });
@@ -67,7 +67,7 @@ var transactionStart;
             });
             if (response.statusCode !== 200)
                 throw new Error(response.body.message);
-            let transaction = response.body;
+            let transaction = response.body.data;
             console.log('transaction:', transaction);
             return transaction;
         });
@@ -81,7 +81,6 @@ var addCOAAuthorization;
             let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
                 body: {
-                    transaction_password: args.transaction.password,
                     owner_id: args.ownerId4administrator,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                     seats: args.reserveSeatsTemporarilyResult.list_tmp_reserve.map((tmpReserve) => {
@@ -97,13 +96,34 @@ var addCOAAuthorization;
                 simple: false,
                 resolveWithFullResponse: true,
             });
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            console.log('addCOAAuthorization result');
+            return response.body.data;
+        });
+    }
+    addCOAAuthorization.call = call;
+})(addCOAAuthorization = exports.addCOAAuthorization || (exports.addCOAAuthorization = {}));
+var removeCOAAuthorization;
+(function (removeCOAAuthorization) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+                body: {
+                    coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
             if (response.statusCode !== 204)
                 throw new Error(response.body.message);
             console.log('addCOAAuthorization result');
         });
     }
-    addCOAAuthorization.call = call;
-})(addCOAAuthorization = exports.addCOAAuthorization || (exports.addCOAAuthorization = {}));
+    removeCOAAuthorization.call = call;
+})(removeCOAAuthorization = exports.removeCOAAuthorization || (exports.removeCOAAuthorization = {}));
 var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
@@ -111,7 +131,6 @@ var addGMOAuthorization;
             let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
                 body: {
-                    transaction_password: args.transaction.password,
                     owner_id: args.owner._id,
                     gmo_shop_id: config.get('gmo_shop_id'),
                     gmo_shop_password: config.get('gmo_shop_password'),
@@ -126,22 +145,85 @@ var addGMOAuthorization;
                 simple: false,
                 resolveWithFullResponse: true,
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== 200)
                 throw new Error(response.body.message);
             console.log("addGMOAuthorization result:");
+            return response.body.data;
         });
     }
     addGMOAuthorization.call = call;
 })(addGMOAuthorization = exports.addGMOAuthorization || (exports.addGMOAuthorization = {}));
+var removeGMOAuthorization;
+(function (removeGMOAuthorization) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+                body: {
+                    gmo_order_id: args.orderId,
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log("removeGMOAuthorization result:");
+        });
+    }
+    removeGMOAuthorization.call = call;
+})(removeGMOAuthorization = exports.removeGMOAuthorization || (exports.removeGMOAuthorization = {}));
+var ownersAnonymous;
+(function (ownersAnonymous) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/owners/anonymous/${args.owner._id}`,
+                body: {
+                    name_first: args.name_first,
+                    name_last: args.name_last,
+                    tel: args.tel,
+                    email: args.email,
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log("removeGMOAuthorization result:");
+        });
+    }
+    ownersAnonymous.call = call;
+})(ownersAnonymous = exports.ownersAnonymous || (exports.ownersAnonymous = {}));
+var transactionsEnableInquiry;
+(function (transactionsEnableInquiry) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
+                body: {
+                    inquiry_id: args.updateReserveResult.reserve_num,
+                    inquiry_pass: args.inquiry_pass
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log("transactionsEnableInquiry result:");
+        });
+    }
+    transactionsEnableInquiry.call = call;
+})(transactionsEnableInquiry = exports.transactionsEnableInquiry || (exports.transactionsEnableInquiry = {}));
 var transactionClose;
 (function (transactionClose) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
                 url: `${endPoint}/transaction/${args.transaction._id}/close`,
-                body: {
-                    password: args.transaction.password
-                },
+                body: {},
                 json: true,
                 simple: false,
                 resolveWithFullResponse: true,

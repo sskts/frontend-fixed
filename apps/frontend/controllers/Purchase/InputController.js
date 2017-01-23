@@ -12,6 +12,7 @@ const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
+const MP = require("../../../../libs/MP");
 class InputController extends PurchaseController_1.default {
     index() {
         if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE))
@@ -74,29 +75,57 @@ class InputController extends PurchaseController_1.default {
     }
     addAuthorization() {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!this.req.session)
-                throw new Error('session is undefined');
-            let gmo = this.purchaseModel.gmo;
-            if (!gmo)
+            if (!this.purchaseModel.transactionMP)
+                throw new Error('transactionMP is undefined');
+            if (!this.purchaseModel.gmo)
                 throw new Error('gmo is undefined');
+            if (!this.purchaseModel.owners)
+                throw new Error('owners is undefined');
+            if (!this.purchaseModel.gmo)
+                throw new Error('gmo is undefined');
+            if (!this.purchaseModel.gmo)
+                throw new Error('gmo is undefined');
+            if (this.purchaseModel.transactionGMO
+                && this.purchaseModel.authorizationGMO
+                && this.purchaseModel.orderId) {
+                yield GMO.CreditService.alterTranInterface.call({
+                    shop_id: config.get('gmo_shop_id'),
+                    shop_pass: config.get('gmo_shop_password'),
+                    access_id: this.purchaseModel.transactionGMO.access_id,
+                    access_pass: this.purchaseModel.transactionGMO.access_pass,
+                    job_cd: GMO.Util.JOB_CD_VOID
+                });
+                this.logger.debug('GMOオーソリ取消');
+                yield MP.removeGMOAuthorization.call({
+                    transaction: this.purchaseModel.transactionMP,
+                    addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
+                    orderId: this.purchaseModel.orderId
+                });
+                this.logger.debug('GMOオーソリ削除');
+            }
+            this.purchaseModel.orderId = Date.now().toString();
             let amount = this.purchaseModel.getReserveAmount();
-            let orderId = Date.now().toString();
-            let entryTranResult = yield GMO.CreditService.entryTranInterface.call({
+            this.purchaseModel.transactionGMO = yield GMO.CreditService.entryTranInterface.call({
                 shop_id: config.get('gmo_shop_id'),
                 shop_pass: config.get('gmo_shop_password'),
-                order_id: orderId,
+                order_id: this.purchaseModel.orderId,
                 job_cd: GMO.Util.JOB_CD_AUTH,
                 amount: amount,
             });
-            this.logger.debug('GMOオーソリ取得', entryTranResult);
-            let execTranResult = yield GMO.CreditService.execTranInterface.call({
-                access_id: entryTranResult.access_id,
-                access_pass: entryTranResult.access_pass,
-                order_id: orderId,
+            yield GMO.CreditService.execTranInterface.call({
+                access_id: this.purchaseModel.transactionGMO.access_id,
+                access_pass: this.purchaseModel.transactionGMO.access_pass,
+                order_id: this.purchaseModel.orderId,
                 method: "1",
-                token: gmo.token
+                token: this.purchaseModel.gmo.token
             });
-            this.logger.debug('GMO決済', execTranResult);
+            MP.addGMOAuthorization.call({
+                transaction: this.purchaseModel.transactionMP,
+                owner: this.purchaseModel.owners,
+                orderId: this.purchaseModel.orderId,
+                amount: amount,
+                entryTranResult: this.purchaseModel.transactionGMO
+            });
         });
     }
 }

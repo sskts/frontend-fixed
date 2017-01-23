@@ -130,13 +130,8 @@ export namespace ownerAnonymousCreate {
     export interface Args {
     }
     export interface Result {
-        _id: string,
-        group: string,
-        name_first: string,
-        name_last: string,
-        email: string,
-        tel: string,
-        $setOnInsert: { __v: string }
+        type: string,
+        _id: string
     }
     export async function call(): Promise<Result> {
         let response = await request.post({
@@ -149,7 +144,7 @@ export namespace ownerAnonymousCreate {
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);
-        let owner = response.body;
+        let owner = response.body.data;
         console.log('owner:', owner);
 
         return owner;
@@ -164,22 +159,10 @@ export namespace transactionStart {
         owners: string[]
     }
     export interface Result {
-        _id: string,
-        password: string,
-        status: string,
-        events: Array<{
-            _id: string,
-            group: string,
-            authorization: any
-        }>,
-        owners: Array<{
-            _id: string,
-            group: string
-        }>,
-        expired_at: string,
-        access_id: string,
-        access_pass: string,
+        type: string,
+        _id: string
     }
+
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
             url: `${endPoint}/transaction/start`,
@@ -191,7 +174,7 @@ export namespace transactionStart {
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);
-        let transaction = response.body;
+        let transaction = response.body.data;
         console.log('transaction:', transaction);
 
         return transaction;
@@ -209,12 +192,13 @@ export namespace addCOAAuthorization {
         performance: performance
     }
     export interface Result {
+        type: string,
+        _id: string
     }
-    export async function call(args: Args): Promise<void> {
+    export async function call(args: Args): Promise<Result> {
         let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
             body: {
-                transaction_password: args.transaction.password,
                 owner_id: args.ownerId4administrator,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                 seats: args.reserveSeatsTemporarilyResult.list_tmp_reserve.map((tmpReserve: any) => {
@@ -230,11 +214,41 @@ export namespace addCOAAuthorization {
             simple: false,
             resolveWithFullResponse: true,
         });
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+
+        console.log('addCOAAuthorization result');
+        return response.body.data;
+    }
+}
+
+/**
+ * COAオーソリ削除
+ */
+export namespace removeCOAAuthorization {
+    export interface Args {
+        transaction: transactionStart.Result,
+        ownerId4administrator: string,
+        reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result,
+        addCOAAuthorizationResult: addCOAAuthorization.Result
+    }
+    export interface Result {
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.post({
+            url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+            body: {
+                coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
         if (response.statusCode !== 204) throw new Error(response.body.message);
 
         console.log('addCOAAuthorization result');
     }
 }
+
 
 /**
  * GMOオーソリ追加
@@ -248,12 +262,13 @@ export namespace addGMOAuthorization {
         entryTranResult: GMO.CreditService.entryTranInterface.Result
     }
     export interface Result {
+        type: string,
+        _id: string
     }
-    export async function call(args: Args): Promise<void> {
+    export async function call(args: Args): Promise<Result> {
         let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
             body: {
-                transaction_password: args.transaction.password,
                 owner_id: args.owner._id,
                 gmo_shop_id: config.get<string>('gmo_shop_id'),
                 gmo_shop_password: config.get<string>('gmo_shop_password'),
@@ -268,11 +283,102 @@ export namespace addGMOAuthorization {
             simple: false,
             resolveWithFullResponse: true,
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== 200) throw new Error(response.body.message);
 
         console.log("addGMOAuthorization result:");
+        return response.body.data;
     }
 }
+
+/**
+ * GMOオーソリ削除
+ */
+export namespace removeGMOAuthorization {
+    export interface Args {
+        transaction: transactionStart.Result,
+        addGMOAuthorizationResult: addGMOAuthorization.Result,
+        orderId: string,
+    }
+    export interface Result {
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.post({
+            url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+            body: {
+                gmo_order_id: args.orderId,
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 204) throw new Error(response.body.message);
+
+        console.log("removeGMOAuthorization result:");
+
+    }
+}
+
+
+/**
+ * 購入者情報登録
+ */
+export namespace ownersAnonymous {
+    export interface Args {
+        owner: ownerAnonymousCreate.Result,
+        name_first: string,
+        name_last: string,
+        tel: string,
+        email: string,
+    }
+    export interface Result {
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.post({
+            url: `${endPoint}/owners/anonymous/${args.owner._id}`,
+            body: {
+                name_first: args.name_first,
+                name_last: args.name_last,
+                tel: args.tel,
+                email: args.email,
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 204) throw new Error(response.body.message);
+
+        console.log("removeGMOAuthorization result:");
+
+    }
+}
+
+// 照会情報登録(購入番号と電話番号で照会する場合)
+export namespace transactionsEnableInquiry {
+    export interface Args {
+        transaction: transactionStart.Result,
+        updateReserveResult: COA.updateReserveInterface.Result,
+        inquiry_pass: string,
+    }
+    export interface Result {
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.post({
+            url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
+            body: {
+                inquiry_id: args.updateReserveResult.reserve_num,
+                inquiry_pass: args.inquiry_pass
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 204) throw new Error(response.body.message);
+
+        console.log("transactionsEnableInquiry result:");
+
+    }
+}
+
 
 /**
  * 取引成立
@@ -287,7 +393,7 @@ export namespace transactionClose {
         let response = await request.post({
             url: `${endPoint}/transaction/${args.transaction._id}/close`,
             body: {
-                password: args.transaction.password
+                
             },
             json: true,
             simple: false,
