@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -6,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-let webdriver = require('selenium-webdriver');
+const webdriver = require("selenium-webdriver");
 let capabilities = {
     'browserstack.user': 'akitohataguchi1',
     'browserstack.key': '91NcdgSQ6KR9vqHP33xp',
@@ -26,7 +27,8 @@ let by = webdriver.By;
 main().then(() => {
     driver.quit();
     console.log('done');
-}, () => {
+}, (err) => {
+    console.log(err);
 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -39,14 +41,14 @@ function main() {
 }
 function performanceSelect() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('performance');
-        yield driver.sleep(3000);
+        yield driver.sleep(1000);
+        console.log('パフォーマンス一覧');
         let lists = yield driver
             .findElement(by.className('performances'))
             .findElements(by.tagName('li'));
         let num = Math.floor(Math.random() * lists.length - 1);
-        console.log(num);
-        driver
+        console.log('パフォーマンス' + num);
+        yield driver
             .findElement(by.className('performances'))
             .findElement(by.xpath(`li[${num}]`))
             .findElement(by.className('blue-button'))
@@ -56,60 +58,68 @@ function performanceSelect() {
 }
 function seat() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('seat');
+        yield driver.sleep(1000);
+        console.log('座席選択');
         yield driver.sleep(3000);
         let seats = yield driver
             .findElement(by.className('screen'))
             .findElements(by.className('default'));
         let num = Math.floor(Math.random() * seats.length - 1);
-        console.log(num);
-        seats[num].click();
-        nextClick();
+        console.log('座席選択' + num);
+        yield seats[num].click();
+        yield nextClick();
     });
 }
 function ticket() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('ticket');
+        yield driver.sleep(3000);
+        console.log('券種選択');
         let seats = yield driver
             .findElement(by.className('seats'))
             .findElements(by.tagName('li'));
-        for (var i = 0; i < seats.length - 1; i++) {
-            seats[i].findElement(by.tagName('a')).click();
-            let tickets = driver
+        console.log('券種選択' + seats.length + '個');
+        for (var i = 0; i < seats.length; i++) {
+            yield seats[i].findElement(by.tagName('a')).click();
+            let tickets = yield driver
                 .findElement(by.className('modal'))
                 .findElements(by.className('blue-button'));
             let num = Math.floor(Math.random() * tickets.length - 1);
-            console.log(num);
-            tickets[num]
+            console.log('券種選択' + num);
+            yield tickets[num]
                 .findElement(by.tagName('a'))
                 .click();
         }
-        nextClick();
+        yield nextClick();
     });
 }
 function input() {
-    console.log('input');
-    driver.findElement(by.name('last_name_hira')).clear();
-    driver.findElement(by.name('first_name_hira')).clear();
-    driver.findElement(by.name('mail')).clear();
-    driver.findElement(by.name('mail_confirm')).clear();
-    driver.findElement(by.name('tel')).clear();
-    driver.findElement(by.name('last_name_kanji')).sendKeys('モーション');
-    driver.findElement(by.name('first_name_kanji')).sendKeys('ピクチャー');
-    driver.findElement(by.name('last_name_hira')).sendKeys('もーしょん');
-    driver.findElement(by.name('first_name_hira')).sendKeys('ぴくちゃー');
-    driver.findElement(by.name('mail')).sendKeys('hataguchi@motionpicture.jp');
-    driver.findElement(by.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
-    driver.findElement(by.name('tel')).sendKeys('0362778824');
-    driver.findElement(by.name('cardno')).sendKeys('4111111111111111');
-    driver.findElement(by.name('credit_year')).sendKeys('2017');
-    driver.findElement(by.name('credit_month')).sendKeys('10');
-    driver.findElement(by.name('securitycode')).sendKeys('123');
-    nextClick();
+    return __awaiter(this, void 0, void 0, function* () {
+        yield driver.sleep(1000);
+        console.log('購入者情報入力');
+        yield driver.findElement(by.name('last_name_hira')).clear();
+        yield driver.findElement(by.name('first_name_hira')).clear();
+        yield driver.findElement(by.name('mail')).clear();
+        yield driver.findElement(by.name('mail_confirm')).clear();
+        yield driver.findElement(by.name('tel')).clear();
+        yield driver.findElement(by.name('last_name_hira')).sendKeys('もーしょん');
+        yield driver.findElement(by.name('first_name_hira')).sendKeys('ぴくちゃー');
+        yield driver.findElement(by.name('mail')).sendKeys('hataguchi@motionpicture.jp');
+        yield driver.findElement(by.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
+        yield driver.findElement(by.name('tel')).sendKeys('0362778824');
+        yield driver.findElement(by.name('agree')).click();
+        yield driver.findElement(by.name('cardno')).sendKeys('4111111111111111');
+        yield driver.findElement(by.name('credit_year')).sendKeys('2017');
+        yield driver.findElement(by.name('credit_month')).sendKeys('10');
+        yield driver.findElement(by.name('securitycode')).sendKeys('123');
+        yield nextClick();
+    });
 }
 function confirm() {
-    console.log('confirm');
-    nextClick();
+    return __awaiter(this, void 0, void 0, function* () {
+        yield driver.sleep(1000);
+        console.log('購入者内容確認');
+        yield nextClick();
+    });
 }
 function nextClick() {
     driver.findElement(by.className('button-area'))

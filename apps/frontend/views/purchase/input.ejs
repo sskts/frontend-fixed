@@ -86,9 +86,14 @@
         </div>
 
         <h2 class="section-ttl"><%- __('purchase.input.agreement') %></h2>
-        <div class="box bg-ultra-light-gray mb-large scroll small-text">
+        <div class="box bg-ultra-light-gray mb-medium scroll small-text">
             <%- partial('agreement_ja') %>
-        </div>            
+        </div>
+        <div class="mb-large">
+            <input type="checkbox" <%= (input.agree) ? 'checked': '' %> name="agree" value="true" id="agree">
+            <label for="agree"><%- __('purchase.input.agree') %></label>
+
+        </div>          
 
         <h2 class="section-ttl">
             <%- __('common.payment') %><span class="text-icon-red small-text"><%- __('common.required') %></span>

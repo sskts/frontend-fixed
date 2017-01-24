@@ -23,7 +23,7 @@ export default form(
         .equals('field::mail_addr', 'メールアドレスが一致しません'),
     form.field('tel_num', '電話番号').trim().required('', '%sが未入力です')
         .regex(/^[0-9]+$/, '%sは数字で入力してください'),
-
+    form.field('agree', '利用規約').trim().required('', '%sに同意してください')
     // form.field('gmo_token_object').trim().required()
 
     

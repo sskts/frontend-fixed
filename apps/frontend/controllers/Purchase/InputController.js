@@ -24,13 +24,14 @@ class InputController extends PurchaseController_1.default {
         this.res.locals['gmoModuleUrl'] = config.get('gmo_module_url');
         this.res.locals['gmoShopId'] = config.get('gmo_shop_id');
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-        if (process.env.NODE_ENV === 'dev') {
+        if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
             this.res.locals['input'] = {
                 last_name_hira: 'はたぐち',
                 first_name_hira: 'あきと',
                 mail_addr: 'hataguchi@motionpicture.jp',
                 mail_confirm: 'hataguchi@motionpicture.jp',
-                tel_num: '09040007648'
+                tel_num: '09040007648',
+                agree: 'true'
             };
         }
         if (!this.req.session)
@@ -47,7 +48,9 @@ class InputController extends PurchaseController_1.default {
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
                     mail_addr: this.req.body.mail_addr,
+                    mail_confirm: this.req.body.mail_confirm,
                     tel_num: this.req.body.tel_num,
+                    agree: this.req.body.agree
                 };
                 if (this.req.body.gmo_token_object) {
                     this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);

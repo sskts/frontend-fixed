@@ -24,13 +24,14 @@ export default class InputController extends PurchaseController {
         this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
 
-        if (process.env.NODE_ENV === 'dev') {
+        if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
             this.res.locals['input'] = {
                 last_name_hira: 'はたぐち',
                 first_name_hira: 'あきと',
                 mail_addr: 'hataguchi@motionpicture.jp',
                 mail_confirm: 'hataguchi@motionpicture.jp',
-                tel_num: '09040007648'
+                tel_num: '09040007648',
+                agree: 'true'
             }
         }
 
@@ -57,7 +58,9 @@ export default class InputController extends PurchaseController {
                     last_name_hira: this.req.body.last_name_hira,
                     first_name_hira: this.req.body.first_name_hira,
                     mail_addr: this.req.body.mail_addr,
+                    mail_confirm: this.req.body.mail_confirm,
                     tel_num: this.req.body.tel_num,
+                    agree: this.req.body.agree
                 };
                 if (this.req.body.gmo_token_object) {
                     //クレジット決済

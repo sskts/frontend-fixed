@@ -11,7 +11,7 @@ $(function () {
         if ($('.validation-text').length > 0) {
             var target = $('.validation').eq(0);
             var top = target.offset().top - 20;
-            $('html,body').animate({scrollTop: top}, 300);
+            $('html,body').animate({ scrollTop: top }, 300);
             return;
         }
 
@@ -65,6 +65,7 @@ function validation() {
         { name: 'mail_addr', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'] },
         { name: 'mail_confirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'], equals: 'mail_addr' },
         { name: 'tel_num', label: '電話番号', required: true, regex: [/^[0-9]+$/, 'は不適切です'] },
+        { name: 'agree', label: '利用規約', agree: true },
         { name: 'cardno', label: 'クレジットカード番号', required: true, regex: [/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|3[0-9]{15})$/, 'は不適切です'] },
         { name: 'credit_month', label: '有効期限（月）', required: true },
         { name: 'credit_year', label: '有効期限（年）', required: true },
@@ -95,6 +96,11 @@ function validation() {
             && value !== $('input[name=' + validation.equals + '], select[name=' + validation.equals + ']').val()) {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + 'が一致しません</div>');
+        } else if (validation.agree
+            && !target.is(':checked')) {
+            target = $('label[for=' + validation.name + ']');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + 'に同意してください</div>');
         }
     });
 

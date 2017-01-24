@@ -42,8 +42,12 @@ export interface Input {
     first_name_hira: string,
     /** メールアドレス */
     mail_addr: string,
+    /** メールアドレス確認 */
+    mail_confirm: string,
     /** 電話番号*/
     tel_num: string,
+    /** 利用規約 */
+    agree: string,
 }
 
 export interface GMO {
