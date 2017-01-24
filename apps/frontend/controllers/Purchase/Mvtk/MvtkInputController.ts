@@ -8,9 +8,7 @@ export default class MvtkInputController extends MvtkController {
      */
     public index() {
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (this.req.session['performance']
-            && this.req.session['reserveSeats']
-            && this.req.session['reserveTickets']) {
+        if (this.purchaseModel) {
 
             //購入者情報入力表示
             this.res.locals['error'] = null;

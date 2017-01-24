@@ -12,11 +12,6 @@ class PurchaseController extends BaseController_1.default {
             return this.next(new Error('session is undefined'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
     }
-    deleteSession() {
-        if (!this.req.session)
-            return;
-        delete this.req.session['purchase'];
-    }
     getScreenStateReserve() {
         COA.getStateReserveSeatInterface.call(this.req.body).then((result) => {
             this.res.json({

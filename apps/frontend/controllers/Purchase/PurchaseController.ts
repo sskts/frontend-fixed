@@ -6,6 +6,7 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
  * TODO any type
  */
 export default class PurchaseController extends BaseController {
+    /** 購入セッションmodel */
     protected purchaseModel: PurchaseSession.PurchaseModel;
 
     constructor(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -19,14 +20,6 @@ export default class PurchaseController extends BaseController {
     private init(): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
-    }
-
-    /**
-     * セッション削除
-     */
-    protected deleteSession(): void {
-        if (!this.req.session) return;
-        delete this.req.session['purchase'];
     }
 
     /**

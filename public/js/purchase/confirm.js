@@ -1,6 +1,7 @@
 var screenSeatStatusesMap;
 
 $(function () {
+    $('.purchase-complete').hide();
     var modal = new SASAKI.Modal();
     /**
      * 次へクリックイベント
@@ -20,16 +21,23 @@ $(function () {
 
             }
         }).done(function (res) {
-            //購入番号
-            $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);
-            //step変更
-            $('.steps li').removeClass('active');
-            $('.steps li:last-child').addClass('active');
-            //コンテンツ切り替え
-            $('.purchase-confirm').remove();
-            $('.purchase-complete').show();
-            $(window).scrollTop(0);
-            heightFix();
+            console.log(res)
+            if (res.err) {
+
+            } else {
+                //購入番号
+                $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);
+                //step変更
+                $('.steps li').removeClass('active');
+                $('.steps li:last-child').addClass('active');
+                //コンテンツ切り替え
+                $('.purchase-confirm').remove();
+                $('.purchase-complete').show();
+                $(window).scrollTop(0);
+                history.pushState(null, null, '/purchase/complete');
+                heightFix();
+            }
+            
         }).fail(function (jqxhr, textStatus, error) {
 
         }).always(function () {
@@ -80,15 +88,7 @@ $(function () {
         
     });
 
-    /**
-     * QR確認
-     */
-    $(document).on('click', '.inquiry-button a', function (event) {
-        event.preventDefault();
-        var purchaseNo = $('.purchase-number dd strong').text();
-        $('input[name=reserve_num]').val(purchaseNo);
-        $('.inquiry-form').submit();
-    });
+    
 
 });
 

@@ -3,10 +3,12 @@ const NamedRoutes = require("named-routes");
 const BaseController_1 = require("../controllers/BaseController");
 const PerformanceController_1 = require("..//controllers/Performance/PerformanceController");
 const PurchaseController_1 = require("../controllers/Purchase/PurchaseController");
+const TransactionController_1 = require("../controllers/Purchase/TransactionController");
 const SeatController_1 = require("../controllers/Purchase/SeatController");
 const InputController_1 = require("../controllers/Purchase/InputController");
 const TicketController_1 = require("../controllers/Purchase/TicketController");
 const ConfirmController_1 = require("../controllers/Purchase/ConfirmController");
+const CompleteController_1 = require("../controllers/Purchase/CompleteController");
 const MvtkInputController_1 = require("../controllers/Purchase/Mvtk/MvtkInputController");
 const MvtkAuthController_1 = require("../controllers/Purchase/Mvtk/MvtkAuthController");
 const MvtkConfirmController_1 = require("../controllers/Purchase/Mvtk/MvtkConfirmController");
@@ -29,13 +31,12 @@ exports.default = (app) => {
         new PerformanceController_1.default(req, res, next).getPerformances(req.body.day);
     });
     app.get('/purchase', 'purchase', (req, res, next) => {
-        new BaseController_1.default(req, res, next);
-        res.redirect(router.build('performance', {}));
+        new TransactionController_1.default(req, res, next).start();
     });
-    app.get('/purchase/seat', 'purchase.seat', (req, res, next) => {
+    app.get('/purchase/seat/:id', 'purchase.seat', (req, res, next) => {
         new SeatController_1.default(req, res, next).index();
     });
-    app.post('/purchase/seat', 'purchase.seat', (req, res, next) => {
+    app.post('/purchase/seat/:id', 'purchase.seat', (req, res, next) => {
         new SeatController_1.default(req, res, next).select();
     });
     app.get('/purchase/ticket', 'purchase.ticket', (req, res, next) => {
@@ -55,6 +56,9 @@ exports.default = (app) => {
     });
     app.post('/purchase/confirm', 'purchase.confirm', (req, res, next) => {
         new ConfirmController_1.default(req, res, next).purchase();
+    });
+    app.get('/purchase/complete', 'purchase.complete', (req, res, next) => {
+        new CompleteController_1.default(req, res, next).index();
     });
     app.get('/purchase/mvtk', 'purchase.mvtk', (req, res, next) => {
         new MvtkInputController_1.default(req, res, next).index();

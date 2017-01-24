@@ -1,7 +1,7 @@
-import BaseController from '../../BaseController';
+import PurchaseController from '../PurchaseController';
 
 
-export default class MvtkController extends BaseController {
+export default class MvtkController extends PurchaseController {
 
     
 

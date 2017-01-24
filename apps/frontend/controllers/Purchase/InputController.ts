@@ -59,18 +59,44 @@ export default class InputController extends PurchaseController {
                     mail_addr: this.req.body.mail_addr,
                     tel_num: this.req.body.tel_num,
                 };
-                //決済情報をセッションへ
-                this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);
-                this.addAuthorization().then(() => {
+                if (this.req.body.gmo_token_object) {
+                    //クレジット決済
+                    //決済情報をセッションへ
+                    this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);
+                    //GMOオーソリなし
+                    this.addAuthorization().then(() => {
+                        if (!this.router) return this.next(new Error('router is undefined'));
+                        //セッション更新
+                        if (!this.req.session) return this.next(new Error('session is undefined'));
+                        this.req.session['purchase'] = this.purchaseModel.formatToSession();
+                        //購入者内容確認へ
+                        this.res.redirect(this.router.build('purchase.confirm', {}));
+                    }, (err) => {
+                        if (!err.hasOwnProperty('type')) return this.next(err.message);
+                        //GMOオーソリ追加失敗
+                        this.res.locals['error'] = {
+                            cardno: [err.error.message]
+                        }
+                        this.res.locals['input'] = this.req.body;
+                        this.res.locals['moment'] = require('moment');
+                        this.res.locals['step'] = 2;
+                        this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
+                        this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
+                        this.res.locals['price'] = this.purchaseModel.getReserveAmount();
+                        this.res.render('purchase/input');
+                    });
+
+
+                } else {
+                    //クレジット決済なし
                     if (!this.router) return this.next(new Error('router is undefined'));
                     //セッション更新
                     if (!this.req.session) return this.next(new Error('session is undefined'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //購入者内容確認へ
                     this.res.redirect(this.router.build('purchase.confirm', {}));
-                }, (err) => {
-                    return this.next(new Error(err.message));
-                });
+                }
+
             } else {
                 this.res.locals['error'] = this.req.form.getErrors();
                 this.res.locals['input'] = this.req.body;
@@ -91,14 +117,17 @@ export default class InputController extends PurchaseController {
     private async addAuthorization(): Promise<void> {
         if (!this.purchaseModel.transactionMP) throw new Error('transactionMP is undefined');
         if (!this.purchaseModel.gmo) throw new Error('gmo is undefined');
-        if (!this.purchaseModel.owners) throw new Error('owners is undefined');
-        if (!this.purchaseModel.gmo) throw new Error('gmo is undefined');
-        if (!this.purchaseModel.gmo) throw new Error('gmo is undefined');
-        
+        if (!this.purchaseModel.owner) throw new Error('owners is undefined');
 
         if (this.purchaseModel.transactionGMO
             && this.purchaseModel.authorizationGMO
             && this.purchaseModel.orderId) {
+            //GMOオーソリあり
+            if (!this.purchaseModel.transactionGMO) throw new Error('transactionGMO is undefined');
+            if (!this.purchaseModel.authorizationGMO) throw new Error('authorizationGMO is undefined');
+            if (!this.purchaseModel.orderId) throw new Error('orderId is undefined');
+
+
             //GMOオーソリ取消
             await GMO.CreditService.alterTranInterface.call({
                 shop_id: config.get<string>('gmo_shop_id'),
@@ -116,40 +145,52 @@ export default class InputController extends PurchaseController {
                 orderId: this.purchaseModel.orderId
             });
             this.logger.debug('GMOオーソリ削除');
+
+
         }
 
-        // GMOオーソリ取得
-        this.purchaseModel.orderId = Date.now().toString();
-        let amount: number = this.purchaseModel.getReserveAmount();
-        this.purchaseModel.transactionGMO = await GMO.CreditService.entryTranInterface.call({
-            shop_id: config.get<string>('gmo_shop_id'),
-            shop_pass: config.get<string>('gmo_shop_password'),
-            order_id: this.purchaseModel.orderId,
-            job_cd: GMO.Util.JOB_CD_AUTH,
-            amount: amount,
-        });
-        
-        await GMO.CreditService.execTranInterface.call({
-            access_id: this.purchaseModel.transactionGMO.access_id,
-            access_pass: this.purchaseModel.transactionGMO.access_pass,
-            order_id: this.purchaseModel.orderId,
-            method: "1",
-            token: this.purchaseModel.gmo.token
-        });
+        try {
+            // GMOオーソリ取得
+            this.purchaseModel.orderId = Date.now().toString();
+            let amount: number = this.purchaseModel.getReserveAmount();
+            this.purchaseModel.transactionGMO = await GMO.CreditService.entryTranInterface.call({
+                shop_id: config.get<string>('gmo_shop_id'),
+                shop_pass: config.get<string>('gmo_shop_password'),
+                order_id: this.purchaseModel.orderId,
+                job_cd: GMO.Util.JOB_CD_AUTH,
+                amount: amount,
+            });
+            this.logger.debug('GMOオーソリ取得', this.purchaseModel.orderId);
 
-        // GMOオーソリ追加
-        MP.addGMOAuthorization.call({
-            transaction: this.purchaseModel.transactionMP,
-            owner: this.purchaseModel.owners,
-            orderId: this.purchaseModel.orderId,
-            amount: amount,
-            entryTranResult: this.purchaseModel.transactionGMO
-        });
+            await GMO.CreditService.execTranInterface.call({
+                access_id: this.purchaseModel.transactionGMO.access_id,
+                access_pass: this.purchaseModel.transactionGMO.access_pass,
+                order_id: this.purchaseModel.orderId,
+                method: "1",
+                token: this.purchaseModel.gmo.token
+            });
+            this.logger.debug('GMO決済');
 
+            // GMOオーソリ追加
+            this.purchaseModel.authorizationGMO = await MP.addGMOAuthorization.call({
+                transaction: this.purchaseModel.transactionMP,
+                owner: this.purchaseModel.owner,
+                orderId: this.purchaseModel.orderId,
+                amount: amount,
+                entryTranResult: this.purchaseModel.transactionGMO
+            });
+            this.logger.debug('MPGMOオーソリ追加', this.purchaseModel.authorizationGMO);
 
+        } catch (err) {
+            throw {
+                error: new Error(err.message),
+                type: 'addAuthorization'
+            };
+        }
 
-        
     }
+
+
 
 
 

@@ -4,10 +4,12 @@ import BaseController from '../controllers/BaseController';
 import PerformanceController from '..//controllers/Performance/PerformanceController';
 
 import PurchaseController from '../controllers/Purchase/PurchaseController';
+import TransactionController from '../controllers/Purchase/TransactionController';
 import SeatController from '../controllers/Purchase/SeatController';
 import InputController from '../controllers/Purchase/InputController';
 import TicketController from '../controllers/Purchase/TicketController';
 import ConfirmController from '../controllers/Purchase/ConfirmController';
+import CompleteController from '../controllers/Purchase/CompleteController';
 
 import MvtkInputController from '../controllers/Purchase/Mvtk/MvtkInputController';
 import MvtkAuthController from '../controllers/Purchase/Mvtk/MvtkAuthController';
@@ -50,16 +52,15 @@ export default (app: express.Application | any) => {
 
     //購入
     app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        new BaseController(req, res, next);
-        res.redirect(router.build('performance', {}));
+        new TransactionController(req, res, next).start();
     });
 
     //座席選択
-    app.get('/purchase/seat', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/seat/:id', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new SeatController(req, res, next).index();
     });
 
-    app.post('/purchase/seat', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/seat/:id', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new SeatController(req, res, next).select();
     });
 
@@ -89,6 +90,12 @@ export default (app: express.Application | any) => {
     app.post('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new ConfirmController(req, res, next).purchase();
     });
+
+    //購入完了
+    app.get('/purchase/complete', 'purchase.complete', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new CompleteController(req, res, next).index();
+    });
+    
 
     //ムビチケ券入力
     app.get('/purchase/mvtk', 'purchase.mvtk', (req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,9 +1,26 @@
 var SASAKI = {};
 $(function () {
+    settingValidation();
     $(document).on('click', '.prev-button button', function (event) {
         event.preventDefault();
     });
 });
+
+/**
+ * サーバーバリデーション時設定
+ */
+function settingValidation() {
+    $('.validation-text').each(function (index, elem) {
+        var target = $(elem).prev('input');
+        target.addClass('validation');
+    });
+    if ($('.validation-text').length > 0) {
+        var target = $('.validation').eq(0);
+        var top = target.offset().top - 20;
+        $('html,body').animate({ scrollTop: top }, 300);
+        return;
+    }
+}
 
 /**
  * 全角=>半角
@@ -46,5 +63,5 @@ function heightFix() {
         $(elem).find('.heighfix').height(h);
     });
 
-    
+
 }

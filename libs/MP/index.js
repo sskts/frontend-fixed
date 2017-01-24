@@ -35,15 +35,13 @@ var ownerAnonymousCreate;
     function call() {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/config/owner/anonymous/create`,
-                body: {
-                    group: 'ANONYMOUS',
-                },
+                url: `${endPoint}/owners/anonymous`,
+                body: {},
                 json: true,
                 simple: false,
                 resolveWithFullResponse: true,
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== 201)
                 throw new Error(response.body.message);
             let owner = response.body.data;
             console.log('owner:', owner);
@@ -57,7 +55,7 @@ var transactionStart;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transaction/start`,
+                url: `${endPoint}/transactions`,
                 body: {
                     owners: args.owners
                 },
@@ -65,7 +63,7 @@ var transactionStart;
                 simple: false,
                 resolveWithFullResponse: true,
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== 201)
                 throw new Error(response.body.message);
             let transaction = response.body.data;
             console.log('transaction:', transaction);
@@ -79,7 +77,7 @@ var addCOAAuthorization;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
+                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
                 body: {
                     owner_id: args.ownerId4administrator,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
@@ -108,8 +106,8 @@ var removeCOAAuthorization;
 (function (removeCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
-                url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+            let response = yield request.del({
+                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
                 body: {
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
                 },
@@ -129,7 +127,7 @@ var addGMOAuthorization;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
+                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
                 body: {
                     owner_id: args.owner._id,
                     gmo_shop_id: config.get('gmo_shop_id'),
@@ -157,8 +155,8 @@ var removeGMOAuthorization;
 (function (removeGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
-                url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+            let response = yield request.del({
+                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
                 body: {
                     gmo_order_id: args.orderId,
                 },
@@ -177,7 +175,7 @@ var ownersAnonymous;
 (function (ownersAnonymous) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
+            let response = yield request.patch({
                 url: `${endPoint}/owners/anonymous/${args.owner._id}`,
                 body: {
                     name_first: args.name_first,
@@ -200,7 +198,7 @@ var transactionsEnableInquiry;
 (function (transactionsEnableInquiry) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
+            let response = yield request.patch({
                 url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
                 body: {
                     inquiry_id: args.updateReserveResult.reserve_num,
@@ -221,8 +219,8 @@ var transactionClose;
 (function (transactionClose) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
-                url: `${endPoint}/transaction/${args.transaction._id}/close`,
+            let response = yield request.patch({
+                url: `${endPoint}/transactions/${args.transaction._id}/close`,
                 body: {},
                 json: true,
                 simple: false,

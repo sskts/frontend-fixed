@@ -4,9 +4,7 @@ class MvtkConfirmController extends MvtkController_1.default {
     index() {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
-        if (this.req.session['performance']
-            && this.req.session['reserveSeats']
-            && this.req.session['reserveTickets']) {
+        if (this.purchaseModel) {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
             this.res.render('purchase/mvtk/confirm');

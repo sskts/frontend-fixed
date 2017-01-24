@@ -11,55 +11,34 @@ export default class SeatSelectController extends PurchaseController {
      * 座席選択
      */
     public index(): void {
-        if (!this.req.query || !this.req.query['id']) return this.next(new Error('不適切なアクセスです'));
+        if (!this.req.query || !this.req.params['id']) return this.next(new Error('不適切なアクセスです'));
+        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.SEAT_STATE)) return this.next(new Error('不適切なアクセスです'));
+        //パフォーマンス取得
+        MP.getPerformance.call({
+            id: this.req.params['id']
+        }).then((result) => {
+            this.res.locals['performance'] = result.data;
+            this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
+            this.res.locals['reserveSeats'] = null;
 
-        this.transactionStart().then(() => {
-            //パフォーマンス取得
-            MP.getPerformance.call({
-                id: this.req.query['id']
-            }).then((result) => {
-                this.res.locals['performance'] = result.data;
-                this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
-                this.res.locals['reserveSeats'] = null;
+            //仮予約中
+            if (this.purchaseModel.reserveSeats) {
+                this.logger.debug('仮予約中')
+                this.res.locals['reserveSeats'] = JSON.stringify(this.purchaseModel.reserveSeats);
+            }
+            this.purchaseModel.performance = result.data;
 
-                //仮予約中
-                if (this.purchaseModel.reserveSeats
-                    && this.purchaseModel.performance
-                    && this.purchaseModel.performance._id === this.req.query['id']) {
-                    this.logger.debug('仮予約中')
-                    this.res.locals['reserveSeats'] = JSON.stringify(this.purchaseModel.reserveSeats);
-                }
-                this.purchaseModel.performance = result.data;
+            //セッション更新
+            if (!this.req.session) return this.next(new Error('session is undefined'));
+            this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
-                //セッション更新
-                if (!this.req.session) return this.next(new Error('session is undefined'));
-                this.req.session['purchase'] = this.purchaseModel.formatToSession();
-
-                this.res.render('purchase/seat');
-            }, (err) => {
-                return this.next(new Error(err.message));
-            });
+            this.res.render('purchase/seat');
         }, (err) => {
             return this.next(new Error(err.message));
         });
-
-
     }
 
-    /**
-     * 取引開始
-     */
-    private async transactionStart(): Promise<void> {
-        // 一般所有者作成
-        let owner = await MP.ownerAnonymousCreate.call();
-        this.purchaseModel.owners = owner;
-
-        // 取引開始
-        let transactionMP = await MP.transactionStart.call({
-            owners: [config.get<string>('admin_id'), owner._id]
-        });
-        this.purchaseModel.transactionMP = transactionMP;
-    }
+   
 
 
     /**
@@ -88,13 +67,12 @@ export default class SeatSelectController extends PurchaseController {
         // console.log('------------------', this.purchaseModel)
         if (!this.purchaseModel.performance) return this.next(new Error('performance is undefined'));
         if (!this.purchaseModel.transactionMP) return this.next(new Error('transactionMP is undefined'));
-        if (!this.purchaseModel.owners) return this.next(new Error('owners is undefined'));
+        if (!this.purchaseModel.owner) return this.next(new Error('owners is undefined'));
 
         let performance = this.purchaseModel.performance;
-        
+
         //予約中
-        if (this.purchaseModel.reserveSeats
-            && this.purchaseModel.performance._id === this.req.query['id']) {
+        if (this.purchaseModel.reserveSeats) {
             let reserveSeats = this.purchaseModel.reserveSeats;
 
             //COA仮予約削除
@@ -125,9 +103,9 @@ export default class SeatSelectController extends PurchaseController {
 
             this.logger.debug('COAオーソリ削除');
 
-            if (this.purchaseModel.transactionGMO 
-            && this.purchaseModel.authorizationGMO
-            && this.purchaseModel.orderId) {
+            if (this.purchaseModel.transactionGMO
+                && this.purchaseModel.authorizationGMO
+                && this.purchaseModel.orderId) {
                 //GMOオーソリ取消
                 await GMO.CreditService.alterTranInterface.call({
                     shop_id: config.get<string>('gmo_shop_id'),
@@ -145,7 +123,9 @@ export default class SeatSelectController extends PurchaseController {
                     orderId: this.purchaseModel.orderId
                 });
                 this.logger.debug('GMOオーソリ削除');
-
+                
+                //予約チケット情報削除
+                this.purchaseModel.reserveTickets = null;
             }
         }
 
@@ -172,8 +152,8 @@ export default class SeatSelectController extends PurchaseController {
             /** 予約座席リスト */
             list_seat: seats,
         });
-        this.logger.debug('仮予約', this.purchaseModel.reserveSeats);
-    
+        this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
+
 
         //COAオーソリ追加
         let COAAuthorizationResult = await MP.addCOAAuthorization.call({
@@ -185,7 +165,7 @@ export default class SeatSelectController extends PurchaseController {
         this.logger.debug('COAオーソリ追加', COAAuthorizationResult);
 
         this.purchaseModel.authorizationCOA = COAAuthorizationResult;
-        
+
     }
 
 }

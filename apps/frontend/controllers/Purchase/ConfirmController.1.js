@@ -22,7 +22,6 @@ class ConfirmController extends PurchaseController_1.default {
         this.res.locals['reserveTickets'] = this.purchaseModel.reserveTickets;
         this.res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-        this.res.locals['updateReserve'] = null;
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
@@ -43,29 +42,21 @@ class ConfirmController extends PurchaseController_1.default {
             let performance = this.purchaseModel.performance;
             let reserveSeats = this.purchaseModel.reserveSeats;
             let input = this.purchaseModel.input;
-            try {
-                this.purchaseModel.updateReserve = yield COA.updateReserveInterface.call({
-                    theater_code: performance.attributes.theater._id,
-                    date_jouei: performance.attributes.day,
-                    title_code: performance.attributes.film.coa_title_code,
-                    title_branch_num: performance.attributes.film.coa_title_branch_num,
-                    time_begin: performance.attributes.time_start,
-                    tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
-                    reserve_name: input.last_name_hira + input.first_name_hira,
-                    reserve_name_jkana: input.last_name_hira + input.first_name_hira,
-                    tel_num: input.tel_num,
-                    mail_addr: input.mail_addr,
-                    reserve_amount: this.purchaseModel.getReserveAmount(),
-                    list_ticket: this.purchaseModel.getTicketList(),
-                });
-                this.logger.debug('COA本予約', this.purchaseModel.updateReserve);
-            }
-            catch (err) {
-                throw {
-                    error: new Error(err.message),
-                    type: 'updateReserve'
-                };
-            }
+            this.purchaseModel.updateReserve = yield COA.updateReserveInterface.call({
+                theater_code: performance.attributes.theater._id,
+                date_jouei: performance.attributes.day,
+                title_code: performance.attributes.film.coa_title_code,
+                title_branch_num: performance.attributes.film.coa_title_branch_num,
+                time_begin: performance.attributes.time_start,
+                tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                reserve_name: input.last_name_hira + input.first_name_hira,
+                reserve_name_jkana: input.last_name_hira + input.first_name_hira,
+                tel_num: input.tel_num,
+                mail_addr: input.mail_addr,
+                reserve_amount: this.purchaseModel.getReserveAmount(),
+                list_ticket: this.purchaseModel.getTicketList(),
+            });
+            this.logger.debug('COA本予約', this.purchaseModel.updateReserve);
             yield MP.ownersAnonymous.call({
                 owner: this.purchaseModel.owner,
                 name_first: input.first_name_hira,
@@ -84,24 +75,15 @@ class ConfirmController extends PurchaseController_1.default {
         this.updateReserve().then(() => {
             if (!this.req.session)
                 throw new Error('session is undefined');
-            this.req.session['complete'] = {
-                updateReserve: this.purchaseModel.updateReserve,
-                performance: this.purchaseModel.performance,
-                input: this.purchaseModel.input,
-                reserveSeats: this.purchaseModel.reserveSeats,
-                reserveTickets: this.purchaseModel.reserveTickets,
-                price: this.purchaseModel.getReserveAmount()
-            };
+            this.req.session['updateReserve'];
             delete this.req.session['purchase'];
             this.res.json({
                 err: null,
-                redirect: false,
-                result: this.req.session['complete'].updateReserve
+                result: this.req.session['updateReserve']
             });
         }, (err) => {
             this.res.json({
-                err: (err.hasOwnProperty('type')) ? err.error : err,
-                redirect: (err.hasOwnProperty('type')) ? false : true,
+                err: err,
                 result: null
             });
         });

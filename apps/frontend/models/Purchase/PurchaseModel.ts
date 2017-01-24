@@ -78,7 +78,7 @@ export class PurchaseModel {
     /**取引GMO */
     public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
     /**パフォーマンス */
-    public owners: MP.ownerAnonymousCreate.Result | null;
+    public owner: MP.ownerAnonymousCreate.Result | null;
     /**オーナー */
     public authorizationCOA: MP.addCOAAuthorization.Result | null;
     /**GMOオーソリ */
@@ -99,7 +99,7 @@ export class PurchaseModel {
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
         this.transactionMP = (purchaseSession.transactionMP) ? purchaseSession.transactionMP : null;
         this.transactionGMO = (purchaseSession.transactionGMO) ? purchaseSession.transactionGMO : null;
-        this.owners = (purchaseSession.owners) ? purchaseSession.owners : null;
+        this.owner = (purchaseSession.owner) ? purchaseSession.owner : null;
         this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
         this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
         this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
@@ -120,7 +120,7 @@ export class PurchaseModel {
         updateReserve: COA.updateReserveInterface.Result | null,
         transactionMP: MP.transactionStart.Result | null,
         transactionGMO: GMO.CreditService.entryTranInterface.Result | null,
-        owners: MP.ownerAnonymousCreate.Result | null,
+        owner: MP.ownerAnonymousCreate.Result | null,
         authorizationCOA: MP.addCOAAuthorization.Result | null,
         authorizationGMO: MP.addGMOAuthorization.Result | null,
         orderId: string | null,
@@ -135,7 +135,7 @@ export class PurchaseModel {
             updateReserve: (this.updateReserve) ? this.updateReserve : null,
             transactionMP: (this.transactionMP) ? this.transactionMP : null,
             transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
-            owners: (this.owners) ? this.owners : null,
+            owner: (this.owner) ? this.owner : null,
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
@@ -149,13 +149,13 @@ export class PurchaseModel {
     public checkAccess(value: number): boolean {
         let result: boolean = false;
         if (value === PurchaseModel.SEAT_STATE) {
-            result = true;
+            if (this.transactionMP && this.owner) result = true;
         } else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.transactionMP && this.owners && this.performance && this.reserveSeats) result = true;
+            if (this.transactionMP && this.owner && this.performance && this.reserveSeats) result = true;
         } else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.transactionMP && this.owners && this.performance && this.reserveSeats && this.reserveTickets) result = true;
+            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets) result = true;
         } else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.owners && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
+            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
         } else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
         }

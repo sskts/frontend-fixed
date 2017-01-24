@@ -34,6 +34,7 @@ export default class TicketTypeSelectController extends PurchaseController {
             this.res.locals['reserveSeats'] = this.purchaseModel.reserveSeats;
             this.res.locals['reserveTickets'] = (this.purchaseModel.reserveTickets) ? this.purchaseModel.reserveTickets : null;
             this.res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
+            
             //セッション更新
             if (!this.req.session) return this.next(new Error('session is undefined'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();

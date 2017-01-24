@@ -1465,10 +1465,6 @@ p a {
   cursor: default;
 }
 
-.purchase .purchase-complete {
-  display: none;
-}
-
 .purchase .purchase-complete .entry-method {
   display: -ms-flexbox;
   display: flex;

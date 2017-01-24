@@ -9,12 +9,16 @@
                 <li>
                     <dl class="d-table">
                         <dt class="d-td seat-code"><%= seat.seat_num %></dt>
-                        <% if (reserveTickets && reserveTickets[seat.seat_num]) { %>
-                            <dd class="d-td width-medium" data-ticket="<%= JSON.stringify(reserveTickets[seat.seat_num]) %>">                                
+                        <% if (reserveTickets) { %>
+                            <% for (let ticket of reserveTickets.tickets) { %>
+                            <% if (ticket.seat_num === seat.seat_num) { %>
+                            <dd class="d-td width-medium" data-ticket="<%= JSON.stringify(ticket.info) %>">                                
                                 <div class="ghost-button blue-button">
-                                    <a href="#" data-modal="ticket-type"><%= reserveTickets[seat.seat_num].ticket_name %></a>
+                                    <a href="#" data-modal="ticket-type"><%= ticket.seat_num %> ￥<%= ticket.info.sale_price %></a>
                                 </div>
                             </dd>
+                            <% } %>
+                            <% } %>
                         <% } else { %>
                             <dd class="d-td width-medium" data-ticket="">
                                 <div class="button blue-button">
@@ -44,7 +48,7 @@
     
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.seat') %>?id=<%= performance._id %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.seat', {id: performance._id}) %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         
     </form>

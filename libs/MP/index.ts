@@ -99,7 +99,7 @@ export interface performance {
 }
 
 /**
- * performance取得
+ * パフォーマンス取得
  */
 export namespace getPerformance {
     export interface Args {
@@ -135,15 +135,13 @@ export namespace ownerAnonymousCreate {
     }
     export async function call(): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/config/owner/anonymous/create`,
-            body: {
-                group: 'ANONYMOUS',
-            },
+            url: `${endPoint}/owners/anonymous`,
+            body: {},
             json: true,
             simple: false,
             resolveWithFullResponse: true,
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== 201) throw new Error(response.body.message);
         let owner = response.body.data;
         console.log('owner:', owner);
 
@@ -165,7 +163,7 @@ export namespace transactionStart {
 
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/transaction/start`,
+            url: `${endPoint}/transactions`,
             body: {
                 owners: args.owners
             },
@@ -173,7 +171,7 @@ export namespace transactionStart {
             simple: false,
             resolveWithFullResponse: true,
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== 201) throw new Error(response.body.message);
         let transaction = response.body.data;
         console.log('transaction:', transaction);
 
@@ -197,7 +195,7 @@ export namespace addCOAAuthorization {
     }
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
+            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
             body: {
                 owner_id: args.ownerId4administrator,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
@@ -234,8 +232,8 @@ export namespace removeCOAAuthorization {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.post({
-            url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+        let response = await request.del({
+            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
             body: {
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
             },
@@ -267,7 +265,7 @@ export namespace addGMOAuthorization {
     }
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/transaction/${args.transaction._id}/addCOAAuthorization`,
+            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
             body: {
                 owner_id: args.owner._id,
                 gmo_shop_id: config.get<string>('gmo_shop_id'),
@@ -302,8 +300,8 @@ export namespace removeGMOAuthorization {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.post({
-            url: `${endPoint}/transaction/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+        let response = await request.del({
+            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
             body: {
                 gmo_order_id: args.orderId,
             },
@@ -333,7 +331,7 @@ export namespace ownersAnonymous {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.post({
+        let response = await request.patch({
             url: `${endPoint}/owners/anonymous/${args.owner._id}`,
             body: {
                 name_first: args.name_first,
@@ -362,7 +360,7 @@ export namespace transactionsEnableInquiry {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.post({
+        let response = await request.patch({
             url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
             body: {
                 inquiry_id: args.updateReserveResult.reserve_num,
@@ -390,8 +388,8 @@ export namespace transactionClose {
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.post({
-            url: `${endPoint}/transaction/${args.transaction._id}/close`,
+        let response = await request.patch({
+            url: `${endPoint}/transactions/${args.transaction._id}/close`,
             body: {
                 
             },

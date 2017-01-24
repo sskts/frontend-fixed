@@ -16,6 +16,7 @@ class BaseController {
     }
     setLocals() {
         this.res.locals.req = this.req;
+        this.res.locals.route = this.req.route;
         this.res.locals.escapeHtml = this.escapeHtml;
         this.res.locals.formatPrice = this.formatPrice;
         this.res.locals.moment = moment;

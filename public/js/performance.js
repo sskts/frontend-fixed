@@ -1,4 +1,5 @@
 $(function () {
+    
     getPerformance();
     $(document).on('click', '.search a', function (event) {
         event.preventDefault();
@@ -37,7 +38,7 @@ function getPerformance() {
                         '<dd>' + performance.film.name.ja + '</dd>' +
                         '<dd>' +
                             '<div class="button blue-button">' +
-                                '<a href="/purchase/seat?id=' + performance._id + '">' + moment(performance.time_start, 'hmm').format('HH:mm') + ' - ' + moment(performance.time_end, 'hmm').format('HH:mm') + '</a>' +
+                                '<a href="/purchase?id=' + performance._id + '">' + moment(performance.time_start, 'hmm').format('HH:mm') + ' - ' + moment(performance.time_end, 'hmm').format('HH:mm') + '</a>' +
                             '</div>' +
                         '</dd>' +
                     '</dl>' +
