@@ -60,8 +60,8 @@ function validation() {
         //TODO　項目確認
         // { name: 'last_name_kanji', label: '姓', required: true, maxLength: 15 },
         // { name: 'first_name_kanji', label: '名', required: true, maxLength: 15 },
-        { name: 'last_name_hira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
-        { name: 'first_name_hira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞ]+$/, 'は全角ひらがなで入力してください'] },
+        { name: 'last_name_hira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, 'は全角ひらがなで入力してください'] },
+        { name: 'first_name_hira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, 'は全角ひらがなで入力してください'] },
         { name: 'mail_addr', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'] },
         { name: 'mail_confirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'は不適切です'], equals: 'mail_addr' },
         { name: 'tel_num', label: '電話番号', required: true, regex: [/^[0-9]+$/, 'は不適切です'] },
