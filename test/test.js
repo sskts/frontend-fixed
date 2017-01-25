@@ -48,18 +48,15 @@ function main() {
 }
 function performanceSelect() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield driver.findElement(by.className('performances'));
+        yield driver.findElements(by.css('.performances li'));
         console.log('パフォーマンス一覧');
-        let lists = yield driver
-            .findElement(by.className('performances'))
-            .findElements(by.tagName('li'));
+        let lists = yield driver.findElements(by.css('.performances li'));
         let num = Math.floor(Math.random() * lists.length - 1);
         console.log('パフォーマンス' + num);
         yield driver
-            .findElement(by.className('performances'))
+            .findElement(by.css('.performances'))
             .findElement(by.xpath(`li[${num}]`))
-            .findElement(by.className('blue-button'))
-            .findElement(by.tagName('a'))
+            .findElement(by.css('.blue-button a'))
             .click();
     });
 }
@@ -138,7 +135,7 @@ function input() {
         yield driver.findElement(by.name('securitycode')).sendKeys('123');
         console.log('入力完了');
         yield driver
-            .findElement(by.css('button-area'))
+            .findElement(by.className('button-area'))
             .findElement(by.className('next-button'))
             .findElement(by.tagName('button'))
             .click();

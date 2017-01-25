@@ -54,18 +54,15 @@ async function main() {
 
 //パフォーマンス一覧
 async function performanceSelect(): Promise<void> {
-    await driver.findElement(by.className('performances'));
+    await driver.findElements(by.css('.performances li'));
     console.log('パフォーマンス一覧');
-    let lists = await driver
-        .findElement(by.className('performances'))
-        .findElements(by.tagName('li'));
+    let lists = await driver.findElements(by.css('.performances li'));
     let num = Math.floor(Math.random() * lists.length - 1);
     console.log('パフォーマンス' + num);
     await driver
-        .findElement(by.className('performances'))
+        .findElement(by.css('.performances'))
         .findElement(by.xpath(`li[${num}]`))
-        .findElement(by.className('blue-button'))
-        .findElement(by.tagName('a'))
+        .findElement(by.css('.blue-button a'))
         .click();
 }
 
@@ -140,7 +137,7 @@ async function input(): Promise<void> {
     await driver.findElement(by.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(by.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(by.name('tel_num')).sendKeys('0362778824');
-    await driver.findElement(by.id('agree')).click();
+    await driver.findElement(by.name('agree')).click();
     await driver.findElement(by.name('cardno')).sendKeys('4111111111111111');
     await driver.findElement(by.name('credit_year')).sendKeys('2017');
     await driver.findElement(by.name('credit_month')).sendKeys('10');

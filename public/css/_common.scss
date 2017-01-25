@@ -124,6 +124,7 @@ input[type=checkbox] {
     opacity: 0;
     margin: 0;
     position: absolute;
+    z-index: 10;
 }
 label {
     position: relative;
