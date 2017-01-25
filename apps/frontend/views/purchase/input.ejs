@@ -90,7 +90,7 @@
             <%- partial('agreement_ja') %>
         </div>
         <div class="mb-large">
-            <input type="checkbox" <%= (input.agree) ? 'checked': '' %> name="agree" value="true" id="agree">
+            <input type="checkbox" name="agree" value="true" id="agree" <%= (input.agree) ? 'checked': '' %>>
             <label for="agree" class="agree-label"><%- __('purchase.input.agree') %></label>
 
         </div>          

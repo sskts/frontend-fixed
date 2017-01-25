@@ -98,6 +98,7 @@ function ticket() {
         console.log(`座席数: ${seats.length}`);
         for (var i = 0; i < seats.length; i++) {
             yield seats[i].findElement(by.tagName('a')).click();
+            yield driver.sleep(1000);
             let tickets = yield driver
                 .findElement(by.className('modal'))
                 .findElements(by.className('blue-button'));
@@ -130,14 +131,14 @@ function input() {
         yield driver.findElement(by.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
         yield driver.findElement(by.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
         yield driver.findElement(by.name('tel_num')).sendKeys('0362778824');
-        yield driver.findElement(by.className('agree-label')).click();
+        yield driver.findElement(by.name('agree')).click();
         yield driver.findElement(by.name('cardno')).sendKeys('4111111111111111');
         yield driver.findElement(by.name('credit_year')).sendKeys('2017');
         yield driver.findElement(by.name('credit_month')).sendKeys('10');
         yield driver.findElement(by.name('securitycode')).sendKeys('123');
         console.log('入力完了');
         yield driver
-            .findElement(by.className('button-area'))
+            .findElement(by.css('button-area'))
             .findElement(by.className('next-button'))
             .findElement(by.tagName('button'))
             .click();

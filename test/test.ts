@@ -105,7 +105,7 @@ async function ticket(): Promise<void> {
     console.log(`座席数: ${seats.length}`);
     for (var i = 0; i < seats.length; i++) {
         await seats[i].findElement(by.tagName('a')).click();
-        // await driver.sleep(1000);
+        await driver.sleep(1000);
         let tickets = await driver
             .findElement(by.className('modal'))
             .findElements(by.className('blue-button'));
@@ -140,7 +140,7 @@ async function input(): Promise<void> {
     await driver.findElement(by.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(by.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(by.name('tel_num')).sendKeys('0362778824');
-    await driver.findElement(by.className('agree-label')).click();
+    await driver.findElement(by.id('agree')).click();
     await driver.findElement(by.name('cardno')).sendKeys('4111111111111111');
     await driver.findElement(by.name('credit_year')).sendKeys('2017');
     await driver.findElement(by.name('credit_month')).sendKeys('10');
