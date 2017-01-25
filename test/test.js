@@ -66,7 +66,6 @@ function seat() {
         console.log('座席選択');
         let defaultSeats = yield driver.findElements(by.css('.screen .seat .default'));
         let count = (defaultSeats.length > 5) ? Math.floor(Math.random() * (5 - 1) + 1) : Math.floor(Math.random() * (defaultSeats.length - 1) + 1);
-        count = 1;
         console.log(`座席選択数: ${count}`);
         for (let i = 0; i < count; i++) {
             let seats = yield driver.findElements(by.css('.screen .seat .default'));
@@ -112,6 +111,7 @@ function input() {
         yield driver.findElement(by.name('mail_addr')).clear();
         yield driver.findElement(by.name('mail_confirm')).clear();
         yield driver.findElement(by.name('tel_num')).clear();
+        yield driver.findElement(by.css('label[for=agree]')).click();
         console.log('入力削除');
         yield driver.findElement(by.name('last_name_hira')).sendKeys('もーしょん');
         yield driver.findElement(by.name('first_name_hira')).sendKeys('ぴくちゃー');
@@ -138,5 +138,8 @@ function confirm() {
             .findElement(by.css('.purchase-confirm .button-area .next-button button'))
             .click();
         console.log('次へクリック');
+        yield driver.findElement(by.css('.purchase-complete'));
+        console.log('購入完了');
+        yield driver.sleep(5000);
     });
 }

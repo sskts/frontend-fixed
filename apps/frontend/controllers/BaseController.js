@@ -12,6 +12,9 @@ class BaseController {
         if (this.req.session && this.req.session['locale']) {
             locales_1.default.setLocale(this.req, this.req.session['locale']);
         }
+        else {
+            locales_1.default.setLocale(this.req, 'ja');
+        }
         this.setLocals();
     }
     setLocals() {

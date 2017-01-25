@@ -25,6 +25,8 @@ export default class BaseController {
         this.logger = log4js.getLogger('system');
         if (this.req.session && this.req.session['locale']) {
             locales.setLocale(this.req, this.req.session['locale']);
+        } else {
+            locales.setLocale(this.req, 'ja');
         }
         this.setLocals();
     }

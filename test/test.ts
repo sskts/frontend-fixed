@@ -72,7 +72,6 @@ async function seat(): Promise<void> {
     console.log('座席選択');
     let defaultSeats = await driver.findElements(by.css('.screen .seat .default'));
     let count = (defaultSeats.length > 5) ? Math.floor(Math.random() * (5 - 1) + 1) : Math.floor(Math.random() * (defaultSeats.length - 1) + 1);
-    count = 1;
     console.log(`座席選択数: ${count}`);
     for (let i = 0; i < count; i++) {
         let seats = await driver.findElements(by.css('.screen .seat .default'));
@@ -120,6 +119,7 @@ async function input(): Promise<void> {
     await driver.findElement(by.name('mail_addr')).clear();
     await driver.findElement(by.name('mail_confirm')).clear();
     await driver.findElement(by.name('tel_num')).clear();
+    await driver.findElement(by.css('label[for=agree]')).click();
     console.log('入力削除');
     await driver.findElement(by.name('last_name_hira')).sendKeys('もーしょん');
     await driver.findElement(by.name('first_name_hira')).sendKeys('ぴくちゃー');
@@ -146,6 +146,9 @@ async function confirm(): Promise<void> {
         .findElement(by.css('.purchase-confirm .button-area .next-button button'))
         .click();
     console.log('次へクリック');
+    await driver.findElement(by.css('.purchase-complete'));
+    console.log('購入完了');
+    await driver.sleep(5000);
 }
 
 
