@@ -32,7 +32,7 @@ class OverlapController extends PurchaseController_1.default {
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             delete this.req.session['purchase'];
-            this.res.redirect(this.router.build('purchase', {}) + this.req.body.performance_id);
+            this.res.redirect(this.router.build('purchase', {}) + '?id=' + this.req.body.performance_id);
         }, (err) => {
             return this.next(new Error(err.message));
         });
