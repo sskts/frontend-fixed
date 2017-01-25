@@ -5,6 +5,7 @@ import PerformanceController from '..//controllers/Performance/PerformanceContro
 
 import PurchaseController from '../controllers/Purchase/PurchaseController';
 import TransactionController from '../controllers/Purchase/TransactionController';
+import OverlapController from '../controllers/Purchase/OverlapController';
 import SeatController from '../controllers/Purchase/SeatController';
 import InputController from '../controllers/Purchase/InputController';
 import TicketController from '../controllers/Purchase/TicketController';
@@ -50,9 +51,22 @@ export default (app: express.Application | any) => {
         new PerformanceController(req, res, next).getPerformances(req.body.day);
     });
 
-    //購入
+    //購入(取引開始)
     app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new TransactionController(req, res, next).start();
+    });
+
+    //仮予約重複
+    app.get('/purchase/overlap/:id', 'purchase.overlap', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new OverlapController(req, res, next).index();
+    });
+
+    app.post('/purchase/overlap/new', 'purchase.overlap.new', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new OverlapController(req, res, next).newReserve();
+    });
+
+    app.post('/purchase/overlap/prev', 'purchase.overlap.prev', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        new OverlapController(req, res, next).prevReserve();
     });
 
     //座席選択

@@ -14,8 +14,7 @@ export default class PerformanceController extends BaseController {
     public index(): void {
         //TODO Session削除
         if (!this.req.session) return;
-        delete this.req.session['purchase'];
-        
+                
         this.res.render('performance');
     }
 

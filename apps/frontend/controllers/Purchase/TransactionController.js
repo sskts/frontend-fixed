@@ -8,14 +8,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const PurchaseController_1 = require("./PurchaseController");
-const config = require("config");
 const MP = require("../../../../libs/MP");
+const moment = require("moment");
 class TransactionController extends PurchaseController_1.default {
     start() {
         if (!this.req.query || !this.req.query['id'])
-            return this.next(new Error('不適切なアクセスです'));
-        if (this.purchaseModel.transactionMP && this.purchaseModel.owner) {
-            console.log('取引中');
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+        if (this.purchaseModel.transactionMP && this.purchaseModel.owner && this.purchaseModel.reserveSeats) {
+            if (!this.router)
+                return this.next(new Error('router is undefined'));
+            this.res.redirect(this.router.build('purchase.overlap', {
+                id: this.req.query['id']
+            }));
         }
         this.transactionStart().then(() => {
             if (!this.router)
@@ -32,10 +36,13 @@ class TransactionController extends PurchaseController_1.default {
     }
     transactionStart() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.purchaseModel.administrator = yield MP.getAdministrator.call();
+            this.logger.debug('MP運営者', this.purchaseModel.administrator);
             this.purchaseModel.owner = yield MP.ownerAnonymousCreate.call();
             this.logger.debug('MP一般所有者作成', this.purchaseModel.owner);
             this.purchaseModel.transactionMP = yield MP.transactionStart.call({
-                owners: [config.get('admin_id'), this.purchaseModel.owner._id]
+                expired_at: moment().add('minutes', 30).unix(),
+                owners: [this.purchaseModel.administrator._id, this.purchaseModel.owner._id]
             });
             this.logger.debug('MP取引開始', this.purchaseModel.transactionMP);
         });

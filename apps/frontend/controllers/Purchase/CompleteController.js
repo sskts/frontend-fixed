@@ -6,7 +6,7 @@ class ConfirmController extends PurchaseController_1.default {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         if (!this.req.session['complete'])
-            return this.next(new Error('無効なアクセスです'));
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         this.res.locals['input'] = this.req.session['complete'].input;
         this.res.locals['performance'] = this.req.session['complete'].performance;
         this.res.locals['reserveSeats'] = this.req.session['complete'].reserveSeats;

@@ -15,8 +15,8 @@ const GMO = require("@motionpicture/gmo-service");
 const MP = require("../../../../libs/MP");
 class InputController extends PurchaseController_1.default {
     index() {
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE))
-            return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE))
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         this.res.locals['error'] = null;
         this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['moment'] = require('moment');
@@ -40,6 +40,8 @@ class InputController extends PurchaseController_1.default {
         this.res.render('purchase/input');
     }
     submit() {
+        if (!this.transactionAuth())
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         InputForm_1.default(this.req, this.res, () => {
             if (!this.req.form)
                 return this.next(new Error('form is undefined'));
@@ -105,6 +107,8 @@ class InputController extends PurchaseController_1.default {
                 throw new Error('gmo is undefined');
             if (!this.purchaseModel.owner)
                 throw new Error('owners is undefined');
+            if (!this.purchaseModel.administrator)
+                throw new Error('administrator is undefined');
             if (this.purchaseModel.transactionGMO
                 && this.purchaseModel.authorizationGMO
                 && this.purchaseModel.orderId) {
@@ -125,7 +129,6 @@ class InputController extends PurchaseController_1.default {
                 yield MP.removeGMOAuthorization.call({
                     transaction: this.purchaseModel.transactionMP,
                     addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
-                    orderId: this.purchaseModel.orderId
                 });
                 this.logger.debug('GMOオーソリ削除');
             }
@@ -150,10 +153,11 @@ class InputController extends PurchaseController_1.default {
                 this.logger.debug('GMO決済');
                 this.purchaseModel.authorizationGMO = yield MP.addGMOAuthorization.call({
                     transaction: this.purchaseModel.transactionMP,
-                    owner: this.purchaseModel.owner,
+                    anonymousOwnerId: this.purchaseModel.owner._id,
+                    administratorOwnerId: this.purchaseModel.administrator._id,
                     orderId: this.purchaseModel.orderId,
                     amount: amount,
-                    entryTranResult: this.purchaseModel.transactionGMO
+                    entryTranResult: this.purchaseModel.transactionGMO,
                 });
                 this.logger.debug('MPGMOオーソリ追加', this.purchaseModel.authorizationGMO);
             }

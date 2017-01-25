@@ -16,10 +16,10 @@ const MP = require("../../../../libs/MP");
 const GMO = require("@motionpicture/gmo-service");
 class SeatSelectController extends PurchaseController_1.default {
     index() {
-        if (!this.req.query || !this.req.params['id'])
-            return this.next(new Error('不適切なアクセスです'));
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.SEAT_STATE))
-            return this.next(new Error('不適切なアクセスです'));
+        if (!this.req.params || !this.req.params['id'])
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         MP.getPerformance.call({
             id: this.req.params['id']
         }).then((result) => {
@@ -40,6 +40,8 @@ class SeatSelectController extends PurchaseController_1.default {
         });
     }
     select() {
+        if (!this.transactionAuth())
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         SeatForm_1.default(this.req, this.res, () => {
             this.reserve().then(() => {
                 if (!this.router)
@@ -61,6 +63,8 @@ class SeatSelectController extends PurchaseController_1.default {
                 return this.next(new Error('transactionMP is undefined'));
             if (!this.purchaseModel.owner)
                 return this.next(new Error('owners is undefined'));
+            if (!this.purchaseModel.administrator)
+                return this.next(new Error('administrator is undefined'));
             let performance = this.purchaseModel.performance;
             if (this.purchaseModel.reserveSeats) {
                 let reserveSeats = this.purchaseModel.reserveSeats;
@@ -75,14 +79,13 @@ class SeatSelectController extends PurchaseController_1.default {
                 this.logger.debug('COA仮予約削除');
                 yield MP.removeCOAAuthorization.call({
                     transaction: this.purchaseModel.transactionMP,
-                    ownerId4administrator: config.get('admin_id'),
+                    ownerId4administrator: this.purchaseModel.administrator._id,
                     reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
                     addCOAAuthorizationResult: this.purchaseModel.performance
                 });
                 this.logger.debug('COAオーソリ削除');
                 if (this.purchaseModel.transactionGMO
-                    && this.purchaseModel.authorizationGMO
-                    && this.purchaseModel.orderId) {
+                    && this.purchaseModel.authorizationGMO) {
                     yield GMO.CreditService.alterTranInterface.call({
                         shop_id: config.get('gmo_shop_id'),
                         shop_pass: config.get('gmo_shop_password'),
@@ -94,10 +97,8 @@ class SeatSelectController extends PurchaseController_1.default {
                     yield MP.removeGMOAuthorization.call({
                         transaction: this.purchaseModel.transactionMP,
                         addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
-                        orderId: this.purchaseModel.orderId
                     });
                     this.logger.debug('GMOオーソリ削除');
-                    this.purchaseModel.reserveTickets = null;
                 }
             }
             let seats = JSON.parse(this.req.body.seats);
@@ -111,11 +112,35 @@ class SeatSelectController extends PurchaseController_1.default {
                 list_seat: seats,
             });
             this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
+            let salesTicketResult = yield COA.salesTicketInterface.call({
+                theater_code: "001",
+                date_jouei: "20170120",
+                title_code: "8513",
+                title_branch_num: "0",
+                time_begin: "1010",
+            });
+            this.purchaseModel.reserveTickets = this.purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
+                return {
+                    section: tmpReserve.seat_section,
+                    seat_code: tmpReserve.seat_num,
+                    ticket_code: salesTicketResult.list_ticket[0].ticket_code,
+                    ticket_name_ja: salesTicketResult.list_ticket[0].ticket_name,
+                    ticket_name_en: salesTicketResult.list_ticket[0].ticket_name_eng,
+                    ticket_name_kana: salesTicketResult.list_ticket[0].ticket_name_kana,
+                    std_price: salesTicketResult.list_ticket[0].std_price,
+                    add_price: salesTicketResult.list_ticket[0].add_price,
+                    dis_price: 0,
+                    sale_price: salesTicketResult.list_ticket[0].sale_price,
+                };
+            });
             let COAAuthorizationResult = yield MP.addCOAAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
-                ownerId4administrator: config.get('admin_id'),
+                administratorOwnerId: this.purchaseModel.administrator._id,
+                anonymousOwnerId: this.purchaseModel.owner._id,
                 reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
-                performance: performance
+                salesTicketResults: this.purchaseModel.reserveTickets,
+                performance: performance,
+                totalPrice: this.purchaseModel.getReserveAmount()
             });
             this.logger.debug('COAオーソリ追加', COAAuthorizationResult);
             this.purchaseModel.authorizationCOA = COAAuthorizationResult;

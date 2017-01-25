@@ -16,6 +16,8 @@ class PurchaseModel {
         this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
         this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
         this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
+        this.administrator = (purchaseSession.administrator) ? purchaseSession.administrator : null;
+        this.expired = (purchaseSession.expired) ? purchaseSession.expired : null;
     }
     formatToSession() {
         return {
@@ -31,9 +33,11 @@ class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
+            administrator: (this.administrator) ? this.administrator : null,
+            expired: (this.expired) ? this.expired : null,
         };
     }
-    checkAccess(value) {
+    accessAuth(value) {
         let result = false;
         if (value === PurchaseModel.SEAT_STATE) {
             if (this.transactionMP && this.owner)
@@ -57,18 +61,12 @@ class PurchaseModel {
         return result;
     }
     getReserveAmount() {
-        let reserveSeats = this.reserveSeats;
         let reserveTickets = this.reserveTickets;
         let amount = 0;
-        if (!reserveSeats || !reserveTickets)
+        if (!reserveTickets)
             return amount;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            for (let ticket of reserveTickets.tickets) {
-                if (ticket.seat_num === seat.seat_num) {
-                    amount += ticket.info.sale_price;
-                    break;
-                }
-            }
+        for (let ticket of reserveTickets) {
+            amount += ticket.sale_price;
         }
         return amount;
     }
@@ -76,15 +74,15 @@ class PurchaseModel {
         let results = [];
         if (!this.reserveTickets)
             return [];
-        for (let ticket of this.reserveTickets.tickets) {
+        for (let ticket of this.reserveTickets) {
             results.push({
-                ticket_code: ticket.info.ticket_code,
-                std_price: ticket.info.std_price,
-                add_price: ticket.info.add_price,
+                ticket_code: ticket.ticket_code,
+                std_price: ticket.std_price,
+                add_price: ticket.add_price,
                 dis_price: 0,
-                sale_price: ticket.info.sale_price,
-                ticket_count: ticket.info.limit_count,
-                seat_num: ticket.seat_num,
+                sale_price: ticket.sale_price,
+                ticket_count: 1,
+                seat_num: ticket.seat_code,
             });
         }
         return results;

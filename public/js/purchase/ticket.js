@@ -13,9 +13,23 @@ $(function () {
         target.find('.button')
             .removeClass('button')
             .addClass('ghost-button');
-        target.find('dd').attr('data-ticket', ticket)
-        var ticketData = JSON.parse(ticket);
-        target.find('dd a').text(ticketData.ticket_name + ' ￥' + ticketData.sale_price);
+        ticket = JSON.parse(ticket);
+        var ticketBefore = JSON.parse(target.find('dt').attr('data-ticket'));
+        var ticketAfter = {
+            section: ticketBefore.section,
+            seat_code: ticketBefore.seat_code,
+            ticket_code: ticket.ticket_code,
+            ticket_name_ja: ticket.ticket_name,
+            ticket_name_en: ticket.ticket_name_eng,
+            ticket_name_kana: ticket.ticket_name_kana,
+            std_price: ticket.std_price,
+            add_price: ticket.add_price,
+            dis_price: 0,
+            sale_price: ticket.sale_price,
+        };
+        
+        target.find('dd a').text(ticketAfter.ticket_name_ja + ' ￥' + ticketAfter.sale_price);
+        target.find('dt').attr('data-ticket', JSON.stringify(ticketAfter));
         modal.close();
         totalPrice();
     });
@@ -25,18 +39,12 @@ $(function () {
      */
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
-        var result = {
-            tickets: []
-        };
+        var result = [];
         var flag = true;
         $('.seats li').each(function (index, elem) {
-            var code = $(elem).find('dt').text();
-            var ticket = ($(elem).find('dd').attr('data-ticket')) ? JSON.parse($(elem).find('dd').attr('data-ticket')) : null;
-            result.tickets.push({
-                seat_num: code,
-                info: ticket
-            });
-            if (!code || !ticket) {
+            var ticket = ($(elem).find('dt').attr('data-ticket')) ? JSON.parse($(elem).find('dt').attr('data-ticket')) : null;
+            result.push(ticket);
+            if (!ticket.ticket_code) {
                 flag = false;
             }
         });

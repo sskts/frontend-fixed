@@ -4,6 +4,7 @@ const BaseController_1 = require("../controllers/BaseController");
 const PerformanceController_1 = require("..//controllers/Performance/PerformanceController");
 const PurchaseController_1 = require("../controllers/Purchase/PurchaseController");
 const TransactionController_1 = require("../controllers/Purchase/TransactionController");
+const OverlapController_1 = require("../controllers/Purchase/OverlapController");
 const SeatController_1 = require("../controllers/Purchase/SeatController");
 const InputController_1 = require("../controllers/Purchase/InputController");
 const TicketController_1 = require("../controllers/Purchase/TicketController");
@@ -32,6 +33,15 @@ exports.default = (app) => {
     });
     app.get('/purchase', 'purchase', (req, res, next) => {
         new TransactionController_1.default(req, res, next).start();
+    });
+    app.get('/purchase/overlap/:id', 'purchase.overlap', (req, res, next) => {
+        new OverlapController_1.default(req, res, next).index();
+    });
+    app.post('/purchase/overlap/new', 'purchase.overlap.new', (req, res, next) => {
+        new OverlapController_1.default(req, res, next).newReserve();
+    });
+    app.post('/purchase/overlap/prev', 'purchase.overlap.prev', (req, res, next) => {
+        new OverlapController_1.default(req, res, next).prevReserve();
     });
     app.get('/purchase/seat/:id', 'purchase.seat', (req, res, next) => {
         new SeatController_1.default(req, res, next).index();

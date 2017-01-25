@@ -1,5 +1,5 @@
 import MvtkController from './MvtkController';
-
+import PurchaseController from '../PurchaseController';
 
 export default class MvtkAuthController extends MvtkController {
 
@@ -18,10 +18,11 @@ export default class MvtkAuthController extends MvtkController {
 
             this.res.render('purchase/mvtk/auth');
         } else {
-            return this.next(new Error('無効なアクセスです'));
+            return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         }
         
     }
+    
 
     /**
      * 適用

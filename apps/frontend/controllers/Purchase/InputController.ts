@@ -11,7 +11,7 @@ export default class InputController extends PurchaseController {
      * 購入者情報入力
      */
     public index(): void {
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.INPUT_STATE)) return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
 
 
 
@@ -46,7 +46,7 @@ export default class InputController extends PurchaseController {
      * 購入者情報入力完了
      */
     public submit(): void {
-
+        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         //バリデーション
         InputForm(this.req, this.res, () => {
 
@@ -121,6 +121,7 @@ export default class InputController extends PurchaseController {
         if (!this.purchaseModel.transactionMP) throw new Error('transactionMP is undefined');
         if (!this.purchaseModel.gmo) throw new Error('gmo is undefined');
         if (!this.purchaseModel.owner) throw new Error('owners is undefined');
+        if (!this.purchaseModel.administrator) throw new Error('administrator is undefined');
 
         if (this.purchaseModel.transactionGMO
             && this.purchaseModel.authorizationGMO
@@ -145,7 +146,6 @@ export default class InputController extends PurchaseController {
             await MP.removeGMOAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
                 addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
-                orderId: this.purchaseModel.orderId
             });
             this.logger.debug('GMOオーソリ削除');
 
@@ -177,10 +177,11 @@ export default class InputController extends PurchaseController {
             // GMOオーソリ追加
             this.purchaseModel.authorizationGMO = await MP.addGMOAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
-                owner: this.purchaseModel.owner,
+                anonymousOwnerId: this.purchaseModel.owner._id,
+                administratorOwnerId: this.purchaseModel.administrator._id,
                 orderId: this.purchaseModel.orderId,
                 amount: amount,
-                entryTranResult: this.purchaseModel.transactionGMO
+                entryTranResult: this.purchaseModel.transactionGMO,
             });
             this.logger.debug('MPGMOオーソリ追加', this.purchaseModel.authorizationGMO);
 

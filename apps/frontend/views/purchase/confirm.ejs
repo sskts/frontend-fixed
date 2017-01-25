@@ -55,12 +55,12 @@
                         <%
                         let ticketObj = {};
                         let tickets = [];
-                        for (let ticket of reserveTickets.tickets) {
-                            if (ticketObj[ticket.info.ticket_code]) {
-                                ticketObj[ticket.info.ticket_code].length++;
+                        for (let ticket of reserveTickets) {
+                            if (ticketObj[ticket.ticket_code]) {
+                                ticketObj[ticket.ticket_code].length++;
                             }　else {
-                                ticketObj[ticket.info.ticket_code] = {
-                                    name: ticket.info.ticket_name,
+                                ticketObj[ticket.ticket_code] = {
+                                    name: ticket.ticket_name_ja,
                                     length: 1
                                 }
                             }
@@ -134,7 +134,7 @@
             <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.confirm.next') %></button></div>
             <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.input') %>"><%- __('purchase.confirm.prev') %></a></div>
         </div>
-        
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>
 

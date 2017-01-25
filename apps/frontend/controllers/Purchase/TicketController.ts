@@ -9,7 +9,7 @@ export default class TicketTypeSelectController extends PurchaseController {
      */
     public index(): void {
         console.log('券種選択', PurchaseSession.PurchaseModel.TICKET_STATE,this.purchaseModel)
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         if (!this.purchaseModel.performance) return this.next(new Error('purchaseModel.performance is undefined'));
 
         //コアAPI券種取得
@@ -32,7 +32,7 @@ export default class TicketTypeSelectController extends PurchaseController {
             this.res.locals['tickets'] = result.list_ticket;
             this.res.locals['performance'] = performance;
             this.res.locals['reserveSeats'] = this.purchaseModel.reserveSeats;
-            this.res.locals['reserveTickets'] = (this.purchaseModel.reserveTickets) ? this.purchaseModel.reserveTickets : null;
+            this.res.locals['reserveTickets'] = this.purchaseModel.reserveTickets;
             this.res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
             
             //セッション更新
@@ -49,6 +49,7 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種決定
      */
     public select(): void {
+        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         //バリデーション
         TicketForm(this.req, this.res, () => {
             if (!this.router) return this.next(new Error('router is undefined'));

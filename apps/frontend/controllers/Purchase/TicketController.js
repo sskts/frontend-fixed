@@ -6,8 +6,8 @@ const COA = require("@motionpicture/coa-service");
 class TicketTypeSelectController extends PurchaseController_1.default {
     index() {
         console.log('券種選択', PurchaseSession.PurchaseModel.TICKET_STATE, this.purchaseModel);
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.TICKET_STATE))
-            return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         if (!this.purchaseModel.performance)
             return this.next(new Error('purchaseModel.performance is undefined'));
         let performance = this.purchaseModel.performance;
@@ -22,7 +22,7 @@ class TicketTypeSelectController extends PurchaseController_1.default {
             this.res.locals['tickets'] = result.list_ticket;
             this.res.locals['performance'] = performance;
             this.res.locals['reserveSeats'] = this.purchaseModel.reserveSeats;
-            this.res.locals['reserveTickets'] = (this.purchaseModel.reserveTickets) ? this.purchaseModel.reserveTickets : null;
+            this.res.locals['reserveTickets'] = this.purchaseModel.reserveTickets;
             this.res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
@@ -33,6 +33,8 @@ class TicketTypeSelectController extends PurchaseController_1.default {
         });
     }
     select() {
+        if (!this.transactionAuth())
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         TicketForm_1.default(this.req, this.res, () => {
             if (!this.router)
                 return this.next(new Error('router is undefined'));

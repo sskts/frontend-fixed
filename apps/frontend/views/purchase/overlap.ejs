@@ -1,0 +1,20 @@
+<% layout('../layouts/layout') -%>
+
+<div class="purchase-overlap">
+    <h1 class="page-ttl"><%- __('purchase.overlap.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.overlap.read') %></p>
+
+    
+    <form method="post" action="<%= url('purchase.overlap.new') %>">
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.overlap.next') %></button></div>
+        </div>
+        <input type="hidden" name="performance_id" value="<%= performance._id %>">
+    </form>
+
+    <form method="post" action="<%= url('purchase.overlap.prev') %>">
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.overlap.prev') %></button></div>
+        </div>
+    </form>
+</div>

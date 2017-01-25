@@ -11,6 +11,21 @@ class PurchaseController extends BaseController_1.default {
         if (!this.req.session)
             return this.next(new Error('session is undefined'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
+        if (this.purchaseModel.transactionMP) {
+            this.res.locals['transactionId'] = this.purchaseModel.transactionMP._id;
+        }
+        else {
+            this.res.locals['transactionId'] = null;
+        }
+    }
+    transactionAuth() {
+        if (!this.purchaseModel.transactionMP)
+            return false;
+        if (!this.req.body.transaction_id)
+            return false;
+        if (this.purchaseModel.transactionMP._id !== this.req.body.transaction_id)
+            return false;
+        return true;
     }
     getScreenStateReserve() {
         COA.getStateReserveSeatInterface.call(this.req.body).then((result) => {
@@ -26,5 +41,6 @@ class PurchaseController extends BaseController_1.default {
         });
     }
 }
+PurchaseController.ERROR_MESSAGE_ACCESS = '不適切なアクセスです';
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PurchaseController;

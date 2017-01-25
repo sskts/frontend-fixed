@@ -1,5 +1,6 @@
 "use strict";
 const MvtkController_1 = require("./MvtkController");
+const PurchaseController_1 = require("../PurchaseController");
 class MvtkAuthController extends MvtkController_1.default {
     index() {
         if (!this.req.session)
@@ -12,7 +13,7 @@ class MvtkAuthController extends MvtkController_1.default {
             this.res.render('purchase/mvtk/auth');
         }
         else {
-            return this.next(new Error('無効なアクセスです'));
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         }
     }
     submit() {

@@ -79,6 +79,12 @@
 				"next": "購入完了",
 				"prev": "戻る"
 			}
+		},
+		"overlap": {
+			"page_ttl": "purchase.overlap.page_ttl",
+			"read": "purchase.overlap.read",
+			"next": "purchase.overlap.next",
+			"prev": "purchase.overlap.prev"
 		}
 	},
 	"inquiry": {

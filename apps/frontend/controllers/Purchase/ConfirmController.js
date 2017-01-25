@@ -13,8 +13,8 @@ const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 class ConfirmController extends PurchaseController_1.default {
     index() {
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE))
-            return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
         this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['performance'] = this.purchaseModel.performance;
@@ -81,6 +81,8 @@ class ConfirmController extends PurchaseController_1.default {
         });
     }
     purchase() {
+        if (!this.transactionAuth())
+            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         this.updateReserve().then(() => {
             if (!this.req.session)
                 throw new Error('session is undefined');

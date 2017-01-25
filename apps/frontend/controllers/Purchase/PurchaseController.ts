@@ -6,7 +6,9 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
  * TODO any type
  */
 export default class PurchaseController extends BaseController {
-    /** 購入セッションmodel */
+    /** エラーメッセージ 認証 */
+    public static ERROR_MESSAGE_ACCESS = '不適切なアクセスです';
+    /** 購入セッションモデル */
     protected purchaseModel: PurchaseSession.PurchaseModel;
 
     constructor(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -20,6 +22,24 @@ export default class PurchaseController extends BaseController {
     private init(): void {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
+        
+        //取引id設定
+        if (this.purchaseModel.transactionMP) {
+            this.res.locals['transactionId'] = this.purchaseModel.transactionMP._id;
+        } else {
+            this.res.locals['transactionId'] = null;
+        }
+
+    }
+
+    /**
+     * 取引認証
+     */
+    protected transactionAuth(): boolean {
+        if (!this.purchaseModel.transactionMP) return false;
+        if (!this.req.body.transaction_id) return false;
+        if (this.purchaseModel.transactionMP._id !== this.req.body.transaction_id) return false;
+        return true;
     }
 
     /**

@@ -9,7 +9,7 @@ export default class ConfirmController extends PurchaseController {
      */
     public index(): void {
 
-        if (!this.purchaseModel.checkAccess(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return this.next(new Error('無効なアクセスです'));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
 
 
         //購入者内容確認表示
@@ -102,6 +102,7 @@ export default class ConfirmController extends PurchaseController {
      * 購入確定
      */
     public purchase() {
+        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         this.updateReserve().then(() => {
             //購入情報をセッションへ
             if (!this.req.session) throw new Error('session is undefined');

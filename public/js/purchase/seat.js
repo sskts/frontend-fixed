@@ -90,19 +90,22 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         // 座席コードリストを取得
-        var seats = $('.screen .seat a.active').map(function () {
-            return {
+        var seats = [];
+        $('.screen .seat a.active').each(function(index, elem) {
+            seats.push({
                 seat_num: $(this).attr('data-seat-code'),
                 seat_section: '0'
-            }
-        }).get();
+            });
+        });
+        
 
         if (seats.length < 1) {
             alert('未選択');
         } else {
-            // location.hrefにpostする
+            var reserveTickets = [];
             var form = $('form');
             $('input[name=seats]').val(JSON.stringify(seats));
+            
             form.submit();
         }
     });

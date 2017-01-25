@@ -30,6 +30,26 @@ var getPerformance;
     }
     getPerformance.call = call;
 })(getPerformance = exports.getPerformance || (exports.getPerformance = {}));
+var getAdministrator;
+(function (getAdministrator) {
+    function call() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.get({
+                url: `${endPoint}/owners/administrator`,
+                body: {},
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            let administrator = response.body.data;
+            console.log('administrator:', administrator);
+            return administrator;
+        });
+    }
+    getAdministrator.call = call;
+})(getAdministrator = exports.getAdministrator || (exports.getAdministrator = {}));
 var ownerAnonymousCreate;
 (function (ownerAnonymousCreate) {
     function call() {
@@ -57,6 +77,7 @@ var transactionStart;
             let response = yield request.post({
                 url: `${endPoint}/transactions`,
                 body: {
+                    expired_at: args.expired_at,
                     owners: args.owners
                 },
                 json: true,
@@ -79,16 +100,25 @@ var addCOAAuthorization;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
                 body: {
-                    owner_id: args.ownerId4administrator,
+                    owner_id_from: args.administratorOwnerId,
+                    owner_id_to: args.anonymousOwnerId,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-                    seats: args.reserveSeatsTemporarilyResult.list_tmp_reserve.map((tmpReserve) => {
+                    seats: args.salesTicketResults.map((tmpReserve) => {
                         return {
                             performance: args.performance._id,
-                            section: tmpReserve.seat_section,
-                            seat_code: tmpReserve.seat_num,
-                            ticket_code: '',
+                            section: tmpReserve.section,
+                            seat_code: tmpReserve.seat_code,
+                            ticket_code: tmpReserve.ticket_code,
+                            ticket_name_ja: tmpReserve.ticket_name_ja,
+                            ticket_name_en: tmpReserve.ticket_name_en,
+                            ticket_name_kana: tmpReserve.ticket_name_kana,
+                            std_price: tmpReserve.std_price,
+                            add_price: tmpReserve.add_price,
+                            dis_price: tmpReserve.dis_price,
+                            sale_price: tmpReserve.sale_price,
                         };
-                    })
+                    }),
+                    price: args.totalPrice,
                 },
                 json: true,
                 simple: false,
@@ -129,7 +159,8 @@ var addGMOAuthorization;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
                 body: {
-                    owner_id: args.owner._id,
+                    owner_id_from: args.anonymousOwnerId,
+                    owner_id_to: args.administratorOwnerId,
                     gmo_shop_id: config.get('gmo_shop_id'),
                     gmo_shop_password: config.get('gmo_shop_password'),
                     gmo_order_id: args.orderId,
@@ -157,9 +188,7 @@ var removeGMOAuthorization;
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
-                body: {
-                    gmo_order_id: args.orderId,
-                },
+                body: {},
                 json: true,
                 simple: false,
                 resolveWithFullResponse: true,

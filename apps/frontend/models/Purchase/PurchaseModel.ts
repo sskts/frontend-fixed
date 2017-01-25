@@ -7,32 +7,27 @@ export interface Args {
     id: string
 }
 
-export interface ReserveTickets {
-    tickets: Array<{
-        seat_num: string,
-        info: {
-            /** チケットコード */
-            ticket_code: string,
-            /** チケット名 */
-            ticket_name: string,
-            /** チケット名（カナ） */
-            ticket_name_kana: string,
-            /** チケット名（英） */
-            ticket_name_eng: string,
-            /** 標準単価 */
-            std_price: number,
-            /** 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金) */
-            add_price: number,
-            /** 販売単価(標準単価＋加算単価) */
-            sale_price: number,
-            /** 人数制限(制限が無い場合は１) */
-            limit_count: number,
-            /** 制限単位(１：ｎ人単位、２：ｎ人以上) */
-            limit_unit: string,
-            /** チケット備考(注意事項等) */
-            ticket_note: string,
-        }
-    }>
+export interface ReserveTicket {
+    /** 座席セクション */
+    section: string,
+    /** 座席番号 */
+    seat_code: string,
+    /** チケットコード */
+    ticket_code: string,
+    /** チケット名 */
+    ticket_name_ja: string,
+    /** チケット名（英） */
+    ticket_name_en: string,
+    /** チケット名（カナ） */
+    ticket_name_kana: string,
+    /** 標準単価 */
+    std_price: number,
+    /** 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金) */
+    add_price: number,
+    /** TODO */
+    dis_price: number,
+    /** 販売単価(標準単価＋加算単価) */
+    sale_price: number
 }
 
 export interface Input {
@@ -70,7 +65,7 @@ export class PurchaseModel {
     /**COA仮予約 */
     public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
     /**予約チケット */
-    public reserveTickets: ReserveTickets | null;
+    public reserveTickets: Array<ReserveTicket> | null;
     /**入力情報 */
     public input: Input | null;
     /**GMO TOKEN情報 */
@@ -89,6 +84,10 @@ export class PurchaseModel {
     public authorizationGMO: MP.addGMOAuthorization.Result | null;
     /**オーダーID */
     public orderId: string | null;
+    /**運営者 */
+    public administrator: MP.getAdministrator.Result | null;
+    /**有効期限 */
+    public expired: number | null; 
 
     constructor(purchaseSession: any) {
         if (!purchaseSession) {
@@ -107,7 +106,8 @@ export class PurchaseModel {
         this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
         this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
         this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
-        
+        this.administrator = (purchaseSession.administrator) ? purchaseSession.administrator : null;
+        this.expired = (purchaseSession.expired) ? purchaseSession.expired : null;
 
 
     }
@@ -118,7 +118,7 @@ export class PurchaseModel {
     public formatToSession(): {
         performance: MP.performance | null,
         reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null,
-        reserveTickets: ReserveTickets | null,
+        reserveTickets: Array<ReserveTicket> | null,
         input: Input | null,
         gmo: GMO | null,
         updateReserve: COA.updateReserveInterface.Result | null,
@@ -128,6 +128,8 @@ export class PurchaseModel {
         authorizationCOA: MP.addCOAAuthorization.Result | null,
         authorizationGMO: MP.addGMOAuthorization.Result | null,
         orderId: string | null,
+        administrator: MP.getAdministrator.Result | null,
+        expired: number | null,
     } {
 
         return {
@@ -143,6 +145,8 @@ export class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
+            administrator: (this.administrator) ? this.administrator : null,
+            expired: (this.expired) ? this.expired : null,
         };
     }
 
@@ -150,7 +154,7 @@ export class PurchaseModel {
     /**
      * ステータス確認
      */
-    public checkAccess(value: number): boolean {
+    public accessAuth(value: number): boolean {
         let result: boolean = false;
         if (value === PurchaseModel.SEAT_STATE) {
             if (this.transactionMP && this.owner) result = true;
@@ -170,17 +174,11 @@ export class PurchaseModel {
      * 合計金額取得
      */
     public getReserveAmount(): number {
-        let reserveSeats = this.reserveSeats;
         let reserveTickets = this.reserveTickets;
         let amount = 0;
-        if (!reserveSeats || !reserveTickets) return amount;
-        for (let seat of reserveSeats.list_tmp_reserve) {
-            for (let ticket of reserveTickets.tickets) {
-                if (ticket.seat_num === seat.seat_num) {
-                    amount += ticket.info.sale_price;
-                    break;
-                }
-            }
+        if (!reserveTickets) return amount;
+        for (let ticket of reserveTickets) {
+            amount += ticket.sale_price;
         }
         return amount;
     }
@@ -189,7 +187,7 @@ export class PurchaseModel {
      * チケットリスト返却
      */
     public getTicketList(): Array<{
-        ticket_code: string, /** チケットコード */
+        ticket_code: string, 
         std_price: number,  /** 標準単価 */
         add_price: number, /** 加算単価 */
         dis_price: number, /** 割引額 */
@@ -199,15 +197,15 @@ export class PurchaseModel {
     }> {
         let results = [];
         if (!this.reserveTickets) return [];
-        for (let ticket of this.reserveTickets.tickets) {
+        for (let ticket of this.reserveTickets) {
             results.push({
-                ticket_code: ticket.info.ticket_code, /** チケットコード */
-                std_price: ticket.info.std_price,  /** 標準単価 */
-                add_price: ticket.info.add_price, /** 加算単価 */
+                ticket_code: ticket.ticket_code, /** チケットコード */
+                std_price: ticket.std_price,  /** 標準単価 */
+                add_price: ticket.add_price, /** 加算単価 */
                 dis_price: 0, /** 割引額 */
-                sale_price: ticket.info.sale_price, /** 金額 */
-                ticket_count: ticket.info.limit_count, /** 枚数 */
-                seat_num: ticket.seat_num, /** 座席番号 */
+                sale_price: ticket.sale_price, /** 金額 */
+                ticket_count: 1, /** 枚数 */
+                seat_num: ticket.seat_code, /** 座席番号 */
             });
         }
         return results;

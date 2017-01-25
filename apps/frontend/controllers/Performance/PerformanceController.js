@@ -6,7 +6,6 @@ class PerformanceController extends BaseController_1.default {
     index() {
         if (!this.req.session)
             return;
-        delete this.req.session['purchase'];
         this.res.render('performance');
     }
     getPerformances(day) {
