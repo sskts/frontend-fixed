@@ -19,7 +19,7 @@ export default class ConfirmController extends PurchaseController {
         this.res.locals['price'] = this.req.session['complete'].price;
         this.res.locals['updateReserve'] = this.req.session['complete'].updateReserve;
 
-        this.res.render('purchase/complete');
+        return this.res.render('purchase/complete');
 
     }
 

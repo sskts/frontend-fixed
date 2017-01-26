@@ -1,5 +1,6 @@
 var screenSeatStatusesMap;
 $(function () {
+    var modal = new SASAKI.Modal();
     getScreenStateReserve(function (result) {
         var screen = $('.screen');
         //席状態変更
@@ -35,6 +36,12 @@ $(function () {
 
         screen.show();
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
+        screenSeatStatusesMap.setScaleUpCallback(function(){
+            $('.zoom-btn').show();
+        });
+        screenSeatStatusesMap.setScaleDownCallback(function(){
+            $('.zoom-btn').hide();
+        });
         
     });
 
@@ -45,19 +52,6 @@ $(function () {
         event.preventDefault();
         if (screenSeatStatusesMap.isZoom()) {
             screenSeatStatusesMap.scaleDown();
-        } else {
-            var scroll = screenSeatStatusesMap.screen.find('.screen-scroll');
-            var pos = {
-                x: screenSeatStatusesMap.screen.width() / 2,
-                y: screenSeatStatusesMap.screen.height() / 2
-            };                    
-            var scrollPos = {
-                x: pos.x / screenSeatStatusesMap.scale - screenSeatStatusesMap.screen.width() / 2,
-                y: pos.y/ screenSeatStatusesMap.scale - screenSeatStatusesMap.screen.height() / 2,
-            }
-            screenSeatStatusesMap.scaleUp();
-            scroll.scrollLeft(scrollPos.x);
-            scroll.scrollTop(scrollPos.y);
         }
     });
 
@@ -76,7 +70,7 @@ $(function () {
         // 座席数上限チェック
         if (!$(this).hasClass('active')) {
             if ($('.screen .seat a.active').length > limit - 1) {
-                alert('上限');
+                modal.open('seat_upper_limit');
                 return;
             }
         }
@@ -100,13 +94,15 @@ $(function () {
         
 
         if (seats.length < 1) {
-            alert('未選択');
+            modal.open('seat_not_select');
         } else {
             var reserveTickets = [];
             var form = $('form');
             $('input[name=seats]').val(JSON.stringify(seats));
             
             form.submit();
+            loadingStart();
+            $(this).prop('disabled', true);
         }
     });
 });

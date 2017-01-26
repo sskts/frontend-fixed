@@ -18,9 +18,8 @@
                 event.preventDefault();
                 event.stopPropagation();
                 var modalName = $(event.target).attr('data-modal');
-                _this.modal = $('.modal[data-modal=' + modalName + ']');
                 _this.trigger = $(this);
-                _this.open();
+                _this.open(modalName);
             });
             //閉じる
             $(document).on('click', '.modal .modal-close', function (event) {
@@ -39,7 +38,10 @@
                 }
             });
         },
-        open: function () {
+        open: function (_modalName) {
+            var target = $('.modal[data-modal=' + _modalName + ']');
+            if (target.length !== 1) return;
+            this.modal = target;
             this.cover
                 .addClass('active')
                 .removeClass('disabled');

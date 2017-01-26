@@ -12,13 +12,14 @@ const MP = require("../../../../libs/MP");
 const moment = require("moment");
 class TransactionController extends PurchaseController_1.default {
     start() {
-        if (!this.req.query || !this.req.query['id'])
+        if (!this.req.params || !this.req.params['id'])
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         if (this.purchaseModel.transactionMP && this.purchaseModel.owner && this.purchaseModel.reserveSeats) {
             if (!this.router)
                 return this.next(new Error('router is undefined'));
-            this.res.redirect(this.router.build('purchase.overlap', {
-                id: this.req.query['id']
+            console.log('重複確認=====================');
+            return this.res.redirect(this.router.build('purchase.overlap', {
+                id: this.req.params['id']
             }));
         }
         this.transactionStart().then(() => {
@@ -26,9 +27,10 @@ class TransactionController extends PurchaseController_1.default {
                 return this.next(new Error('router is undefined'));
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
+            delete this.req.session['purchase'];
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
-            this.res.redirect(this.router.build('purchase.seat', {
-                id: this.req.query['id']
+            return this.res.redirect(this.router.build('purchase.seat', {
+                id: this.req.params['id']
             }));
         }, (err) => {
             return this.next(new Error(err.message));
@@ -40,8 +42,9 @@ class TransactionController extends PurchaseController_1.default {
             this.logger.debug('MP運営者', this.purchaseModel.administrator);
             this.purchaseModel.owner = yield MP.ownerAnonymousCreate.call();
             this.logger.debug('MP一般所有者作成', this.purchaseModel.owner);
+            this.purchaseModel.expired = moment().add('minutes', 30).unix();
             this.purchaseModel.transactionMP = yield MP.transactionStart.call({
-                expired_at: moment().add('minutes', 30).unix(),
+                expired_at: this.purchaseModel.expired,
                 owners: [this.purchaseModel.administrator._id, this.purchaseModel.owner._id]
             });
             this.logger.debug('MP取引開始', this.purchaseModel.transactionMP);

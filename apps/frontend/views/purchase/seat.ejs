@@ -7,33 +7,35 @@
     <p class="read"><%- __('purchase.seat.read') %></p>
 
     <div>
-        <div class="screen-cover bg-light-gray" 
-        data-limit="5" 
+        <div class="screen-cover" 
+        data-limit="4" 
         data-theater="<%= performance.attributes.theater._id %>" 
         data-day="<%= performance.attributes.day %>" 
         data-coa-title-code="<%= performance.attributes.film.coa_title_code %>"
         data-coa-title-branch-num="<%= performance.attributes.film.coa_title_branch_num %>"
         data-time-start="<%= performance.attributes.time_start %>"
         data-screen-code="<%= performance.attributes.screen.coa_screen_code %>">
-            <div class="screen">
-                <div class="screen-scroll">
-                    <%- partial('../screens/00101') %>
+            <div class="bg-light-gray">
+                <div class="screen">
+                    <div class="zoom-btn"><a class="icon-zoom-out bg-white text-center small-text" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
+                    <div class="screen-scroll">
+                        <%- partial('../screens/00101') %>
+                    </div>
+                    <div class="device-type-pc"></div>
+                    <div class="device-type-sp"></div>
                 </div>
-                <div class="device-type-pc"></div>
-                <div class="device-type-sp"></div>
-            </div>
-            <div class="seat-info bg-light-gray mb-medium">
-                <div class="box bg-white">
-                    <div class="seat"><strong>空席</strong></div>
-                    <div class="seat active"><strong>選択した席</strong></div>
-                    <div class="seat disabled"><strong>選択不可の席</strong></div>
+                <div class="seat-info bg-light-gray mb-medium">
+                    <div class="box bg-white">
+                        <div class="seat"><strong><%- __('purchase.seat.seats.default') %></strong></div>
+                        <div class="seat active"><strong><%- __('purchase.seat.seats.active') %></strong></div>
+                        <div class="seat disabled"><strong><%- __('purchase.seat.seats.disabled') %></strong></div>
+                    </div>
                 </div>
             </div>
-            <div class="zoom-btn ghost-button black-button mb-medium"><a href="javascript:void(0)">zoom</a></div>
         </div>
 
         <div class="film-info">
-            <p class="mb-small">現在、選択されているチケットは下記のとおりです。</p>
+            <p class="mb-small"><%- __('purchase.seat.film_info.read') %></p>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
                 <dd><%= performance.attributes.theater.name[__('lang')] %> / <%= performance.attributes.screen.name[__('lang')] %></dd>
@@ -52,4 +54,8 @@
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
+    <div style="display: none"><a data-modal="seat_alert" href="#"></a></div>
 </div>
+
+<% block('modals', partial('modals/seat_not_select')) -%>
+<% block('modals', partial('modals/seat_upper_limit')) -%>

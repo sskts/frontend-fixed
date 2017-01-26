@@ -14,11 +14,12 @@ $(function () {
             type: 'POST',
             timeout: 100000,
             data: {
-                toBeExpiredAt: $('input[toBeExpiredAt]').val(),
-                isSecurityCodeSet: $('input[isSecurityCodeSet]').val(),
+                toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
+                isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
+                transaction_id: $('input[name=transaction_id]').val()
             },
             beforeSend: function () {
-
+                loadingStart();
             }
         }).done(function (res) {
             console.log(res)
@@ -41,7 +42,7 @@ $(function () {
         }).fail(function (jqxhr, textStatus, error) {
 
         }).always(function () {
-
+            loadingEnd();
         });
     });
 

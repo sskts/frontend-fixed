@@ -453,3 +453,61 @@ export namespace transactionClose {
         console.log('close result:');
     }
 }
+
+
+/**
+ * メール追加
+ */
+export namespace addEmail {
+    export interface Args {
+        transaction: transactionStart.Result,
+        from: string,
+        to: string,
+        subject: string,
+        body: string,
+    }
+    export interface Result {
+        _id: string,
+    }
+    export async function call(args: Args): Promise<Result> {
+        let response = await request.post({
+            url: `${endPoint}/transactions/${args.transaction._id}/emails`,
+            body: {
+                from: args.from,
+                to: args.to,
+                subject: args.subject,
+                body: args.body,
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+        console.log('addEmail result:' + response.body.data);
+        return response.body.data;
+    }
+}
+
+/**
+ * メール削除
+ */
+export namespace removeEmail {
+    export interface Args {
+        transaction: transactionStart.Result,
+        emailId: string,
+    }
+    export interface Result {
+        _id: string,
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.del({
+            url: `${endPoint}/transactions/${args.transaction._id}/emails/${emailId}`,
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 204) throw new Error(response.body.message);
+        console.log('removeEmail result:');
+    }
+}

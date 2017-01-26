@@ -31,10 +31,10 @@ exports.default = (app) => {
     app.post('/performance', 'performance', (req, res, next) => {
         new PerformanceController_1.default(req, res, next).getPerformances(req.body.day);
     });
-    app.get('/purchase', 'purchase', (req, res, next) => {
+    app.get('/purchase/:id/transaction', 'purchase', (req, res, next) => {
         new TransactionController_1.default(req, res, next).start();
     });
-    app.get('/purchase/overlap/:id', 'purchase.overlap', (req, res, next) => {
+    app.get('/purchase/:id/overlap', 'purchase.overlap', (req, res, next) => {
         new OverlapController_1.default(req, res, next).index();
     });
     app.post('/purchase/overlap/new', 'purchase.overlap.new', (req, res, next) => {

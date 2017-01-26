@@ -3,6 +3,7 @@ $(function () {
     settingValidation();
     $(document).on('click', '.prev-button button', function (event) {
         event.preventDefault();
+        
     });
 });
 
@@ -62,6 +63,23 @@ function heightFix() {
         });
         $(elem).find('.heighfix').height(h);
     });
-
-
 }
+
+/**
+ * ローディングスタート
+ */
+function loadingStart() {
+    $('.loading-cover').addClass('active');
+    $('.loading').addClass('active');
+    $('.wrapper').addClass('blur');
+}
+
+/**
+ * ローディングエンド
+ */
+function loadingEnd() {
+    $('.loading-cover').removeClass('active');
+    $('.loading').removeClass('active');
+    $('.wrapper').removeClass('blur');
+}
+

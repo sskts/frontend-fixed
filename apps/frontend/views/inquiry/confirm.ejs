@@ -27,13 +27,13 @@
     
     <ul class="tickets">
         
-        <% for (let i = 0; i < stateReserve.list_reserve_seat.length; i++) { %>
+        <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="border-bottom-dot box bg-white">
                     <div>
-                        <strong class="large-text"><%= stateReserve.list_reserve_seat[i].seat_num %></strong>
-                        <span>[<% //stateReserve.list_ticket[i].ticket_name %>]</span>
+                        <strong class="large-text"><%= stateReserve.list_ticket[i].seat_num %></strong>
+                        <span>[<%= stateReserve.list_ticket[i].ticket_name %>]</span>
                     </div>
                     <!--<div><%- __('common.ticket_code') %> : </div>-->
                 </div>

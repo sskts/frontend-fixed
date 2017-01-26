@@ -1,20 +1,70 @@
 <% layout('../layouts/layout') -%>
-
+<% block('script', '<script src="/js/purchase/overlap.js"></script>') -%>
 <div class="purchase-overlap">
-    <h1 class="page-ttl"><%- __('purchase.overlap.page_ttl') %></h1>
+    <h1 class="page-ttl red-text"><%- __('purchase.overlap.page_ttl') %></h1>
     <p class="read"><%- __('purchase.overlap.read') %></p>
 
+    <div class="form-layout mb-x-large">
+        <h2 class="section-ttl"><%- __('purchase.overlap.prev_ttl') %></h2>
+        <ul class="box bg-light-gray mb-large">
+            <li>
+                <dl>
+                    <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
+                    <dd><%= performances.before.attributes.theater.name[__('lang')] %> / <%= performances.before.attributes.screen.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.film_title') %></dt>
+                    <dd><%= performances.before.attributes.film.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.appreciation_date') %></dt>
+                    <dd>
+                        <%= moment(performances.before.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performances.before.attributes.day).format('ddd') + ']') %>) <%= moment(performances.before.attributes.time_start, 'hmm').format('HH:mm') %> - <%= moment(performances.before.attributes.time_end, 'hmm').format('HH:mm') %>
+                    </dd>
+                </dl>
+            </li>       
+        </ul>
+        <p class="text-center mb-x-small"><%- __('purchase.overlap.prev_read') %></p>
+        <form method="post" action="<%= url('purchase.overlap.prev') %>">
+            <div class="button prev-button blue-button"><button class="icon-prev-white" type="submit"><%- __('purchase.overlap.prev') %></button></div>
+            <input type="hidden" name="performance_id" value="<%= performances.before._id %>">
+        </form>
+    </div>
     
-    <form method="post" action="<%= url('purchase.overlap.new') %>">
-        <div class="button-area clearfix">
+    <div class="form-layout">
+        <h2 class="section-ttl"><%- __('purchase.overlap.next_ttl') %></h2>
+        <ul class="box bg-light-gray mb-large">
+            <li>
+                <dl>
+                    <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
+                    <dd><%= performances.after.attributes.theater.name[__('lang')] %> / <%= performances.after.attributes.screen.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.film_title') %></dt>
+                    <dd><%= performances.after.attributes.film.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.appreciation_date') %></dt>
+                    <dd>
+                        <%= moment(performances.after.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performances.after.attributes.day).format('ddd') + ']') %>) <%= moment(performances.after.attributes.time_start, 'hmm').format('HH:mm') %> - <%= moment(performances.after.attributes.time_end, 'hmm').format('HH:mm') %>
+                    </dd>
+                </dl>
+            </li>       
+        </ul> 
+        <p class="text-center  mb-x-small"><%- __('purchase.overlap.next_read') %></p>
+        <form method="post" action="<%= url('purchase.overlap.new') %>">
             <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.overlap.next') %></button></div>
-        </div>
-        <input type="hidden" name="performance_id" value="<%= performance._id %>">
-    </form>
+            <input type="hidden" name="performance_id" value="<%= performances.after._id %>">
+        </form>
+    </div>
 
-    <form method="post" action="<%= url('purchase.overlap.prev') %>">
-        <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.overlap.prev') %></button></div>
-        </div>
-    </form>
+    
 </div>

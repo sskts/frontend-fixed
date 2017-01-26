@@ -6,7 +6,7 @@ class PerformanceController extends BaseController_1.default {
     index() {
         if (!this.req.session)
             return;
-        this.res.render('performance');
+        return this.res.render('performance');
     }
     getPerformances(day) {
         let endpoint = config.get('mp_api_endpoint');

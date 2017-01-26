@@ -10,12 +10,17 @@ export default class OverlapController extends PurchaseController {
      */
     public index(): void {
         if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.purchaseModel.performance) throw new Error('performance is undefined');
         //パフォーマンス取得
         MP.getPerformance.call({
             id: this.req.params['id']
         }).then((result) => {
-            this.res.locals['performance'] = result.data;
-            this.res.render('purchase/overlap');
+            this.res.locals['performances'] = {
+                after: result.data,
+                before: this.purchaseModel.performance,
+            }
+            
+            return this.res.render('purchase/overlap');
         }, (err) => {
             return this.next(new Error(err.message));
         });
@@ -28,9 +33,11 @@ export default class OverlapController extends PurchaseController {
         this.removeReserve().then(()=>{
             if (!this.router) return this.next(new Error('router is undefined'));
             if (!this.req.session) return this.next(new Error('session is undefined'));
-            delete this.req.session['purchase'];
             //購入スタートへ
-            this.res.redirect(this.router.build('purchase', {}) + '?id=' + this.req.body.performance_id);
+            delete this.req.session['purchase'];
+            return this.res.redirect(this.router.build('purchase', {
+                id: this.req.body.performance_id
+            }));
         }, (err)=>{
             return this.next(new Error(err.message));
         });
@@ -42,9 +49,8 @@ export default class OverlapController extends PurchaseController {
     public prevReserve(): void {
         if (!this.router) return this.next(new Error('router is undefined'));
         if (!this.req.session) return this.next(new Error('session is undefined'));
-        this.req.session['purchase'];
         //座席選択へ
-        this.res.redirect(this.router.build('purchase.seat', {
+         return this.res.redirect(this.router.build('purchase.seat', {
             id: this.req.body.performance_id
         }));
     }
@@ -55,11 +61,11 @@ export default class OverlapController extends PurchaseController {
      * 仮予約取り消し
      */
     private async removeReserve(): Promise<void> {
-        if (!this.purchaseModel.performance) return this.next(new Error('performance is undefined'));
-        if (!this.purchaseModel.transactionMP) return this.next(new Error('transactionMP is undefined'));
-        if (!this.purchaseModel.owner) return this.next(new Error('owners is undefined'));
-        if (!this.purchaseModel.reserveSeats) return this.next(new Error('reserveSeats is undefined'));
-        if (!this.purchaseModel.administrator) return this.next(new Error('administrator is undefined'));
+        if (!this.purchaseModel.performance) throw new Error('performance is undefined');
+        if (!this.purchaseModel.transactionMP) throw new Error('transactionMP is undefined');
+        if (!this.purchaseModel.owner) throw new Error('owners is undefined');
+        if (!this.purchaseModel.reserveSeats) throw new Error('reserveSeats is undefined');
+        if (!this.purchaseModel.administrator) throw new Error('administrator is undefined');
 
         let performance = this.purchaseModel.performance;
         let reserveSeats = this.purchaseModel.reserveSeats;
@@ -109,7 +115,6 @@ export default class OverlapController extends PurchaseController {
             await MP.removeGMOAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
                 addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
-                orderId: this.purchaseModel.orderId
             });
             this.logger.debug('GMOオーソリ削除');
         }

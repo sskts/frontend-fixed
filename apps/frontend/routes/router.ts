@@ -52,12 +52,12 @@ export default (app: express.Application | any) => {
     });
 
     //購入(取引開始)
-    app.get('/purchase', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/:id/transaction', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new TransactionController(req, res, next).start();
     });
 
     //仮予約重複
-    app.get('/purchase/overlap/:id', 'purchase.overlap', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/:id/overlap', 'purchase.overlap', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new OverlapController(req, res, next).index();
     });
 

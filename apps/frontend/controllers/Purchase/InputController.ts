@@ -39,7 +39,7 @@ export default class InputController extends PurchaseController {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
-        this.res.render('purchase/input');
+        return this.res.render('purchase/input');
     }
 
     /**
@@ -73,7 +73,7 @@ export default class InputController extends PurchaseController {
                         if (!this.req.session) return this.next(new Error('session is undefined'));
                         this.req.session['purchase'] = this.purchaseModel.formatToSession();
                         //購入者内容確認へ
-                        this.res.redirect(this.router.build('purchase.confirm', {}));
+                        return this.res.redirect(this.router.build('purchase.confirm', {}));
                     }, (err) => {
                         if (!err.hasOwnProperty('type')) return this.next(err.message);
                         //GMOオーソリ追加失敗
@@ -86,7 +86,7 @@ export default class InputController extends PurchaseController {
                         this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
                         this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
                         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-                        this.res.render('purchase/input');
+                        return this.res.render('purchase/input');
                     });
 
 
@@ -97,7 +97,7 @@ export default class InputController extends PurchaseController {
                     if (!this.req.session) return this.next(new Error('session is undefined'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //購入者内容確認へ
-                    this.res.redirect(this.router.build('purchase.confirm', {}));
+                    return this.res.redirect(this.router.build('purchase.confirm', {}));
                 }
 
             } else {
@@ -108,7 +108,7 @@ export default class InputController extends PurchaseController {
                 this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
                 this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
                 this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-                this.res.render('purchase/input');
+                return this.res.render('purchase/input');
             }
 
         });

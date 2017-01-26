@@ -14,7 +14,7 @@ class ConfirmController extends PurchaseController_1.default {
         this.res.locals['step'] = PurchaseSession.PurchaseModel.COMPLETE_STATE;
         this.res.locals['price'] = this.req.session['complete'].price;
         this.res.locals['updateReserve'] = this.req.session['complete'].updateReserve;
-        this.res.render('purchase/complete');
+        return this.res.render('purchase/complete');
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

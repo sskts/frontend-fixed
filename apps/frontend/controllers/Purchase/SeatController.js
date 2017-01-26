@@ -34,7 +34,7 @@ class SeatSelectController extends PurchaseController_1.default {
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
-            this.res.render('purchase/seat');
+            return this.res.render('purchase/seat');
         }, (err) => {
             return this.next(new Error(err.message));
         });
@@ -49,7 +49,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 if (!this.req.session)
                     return this.next(new Error('session is undefined'));
                 this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                this.res.redirect(this.router.build('purchase.ticket', {}));
+                return this.res.redirect(this.router.build('purchase.ticket', {}));
             }, (err) => {
                 return this.next(new Error(err.message));
             });
@@ -58,13 +58,13 @@ class SeatSelectController extends PurchaseController_1.default {
     reserve() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.purchaseModel.performance)
-                return this.next(new Error('performance is undefined'));
+                throw new Error('performance is undefined');
             if (!this.purchaseModel.transactionMP)
-                return this.next(new Error('transactionMP is undefined'));
+                throw new Error('transactionMP is undefined');
             if (!this.purchaseModel.owner)
-                return this.next(new Error('owners is undefined'));
+                throw new Error('owners is undefined');
             if (!this.purchaseModel.administrator)
-                return this.next(new Error('administrator is undefined'));
+                throw new Error('administrator is undefined');
             let performance = this.purchaseModel.performance;
             if (this.purchaseModel.reserveSeats) {
                 let reserveSeats = this.purchaseModel.reserveSeats;
@@ -83,7 +83,7 @@ class SeatSelectController extends PurchaseController_1.default {
                     reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
                     addCOAAuthorizationResult: this.purchaseModel.performance
                 });
-                this.logger.debug('COAオーソリ削除');
+                this.logger.debug('MPCOAオーソリ削除');
                 if (this.purchaseModel.transactionGMO
                     && this.purchaseModel.authorizationGMO) {
                     yield GMO.CreditService.alterTranInterface.call({
@@ -142,7 +142,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 performance: performance,
                 totalPrice: this.purchaseModel.getReserveAmount()
             });
-            this.logger.debug('COAオーソリ追加', COAAuthorizationResult);
+            this.logger.debug('MPCOAオーソリ追加', COAAuthorizationResult);
             this.purchaseModel.authorizationCOA = COAAuthorizationResult;
         });
     }

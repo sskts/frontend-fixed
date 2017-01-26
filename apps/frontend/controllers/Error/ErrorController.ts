@@ -11,7 +11,7 @@ export default class ErrorController extends BaseController {
             this.res.status(status).send({ error: 'Not Found.' });
         } else {
             this.res.status(status);
-            this.res.render('error/notFound');
+            return this.res.render('error/notFound');
         }
     }
 
@@ -29,7 +29,7 @@ export default class ErrorController extends BaseController {
             this.res.status(status);
             this.res.locals['message'] = err.message;
             this.res.locals['error'] = err;
-            this.res.render('error/error');
+            return this.res.render('error/error');
         }
     }
 }

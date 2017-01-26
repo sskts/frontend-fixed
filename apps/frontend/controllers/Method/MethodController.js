@@ -2,10 +2,10 @@
 const BaseController_1 = require("../BaseController");
 class MethodController extends BaseController_1.default {
     ticketing() {
-        this.res.render('method/ticketing');
+        return this.res.render('method/ticketing');
     }
     entry() {
-        this.res.render('method/entry');
+        return this.res.render('method/entry');
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

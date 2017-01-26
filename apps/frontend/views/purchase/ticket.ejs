@@ -28,15 +28,20 @@
             
         </ul>
 
-        <div class="total box bg-light-gray mb-medium text-right">
-            <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
-            <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span>円</strong></div>
+        <div class="total bg-light-gray box mb-medium">
+            <div class="text-right mb-small">
+                <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
+                <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span>円</strong></div>
+            </div>
+            <div class="border-bottom-dot mb-small"></div>
+            <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
+            
         </div>
 
-        <p class="small-text mb-small"><%- __('purchase.ticket.note') %></p>
+        <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>
         <div class="mvtk-button mb-medium ghost-button  yellow-button center-button">
             <input type="checkbox" name="mvtk" value="true" id="mvtk">
-            <label for="mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk') %></label>
+            <label for="mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></label>
         </div>
 
         
@@ -50,4 +55,5 @@
     </form>
 </div>
 
-<% block('modals', partial('modals/ticket')) -%>
+<% block('modals', partial('modals/tickets')) -%>
+<% block('modals', partial('modals/ticket_not_select')) -%>

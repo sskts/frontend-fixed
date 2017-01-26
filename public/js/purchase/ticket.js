@@ -50,13 +50,15 @@ $(function () {
         });
 
         if (!flag) {
-            alert('未選択');
+            modal.open('ticket_not_select');
         } else {
             // location.hrefにpostする
             var form = $('form');
             var dom = $('<input type="hidden" name="reserve_tickets">').val(JSON.stringify(result));
             form.append(dom);
             form.submit();
+            loadingStart();
+            $(this).prop('disabled', true);
         }
     });
 })

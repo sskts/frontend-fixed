@@ -26,7 +26,7 @@ export default class ConfirmController extends PurchaseController {
         if (!this.req.session) return this.next(new Error('session is undefined'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
-        this.res.render('purchase/confirm');
+        return this.res.render('purchase/confirm');
 
     }
 
@@ -90,6 +90,18 @@ export default class ConfirmController extends PurchaseController {
         });
         this.logger.debug('MP購入者情報登録');
 
+        
+        // MPメール登録
+        let mail = this.createMail();
+        await MP.addEmail.call({
+            transaction: this.purchaseModel.transactionMP,
+            from: mail.from,
+            to: mail.to,
+            subject: mail.subject,
+            body: mail.body,
+        });
+        this.logger.debug('MPメール登録');
+
         // MP取引成立
         await MP.transactionClose.call({
             transaction: this.purchaseModel.transactionMP,
@@ -97,11 +109,35 @@ export default class ConfirmController extends PurchaseController {
         this.logger.debug('MP取引成立');
     }
 
+    /**
+     * メール作成
+     */
+    private createMail(): {
+        from: string,
+        to: string,
+        subject: string,
+        body: string,
+    } {
+        if (!this.purchaseModel.input) throw new Error('purchaseModel.input is undefined');
+        let body = 
+`購入完了\n
+この度はご購入いただき誠にありがとうございます。
+`;
+
+        return {
+            from: 'noreply@localhost',
+            to: this.purchaseModel.input.mail_addr,
+            subject: '購入完了',
+            body: body,
+        }
+
+    }
+
 
     /**
      * 購入確定
      */
-    public purchase() {
+    public purchase(): void {
         if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         this.updateReserve().then(() => {
             //購入情報をセッションへ

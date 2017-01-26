@@ -15,7 +15,7 @@ export default class PerformanceController extends BaseController {
         //TODO Session削除
         if (!this.req.session) return;
                 
-        this.res.render('performance');
+        return this.res.render('performance');
     }
 
     /**

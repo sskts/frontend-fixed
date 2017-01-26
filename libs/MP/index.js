@@ -262,3 +262,45 @@ var transactionClose;
     }
     transactionClose.call = call;
 })(transactionClose = exports.transactionClose || (exports.transactionClose = {}));
+var addEmail;
+(function (addEmail) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/transactions/${args.transaction._id}/emails`,
+                body: {
+                    from: args.from,
+                    to: args.to,
+                    subject: args.subject,
+                    body: args.body,
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            console.log('addEmail result:' + response.body.data);
+            return response.body.data;
+        });
+    }
+    addEmail.call = call;
+})(addEmail = exports.addEmail || (exports.addEmail = {}));
+var removeEmail;
+(function (removeEmail) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.del({
+                url: `${endPoint}/transactions/${args.transaction._id}/emails/${emailId}`,
+                body: {},
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 204)
+                throw new Error(response.body.message);
+            console.log('removeEmail result:');
+        });
+    }
+    removeEmail.call = call;
+})(removeEmail = exports.removeEmail || (exports.removeEmail = {}));

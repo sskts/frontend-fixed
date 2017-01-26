@@ -22,7 +22,7 @@ class InquiryController extends BaseController_1.default {
             this.res.locals['tel_num'] = '0849273550';
         }
         this.res.locals['error'] = null;
-        this.res.render('inquiry/login');
+        return this.res.render('inquiry/login');
     }
     auth() {
         LoginForm_1.default(this.req, this.res, () => {
@@ -32,14 +32,14 @@ class InquiryController extends BaseController_1.default {
                 this.getStateReserve().then(() => {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
-                    this.res.redirect(this.router.build('inquiry', {}));
+                    return this.res.redirect(this.router.build('inquiry', {}));
                 }, (err) => {
                     return this.next(new Error(err.message));
                 });
             }
             else {
                 this.res.locals['error'] = this.req.form.getErrors();
-                this.res.render('inquiry/login');
+                return this.res.render('inquiry/login');
             }
         });
     }
@@ -72,12 +72,12 @@ class InquiryController extends BaseController_1.default {
             this.res.locals['stateReserve'] = this.req.session['inquiry'].stateReserve;
             this.res.locals['performance'] = this.req.session['inquiry'].performance.data;
             this.res.locals['reserve_num'] = this.req.session['inquiry'].reserve_num;
-            this.res.render('inquiry/confirm');
+            return this.res.render('inquiry/confirm');
         }
         else {
             if (!this.router)
                 return this.next(new Error('router is undefined'));
-            this.res.redirect(this.router.build('inquiry.login', {}));
+            return this.res.redirect(this.router.build('inquiry.login', {}));
         }
     }
     print() {

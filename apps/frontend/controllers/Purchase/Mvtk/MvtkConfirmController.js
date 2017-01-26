@@ -8,7 +8,7 @@ class MvtkConfirmController extends MvtkController_1.default {
         if (this.purchaseModel) {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
-            this.res.render('purchase/mvtk/confirm');
+            return this.res.render('purchase/mvtk/confirm');
         }
         else {
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
@@ -17,7 +17,7 @@ class MvtkConfirmController extends MvtkController_1.default {
     submit() {
         if (!this.router)
             return this.next(new Error('router is undefined'));
-        this.res.redirect(this.router.build('purchase.input', {}));
+        return this.res.redirect(this.router.build('purchase.input', {}));
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

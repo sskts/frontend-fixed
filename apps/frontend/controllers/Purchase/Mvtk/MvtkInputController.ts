@@ -14,7 +14,7 @@ export default class MvtkInputController extends MvtkController {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
 
-            this.res.render('purchase/mvtk/input');
+            return this.res.render('purchase/mvtk/input');
         } else {
             return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         }
@@ -26,7 +26,7 @@ export default class MvtkInputController extends MvtkController {
      */
     public auth() {
         if (!this.router) return this.next(new Error('router is undefined'));
-        this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
+        return this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 
 

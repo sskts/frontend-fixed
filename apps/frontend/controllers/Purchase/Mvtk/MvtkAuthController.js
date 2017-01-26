@@ -10,7 +10,7 @@ class MvtkAuthController extends MvtkController_1.default {
             && this.req.session['reserveTickets']) {
             this.res.locals['error'] = null;
             this.res.locals['step'] = 2;
-            this.res.render('purchase/mvtk/auth');
+            return this.res.render('purchase/mvtk/auth');
         }
         else {
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
@@ -19,7 +19,7 @@ class MvtkAuthController extends MvtkController_1.default {
     submit() {
         if (!this.router)
             return this.next(new Error('router is undefined'));
-        this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
+        return this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
