@@ -84,11 +84,13 @@ class TicketTypeSelectController extends PurchaseController_1.default {
                 throw new Error('owners is undefined');
             if (!this.purchaseModel.administrator)
                 throw new Error('administrator is undefined');
+            if (!this.purchaseModel.authorizationCOA)
+                throw new Error('authorizationCOA is undefined');
             yield MP.removeCOAAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
                 ownerId4administrator: this.purchaseModel.administrator._id,
                 reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
-                addCOAAuthorizationResult: this.purchaseModel.performance
+                addCOAAuthorizationResult: this.purchaseModel.authorizationCOA
             });
             this.logger.debug('MPCOAオーソリ削除');
             if (this.purchaseModel.transactionGMO

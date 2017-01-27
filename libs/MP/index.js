@@ -138,9 +138,7 @@ var removeCOAAuthorization;
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
-                body: {
-                    coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
-                },
+                body: {},
                 json: true,
                 simple: false,
                 resolveWithFullResponse: true,

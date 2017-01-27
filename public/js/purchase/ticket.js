@@ -70,8 +70,8 @@ $(function () {
 function totalPrice() {
     var price = 0;
     $('.seats li').each(function (index, elem) {
-        if ($(elem).find('dd').attr('data-ticket')) {
-            var data = JSON.parse($(elem).find('dd').attr('data-ticket'));
+        if ($(elem).find('dt').attr('data-ticket')) {
+            var data = JSON.parse($(elem).find('dt').attr('data-ticket'));
             price += data.sale_price;
         }
     });

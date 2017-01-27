@@ -66,6 +66,7 @@ export default class OverlapController extends PurchaseController {
         if (!this.purchaseModel.owner) throw new Error('owners is undefined');
         if (!this.purchaseModel.reserveSeats) throw new Error('reserveSeats is undefined');
         if (!this.purchaseModel.administrator) throw new Error('administrator is undefined');
+        if (!this.purchaseModel.authorizationCOA) throw new Error('authorizationCOA is undefined');
 
         let performance = this.purchaseModel.performance;
         let reserveSeats = this.purchaseModel.reserveSeats;
@@ -93,7 +94,7 @@ export default class OverlapController extends PurchaseController {
             transaction: this.purchaseModel.transactionMP,
             ownerId4administrator: this.purchaseModel.administrator._id,
             reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
-            addCOAAuthorizationResult: this.purchaseModel.performance
+            addCOAAuthorizationResult: this.purchaseModel.authorizationCOA
         });
 
         this.logger.debug('COAオーソリ削除');

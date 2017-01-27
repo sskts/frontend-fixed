@@ -286,7 +286,6 @@ export namespace removeCOAAuthorization {
         let response = await request.del({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
             body: {
-                coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num.toString()
             },
             json: true,
             simple: false,

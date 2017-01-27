@@ -1,49 +1,12 @@
 var screenSeatStatusesMap;
 $(function () {
     var modal = new SASAKI.Modal();
-    getScreenStateReserve(function (result) {
-        var screen = $('.screen');
-        //席状態変更
-        $('.seat a').addClass('disabled');
-
-        var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
-        if (purchaseSeats) {
-            console.log(purchaseSeats)
-            //予約している席設定
-            for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
-                var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
-                var seatNum = purchaseSeat.seat_num;
-                var seat = $('.seat a[data-seat-code=' + seatNum + ']');
-                seat.removeClass('disabled');
-                seat.addClass('active');
-            }
-        }
-        if (result && result.cnt_reserve_free > 0) {
-            //空いている座席設定
-            var freeSeats = result.list_seat[0].list_free_seat;
-            for (var i = 0, len = freeSeats.length; i < len; i++) {
-                var freeSeat = freeSeats[i];
-                // var seatNum = replaceHalfSize(freeSeat.seat_num);
-                var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
-                if (seat && !seat.hasClass('active')) {
-                    seat.removeClass('disabled');
-                    seat.addClass('default');
-                }
-            }
-        }
-
-
-
-        screen.show();
-        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
-        screenSeatStatusesMap.setScaleUpCallback(function () {
-            $('.zoom-btn').show();
+    loadingStart(function () {
+        screenStateUpdate(function () {
+            loadingEnd();
         });
-        screenSeatStatusesMap.setScaleDownCallback(function () {
-            $('.zoom-btn').hide();
-        });
-
     });
+
 
     /**
      * 座席クリックイベント
@@ -112,7 +75,7 @@ $(function () {
 /**
  * スクリーン状態取得
  */
-function getScreenStateReserve(cb) {
+function getScreenStateReserve(_cb) {
     var target = $('.screen-cover');
     $.ajax({
         dataType: 'json',
@@ -135,11 +98,65 @@ function getScreenStateReserve(cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        //TODO
-        console.log(res)
-        cb(res.result);
+        _cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
-    }).always(function () { });
+    }).always(function () {
+        loadingEnd();
+    });
 }
 
+/**
+ * スクリーン状態更新
+ */
+function screenStateChange(result) {
+    var screen = $('.screen');
+    //席状態変更
+    $('.seat a').addClass('disabled');
+
+    var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
+    if (purchaseSeats) {
+        console.log(purchaseSeats)
+        //予約している席設定
+        for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
+            var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
+            var seatNum = purchaseSeat.seat_num;
+            var seat = $('.seat a[data-seat-code=' + seatNum + ']');
+            seat.removeClass('disabled');
+            seat.addClass('active');
+        }
+    }
+    if (result && result.cnt_reserve_free > 0) {
+        //空いている座席設定
+        var freeSeats = result.list_seat[0].list_free_seat;
+        for (var i = 0, len = freeSeats.length; i < len; i++) {
+            var freeSeat = freeSeats[i];
+            // var seatNum = replaceHalfSize(freeSeat.seat_num);
+            var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
+            if (seat && !seat.hasClass('active')) {
+                seat.removeClass('disabled');
+                seat.addClass('default');
+            }
+        }
+    }
+}
+
+
+/**
+ * スクリーン状態更新
+ */
+function screenStateUpdate(_cb) {
+    getScreenStateReserve(function (result) {
+        screenStateChange(result);
+        var screen = $('.screen');
+        screen.show();
+        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
+        screenSeatStatusesMap.setScaleUpCallback(function () {
+            $('.zoom-btn').show();
+        });
+        screenSeatStatusesMap.setScaleDownCallback(function () {
+            $('.zoom-btn').hide();
+        });
+        _cb();
+    });
+}   

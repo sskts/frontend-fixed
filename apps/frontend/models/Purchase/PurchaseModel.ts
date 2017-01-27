@@ -76,9 +76,9 @@ export class PurchaseModel {
     public transactionMP: MP.transactionStart.Result | null;
     /**取引GMO */
     public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
-    /**パフォーマンス */
-    public owner: MP.ownerAnonymousCreate.Result | null;
     /**オーナー */
+    public owner: MP.ownerAnonymousCreate.Result | null;
+    /**COAオーソリ */
     public authorizationCOA: MP.addCOAAuthorization.Result | null;
     /**GMOオーソリ */
     public authorizationGMO: MP.addGMOAuthorization.Result | null;

@@ -1105,7 +1105,6 @@ p a {
   -moz-filter: blur(5px);
   -ms-filter: blur(5px);
   filter: blur(5px);
-  transition: all 0.4s;
 }
 
 .loading-cover {
@@ -1478,7 +1477,7 @@ p a {
 
 @media screen and (max-width: 1024px) {
   .purchase .purchase-input .column-02 dl {
-    max-width: 290px;
+    max-width: 280px;
     width: 50%;
   }
 }
@@ -1589,12 +1588,12 @@ p a {
   }
 }
 
-.purchase .purchase-confirm .change-button {
+.purchase .purchase-confirm .change-button, .purchase .purchase-confirm .confirm-button {
   display: inline-block;
   margin-left: 10px;
 }
 
-.purchase .purchase-confirm .change-button a {
+.purchase .purchase-confirm .change-button a, .purchase .purchase-confirm .confirm-button a {
   width: 70px;
   padding: 5px 0;
   font-size: 12px;
