@@ -57,5 +57,10 @@
             background-repeat: no-repeat;
             background-position: center;
         }
+        &:last-child {
+            .inner {
+                margin-bottom: 0;
+            }
+        }
     }
 }

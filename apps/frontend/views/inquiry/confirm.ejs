@@ -9,8 +9,8 @@
     </div>
 
     <div class="box radius bg-ultra-light-gray mb-large">
-        <div class="section-ttl"><%- __('inquiry.confirm.section_ttl') %></div>
-        <p class="small-text mb-small"><%- __('inquiry.confirm.section_text') %></p>
+        <div class="section-ttl text-center"><%- __('inquiry.confirm.section_ttl') %></div>
+        <p class="small-text mb-small read"><%- __('inquiry.confirm.section_text') %></p>
         <div class="small-text mb-large bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
         <div class="ghost-button blue-button center-button">
             <a href="#"><%- __('inquiry.confirm.section_button') %></a>
@@ -21,7 +21,7 @@
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
             <dd><strong class="red-text large-x-text"><%= reserve_num %></strong></dd>
-            <dd class="small-text red-text">※チケットの発行・照会等に必要な番号となりますので必ずお控えください。</dd>
+            <dd class="small-text red-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
     

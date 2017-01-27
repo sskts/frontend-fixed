@@ -103,7 +103,7 @@ body {
 @media screen and (max-width: 1024px) {
   body {
     width: auto;
-    padding: 30px 15px;
+    padding: 15px;
   }
 }
 
@@ -190,6 +190,11 @@ select {
   background-repeat: no-repeat;
   background-size: 44px;
   background-position: right center;
+  outline: none;
+}
+
+select:focus {
+  border: 2px solid #707070;
 }
 
 /*　IE11,IE10　*/
@@ -709,7 +714,7 @@ p a {
 @media screen and (max-width: 767px) {
   .next-button {
     width: auto;
-    margin: 0 0 20px;
+    margin: 0 0 40px;
   }
 }
 
@@ -1008,12 +1013,12 @@ p a {
 }
 
 .contents {
-  padding: 60px 120px 40px;
+  padding: 40px 120px 60px;
 }
 
 @media screen and (max-width: 1024px) {
   .contents {
-    padding: 40px 60px;
+    padding: 40px 60px 60px;
   }
 }
 
@@ -1368,7 +1373,6 @@ p a {
 .purchase .purchase-seat .film-info dl dd {
   color: #FFF;
   padding: 0 0 10px;
-  border-bottom: 1px solid #979797;
   margin-bottom: 10px;
 }
 
@@ -1634,7 +1638,11 @@ p a {
 
 @media screen and (max-width: 767px) {
   .purchase .purchase-complete .entry-method li {
+    margin-bottom: 20px;
     width: 100%;
+  }
+  .purchase .purchase-complete .entry-method li:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -1645,6 +1653,10 @@ p a {
 
 .purchase .purchase-complete .entry-method dl dt span {
   margin-right: 5px;
+}
+
+.purchase .purchase-complete .button-area {
+  margin-top: 40px;
 }
 
 .purchase .purchase-mvtk-input .clone {
@@ -1836,6 +1848,10 @@ p a {
   background-size: 100px 60px;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.inquiry-confirm .ticket:last-child .inner {
+  margin-bottom: 0;
 }
 
 @-webkit-keyframes loading {
