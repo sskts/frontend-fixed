@@ -1,14 +1,11 @@
 <% layout('../../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/mvtk/confirm.js"></script>') -%>
 <div class="purchase-mvtk-confirm">
-    <h1 class="page-ttl">ムビチケ券適用内容確認</h1>
-    <p class="read">
-        認証したムビチケ券を割当ました。<br>
-        内容に問題なければ次へボタンを押して進んでください。
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.mvtk.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.mvtk.confirm.read') %></p>
 
     <form method="post">
-        <ul class="box bg-light-gray mb-medium">
+        <ul class="box radius bg-light-gray mb-medium">
             <li>
                 <dl class="d-table">
                     <dt class="d-td">Ａ－１</dt>
@@ -25,8 +22,8 @@
         </ul>
 
 
-        <div class="section-ttl">ムビチケ券残数</div>
-        <div class="box bg-light-gray mb-medium">
+        <div class="section-ttl"><%- __('purchase.mvtk.confirm.remaining') %></div>
+        <div class="box radius bg-light-gray mb-medium">
             <div class="box-ttl">ムビチケ購入番号:1111111111</div>
             <ul>
                 <li>
@@ -38,18 +35,22 @@
             </ul>
         </div>
         
-        <div class="box bg-light-gray mb-small">
-            <div class="text-right mb-x-small">購入枚数 <strong class="red-text large-text"><%- __n('%s ticket', 0) %></strong></div>
-            <div class="text-right mb-x-small">3D上映差額分 <strong class="red-text large-text"><%= formatPrice(1200) %>円</strong></div>
-            <div class="text-right">合計金額 <strong class="red-text large-text"><%= formatPrice(1200) %>円</strong></div>
+        <div class="box radius bg-light-gray mb-small">
+            <div class="text-right mb-small">
+                <div class="mb-x-small">><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', 0) %></strong></div>
+                <div class="mb-x-small"><%- __('common.difference_3d') %> <strong class="red-text large-text"><span><%= formatPrice(1200) %></span><%- __('common.price') %></strong></div>
+                <div><%- __('common.total_fee') %> <strong class="red-text large-text"><span><%= formatPrice(1200) %></span><%- __('common.price') %></strong></div>
+            </div>
+            <div class="border-bottom-dot mb-small"></div>
+            <p class="small-x-text"><%- __('purchase.mvtk.confirm.note') %></p>
         </div>
 
-        <p class="small-text">※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。</p>
+       
         
 
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next" type="submit">購入者情報入力</button></div>
-            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.mvtk') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
+            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.mvtk') %>"><%- __('purchase.mvtk.confirm.prev') %></a></div>
         </div>
         
     </form>

@@ -7,7 +7,7 @@
     <p class="read"><%- __('purchase.seat.read') %></p>
 
     <div>
-        <div class="screen-cover" 
+        <div class="screen-cover mb-medium" 
         data-limit="4" 
         data-theater="<%= performance.attributes.theater._id %>" 
         data-day="<%= performance.attributes.day %>" 
@@ -15,7 +15,7 @@
         data-coa-title-branch-num="<%= performance.attributes.film.coa_title_branch_num %>"
         data-time-start="<%= performance.attributes.time_start %>"
         data-screen-code="<%= performance.attributes.screen.coa_screen_code %>">
-            <div class="bg-light-gray">
+            <div class="radius bg-light-gray">
                 <div class="screen">
                     <div class="zoom-btn"><a class="icon-zoom-out bg-white text-center small-text" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
                     <div class="screen-scroll">
@@ -24,8 +24,8 @@
                     <div class="device-type-pc"></div>
                     <div class="device-type-sp"></div>
                 </div>
-                <div class="seat-info bg-light-gray mb-medium">
-                    <div class="box bg-white">
+                <div class="seat-info">
+                    <div class="box radius bg-white">
                         <div class="seat"><strong><%- __('purchase.seat.seats.default') %></strong></div>
                         <div class="seat active"><strong><%- __('purchase.seat.seats.active') %></strong></div>
                         <div class="seat disabled"><strong><%- __('purchase.seat.seats.disabled') %></strong></div>

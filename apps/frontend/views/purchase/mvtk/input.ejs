@@ -1,21 +1,18 @@
 <% layout('../../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/mvtk/input.js"></script>') -%>
 <div class="purchase-mvtk-input">
-    <h1 class="page-ttl">ムビチケ券認証</h1>
-    <p class="read">
-        ご利用になるムビチケ券の購入番号と、暗証番号を入力してください。<br>
-        複数枚ご利用になる場合はムビチケ券を追加ボタンを押して追加してください。
-    </p>
+    <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.mvtk.input.read') %></p>
 
     <form method="post">
         
         <div class="ticket-list mb-medium">
-            <ul class="box bg-light-gray mb-small form-layout">
+            <ul class="box radius bg-light-gray mb-small form-layout">
                 <li>
                     <dl>
-                        <dt>ムビチケ購入番号(10桁)</dt>
+                        <dt><%- __('common.mvtk_code') %></dt>
                         <dd>
-                            <input type="text" name="" value="" placeholder="(例)1111111111" maxlength="10">
+                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
                             <% if (error) { %>
                             <div class="validation-text"></div> 
                             <% } %>
@@ -24,9 +21,9 @@
                 </li>
                 <li>
                     <dl>
-                        <dt>ムビチケ暗証番号(4桁)</dt>
+                        <dt><%- __('common.mvtk_password') %></dt>
                         <dd>
-                            <input type="text" name="" value="" placeholder="ムビチケ暗証番号(4桁)" maxlength="4">
+                            <input type="text" name="mvtk_password" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
                             <% if (error) { %>
                             <div class="validation-text"></div>
                             <% } %>
@@ -37,12 +34,12 @@
         </div>
 
 
-        <ul class="clone box bg-light-gray mb-small form-layout">
+        <ul class="box radius bg-light-gray mb-small form-layout clone">
             <li>
                 <dl>
-                    <dt>ムビチケ購入番号(10桁)</dt>
+                    <dt><%- __('common.mvtk_code') %></dt>
                     <dd>
-                        <input type="text" name="" value="" placeholder="(例)1111111111" maxlength="10">
+                        <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
                         <% if (error) { %>
                         <div class="validation-text"></div> 
                         <% } %>
@@ -51,9 +48,9 @@
             </li>
             <li>
                 <dl>
-                    <dt>ムビチケ暗証番号(4桁)</dt>
+                    <dt><%- __('common.mvtk_password') %></dt>
                     <dd>
-                        <input type="text" name="" value="" placeholder="ムビチケ暗証番号(4桁)" maxlength="4">
+                        <input type="text" name="mvtk_password" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
                         <% if (error) { %>
                         <div class="validation-text"></div>
                         <% } %>
@@ -65,22 +62,22 @@
         
 
         <div class="button dark-blue-button add-button mb-medium center-button">
-            <a class="icon-add" href="#">ムビチケ券を追加</a>
+            <a class="icon-add" href="#"><%- __('purchase.mvtk.input.add') %></a>
         </div>
         
         
-        <div class="box bg-light-gray mb-small">
-            <div class="box-ttl">選択中の座席</div>
+        <div class="box radius bg-light-gray mb-small">
+            <div class="box-ttl"><%- __('purchase.mvtk.input.select_seat') %></div>
             <div class="text-right large-text"><strong><%- __n('%s seat', 2) %></strong></div>
         </div>
 
-        <p class="small-text">※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。</p>
+        <p class="small-text"><%- __('purchase.mvtk.input.note') %></p>
 
         
 
         <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next" type="submit">認証する</button></div>
-            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.ticket') %>">戻る</a></div>
+            <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
+            <div class="prev-link"><a class="icon-prev"href="<%- url('purchase.ticket') %>"><%- __('purchase.mvtk.input.prev') %></a></div>
         </div>
         
     </form>

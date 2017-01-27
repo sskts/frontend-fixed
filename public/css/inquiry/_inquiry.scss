@@ -34,10 +34,7 @@
         margin: 0 -10px;
     }
     .ticket {
-        width: 33.3%;
-        @media screen and (max-width: $tablet){
-            width: 50%;
-        }
+        width: 50%;
         @media screen and (max-width: $mobile){
             width: 100%;
         }

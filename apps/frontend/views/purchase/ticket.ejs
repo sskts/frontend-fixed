@@ -4,7 +4,7 @@
     <form method="post">
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
         <p class="read"><%- __('purchase.ticket.read') %></p>
-        <ul class="seats box bg-light-gray mb-medium">
+        <ul class="box radius bg-light-gray mb-medium seats">
             <% for (let ticket of reserveTickets) { %>
                 <li>
                     <dl class="d-table">
@@ -28,14 +28,13 @@
             
         </ul>
 
-        <div class="total bg-light-gray box mb-medium">
+        <div class="box radius bg-light-gray mb-large total">
             <div class="text-right mb-small">
                 <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
-                <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span>円</strong></div>
+                <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span><%- __('common.price') %></strong></div>
             </div>
             <div class="border-bottom-dot mb-small"></div>
             <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
-            
         </div>
 
         <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>

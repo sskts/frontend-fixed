@@ -8,7 +8,7 @@
 
     <form id="purchaseform" method="post">
         <!--<h2 class="section-ttl"><%- __('common.name_kanji') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
-        <div class="box bg-light-gray mb-medium">
+        <div class="box radius bg-light-gray mb-medium">
             <dl>
                 <dt><%- __('common.last_name_kanji') %></dt>
                 <dd>
@@ -28,7 +28,7 @@
         </div>-->
 
         <h2 class="section-ttl"><%- __('common.name_hira') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
-        <div class="box bg-light-gray mb-large">
+        <div class="box radius bg-light-gray mb-large">
             <div class="column-02">
                 <dl>
                     <dt><%- __('common.last_name_hira') %></dt>
@@ -51,7 +51,7 @@
             </div>
         </div>
         <h2 class="section-ttl"><%- __('common.mail') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
-        <div class="box bg-light-gray mb-large">
+        <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
                     <input type="email" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
@@ -73,7 +73,7 @@
         </div>
 
         <h2 class="section-ttl"><%- __('common.tel') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
-        <div class="box bg-light-gray mb-large">
+        <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
                     <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
@@ -86,7 +86,7 @@
         </div>
 
         <h2 class="section-ttl"><%- __('purchase.input.agreement') %></h2>
-        <div class="box bg-ultra-light-gray mb-medium scroll small-text">
+        <div class="box radius bg-ultra-light-gray mb-medium scroll small-text">
             <%- partial('agreement_ja') %>
         </div>
         <div class="mb-large">
@@ -101,7 +101,7 @@
         </h2>
         
         <p class="mb-small"><%- __('common.note.credit') %></p>
-        <ul class="box bg-light-gray mb-large credit form-layout">
+        <ul class="box radius bg-light-gray mb-large credit form-layout">
             <li class="price">
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>

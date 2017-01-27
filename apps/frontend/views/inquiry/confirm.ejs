@@ -8,16 +8,16 @@
         <a class="icon-ticket" href="#"><%- __('inquiry.confirm.ticket_button') %></a>
     </div>
 
-    <div class="box bg-ultra-light-gray mb-large">
+    <div class="box radius bg-ultra-light-gray mb-large">
         <div class="section-ttl"><%- __('inquiry.confirm.section_ttl') %></div>
         <p class="small-text mb-small"><%- __('inquiry.confirm.section_text') %></p>
-        <div class="small-text mb-small bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
+        <div class="small-text mb-large bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
         <div class="ghost-button blue-button center-button">
             <a href="#"><%- __('inquiry.confirm.section_button') %></a>
         </div>
     </div>
 
-    <div class="box bg-light-gray mb-large">
+    <div class="box radius bg-light-gray mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
             <dd><strong class="red-text large-x-text"><%= reserve_num %></strong></dd>
@@ -30,17 +30,17 @@
         <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
         <li class="ticket">
             <div class="inner bg-light-gray">
-                <div class="border-bottom-dot box bg-white">
+                <div class="box radius border-bottom-dot bg-white">
                     <div>
                         <strong class="large-text"><%= stateReserve.list_ticket[i].seat_num %></strong>
                         <span>[<%= stateReserve.list_ticket[i].ticket_name %>]</span>
                     </div>
                     <!--<div><%- __('common.ticket_code') %> : </div>-->
                 </div>
-                <div class="border-bottom-dot not-qr box bg-white">
+                <div class="box radius border-bottom-dot not-qr bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.ticket_text') %></p>
                 </div>
-                <div class="box not-radius">
+                <div class="box">
                     <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= moment(performance.attributes.time_start, 'hmm').format('HH:mm') %>-</div>
                     <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>
                     <div class="mb-x-small"><%= performance.attributes.screen.name[__('lang')] %></div>

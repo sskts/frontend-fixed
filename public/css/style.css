@@ -435,6 +435,10 @@ p a {
   background-size: contain;
 }
 
+.radius {
+  border-radius: 4px;
+}
+
 .not-radius {
   border-radius: 0 !important;
 }
@@ -446,7 +450,6 @@ p a {
 .box {
   overflow: hidden;
   padding: 20px;
-  border-radius: 5px;
 }
 
 @media screen and (max-width: 767px) {
@@ -689,7 +692,7 @@ p a {
 }
 
 .button-area {
-  margin: 40px auto 0;
+  margin: 30px auto 0;
 }
 
 @media screen and (max-width: 767px) {
@@ -700,7 +703,7 @@ p a {
 
 .next-button {
   width: 320px;
-  margin: 0 auto 20px;
+  margin: 0 auto 40px;
 }
 
 @media screen and (max-width: 767px) {
@@ -882,7 +885,7 @@ p a {
 }
 
 .read {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -961,6 +964,7 @@ p a {
   background-color: #212121;
   padding: 25px 40px;
   font-size: 10px;
+  border-radius: 0 0 4px 4px;
 }
 
 @media screen and (max-width: 767px) {
@@ -1004,7 +1008,7 @@ p a {
 }
 
 .contents {
-  padding: 40px 120px;
+  padding: 60px 120px 40px;
 }
 
 @media screen and (max-width: 1024px) {
@@ -1015,7 +1019,7 @@ p a {
 
 @media screen and (max-width: 767px) {
   .contents {
-    padding: 20px 15px;
+    padding: 20px 15px 50px;
   }
 }
 
@@ -1347,7 +1351,13 @@ p a {
 .purchase .purchase-seat .film-info {
   background-color: #3e3a39;
   color: #FFF;
-  padding: 15px 10px;
+  padding: 20px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-seat .film-info {
+    padding: 15px;
+  }
 }
 
 .purchase .purchase-seat .film-info dl dt {
@@ -1358,7 +1368,7 @@ p a {
 .purchase .purchase-seat .film-info dl dd {
   color: #FFF;
   padding: 0 0 10px;
-  border-bottom: 1px solid #FFF;
+  border-bottom: 1px solid #979797;
   margin-bottom: 10px;
 }
 
@@ -1399,7 +1409,7 @@ p a {
 .purchase .purchase-input input[type=tel],
 .purchase .purchase-input input[type=email],
 .purchase .purchase-input textarea {
-  margin: 0 0 5px;
+  margin: 0 0 10px;
 }
 
 .purchase .purchase-input input[type=text]:last-child,
@@ -1801,13 +1811,7 @@ p a {
 }
 
 .inquiry-confirm .ticket {
-  width: 33.3%;
-}
-
-@media screen and (max-width: 1024px) {
-  .inquiry-confirm .ticket {
-    width: 50%;
-  }
+  width: 50%;
 }
 
 @media screen and (max-width: 767px) {

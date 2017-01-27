@@ -298,6 +298,8 @@ p {
     }
 }
 
+
+
 .width-medium {
     width: 380px;
     @media screen and (max-width: $mobile){
@@ -340,6 +342,10 @@ p {
     }
 }
 
+.radius {
+    border-radius: 4px;
+}
+
 .not-radius {
     border-radius: 0 !important;
 }
@@ -353,7 +359,6 @@ p {
 .box {
     overflow: hidden;
     padding: 20px;
-    border-radius: 5px;
     @media screen and (max-width: $mobile) {
         padding: 20px 10px;
     }
@@ -581,14 +586,14 @@ p {
 
 
 .button-area {
-    margin: 40px auto 0;
+    margin: 30px auto 0;
     @media screen and (max-width: $mobile){
         width: auto;
     }
 }
 .next-button {
     width: 320px;
-    margin: 0 auto 20px;
+    margin: 0 auto 40px;
     @media screen and (max-width: $mobile){
         width: auto;
         margin: 0 0 20px;
@@ -770,7 +775,7 @@ p {
 }
 
 .read {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     text-align: center;
     @media screen and (max-width: $mobile){
         text-align: left;
@@ -837,6 +842,7 @@ p {
     background-color: #212121;
     padding: 25px 40px;
     font-size: 10px;
+    border-radius: 0 0 4px 4px;
     @media screen and (max-width: $mobile){
         padding: 20px 15px;
     }
@@ -873,12 +879,12 @@ p {
 
 //contents
 .contents {
-    padding: 40px 120px;
+    padding: 60px 120px 40px;
     @media screen and (max-width: $tablet){
         padding: 40px 60px;
     }
     @media screen and (max-width: $mobile){
-        padding: 20px 15px;
+        padding: 20px 15px 50px;
     }
 }
 

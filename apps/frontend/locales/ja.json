@@ -54,7 +54,7 @@
 		},
 		"input": {
 			"page_ttl": "購入者情報入力",
-			"read": "入力必須項目を入力していただき、オンライン規約をご確認頂き問題ないようでしたら「規約に同意して次へ」ボタンを押してください。",
+			"read": "必須項目を入力し、利用規約にご同意していただき「次へ」ボタンを押してください。",
 			"next": "次へ",
 			"prev": "戻る",
 			"agreement": "利用規約",
@@ -76,7 +76,7 @@
 		},
 		"confirm": {
 			"page_ttl": "購入者内容確認",
-			"read": "ご購入内容を確認頂き「購入確定」ボタンを押して購入を確定してください。",
+			"read": "ご購入内容をご確認頂き「購入完了」ボタンを押して購入を確定してください",
 			"next": "購入完了",
 			"prev": "戻る",
 			"date_note": "※上映日時を必ずご確認ください。"
@@ -97,18 +97,21 @@
 		},
 		"mvtk": {
 			"input": {
-				"page_ttl": "購入者情報入力",
-				"read": "購入する方のお名前(ひらがな)とメールアドレスと電話番号とお支払い方法を入力し、オンライン規約をご確認頂き問題ないようでしたらオンライン規約に同意し次へボタンを押してください。",
-				"next": "次へ",
+				"page_ttl": "ムビチケ券認証",
+				"read": "ご利用になるムビチケ券の購入番号と、暗証番号を入力してください。<br>複数枚ご利用になる場合はムビチケ券を追加ボタンを押して追加してください。",
+				"next": "認証する",
 				"prev": "戻る",
-				"agreement": "オンライン規約",
-				"agreement_text": ""
+				"add": "ムビチケ券を追加",
+				"select_seat": "選択中の座席",
+				"note": "※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。"
 			},
 			"confirm": {
-				"page_ttl": "購入者内容確認",
-				"read": "ご希望の座席を選択して次へボタンを押してください。予約できる座席枚数は最大4席までとなります。<br>画面をタッチすると画面がズームしますので座席を選択してください。",
-				"next": "購入完了",
-				"prev": "戻る"
+				"page_ttl": "ムビチケ券適用内容確認",
+				"read": "認証したムビチケ券を割当ました。<br>内容に問題なければ次へボタンを押して進んでください。",
+				"next": "購入者情報入力",
+				"prev": "戻る",
+				"note": "※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。",
+				"remaining": "ムビチケ券残数"
 			}
 		},
 		"overlap": {
@@ -142,8 +145,10 @@
 		}
 	},
 	"common": {
+		"price": "円",
 		"close": "閉じる",
 		"purchase_length": "購入枚数",
+		"difference_3d": "3D上映差額分",
 		"total_fee": "合計金額",
 		"theater": "劇場",
 		"theater_code": "劇場コード",
@@ -178,6 +183,8 @@
 		"securitycode": "セキュリティーコード",
 		"purchase_number": "購入番号",
 		"password": "パスワード",
+		"mvtk_code": "ムビチケ購入番号(10桁)",
+		"mvtk_password": "ムビチケ暗証番号(4桁)",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
@@ -189,7 +196,9 @@
 			"purchase_number": "(例)12345678",
 			"theater_code": "(例)1234",
 			"cardno": "(例)4111111111111111",
-			"securitycode": "(例)123"
+			"securitycode": "(例)123",
+			"mvtk_code": "(例)012345789",
+			"mvtk_password": "(例)0123"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
@@ -213,18 +222,5 @@
 	"week[Thu]": "木",
 	"week[Fri]": "金",
 	"week[Sat]": "土",
-	"week[Sun]": "日",
-	"stateReserve": {
-		"confirm": {
-			"page_ttl": "stateReserve.confirm.page_ttl",
-			"read": "stateReserve.confirm.read",
-			"ticket_button": "stateReserve.confirm.ticket_button",
-			"section_ttl": "stateReserve.confirm.section_ttl",
-			"section_text": "stateReserve.confirm.section_text",
-			"section_button": "stateReserve.confirm.section_button",
-			"ticket_text": "stateReserve.confirm.ticket_text",
-			"next": "stateReserve.confirm.next",
-			"prev": "stateReserve.confirm.prev"
-		}
-	}
+	"week[Sun]": "日"
 }
