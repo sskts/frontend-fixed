@@ -56,28 +56,69 @@ export default class TicketTypeSelectController extends PurchaseController {
         TicketForm(this.req, this.res, () => {
             //座席情報をセッションへ
             this.purchaseModel.reserveTickets = JSON.parse(this.req.body.reserve_tickets);
-            this.logger.debug('券種決定完了');
-            if (this.req.body['mvtk']) {
-                if (!this.router) return this.next(new Error('router is undefined'));
-                if (!this.req.session) return this.next(new Error('session is undefined'));
-                //セッション更新
-                this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                //ムビチケ入力へ
-                return this.res.redirect(this.router.build('purchase.mvtk', {}));
-            } else {
-                this.upDateAuthorization().then(() => {
+            this.ticketValidation().then(() => {
+                this.logger.debug('券種決定完了');
+                if (this.req.body['mvtk']) {
                     if (!this.router) return this.next(new Error('router is undefined'));
                     if (!this.req.session) return this.next(new Error('session is undefined'));
                     //セッション更新
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                    //購入者情報入力へ
-                    return this.res.redirect(this.router.build('purchase.input', {}));
-                }, (err) => {
-                    return this.next(new Error(err.message));
-                });
-
-            }
+                    //ムビチケ入力へ
+                    return this.res.redirect(this.router.build('purchase.mvtk', {}));
+                } else {
+                    this.upDateAuthorization().then(() => {
+                        if (!this.router) return this.next(new Error('router is undefined'));
+                        if (!this.req.session) return this.next(new Error('session is undefined'));
+                        //セッション更新
+                        this.req.session['purchase'] = this.purchaseModel.formatToSession();
+                        //購入者情報入力へ
+                        return this.res.redirect(this.router.build('purchase.input', {}));
+                    }, (err) => {
+                        return this.next(new Error(err.message));
+                    });
+                }
+            }, (err) => {
+                return this.next(new Error(err.message));
+            });
         });
+    }
+
+    /**
+     * 券種検証
+     */
+    private async ticketValidation(): Promise<void> {
+        if (!this.purchaseModel.performance) throw new Error('performance is undefined');
+        if (!this.purchaseModel.reserveTickets) throw new Error('reserveTickets is undefined');
+        //コアAPI券種取得
+        let performance = this.purchaseModel.performance;
+        let salesTickets = await COA.salesTicketInterface.call({
+            /** 施設コード */
+            theater_code: performance.attributes.theater._id,
+            /** 上映日 */
+            date_jouei: performance.attributes.day,
+            /** 作品コード */
+            title_code: performance.attributes.film.coa_title_code,
+            /** 作品枝番 */
+            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            /** 上映時刻 */
+            time_begin: performance.attributes.time_start,
+            /** スクリーンコード */
+            // screen_code: performance.screen._id,
+        });
+
+        let reserveTickets = this.purchaseModel.reserveTickets;
+        for (let reserveTicket of reserveTickets) {
+            for (let salesTicket of salesTickets.list_ticket) {
+                if (salesTicket.ticket_code === reserveTicket.ticket_code) {
+                    if (salesTicket.sale_price !== reserveTicket.sale_price) {
+                        this.logger.debug(`${reserveTicket.seat_code}: 券種検証NG`);
+                        throw new Error(PurchaseController.ERROR_MESSAGE_ACCESS);
+                    }
+                    this.logger.debug(`${reserveTicket.seat_code}: 券種検証OK`);
+                    break;
+                }
+            }
+        }
     }
 
     /**

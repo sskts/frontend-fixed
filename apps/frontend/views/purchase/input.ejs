@@ -112,7 +112,7 @@
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
                     <dd>
-                        <input type="text" name="cardno" maxlength="16" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
+                        <input type="text" name="cardno" id="cardNumber" maxlength="20" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
                         <% if (error && error.cardno) { %>
                         <div class="validation-text"><%= error.cardno[0] %></div>
                         <% } %>
@@ -124,7 +124,7 @@
                 <dl>
                     <dt><%- __('common.expire') %></dt>
                     <dd>
-                        <select name="credit_month">
+                        <select name="credit_month" id="cardExpirationMonth">
                             <%
                             for (let i = 0; i < 12; i++) {
                                 let num = i + 1;
@@ -133,7 +133,7 @@
                                 <option value="<%= month %>"><%= month %></option>
                             <% } %>
                         </select> <%- __('common.month') %> 
-                        <select name="credit_year">
+                        <select name="credit_year" id="cardExpirationYear">
                             <%
                             let choices = {};
                             let year2digits = moment().format('YY');

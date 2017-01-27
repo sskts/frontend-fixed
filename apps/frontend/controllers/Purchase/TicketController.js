@@ -47,26 +47,59 @@ class TicketTypeSelectController extends PurchaseController_1.default {
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         TicketForm_1.default(this.req, this.res, () => {
             this.purchaseModel.reserveTickets = JSON.parse(this.req.body.reserve_tickets);
-            this.logger.debug('券種決定完了');
-            if (this.req.body['mvtk']) {
-                if (!this.router)
-                    return this.next(new Error('router is undefined'));
-                if (!this.req.session)
-                    return this.next(new Error('session is undefined'));
-                this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                return this.res.redirect(this.router.build('purchase.mvtk', {}));
-            }
-            else {
-                this.upDateAuthorization().then(() => {
+            this.ticketValidation().then(() => {
+                this.logger.debug('券種決定完了');
+                if (this.req.body['mvtk']) {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
                     if (!this.req.session)
                         return this.next(new Error('session is undefined'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                    return this.res.redirect(this.router.build('purchase.input', {}));
-                }, (err) => {
-                    return this.next(new Error(err.message));
-                });
+                    return this.res.redirect(this.router.build('purchase.mvtk', {}));
+                }
+                else {
+                    this.upDateAuthorization().then(() => {
+                        if (!this.router)
+                            return this.next(new Error('router is undefined'));
+                        if (!this.req.session)
+                            return this.next(new Error('session is undefined'));
+                        this.req.session['purchase'] = this.purchaseModel.formatToSession();
+                        return this.res.redirect(this.router.build('purchase.input', {}));
+                    }, (err) => {
+                        return this.next(new Error(err.message));
+                    });
+                }
+            }, (err) => {
+                return this.next(new Error(err.message));
+            });
+        });
+    }
+    ticketValidation() {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!this.purchaseModel.performance)
+                throw new Error('performance is undefined');
+            if (!this.purchaseModel.reserveTickets)
+                throw new Error('reserveTickets is undefined');
+            let performance = this.purchaseModel.performance;
+            let salesTickets = yield COA.salesTicketInterface.call({
+                theater_code: performance.attributes.theater._id,
+                date_jouei: performance.attributes.day,
+                title_code: performance.attributes.film.coa_title_code,
+                title_branch_num: performance.attributes.film.coa_title_branch_num,
+                time_begin: performance.attributes.time_start,
+            });
+            let reserveTickets = this.purchaseModel.reserveTickets;
+            for (let reserveTicket of reserveTickets) {
+                for (let salesTicket of salesTickets.list_ticket) {
+                    if (salesTicket.ticket_code === reserveTicket.ticket_code) {
+                        if (salesTicket.sale_price !== reserveTicket.sale_price) {
+                            this.logger.debug(`${reserveTicket.seat_code}: 券種検証NG`);
+                            throw new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS);
+                        }
+                        this.logger.debug(`${reserveTicket.seat_code}: 券種検証OK`);
+                        break;
+                    }
+                }
             }
         });
     }
