@@ -27,7 +27,7 @@ $(function () {
             dis_price: 0,
             sale_price: ticket.sale_price,
         };
-        
+
         target.find('dd a').text(ticketAfter.ticket_name_ja + ' ￥' + ticketAfter.sale_price);
         target.find('dt').attr('data-ticket', JSON.stringify(ticketAfter));
         modal.close();
@@ -56,9 +56,10 @@ $(function () {
             var form = $('form');
             var dom = $('<input type="hidden" name="reserve_tickets">').val(JSON.stringify(result));
             form.append(dom);
-            form.submit();
-            loadingStart();
-            $(this).prop('disabled', true);
+            loadingStart(function () {
+                form.submit();
+                $(this).prop('disabled', true);
+            });
         }
     });
 })

@@ -47,9 +47,11 @@
     .column-02 {
         overflow: hidden;
         display: -ms-flexbox;
+        display: -webkit-flex;
         display: flex; 
         max-width: 706px;
         -ms-flex-pack: justify;
+        -webkit-justify-content: space-between; 
         justify-content: space-between; 
         
         @media screen and (max-width: $mobile) {
@@ -58,6 +60,7 @@
         dl {
             margin-bottom: 0;
             display: -ms-flexbox;
+            display: -webkit-flex;
             display: flex;
             width: 318px;
             @media screen and (max-width: $tablet) {

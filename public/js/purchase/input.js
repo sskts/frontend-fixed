@@ -25,9 +25,12 @@ $(function () {
             securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
             // holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
         }
-        Multipayment.getToken(sendParam, someCallbackFunction);
-        loadingStart();
-        $(this).prop('disabled', true);
+        
+        loadingStart(function () {
+            Multipayment.getToken(sendParam, someCallbackFunction);
+            $(this).prop('disabled', true);
+        });
+
     });
 });
 

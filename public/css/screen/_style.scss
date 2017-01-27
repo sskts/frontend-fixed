@@ -47,8 +47,20 @@
         font-size: 24px;
         color: #9a9a9b;
     }
-
     
+}
+.screen-cover {
+    .device-type-sp {
+        display: none;
+    }
+    @media screen and (max-width: 768px) {
+        .device-type-sp {
+            display: block;
+        }
+        .device-type-pc {
+            display: none;
+        }
+    }
 }
 .zoom {
     .screen-scroll {

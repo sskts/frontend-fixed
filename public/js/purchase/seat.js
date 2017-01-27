@@ -5,7 +5,7 @@ $(function () {
         var screen = $('.screen');
         //席状態変更
         $('.seat a').addClass('disabled');
-        
+
         var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
         if (purchaseSeats) {
             console.log(purchaseSeats)
@@ -13,7 +13,7 @@ $(function () {
             for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
                 var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
                 var seatNum = purchaseSeat.seat_num;
-                var seat = $('.seat a[data-seat-code='+ seatNum +']');
+                var seat = $('.seat a[data-seat-code=' + seatNum + ']');
                 seat.removeClass('disabled');
                 seat.addClass('active');
             }
@@ -24,31 +24,31 @@ $(function () {
             for (var i = 0, len = freeSeats.length; i < len; i++) {
                 var freeSeat = freeSeats[i];
                 // var seatNum = replaceHalfSize(freeSeat.seat_num);
-                var seat = $('.seat a[data-seat-code='+ freeSeat.seat_num +']');
+                var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
                 if (seat && !seat.hasClass('active')) {
                     seat.removeClass('disabled');
                     seat.addClass('default');
                 }
             }
         }
-        
-        
+
+
 
         screen.show();
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
-        screenSeatStatusesMap.setScaleUpCallback(function(){
+        screenSeatStatusesMap.setScaleUpCallback(function () {
             $('.zoom-btn').show();
         });
-        screenSeatStatusesMap.setScaleDownCallback(function(){
+        screenSeatStatusesMap.setScaleDownCallback(function () {
             $('.zoom-btn').hide();
         });
-        
+
     });
 
     /**
      * 座席クリックイベント
      */
-    $(document).on('click', '.zoom-btn a', function(event) {
+    $(document).on('click', '.zoom-btn a', function (event) {
         event.preventDefault();
         if (screenSeatStatusesMap.isZoom()) {
             screenSeatStatusesMap.scaleDown();
@@ -85,13 +85,13 @@ $(function () {
         event.preventDefault();
         // 座席コードリストを取得
         var seats = [];
-        $('.screen .seat a.active').each(function(index, elem) {
+        $('.screen .seat a.active').each(function (index, elem) {
             seats.push({
                 seat_num: $(this).attr('data-seat-code'),
                 seat_section: '0'
             });
         });
-        
+
 
         if (seats.length < 1) {
             modal.open('seat_not_select');
@@ -99,10 +99,11 @@ $(function () {
             var reserveTickets = [];
             var form = $('form');
             $('input[name=seats]').val(JSON.stringify(seats));
-            
-            form.submit();
-            loadingStart();
-            $(this).prop('disabled', true);
+
+            loadingStart(function () {
+                form.submit();
+                $(this).prop('disabled', true);
+            });
         }
     });
 });

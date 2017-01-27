@@ -20,12 +20,16 @@
     }
     .tickets {
         display: -ms-flexbox;
+        display: -webkit-flex;
         display: flex;
         -ms-flex-pack: justify;
         -ms-flex-align: stretch;
+        -webkit-justify-content: space-between;
         justify-content: space-between;
+        -webkit-align-items: stretch;
         align-items: stretch;
         -ms-flex-wrap: wrap;
+        -webkit-flex-wrap: wrap;
         flex-wrap: wrap;
         margin: 0 -10px;
     }

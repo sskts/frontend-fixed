@@ -416,6 +416,7 @@ p {
     dl {
         margin-bottom: 0;
         display: -ms-flexbox;
+        display: -webkit-flex;
         display: flex;
         @media screen and (max-width: $mobile) {
             display: block;
@@ -487,6 +488,9 @@ p {
         &:hover {
             transition: opacity 0.25s;
             opacity: 0.75;
+            @media screen and (max-width: $tablet) {
+                opacity: 1;
+            }
         }
     }
     &.blue-button {
@@ -537,6 +541,9 @@ p {
         &:hover {
             transition: opacity 0.25s;
             opacity: 0.75;
+            @media screen and (max-width: $tablet) {
+                opacity: 1;
+            }
         }
     }
     &.blue-button {
@@ -838,8 +845,10 @@ p {
     }
     ul {
         display: -ms-flexbox;
+        display: -webkit-flex;
         display: flex;
         -ms-flex-pack: center;
+        -webkit-justify-content: center;
         justify-content: center;
         margin-bottom: 10px;
         li {
@@ -939,12 +948,14 @@ p {
 .modal-cover.active,
 .modal.active {
     visibility: visible;
+    -webkit-animation: fadein 0.4s both;
     animation: fadein 0.4s both;
 }
 
 .modal-cover.disabled,
 .modal.disabled {
     visibility: visible;
+    -webkit-animation: fadeout 0.4s both;
     animation: fadeout 0.4s both;
 }
 
@@ -971,6 +982,7 @@ p {
 .loading-cover.active,
 .loading.active {
     visibility: visible;
+    -webkit-animation: fadein 0.4s both;
     animation: fadein 0.4s both;
 }
 
@@ -993,6 +1005,7 @@ p {
     background-color: #FFF;
     display: inline-block;
     margin-right: 10px;
+    -webkit-animation: loading 1s infinite;
     animation: loading 1s infinite;
 }
 
@@ -1017,42 +1030,3 @@ p {
     animation-delay: 0.9s;
 }
 
-//animations
-@keyframes loading {
-    30% {
-        transform: scaleY(2);
-    }
-}
-
-
-@keyframes zoom {
-    0% {
-        transform: scale(.5);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-@keyframes fadein {
-    0% {
-        visibility: hidden;
-        opacity: 0;
-    }
-    100% {
-        visibility: visible;
-        opacity: 1;
-    }
-}
-
-@keyframes fadeout {
-    0% {
-        visibility: visible;
-        opacity: 1;
-    }
-    100% {
-        visibility: hidden;
-        opacity: 0;
-    }
-}

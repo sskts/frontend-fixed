@@ -68,10 +68,13 @@ function heightFix() {
 /**
  * ローディングスタート
  */
-function loadingStart() {
+function loadingStart(_cb) {
     $('.loading-cover').addClass('active');
     $('.loading').addClass('active');
     $('.wrapper').addClass('blur');
+    setTimeout(function() {
+        if (_cb) _cb();
+    }, 1000);
 }
 
 /**

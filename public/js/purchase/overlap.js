@@ -16,7 +16,9 @@ $(function () {
     $(document).on('click', '.prev-button button', function (event) {
         event.preventDefault();
         var form = $(this).parent().parent();
-        form.submit();
-        $(this).prop('disabled', true);
+        loadingStart(function () {
+            form.submit();
+            $(this).prop('disabled', true);
+        });
     });
 });
