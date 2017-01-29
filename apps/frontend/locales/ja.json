@@ -1,5 +1,14 @@
 {
 	"lang": "ja",
+	"header": {
+		"logo": "シネマサンシャイン"
+	},
+	"footer": {
+		"privacy_policy": "プライバシーポリシー",
+		"Specified_Commercial_Transaction_Law": "特定商取引法に基づく表記",
+		"copyright": "Copyright (C) 2001-2016 Cinema Sunshine Co., Ltd. All Rights Reserved."
+	},
+	"noscript": "このページではJavaScriptを使用しています。",
 	"purchase": {
 		"step01": "座席選択",
 		"step02": "券種選択",

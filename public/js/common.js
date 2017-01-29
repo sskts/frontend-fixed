@@ -1,4 +1,5 @@
 var SASAKI = {};
+
 $(function () {
     settingValidation();
     $(document).on('click', '.prev-button button', function (event) {

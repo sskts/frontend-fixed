@@ -2,6 +2,12 @@
     .clone {
         display: none;
     }
+    .ticket-list {
+        .zoom {
+            -webkit-animation: zoom 0.2s both;
+            animation: zoom 0.2s both;
+        }
+    }
     dl {
         dt {
             line-height: 44px;

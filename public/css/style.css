@@ -194,6 +194,7 @@ select {
 }
 
 select:focus {
+  padding: 0 53px 0 9px;
   border: 2px solid #707070;
 }
 
@@ -421,6 +422,10 @@ p a {
 
 .bg-light-gray {
   background-color: #eeeef0;
+}
+
+.bg-pink {
+  background-color: #ffe8eb;
 }
 
 .border-bottom-dot {
@@ -934,6 +939,10 @@ p a {
   .wrapper {
     width: auto;
   }
+}
+
+.noscript {
+  padding: 10px 0;
 }
 
 .header {
@@ -1661,6 +1670,11 @@ p a {
 
 .purchase .purchase-mvtk-input .clone {
   display: none;
+}
+
+.purchase .purchase-mvtk-input .ticket-list .zoom {
+  -webkit-animation: zoom 0.2s both;
+  animation: zoom 0.2s both;
 }
 
 .purchase .purchase-mvtk-input dl dt {

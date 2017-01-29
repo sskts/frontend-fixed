@@ -115,6 +115,7 @@ select {
     background-position: right center;
     outline: none;
     &:focus {
+        padding: 0 53px 0 9px;
         border: 2px solid #707070;
     }
 }
@@ -328,6 +329,10 @@ p {
 
 .bg-light-gray {
     background-color: #eeeef0;
+}
+
+.bg-pink {
+    background-color: #ffe8eb
 }
 
 .border-bottom-dot {
@@ -817,6 +822,10 @@ p {
     @media screen and (max-width: $tablet){
         width: auto;
     }
+}
+
+.noscript {
+    padding: 10px 0;
 }
 
 
