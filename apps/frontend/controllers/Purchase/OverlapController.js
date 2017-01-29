@@ -59,12 +59,8 @@ class OverlapController extends PurchaseController_1.default {
                 throw new Error('performance is undefined');
             if (!this.purchaseModel.transactionMP)
                 throw new Error('transactionMP is undefined');
-            if (!this.purchaseModel.owner)
-                throw new Error('owners is undefined');
             if (!this.purchaseModel.reserveSeats)
                 throw new Error('reserveSeats is undefined');
-            if (!this.purchaseModel.administrator)
-                throw new Error('administrator is undefined');
             if (!this.purchaseModel.authorizationCOA)
                 throw new Error('authorizationCOA is undefined');
             let performance = this.purchaseModel.performance;
@@ -79,10 +75,8 @@ class OverlapController extends PurchaseController_1.default {
             });
             this.logger.debug('COA仮予約削除');
             yield MP.removeCOAAuthorization.call({
-                transaction: this.purchaseModel.transactionMP,
-                ownerId4administrator: this.purchaseModel.administrator._id,
-                reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
-                addCOAAuthorizationResult: this.purchaseModel.authorizationCOA
+                transactionId: this.purchaseModel.transactionMP._id,
+                coaAuthorizationId: this.purchaseModel.authorizationCOA._id
             });
             this.logger.debug('COAオーソリ削除');
             if (this.purchaseModel.transactionGMO
@@ -97,8 +91,8 @@ class OverlapController extends PurchaseController_1.default {
                 });
                 this.logger.debug('GMOオーソリ取消');
                 yield MP.removeGMOAuthorization.call({
-                    transaction: this.purchaseModel.transactionMP,
-                    addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
+                    transactionId: this.purchaseModel.transactionMP._id,
+                    gmoAuthorizationId: this.purchaseModel.authorizationGMO._id,
                 });
                 this.logger.debug('GMOオーソリ削除');
             }

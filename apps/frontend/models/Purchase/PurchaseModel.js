@@ -12,11 +12,9 @@ class PurchaseModel {
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
         this.transactionMP = (purchaseSession.transactionMP) ? purchaseSession.transactionMP : null;
         this.transactionGMO = (purchaseSession.transactionGMO) ? purchaseSession.transactionGMO : null;
-        this.owner = (purchaseSession.owner) ? purchaseSession.owner : null;
         this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
         this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
         this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
-        this.administrator = (purchaseSession.administrator) ? purchaseSession.administrator : null;
         this.expired = (purchaseSession.expired) ? purchaseSession.expired : null;
     }
     formatToSession() {
@@ -29,30 +27,28 @@ class PurchaseModel {
             updateReserve: (this.updateReserve) ? this.updateReserve : null,
             transactionMP: (this.transactionMP) ? this.transactionMP : null,
             transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
-            owner: (this.owner) ? this.owner : null,
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            administrator: (this.administrator) ? this.administrator : null,
             expired: (this.expired) ? this.expired : null,
         };
     }
     accessAuth(value) {
         let result = false;
         if (value === PurchaseModel.SEAT_STATE) {
-            if (this.transactionMP && this.owner)
+            if (this.transactionMP)
                 result = true;
         }
         else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats)
+            if (this.transactionMP && this.performance && this.reserveSeats)
                 result = true;
         }
         else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets)
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets)
                 result = true;
         }
         else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo)
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo)
                 result = true;
         }
         else if (value === PurchaseModel.COMPLETE_STATE) {

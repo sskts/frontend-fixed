@@ -13,6 +13,8 @@ class ErrorController extends BaseController_1.default {
     }
     index(err) {
         this.logger.error(err.stack);
+        if (this.req.session)
+            delete this.req.session['purchase'];
         let status = 500;
         if (this.req.xhr) {
             this.res.status(status).send({ error: 'Something failed.' });

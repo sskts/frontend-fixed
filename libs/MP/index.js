@@ -30,46 +30,6 @@ var getPerformance;
     }
     getPerformance.call = call;
 })(getPerformance = exports.getPerformance || (exports.getPerformance = {}));
-var getAdministrator;
-(function (getAdministrator) {
-    function call() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.get({
-                url: `${endPoint}/owners/administrator`,
-                body: {},
-                json: true,
-                simple: false,
-                resolveWithFullResponse: true,
-            });
-            if (response.statusCode !== 200)
-                throw new Error(response.body.message);
-            let administrator = response.body.data;
-            console.log('administrator:', administrator);
-            return administrator;
-        });
-    }
-    getAdministrator.call = call;
-})(getAdministrator = exports.getAdministrator || (exports.getAdministrator = {}));
-var ownerAnonymousCreate;
-(function (ownerAnonymousCreate) {
-    function call() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
-                url: `${endPoint}/owners/anonymous`,
-                body: {},
-                json: true,
-                simple: false,
-                resolveWithFullResponse: true,
-            });
-            if (response.statusCode !== 201)
-                throw new Error(response.body.message);
-            let owner = response.body.data;
-            console.log('owner:', owner);
-            return owner;
-        });
-    }
-    ownerAnonymousCreate.call = call;
-})(ownerAnonymousCreate = exports.ownerAnonymousCreate || (exports.ownerAnonymousCreate = {}));
 var transactionStart;
 (function (transactionStart) {
     function call(args) {
@@ -78,7 +38,6 @@ var transactionStart;
                 url: `${endPoint}/transactions`,
                 body: {
                     expired_at: args.expired_at,
-                    owners: args.owners
                 },
                 json: true,
                 simple: false,
@@ -97,11 +56,17 @@ var addCOAAuthorization;
 (function (addCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
+            let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
+                return owner.group === "ADMINISTRATOR";
+            })[0]._id;
+            let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
+                return owner.group === "ANONYMOUS";
+            })[0]._id;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
                 body: {
-                    owner_id_from: args.administratorOwnerId,
-                    owner_id_to: args.anonymousOwnerId,
+                    owner_id_from: administratorOwnerId,
+                    owner_id_to: anonymousOwnerId,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                     seats: args.salesTicketResults.map((tmpReserve) => {
                         return {
@@ -137,7 +102,7 @@ var removeCOAAuthorization;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
-                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+                url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
                 body: {},
                 json: true,
                 simple: false,
@@ -154,11 +119,17 @@ var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
+            let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
+                return owner.group === "ADMINISTRATOR";
+            })[0]._id;
+            let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
+                return owner.group === "ANONYMOUS";
+            })[0]._id;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
                 body: {
-                    owner_id_from: args.anonymousOwnerId,
-                    owner_id_to: args.administratorOwnerId,
+                    owner_id_from: anonymousOwnerId,
+                    owner_id_to: administratorOwnerId,
                     gmo_shop_id: config.get('gmo_shop_id'),
                     gmo_shop_password: config.get('gmo_shop_password'),
                     gmo_order_id: args.orderId,
@@ -185,7 +156,7 @@ var removeGMOAuthorization;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
-                url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+                url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
                 body: {},
                 json: true,
                 simple: false,
@@ -203,7 +174,7 @@ var ownersAnonymous;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.patch({
-                url: `${endPoint}/owners/anonymous/${args.owner._id}`,
+                url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
                 body: {
                     name_first: args.name_first,
                     name_last: args.name_last,
@@ -226,7 +197,7 @@ var transactionsEnableInquiry;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.patch({
-                url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
+                url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
                 body: {
                     inquiry_id: args.updateReserveResult.reserve_num,
                     inquiry_pass: args.inquiry_pass
@@ -247,7 +218,7 @@ var transactionClose;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.patch({
-                url: `${endPoint}/transactions/${args.transaction._id}/close`,
+                url: `${endPoint}/transactions/${args.transactionId}/close`,
                 body: {},
                 json: true,
                 simple: false,
@@ -265,7 +236,7 @@ var addEmail;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transactions/${args.transaction._id}/emails`,
+                url: `${endPoint}/transactions/${args.transactionId}/emails`,
                 body: {
                     from: args.from,
                     to: args.to,
@@ -289,7 +260,7 @@ var removeEmail;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
-                url: `${endPoint}/transactions/${args.transaction._id}/emails/${emailId}`,
+                url: `${endPoint}/transactions/${args.transactionId}/emails/${args.emailId}`,
                 body: {},
                 json: true,
                 simple: false,

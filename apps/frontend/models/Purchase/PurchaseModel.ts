@@ -76,16 +76,12 @@ export class PurchaseModel {
     public transactionMP: MP.transactionStart.Result | null;
     /**取引GMO */
     public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
-    /**オーナー */
-    public owner: MP.ownerAnonymousCreate.Result | null;
     /**COAオーソリ */
     public authorizationCOA: MP.addCOAAuthorization.Result | null;
     /**GMOオーソリ */
     public authorizationGMO: MP.addGMOAuthorization.Result | null;
     /**オーダーID */
     public orderId: string | null;
-    /**運営者 */
-    public administrator: MP.getAdministrator.Result | null;
     /**有効期限 */
     public expired: number | null; 
 
@@ -102,11 +98,9 @@ export class PurchaseModel {
         this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
         this.transactionMP = (purchaseSession.transactionMP) ? purchaseSession.transactionMP : null;
         this.transactionGMO = (purchaseSession.transactionGMO) ? purchaseSession.transactionGMO : null;
-        this.owner = (purchaseSession.owner) ? purchaseSession.owner : null;
         this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
         this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
         this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
-        this.administrator = (purchaseSession.administrator) ? purchaseSession.administrator : null;
         this.expired = (purchaseSession.expired) ? purchaseSession.expired : null;
 
 
@@ -124,11 +118,9 @@ export class PurchaseModel {
         updateReserve: COA.updateReserveInterface.Result | null,
         transactionMP: MP.transactionStart.Result | null,
         transactionGMO: GMO.CreditService.entryTranInterface.Result | null,
-        owner: MP.ownerAnonymousCreate.Result | null,
         authorizationCOA: MP.addCOAAuthorization.Result | null,
         authorizationGMO: MP.addGMOAuthorization.Result | null,
         orderId: string | null,
-        administrator: MP.getAdministrator.Result | null,
         expired: number | null,
     } {
 
@@ -141,11 +133,9 @@ export class PurchaseModel {
             updateReserve: (this.updateReserve) ? this.updateReserve : null,
             transactionMP: (this.transactionMP) ? this.transactionMP : null,
             transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
-            owner: (this.owner) ? this.owner : null,
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            administrator: (this.administrator) ? this.administrator : null,
             expired: (this.expired) ? this.expired : null,
         };
     }
@@ -157,13 +147,13 @@ export class PurchaseModel {
     public accessAuth(value: number): boolean {
         let result: boolean = false;
         if (value === PurchaseModel.SEAT_STATE) {
-            if (this.transactionMP && this.owner) result = true;
+            if (this.transactionMP) result = true;
         } else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats) result = true;
+            if (this.transactionMP && this.performance && this.reserveSeats) result = true;
         } else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets) result = true;
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets) result = true;
         } else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.owner && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
         } else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
         }

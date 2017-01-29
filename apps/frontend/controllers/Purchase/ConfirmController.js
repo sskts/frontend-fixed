@@ -36,8 +36,6 @@ class ConfirmController extends PurchaseController_1.default {
                 throw new Error('purchaseModel.reserveSeats is undefined');
             if (!this.purchaseModel.input)
                 throw new Error('purchaseModel.input is undefined');
-            if (!this.purchaseModel.owner)
-                throw new Error('purchaseModel.owner is undefined');
             if (!this.purchaseModel.transactionMP)
                 throw Error('purchaseModel.transactionMP is undefined');
             let performance = this.purchaseModel.performance;
@@ -67,7 +65,7 @@ class ConfirmController extends PurchaseController_1.default {
                 };
             }
             yield MP.ownersAnonymous.call({
-                owner: this.purchaseModel.owner,
+                transactionId: this.purchaseModel.transactionMP._id,
                 name_first: input.first_name_hira,
                 name_last: input.last_name_hira,
                 tel: input.tel_num,
@@ -76,7 +74,7 @@ class ConfirmController extends PurchaseController_1.default {
             this.logger.debug('MP購入者情報登録');
             let mail = this.createMail();
             yield MP.addEmail.call({
-                transaction: this.purchaseModel.transactionMP,
+                transactionId: this.purchaseModel.transactionMP._id,
                 from: mail.from,
                 to: mail.to,
                 subject: mail.subject,
@@ -84,7 +82,7 @@ class ConfirmController extends PurchaseController_1.default {
             });
             this.logger.debug('MPメール登録');
             yield MP.transactionClose.call({
-                transaction: this.purchaseModel.transactionMP,
+                transactionId: this.purchaseModel.transactionMP._id,
             });
             this.logger.debug('MP取引成立');
         });

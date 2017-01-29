@@ -14,10 +14,9 @@ class TransactionController extends PurchaseController_1.default {
     start() {
         if (!this.req.params || !this.req.params['id'])
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
-        if (this.purchaseModel.transactionMP && this.purchaseModel.owner && this.purchaseModel.reserveSeats) {
+        if (this.purchaseModel.transactionMP && this.purchaseModel.reserveSeats) {
             if (!this.router)
                 return this.next(new Error('router is undefined'));
-            console.log('重複確認=====================');
             return this.res.redirect(this.router.build('purchase.overlap', {
                 id: this.req.params['id']
             }));
@@ -38,16 +37,11 @@ class TransactionController extends PurchaseController_1.default {
     }
     transactionStart() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.purchaseModel.administrator = yield MP.getAdministrator.call();
-            this.logger.debug('MP運営者', this.purchaseModel.administrator);
-            this.purchaseModel.owner = yield MP.ownerAnonymousCreate.call();
-            this.logger.debug('MP一般所有者作成', this.purchaseModel.owner);
             this.purchaseModel.expired = moment().add('minutes', 30).unix();
             this.purchaseModel.transactionMP = yield MP.transactionStart.call({
                 expired_at: this.purchaseModel.expired,
-                owners: [this.purchaseModel.administrator._id, this.purchaseModel.owner._id]
             });
-            this.logger.debug('MP取引開始', this.purchaseModel.transactionMP);
+            this.logger.debug('MP取引開始', this.purchaseModel.transactionMP.attributes.owners);
         });
     }
 }

@@ -120,8 +120,6 @@ export default class InputController extends PurchaseController {
     private async addAuthorization(): Promise<void> {
         if (!this.purchaseModel.transactionMP) throw new Error('transactionMP is undefined');
         if (!this.purchaseModel.gmo) throw new Error('gmo is undefined');
-        if (!this.purchaseModel.owner) throw new Error('owners is undefined');
-        if (!this.purchaseModel.administrator) throw new Error('administrator is undefined');
 
         if (this.purchaseModel.transactionGMO
             && this.purchaseModel.authorizationGMO
@@ -144,8 +142,8 @@ export default class InputController extends PurchaseController {
 
             // GMOオーソリ削除
             await MP.removeGMOAuthorization.call({
-                transaction: this.purchaseModel.transactionMP,
-                addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
+                transactionId: this.purchaseModel.transactionMP._id,
+                gmoAuthorizationId: this.purchaseModel.authorizationGMO._id,
             });
             this.logger.debug('GMOオーソリ削除');
 
@@ -177,8 +175,6 @@ export default class InputController extends PurchaseController {
             // GMOオーソリ追加
             this.purchaseModel.authorizationGMO = await MP.addGMOAuthorization.call({
                 transaction: this.purchaseModel.transactionMP,
-                anonymousOwnerId: this.purchaseModel.owner._id,
-                administratorOwnerId: this.purchaseModel.administrator._id,
                 orderId: this.purchaseModel.orderId,
                 amount: amount,
                 entryTranResult: this.purchaseModel.transactionGMO,

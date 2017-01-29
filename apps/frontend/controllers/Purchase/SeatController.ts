@@ -68,8 +68,6 @@ export default class SeatSelectController extends PurchaseController {
     private async reserve(): Promise<void> {
         if (!this.purchaseModel.performance) throw new Error('performance is undefined');
         if (!this.purchaseModel.transactionMP) throw new Error('transactionMP is undefined');
-        if (!this.purchaseModel.owner) throw new Error('owners is undefined');
-        if (!this.purchaseModel.administrator) throw new Error('administrator is undefined');
 
         let performance = this.purchaseModel.performance;
 
@@ -98,10 +96,8 @@ export default class SeatSelectController extends PurchaseController {
 
             // COAオーソリ削除
             await MP.removeCOAAuthorization.call({
-                transaction: this.purchaseModel.transactionMP,
-                ownerId4administrator: this.purchaseModel.administrator._id,
-                reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
-                addCOAAuthorizationResult: this.purchaseModel.authorizationCOA
+                transactionId: this.purchaseModel.transactionMP._id,
+                coaAuthorizationId: this.purchaseModel.authorizationCOA._id,
             });
 
             this.logger.debug('MPCOAオーソリ削除');
@@ -120,8 +116,8 @@ export default class SeatSelectController extends PurchaseController {
 
                 // GMOオーソリ削除
                 await MP.removeGMOAuthorization.call({
-                    transaction: this.purchaseModel.transactionMP,
-                    addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
+                    transactionId: this.purchaseModel.transactionMP._id,
+                    gmoAuthorizationId: this.purchaseModel.authorizationGMO._id,
                 });
                 this.logger.debug('GMOオーソリ削除');
 
@@ -183,8 +179,6 @@ export default class SeatSelectController extends PurchaseController {
         //COAオーソリ追加
         let COAAuthorizationResult = await MP.addCOAAuthorization.call({
             transaction: this.purchaseModel.transactionMP,
-            administratorOwnerId: this.purchaseModel.administrator._id,
-            anonymousOwnerId: this.purchaseModel.owner._id,
             reserveSeatsTemporarilyResult: this.purchaseModel.reserveSeats,
             salesTicketResults: this.purchaseModel.reserveTickets,
             performance: performance,

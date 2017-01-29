@@ -105,10 +105,6 @@ class InputController extends PurchaseController_1.default {
                 throw new Error('transactionMP is undefined');
             if (!this.purchaseModel.gmo)
                 throw new Error('gmo is undefined');
-            if (!this.purchaseModel.owner)
-                throw new Error('owners is undefined');
-            if (!this.purchaseModel.administrator)
-                throw new Error('administrator is undefined');
             if (this.purchaseModel.transactionGMO
                 && this.purchaseModel.authorizationGMO
                 && this.purchaseModel.orderId) {
@@ -127,8 +123,8 @@ class InputController extends PurchaseController_1.default {
                 });
                 this.logger.debug('GMOオーソリ取消');
                 yield MP.removeGMOAuthorization.call({
-                    transaction: this.purchaseModel.transactionMP,
-                    addGMOAuthorizationResult: this.purchaseModel.authorizationGMO,
+                    transactionId: this.purchaseModel.transactionMP._id,
+                    gmoAuthorizationId: this.purchaseModel.authorizationGMO._id,
                 });
                 this.logger.debug('GMOオーソリ削除');
             }
@@ -153,8 +149,6 @@ class InputController extends PurchaseController_1.default {
                 this.logger.debug('GMO決済');
                 this.purchaseModel.authorizationGMO = yield MP.addGMOAuthorization.call({
                     transaction: this.purchaseModel.transactionMP,
-                    anonymousOwnerId: this.purchaseModel.owner._id,
-                    administratorOwnerId: this.purchaseModel.administrator._id,
                     orderId: this.purchaseModel.orderId,
                     amount: amount,
                     entryTranResult: this.purchaseModel.transactionGMO,

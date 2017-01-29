@@ -123,54 +123,28 @@ export namespace getPerformance {
 }
 
 /**
- * 運営者取得
+ * オーナー
  */
-export namespace getAdministrator {
-    export interface Args {
-    }
-    export interface Result {
-        type: string,
-        _id: string
-    }
-    export async function call(): Promise<Result> {
-        let response = await request.get({
-            url: `${endPoint}/owners/administrator`,
-            body: {},
-            json: true,
-            simple: false,
-            resolveWithFullResponse: true,
-        });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
-        let administrator = response.body.data;
-        console.log('administrator:', administrator);
+export namespace owners {
 
-        return administrator;
+    export interface administrator {
+        _id: string,
+        updated_at: string,
+        created_at: string,
+        group: string,
+        name: {
+            ja: string,
+            en: string
+        },
     }
-}
 
-/**
- * 一般所有者作成
- */
-export namespace ownerAnonymousCreate {
-    export interface Args {
-    }
-    export interface Result {
-        type: string,
-        _id: string
-    }
-    export async function call(): Promise<Result> {
-        let response = await request.post({
-            url: `${endPoint}/owners/anonymous`,
-            body: {},
-            json: true,
-            simple: false,
-            resolveWithFullResponse: true,
-        });
-        if (response.statusCode !== 201) throw new Error(response.body.message);
-        let owner = response.body.data;
-        console.log('owner:', owner);
-
-        return owner;
+    export interface anonymous {
+        _id: string,
+        group: string,
+        name_first: string,
+        name_last: string,
+        email: string,
+        tel: string,
     }
 }
 
@@ -180,11 +154,24 @@ export namespace ownerAnonymousCreate {
 export namespace transactionStart {
     export interface Args {
         expired_at: number,
-        owners: string[]
     }
     export interface Result {
         type: string,
-        _id: string
+        _id: string,
+        attributes: {
+            _id: string,
+            status: string,
+            events: any[],
+            owners: Array<{
+                _id: string,
+                group: string
+            }>,
+            queues: any[],
+            expired_at: string,
+            inquiry_id: string,
+            inquiry_pass: string,
+            queues_status: string,
+        }
     }
 
     export async function call(args: Args): Promise<Result> {
@@ -192,7 +179,6 @@ export namespace transactionStart {
             url: `${endPoint}/transactions`,
             body: {
                 expired_at: args.expired_at,
-                owners: args.owners
             },
             json: true,
             simple: false,
@@ -212,8 +198,6 @@ export namespace transactionStart {
 export namespace addCOAAuthorization {
     export interface Args {
         transaction: transactionStart.Result,
-        administratorOwnerId: string,
-        anonymousOwnerId: string,
         reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result,
         salesTicketResults: Array<{
             section: string,
@@ -236,11 +220,17 @@ export namespace addCOAAuthorization {
         _id: string
     }
     export async function call(args: Args): Promise<Result> {
+        let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
+            return owner.group === "ADMINISTRATOR";
+        })[0]._id;
+        let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
+            return owner.group === "ANONYMOUS";
+        })[0]._id;
         let response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
             body: {
-                owner_id_from: args.administratorOwnerId,
-                owner_id_to: args.anonymousOwnerId,
+                owner_id_from: administratorOwnerId,
+                owner_id_to: anonymousOwnerId,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                 seats: args.salesTicketResults.map((tmpReserve: any) => {
                     return {
@@ -275,16 +265,14 @@ export namespace addCOAAuthorization {
  */
 export namespace removeCOAAuthorization {
     export interface Args {
-        transaction: transactionStart.Result,
-        ownerId4administrator: string,
-        reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result,
-        addCOAAuthorizationResult: addCOAAuthorization.Result
+        transactionId: string,
+        coaAuthorizationId: string,
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.del({
-            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addCOAAuthorizationResult._id}`,
+            url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
             body: {
             },
             json: true,
@@ -304,8 +292,6 @@ export namespace removeCOAAuthorization {
 export namespace addGMOAuthorization {
     export interface Args {
         transaction: transactionStart.Result,
-        anonymousOwnerId: string,
-        administratorOwnerId: string,
         orderId: string,
         amount: number,
         entryTranResult: GMO.CreditService.entryTranInterface.Result
@@ -315,11 +301,17 @@ export namespace addGMOAuthorization {
         _id: string
     }
     export async function call(args: Args): Promise<Result> {
+        let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
+            return owner.group === "ADMINISTRATOR";
+        })[0]._id;
+        let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
+            return owner.group === "ANONYMOUS";
+        })[0]._id;
         let response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
             body: {
-                owner_id_from: args.anonymousOwnerId,
-                owner_id_to: args.administratorOwnerId,
+                owner_id_from: anonymousOwnerId,
+                owner_id_to: administratorOwnerId,
                 gmo_shop_id: config.get<string>('gmo_shop_id'),
                 gmo_shop_password: config.get<string>('gmo_shop_password'),
                 gmo_order_id: args.orderId,
@@ -345,16 +337,16 @@ export namespace addGMOAuthorization {
  */
 export namespace removeGMOAuthorization {
     export interface Args {
-        transaction: transactionStart.Result,
-        addGMOAuthorizationResult: addGMOAuthorization.Result,
+        transactionId: string,
+        gmoAuthorizationId: string,
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.del({
-            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/${args.addGMOAuthorizationResult._id}`,
+            url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
             body: {
-                
+
             },
             json: true,
             simple: false,
@@ -373,7 +365,7 @@ export namespace removeGMOAuthorization {
  */
 export namespace ownersAnonymous {
     export interface Args {
-        owner: ownerAnonymousCreate.Result,
+        transactionId: string,
         name_first: string,
         name_last: string,
         tel: string,
@@ -383,7 +375,7 @@ export namespace ownersAnonymous {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.patch({
-            url: `${endPoint}/owners/anonymous/${args.owner._id}`,
+            url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
             body: {
                 name_first: args.name_first,
                 name_last: args.name_last,
@@ -404,7 +396,7 @@ export namespace ownersAnonymous {
 // 照会情報登録(購入番号と電話番号で照会する場合)
 export namespace transactionsEnableInquiry {
     export interface Args {
-        transaction: transactionStart.Result,
+        transactionId: string,
         updateReserveResult: COA.updateReserveInterface.Result,
         inquiry_pass: string,
     }
@@ -412,7 +404,7 @@ export namespace transactionsEnableInquiry {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.patch({
-            url: `${endPoint}/transactions/${args.transaction._id}/enableInquiry`,
+            url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
             body: {
                 inquiry_id: args.updateReserveResult.reserve_num,
                 inquiry_pass: args.inquiry_pass
@@ -434,15 +426,15 @@ export namespace transactionsEnableInquiry {
  */
 export namespace transactionClose {
     export interface Args {
-        transaction: transactionStart.Result
+        transactionId: string
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.patch({
-            url: `${endPoint}/transactions/${args.transaction._id}/close`,
+            url: `${endPoint}/transactions/${args.transactionId}/close`,
             body: {
-                
+
             },
             json: true,
             simple: false,
@@ -459,7 +451,7 @@ export namespace transactionClose {
  */
 export namespace addEmail {
     export interface Args {
-        transaction: transactionStart.Result,
+        transactionId: string,
         from: string,
         to: string,
         subject: string,
@@ -470,7 +462,7 @@ export namespace addEmail {
     }
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/transactions/${args.transaction._id}/emails`,
+            url: `${endPoint}/transactions/${args.transactionId}/emails`,
             body: {
                 from: args.from,
                 to: args.to,
@@ -492,7 +484,7 @@ export namespace addEmail {
  */
 export namespace removeEmail {
     export interface Args {
-        transaction: transactionStart.Result,
+        transactionId: string,
         emailId: string,
     }
     export interface Result {
@@ -500,7 +492,7 @@ export namespace removeEmail {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.del({
-            url: `${endPoint}/transactions/${args.transaction._id}/emails/${emailId}`,
+            url: `${endPoint}/transactions/${args.transactionId}/emails/${args.emailId}`,
             body: {},
             json: true,
             simple: false,
