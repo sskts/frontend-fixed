@@ -56,16 +56,18 @@ var addCOAAuthorization;
 (function (addCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
-                return owner.group === "ADMINISTRATOR";
-            })[0]._id;
-            let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
-                return owner.group === "ANONYMOUS";
-            })[0]._id;
+            let promoterOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === "PROMOTER");
+            });
+            let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+            let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === "ANONYMOUS");
+            });
+            let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
                 body: {
-                    owner_id_from: administratorOwnerId,
+                    owner_id_from: promoterOwnerId,
                     owner_id_to: anonymousOwnerId,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                     seats: args.salesTicketResults.map((tmpReserve) => {
@@ -119,17 +121,19 @@ var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
-                return owner.group === "ADMINISTRATOR";
-            })[0]._id;
-            let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
-                return owner.group === "ANONYMOUS";
-            })[0]._id;
+            let promoterOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === "PROMOTER");
+            });
+            let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+            let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === "ANONYMOUS");
+            });
+            let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
             let response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
                 body: {
                     owner_id_from: anonymousOwnerId,
-                    owner_id_to: administratorOwnerId,
+                    owner_id_to: promoterOwnerId,
                     gmo_shop_id: config.get('gmo_shop_id'),
                     gmo_shop_password: config.get('gmo_shop_password'),
                     gmo_order_id: args.orderId,

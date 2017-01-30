@@ -220,19 +220,22 @@ export namespace addCOAAuthorization {
         _id: string
     }
     export async function call(args: Args): Promise<Result> {
-        let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
-            return owner.group === "ADMINISTRATOR";
-        })[0]._id;
-        let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
-            return owner.group === "ANONYMOUS";
-        })[0]._id;
+        let promoterOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === "PROMOTER");
+        });
+        let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === "ANONYMOUS");
+        });
+        let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+
         let response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
             body: {
-                owner_id_from: administratorOwnerId,
+                owner_id_from: promoterOwnerId,
                 owner_id_to: anonymousOwnerId,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-                seats: args.salesTicketResults.map((tmpReserve: any) => {
+                seats: args.salesTicketResults.map((tmpReserve) => {
                     return {
                         performance: args.performance._id,
                         section: tmpReserve.section,
@@ -301,17 +304,19 @@ export namespace addGMOAuthorization {
         _id: string
     }
     export async function call(args: Args): Promise<Result> {
-        let administratorOwnerId = args.transaction.attributes.owners.filter((owner) => {
-            return owner.group === "ADMINISTRATOR";
-        })[0]._id;
-        let anonymousOwnerId = args.transaction.attributes.owners.filter((owner) => {
-            return owner.group === "ANONYMOUS";
-        })[0]._id;
+        let promoterOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === "PROMOTER");
+        });
+        let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === "ANONYMOUS");
+        });
+        let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
         let response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
             body: {
                 owner_id_from: anonymousOwnerId,
-                owner_id_to: administratorOwnerId,
+                owner_id_to: promoterOwnerId,
                 gmo_shop_id: config.get<string>('gmo_shop_id'),
                 gmo_shop_password: config.get<string>('gmo_shop_password'),
                 gmo_order_id: args.orderId,

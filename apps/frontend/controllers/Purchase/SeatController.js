@@ -109,11 +109,11 @@ class SeatSelectController extends PurchaseController_1.default {
             });
             this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
             let salesTicketResult = yield COA.salesTicketInterface.call({
-                theater_code: "001",
-                date_jouei: "20170120",
-                title_code: "8513",
-                title_branch_num: "0",
-                time_begin: "1010",
+                theater_code: performance.attributes.theater._id,
+                date_jouei: performance.attributes.day,
+                title_code: performance.attributes.film.coa_title_code,
+                title_branch_num: performance.attributes.film.coa_title_branch_num,
+                time_begin: performance.attributes.time_start,
             });
             this.purchaseModel.reserveTickets = this.purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
                 return {
