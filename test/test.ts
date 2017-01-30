@@ -1,5 +1,6 @@
 import webdriver = require('selenium-webdriver');
-
+let width = 1920;
+let height = 1080;
 // Input capabilities
 let capabilities = {
     // 'browserstack.user': 'akitohataguchi1',
@@ -10,15 +11,15 @@ let capabilities = {
     'browser_version': '55.0',
     'os': 'Windows',
     'os_version': '10',
-    'resolution': '1920x1080',
+    'resolution': `${width}x${height}`,
     'browserstack.debug': true
 }
 //設定
-console.log(`
+console.log(`-------------------
 ブラウザ: ${capabilities.browserName} ${capabilities.browser_version}
 OS: ${capabilities.os} ${capabilities.os_version}
 画面: ${capabilities.resolution}
-`);
+-------------------`);
 
 
 
@@ -44,11 +45,13 @@ async function test(): Promise<void> {
 
     let url = 'https://devsasakiticketfrontendprototypewebapp-sasaki-ticket-11.azurewebsites.net/';
 
-    //要素表示待機20秒
-    console.log('要素表示待機10秒')
+    //要素表示待機10秒
     driver.manage().timeouts().implicitlyWait(10000);
-    //アクセス
+    //画面サイズfull
+    driver.manage().window().setSize(width, height);
+    //アクセスURL
     await driver.get(url);
+    //各ページ処理
     await performanceSelect(driver);
     await seat(driver);
     await ticket(driver);

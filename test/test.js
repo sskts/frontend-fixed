@@ -8,6 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const webdriver = require("selenium-webdriver");
+let width = 1920;
+let height = 1080;
 let capabilities = {
     'browserstack.user': 'tetsuyamazaki2',
     'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
@@ -15,14 +17,14 @@ let capabilities = {
     'browser_version': '55.0',
     'os': 'Windows',
     'os_version': '10',
-    'resolution': '1920x1080',
+    'resolution': `${width}x${height}`,
     'browserstack.debug': true
 };
-console.log(`
+console.log(`-------------------
 ブラウザ: ${capabilities.browserName} ${capabilities.browser_version}
 OS: ${capabilities.os} ${capabilities.os_version}
 画面: ${capabilities.resolution}
-`);
+-------------------`);
 test().then(() => {
     console.log('DONE');
 }, (err) => {
@@ -36,8 +38,8 @@ function test() {
             .withCapabilities(capabilities)
             .build();
         let url = 'https://devsasakiticketfrontendprototypewebapp-sasaki-ticket-11.azurewebsites.net/';
-        console.log('要素表示待機10秒');
         driver.manage().timeouts().implicitlyWait(10000);
+        driver.manage().window().setSize(width, height);
         yield driver.get(url);
         yield performanceSelect(driver);
         yield seat(driver);
