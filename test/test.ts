@@ -4,8 +4,8 @@ import webdriver = require('selenium-webdriver');
 let capabilities = {
     // 'browserstack.user': 'akitohataguchi1',
     // 'browserstack.key': '91NcdgSQ6KR9vqHP33xp',
-    'browserstack.user': 'motionpicture1',
-    'browserstack.key': 'f2BL4hRyXNb6KjxQw7Jm',
+    'browserstack.user': 'tetsuyamazaki2',
+    'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
     'browserName': 'Chrome',
     'browser_version': '55.0',
     'os': 'Windows',

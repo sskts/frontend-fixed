@@ -10,9 +10,8 @@ cls
 
 
 
-FOR /L %%i IN (1,1,3) DO (
-    rem node ..\test\test.js
-    start /MIN node ..\test\test.js
+FOR /L %%i IN (1,1,20) DO (
+    start /MIN cmd /K node ..\test\test.js
     rem timeout 0
 )
 pause

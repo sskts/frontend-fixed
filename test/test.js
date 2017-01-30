@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const webdriver = require("selenium-webdriver");
 let capabilities = {
-    'browserstack.user': 'motionpicture1',
-    'browserstack.key': 'f2BL4hRyXNb6KjxQw7Jm',
+    'browserstack.user': 'tetsuyamazaki2',
+    'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
     'browserName': 'Chrome',
     'browser_version': '55.0',
     'os': 'Windows',
