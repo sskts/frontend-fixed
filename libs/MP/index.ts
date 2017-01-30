@@ -123,32 +123,6 @@ export namespace getPerformance {
 }
 
 /**
- * オーナー
- */
-export namespace owners {
-
-    export interface administrator {
-        _id: string,
-        updated_at: string,
-        created_at: string,
-        group: string,
-        name: {
-            ja: string,
-            en: string
-        },
-    }
-
-    export interface anonymous {
-        _id: string,
-        group: string,
-        name_first: string,
-        name_last: string,
-        email: string,
-        tel: string,
-    }
-}
-
-/**
  * 取引開始
  */
 export namespace transactionStart {
