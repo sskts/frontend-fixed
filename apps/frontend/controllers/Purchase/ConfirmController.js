@@ -78,7 +78,7 @@ class ConfirmController extends PurchaseController_1.default {
                 from: mail.from,
                 to: mail.to,
                 subject: mail.subject,
-                body: mail.body,
+                content: mail.content,
             });
             this.logger.debug('MPメール登録');
             yield MP.transactionClose.call({
@@ -90,14 +90,14 @@ class ConfirmController extends PurchaseController_1.default {
     createMail() {
         if (!this.purchaseModel.input)
             throw new Error('purchaseModel.input is undefined');
-        let body = `購入完了\n
+        let content = `購入完了\n
 この度はご購入いただき誠にありがとうございます。
 `;
         return {
             from: 'noreply@localhost',
             to: this.purchaseModel.input.mail_addr,
             subject: '購入完了',
-            body: body,
+            content: content,
         };
     }
     purchase() {

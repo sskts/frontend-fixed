@@ -240,12 +240,12 @@ var addEmail;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transactions/${args.transactionId}/emails`,
+                url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
                 body: {
                     from: args.from,
                     to: args.to,
                     subject: args.subject,
-                    body: args.body,
+                    content: args.content,
                 },
                 json: true,
                 simple: false,
@@ -264,7 +264,7 @@ var removeEmail;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.del({
-                url: `${endPoint}/transactions/${args.transactionId}/emails/${args.emailId}`,
+                url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
                 body: {},
                 json: true,
                 simple: false,

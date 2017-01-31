@@ -434,19 +434,19 @@ export namespace addEmail {
         from: string,
         to: string,
         subject: string,
-        body: string,
+        content: string,
     }
     export interface Result {
         _id: string,
     }
     export async function call(args: Args): Promise<Result> {
         let response = await request.post({
-            url: `${endPoint}/transactions/${args.transactionId}/emails`,
+            url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
             body: {
                 from: args.from,
                 to: args.to,
                 subject: args.subject,
-                body: args.body,
+                content: args.content,
             },
             json: true,
             simple: false,
@@ -471,7 +471,7 @@ export namespace removeEmail {
     }
     export async function call(args: Args): Promise<void> {
         let response = await request.del({
-            url: `${endPoint}/transactions/${args.transactionId}/emails/${args.emailId}`,
+            url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
             body: {},
             json: true,
             simple: false,

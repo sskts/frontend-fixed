@@ -1,8 +1,28 @@
 <% layout('../layouts/layout') -%>
 <% block('script', '<script src="/js/method/ticketing.js"></script>') -%>
 <div class="method-ticketing">
-    <h1 class="page-ttl"><%- __('purchase.method.ticketing.page_ttl') %></h1>
-    <p class="read"><%- __('purchase.method.ticketing.read') %></p>
+    <h1 class="page-ttl"><%- __('method.ticketing.page_ttl') %></h1>
+    <p class="read"><%- __('method.ticketing.read') %></p>
+
+    <ol>
+        <li class="mb-large">
+            <h2 class="section-ttl"><%- __('method.ticketing.step_01_ttl') %></h2>
+            <p class="mb-medium"><%- __('method.ticketing.step_01_read') %></p>
+            <div class="image"><img src="/images/common/test.svg" alt=""></div>
+        </li>
+        <li class="mb-large">
+            <h2 class="section-ttl"><%- __('method.ticketing.step_02_ttl') %></h2>
+            <p class="mb-medium"><%- __('method.ticketing.step_02_read') %></p>
+            <div class="image"><img src="/images/common/test.svg" alt=""></div>
+        </li>
+        <li class="mb-large">
+            <h2 class="section-ttl"><%- __('method.ticketing.step_03_ttl') %></h2>
+            <p class="mb-medium"><%- __('method.ticketing.step_03_read') %></p>
+            <div class="image"><img src="/images/common/test.svg" alt=""></div>
+        </li>
+    </ol>
+
+
     <div class="button-area clearfix">
         <div class="close-link"><a class="icon-close window-close" href="#"><%- __('common.close') %></a></div>
     </div>

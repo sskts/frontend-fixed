@@ -158,7 +158,7 @@ export default (app: express.Application | any) => {
     });
 
     //入場方法説明
-    app.get('/method/entry', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/method/entry', 'method.entry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
         new MethodController(req, res, next).entry();
     });
 

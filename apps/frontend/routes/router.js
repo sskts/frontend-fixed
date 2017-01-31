@@ -100,7 +100,7 @@ exports.default = (app) => {
     app.get('/inquiry/print', 'inquiry.print', (req, res, next) => {
         new InquiryController_1.default(req, res, next).print();
     });
-    app.get('/method/entry', 'method.ticketing', (req, res, next) => {
+    app.get('/method/entry', 'method.entry', (req, res, next) => {
         new MethodController_1.default(req, res, next).entry();
     });
     app.get('/method/ticketing', 'method.ticketing', (req, res, next) => {
