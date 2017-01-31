@@ -59,9 +59,9 @@ export default class ConfirmController extends PurchaseController {
                 /** 座席チケット仮予約番号 */
                 tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
                 /** 予約者名 */
-                reserve_name: input.last_name_hira + input.first_name_hira,
+                reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
                 /** 予約者名（かな） */
-                reserve_name_jkana: input.last_name_hira + input.first_name_hira,
+                reserve_name_jkana: `${input.last_name_hira}　${input.first_name_hira}`,
                 /** 電話番号 */
                 tel_num: input.tel_num,
                 /** メールアドレス */

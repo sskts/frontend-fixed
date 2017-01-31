@@ -8,21 +8,21 @@
             <dl>
                 <dt><%- __('common.theater_code') %></dt>
                 <dd>
-                    <input type="text" name="theater_code" placeholder="<%- __('common.placeholder.theater_code') %>" value="<%= theater_code %>">
+                    <input type="number" pattern="\d*" name="theater_code" placeholder="<%- __('common.placeholder.theater_code') %>" value="<%= theater_code %>">
                     <% if (error && error.theater_code) { %>
                     <div class="validation-text"><%= error.theater_code[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <input type="text" name="reserve_num" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= reserve_num %>">
+                    <input type="number" pattern="\d*" name="reserve_num" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= reserve_num %>">
                     <% if (error && error.reserve_num) { %>
                     <div class="validation-text"><%= error.reserve_num[0] %></div>
                     <% } %>
                 </dd>
                 <dt><%- __('common.tel') %></dt>
                 <dd>
-                    <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= tel_num %>">
+                    <input type="number" pattern="\d*" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= tel_num %>">
                     <% if (error && error.tel_num) { %>
                     <div class="validation-text"><%= error.tel_num[0] %></div>
                     <% } %>
@@ -32,7 +32,7 @@
         
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('inquiry.login.next') %></button></div>
-            <div class="close-link"><a class="icon-prev" href="<%- url('index') %>"><%- __('inquiry.login.prev') %></a></div>
+            <div class="close-link"><a class="icon-prev window-close" href="<%- url('index') %>"><%- __('inquiry.login.prev') %></a></div>
         </div>
     </form>
 </div>

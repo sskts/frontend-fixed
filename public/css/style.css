@@ -119,6 +119,7 @@ input[type=number],
 input[type=password],
 input[type=tel],
 input[type=email],
+input[type=number],
 input[type=submit],
 textarea,
 select,
@@ -140,11 +141,21 @@ button {
   cursor: pointer;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 input[type=text],
 input[type=number],
 input[type=password],
 input[type=tel],
-input[type=email] {
+input[type=email],
+input[type=number] {
   width: 100%;
   border: 1px solid #989898;
   padding: 0 10px;
@@ -159,7 +170,8 @@ input[type=text]:focus,
 input[type=number]:focus,
 input[type=password]:focus,
 input[type=tel]:focus,
-input[type=email]:focus {
+input[type=email]:focus,
+input[type=number]:focus {
   border: 2px solid #707070;
 }
 
@@ -780,12 +792,24 @@ p a {
 }
 
 .close-link a, .close-link button {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
   color: #333;
   position: relative;
   padding-left: 20px;
   text-decoration: underline;
+}
+
+.icon-new-tab:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  background-image: url(/images/common/icon/icon_new_tab.svg);
+  background-size: 15px;
+  width: 15px;
+  height: 15px;
+  margin-top: -7.5px;
 }
 
 .icon-next:before {
@@ -1199,12 +1223,14 @@ p a {
   width: 300px;
   height: 1px;
   background-color: #ccc;
+  margin-top: 10px;
 }
 
 @media screen and (max-width: 767px) {
   .purchase .header .steps {
-    width: 200px;
-    right: 0;
+    width: 150px;
+    right: 5px;
+    margin-top: 0;
   }
 }
 
@@ -1337,7 +1363,8 @@ p a {
 
 @media screen and (max-width: 767px) {
   .purchase .purchase-seat .seat-info .seat {
-    margin: 0 2px;
+    margin: 0 7px;
+    font-size: 12px;
   }
 }
 
@@ -1408,7 +1435,7 @@ p a {
   vertical-align: text-bottom;
 }
 
-.purchase .modal[data-modal="ticket-type"] dl dt {
+.purchase .modal[data-modal="ticket_type"] dl dt {
   padding-right: 10px;
 }
 
@@ -1421,6 +1448,7 @@ p a {
 .purchase .purchase-input input[type=password],
 .purchase .purchase-input input[type=tel],
 .purchase .purchase-input input[type=email],
+.purchase .purchase-input input[type=number],
 .purchase .purchase-input textarea {
   margin: 0 0 10px;
 }
@@ -1430,6 +1458,7 @@ p a {
 .purchase .purchase-input input[type=password]:last-child,
 .purchase .purchase-input input[type=tel]:last-child,
 .purchase .purchase-input input[type=email]:last-child,
+.purchase .purchase-input input[type=number]:last-child,
 .purchase .purchase-input textarea:last-child {
   margin-bottom: 0;
 }
@@ -1711,7 +1740,7 @@ p a {
   height: 50px;
   display: block;
   color: #9D9E9E;
-  padding-top: 14px;
+  padding-top: 20px;
   background-image: url(/images/screen/seat.svg);
   background-size: 120px 50px;
   background-repeat: no-repeat;
@@ -1725,6 +1754,7 @@ p a {
 .screen .seat a.disabled {
   color: #FFF;
   background-position: -80px 0;
+  cursor: default;
 }
 
 .screen .seat a span {
@@ -1797,6 +1827,7 @@ p a {
 .inquiry-confirm input[type=password],
 .inquiry-confirm input[type=tel],
 .inquiry-confirm input[type=email],
+.inquiry-confirm input[type=number],
 .inquiry-confirm textarea {
   margin: 0 0 5px;
 }
@@ -1806,6 +1837,7 @@ p a {
 .inquiry-confirm input[type=password]:last-child,
 .inquiry-confirm input[type=tel]:last-child,
 .inquiry-confirm input[type=email]:last-child,
+.inquiry-confirm input[type=number]:last-child,
 .inquiry-confirm textarea:last-child {
   margin-bottom: 0;
 }
@@ -1866,6 +1898,14 @@ p a {
 
 .inquiry-confirm .ticket:last-child .inner {
   margin-bottom: 0;
+}
+
+.error .button-area {
+  margin-top: 40px;
+}
+
+.not-found .button-area {
+  margin-top: 40px;
 }
 
 @-webkit-keyframes loading {
@@ -1939,5 +1979,11 @@ p a {
   100% {
     visibility: hidden;
     opacity: 0;
+  }
+}
+
+@media print {
+  .not-print {
+    display: none;
   }
 }

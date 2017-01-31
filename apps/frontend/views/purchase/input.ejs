@@ -1,31 +1,15 @@
 <% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/input.js"></script>') -%>
-<script src="<%= gmoModuleUrl %>"></script>
-<script>Multipayment.init('<%= gmoShopId %>'); // トークンを利用するための api キー</script>
+<% block('script', '<script src="'+ gmoModuleUrl +'"></script>') -%>
+<% block('script', '<script>Multipayment.init("'+ gmoShopId +'");</script>') -%>
+
+
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.input.read') %></p>
 
     <form id="purchaseform" method="post">
-        <!--<h2 class="section-ttl"><%- __('common.name_kanji') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
-        <div class="box radius bg-light-gray mb-medium">
-            <dl>
-                <dt><%- __('common.last_name_kanji') %></dt>
-                <dd>
-                    <input type="text" name="last_name_kanji" placeholder="<%- __('common.placeholder.last_name_kanji') %>" value="<%= input.last_name_kanji %>">
-                    <% if (error && error.last_name_kanji) { %>
-                    <div class="validation-text"><%= error.last_name_kanji[0] %></div>
-                    <% } %>
-                </dd>
-                <dt><%- __('common.first_name_kanji') %></dt>
-                <dd>
-                    <input type="text" name="first_name_kanji" placeholder="<%- __('common.placeholder.first_name_kanji') %>" value="<%= input.first_name_kanji %>">
-                    <% if (error && error.first_name_kanji) { %>
-                    <div class="validation-text"><%= error.first_name_kanji[0] %></div>
-                    <% } %>
-                </dd>
-            </dl>
-        </div>-->
+        
 
         <h2 class="section-ttl"><%- __('common.name_hira') %><span class="text-icon-red small-text"><%- __('common.required') %></span></h2>
         <div class="box radius bg-light-gray mb-large">
@@ -63,7 +47,7 @@
             <dl>
                 <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="text" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mail_confirm %>">
+                    <input type="email" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mail_confirm %>">
                     <% if (error && error.mail_confirm) { %>
                     <div class="validation-text"><%= error.mail_confirm[0] %></div>
                     <% } %>
@@ -76,7 +60,7 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="text" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
+                    <input type="tel" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
                     <% if (error && error.tel_num) { %>
                     <div class="validation-text"><%= error.tel_num[0] %></div>
                     <% } %>
@@ -89,7 +73,7 @@
         <div class="box radius bg-ultra-light-gray mb-medium scroll small-text">
             <%- partial('agreement_ja') %>
         </div>
-        <div class="mb-large">
+        <div class="mb-large text-center">
             <input type="checkbox" name="agree" value="true" id="agree" <%= (input.agree) ? 'checked': '' %>>
             <label for="agree" class="agree-label"><%- __('purchase.input.agree') %></label>
 
@@ -112,7 +96,7 @@
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
                     <dd>
-                        <input type="text" name="cardno" id="cardNumber" maxlength="20" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
+                        <input type="number" pattern="\d*" name="cardno" id="cardNumber" maxlength="20" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
                         <% if (error && error.cardno) { %>
                         <div class="validation-text"><%= error.cardno[0] %></div>
                         <% } %>
@@ -151,19 +135,11 @@
                     </dd>
                 </dl>
             </li>
-            <!--<li>
-                <dl>
-                    <dt><%- __('common.holdername') %></dt>
-                    <dd>
-                        <input type="text" name="holdername" value="">
-                    </dd>
-                </dl>
-            </li>-->
             <li>
                 <dl>
                     <dt><%- __('common.securitycode') %></dt>
                     <dd>
-                        <input type="text" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                        <input type="number" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
                         <p><a href="#" data-modal="securitycode"><%- __('common.note.securitycode') %></a></p>
                     </dd>
                 </dl>

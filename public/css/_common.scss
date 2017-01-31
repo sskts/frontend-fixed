@@ -47,6 +47,7 @@ input[type=number],
 input[type=password],
 input[type=tel],
 input[type=email],
+input[type=number],
 input[type=submit],
 textarea,
 select,
@@ -68,11 +69,21 @@ button {
     cursor: pointer;
 }
 
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
 input[type=text],
 input[type=number],
 input[type=password],
 input[type=tel],
-input[type=email] {
+input[type=email],
+input[type=number] {
     width: 100%;
     border: 1px solid #989898;
     padding: 0 10px;
@@ -650,7 +661,7 @@ p {
 .close-link {
     text-align: center;
     a, button {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
         color: #333;
         position: relative;
@@ -659,7 +670,19 @@ p {
     }
 }
 
-
+.icon-new-tab {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 20px;
+        background-image: url(/images/common/icon/icon_new_tab.svg);
+        background-size: 15px;
+        width: 15px;
+        height: 15px;
+        margin-top: -7.5px;
+    }
+}
 
 .icon-next {
     &:before {

@@ -12,13 +12,13 @@
                         <% if (ticket.ticket_code) { %>
                             <dd class="d-td width-medium">                                
                                 <div class="ghost-button blue-button">
-                                    <a href="#" data-modal="ticket-type"><%= ticket.ticket_name_ja %> ￥<%= ticket.sale_price %></a>
+                                    <a href="#" data-modal="ticket_type"><%= ticket.ticket_name_ja %> ￥<%= ticket.sale_price %></a>
                                 </div>
                             </dd>
                         <% } else { %>
                             <dd class="d-td width-medium" data-ticket="">
                                 <div class="button blue-button">
-                                    <a href="#" data-modal="ticket-type"><%- __('purchase.ticket.ticket_select') %></a>
+                                    <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
                                 </div>
                             </dd>
                         <% } %>

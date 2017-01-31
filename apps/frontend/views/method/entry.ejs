@@ -1,11 +1,9 @@
 <% layout('../layouts/layout') -%>
-<% block('script', '<script src="/js/method/ticketing.js"></script>') -%>
-<div class="method-ticketing">
-    <h1 class="page-ttl">入場方法はこちら</h1>
-    <p class="read">
-        当日、こちらの発券情報を使用して劇場にある発券機もしくはチケット照会ページより入場用QRコードを発券してください。<br> 発券情報をコピーするボタンを押してメールの本文などに貼付けることもできます。
-    </p>
+<% block('script', '<script src="/js/method/entry.js"></script>') -%>
+<div class="method-entry">
+    <h1 class="page-ttl"><%- __('purchase.method.entry.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.method.entry.read') %></p>
     <div class="button-area clearfix">
-        <div class="close-link"><a class="icon-close" href="#">閉じる</a></div>
+        <div class="close-link"><a class="icon-close window-close" href="#"><%- __('common.close') %></a></div>
     </div>
 </div>

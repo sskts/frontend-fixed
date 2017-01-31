@@ -17,23 +17,35 @@ export default class InputController extends PurchaseController {
 
         //購入者情報入力表示
         this.res.locals['error'] = null;
-        this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['moment'] = require('moment');
         this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
         this.res.locals['gmoModuleUrl'] = config.get<string>('gmo_module_url');
         this.res.locals['gmoShopId'] = config.get<string>('gmo_shop_id');
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
-
-        if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
+        if (this.purchaseModel.input) {
+            this.res.locals['input'] = this.purchaseModel.input;
+        } else {
             this.res.locals['input'] = {
-                last_name_hira: 'はたぐち',
-                first_name_hira: 'あきと',
-                mail_addr: 'hataguchi@motionpicture.jp',
-                mail_confirm: 'hataguchi@motionpicture.jp',
-                tel_num: '09040007648',
-                agree: 'true'
-            }
+                last_name_hira: '',
+                first_name_hira: '',
+                mail_addr: '',
+                mail_confirm: '',
+                tel_num: '',
+                agree: ''
+            };
         }
+        
+
+        // if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
+        //     this.res.locals['input'] = {
+        //         last_name_hira: 'はたぐち',
+        //         first_name_hira: 'あきと',
+        //         mail_addr: 'hataguchi@motionpicture.jp',
+        //         mail_confirm: 'hataguchi@motionpicture.jp',
+        //         tel_num: '09040007648',
+        //         agree: 'true'
+        //     }
+        // }
 
         //セッション更新
         if (!this.req.session) return this.next(new Error('session is undefined'));

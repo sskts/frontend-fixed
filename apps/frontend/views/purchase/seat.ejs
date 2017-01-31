@@ -49,13 +49,14 @@
     <form method="post">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next" type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev"href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="close-link"><a class="icon-close" data-modal="seat_close" href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-    <div style="display: none"><a data-modal="seat_alert" href="#"></a></div>
+    <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
 </div>
 
+<% block('modals', partial('modals/seat_close')) -%>
 <% block('modals', partial('modals/seat_not_select')) -%>
 <% block('modals', partial('modals/seat_upper_limit')) -%>

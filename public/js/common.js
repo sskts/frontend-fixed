@@ -2,8 +2,18 @@ var SASAKI = {};
 
 $(function () {
     settingValidation();
+    /**
+     * 戻るクリックイベント
+     */
     $(document).on('click', '.prev-button button', function (event) {
         event.preventDefault();
+    });
+    /**
+     * 閉じるクリックイベント
+     */
+    $(document).on('click', '.window-close', function (event) {
+        event.preventDefault();
+        window.close();
     });
 });
 

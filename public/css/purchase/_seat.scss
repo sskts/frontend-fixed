@@ -47,7 +47,8 @@
             position: relative;
             padding-left: 24px;
             @media screen and (max-width: $mobile) {
-                margin: 0 2px;
+                margin: 0 7px;
+                font-size: 12px;
             }
             &:before {
                 width: 16px;
