@@ -48,7 +48,7 @@ class ConfirmController extends PurchaseController_1.default {
                     title_code: performance.attributes.film.coa_title_code,
                     title_branch_num: performance.attributes.film.coa_title_branch_num,
                     time_begin: performance.attributes.time_start,
-                    tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                    tmp_reserve_num: reserveSeats.tmp_reserve_num,
                     reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
                     reserve_name_jkana: `${input.last_name_hira}　${input.first_name_hira}`,
                     tel_num: input.tel_num,

@@ -70,6 +70,12 @@ var addCOAAuthorization;
                     owner_id_from: promoterOwnerId,
                     owner_id_to: anonymousOwnerId,
                     coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
+                    coa_theater_code: args.performance.attributes.theater._id,
+                    coa_date_jouei: args.performance.attributes.day,
+                    coa_title_code: args.performance.attributes.film.coa_title_code,
+                    coa_title_branch_num: args.performance.attributes.film.coa_title_branch_num,
+                    coa_time_begin: args.performance.attributes.time_start,
+                    coa_screen_code: args.performance.attributes.screen.coa_screen_code,
                     seats: args.salesTicketResults.map((tmpReserve) => {
                         return {
                             performance: args.performance._id,

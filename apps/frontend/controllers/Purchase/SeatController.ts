@@ -89,7 +89,7 @@ export default class SeatSelectController extends PurchaseController {
                 /** 上映時刻 */
                 time_begin: performance.attributes.time_start,
                 /** 座席チケット仮予約番号 */
-                tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                tmp_reserve_num: reserveSeats.tmp_reserve_num,
             });
 
             this.logger.debug('COA仮予約削除');
@@ -124,7 +124,7 @@ export default class SeatSelectController extends PurchaseController {
             }
         }
 
-        
+
 
 
 
@@ -151,7 +151,7 @@ export default class SeatSelectController extends PurchaseController {
         });
         this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
 
-        
+
         // TODO 一時対応
         // 販売可能チケット検索
         let salesTicketResult = await COA.salesTicketInterface.call({
@@ -161,7 +161,7 @@ export default class SeatSelectController extends PurchaseController {
             title_branch_num: performance.attributes.film.coa_title_branch_num,
             time_begin: performance.attributes.time_start,
         });
-        
+
         //予約チケット作成
         this.purchaseModel.reserveTickets = this.purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
             return {
@@ -177,7 +177,7 @@ export default class SeatSelectController extends PurchaseController {
                 sale_price: salesTicketResult.list_ticket[0].sale_price,
             }
         });
-        
+
         //COAオーソリ追加
         let COAAuthorizationResult = await MP.addCOAAuthorization.call({
             transaction: this.purchaseModel.transactionMP,

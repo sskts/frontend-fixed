@@ -82,7 +82,7 @@ export default class OverlapController extends PurchaseController {
             /** 上映時刻 */
             time_begin: performance.attributes.time_start,
             /** 座席チケット仮予約番号 */
-            tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+            tmp_reserve_num: reserveSeats.tmp_reserve_num,
         });
 
         this.logger.debug('COA仮予約削除');

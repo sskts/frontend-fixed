@@ -71,7 +71,7 @@ class OverlapController extends PurchaseController_1.default {
                 title_code: performance.attributes.film.coa_title_code,
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
                 time_begin: performance.attributes.time_start,
-                tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                tmp_reserve_num: reserveSeats.tmp_reserve_num,
             });
             this.logger.debug('COA仮予約削除');
             yield MP.removeCOAAuthorization.call({

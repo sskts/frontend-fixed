@@ -9,7 +9,7 @@
     "sass": "node-sass public/css/style.scss public/css/style.css --output-style expanded -w"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^1.1.6",
+    "@motionpicture/coa-service": "^1.1.7",
     "@motionpicture/gmo-service": "^1.0.3",
     "@types/body-parser": "0.0.33",
     "@types/config": "0.0.30",

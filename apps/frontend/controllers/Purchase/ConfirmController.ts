@@ -57,7 +57,7 @@ export default class ConfirmController extends PurchaseController {
                 /** 上映時刻 */
                 time_begin: performance.attributes.time_start,
                 /** 座席チケット仮予約番号 */
-                tmp_reserve_num: String(reserveSeats.tmp_reserve_num),
+                tmp_reserve_num: reserveSeats.tmp_reserve_num,
                 /** 予約者名 */
                 reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
                 /** 予約者名（かな） */

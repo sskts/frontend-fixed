@@ -4,11 +4,11 @@ $(function () {
     /**
          * 券種クリックイベント
          */
-    $(document).on('click', '.modal[data-modal="ticket-type"] a', function (event) {
+    $(document).on('click', '.modal[data-modal=ticket_type] a', function (event) {
         event.preventDefault();
         var ticket = $(this).attr('data-ticket');
         if (!ticket) return;
-        var triggerIndex = $('.modal[data-modal="ticket-type"]').attr('data-modal-trigger-index');
+        var triggerIndex = $('.modal[data-modal=ticket_type]').attr('data-modal-trigger-index');
         var target = modal.getTrigger().parent().parent().parent();
         target.find('.button')
             .removeClass('button')
