@@ -94,7 +94,7 @@ exports.default = (app) => {
     app.post('/inquiry/login', 'inquiry.login', (req, res, next) => {
         new InquiryController_1.default(req, res, next).auth();
     });
-    app.get('/inquiry', 'inquiry', (req, res, next) => {
+    app.get('/inquiry/:theaterId/:updateReserveId/', 'inquiry', (req, res, next) => {
         new InquiryController_1.default(req, res, next).index();
     });
     app.get('/inquiry/print', 'inquiry.print', (req, res, next) => {

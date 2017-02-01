@@ -22,7 +22,7 @@ class OverlapController extends PurchaseController_1.default {
             id: this.req.params['id']
         }).then((result) => {
             this.res.locals['performances'] = {
-                after: result.data,
+                after: result,
                 before: this.purchaseModel.performance,
             };
             return this.res.render('purchase/overlap');

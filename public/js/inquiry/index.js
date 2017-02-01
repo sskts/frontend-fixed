@@ -27,4 +27,11 @@ $(function () {
         $('html,body').animate({scrollTop: top}, 300);
     });
 });
+
+/**
+ * 照会情報保存
+ */
+function saveInquiry() {
+    
+}
             

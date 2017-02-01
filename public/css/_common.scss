@@ -31,14 +31,11 @@ body {
     font-size: 14px;
     color: #333;
     background-color: #E2E1E0;
-    padding: 30px 0;
     @media screen and (max-width: $tablet){
-        width: auto;
-        padding: 15px;
+        font-weight: normal;
     }
     @media screen and (max-width: $mobile){
-        width: auto;
-        padding: 10px;
+        
     }
 }
 
@@ -62,6 +59,9 @@ label {
     padding: 0;
     margin: 0;
     font-size: 14px;
+    @media screen and (max-width: $tablet){
+        font-weight: normal;
+    }
 }
 
 input[type=submit],
@@ -839,11 +839,14 @@ p {
 //wrapper
 .wrapper {
     width: 940px;
-    margin: 0 auto;
-    background-color: #FFF;
-    border-radius: 5px 5px 0 0;
+    margin: 30px auto;
     @media screen and (max-width: $tablet){
         width: auto;
+        margin: 15px;
+    }
+    @media screen and (max-width: $mobile){
+        width: auto;
+        margin: 10px;
     }
 }
 
@@ -856,7 +859,8 @@ p {
 .header {
     padding: 25px 40px;
     border-bottom: 1px solid #E2E1E0;
-    
+    border-radius: 4px 4px 0 0;
+    background-color: #FFF;
     @media screen and (max-width: $mobile){
         padding: 10px 15px;
     }
@@ -915,6 +919,7 @@ p {
 
 //contents
 .contents {
+    background-color: #FFF;
     padding: 40px 120px 60px;
     @media screen and (max-width: $tablet){
         padding: 40px 60px 60px;

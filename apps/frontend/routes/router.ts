@@ -22,6 +22,10 @@ import MethodController from '../controllers/Method/MethodController';
 
 import ErrorController from '../controllers/Error/ErrorController';
 
+type Request = express.Request;
+type Response = express.Response;
+type NextFunction = express.NextFunction;
+
 /**
  * URLルーティング
  * 
@@ -32,149 +36,150 @@ import ErrorController from '../controllers/Error/ErrorController';
  * リクエスト毎に、req,res,nextでコントローラーインスタンスを生成して、URLに応じたメソッドを実行する、という考え方
  * 
  */
-export default (app: express.Application | any) => {
+export default (app: any) => {
     let router: Express.NamedRoutes = new NamedRoutes();
     router.extendExpress(app);
     router.registerAppHelpers(app);
 
-    app.get('/', 'index', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/', 'index', (req: Request, res: Response, next: NextFunction) => {
         new BaseController(req, res, next);
         res.redirect(router.build('performance', {}));
     });
 
-    app.get('/performance', 'performance', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    //パフォーマンス一覧
+    app.get('/performance', 'performance', (req: Request, res: Response, next: NextFunction) => {
         new PerformanceController(req, res, next).index();
     });
 
     //パフォーマンス一覧
-    app.post('/performance', 'performance', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/performance', 'performance', (req: Request, res: Response, next: NextFunction) => {
         new PerformanceController(req, res, next).getPerformances(req.body.day);
     });
 
     //購入(取引開始)
-    app.get('/purchase/:id/transaction', 'purchase', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/:id/transaction', 'purchase', (req: Request, res: Response, next: NextFunction) => {
         new TransactionController(req, res, next).start();
     });
 
     //仮予約重複
-    app.get('/purchase/:id/overlap', 'purchase.overlap', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/:id/overlap', 'purchase.overlap', (req: Request, res: Response, next: NextFunction) => {
         new OverlapController(req, res, next).index();
     });
 
-    app.post('/purchase/overlap/new', 'purchase.overlap.new', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/overlap/new', 'purchase.overlap.new', (req: Request, res: Response, next: NextFunction) => {
         new OverlapController(req, res, next).newReserve();
     });
 
-    app.post('/purchase/overlap/prev', 'purchase.overlap.prev', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/overlap/prev', 'purchase.overlap.prev', (req: Request, res: Response, next: NextFunction) => {
         new OverlapController(req, res, next).prevReserve();
     });
 
     //座席選択
-    app.get('/purchase/seat/:id', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/seat/:id', 'purchase.seat', (req: Request, res: Response, next: NextFunction) => {
         new SeatController(req, res, next).index();
     });
 
-    app.post('/purchase/seat/:id', 'purchase.seat', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/seat/:id', 'purchase.seat', (req: Request, res: Response, next: NextFunction) => {
         new SeatController(req, res, next).select();
     });
 
     //券種選択
-    app.get('/purchase/ticket', 'purchase.ticket', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/ticket', 'purchase.ticket', (req: Request, res: Response, next: NextFunction) => {
         new TicketController(req, res, next).index();
     });
 
-    app.post('/purchase/ticket', 'purchase.ticket', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/ticket', 'purchase.ticket', (req: Request, res: Response, next: NextFunction) => {
         new TicketController(req, res, next).select();
     });
 
     //購入者情報入力
-    app.get('/purchase/input', 'purchase.input', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/input', 'purchase.input', (req: Request, res: Response, next: NextFunction) => {
         new InputController(req, res, next).index();
     });
 
-    app.post('/purchase/input', 'purchase.input', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/input', 'purchase.input', (req: Request, res: Response, next: NextFunction) => {
         new InputController(req, res, next).submit();
     });
 
     //購入内容確認
-    app.get('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/confirm', 'purchase.confirm', (req: Request, res: Response, next: NextFunction) => {
         new ConfirmController(req, res, next).index();
     });
 
-    app.post('/purchase/confirm', 'purchase.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/confirm', 'purchase.confirm', (req: Request, res: Response, next: NextFunction) => {
         new ConfirmController(req, res, next).purchase();
     });
 
     //購入完了
-    app.get('/purchase/complete', 'purchase.complete', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/complete', 'purchase.complete', (req: Request, res: Response, next: NextFunction) => {
         new CompleteController(req, res, next).index();
     });
     
 
     //ムビチケ券入力
-    app.get('/purchase/mvtk', 'purchase.mvtk', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/mvtk', 'purchase.mvtk', (req: Request, res: Response, next: NextFunction) => {
         new MvtkInputController(req, res, next).index();
     });
 
-    app.post('/purchase/mvtk', 'purchase.mvtk', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/mvtk', 'purchase.mvtk', (req: Request, res: Response, next: NextFunction) => {
         new MvtkInputController(req, res, next).auth();
     });
 
     //ムビチケ券認証
-    app.get('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: Request, res: Response, next: NextFunction) => {
         new MvtkAuthController(req, res, next).index();
     });
 
-    app.post('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/mvtk/auth', 'purchase.mvtk.auth', (req: Request, res: Response, next: NextFunction) => {
         new MvtkAuthController(req, res, next).submit();
     });
 
     //ムビチケ券適用確認
-    app.get('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: Request, res: Response, next: NextFunction) => {
         new MvtkConfirmController(req, res, next).index();
     });
 
-    app.post('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/mvtk/confirm', 'purchase.mvtk.confirm', (req: Request, res: Response, next: NextFunction) => {
         new MvtkConfirmController(req, res, next).submit();
     });
 
     //チケット照会ログイン
-    app.get('/inquiry/login', 'inquiry.login', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/inquiry/login', 'inquiry.login', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).login();
     });
 
-    app.post('/inquiry/login', 'inquiry.login', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/inquiry/login', 'inquiry.login', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).auth();
     });
 
     //チケット照会
-    app.get('/inquiry', 'inquiry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/inquiry/:theaterId/:updateReserveId/', 'inquiry', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).index();
     });
 
     //チケット照会(QRコード発行印刷ページ)
-    app.get('/inquiry/print', 'inquiry.print', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/inquiry/print', 'inquiry.print', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).print();
     });
 
     //入場方法説明
-    app.get('/method/entry', 'method.entry', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/method/entry', 'method.entry', (req: Request, res: Response, next: NextFunction) => {
         new MethodController(req, res, next).entry();
     });
 
     //発券方法説明
-    app.get('/method/ticketing', 'method.ticketing', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/method/ticketing', 'method.ticketing', (req: Request, res: Response, next: NextFunction) => {
         new MethodController(req, res, next).ticketing();
     });
 
     //座席状態取得
-    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req: Request, res: Response, next: NextFunction) => {
         new PurchaseController(req, res, next).getScreenStateReserve();
     });
 
     
 
-    app.get('/500', '500', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.get('/500', '500', (req: Request, res: Response, next: NextFunction) => {
         new BaseController(req, res, next);
         process.exit(1);
     });
@@ -185,12 +190,12 @@ export default (app: express.Application | any) => {
 
 
     // error handlers
-    app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
         new ErrorController(req, res, next).index(err);
     });
 
     // 404
-    app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.use((req: Request, res: Response, next: NextFunction) => {
         new ErrorController(req, res, next).notFound();
     });
 

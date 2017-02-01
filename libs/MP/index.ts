@@ -8,7 +8,7 @@ const endPoint = config.get<string>('mp_api_endpoint');
 /**
  * theater
  */
-export interface theater {
+export interface Theater {
     __v: string,
     _id: string,
     address: {
@@ -27,7 +27,7 @@ export interface theater {
 /**
  * screen
  */
-export interface screen {
+export interface Screen {
     __v: string,
     _id: string,
     coa_screen_code: string,
@@ -54,7 +54,7 @@ export interface screen {
 /**
  * film
  */
-export interface film {
+export interface Film {
     __v: string,
     _id: string,
     coa_title_branch_num: string,
@@ -83,14 +83,14 @@ export interface film {
 /**
  * performance
  */
-export interface performance {
+export interface Performance {
     _id: string,
     attributes: {
         canceled: boolean,
         day: string,
-        film: film,
-        screen: screen,
-        theater: theater,
+        film: Film,
+        screen: Screen,
+        theater: Theater,
         time_end: string,
         time_start: string
     },
@@ -106,9 +106,9 @@ export namespace getPerformance {
         id: string
     }
     export interface Result {
-        data: performance,
+        
     }
-    export async function call(args: Args): Promise<Result> {
+    export async function call(args: Args): Promise<Performance> {
         let response = await request.get({
             url: `${endPoint}/performances/${args.id}`,
             body: {},
@@ -117,8 +117,8 @@ export namespace getPerformance {
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);
-        console.log('performances:', response.body);
-        return response.body;
+        console.log('performances:', response.body.data);
+        return response.body.data;
     }
 }
 
@@ -185,7 +185,7 @@ export namespace addCOAAuthorization {
             dis_price: number,
             sale_price: number
         }>,
-        performance: performance,
+        performance: Performance,
         totalPrice: number,
 
     }
@@ -373,7 +373,7 @@ export namespace ownersAnonymous {
         });
         if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log("removeGMOAuthorization result:");
+        console.log("ownersAnonymous result:");
 
     }
 }
@@ -382,7 +382,8 @@ export namespace ownersAnonymous {
 export namespace transactionsEnableInquiry {
     export interface Args {
         transactionId: string,
-        updateReserveResult: COA.updateReserveInterface.Result,
+        inquiry_theater: string,
+        inquiry_id: number,
         inquiry_pass: string,
     }
     export interface Result {
@@ -391,7 +392,8 @@ export namespace transactionsEnableInquiry {
         let response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
             body: {
-                inquiry_id: args.updateReserveResult.reserve_num,
+                inquiry_theater: args.inquiry_theater,
+                inquiry_id: args.inquiry_id,
                 inquiry_pass: args.inquiry_pass
             },
             json: true,
@@ -485,5 +487,35 @@ export namespace removeEmail {
         });
         if (response.statusCode !== 204) throw new Error(response.body.message);
         console.log('removeEmail result:');
+    }
+}
+
+/**
+ * 照会情報取得
+ */
+export namespace makeInquiry {
+    export interface Args {
+        transactionId: string,
+        inquiry_theater: string,
+        inquiry_id: number,
+        inquiry_pass: string,
+    }
+    export interface Result {
+        _id: string,
+    }
+    export async function call(args: Args): Promise<void> {
+        let response = await request.post({
+            url: `${endPoint}/transactions/${args.transactionId}/makeInquiry`,
+            body: {
+                inquiry_theater: args.inquiry_theater,
+                inquiry_id: args.inquiry_id,
+                inquiry_pass: args.inquiry_pass,
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+        });
+        if (response.statusCode !== 200) throw new Error(response.body.message);
+        console.log('makeInquiry result:' + response.body);
     }
 }

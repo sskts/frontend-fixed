@@ -89,6 +89,15 @@ export default class ConfirmController extends PurchaseController {
         });
         this.logger.debug('MP購入者情報登録');
 
+        // MP照会情報登録
+        await MP.transactionsEnableInquiry.call({
+            transactionId: this.purchaseModel.transactionMP._id,
+            inquiry_theater: this.purchaseModel.performance.attributes.theater._id,
+            inquiry_id: this.purchaseModel.updateReserve.reserve_num,
+            inquiry_pass: this.purchaseModel.input.tel_num,
+        });
+        this.logger.debug('MP照会情報登録');
+
         
         // MPメール登録
         let mail = this.createMail();

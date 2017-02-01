@@ -1,9 +1,27 @@
 import BaseController from '../BaseController';
+import express = require('express');
+import InquirySession = require('../../models/Inquiry/InquiryModel');
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import COA = require("@motionpicture/coa-service");
 import MP = require('../../../../libs/MP');
 
+
 export default class InquiryController extends BaseController {
+    private inquiryModel: InquirySession.InquiryModel;
+
+    constructor(req: express.Request, res: express.Response, next: express.NextFunction) {
+        super(req, res, next);
+        this.init();
+    }
+
+    /**
+     * 初期化
+     */
+    private init(): void {
+        if (!this.req.session) return this.next(new Error('session is undefined'));
+        this.inquiryModel = new InquirySession.InquiryModel(this.req.session['inquiry']);
+    }
+
     /**
      * 照会認証ページ表示
      */
@@ -30,8 +48,12 @@ export default class InquiryController extends BaseController {
             if (this.req.form.isValid) {
                 this.getStateReserve().then(()=>{
                     if (!this.router) return this.next(new Error('router is undefined'));
+                    
                     //購入者内容確認へ
-                    return this.res.redirect(this.router.build('inquiry', {}));
+                    return this.res.redirect(this.router.build('inquiry', {
+                        theaterId: this.req.body.theater_code,
+                        updateReserveId: this.req.body.reserve_num
+                    }));
                 }, (err)=>{
                     return this.next(new Error(err.message));
                 });
@@ -49,11 +71,13 @@ export default class InquiryController extends BaseController {
      * 照会情報取得
      */
     private async getStateReserve(): Promise<void> {
-        let stateReserve = await COA.stateReserveInterface.call({
+        this.inquiryModel.login = this.req.body;
+        this.inquiryModel.stateReserve = await COA.stateReserveInterface.call({
             theater_code: this.req.body.theater_code, /** 施設コード */                    
             reserve_num: this.req.body.reserve_num, /** 座席チケット購入番号 */
             tel_num: this.req.body.tel_num, /** 電話番号 */
         });
+        this.logger.debug('COA照会情報取得');
 
         let performanceId = '001201701018513021010';
         //TODO情報不足
@@ -65,16 +89,13 @@ export default class InquiryController extends BaseController {
         //     screenCode: string, 
         //     timeBegin: string
         // }) 
-        let performance = await MP.getPerformance.call({
+        this.inquiryModel.performance = await MP.getPerformance.call({
             id: performanceId
         });
+        this.logger.debug('MPパフォーマンス取得');
 
         if (!this.req.session) throw new Error('session is undefined');
-        this.req.session['inquiry'] = {
-            stateReserve: stateReserve,
-            performance: performance,
-            reserve_num: this.req.body.reserve_num
-        };
+        this.req.session['inquiry'] = this.inquiryModel.formatToSession(); 
         
     }
 
@@ -84,13 +105,12 @@ export default class InquiryController extends BaseController {
      * 照会確認ページ表示
      */
     public index(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (this.req.session['inquiry'] 
-        && this.req.session['inquiry'].stateReserve
-        && this.req.session['inquiry'].performance) {
-            this.res.locals['stateReserve'] = this.req.session['inquiry'].stateReserve;
-            this.res.locals['performance'] = this.req.session['inquiry'].performance.data;
-            this.res.locals['reserve_num'] = this.req.session['inquiry'].reserve_num;
+        if (this.inquiryModel.stateReserve
+        && this.inquiryModel.performance
+        && this.inquiryModel.login) {
+            this.res.locals['stateReserve'] = this.inquiryModel.stateReserve;
+            this.res.locals['performance'] = this.inquiryModel.performance;
+            this.res.locals['login'] = this.inquiryModel.login;
             return this.res.render('inquiry/confirm');
         } else {
             if (!this.router) return this.next(new Error('router is undefined'));

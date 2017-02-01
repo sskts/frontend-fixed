@@ -23,14 +23,14 @@ class SeatSelectController extends PurchaseController_1.default {
         MP.getPerformance.call({
             id: this.req.params['id']
         }).then((result) => {
-            this.res.locals['performance'] = result.data;
+            this.res.locals['performance'] = result;
             this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
             this.res.locals['reserveSeats'] = null;
             if (this.purchaseModel.reserveSeats) {
                 this.logger.debug('仮予約中');
                 this.res.locals['reserveSeats'] = JSON.stringify(this.purchaseModel.reserveSeats);
             }
-            this.purchaseModel.performance = result.data;
+            this.purchaseModel.performance = result;
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
@@ -108,25 +108,18 @@ class SeatSelectController extends PurchaseController_1.default {
                 list_seat: seats,
             });
             this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
-            let salesTicketResult = yield COA.salesTicketInterface.call({
-                theater_code: performance.attributes.theater._id,
-                date_jouei: performance.attributes.day,
-                title_code: performance.attributes.film.coa_title_code,
-                title_branch_num: performance.attributes.film.coa_title_branch_num,
-                time_begin: performance.attributes.time_start,
-            });
             this.purchaseModel.reserveTickets = this.purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
                 return {
                     section: tmpReserve.seat_section,
                     seat_code: tmpReserve.seat_num,
-                    ticket_code: salesTicketResult.list_ticket[0].ticket_code,
-                    ticket_name_ja: salesTicketResult.list_ticket[0].ticket_name,
-                    ticket_name_en: salesTicketResult.list_ticket[0].ticket_name_eng,
-                    ticket_name_kana: salesTicketResult.list_ticket[0].ticket_name_kana,
-                    std_price: salesTicketResult.list_ticket[0].std_price,
-                    add_price: salesTicketResult.list_ticket[0].add_price,
+                    ticket_code: '',
+                    ticket_name_ja: '',
+                    ticket_name_en: '',
+                    ticket_name_kana: '',
+                    std_price: 0,
+                    add_price: 0,
                     dis_price: 0,
-                    sale_price: salesTicketResult.list_ticket[0].sale_price,
+                    sale_price: 0,
                 };
             });
             let COAAuthorizationResult = yield MP.addCOAAuthorization.call({

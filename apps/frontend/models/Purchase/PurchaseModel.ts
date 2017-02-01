@@ -61,7 +61,7 @@ export class PurchaseModel {
     public static COMPLETE_STATE = 4;
 
     /**パフォーマンス */
-    public performance: MP.performance | null;
+    public performance: MP.Performance | null;
     /**COA仮予約 */
     public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
     /**予約チケット */
@@ -85,23 +85,23 @@ export class PurchaseModel {
     /**有効期限 */
     public expired: number | null; 
 
-    constructor(purchaseSession: any) {
-        if (!purchaseSession) {
-            purchaseSession = {};
+    constructor(session: any) {
+        if (!session) {
+            session = {};
         }
 
-        this.performance = (purchaseSession.performance) ? purchaseSession.performance : null;
-        this.reserveSeats = (purchaseSession.reserveSeats) ? purchaseSession.reserveSeats : null;
-        this.reserveTickets = (purchaseSession.reserveTickets) ? purchaseSession.reserveTickets : null;
-        this.input = (purchaseSession.input) ? purchaseSession.input : null;
-        this.gmo = (purchaseSession.gmo) ? purchaseSession.gmo : null;
-        this.updateReserve = (purchaseSession.updateReserve) ? purchaseSession.updateReserve : null;
-        this.transactionMP = (purchaseSession.transactionMP) ? purchaseSession.transactionMP : null;
-        this.transactionGMO = (purchaseSession.transactionGMO) ? purchaseSession.transactionGMO : null;
-        this.authorizationCOA = (purchaseSession.authorizationCOA) ? purchaseSession.authorizationCOA : null;
-        this.authorizationGMO = (purchaseSession.authorizationGMO) ? purchaseSession.authorizationGMO : null;
-        this.orderId = (purchaseSession.orderId) ? purchaseSession.orderId : null;
-        this.expired = (purchaseSession.expired) ? purchaseSession.expired : null;
+        this.performance = (session.performance) ? session.performance : null;
+        this.reserveSeats = (session.reserveSeats) ? session.reserveSeats : null;
+        this.reserveTickets = (session.reserveTickets) ? session.reserveTickets : null;
+        this.input = (session.input) ? session.input : null;
+        this.gmo = (session.gmo) ? session.gmo : null;
+        this.updateReserve = (session.updateReserve) ? session.updateReserve : null;
+        this.transactionMP = (session.transactionMP) ? session.transactionMP : null;
+        this.transactionGMO = (session.transactionGMO) ? session.transactionGMO : null;
+        this.authorizationCOA = (session.authorizationCOA) ? session.authorizationCOA : null;
+        this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
+        this.orderId = (session.orderId) ? session.orderId : null;
+        this.expired = (session.expired) ? session.expired : null;
 
 
     }
@@ -110,7 +110,7 @@ export class PurchaseModel {
      * セッションObjectへ変換
      */
     public formatToSession(): {
-        performance: MP.performance | null,
+        performance: MP.Performance | null,
         reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null,
         reserveTickets: Array<ReserveTicket> | null,
         input: Input | null,

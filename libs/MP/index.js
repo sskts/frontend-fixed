@@ -24,8 +24,8 @@ var getPerformance;
             });
             if (response.statusCode !== 200)
                 throw new Error(response.body.message);
-            console.log('performances:', response.body);
-            return response.body;
+            console.log('performances:', response.body.data);
+            return response.body.data;
         });
     }
     getPerformance.call = call;
@@ -197,7 +197,7 @@ var ownersAnonymous;
             });
             if (response.statusCode !== 204)
                 throw new Error(response.body.message);
-            console.log("removeGMOAuthorization result:");
+            console.log("ownersAnonymous result:");
         });
     }
     ownersAnonymous.call = call;
@@ -209,7 +209,8 @@ var transactionsEnableInquiry;
             let response = yield request.patch({
                 url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
                 body: {
-                    inquiry_id: args.updateReserveResult.reserve_num,
+                    inquiry_theater: args.inquiry_theater,
+                    inquiry_id: args.inquiry_id,
                     inquiry_pass: args.inquiry_pass
                 },
                 json: true,
@@ -283,3 +284,25 @@ var removeEmail;
     }
     removeEmail.call = call;
 })(removeEmail = exports.removeEmail || (exports.removeEmail = {}));
+var makeInquiry;
+(function (makeInquiry) {
+    function call(args) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let response = yield request.post({
+                url: `${endPoint}/transactions/${args.transactionId}/makeInquiry`,
+                body: {
+                    inquiry_theater: args.inquiry_theater,
+                    inquiry_id: args.inquiry_id,
+                    inquiry_pass: args.inquiry_pass,
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+            });
+            if (response.statusCode !== 200)
+                throw new Error(response.body.message);
+            console.log('makeInquiry result:' + response.body);
+        });
+    }
+    makeInquiry.call = call;
+})(makeInquiry = exports.makeInquiry || (exports.makeInquiry = {}));

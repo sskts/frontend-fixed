@@ -20,7 +20,7 @@ export default class BaseController {
         this.req = req;
         this.res = res;
         this.next = next;
-
+        
         this.router = this.req.app.namedRoutes;
         this.logger = log4js.getLogger('system');
         if (this.req.session && this.req.session['locale']) {

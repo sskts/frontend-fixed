@@ -2,7 +2,7 @@ $(function () {
     heightFix();
 
     /**
-     * QR確認
+     * 照会画面へ
      */
     $(document).on('click', '.inquiry-button a', function (event) {
         event.preventDefault();

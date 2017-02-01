@@ -72,6 +72,13 @@ class ConfirmController extends PurchaseController_1.default {
                 email: input.mail_addr,
             });
             this.logger.debug('MP購入者情報登録');
+            yield MP.transactionsEnableInquiry.call({
+                transactionId: this.purchaseModel.transactionMP._id,
+                inquiry_theater: this.purchaseModel.performance.attributes.theater._id,
+                inquiry_id: this.purchaseModel.updateReserve.reserve_num,
+                inquiry_pass: this.purchaseModel.input.tel_num,
+            });
+            this.logger.debug('MP照会情報登録');
             let mail = this.createMail();
             yield MP.addEmail.call({
                 transactionId: this.purchaseModel.transactionMP._id,

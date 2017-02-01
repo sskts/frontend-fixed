@@ -69,7 +69,52 @@ $(function () {
             });
         }
     });
+
+    /**
+     * スクロール
+     */
+    $(window).on('scroll', function (event) {
+        zoomButtonScroll();
+    });
+    
 });
+
+/**
+ * ズームボタンスクロール
+ */
+function zoomButtonScroll() {
+    if (screenSeatStatusesMap && !screenSeatStatusesMap.isZoom()) return;
+    var win = $(window);
+    var winTop = win.scrollTop();
+    var screen = $('.screen');
+    var screenTop = screen.offset().top;
+    var screenRight = screen.offset().left;
+    var screenH = screen.height();
+    var target = $('.zoom-btn');
+    var targetH = target.height();
+    var fixH = 10;
+    if (screenTop < winTop
+        && (screenTop + screenH - targetH - fixH * 2) > winTop) {
+        target.css({
+            top: fixH + 'px',
+            right: screenRight + fixH + 'px'
+        });
+        target.addClass('scroll');
+    } else if ((screenTop + screenH - targetH - fixH * 2) < winTop) {
+        target.css({
+            top: screenH - targetH - fixH + 'px',
+            right: fixH + 'px'
+        });
+        target.removeClass('scroll');
+    } else {
+        target.css({
+            top: fixH + 'px',
+            right: fixH + 'px'
+        });
+        target.removeClass('scroll');
+    }
+    
+}
 
 
 /**
@@ -153,6 +198,7 @@ function screenStateUpdate(_cb) {
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
         screenSeatStatusesMap.setScaleUpCallback(function () {
             $('.zoom-btn').show();
+            zoomButtonScroll();
         });
         screenSeatStatusesMap.setScaleDownCallback(function () {
             $('.zoom-btn').hide();

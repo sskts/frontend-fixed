@@ -20,7 +20,7 @@
     <div class="box radius bg-light-gray mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
-            <dd><strong class="red-text large-x-text"><%= reserve_num %></strong></dd>
+            <dd><strong class="red-text large-x-text"><%= login.reserve_num %></strong></dd>
             <dd class="small-text red-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
@@ -56,3 +56,7 @@
     </div>
 </div>
 <div id="copy" style="display: none"></div>
+
+<input type="hidden" name="theater_code" value="<%= login.theater_code %>">
+<input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
+<input type="hidden" name="tel_num" value="<%= login.tel_num %>">

@@ -1,0 +1,10 @@
+.purchase-overlap {
+    .prev-button, .next-button {
+        button {
+            @media screen and (max-width: $mobile) {
+                font-size: 14px;
+                
+            }
+        }
+    }
+}

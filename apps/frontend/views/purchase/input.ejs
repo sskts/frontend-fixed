@@ -17,7 +17,7 @@
                 <dl>
                     <dt><%- __('common.last_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.last_name_hira %>">
+                        <input type="text" name="last_name_hira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.last_name_hira %>">
                         <% if (error && error.last_name_hira) { %>
                         <div class="validation-text"><%= error.last_name_hira[0] %></div>
                         <% } %>
@@ -26,7 +26,7 @@
                 <dl>
                     <dt><%- __('common.first_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.first_name_hira %>">
+                        <input type="text" name="first_name_hira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.first_name_hira %>">
                         <% if (error && error.first_name_hira) { %>
                         <div class="validation-text"><%= error.first_name_hira[0] %></div>
                         <% } %>
@@ -38,7 +38,7 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="email" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
+                    <input type="email" name="mail_addr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
                     <% if (error && error.mail_addr) { %>
                     <div class="validation-text"><%= error.mail_addr[0] %></div>
                     <% } %>
@@ -60,7 +60,7 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="tel" name="tel_num" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
+                    <input type="tel" name="tel_num" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
                     <% if (error && error.tel_num) { %>
                     <div class="validation-text"><%= error.tel_num[0] %></div>
                     <% } %>
@@ -73,10 +73,15 @@
         <div class="box radius bg-ultra-light-gray mb-medium scroll small-text">
             <%- partial('agreement_ja') %>
         </div>
-        <div class="mb-large text-center">
-            <input type="checkbox" name="agree" value="true" id="agree" <%= (input.agree) ? 'checked': '' %>>
-            <label for="agree" class="agree-label"><%- __('purchase.input.agree') %></label>
 
+        <h2 class="section-ttl"><%- __('purchase.input.notes') %></h2>
+        <div class="box radius bg-ultra-light-gray mb-medium small-text notes">
+            <%- partial('notes_ja') %>
+        </div>
+
+        <div class="mb-x-large text-center">
+            <input type="checkbox" name="agree" value="true" id="agree" <%= (input.agree) ? 'checked': '' %>>
+            <label for="agree" class="agree-label"><strong><%- __('purchase.input.agree') %></strong></label>
         </div>          
 
         <h2 class="section-ttl">
@@ -96,7 +101,7 @@
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
                     <dd>
-                        <input type="number" pattern="\d*" name="cardno" id="cardNumber" maxlength="20" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
+                        <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
                         <% if (error && error.cardno) { %>
                         <div class="validation-text"><%= error.cardno[0] %></div>
                         <% } %>
@@ -108,6 +113,7 @@
                 <dl>
                     <dt><%- __('common.expire') %></dt>
                     <dd>
+                        
                         <select name="credit_month" id="cardExpirationMonth">
                             <%
                             for (let i = 0; i < 12; i++) {
@@ -130,8 +136,8 @@
                             <option value="20<%- key %>"><%- choices[key] %></option>
                             <% } %>
                         </select> <%- __('common.year') %>
-                        
                         <input type="hidden" name="expire" value="">
+                        
                     </dd>
                 </dl>
             </li>
@@ -139,7 +145,7 @@
                 <dl>
                     <dt><%- __('common.securitycode') %></dt>
                     <dd>
-                        <input type="number" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                        <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
                         <p><a href="#" data-modal="securitycode"><%- __('common.note.securitycode') %></a></p>
                     </dd>
                 </dl>
@@ -156,3 +162,4 @@
 
 
 <% block('modals', partial('modals/securitycode')) -%>
+<% block('modals', partial('modals/creditcard_alert')) -%>
