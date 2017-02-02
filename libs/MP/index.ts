@@ -491,11 +491,10 @@ export namespace removeEmail {
 }
 
 /**
- * 照会情報取得
+ * 照会取引情報取得
  */
 export namespace makeInquiry {
     export interface Args {
-        transactionId: string,
         inquiry_theater: string,
         inquiry_id: number,
         inquiry_pass: string,
@@ -503,9 +502,9 @@ export namespace makeInquiry {
     export interface Result {
         _id: string,
     }
-    export async function call(args: Args): Promise<void> {
+    export async function call(args: Args): Promise<string> {
         let response = await request.post({
-            url: `${endPoint}/transactions/${args.transactionId}/makeInquiry`,
+            url: `${endPoint}/transactions/makeInquiry`,
             body: {
                 inquiry_theater: args.inquiry_theater,
                 inquiry_id: args.inquiry_id,
@@ -516,6 +515,7 @@ export namespace makeInquiry {
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);
-        console.log('makeInquiry result:' + response.body);
+        console.log('makeInquiry result:' + response.body.data);
+        return response.body.data._id;
     }
 }

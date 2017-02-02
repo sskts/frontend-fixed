@@ -44,8 +44,8 @@ class BaseController {
     formatPrice(price) {
         return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
     }
-    getPerformanceId(theaterCode, day, titleCode, titleBranchNum, screenCode, timeBegin) {
-        return `${theaterCode}${day}${titleCode}${titleBranchNum}${screenCode}${timeBegin}`;
+    getPerformanceId(args) {
+        return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

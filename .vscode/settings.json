@@ -5,6 +5,7 @@
         "app/**/*.js": true,
         "lib/**/*.js": true,
         "bin/**/*.js": true,
-        "*.js": true
+        "*.js": true,
+        "public/**/*.css": true
     }
 }

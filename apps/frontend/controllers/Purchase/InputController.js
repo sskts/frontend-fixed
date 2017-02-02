@@ -43,7 +43,6 @@ class InputController extends PurchaseController_1.default {
                 mail_addr: 'hataguchi@motionpicture.jp',
                 mail_confirm: 'hataguchi@motionpicture.jp',
                 tel_num: '09040007648',
-                agree: 'true'
             };
         }
         if (!this.req.session)
@@ -79,7 +78,7 @@ class InputController extends PurchaseController_1.default {
                         if (!err.hasOwnProperty('type'))
                             return this.next(err.message);
                         this.res.locals['error'] = {
-                            cardno: [err.error.message]
+                            cardno: ['クレジットカードカード番号ををご確認ください']
                         };
                         this.res.locals['input'] = this.req.body;
                         this.res.locals['moment'] = require('moment');

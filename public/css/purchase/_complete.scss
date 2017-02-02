@@ -36,4 +36,9 @@
     .button-area {
         margin-top: 40px;
     }
+    .print-button {
+        @media screen and (max-width: $tablet){
+            display: none;
+        }
+    }
 }

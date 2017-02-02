@@ -2,11 +2,13 @@
 @import "reset";
 @import "config";
 @import "common";
-@import "purchase/common";
+@import "animations";
+@import "icons";
+@import "purchase/style";
 @import "screen/style";
 @import "performance/performance";
 @import "inquiry/inquiry";
 @import "overlap/overlap";
 @import "error/error";
-@import "animations";
+@import "method/style";
 @import "print";

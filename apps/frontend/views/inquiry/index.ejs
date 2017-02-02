@@ -5,7 +5,7 @@
     <p class="read"><%- __('inquiry.confirm.read') %></p>
 
     <div class="ghost-button black-button mb-large center-button ticket-scroll-button">
-        <a class="icon-ticket" href="#"><%- __('inquiry.confirm.ticket_button') %></a>
+        <a class="icon-ticket-black" href="#"><%- __('inquiry.confirm.ticket_button') %></a>
     </div>
 
     <div class="box radius bg-ultra-light-gray mb-large">
@@ -13,7 +13,7 @@
         <p class="small-text mb-small read"><%- __('inquiry.confirm.section_text') %></p>
         <div class="small-text mb-large bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
         <div class="ghost-button blue-button center-button">
-            <a href="#"><%- __('inquiry.confirm.section_button') %></a>
+            <a class="icon-new-tab-blue" href="<%- url('method.bookmark') %>" target="_blank"><%- __('inquiry.confirm.section_button') %></a>
         </div>
     </div>
 
@@ -51,8 +51,8 @@
         <% } %>
     </ul>
     <div class="button-area clearfix">
-        <div class="button next-button blue-button"><a class="icon-new-tab" href="<%- url('method.entry') %>" target="_blank"><%- __('inquiry.confirm.next') %></a></div>
-        <div class="close-link"><a class="icon-close window-close" href="#"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="button next-button blue-button"><a class="icon-new-tab-white" href="<%- url('method.entry') %>" target="_blank"><%- __('inquiry.confirm.next') %></a></div>
+        <div class="close-link"><a class="icon-close-black window-close" href="#"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>
@@ -60,3 +60,6 @@
 <input type="hidden" name="theater_code" value="<%= login.theater_code %>">
 <input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
+<input type="hidden" name="transaction_id" value="<%= transactionId %>">
+<input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+

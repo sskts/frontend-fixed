@@ -289,7 +289,7 @@ var makeInquiry;
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
             let response = yield request.post({
-                url: `${endPoint}/transactions/${args.transactionId}/makeInquiry`,
+                url: `${endPoint}/transactions/makeInquiry`,
                 body: {
                     inquiry_theater: args.inquiry_theater,
                     inquiry_id: args.inquiry_id,
@@ -301,7 +301,8 @@ var makeInquiry;
             });
             if (response.statusCode !== 200)
                 throw new Error(response.body.message);
-            console.log('makeInquiry result:' + response.body);
+            console.log('makeInquiry result:' + response.body.data);
+            return response.body.data._id;
         });
     }
     makeInquiry.call = call;

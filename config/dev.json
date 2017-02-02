@@ -1,4 +1,7 @@
 {
+
+    "portal_site": "http://www.cinemasunshine.co.jp",
+
     "mp_api_endpoint": "https://devsasakiticketapiprototypewebapp.azurewebsites.net",
     // "mp_api_endpoint": "http://localhost:8081",
     "admin_id": "5868e16789cc75249cdbfa4b",

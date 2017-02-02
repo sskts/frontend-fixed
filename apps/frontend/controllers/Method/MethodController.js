@@ -7,6 +7,9 @@ class MethodController extends BaseController_1.default {
     entry() {
         return this.res.render('method/entry');
     }
+    bookmark() {
+        return this.res.render('method/bookmark');
+    }
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MethodController;

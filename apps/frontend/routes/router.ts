@@ -148,12 +148,13 @@ export default (app: any) => {
         new InquiryController(req, res, next).login();
     });
 
+    //チケット照会ログイン（認証）
     app.post('/inquiry/login', 'inquiry.login', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).auth();
     });
 
     //チケット照会
-    app.get('/inquiry/:theaterId/:updateReserveId/', 'inquiry', (req: Request, res: Response, next: NextFunction) => {
+    app.get('/inquiry/:transactionId/', 'inquiry', (req: Request, res: Response, next: NextFunction) => {
         new InquiryController(req, res, next).index();
     });
 
@@ -170,6 +171,11 @@ export default (app: any) => {
     //発券方法説明
     app.get('/method/ticketing', 'method.ticketing', (req: Request, res: Response, next: NextFunction) => {
         new MethodController(req, res, next).ticketing();
+    });
+
+    //ブックマーク方法説明
+    app.get('/method/bookmark', 'method.bookmark', (req: Request, res: Response, next: NextFunction) => {
+        new MethodController(req, res, next).bookmark();
     });
 
     //座席状態取得

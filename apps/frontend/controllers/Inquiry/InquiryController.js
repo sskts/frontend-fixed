@@ -28,8 +28,8 @@ class InquiryController extends BaseController_1.default {
         this.res.locals['tel_num'] = '';
         if (process.env.NODE_ENV === 'dev') {
             this.res.locals['theater_code'] = '001';
-            this.res.locals['reserve_num'] = '5836';
-            this.res.locals['tel_num'] = '0849273550';
+            this.res.locals['reserve_num'] = '11625';
+            this.res.locals['tel_num'] = '09040007648';
         }
         this.res.locals['error'] = null;
         return this.res.render('inquiry/login');
@@ -43,8 +43,7 @@ class InquiryController extends BaseController_1.default {
                     if (!this.router)
                         return this.next(new Error('router is undefined'));
                     return this.res.redirect(this.router.build('inquiry', {
-                        theaterId: this.req.body.theater_code,
-                        updateReserveId: this.req.body.reserve_num
+                        transactionId: this.inquiryModel.transactionId
                     }));
                 }, (err) => {
                     return this.next(new Error(err.message));
@@ -58,6 +57,12 @@ class InquiryController extends BaseController_1.default {
     }
     getStateReserve() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.inquiryModel.transactionId = yield MP.makeInquiry.call({
+                inquiry_theater: this.req.body.theater_code,
+                inquiry_id: this.req.body.reserve_num,
+                inquiry_pass: this.req.body.tel_num,
+            });
+            this.logger.debug('MP取引Id取得', this.inquiryModel.transactionId);
             this.inquiryModel.login = this.req.body;
             this.inquiryModel.stateReserve = yield COA.stateReserveInterface.call({
                 theater_code: this.req.body.theater_code,
@@ -65,7 +70,15 @@ class InquiryController extends BaseController_1.default {
                 tel_num: this.req.body.tel_num,
             });
             this.logger.debug('COA照会情報取得');
-            let performanceId = '001201701018513021010';
+            let performanceId = this.getPerformanceId({
+                theaterCode: this.req.body.theater_code,
+                day: this.inquiryModel.stateReserve.date_jouei,
+                titleCode: this.inquiryModel.stateReserve.title_code,
+                titleBranchNum: this.inquiryModel.stateReserve.title_branch_num,
+                screenCode: this.inquiryModel.stateReserve.screen_code,
+                timeBegin: this.inquiryModel.stateReserve.time_begin
+            });
+            this.logger.debug('パフォーマンスID取得', performanceId);
             this.inquiryModel.performance = yield MP.getPerformance.call({
                 id: performanceId
             });
@@ -78,19 +91,19 @@ class InquiryController extends BaseController_1.default {
     index() {
         if (this.inquiryModel.stateReserve
             && this.inquiryModel.performance
-            && this.inquiryModel.login) {
+            && this.inquiryModel.login
+            && this.inquiryModel.transactionId) {
             this.res.locals['stateReserve'] = this.inquiryModel.stateReserve;
             this.res.locals['performance'] = this.inquiryModel.performance;
             this.res.locals['login'] = this.inquiryModel.login;
-            return this.res.render('inquiry/confirm');
+            this.res.locals['transactionId'] = this.inquiryModel.transactionId;
+            return this.res.render('inquiry/index');
         }
         else {
             if (!this.router)
                 return this.next(new Error('router is undefined'));
-            return this.res.redirect(this.router.build('inquiry.login', {}));
+            return this.res.redirect(this.router.build('inquiry.login', {}) + '?transaction_id=' + this.req.params.transactionId);
         }
-    }
-    print() {
     }
 }
 Object.defineProperty(exports, "__esModule", { value: true });

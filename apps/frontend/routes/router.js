@@ -94,7 +94,7 @@ exports.default = (app) => {
     app.post('/inquiry/login', 'inquiry.login', (req, res, next) => {
         new InquiryController_1.default(req, res, next).auth();
     });
-    app.get('/inquiry/:theaterId/:updateReserveId/', 'inquiry', (req, res, next) => {
+    app.get('/inquiry/:transactionId/', 'inquiry', (req, res, next) => {
         new InquiryController_1.default(req, res, next).index();
     });
     app.get('/inquiry/print', 'inquiry.print', (req, res, next) => {
@@ -105,6 +105,9 @@ exports.default = (app) => {
     });
     app.get('/method/ticketing', 'method.ticketing', (req, res, next) => {
         new MethodController_1.default(req, res, next).ticketing();
+    });
+    app.get('/method/bookmark', 'method.bookmark', (req, res, next) => {
+        new MethodController_1.default(req, res, next).bookmark();
     });
     app.post('/purchase/getScreenStateReserve', 'purchase.getScreenStateReserve', (req, res, next) => {
         new PurchaseController_1.default(req, res, next).getScreenStateReserve();

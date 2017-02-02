@@ -77,15 +77,15 @@ export default class BaseController {
      * 
      * パフォーマンスID取得
      */
-    protected getPerformanceId(
+    protected getPerformanceId(args: {
         theaterCode: string, 
         day: string, 
         titleCode: string, 
         titleBranchNum: string,
         screenCode: string,
         timeBegin: string
-    ): string  {
-        return `${theaterCode}${day}${titleCode}${titleBranchNum}${screenCode}${timeBegin}`;
+    }): string  {
+        return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
     }
 
     

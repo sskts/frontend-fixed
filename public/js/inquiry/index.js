@@ -1,5 +1,5 @@
 $(function () {
-    
+    saveInquiry();
 
     /**
      * コピークリックイベント
@@ -32,6 +32,19 @@ $(function () {
  * 照会情報保存
  */
 function saveInquiry() {
-    
+    var inquiryInfo = {
+        transaction_id: $('input[name=transaction_id]').val(),
+        theater_code: $('input[name=theater_code]').val(),
+        reserve_num: $('input[name=reserve_num]').val(),
+        tel_num: $('input[name=tel_num]').val(),
+        expire: $('input[name=expire]').val()
+    };
+    var data = localStorage.getItem('inquiryInfo');
+    var saveData = [];
+    if (data) {
+        saveData = JSON.parse(data);
+    }
+    saveData.push(inquiryInfo);
+    localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
 }
             

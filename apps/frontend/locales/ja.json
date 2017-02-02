@@ -6,7 +6,7 @@
 	"footer": {
 		"privacy_policy": "プライバシーポリシー",
 		"Specified_Commercial_Transaction_Law": "特定商取引法に基づく表記",
-		"copyright": "Copyright (C) 2001-2016 Cinema Sunshine Co., Ltd. All Rights Reserved."
+		"copyright": "Copyright (C) 2001-2017 Cinema Sunshine Co., Ltd. All Rights Reserved."
 	},
 	"noscript": "javascrptの設定を有効にしてご覧ください",
 	"purchase": {
@@ -42,8 +42,9 @@
 					"text": "予約座席数は最大４席までとなります。"
 				},
 				"close": {
-					"ttl": "purchase.seat.modal.close.ttl",
-					"text": "purchase.seat.modal.close.text"
+					"ttl": "ページを閉じます",
+					"text": "お手続き途中の内容が削除されますがよろしいでしょうか？",
+					"close": "了承して閉じる"
 				}
 			}
 		},
@@ -103,7 +104,7 @@
 			"page_ttl": "購入完了",
 			"read": "ご購入ありがとうございました。<br>購入者情報入力画面で入力していただいたメールアドレス宛に購入完了メールを送信しました。<br>ご入場方法に関しましてはページ下部をご確認ください。",
 			"next": "",
-			"prev": "劇場TOPへ戻る",
+			"prev": "TOPへ戻る",
 			"entry": "入場方法",
 			"entry_read": "シネマサンシャインでは2通りの入場方法をお選びいただけます。<br>以下をお読み頂きいずれかの方法でご入場ください。",
 			"entry_01_title": "劇場発券機で発券し入場",
@@ -112,7 +113,8 @@
 			"entry_02_title": "入場用QRコードで入場",
 			"entry_02_read": "以下の「チケット情報確認」ボタンをクリックするとチケット情報確認画面へ遷移します。 ご鑑賞日の前日から入場用QRコードが表示されますのでそちらの画面をご呈示ください。",
 			"entry_02_button": "チケット情報確認",
-			"print": "印刷する"
+			"print": "印刷する",
+			"print_read": "<strong>購入完了メールが届かない場合</strong><br>しばらく経っても購入完了メールが届かない場合は以下の点をご確認ください。<br>また、購入完了メールの再送信は致しかねますのでご了承ください。<br>・メールアドレスに不備があった場合、メールの着信拒否されている場合はメールが受け取れない場合があります。<br>・プロバイダのメール設定ならびに各携帯キャリア会社のメール設定のフィルタリング機能を有効にしている方は「削除フォルダ」「迷惑メールフォルダ」もご確認ください。"
 		},
 		"mvtk": {
 			"input": {
@@ -185,15 +187,27 @@
 			"step_02_read": "表示された購入内容に誤りが無いかご確認してください。",
 			"step_03_ttl": "3.発券ボタンを押してチケットを発券してください。",
 			"step_03_read": "「発券」ボタンを押してチケットを発券してください。<br>発券したチケットを入場口スタッフにご呈示いただけますとご入場していただけます。"
+		},
+		"bookmark": {
+			"page_ttl": "ブックマーク追加方法について",
+			"read": "各ブラウザ・端末のブックマーク追加方法は下記になります。",
+			"step_01_ttl": "Internet Explore",
+			"step_01_read": "ご使用されているブラウザがInternet Exploreの場合、ブラウザの右上にある星マークを押してください",
+			"step_02_ttl": "Google Chrom",
+			"step_02_read": "ご使用されているブラウザがGoogle Chromの場合、ブラウザ上部にある検索窓の右側にある星マークを押してください。",
+			"step_03_ttl": "iPhone(Safari)",
+			"step_03_read": "ご使用されているブラウザがiPhoneのSafariの場合、画面下部にある下記のアイコンを押して「ホーム画面に追加」もしくは「ブックマークを追加」を押してください。",
+			"step_04_ttl": "Andorod(Google Chrom)",
+			"step_04_read": "ご使用されているブラウザがAndroid端末のGoogle Chromの場合、画面上部にあるメニューアイコンを押して「ホーム画面に追加」もしくは「ブックマーク」を押してください。"
 		}
 	},
 	"not_found": {
-		"page_ttl": "404 NOT FOUND",
+		"page_ttl": "ページが見つかりませんでした",
 		"read": "申し訳ございません。<br>お探しのページは見つかりませんでした。<br>",
 		"prev": "戻る"
 	},
 	"error": {
-		"page_ttl": "エラー",
+		"page_ttl": "エラーが発生しました",
 		"prev": "戻る"
 	},
 	"common": {

@@ -19,7 +19,8 @@ export interface Login {
  * 照会セッション
  */
 export class InquiryModel {
-
+    /**取引MPId */
+    public transactionId: string | null;
     /**パフォーマンス */
     public performance: MP.Performance | null;
     /**COA照会情報 */
@@ -32,7 +33,7 @@ export class InquiryModel {
         if (!session) {
             session = {};
         }
-
+        this.transactionId = (session.transactionId) ? session.transactionId : null;
         this.performance = (session.performance) ? session.performance : null;
         this.stateReserve = (session.stateReserve) ? session.stateReserve : null;
         this.login = (session.login) ? session.login : null;
@@ -43,12 +44,14 @@ export class InquiryModel {
      * セッションObjectへ変換
      */
     public formatToSession(): {
+        transactionId: string | null,
         performance: MP.Performance | null,
         stateReserve: COA.stateReserveInterface.Result | null,
         login: Login | null,
     } {
 
         return {
+            transactionId: (this.transactionId) ? this.transactionId : null,
             performance: (this.performance) ? this.performance : null,
             stateReserve: (this.stateReserve) ? this.stateReserve : null,
             login: (this.login) ? this.login : null,

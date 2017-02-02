@@ -7,7 +7,7 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
  */
 export default class PurchaseController extends BaseController {
     /** エラーメッセージ 認証 */
-    public static ERROR_MESSAGE_ACCESS = '不適切なアクセスです';
+    public static ERROR_MESSAGE_ACCESS = `お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
     /** 購入セッションモデル */
     protected purchaseModel: PurchaseSession.PurchaseModel;
 

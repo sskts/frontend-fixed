@@ -82,8 +82,11 @@
         </li>
     </ul>
 
-    <div class="button dark-blue-button print-button mb-large center-button not-print">
-        <a class="icon-add" href="#"><%- __('purchase.complete.print') %></a>
+    <div class="mb-x-large">
+        <p class="mb-medium small-x-text"><%- __('purchase.complete.print_read') %></p>
+        <div class="button dark-blue-button print-button center-button not-print">
+            <a class="icon-print-white" href="#"><%- __('purchase.complete.print') %></a>
+        </div>
     </div>
 
     <div class="not-print">
@@ -101,7 +104,7 @@
                         <p class="mb-small heighfix"><%- __('purchase.complete.entry_01_read') %></p>
                         <div class="image mb-x-small"><img src="/images/common/test.svg" alt=""></div>
                         <div class="button blue-button">
-                            <a class="icon-new-tab" href="<%- url('method.ticketing') %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
+                            <a class="icon-new-tab-white" href="<%- url('method.ticketing') %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
                         </div>
                     </dd>
                 </dl>
@@ -116,7 +119,7 @@
                         <p class="mb-small heighfix"><%- __('purchase.complete.entry_02_read') %></p>
                         <div class="image mb-x-small"><img src="/images/common/test.svg" alt=""></div>
                         <div class="button blue-button inquiry-button">
-                            <a class="icon-new-tab" href="#" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
+                            <a class="icon-new-tab-white" href="#" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
                         </div>
                         <form class="inquiry-form" method="post" method="post" target="_blank" action="<%- url('inquiry.login') %>">
                             <input type="hidden" name="theater_code" value="<%= performance.attributes.theater._id %>">
@@ -129,7 +132,7 @@
         </ul>
 
         <div class="button-area clearfix">
-            <div class="prev-link"><a class="icon-prev"href="<%- url('index') %>"><%- __('purchase.complete.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev-black"href="<%- url('index') %>"><%- __('purchase.complete.prev') %></a></div>
         </div>
     </div>
 
