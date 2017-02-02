@@ -25,7 +25,7 @@
         </dl>
     </div>
     
-    <ul class="tickets">
+    <ul class="tickets mb-large">
         
         <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
         <li class="ticket">
@@ -50,9 +50,9 @@
         </li>
         <% } %>
     </ul>
+    <p class="text-center"><%- __('inquiry.confirm.qr_read') %></p>
     <div class="button-area clearfix">
-        <div class="button next-button blue-button"><a class="icon-new-tab-white" href="<%- url('method.entry') %>" target="_blank"><%- __('inquiry.confirm.next') %></a></div>
-        <div class="close-link"><a class="icon-close-black window-close" href="#"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="prev-link"><a class="icon-prev-black" href="<%- url('inquiry.login') %>"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>

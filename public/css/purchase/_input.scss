@@ -15,14 +15,7 @@
             margin-bottom: 0;
         }
     }
-    .scroll {
-        overflow-y: auto;
-        resize: vertical;
-        height: 150px;
-        @media screen and (max-width: $mobile) {
-            height: 100px;
-        }
-    }
+    
     .credit-image {
         display: inline-block;
         @media screen and (max-width: $mobile) {
@@ -126,30 +119,7 @@
             font-size: 14px;
         }
     }
-    .notes {
-        ol {
-            li {
-                line-height: 1.5;
-                margin: 0 0 5px;
-                padding: 0;
-                &:after {
-                    display: none;
-                }
-                &:last-child {
-                    margin: 0;
-                }
-            }
-        }
-        ul {
-            li {
-                margin: 0;
-                padding: 0;
-                &:after {
-                    display: none;
-                }
-            }
-        }
-    }
+    
 }
 
 .modal[data-modal=securitycode] {

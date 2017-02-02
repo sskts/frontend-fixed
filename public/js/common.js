@@ -22,7 +22,16 @@ $(function () {
  */
 function settingValidation() {
     $('.validation-text').each(function (index, elem) {
-        var target = $(elem).prev('input');
+        if ($(elem).hasClass('expire')) {
+            var target = $('select[name=credit_month], select[name=credit_year]');
+        } else {
+            var target;
+            if ($(elem).prev('input')) {
+                target = $(elem).prev('input');
+            } else {
+                target = $(elem).prev('label');
+            }
+        }
         target.addClass('validation');
     });
     if ($('.validation-text').length > 0) {

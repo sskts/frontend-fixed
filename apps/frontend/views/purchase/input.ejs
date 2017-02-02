@@ -67,22 +67,7 @@
                     <p class="small-text"><%- __('common.note.tel') %></p>
                 </dd>
             </dl>
-        </div>
-
-        <h2 class="section-ttl"><%- __('purchase.input.agreement') %></h2>
-        <div class="box radius bg-ultra-light-gray mb-medium scroll small-text">
-            <%- partial('agreement_ja') %>
-        </div>
-
-        <h2 class="section-ttl"><%- __('purchase.input.notes') %></h2>
-        <div class="box radius bg-ultra-light-gray mb-medium small-text notes">
-            <%- partial('notes_ja') %>
-        </div>
-
-        <div class="mb-x-large text-center">
-            <input type="checkbox" name="agree" value="true" id="agree" <%= (input.agree) ? 'checked': '' %>>
-            <label for="agree" class="agree-label"><strong><%- __('purchase.input.agree') %></strong></label>
-        </div>          
+        </div>      
 
         <h2 class="section-ttl">
             <%- __('common.payment') %><span class="text-icon-red small-text"><%- __('common.required') %></span>
@@ -137,7 +122,9 @@
                             <% } %>
                         </select> <%- __('common.year') %>
                         <input type="hidden" name="expire" value="">
-                        
+                        <% if (error && error.expire) { %>
+                        <div class="validation-text expire"><%= error.expire[0] %></div>
+                        <% } %>
                     </dd>
                 </dl>
             </li>
@@ -146,6 +133,9 @@
                     <dt><%- __('common.securitycode') %></dt>
                     <dd>
                         <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                        <% if (error && error.securitycode) { %>
+                        <div class="validation-text"><%= error.securitycode[0] %></div>
+                        <% } %>
                         <p><a href="#" data-modal="securitycode"><%- __('common.note.securitycode') %></a></p>
                     </dd>
                 </dl>

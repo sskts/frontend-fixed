@@ -89,7 +89,9 @@ export default class InputController extends PurchaseController {
                         if (!err.hasOwnProperty('type')) return this.next(err.message);
                         //GMOオーソリ追加失敗
                         this.res.locals['error'] = {
-                            cardno: ['クレジットカードカード番号ををご確認ください']
+                            cardno: ['クレジットカード番号ををご確認ください'],
+                            expire: ['有効期限ををご確認ください'],
+                            securitycode: ['セキュリティーコードををご確認ください'],
                         }
                         this.res.locals['input'] = this.req.body;
                         this.res.locals['moment'] = require('moment');

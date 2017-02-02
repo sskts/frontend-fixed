@@ -6,7 +6,14 @@
     <p class="read"><%- __('purchase.confirm.read') %></p>
 
     <form class="form-layout" method="post">
-        <h2 class="section-ttl"><%- __('common.film_info') %></h2>
+        <h2 class="section-ttl">
+            <%- __('common.film_info') %>
+            <div class="right">
+                <div class="button light-gray-button change-button">
+                    <a href="<%- url('index') %>"><%- __('common.change') %></a>
+                </div>
+            </div>
+        </h2>
         <ul class="box radius bg-light-gray mb-large">
             <li>
                 <dl>
@@ -40,7 +47,7 @@
                         } 
                         %>
                         <div><%= seats.join('、') %></div>
-                        <div class="right">
+                        <div style="display: none" class="right">
                             <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
                             --><div class="button light-gray-button change-button"><a href="<%- url('purchase.seat', {id: performance._id}) %>"><%- __('common.change') %></a></div>
                         </div>
@@ -71,7 +78,7 @@
                         }
                         %>
                         <div><%= tickets.join('、') %></div>
-                        <div class="right">
+                        <div style="display: none" class="right">
                             <div class="button light-gray-button change-button">
                                 <a href="<%- url('purchase.ticket') %>"><%- __('common.change') %></a>
                             </div>
@@ -79,7 +86,6 @@
                     </dd>
                 </dl>
             </li>
-            
         </ul>       
         
         <h2 class="section-ttl">
@@ -127,6 +133,12 @@
         <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
         <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
         <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
+
+        <h2 class="section-ttl"><%- __('common.notes') %></h2>
+        <p class="mb-small"><%- __('common.notes_read') %></p>
+        <div class="box radius bg-ultra-light-gray small-text notes">
+            <%- partial('notes_ja') %>
+        </div>
         
         
 

@@ -260,6 +260,7 @@ label:before {
   margin-top: -10px;
   border: 1px solid #ccc;
   box-sizing: border-box;
+  background-color: #FFF;
 }
 
 label:after {
@@ -1537,6 +1538,18 @@ p a {
   border: none;
 }
 
+.purchase .purchase-seat .agree {
+  overflow-y: auto;
+  resize: vertical;
+  height: 150px;
+}
+
+@media screen and (max-width: 767px) {
+  .purchase .purchase-seat .agree {
+    height: 100px;
+  }
+}
+
 .purchase .purchase-ticket .mvtk-button label {
   border: 1px solid #d82918;
 }
@@ -1582,18 +1595,6 @@ p a {
 .purchase .purchase-input select:last-child,
 .purchase .purchase-input textarea:last-child {
   margin-bottom: 0;
-}
-
-.purchase .purchase-input .scroll {
-  overflow-y: auto;
-  resize: vertical;
-  height: 150px;
-}
-
-@media screen and (max-width: 767px) {
-  .purchase .purchase-input .scroll {
-    height: 100px;
-  }
 }
 
 .purchase .purchase-input .credit-image {
@@ -1726,29 +1727,6 @@ p a {
   }
 }
 
-.purchase .purchase-input .notes ol li {
-  line-height: 1.5;
-  margin: 0 0 5px;
-  padding: 0;
-}
-
-.purchase .purchase-input .notes ol li:after {
-  display: none;
-}
-
-.purchase .purchase-input .notes ol li:last-child {
-  margin: 0;
-}
-
-.purchase .purchase-input .notes ul li {
-  margin: 0;
-  padding: 0;
-}
-
-.purchase .purchase-input .notes ul li:after {
-  display: none;
-}
-
 .purchase .modal[data-modal=securitycode] dl dd img {
   display: block;
   margin: 0 auto;
@@ -1805,6 +1783,39 @@ p a {
   font-size: 12px;
   box-shadow: 0 0 0 transparent;
   font-weight: 500;
+}
+
+.purchase .purchase-confirm .notes input[type=checkbox] + label {
+  margin-bottom: 0;
+  padding-left: 30px;
+}
+
+.purchase .purchase-confirm .notes input[type=checkbox] + label:before, .purchase .purchase-confirm .notes input[type=checkbox] + label:after {
+  left: 0;
+  top: 11px;
+}
+
+.purchase .purchase-confirm .notes ol li {
+  line-height: 1.5;
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+.purchase .purchase-confirm .notes ol li:after {
+  display: none;
+}
+
+.purchase .purchase-confirm .notes ol li:last-child {
+  margin: 0;
+}
+
+.purchase .purchase-confirm .notes ul li {
+  margin: 0;
+  padding: 0;
+}
+
+.purchase .purchase-confirm .notes ul li:after {
+  display: none;
 }
 
 .purchase .modal[data-modal=screen] .screen .seat a {

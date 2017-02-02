@@ -75,7 +75,7 @@ function validation() {
         { name: 'mail_addr', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'が正しくありません'] },
         { name: 'mail_confirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'が正しくありません'], equals: 'mail_addr' },
         { name: 'tel_num', label: '電話番号', required: true, regex: [/^[0-9]+$/, 'が正しくありません'] },
-        { name: 'agree', label: '利用規約', agree: true },
+        // { name: 'agree', label: '利用規約', agree: true },
         { name: 'cardno', label: 'クレジットカード番号', required: true },
         { name: 'credit_month', label: '有効期限（月）', required: true },
         { name: 'credit_year', label: '有効期限（年）', required: true },

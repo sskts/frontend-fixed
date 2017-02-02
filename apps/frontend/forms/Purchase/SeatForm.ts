@@ -17,7 +17,8 @@ export default form(
         } catch (err) {
             throw new Error('%sの形式がただしくありません。');
         }
-    })
+    }),
+    // form.field('agree', '利用規約').trim().required('', '%sに同意してください')
 );
 
 

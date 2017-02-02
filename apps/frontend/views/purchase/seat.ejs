@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <div class="film-info radius">
+        <div class="film-info radius mb-large">
             <p class="mb-small"><%- __('purchase.seat.film_info.read') %></p>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
@@ -46,10 +46,24 @@
             </dl>
         </div>
     </div>
+
+    <h2 class="section-ttl"><%- __('common.agreement') %></h2>
+    <div class="box radius bg-ultra-light-gray mb-medium agree small-text">
+        <%- partial('agreement_ja') %>
+    </div>
+
+    <div class="mb-x-large text-center">
+        <input type="checkbox" name="agree" value="true" id="agree">
+        <label for="agree" class="agree-label"><strong><%- __('common.agree') %></strong></label>
+        <% if (error && error.agree) { %>
+            <div class="validation-text"><%= error.agree[0] %></div>
+        <% } %>
+    </div>    
+
     <form method="post">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="close-link"><a class="icon-close-black" data-modal="seat_close" href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev-black" href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
@@ -57,6 +71,6 @@
     <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
 </div>
 
-<% block('modals', partial('modals/seat_close')) -%>
+
 <% block('modals', partial('modals/seat_not_select')) -%>
 <% block('modals', partial('modals/seat_upper_limit')) -%>

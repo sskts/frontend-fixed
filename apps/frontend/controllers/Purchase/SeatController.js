@@ -34,6 +34,7 @@ class SeatSelectController extends PurchaseController_1.default {
             if (!this.req.session)
                 return this.next(new Error('session is undefined'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
+            this.res.locals['error'] = null;
             return this.res.render('purchase/seat');
         }, (err) => {
             return this.next(new Error(err.message));
@@ -43,16 +44,27 @@ class SeatSelectController extends PurchaseController_1.default {
         if (!this.transactionAuth())
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         SeatForm_1.default(this.req, this.res, () => {
-            this.reserve().then(() => {
-                if (!this.router)
-                    return this.next(new Error('router is undefined'));
-                if (!this.req.session)
-                    return this.next(new Error('session is undefined'));
-                this.req.session['purchase'] = this.purchaseModel.formatToSession();
-                return this.res.redirect(this.router.build('purchase.ticket', {}));
-            }, (err) => {
-                return this.next(new Error(err.message));
-            });
+            if (this.req.form.isValid) {
+                this.reserve().then(() => {
+                    if (!this.router)
+                        return this.next(new Error('router is undefined'));
+                    if (!this.req.session)
+                        return this.next(new Error('session is undefined'));
+                    this.req.session['purchase'] = this.purchaseModel.formatToSession();
+                    return this.res.redirect(this.router.build('purchase.ticket', {}));
+                }, (err) => {
+                    return this.next(new Error(err.message));
+                });
+            }
+            else {
+                if (!this.req.params || !this.req.params['id'])
+                    return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+                this.res.locals['performance'] = this.purchaseModel.performance;
+                this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
+                this.res.locals['reserveSeats'] = this.req.body.reserveSeats;
+                this.res.locals['error'] = this.req.form.getErrors();
+                return this.res.render('purchase/seat');
+            }
         });
     }
     reserve() {

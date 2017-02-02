@@ -101,4 +101,12 @@
             }
         }
     }
+    .agree {
+        overflow-y: auto;
+        resize: vertical;
+        height: 150px;
+        @media screen and (max-width: $mobile) {
+            height: 100px;
+        }
+    }
 }
