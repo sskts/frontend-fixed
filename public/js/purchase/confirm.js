@@ -22,9 +22,16 @@ $(function () {
                 loadingStart();
             }
         }).done(function (res) {
-            console.log(res)
             if (res.err) {
-
+                if (res.err && res.type === 'expired') {
+                     //コンテンツ切り替え
+                     $('.error-expired .read').html(res.err);
+                    $('.purchase-confirm').remove();
+                    $('.header .steps').remove();
+                    $('.error-expired').show();
+                    $(window).scrollTop(0);
+                    history.pushState(null, null, '/error');
+                }
             } else {
                 //購入番号
                 $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);

@@ -1,0 +1,29 @@
+.purchase-mvtk-input {
+    .clone {
+        display: none;
+    }
+    .ticket-list {
+        .zoom {
+            -webkit-animation: zoom 0.2s both;
+            animation: zoom 0.2s both;
+        }
+    }
+    dl {
+        dt {
+            line-height: 44px;
+            width: 200px;
+            @media screen and (max-width: $mobile) {
+                line-height: 1;
+                width: auto;
+            }
+        }
+    }
+    input[type=text], 
+    input[type=number], 
+    input[type=password], 
+    input[type=tel], 
+    input[type=email], 
+    input[type=number] {
+        max-width: 400px;
+    } 
+}

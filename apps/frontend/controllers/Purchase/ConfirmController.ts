@@ -2,6 +2,7 @@ import PurchaseController from './PurchaseController';
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import COA = require("@motionpicture/coa-service");
 import MP = require('../../../../libs/MP');
+import moment = require('moment');
 
 export default class ConfirmController extends PurchaseController {
     /**
@@ -38,6 +39,17 @@ export default class ConfirmController extends PurchaseController {
         if (!this.purchaseModel.reserveSeats) throw new Error('purchaseModel.reserveSeats is undefined');
         if (!this.purchaseModel.input) throw new Error('purchaseModel.input is undefined');
         if (!this.purchaseModel.transactionMP) throw Error('purchaseModel.transactionMP is undefined');
+        if (!this.purchaseModel.expired) throw Error('purchaseModel.transactionMP is undefined');
+        //購入期限切れ
+        if (this.purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+            throw {
+                error: new Error(PurchaseController.ERROR_MESSAGE_EXPIRED),
+                type: 'expired'
+            };
+        }
+
+        
+            
 
         let performance = this.purchaseModel.performance;
         let reserveSeats = this.purchaseModel.reserveSeats;
@@ -163,17 +175,19 @@ export default class ConfirmController extends PurchaseController {
             delete this.req.session['purchase'];
 
             //購入完了情報を返す
-            this.res.json({
+            return this.res.json({
                 err: null,
                 redirect: false,
-                result: this.req.session['complete'].updateReserve
+                result: this.req.session['complete'].updateReserve,
+                type: null
             });
         }, (err) => {
             //購入完了情報を返す
-            this.res.json({
-                err: (err.hasOwnProperty('type')) ? err.error : err,
-                redirect: (err.hasOwnProperty('type')) ? false : true,
-                result: null
+            return this.res.json({
+                err: (err.error) ? err.error.message : err.message,
+                redirect: (err.error) ? false : true,
+                result: null,
+                type: (err.type) ? err.type : null,
             });
         });
     }

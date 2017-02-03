@@ -11,6 +11,7 @@ const PurchaseController_1 = require("./PurchaseController");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
+const moment = require("moment");
 class ConfirmController extends PurchaseController_1.default {
     index() {
         if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
@@ -38,6 +39,14 @@ class ConfirmController extends PurchaseController_1.default {
                 throw new Error('purchaseModel.input is undefined');
             if (!this.purchaseModel.transactionMP)
                 throw Error('purchaseModel.transactionMP is undefined');
+            if (!this.purchaseModel.expired)
+                throw Error('purchaseModel.transactionMP is undefined');
+            if (this.purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+                throw {
+                    error: new Error(PurchaseController_1.default.ERROR_MESSAGE_EXPIRED),
+                    type: 'expired'
+                };
+            }
             let performance = this.purchaseModel.performance;
             let reserveSeats = this.purchaseModel.reserveSeats;
             let input = this.purchaseModel.input;
@@ -122,16 +131,18 @@ class ConfirmController extends PurchaseController_1.default {
                 price: this.purchaseModel.getReserveAmount()
             };
             delete this.req.session['purchase'];
-            this.res.json({
+            return this.res.json({
                 err: null,
                 redirect: false,
-                result: this.req.session['complete'].updateReserve
+                result: this.req.session['complete'].updateReserve,
+                type: null
             });
         }, (err) => {
-            this.res.json({
-                err: (err.hasOwnProperty('type')) ? err.error : err,
-                redirect: (err.hasOwnProperty('type')) ? false : true,
-                result: null
+            return this.res.json({
+                err: (err.error) ? err.error.message : err.message,
+                redirect: (err.error) ? false : true,
+                result: null,
+                type: (err.type) ? err.type : null,
             });
         });
     }

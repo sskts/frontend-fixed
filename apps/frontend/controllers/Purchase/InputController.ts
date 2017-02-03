@@ -36,15 +36,15 @@ export default class InputController extends PurchaseController {
         }
         
 
-        // if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
-        //     this.res.locals['input'] = {
-        //         last_name_hira: 'はたぐち',
-        //         first_name_hira: 'あきと',
-        //         mail_addr: 'hataguchi@motionpicture.jp',
-        //         mail_confirm: 'hataguchi@motionpicture.jp',
-        //         tel_num: '09040007648',
-        //     }
-        // }
+        if (process.env.NODE_ENV === 'dev' && !this.purchaseModel.input) {
+            this.res.locals['input'] = {
+                last_name_hira: 'はたぐち',
+                first_name_hira: 'あきと',
+                mail_addr: 'hataguchi@motionpicture.jp',
+                mail_confirm: 'hataguchi@motionpicture.jp',
+                tel_num: '09040007648',
+            }
+        }
 
         //セッション更新
         if (!this.req.session) return this.next(new Error('session is undefined'));

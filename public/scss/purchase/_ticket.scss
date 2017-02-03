@@ -1,0 +1,28 @@
+.purchase-ticket {
+    .seats {
+        
+    }
+    .mvtk-button {
+        label {
+            border: 1px solid #d82918;
+            &:before {
+                left: 15px;
+            }
+            &:after {
+                left: 15px;
+            }
+        }
+        img {
+            width: 100px;
+            vertical-align: text-bottom;
+        }
+    }
+}
+
+.modal[data-modal="ticket_type"] {
+    dl {
+        dt {
+            padding-right: 10px;
+        }
+    }
+}

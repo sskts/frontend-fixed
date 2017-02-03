@@ -8,6 +8,8 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 export default class PurchaseController extends BaseController {
     /** エラーメッセージ 認証 */
     public static ERROR_MESSAGE_ACCESS = `お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
+    /** エラーメッセージ 時間切れ */
+    public static ERROR_MESSAGE_EXPIRED = `お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
     /** 購入セッションモデル */
     protected purchaseModel: PurchaseSession.PurchaseModel;
 

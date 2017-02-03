@@ -1,0 +1,14 @@
+{
+  "use": [
+    "postcss-import",
+    "postcss-simple-vars",
+    "postcss-nested",
+    "postcss-comment",
+    "autoprefixer"
+  ],
+  "input": "public/post/import.css",
+  "output": "public/css/style.css",
+  "autoprefixer": {
+    "browsers": "last 5 versions"
+  }
+}

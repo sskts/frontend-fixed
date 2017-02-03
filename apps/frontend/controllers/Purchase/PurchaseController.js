@@ -42,5 +42,6 @@ class PurchaseController extends BaseController_1.default {
     }
 }
 PurchaseController.ERROR_MESSAGE_ACCESS = `お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
+PurchaseController.ERROR_MESSAGE_EXPIRED = `お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PurchaseController;
