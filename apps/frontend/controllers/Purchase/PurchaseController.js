@@ -9,7 +9,7 @@ class PurchaseController extends BaseController_1.default {
     }
     init() {
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
         if (this.purchaseModel.transactionMP) {
             this.res.locals['transactionId'] = this.purchaseModel.transactionMP._id;
@@ -41,7 +41,5 @@ class PurchaseController extends BaseController_1.default {
         });
     }
 }
-PurchaseController.ERROR_MESSAGE_ACCESS = `お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
-PurchaseController.ERROR_MESSAGE_EXPIRED = `お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = PurchaseController;

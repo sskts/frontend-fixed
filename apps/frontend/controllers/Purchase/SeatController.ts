@@ -11,8 +11,8 @@ export default class SeatSelectController extends PurchaseController {
      * 座席選択
      */
     public index(): void {
-        if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
-        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.req.params || !this.req.params['id']) return this.next(new Error(this.req.__('common.error.access')));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return this.next(new Error(this.req.__('common.error.access')));
         //パフォーマンス取得
         MP.getPerformance.call({
             id: this.req.params['id']
@@ -30,7 +30,7 @@ export default class SeatSelectController extends PurchaseController {
             this.purchaseModel.performance = result;
 
             //セッション更新
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+            if (!this.req.session) return this.next(this.req.__('common.error.property'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
             this.res.locals['error'] = null;
@@ -47,15 +47,16 @@ export default class SeatSelectController extends PurchaseController {
      * 座席決定
      */
     public select(): void {
-        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.transactionAuth()) return this.next(new Error(this.req.__('common.error.access')));
         //バリデーション
-        SeatForm(this.req, this.res, () => {
-            if (!this.req.form) return this.next(new Error('form is undefined'));
+        let form = SeatForm(this.req);
+        form(this.req, this.res, () => {
+            if (!this.req.form) return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
                 this.reserve().then(() => {
-                    if (!this.router) return this.next(new Error('router is undefined'));
+                    if (!this.router) return this.next(this.req.__('common.error.property'));
                     //セッション更新
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                    if (!this.req.session) return this.next(this.req.__('common.error.property'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //券種選択へ
                     return this.res.redirect(this.router.build('purchase.ticket', {}));
@@ -63,7 +64,7 @@ export default class SeatSelectController extends PurchaseController {
                     return this.next(new Error(err.message));
                 });
             } else {
-                if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+                if (!this.req.params || !this.req.params['id']) return this.next(new Error(this.req.__('common.error.access')));
                 this.res.locals['performance'] = this.purchaseModel.performance;
                 this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
                 this.res.locals['reserveSeats'] = this.req.body.seats;

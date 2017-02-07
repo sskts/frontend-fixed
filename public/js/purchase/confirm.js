@@ -148,7 +148,7 @@ function screenStateUpdate(_cb) {
     getScreenStateReserve(function (result) {
         screenStateChange(result);
         var screen = $('.screen');
-        screen.show();
+        screen.css('visibility', 'visible');
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
         screenSeatStatusesMap.setPermission(false);
         _cb();

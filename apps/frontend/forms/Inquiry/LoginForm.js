@@ -1,7 +1,12 @@
 "use strict";
 const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = form(form.field('theater_code', '施設コード').trim().required('', '%sが未入力です')
-    .regex(/^[0-9]+$/, '%sは数字で入力してください'), form.field('reserve_num', '購入番号').trim().required('', '%sが未入力です')
-    .regex(/^[0-9]+$/, '%sは数字で入力してください'), form.field('tel_num', '電話番号').trim().required('', '%sが未入力です')
-    .regex(/^[0-9]+$/, '%sは数字で入力してください'));
+exports.default = (req) => {
+    return form(form.field('theater_code', req.__('common.theater_code')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`), form.field('reserve_num', req.__('common.purchase_number')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`), form.field('tel_num', req.__('common.tel_num')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`));
+};

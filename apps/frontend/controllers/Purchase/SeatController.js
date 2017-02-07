@@ -17,9 +17,9 @@ const GMO = require("@motionpicture/gmo-service");
 class SeatSelectController extends PurchaseController_1.default {
     index() {
         if (!this.req.params || !this.req.params['id'])
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         MP.getPerformance.call({
             id: this.req.params['id']
         }).then((result) => {
@@ -32,7 +32,7 @@ class SeatSelectController extends PurchaseController_1.default {
             }
             this.purchaseModel.performance = result;
             if (!this.req.session)
-                return this.next(new Error('session is undefined'));
+                return this.next(this.req.__('common.error.property'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
             this.res.locals['error'] = null;
             return this.res.render('purchase/seat');
@@ -42,16 +42,17 @@ class SeatSelectController extends PurchaseController_1.default {
     }
     select() {
         if (!this.transactionAuth())
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
-        SeatForm_1.default(this.req, this.res, () => {
+            return this.next(new Error(this.req.__('common.error.access')));
+        let form = SeatForm_1.default(this.req);
+        form(this.req, this.res, () => {
             if (!this.req.form)
-                return this.next(new Error('form is undefined'));
+                return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
                 this.reserve().then(() => {
                     if (!this.router)
-                        return this.next(new Error('router is undefined'));
+                        return this.next(this.req.__('common.error.property'));
                     if (!this.req.session)
-                        return this.next(new Error('session is undefined'));
+                        return this.next(this.req.__('common.error.property'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     return this.res.redirect(this.router.build('purchase.ticket', {}));
                 }, (err) => {
@@ -60,7 +61,7 @@ class SeatSelectController extends PurchaseController_1.default {
             }
             else {
                 if (!this.req.params || !this.req.params['id'])
-                    return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+                    return this.next(new Error(this.req.__('common.error.access')));
                 this.res.locals['performance'] = this.purchaseModel.performance;
                 this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
                 this.res.locals['reserveSeats'] = this.req.body.seats;

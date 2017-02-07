@@ -1,12 +1,19 @@
 "use strict";
 const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = form(form.field('last_name_hira', 'せい').trim().required('', '%sが未入力です')
-    .maxLength(30, '%sは30文字以内で入力してください')
-    .regex(/^[ぁ-ゞー]+$/, '%sは全角ひらがなで入力してください'), form.field('first_name_hira', 'めい').trim().required('', '%sが未入力です')
-    .maxLength(30, '%sは30文字以内で入力してください')
-    .regex(/^[ぁ-ゞー]+$/, '%sは全角ひらがなで入力してください'), form.field('mail_addr', 'メールアドレス').trim().required('', '%sが未入力です')
-    .isEmail('%sが正しくありません'), form.field('mail_confirm', 'メールアドレス(確認)').trim().required('', '%sが未入力です')
-    .isEmail('%sが正しくありません')
-    .equals('field::mail_addr', 'メールアドレスが一致しません'), form.field('tel_num', '電話番号').trim().required('', '%sが未入力です')
-    .regex(/^[0-9]+$/, '%sは数字で入力してください'));
+exports.default = (req) => {
+    return form(form.field('last_name_hira', req.__('common.last_name_hira')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .maxLength(30, `%s${req.__('common.validation.maxlength %s', '30')}`)
+        .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_hira')}`), form.field('first_name_hira', req.__('common.first_name_hira')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .maxLength(30, `%s${req.__('common.validation.maxlength %s', '30')}`)
+        .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_hira')}`), form.field('mail_addr', req.__('common.mail_addr')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_email')}`), form.field('mail_confirm', req.__('common.mail_confirm')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_email')}`)
+        .equals('field::mail_addr', `${req.__('common.validation.equals_email')}`), form.field('tel_num', req.__('common.tel_num')).trim()
+        .required('', `%s${req.__('common.validation.required')}`)
+        .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`));
+};

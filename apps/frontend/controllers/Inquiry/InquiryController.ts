@@ -18,7 +18,7 @@ export default class InquiryController extends BaseController {
      * 初期化
      */
     private init(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         this.inquiryModel = new InquirySession.InquiryModel(this.req.session['inquiry']);
     }
 
@@ -43,11 +43,12 @@ export default class InquiryController extends BaseController {
      * 照会認証
      */
     public auth() {
-        LoginForm(this.req, this.res, () => {
-            if (!this.req.form) return this.next(new Error('form is undefined'));
+        let form = LoginForm(this.req);
+        form(this.req, this.res, () => {
+            if (!this.req.form) return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
                 this.getStateReserve().then(()=>{
-                    if (!this.router) return this.next(new Error('router is undefined'));
+                    if (!this.router) return this.next(this.req.__('common.error.property'));
                     
                     //購入者内容確認へ
                     return this.res.redirect(this.router.build('inquiry', {
@@ -71,18 +72,24 @@ export default class InquiryController extends BaseController {
      */
     private async getStateReserve(): Promise<void> {
         this.inquiryModel.transactionId = await MP.makeInquiry.call({
-            inquiry_theater: this.req.body.theater_code, /** 施設コード */                    
-            inquiry_id: this.req.body.reserve_num, /** 座席チケット購入番号 */
-            inquiry_pass: this.req.body.tel_num, /** 電話番号 */
+            /** 施設コード */ 
+            inquiry_theater: this.req.body.theater_code,   
+            /** 座席チケット購入番号 */                 
+            inquiry_id: this.req.body.reserve_num, 
+            /** 電話番号 */
+            inquiry_pass: this.req.body.tel_num, 
         });
         this.logger.debug('MP取引Id取得', this.inquiryModel.transactionId);
 
         this.inquiryModel.login = this.req.body;
 
         this.inquiryModel.stateReserve = await COA.stateReserveInterface.call({
-            theater_code: this.req.body.theater_code, /** 施設コード */                    
-            reserve_num: this.req.body.reserve_num, /** 座席チケット購入番号 */
-            tel_num: this.req.body.tel_num, /** 電話番号 */
+            /** 施設コード */ 
+            theater_code: this.req.body.theater_code,
+            /** 座席チケット購入番号 */                   
+            reserve_num: this.req.body.reserve_num, 
+            /** 電話番号 */
+            tel_num: this.req.body.tel_num, 
         });
         this.logger.debug('COA照会情報取得');
 
@@ -101,7 +108,7 @@ export default class InquiryController extends BaseController {
         });
         this.logger.debug('MPパフォーマンス取得');
 
-        if (!this.req.session) throw new Error('session is undefined');
+        if (!this.req.session) throw this.req.__('common.error.property');
         this.req.session['inquiry'] = this.inquiryModel.formatToSession(); 
         
     }
@@ -123,7 +130,7 @@ export default class InquiryController extends BaseController {
             
             return this.res.render('inquiry/index');
         } else {
-            if (!this.router) return this.next(new Error('router is undefined'));
+            if (!this.router) return this.next(this.req.__('common.error.property'));
             //照会認証ページへ
             return this.res.redirect(this.router.build('inquiry.login', {}) + '?transaction_id=' + this.req.params.transactionId);
         }

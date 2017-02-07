@@ -1,5 +1,4 @@
 import MvtkController from './MvtkController';
-import PurchaseController from '../PurchaseController';
 
 export default class MvtkInputController extends MvtkController {
 
@@ -7,7 +6,7 @@ export default class MvtkInputController extends MvtkController {
      * ムビチケ券入力ページ表示
      */
     public index() {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         if (this.purchaseModel) {
 
             //購入者情報入力表示
@@ -16,7 +15,7 @@ export default class MvtkInputController extends MvtkController {
 
             return this.res.render('purchase/mvtk/input');
         } else {
-            return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         }
 
     }
@@ -25,7 +24,7 @@ export default class MvtkInputController extends MvtkController {
      * 認証
      */
     public auth() {
-        if (!this.router) return this.next(new Error('router is undefined'));
+        if (!this.router) return this.next(this.req.__('common.error.property'));
         return this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 

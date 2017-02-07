@@ -9,7 +9,7 @@ export default class OverlapController extends PurchaseController {
      * 仮予約重複
      */
     public index(): void {
-        if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.req.params || !this.req.params['id']) return this.next(new Error(this.req.__('common.error.access')));
         if (!this.purchaseModel.performance) throw new Error('performance is undefined');
         //パフォーマンス取得
         MP.getPerformance.call({
@@ -31,8 +31,8 @@ export default class OverlapController extends PurchaseController {
      */
     public newReserve(): void {
         this.removeReserve().then(()=>{
-            if (!this.router) return this.next(new Error('router is undefined'));
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+            if (!this.router) return this.next(this.req.__('common.error.property'));
+            if (!this.req.session) return this.next(this.req.__('common.error.property'));
             //購入スタートへ
             delete this.req.session['purchase'];
             return this.res.redirect(this.router.build('purchase', {
@@ -47,8 +47,8 @@ export default class OverlapController extends PurchaseController {
      * 前回の予約へ
      */
     public prevReserve(): void {
-        if (!this.router) return this.next(new Error('router is undefined'));
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.router) return this.next(this.req.__('common.error.property'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         //座席選択へ
          return this.res.redirect(this.router.build('purchase.seat', {
             id: this.req.body.performance_id

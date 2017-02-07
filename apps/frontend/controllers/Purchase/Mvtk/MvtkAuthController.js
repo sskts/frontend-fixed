@@ -1,10 +1,9 @@
 "use strict";
 const MvtkController_1 = require("./MvtkController");
-const PurchaseController_1 = require("../PurchaseController");
 class MvtkAuthController extends MvtkController_1.default {
     index() {
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         if (this.req.session['performance']
             && this.req.session['reserveSeats']
             && this.req.session['reserveTickets']) {
@@ -13,12 +12,12 @@ class MvtkAuthController extends MvtkController_1.default {
             return this.res.render('purchase/mvtk/auth');
         }
         else {
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         }
     }
     submit() {
         if (!this.router)
-            return this.next(new Error('router is undefined'));
+            return this.next(this.req.__('common.error.property'));
         return this.res.redirect(this.router.build('purchase.mvtk.confirm', {}));
     }
 }

@@ -11,7 +11,7 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種選択
      */
     public index(): void {
-        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return this.next(new Error(this.req.__('common.error.access')));
         if (!this.purchaseModel.performance) return this.next(new Error('purchaseModel.performance is undefined'));
 
         //コアAPI券種取得
@@ -38,7 +38,7 @@ export default class TicketTypeSelectController extends PurchaseController {
             this.res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
 
             //セッション更新
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+            if (!this.req.session) return this.next(this.req.__('common.error.property'));
             this.req.session['purchase'] = this.purchaseModel.formatToSession();
             //券種選択表示
             return this.res.render('purchase/ticket');
@@ -51,24 +51,25 @@ export default class TicketTypeSelectController extends PurchaseController {
      * 券種決定
      */
     public select(): void {
-        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.transactionAuth()) return this.next(new Error(this.req.__('common.error.access')));
         //バリデーション
-        TicketForm(this.req, this.res, () => {
+        let form = TicketForm(this.req);
+        form(this.req, this.res, () => {
             //座席情報をセッションへ
             this.purchaseModel.reserveTickets = JSON.parse(this.req.body.reserve_tickets);
             this.ticketValidation().then(() => {
                 this.logger.debug('券種決定完了');
                 if (this.req.body['mvtk']) {
-                    if (!this.router) return this.next(new Error('router is undefined'));
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                    if (!this.router) return this.next(this.req.__('common.error.property'));
+                    if (!this.req.session) return this.next(this.req.__('common.error.property'));
                     //セッション更新
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //ムビチケ入力へ
                     return this.res.redirect(this.router.build('purchase.mvtk', {}));
                 } else {
                     this.upDateAuthorization().then(() => {
-                        if (!this.router) return this.next(new Error('router is undefined'));
-                        if (!this.req.session) return this.next(new Error('session is undefined'));
+                        if (!this.router) return this.next(this.req.__('common.error.property'));
+                        if (!this.req.session) return this.next(this.req.__('common.error.property'));
                         //セッション更新
                         this.req.session['purchase'] = this.purchaseModel.formatToSession();
                         //購入者情報入力へ
@@ -112,7 +113,7 @@ export default class TicketTypeSelectController extends PurchaseController {
                 if (salesTicket.ticket_code === reserveTicket.ticket_code) {
                     if (salesTicket.sale_price !== reserveTicket.sale_price) {
                         this.logger.debug(`${reserveTicket.seat_code}: 券種検証NG`);
-                        throw new Error(PurchaseController.ERROR_MESSAGE_ACCESS);
+                        throw new Error(this.req.__('common.error.access'));
                     }
                     this.logger.debug(`${reserveTicket.seat_code}: 券種検証OK`);
                     break;

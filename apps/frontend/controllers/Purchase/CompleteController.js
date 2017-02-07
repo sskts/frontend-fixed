@@ -4,9 +4,9 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 class ConfirmController extends PurchaseController_1.default {
     index() {
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         if (!this.req.session['complete'])
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         this.res.locals['input'] = this.req.session['complete'].input;
         this.res.locals['performance'] = this.req.session['complete'].performance;
         this.res.locals['reserveSeats'] = this.req.session['complete'].reserveSeats;

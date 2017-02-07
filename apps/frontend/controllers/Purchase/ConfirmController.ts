@@ -10,7 +10,7 @@ export default class ConfirmController extends PurchaseController {
      */
     public index(): void {
 
-        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return this.next(new Error(this.req.__('common.error.access')));
 
 
         //購入者内容確認表示
@@ -24,7 +24,7 @@ export default class ConfirmController extends PurchaseController {
         this.res.locals['updateReserve'] = null;
 
         //セッション更新
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
         return this.res.render('purchase/confirm');
@@ -43,7 +43,7 @@ export default class ConfirmController extends PurchaseController {
         //購入期限切れ
         if (this.purchaseModel.expired < moment().add(5, 'minutes').unix()) {
             throw {
-                error: new Error(PurchaseController.ERROR_MESSAGE_EXPIRED),
+                error: new Error(this.req.__('common.error.expire')),
                 type: 'expired'
             };
         }
@@ -158,10 +158,10 @@ export default class ConfirmController extends PurchaseController {
      * 購入確定
      */
     public purchase(): void {
-        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.transactionAuth()) return this.next(new Error(this.req.__('common.error.access')));
         this.updateReserve().then(() => {
             //購入情報をセッションへ
-            if (!this.req.session) throw new Error('session is undefined');
+            if (!this.req.session) throw this.req.__('common.error.property');
             this.req.session['complete'] = {
                 updateReserve: this.purchaseModel.updateReserve,
                 performance: this.purchaseModel.performance,

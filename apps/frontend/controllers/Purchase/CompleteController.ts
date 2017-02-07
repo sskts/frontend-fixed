@@ -6,8 +6,8 @@ export default class ConfirmController extends PurchaseController {
      * 購入完了表示
      */
     public index(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
-        if (!this.req.session['complete']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
+        if (!this.req.session['complete']) return this.next(new Error(this.req.__('common.error.access')));
         
 
         //購入者内容確認表示

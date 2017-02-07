@@ -234,12 +234,13 @@
 		"last_name_hira": "せい",
 		"first_name_hira": "めい",
 		"mail": "メールアドレス",
+		"mail_addr": "メールアドレス",
 		"mail_confirm": "確認のためもう一度ご入力ください",
-		"tel": "電話番号",
+		"tel_num": "電話番号",
 		"confirm": "確認",
 		"change": "変更",
 		"cardno": "カード番号",
-		"expire": "カード有効期限",
+		"expire": "有効期限",
 		"year": "年",
 		"month": "月",
 		"holdername": "カード名義人",
@@ -268,13 +269,32 @@
 			"mvtk_code": "(例)012345789",
 			"mvtk_password": "(例)0123"
 		},
+		"validation": {
+			"maxlength %s": "は%s文字以内で入力してください",
+			"minlength %s": "は%s文字以上で入力してください",
+			"required": "が未入力です",
+			"is_hira": "は全角ひらがなで入力してください",
+			"is_email": "が正しくありません",
+			"is_number": "は数字で入力してください",
+			"is_json": "が正しくありません",
+			"equals_email": "メールアドレスが一致しません"
+		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
 			"credit": "クレジットカード決済の必要事項をご記入ください。",
 			"tel": "※半角数字、ハイフン「-」なしで入力してください",
 			"cardno": "※半角数字、ハイフン「-」なしで入力してください",
 			"securitycode": "セキュリティーコードについて"
+		},
+		"error": {
+			"session_undefined": "session is undefined",
+			"form_undefined": "form is undefined",
+			"property_undefined": "router is undefined",
+			"property": "target　property is undefined",
+			"access": "お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。",
+			"expire": "お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。"
 		}
+		
 	},
 	"%s ticket": {
 		"one": "%s枚",

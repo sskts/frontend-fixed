@@ -12,9 +12,9 @@ export default class TransactionController extends PurchaseController {
      * 取引開始
      */
     public start(): void {
-        if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.req.params || !this.req.params['id']) return this.next(new Error(this.req.__('common.error.access')));
         if (this.purchaseModel.transactionMP && this.purchaseModel.reserveSeats) {
-            if (!this.router) return this.next(new Error('router is undefined'));
+            if (!this.router) return this.next(this.req.__('common.error.property'));
             //重複確認へ
             return this.res.redirect(this.router.build('purchase.overlap', {
                 id: this.req.params['id']
@@ -22,8 +22,8 @@ export default class TransactionController extends PurchaseController {
         }
 
         this.transactionStart().then(() => {
-            if (!this.router) return this.next(new Error('router is undefined'));
-            if (!this.req.session) return this.next(new Error('session is undefined'));
+            if (!this.router) return this.next(this.req.__('common.error.property'));
+            if (!this.req.session) return this.next(this.req.__('common.error.property'));
             delete this.req.session['purchase'];
             //セッション更新
             this.req.session['purchase'] = this.purchaseModel.formatToSession();

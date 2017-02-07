@@ -15,7 +15,7 @@ const GMO = require("@motionpicture/gmo-service");
 class OverlapController extends PurchaseController_1.default {
     index() {
         if (!this.req.params || !this.req.params['id'])
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         if (!this.purchaseModel.performance)
             throw new Error('performance is undefined');
         MP.getPerformance.call({
@@ -33,9 +33,9 @@ class OverlapController extends PurchaseController_1.default {
     newReserve() {
         this.removeReserve().then(() => {
             if (!this.router)
-                return this.next(new Error('router is undefined'));
+                return this.next(this.req.__('common.error.property'));
             if (!this.req.session)
-                return this.next(new Error('session is undefined'));
+                return this.next(this.req.__('common.error.property'));
             delete this.req.session['purchase'];
             return this.res.redirect(this.router.build('purchase', {
                 id: this.req.body.performance_id
@@ -46,9 +46,9 @@ class OverlapController extends PurchaseController_1.default {
     }
     prevReserve() {
         if (!this.router)
-            return this.next(new Error('router is undefined'));
+            return this.next(this.req.__('common.error.property'));
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         return this.res.redirect(this.router.build('purchase.seat', {
             id: this.req.body.performance_id
         }));

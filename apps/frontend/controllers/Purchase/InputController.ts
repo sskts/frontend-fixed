@@ -11,7 +11,7 @@ export default class InputController extends PurchaseController {
      * 購入者情報入力
      */
     public index(): void {
-        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return this.next(new Error(this.req.__('common.error.access')));
 
 
 
@@ -47,7 +47,7 @@ export default class InputController extends PurchaseController {
         }
 
         //セッション更新
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
 
         return this.res.render('purchase/input');
@@ -57,11 +57,12 @@ export default class InputController extends PurchaseController {
      * 購入者情報入力完了
      */
     public submit(): void {
-        if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
+        if (!this.transactionAuth()) return this.next(new Error(this.req.__('common.error.access')));
         //バリデーション
-        InputForm(this.req, this.res, () => {
+        let form = InputForm(this.req);
+        form(this.req, this.res, () => {
 
-            if (!this.req.form) return this.next(new Error('form is undefined'));
+            if (!this.req.form) return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
 
                 //入力情報をセッションへ
@@ -79,9 +80,9 @@ export default class InputController extends PurchaseController {
                     this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);
                     //GMOオーソリなし
                     this.addAuthorization().then(() => {
-                        if (!this.router) return this.next(new Error('router is undefined'));
+                        if (!this.router) return this.next(this.req.__('common.error.property'));
                         //セッション更新
-                        if (!this.req.session) return this.next(new Error('session is undefined'));
+                        if (!this.req.session) return this.next(this.req.__('common.error.property'));
                         this.req.session['purchase'] = this.purchaseModel.formatToSession();
                         //購入者内容確認へ
                         return this.res.redirect(this.router.build('purchase.confirm', {}));
@@ -105,9 +106,9 @@ export default class InputController extends PurchaseController {
 
                 } else {
                     //クレジット決済なし
-                    if (!this.router) return this.next(new Error('router is undefined'));
+                    if (!this.router) return this.next(this.req.__('common.error.property'));
                     //セッション更新
-                    if (!this.req.session) return this.next(new Error('session is undefined'));
+                    if (!this.req.session) return this.next(this.req.__('common.error.property'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     //購入者内容確認へ
                     return this.res.redirect(this.router.build('purchase.confirm', {}));

@@ -16,7 +16,7 @@ const MP = require("../../../../libs/MP");
 class InputController extends PurchaseController_1.default {
     index() {
         if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE))
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         this.res.locals['error'] = null;
         this.res.locals['moment'] = require('moment');
         this.res.locals['step'] = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -46,16 +46,17 @@ class InputController extends PurchaseController_1.default {
             };
         }
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
         return this.res.render('purchase/input');
     }
     submit() {
         if (!this.transactionAuth())
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
-        InputForm_1.default(this.req, this.res, () => {
+            return this.next(new Error(this.req.__('common.error.access')));
+        let form = InputForm_1.default(this.req);
+        form(this.req, this.res, () => {
             if (!this.req.form)
-                return this.next(new Error('form is undefined'));
+                return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
                 this.purchaseModel.input = {
                     last_name_hira: this.req.body.last_name_hira,
@@ -69,9 +70,9 @@ class InputController extends PurchaseController_1.default {
                     this.purchaseModel.gmo = JSON.parse(this.req.body.gmo_token_object);
                     this.addAuthorization().then(() => {
                         if (!this.router)
-                            return this.next(new Error('router is undefined'));
+                            return this.next(this.req.__('common.error.property'));
                         if (!this.req.session)
-                            return this.next(new Error('session is undefined'));
+                            return this.next(this.req.__('common.error.property'));
                         this.req.session['purchase'] = this.purchaseModel.formatToSession();
                         return this.res.redirect(this.router.build('purchase.confirm', {}));
                     }, (err) => {
@@ -93,9 +94,9 @@ class InputController extends PurchaseController_1.default {
                 }
                 else {
                     if (!this.router)
-                        return this.next(new Error('router is undefined'));
+                        return this.next(this.req.__('common.error.property'));
                     if (!this.req.session)
-                        return this.next(new Error('session is undefined'));
+                        return this.next(this.req.__('common.error.property'));
                     this.req.session['purchase'] = this.purchaseModel.formatToSession();
                     return this.res.redirect(this.router.build('purchase.confirm', {}));
                 }

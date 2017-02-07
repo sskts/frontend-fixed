@@ -19,7 +19,7 @@ class InquiryController extends BaseController_1.default {
     }
     init() {
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         this.inquiryModel = new InquirySession.InquiryModel(this.req.session['inquiry']);
     }
     login() {
@@ -35,13 +35,14 @@ class InquiryController extends BaseController_1.default {
         return this.res.render('inquiry/login');
     }
     auth() {
-        LoginForm_1.default(this.req, this.res, () => {
+        let form = LoginForm_1.default(this.req);
+        form(this.req, this.res, () => {
             if (!this.req.form)
-                return this.next(new Error('form is undefined'));
+                return this.next(this.req.__('common.error.property'));
             if (this.req.form.isValid) {
                 this.getStateReserve().then(() => {
                     if (!this.router)
-                        return this.next(new Error('router is undefined'));
+                        return this.next(this.req.__('common.error.property'));
                     return this.res.redirect(this.router.build('inquiry', {
                         transactionId: this.inquiryModel.transactionId
                     }));
@@ -84,7 +85,7 @@ class InquiryController extends BaseController_1.default {
             });
             this.logger.debug('MPパフォーマンス取得');
             if (!this.req.session)
-                throw new Error('session is undefined');
+                throw this.req.__('common.error.property');
             this.req.session['inquiry'] = this.inquiryModel.formatToSession();
         });
     }
@@ -101,7 +102,7 @@ class InquiryController extends BaseController_1.default {
         }
         else {
             if (!this.router)
-                return this.next(new Error('router is undefined'));
+                return this.next(this.req.__('common.error.property'));
             return this.res.redirect(this.router.build('inquiry.login', {}) + '?transaction_id=' + this.req.params.transactionId);
         }
     }

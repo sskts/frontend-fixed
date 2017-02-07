@@ -6,10 +6,7 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
  * TODO any type
  */
 export default class PurchaseController extends BaseController {
-    /** エラーメッセージ 認証 */
-    public static ERROR_MESSAGE_ACCESS = `お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
-    /** エラーメッセージ 時間切れ */
-    public static ERROR_MESSAGE_EXPIRED = `お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。`;
+    
     /** 購入セッションモデル */
     protected purchaseModel: PurchaseSession.PurchaseModel;
 
@@ -22,7 +19,7 @@ export default class PurchaseController extends BaseController {
      * 初期化
      */
     private init(): void {
-        if (!this.req.session) return this.next(new Error('session is undefined'));
+        if (!this.req.session) return this.next(this.req.__('common.error.property'));
         this.purchaseModel = new PurchaseSession.PurchaseModel(this.req.session['purchase']);
         
         //取引id設定

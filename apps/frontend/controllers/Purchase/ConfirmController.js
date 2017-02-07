@@ -15,7 +15,7 @@ const moment = require("moment");
 class ConfirmController extends PurchaseController_1.default {
     index() {
         if (!this.purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         this.res.locals['gmoTokenObject'] = (this.purchaseModel.gmo) ? this.purchaseModel.gmo : null;
         this.res.locals['input'] = this.purchaseModel.input;
         this.res.locals['performance'] = this.purchaseModel.performance;
@@ -25,7 +25,7 @@ class ConfirmController extends PurchaseController_1.default {
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
         this.res.locals['updateReserve'] = null;
         if (!this.req.session)
-            return this.next(new Error('session is undefined'));
+            return this.next(this.req.__('common.error.property'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();
         return this.res.render('purchase/confirm');
     }
@@ -43,7 +43,7 @@ class ConfirmController extends PurchaseController_1.default {
                 throw Error('purchaseModel.transactionMP is undefined');
             if (this.purchaseModel.expired < moment().add(5, 'minutes').unix()) {
                 throw {
-                    error: new Error(PurchaseController_1.default.ERROR_MESSAGE_EXPIRED),
+                    error: new Error(this.req.__('common.error.expire')),
                     type: 'expired'
                 };
             }
@@ -118,10 +118,10 @@ class ConfirmController extends PurchaseController_1.default {
     }
     purchase() {
         if (!this.transactionAuth())
-            return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
+            return this.next(new Error(this.req.__('common.error.access')));
         this.updateReserve().then(() => {
             if (!this.req.session)
-                throw new Error('session is undefined');
+                throw this.req.__('common.error.property');
             this.req.session['complete'] = {
                 updateReserve: this.purchaseModel.updateReserve,
                 performance: this.purchaseModel.performance,

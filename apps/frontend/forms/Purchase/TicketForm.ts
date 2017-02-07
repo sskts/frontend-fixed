@@ -1,21 +1,23 @@
 import form = require('express-form');
+import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 
-export default form(
-    form.field('reserve_tickets', '券種').trim().required().custom((value: string)=>{
-        try {
-            let tickets: Array<PurchaseSession.ReserveTicket> = JSON.parse(value);
-            for (let ticket of tickets) {
-                if (!ticket.seat_code
-                || !ticket.section
-                || !ticket.ticket_code) {
-                    throw new Error();
+export default (req: express.Request) => {
+    return form(
+        form.field('reserve_tickets', req.__('common.ticket')).trim().required().custom((value: string) => {
+            try {
+                let tickets: Array<PurchaseSession.ReserveTicket> = JSON.parse(value);
+                for (let ticket of tickets) {
+                    if (!ticket.seat_code
+                        || !ticket.section
+                        || !ticket.ticket_code) {
+                        throw new Error();
+                    }
                 }
+            } catch (err) {
+                throw new Error(`%s${req.__('common.validation.is_json')}`);
             }
-        } catch (err) {
-            throw new Error('%sの形式がただしくありません。');
-        }
-    }),
-    form.field('mvtk').trim()
-);
-
+        }),
+        form.field('mvtk').trim()
+    );
+}

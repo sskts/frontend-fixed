@@ -1975,7 +1975,7 @@ p a {
 }
 
 .screen {
-    display: none;
+    visibility: hidden;
     position: relative;
     overflow: hidden;
     
