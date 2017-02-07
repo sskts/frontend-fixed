@@ -47,16 +47,18 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         // 座席コードリストを取得
-        var seats = [];
+        var seats = {
+            list_tmp_reserve: []
+        };
         $('.screen .seat a.active').each(function (index, elem) {
-            seats.push({
+            seats.list_tmp_reserve.push({
                 seat_num: $(this).attr('data-seat-code'),
                 seat_section: '0'
             });
         });
 
 
-        if (seats.length < 1) {
+        if (seats.list_tmp_reserve.length < 1) {
             modal.open('seat_not_select');
         } else {
             var reserveTickets = [];

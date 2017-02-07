@@ -158,10 +158,6 @@ export default (app: any) => {
         new InquiryController(req, res, next).index();
     });
 
-    //チケット照会(QRコード発行印刷ページ)
-    app.get('/inquiry/print', 'inquiry.print', (req: Request, res: Response, next: NextFunction) => {
-        new InquiryController(req, res, next).print();
-    });
 
     //入場方法説明
     app.get('/method/entry', 'method.entry', (req: Request, res: Response, next: NextFunction) => {

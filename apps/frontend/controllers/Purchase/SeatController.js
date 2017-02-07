@@ -44,6 +44,8 @@ class SeatSelectController extends PurchaseController_1.default {
         if (!this.transactionAuth())
             return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
         SeatForm_1.default(this.req, this.res, () => {
+            if (!this.req.form)
+                return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
                 this.reserve().then(() => {
                     if (!this.router)
@@ -61,7 +63,7 @@ class SeatSelectController extends PurchaseController_1.default {
                     return this.next(new Error(PurchaseController_1.default.ERROR_MESSAGE_ACCESS));
                 this.res.locals['performance'] = this.purchaseModel.performance;
                 this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
-                this.res.locals['reserveSeats'] = this.req.body.reserveSeats;
+                this.res.locals['reserveSeats'] = this.req.body.seats;
                 this.res.locals['error'] = this.req.form.getErrors();
                 return this.res.render('purchase/seat');
             }
@@ -117,7 +119,7 @@ class SeatSelectController extends PurchaseController_1.default {
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
                 time_begin: performance.attributes.time_start,
                 screen_code: performance.attributes.screen.coa_screen_code,
-                list_seat: seats,
+                list_seat: seats.list_tmp_reserve,
             });
             this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
             this.purchaseModel.reserveTickets = this.purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {

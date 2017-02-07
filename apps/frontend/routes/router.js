@@ -97,9 +97,6 @@ exports.default = (app) => {
     app.get('/inquiry/:transactionId/', 'inquiry', (req, res, next) => {
         new InquiryController_1.default(req, res, next).index();
     });
-    app.get('/inquiry/print', 'inquiry.print', (req, res, next) => {
-        new InquiryController_1.default(req, res, next).print();
-    });
     app.get('/method/entry', 'method.entry', (req, res, next) => {
         new MethodController_1.default(req, res, next).entry();
     });

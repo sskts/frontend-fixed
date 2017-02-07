@@ -26,7 +26,7 @@ function settingValidation() {
             var target = $('select[name=credit_month], select[name=credit_year]');
         } else {
             var target;
-            if ($(elem).prev('input')) {
+            if ($(elem).prev('input').length > 0) {
                 target = $(elem).prev('input');
             } else {
                 target = $(elem).prev('label');

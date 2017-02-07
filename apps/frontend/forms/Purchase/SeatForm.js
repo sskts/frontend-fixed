@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = form(form.field('seats', '座席').trim().required().custom((value) => {
     try {
         let seats = JSON.parse(value);
-        for (let seat of seats) {
+        for (let seat of seats.list_tmp_reserve) {
             if (!seat.seat_num || !seat.seat_section) {
                 throw new Error();
             }
@@ -13,4 +13,4 @@ exports.default = form(form.field('seats', '座席').trim().required().custom((v
     catch (err) {
         throw new Error('%sの形式がただしくありません。');
     }
-}));
+}), form.field('agree', '利用規約').trim().required('', '%sに同意してください'));

@@ -50,6 +50,7 @@ export default class SeatSelectController extends PurchaseController {
         if (!this.transactionAuth()) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
         //バリデーション
         SeatForm(this.req, this.res, () => {
+            if (!this.req.form) return this.next(new Error('form is undefined'));
             if (this.req.form.isValid) {
                 this.reserve().then(() => {
                     if (!this.router) return this.next(new Error('router is undefined'));
@@ -65,7 +66,7 @@ export default class SeatSelectController extends PurchaseController {
                 if (!this.req.params || !this.req.params['id']) return this.next(new Error(PurchaseController.ERROR_MESSAGE_ACCESS));
                 this.res.locals['performance'] = this.purchaseModel.performance;
                 this.res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
-                this.res.locals['reserveSeats'] = this.req.body.reserveSeats;
+                this.res.locals['reserveSeats'] = this.req.body.seats;
 
 
                 
@@ -162,7 +163,7 @@ export default class SeatSelectController extends PurchaseController {
             /** スクリーンコード */
             screen_code: performance.attributes.screen.coa_screen_code,
             /** 予約座席リスト */
-            list_seat: seats,
+            list_seat: seats.list_tmp_reserve,
         });
         this.logger.debug('COA仮予約', this.purchaseModel.reserveSeats);
 

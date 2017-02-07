@@ -52,16 +52,16 @@
     <div class="box radius bg-ultra-light-gray mb-medium agree small-text">
         <%- partial('agreement_ja') %>
     </div>
-
-    <div class="mb-x-large text-center">
-        <input type="checkbox" name="agree" value="true" id="agree">
-        <label for="agree" class="agree-label"><strong><%- __('common.agree') %></strong></label>
-        <% if (error && error.agree) { %>
-            <div class="validation-text"><%= error.agree[0] %></div>
-        <% } %>
-    </div>    
-
     <form method="post">
+        <div class="mb-x-large text-center">
+            <input type="checkbox" name="agree" value="true" id="agree">
+            <label for="agree" class="agree-label"><strong><%- __('common.agree') %></strong></label>
+            <% if (error && error.agree) { %>
+                <div class="validation-text"><%= error.agree[0] %></div>
+            <% } %>
+        </div>    
+
+    
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.seat.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black" href="<%- url('index') %>"><%- __('purchase.seat.prev') %></a></div>
