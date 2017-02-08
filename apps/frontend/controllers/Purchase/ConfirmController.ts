@@ -22,6 +22,7 @@ export default class ConfirmController extends PurchaseController {
         this.res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
         this.res.locals['updateReserve'] = null;
+        this.res.locals['error'] = null;
 
         //セッション更新
         if (!this.req.session) return this.next(this.req.__('common.error.property'));

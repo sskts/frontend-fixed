@@ -87,12 +87,12 @@ export default class InputController extends PurchaseController {
                         //購入者内容確認へ
                         return this.res.redirect(this.router.build('purchase.confirm', {}));
                     }, (err) => {
-                        if (!err.hasOwnProperty('type')) return this.next(err.message);
+                        if (!err.hasOwnProperty('type')) return this.next(new Error(err.message));
                         //GMOオーソリ追加失敗
                         this.res.locals['error'] = {
-                            cardno: ['クレジットカード番号ををご確認ください'],
-                            expire: ['有効期限ををご確認ください'],
-                            securitycode: ['セキュリティーコードををご確認ください'],
+                            cardno: [`${this.req.__('common.cardno')}${this.req.__('common.validation.card')}`],
+                            expire: [`${this.req.__('common.expire')}${this.req.__('common.validation.card')}`],
+                            securitycode: [`${this.req.__('common.securitycode')}${this.req.__('common.validation.card')}`],
                         }
                         this.res.locals['input'] = this.req.body;
                         this.res.locals['moment'] = require('moment');

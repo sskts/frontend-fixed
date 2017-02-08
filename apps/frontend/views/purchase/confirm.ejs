@@ -1,6 +1,8 @@
 <% layout('../layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
 <% block('script', '<script src="/js/purchase/confirm.js"></script>') -%>
+
+
 <div class="purchase-confirm">
     <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
     <p class="read"><%- __('purchase.confirm.read') %></p>
@@ -134,11 +136,19 @@
         <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
         <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
 
-        <h2 class="section-ttl"><%- __('common.notes') %></h2>
+        <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
-        <div class="box radius bg-ultra-light-gray small-text notes">
-            <%- partial('notes_ja') %>
+        <div class="box radius bg-ultra-light-gray small-text notes mb-medium">
+            <%- partial('notes/ja') %>
         </div>
+
+        <div class="mb-x-large text-center">
+            <input type="checkbox" name="notes_agree" value="true" id="notes_agree">
+            <label for="notes_agree" class="notes_agree-label"><strong><%- __('common.notes_agree') %></strong></label>
+            <% if (error && error.notes_agree) { %>
+                <div class="validation-text"><%= error.notes_agree[0] %></div>
+            <% } %>
+        </div>  
         
         
 
@@ -150,10 +160,8 @@
     </form>
 </div>
 
-
-
-<%- partial('complete') %>
-
 <% block('modals', partial('modals/screen')) -%>
 
+<%- partial('complete') %>
 <%- partial('../error/expired') %>
+<%- partial('../locales/validation') %>

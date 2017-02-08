@@ -307,7 +307,6 @@ export namespace addGMOAuthorization {
                 gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT,
             },
             json: true,
-            simple: false,
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);

@@ -233,7 +233,6 @@
 		"name_hira": "お名前（ひらがな）",
 		"last_name_hira": "せい",
 		"first_name_hira": "めい",
-		"mail": "メールアドレス",
 		"mail_addr": "メールアドレス",
 		"mail_confirm": "確認のためもう一度ご入力ください",
 		"tel_num": "電話番号",
@@ -251,9 +250,11 @@
 		"mvtk_password": "ムビチケ暗証番号(4桁)",
 		"agreement": "利用規約",
 		"agreement_read": "利用規約に同意した上で次へお進みください。",
-		"notes": "注意事項（重要）",
+		"strong": "重要",
+		"notes": "注意事項",
 		"notes_read": "下記項目をご確認いただきチェックを入れて「購入確定」ボタンを押してください。",
 		"agree": "利用規約に同意する",
+		"notes_agree": "注意事項に同意する",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
@@ -277,7 +278,11 @@
 			"is_email": "が正しくありません",
 			"is_number": "は数字で入力してください",
 			"is_json": "が正しくありません",
-			"equals_email": "メールアドレスが一致しません"
+			"is_tel": "が正しくありません",
+			"equals": "が一致しません",
+			"agree": "に同意してください",
+			"card": "をご確認ください",
+			"equals_email": "common.validation.equals_email"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
@@ -293,8 +298,8 @@
 			"property": "target　property is undefined",
 			"access": "お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。",
 			"expire": "お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。"
-		}
-		
+		},
+		"mail": "common.mail"
 	},
 	"%s ticket": {
 		"one": "%s枚",

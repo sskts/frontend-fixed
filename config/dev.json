@@ -2,13 +2,13 @@
 
     "portal_site": "http://www.cinemasunshine.co.jp",
 
-    "mp_api_endpoint": "https://devsasakiticketapiprototypewebapp.azurewebsites.net",
+    "mp_api_endpoint": "https://devssktsapi.azurewebsites.net",
     // "mp_api_endpoint": "http://localhost:8081",
     "admin_id": "5868e16789cc75249cdbfa4b",
     
-    "redis_host": "devsasakiticketredis.redis.cache.windows.net",
+    "redis_host": "devsskts.redis.cache.windows.net",
     "redis_port": 6380,
-    "redis_key": "+MtUTBfgxHbsOZWvxbVBe9vZGNbS9TpD+gDb6hgtar8=",
+    "redis_key": "W/yjVruvypTFz3nl8teXxBYfunq6teXnyvIN5xuVLWU=",
 
     "mongolab_uri": "",
 

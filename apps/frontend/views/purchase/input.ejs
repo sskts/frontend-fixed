@@ -4,6 +4,8 @@
 <% block('script', '<script>Multipayment.init("'+ gmoShopId +'");</script>') -%>
 
 
+
+
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.input.read') %></p>
@@ -153,3 +155,4 @@
 
 <% block('modals', partial('modals/securitycode')) -%>
 <% block('modals', partial('modals/creditcard_alert')) -%>
+<%- partial('../locales/validation') %>

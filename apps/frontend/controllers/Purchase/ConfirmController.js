@@ -24,6 +24,7 @@ class ConfirmController extends PurchaseController_1.default {
         this.res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
         this.res.locals['price'] = this.purchaseModel.getReserveAmount();
         this.res.locals['updateReserve'] = null;
+        this.res.locals['error'] = null;
         if (!this.req.session)
             return this.next(this.req.__('common.error.property'));
         this.req.session['purchase'] = this.purchaseModel.formatToSession();

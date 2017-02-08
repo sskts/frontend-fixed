@@ -22,8 +22,8 @@ $(function () {
             securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
             // holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
         }
+        
         Multipayment.getToken(sendParam, someCallbackFunction);
-        $(this).prop('disabled', true);
         
 
     });
@@ -33,6 +33,7 @@ $(function () {
  * トークン取得後イベント
  */
 function someCallbackFunction(response) {
+    console.log(response.resultCode)
     if (response.resultCode != 000) {
         gmoValidation();
         validationScroll();
@@ -70,47 +71,43 @@ function validation() {
     $('.validation-text').remove();
 
     var validationList = [
-        { name: 'last_name_hira', label: 'せい', required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, 'は全角ひらがなで入力してください'] },
-        { name: 'first_name_hira', label: 'めい', required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, 'は全角ひらがなで入力してください'] },
-        { name: 'mail_addr', label: 'メールアドレス', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'が正しくありません'] },
-        { name: 'mail_confirm', label: 'メールアドレス(確認)', required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, 'が正しくありません'], equals: 'mail_addr' },
-        { name: 'tel_num', label: '電話番号', required: true, regex: [/^[0-9]+$/, 'が正しくありません'] },
-        // { name: 'agree', label: '利用規約', agree: true },
-        { name: 'cardno', label: 'クレジットカード番号', required: true },
-        { name: 'credit_month', label: '有効期限（月）', required: true },
-        { name: 'credit_year', label: '有効期限（年）', required: true },
-        // { name: 'holdername', label: 'カード名義人', required: true, regex: [/^[A-Z]+[\s|　]+[A-Z]+[\s|　]*[A-Z]+$/, 'が正しくありません'] },
-        { name: 'securitycode', label: 'セキュリティーコード', required: true },
+        { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+        { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+        { name: 'mail_addr', label: locales.label.mail_addr, required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+        { name: 'mail_confirm', label: locales.label.mail_confirm, required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
+        { name: 'tel_num', label: locales.label.tel_num, required: true, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+        { name: 'cardno', label: locales.label.cardno, required: true },
+        { name: 'securitycode', label: locales.label.securitycode, required: true },
     ];
 
 
     validationList.forEach(function (validation, index) {
 
-        var target = $('input[name=' + validation.name + '], select[name=' + validation.name + ']');
+        var target = $('input[name=' + validation.name + ']');
         var value = target.val();
 
         if (validation.required
             && !value
             && value == '') {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + 'が未入力です</div>');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
         } else if (validation.maxLength
             && value.length > validation.maxLength) {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + 'は' + validation.maxLength + '文字以内で入力してください</div>');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
         } else if (validation.regex
             && !value.match(validation.regex[0])) {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
         } else if (validation.equals
-            && value !== $('input[name=' + validation.equals + '], select[name=' + validation.equals + ']').val()) {
+            && value !== $('input[name=' + validation.equals + ']').val()) {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + 'が一致しません</div>');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.equals + '</div>');
         } else if (validation.agree
             && !target.is(':checked')) {
             target = $('label[for=' + validation.name + ']');
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + 'に同意してください</div>');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
     });
 
@@ -124,11 +121,10 @@ function gmoValidation() {
     $('.validation-text').remove();
     
     var validationList = [
-        { name: 'cardno', label: 'クレジットカード番号'},
-        { name: 'expire', label: '有効期限'},
-        { name: 'securitycode', label: 'セキュリティーコード'},
+        { name: 'cardno', label: locales.label.cardno},
+        { name: 'expire', label: locales.label.expire},
+        { name: 'securitycode', label: locales.label.securitycode},
     ];
-
 
     validationList.forEach(function (validation, index) {
 
@@ -138,7 +134,7 @@ function gmoValidation() {
         } else {
             target.addClass('validation');
         }
-        target.after('<div class="validation-text">' + validation.label + 'をご確認ください</div>');
+        target.after('<div class="validation-text">' + validation.label + locales.validation.card + '</div>');
         
     });
 

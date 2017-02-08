@@ -39,14 +39,6 @@
         }
     } 
     .notes {
-        input[type=checkbox] + label {
-            margin-bottom: 0;
-            padding-left: 30px;
-            &:before, &:after {
-                left: 0;
-                top: 11px;
-            }
-        }
         ol {
             li {
                 line-height: 1.5;

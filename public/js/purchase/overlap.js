@@ -8,7 +8,6 @@ $(function () {
         var form = $(this).parent().parent();
         loadingStart(function () {
             form.submit();
-            $(this).prop('disabled', true);
         });
     });
 
@@ -20,7 +19,6 @@ $(function () {
         var form = $(this).parent().parent();
         loadingStart(function () {
             form.submit();
-            $(this).prop('disabled', true);
         });
     });
 });

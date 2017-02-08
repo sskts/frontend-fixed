@@ -50,7 +50,7 @@
     <h2 class="section-ttl"><%- __('common.agreement') %></h2>
     <p class="mb-small"><%- __('common.agreement_read') %></p>
     <div class="box radius bg-ultra-light-gray mb-medium agree small-text">
-        <%- partial('agreement_ja') %>
+        <%- partial('agreement/ja') %>
     </div>
     <form method="post">
         <div class="mb-x-large text-center">
@@ -75,3 +75,4 @@
 
 <% block('modals', partial('modals/seat_not_select')) -%>
 <% block('modals', partial('modals/seat_upper_limit')) -%>
+<%- partial('../locales/validation') %>

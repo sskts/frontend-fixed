@@ -58,7 +58,6 @@ $(function () {
             form.append(dom);
             loadingStart(function () {
                 form.submit();
-                $(this).prop('disabled', true);
             });
         }
     });

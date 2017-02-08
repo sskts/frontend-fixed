@@ -60,16 +60,21 @@ $(function () {
 
         if (seats.list_tmp_reserve.length < 1) {
             modal.open('seat_not_select');
-        } else {
-            var reserveTickets = [];
-            var form = $('form');
-            $('input[name=seats]').val(JSON.stringify(seats));
-
-            loadingStart(function () {
-                form.submit();
-                $(this).prop('disabled', true);
-            });
+            return;
         }
+        validation();
+        if ($('.validation-text').length > 0) {
+            validationScroll();
+            return;
+        }
+
+        var reserveTickets = [];
+        var form = $('form');
+        $('input[name=seats]').val(JSON.stringify(seats));
+
+        loadingStart(function () {
+            form.submit();
+        });
     });
 
     /**
@@ -208,3 +213,56 @@ function screenStateUpdate(_cb) {
         _cb();
     });
 }   
+
+/**
+ * バリデーションスクロール
+ */
+function validationScroll() {
+    var target = $('.validation').eq(0);
+    var top = target.offset().top - 20;
+    $('html,body').animate({ scrollTop: top }, 300);
+}
+
+/**
+ * バリデーション
+ */
+function validation() {
+    $('.validation').removeClass('validation');
+    $('.validation-text').remove();
+
+    var validationList = [
+        { name: 'agree', label: locales.label.agree, agree: true },
+    ];
+
+
+    validationList.forEach(function (validation, index) {
+
+        var target = $('input[name=' + validation.name + ']');
+        var value = target.val();
+
+        if (validation.required
+            && !value
+            && value == '') {
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
+        } else if (validation.maxLength
+            && value.length > validation.maxLength) {
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
+        } else if (validation.regex
+            && !value.match(validation.regex[0])) {
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
+        } else if (validation.equals
+            && value !== $('input[name=' + validation.equals + ']').val()) {
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.equals + '</div>');
+        } else if (validation.agree
+            && !target.is(':checked')) {
+            target = $('label[for=' + validation.name + ']');
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
+        }
+    });
+
+}
