@@ -1,7 +1,7 @@
 "use strict";
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-var Module;
-(function (Module) {
+var CompleteModule;
+(function (CompleteModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -16,5 +16,7 @@ var Module;
         res.locals['updateReserve'] = req.session['complete'].updateReserve;
         return res.render('purchase/complete');
     }
-    Module.index = index;
-})(Module = exports.Module || (exports.Module = {}));
+    CompleteModule.index = index;
+})(CompleteModule || (CompleteModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = CompleteModule;

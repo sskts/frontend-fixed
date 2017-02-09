@@ -1,6 +1,6 @@
 "use strict";
-var Module;
-(function (Module) {
+var ErrorModule;
+(function (ErrorModule) {
     function notFound(req, res, _next) {
         let status = 404;
         if (req.xhr) {
@@ -11,7 +11,7 @@ var Module;
             return res.render('error/notFound');
         }
     }
-    Module.notFound = notFound;
+    ErrorModule.notFound = notFound;
     function index(err, req, res, _next) {
         console.log(err.stack);
         if (req.session)
@@ -27,5 +27,7 @@ var Module;
             return res.render('error/error');
         }
     }
-    Module.index = index;
-})(Module = exports.Module || (exports.Module = {}));
+    ErrorModule.index = index;
+})(ErrorModule || (ErrorModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ErrorModule;

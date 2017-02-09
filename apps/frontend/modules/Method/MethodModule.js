@@ -1,16 +1,18 @@
 "use strict";
-var Module;
-(function (Module) {
+var MethodModule;
+(function (MethodModule) {
     function ticketing(_req, res, _next) {
         return res.render('method/ticketing');
     }
-    Module.ticketing = ticketing;
+    MethodModule.ticketing = ticketing;
     function entry(_req, res, _next) {
         return res.render('method/entry');
     }
-    Module.entry = entry;
+    MethodModule.entry = entry;
     function bookmark(_req, res, _next) {
         return res.render('method/bookmark');
     }
-    Module.bookmark = bookmark;
-})(Module = exports.Module || (exports.Module = {}));
+    MethodModule.bookmark = bookmark;
+})(MethodModule || (MethodModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MethodModule;

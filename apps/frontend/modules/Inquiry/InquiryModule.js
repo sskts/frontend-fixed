@@ -11,9 +11,9 @@ const InquirySession = require("../../models/Inquiry/InquiryModel");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
-const Util = require("../Util/UtilModule");
-var Module;
-(function (Module) {
+const UtilModule_1 = require("../Util/UtilModule");
+var InquiryModule;
+(function (InquiryModule) {
     function login(_req, res) {
         res.locals['theater_code'] = '';
         res.locals['reserve_num'] = '';
@@ -26,7 +26,7 @@ var Module;
         res.locals['error'] = null;
         return res.render('inquiry/login');
     }
-    Module.login = login;
+    InquiryModule.login = login;
     function auth(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -48,7 +48,7 @@ var Module;
             }
         });
     }
-    Module.auth = auth;
+    InquiryModule.auth = auth;
     function getStateReserve(req, inquiryModel) {
         return __awaiter(this, void 0, void 0, function* () {
             inquiryModel.transactionId = yield MP.makeInquiry.call({
@@ -64,7 +64,7 @@ var Module;
                 tel_num: req.body.tel_num,
             });
             console.log('COA照会情報取得');
-            let performanceId = Util.Module.getPerformanceId({
+            let performanceId = UtilModule_1.default.getPerformanceId({
                 theaterCode: req.body.theater_code,
                 day: inquiryModel.stateReserve.date_jouei,
                 titleCode: inquiryModel.stateReserve.title_code,
@@ -100,5 +100,7 @@ var Module;
             return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
         }
     }
-    Module.index = index;
-})(Module = exports.Module || (exports.Module = {}));
+    InquiryModule.index = index;
+})(InquiryModule || (InquiryModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = InquiryModule;

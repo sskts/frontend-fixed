@@ -3,9 +3,9 @@ import InquirySession = require('../../models/Inquiry/InquiryModel');
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import COA = require("@motionpicture/coa-service");
 import MP = require('../../../../libs/MP');
-import Util  = require('../Util/UtilModule');
+import UtilModule from '../Util/UtilModule';
 
-export namespace Module {
+namespace InquiryModule {
     /**
      * 照会認証ページ表示
      */
@@ -74,7 +74,7 @@ export namespace Module {
         });
         console.log('COA照会情報取得');
 
-        let performanceId = Util.Module.getPerformanceId({
+        let performanceId = UtilModule.getPerformanceId({
             theaterCode: req.body.theater_code, 
             day: inquiryModel.stateReserve.date_jouei, 
             titleCode: inquiryModel.stateReserve.title_code, 
@@ -118,4 +118,6 @@ export namespace Module {
 
     }
 }
+
+export default InquiryModule;
 

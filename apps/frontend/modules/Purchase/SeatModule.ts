@@ -7,7 +7,7 @@ import MP = require('../../../../libs/MP');
 import GMO = require("@motionpicture/gmo-service");
 
 
-export namespace Module {
+namespace SeatModule {
     /**
      * 座席選択
      */
@@ -227,3 +227,4 @@ export namespace Module {
     }
 }
 
+export default SeatModule;

@@ -1,6 +1,6 @@
 import express = require('express');
 
-export namespace Module {
+namespace ErrorModule {
     /**
      * Not Found
      */
@@ -35,3 +35,5 @@ export namespace Module {
         }
     }
 }
+
+export default ErrorModule;

@@ -13,8 +13,8 @@ const config = require("config");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 const GMO = require("@motionpicture/gmo-service");
-var Module;
-(function (Module) {
+var SeatModule;
+(function (SeatModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -46,7 +46,7 @@ var Module;
             return next(new Error(err.message));
         });
     }
-    Module.index = index;
+    SeatModule.index = index;
     function select(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -83,7 +83,7 @@ var Module;
             }
         });
     }
-    Module.select = select;
+    SeatModule.select = select;
     function reserve(req, purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!purchaseModel.performance)
@@ -175,5 +175,7 @@ var Module;
             });
         });
     }
-    Module.getScreenStateReserve = getScreenStateReserve;
-})(Module = exports.Module || (exports.Module = {}));
+    SeatModule.getScreenStateReserve = getScreenStateReserve;
+})(SeatModule || (SeatModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = SeatModule;

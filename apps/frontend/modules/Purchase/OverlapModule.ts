@@ -5,7 +5,7 @@ import COA = require('@motionpicture/coa-service');
 import MP = require('../../../../libs/MP');
 import GMO = require("@motionpicture/gmo-service");
 
-export namespace Module {
+namespace OverlapModule {
     /**
      * 仮予約重複
      */
@@ -118,3 +118,6 @@ export namespace Module {
         
     }
 }
+
+
+export default OverlapModule;

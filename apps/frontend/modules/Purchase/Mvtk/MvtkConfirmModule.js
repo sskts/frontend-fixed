@@ -1,7 +1,7 @@
 "use strict";
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
-var Module;
-(function (Module) {
+var MvtkConfirmModule;
+(function (MvtkConfirmModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -13,7 +13,7 @@ var Module;
         res.locals['transactionId'] = purchaseModel.transactionMP._id;
         return res.render('purchase/mvtk/confirm');
     }
-    Module.index = index;
+    MvtkConfirmModule.index = index;
     function submit(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -24,5 +24,7 @@ var Module;
             return next(new Error(req.__('common.error.access')));
         return res.redirect('/purchase/input');
     }
-    Module.submit = submit;
-})(Module = exports.Module || (exports.Module = {}));
+    MvtkConfirmModule.submit = submit;
+})(MvtkConfirmModule || (MvtkConfirmModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MvtkConfirmModule;

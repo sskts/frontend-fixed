@@ -1,8 +1,9 @@
 "use strict";
 const express = require("express");
-const Method = require("../modules/Method/MethodModule");
+const MethodModule_1 = require("../modules/Method/MethodModule");
 let router = express.Router();
-router.get('/entry', Method.Module.entry);
-router.get('/ticketing', Method.Module.ticketing);
-router.get('/bookmark', Method.Module.bookmark);
-module.exports = router;
+router.get('/entry', MethodModule_1.default.entry);
+router.get('/ticketing', MethodModule_1.default.ticketing);
+router.get('/bookmark', MethodModule_1.default.bookmark);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = router;

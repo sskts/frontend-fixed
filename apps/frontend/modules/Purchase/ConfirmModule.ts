@@ -4,7 +4,7 @@ import COA = require("@motionpicture/coa-service");
 import MP = require('../../../../libs/MP');
 import moment = require('moment');
 
-export namespace Module {
+namespace ConfirmModule {
     /**
      * 購入者内容確認
      */
@@ -178,3 +178,5 @@ export namespace Module {
         });
     }
 }
+
+export default ConfirmModule;

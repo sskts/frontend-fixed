@@ -3,7 +3,7 @@ import request = require('request');
 import config = require('config');
 
 
-export namespace Module {
+namespace PerformancesModule {
     /**
      * パフォーマンス一覧表示
      */
@@ -37,3 +37,5 @@ export namespace Module {
         });
     }
 }
+
+export default PerformancesModule;

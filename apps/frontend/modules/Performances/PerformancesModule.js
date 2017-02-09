@@ -1,14 +1,14 @@
 "use strict";
 const request = require("request");
 const config = require("config");
-var Module;
-(function (Module) {
+var PerformancesModule;
+(function (PerformancesModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
         return res.render('performance');
     }
-    Module.index = index;
+    PerformancesModule.index = index;
     function getPerformances(req, res) {
         let endpoint = config.get('mp_api_endpoint');
         let method = 'performances';
@@ -25,5 +25,7 @@ var Module;
             });
         });
     }
-    Module.getPerformances = getPerformances;
-})(Module = exports.Module || (exports.Module = {}));
+    PerformancesModule.getPerformances = getPerformances;
+})(PerformancesModule || (PerformancesModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = PerformancesModule;

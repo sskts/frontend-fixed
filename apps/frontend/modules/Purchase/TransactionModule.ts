@@ -3,7 +3,7 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import MP = require('../../../../libs/MP');
 import moment = require('moment');
 
-export namespace Module {
+namespace TransactionModule {
     /**
      * 取引開始
      */
@@ -41,3 +41,5 @@ export namespace Module {
         console.log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
     }
 }
+
+export default TransactionModule;

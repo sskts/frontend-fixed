@@ -4,7 +4,7 @@ import moment = require('moment');
 
 
 
-export namespace Module {
+namespace UtilModule {
     /**
      * テンプレート変数へ渡す
      * 
@@ -62,3 +62,5 @@ export namespace Module {
     }
 
 }
+
+export default UtilModule;

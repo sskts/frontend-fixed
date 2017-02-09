@@ -11,8 +11,8 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 const moment = require("moment");
-var Module;
-(function (Module) {
+var ConfirmModule;
+(function (ConfirmModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -36,7 +36,7 @@ var Module;
         req.session['purchase'] = purchaseModel.formatToSession();
         return res.render('purchase/confirm');
     }
-    Module.index = index;
+    ConfirmModule.index = index;
     function updateReserve(req, purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!purchaseModel.performance)
@@ -146,5 +146,7 @@ var Module;
             });
         });
     }
-    Module.purchase = purchase;
-})(Module = exports.Module || (exports.Module = {}));
+    ConfirmModule.purchase = purchase;
+})(ConfirmModule || (ConfirmModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = ConfirmModule;

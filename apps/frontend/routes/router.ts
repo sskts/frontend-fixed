@@ -1,27 +1,27 @@
 import express = require('express');
-import Performances = require('../modules/Performances/PerformancesModule');
-import Error = require('../modules/Error/ErrorModule');
-import Util = require('../modules/Util/UtilModule');
+import PerformancesModule from '../modules/Performances/PerformancesModule';
+import ErrorModule from '../modules/Error/ErrorModule';
+import UtilModule from '../modules/Util/UtilModule';
 
-import purchase = require('./purchase');
-import inquiry = require('./inquiry');
-import method = require('./method');
+import purchase from './purchase';
+import inquiry from './inquiry';
+import method from './method';
 
 
 let router = express.Router();
 export default (app: express.Application) => {
 
-    app.use(Util.Module.setLocals);
+    app.use(UtilModule.setLocals);
 
     router.get('/', (_req, res, _next) => {
         res.redirect('/performances');
     });
 
     //パフォーマンス一覧
-    router.get('/performances', Performances.Module.index);
+    router.get('/performances', PerformancesModule.index);
 
     //パフォーマンス一覧
-    router.post('/performances', Performances.Module.getPerformances);
+    router.post('/performances', PerformancesModule.getPerformances);
 
     //再起動
     router.get('/500', (_req, _res, _next) => {
@@ -42,9 +42,9 @@ export default (app: express.Application) => {
 
 
     // error handlers
-    app.use(Error.Module.index);
+    app.use(ErrorModule.index);
 
     // 404
-    app.use(Error.Module.notFound);
+    app.use(ErrorModule.notFound);
 }
 

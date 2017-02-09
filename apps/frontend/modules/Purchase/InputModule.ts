@@ -7,7 +7,7 @@ import GMO = require("@motionpicture/gmo-service");
 import MP = require('../../../../libs/MP');
 
 
-export namespace Module {
+namespace InputModule {
     /**
      * 購入者情報入力
      */
@@ -218,6 +218,8 @@ export namespace Module {
 
     }
 }
+
+export default InputModule;
 
 
 

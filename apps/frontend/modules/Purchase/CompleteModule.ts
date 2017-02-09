@@ -3,7 +3,7 @@ import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 
 
 
-export namespace Module {
+namespace CompleteModule {
     /**
      * 購入完了表示
      */
@@ -26,3 +26,5 @@ export namespace Module {
 
     }
 }
+
+export default CompleteModule;

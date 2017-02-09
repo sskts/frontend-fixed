@@ -1,6 +1,6 @@
 import express = require('express');
 
-export namespace Module {
+namespace MethodModule {
     /**
      * 発券方法ページ表示
      */
@@ -22,3 +22,5 @@ export namespace Module {
         return res.render('method/bookmark');
     }
 }
+
+export default MethodModule;

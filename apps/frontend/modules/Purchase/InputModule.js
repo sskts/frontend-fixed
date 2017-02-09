@@ -12,8 +12,8 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
 const MP = require("../../../../libs/MP");
-var Module;
-(function (Module) {
+var InputModule;
+(function (InputModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -56,7 +56,7 @@ var Module;
         req.session['purchase'] = purchaseModel.formatToSession();
         return res.render('purchase/input');
     }
-    Module.index = index;
+    InputModule.index = index;
     function submit(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -127,7 +127,7 @@ var Module;
             }
         });
     }
-    Module.submit = submit;
+    InputModule.submit = submit;
     function addAuthorization(req, purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!purchaseModel.transactionMP)
@@ -192,4 +192,6 @@ var Module;
             }
         });
     }
-})(Module = exports.Module || (exports.Module = {}));
+})(InputModule || (InputModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = InputModule;

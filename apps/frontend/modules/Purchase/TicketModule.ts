@@ -7,7 +7,7 @@ import GMO = require("@motionpicture/gmo-service");
 import MP = require('../../../../libs/MP');
 
 
-export namespace Module {
+namespace TicketModule {
     /**
      * 券種選択
      */
@@ -193,3 +193,5 @@ export namespace Module {
 
     }
 }
+
+export default TicketModule;

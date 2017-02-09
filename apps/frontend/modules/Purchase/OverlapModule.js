@@ -12,8 +12,8 @@ const config = require("config");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 const GMO = require("@motionpicture/gmo-service");
-var Module;
-(function (Module) {
+var OverlapModule;
+(function (OverlapModule) {
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -34,7 +34,7 @@ var Module;
             return next(new Error(err.message));
         });
     }
-    Module.index = index;
+    OverlapModule.index = index;
     function newReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -48,13 +48,13 @@ var Module;
             return next(new Error(err.message));
         });
     }
-    Module.newReserve = newReserve;
+    OverlapModule.newReserve = newReserve;
     function prevReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
         return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
     }
-    Module.prevReserve = prevReserve;
+    OverlapModule.prevReserve = prevReserve;
     function removeReserve(req, purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!purchaseModel.performance)
@@ -100,4 +100,6 @@ var Module;
             }
         });
     }
-})(Module = exports.Module || (exports.Module = {}));
+})(OverlapModule || (OverlapModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = OverlapModule;

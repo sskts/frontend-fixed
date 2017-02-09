@@ -1,7 +1,7 @@
 import express = require('express');
 import PurchaseSession = require('../../../models/Purchase/PurchaseModel');
 
-export namespace Module {
+namespace MvtkConfirmModule {
     /**
      * ムビチケ券適用確認ページ表示
      */
@@ -31,3 +31,5 @@ export namespace Module {
         return res.redirect('/purchase/input');
     }
 }
+
+export default MvtkConfirmModule;

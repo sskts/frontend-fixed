@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const MP = require("../../../../libs/MP");
 const moment = require("moment");
-var Module;
-(function (Module) {
+var TransactionModule;
+(function (TransactionModule) {
     function start(req, res, next) {
         if (!req.params || !req.params['id'])
             return next(new Error(req.__('common.error.access')));
@@ -31,7 +31,7 @@ var Module;
             return next(new Error(err.message));
         });
     }
-    Module.start = start;
+    TransactionModule.start = start;
     function transactionStart(purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             purchaseModel.expired = moment().add('minutes', 30).unix();
@@ -41,4 +41,6 @@ var Module;
             console.log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
         });
     }
-})(Module = exports.Module || (exports.Module = {}));
+})(TransactionModule || (TransactionModule = {}));
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = TransactionModule;
