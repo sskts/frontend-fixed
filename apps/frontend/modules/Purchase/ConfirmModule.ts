@@ -44,8 +44,11 @@ namespace ConfirmModule {
         if (!purchaseModel.input) throw new Error(req.__('common.error.property'));
         if (!purchaseModel.transactionMP) throw Error(req.__('common.error.property'));
         if (!purchaseModel.expired) throw Error(req.__('common.error.property'));
+        if (!req.session) throw Error(req.__('common.error.property'));
         //購入期限切れ
         if (purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+            //購入セッション削除
+            delete req.session['purchase'];
             throw {
                 error: new Error(req.__('common.error.expire')),
                 type: 'expired'

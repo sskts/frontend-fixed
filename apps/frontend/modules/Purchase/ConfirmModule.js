@@ -49,7 +49,10 @@ var ConfirmModule;
                 throw Error(req.__('common.error.property'));
             if (!purchaseModel.expired)
                 throw Error(req.__('common.error.property'));
+            if (!req.session)
+                throw Error(req.__('common.error.property'));
             if (purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+                delete req.session['purchase'];
                 throw {
                     error: new Error(req.__('common.error.expire')),
                     type: 'expired'
