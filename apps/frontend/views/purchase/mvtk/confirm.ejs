@@ -52,6 +52,6 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/mvtk"><%- __('purchase.mvtk.confirm.prev') %></a></div>
         </div>
-        
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>
