@@ -2,12 +2,11 @@
 const moment = require("moment");
 var Module;
 (function (Module) {
-    function setLocals(req, res) {
-        res.locals.req = req;
-        res.locals.route = req.route;
+    function setLocals(_req, res, next) {
         res.locals.escapeHtml = escapeHtml;
         res.locals.formatPrice = formatPrice;
         res.locals.moment = moment;
+        return next();
     }
     Module.setLocals = setLocals;
     function escapeHtml(string) {

@@ -37,7 +37,7 @@ var Module;
                 return next(req.__('common.error.property'));
             if (req.form.isValid) {
                 getStateReserve(req, inquiryModel).then(() => {
-                    return res.redirect(`/inquiry/:${inquiryModel.transactionId}/`);
+                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 }, (err) => {
                     return next(new Error(err.message));
                 });
@@ -82,4 +82,23 @@ var Module;
             req.session['inquiry'] = inquiryModel.formatToSession();
         });
     }
+    function index(req, res, next) {
+        if (!req.session)
+            return next(req.__('common.error.property'));
+        let inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        if (inquiryModel.stateReserve
+            && inquiryModel.performance
+            && inquiryModel.login
+            && inquiryModel.transactionId) {
+            res.locals['stateReserve'] = inquiryModel.stateReserve;
+            res.locals['performance'] = inquiryModel.performance;
+            res.locals['login'] = inquiryModel.login;
+            res.locals['transactionId'] = inquiryModel.transactionId;
+            return res.render('inquiry/index');
+        }
+        else {
+            return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
+        }
+    }
+    Module.index = index;
 })(Module = exports.Module || (exports.Module = {}));

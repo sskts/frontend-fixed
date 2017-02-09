@@ -35,7 +35,7 @@ export namespace Module {
                 getStateReserve(req, inquiryModel).then(()=>{
                     
                     //購入者内容確認へ
-                    return res.redirect(`/inquiry/:${inquiryModel.transactionId}/`);
+                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 }, (err)=>{
                     return next(new Error(err.message));
                 });
@@ -92,6 +92,30 @@ export namespace Module {
         if (!req.session) throw req.__('common.error.property');
         req.session['inquiry'] = inquiryModel.formatToSession(); 
         
+    }
+
+    /**
+     * 照会確認ページ表示
+     */
+    export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
+        if (!req.session) return next(req.__('common.error.property'));
+        let inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        if (inquiryModel.stateReserve
+        && inquiryModel.performance
+        && inquiryModel.login
+        && inquiryModel.transactionId) {
+            res.locals['stateReserve'] = inquiryModel.stateReserve;
+            res.locals['performance'] = inquiryModel.performance;
+            res.locals['login'] = inquiryModel.login;
+            res.locals['transactionId'] = inquiryModel.transactionId;
+            
+            return res.render('inquiry/index');
+        } else {
+            //照会認証ページへ
+            return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
+        }
+
+
     }
 }
 

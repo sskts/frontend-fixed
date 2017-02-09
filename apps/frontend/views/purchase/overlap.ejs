@@ -29,7 +29,7 @@
             </li>       
         </ul>
         <p class="text-center mb-x-small"><%- __('purchase.overlap.prev_read') %></p>
-        <form method="post" action="<%= url('purchase.overlap.prev') %>">
+        <form method="post" action="/purchase/overlap/prev">
             <div class="button prev-button blue-button"><button class="icon-prev-white" type="submit"><%- __('purchase.overlap.prev') %></button></div>
             <input type="hidden" name="performance_id" value="<%= performances.before._id %>">
         </form>
@@ -60,7 +60,7 @@
             </li>       
         </ul> 
         <p class="text-center  mb-x-small"><%- __('purchase.overlap.next_read') %></p>
-        <form method="post" action="<%= url('purchase.overlap.new') %>">
+        <form method="post" action="/purchase/overlap/new">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.overlap.next') %></button></div>
             <input type="hidden" name="performance_id" value="<%= performances.after._id %>">
         </form>

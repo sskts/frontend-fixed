@@ -19,9 +19,6 @@ var Module;
         if (!req.session)
             return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP)
-            return next(new Error(req.__('common.error.access')));
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
         if (!req.params || !req.params['id'])
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
@@ -29,9 +26,12 @@ var Module;
         MP.getPerformance.call({
             id: req.params['id']
         }).then((result) => {
+            if (!purchaseModel.transactionMP)
+                return next(new Error(req.__('common.error.property')));
             res.locals['performance'] = result;
             res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals['reserveSeats'] = null;
+            res.locals['transactionId'] = purchaseModel.transactionMP._id;
             if (purchaseModel.reserveSeats) {
                 console.log('仮予約中');
                 res.locals['reserveSeats'] = JSON.stringify(purchaseModel.reserveSeats);
@@ -52,8 +52,11 @@ var Module;
             return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP)
+            return next(new Error(req.__('common.error.property')));
+        console.log('座席決定1', req.body.transaction_id, purchaseModel.transactionMP._id);
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id)
             return next(new Error(req.__('common.error.access')));
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
+        console.log('座席決定2');
         let form = SeatForm_1.default(req);
         form(req, res, () => {
             if (!req.form)
@@ -71,6 +74,7 @@ var Module;
             else {
                 if (!req.params || !req.params['id'])
                     return next(new Error(req.__('common.error.access')));
+                res.locals['transactionId'] = purchaseModel.transactionMP;
                 res.locals['performance'] = purchaseModel.performance;
                 res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
                 res.locals['reserveSeats'] = req.body.seats;
@@ -158,4 +162,18 @@ var Module;
             purchaseModel.authorizationCOA = COAAuthorizationResult;
         });
     }
+    function getScreenStateReserve(req, res, _next) {
+        COA.getStateReserveSeatInterface.call(req.body).then((result) => {
+            res.json({
+                err: null,
+                result: result
+            });
+        }, (err) => {
+            res.json({
+                err: err,
+                result: null
+            });
+        });
+    }
+    Module.getScreenStateReserve = getScreenStateReserve;
 })(Module = exports.Module || (exports.Module = {}));

@@ -9,12 +9,11 @@ export namespace Module {
      * テンプレート変数へ渡す
      * 
      */
-    export function setLocals(req: express.Request, res: express.Response): void {
-        res.locals.req = req;
-        res.locals.route = req.route;
+    export function setLocals(_req: express.Request, res: express.Response, next: express.NextFunction): void {
         res.locals.escapeHtml = escapeHtml;
         res.locals.formatPrice = formatPrice;
         res.locals.moment = moment;
+        return next();
     }
 
     /**

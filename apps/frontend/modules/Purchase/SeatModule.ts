@@ -14,21 +14,20 @@ export namespace Module {
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.access')));
-        //取引id設定
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
-
-
         if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return next(new Error(req.__('common.error.access')));
+
+
         //パフォーマンス取得
         MP.getPerformance.call({
             id: req.params['id']
         }).then((result) => {
+            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
             res.locals['performance'] = result;
             res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals['reserveSeats'] = null;
-
+            res.locals['transactionId'] = purchaseModel.transactionMP._id;
+            
 
             //仮予約中
             if (purchaseModel.reserveSeats) {
@@ -54,10 +53,11 @@ export namespace Module {
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.access')));
-        //取引id設定
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
-
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property'))); 
+        console.log('座席決定1',req.body.transaction_id, purchaseModel.transactionMP._id)
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));       
+        console.log('座席決定2')
         
         //バリデーション
         let form = SeatForm(req);
@@ -76,10 +76,12 @@ export namespace Module {
                 });
             } else {
                 if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
+                res.locals['transactionId'] = purchaseModel.transactionMP;
                 res.locals['performance'] = purchaseModel.performance;
                 res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
                 res.locals['reserveSeats'] = req.body.seats;
                 res.locals['error'] = req.form.getErrors();
+                
                 return res.render('purchase/seat');
                 
             }
@@ -203,6 +205,25 @@ export namespace Module {
 
         purchaseModel.authorizationCOA = COAAuthorizationResult;
 
+    }
+
+
+    /**
+     * スクリーン状態取得
+     */
+    export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
+        
+        COA.getStateReserveSeatInterface.call(req.body).then((result) => {
+            res.json({
+                err: null,
+                result: result
+            });
+        }, (err) => {
+            res.json({
+                err: err,
+                result: null
+            });
+        });
     }
 }
 

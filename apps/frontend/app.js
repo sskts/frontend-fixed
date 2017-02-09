@@ -27,6 +27,12 @@ if (process.env.NODE_ENV === 'dev') {
 }
 app.use((req, res, next) => {
     locales_1.default.init(req, res, next);
+    if (req.session && req.session['locale']) {
+        locales_1.default.setLocale(req, req.session['locale']);
+    }
+    else {
+        locales_1.default.setLocale(req, 'ja');
+    }
 });
 COA.initialize({
     endpoint: config.get("coa_api_endpoint"),

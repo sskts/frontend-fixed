@@ -19,13 +19,10 @@ var Module;
         if (!req.session)
             return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP)
-            return next(new Error(req.__('common.error.property')));
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
-            return next(new Error('purchaseModel.performance is undefined'));
+            return next(new Error(req.__('common.error.property')));
         let performance = purchaseModel.performance;
         COA.salesTicketInterface.call({
             theater_code: performance.attributes.theater._id,
@@ -34,12 +31,14 @@ var Module;
             title_branch_num: performance.attributes.film.coa_title_branch_num,
             time_begin: performance.attributes.time_start,
         }).then((result) => {
-            console.log('券種取得', result);
+            if (!purchaseModel.transactionMP)
+                return next(new Error(req.__('common.error.property')));
             res.locals['tickets'] = result.list_ticket;
             res.locals['performance'] = performance;
             res.locals['reserveSeats'] = purchaseModel.reserveSeats;
             res.locals['reserveTickets'] = purchaseModel.reserveTickets;
             res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals['transactionId'] = purchaseModel.transactionMP._id;
             if (!req.session)
                 return next(req.__('common.error.property'));
             req.session['purchase'] = purchaseModel.formatToSession();
@@ -55,7 +54,8 @@ var Module;
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id)
+            return next(new Error(req.__('common.error.access')));
         let form = TicketForm_1.default(req);
         form(req, res, () => {
             purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);

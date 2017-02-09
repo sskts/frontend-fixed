@@ -11,7 +11,7 @@ function getPerformance() {
     var day = $('.date select').val();
     $.ajax({
         dataType: 'json',
-        url: '/performance',
+        url: '/performances',
         type: 'POST',
         timeout: 100000,
         data: {

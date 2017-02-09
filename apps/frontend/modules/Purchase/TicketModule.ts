@@ -14,12 +14,8 @@ export namespace Module {
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-        //取引id設定
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
-
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return next(new Error(req.__('common.error.access')));
-        if (!purchaseModel.performance) return next(new Error('purchaseModel.performance is undefined'));
+        if (!purchaseModel.performance) return next(new Error(req.__('common.error.property')));
 
         //コアAPI券種取得
         let performance = purchaseModel.performance;
@@ -37,12 +33,14 @@ export namespace Module {
             /** スクリーンコード */
             // screen_code: performance.screen._id,
         }).then((result) => {
-            console.log('券種取得', result);
+            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
             res.locals['tickets'] = result.list_ticket;
             res.locals['performance'] = performance;
             res.locals['reserveSeats'] = purchaseModel.reserveSeats;
             res.locals['reserveTickets'] = purchaseModel.reserveTickets;
             res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals['transactionId'] = purchaseModel.transactionMP._id;
+            
 
             //セッション更新
             if (!req.session) return next(req.__('common.error.property'));
@@ -60,9 +58,11 @@ export namespace Module {
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-        //取引id設定
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property'))); 
+        
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));  
+       
 
         //バリデーション
         let form = TicketForm(req);
