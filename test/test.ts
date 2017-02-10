@@ -90,7 +90,7 @@ async function seat(driver: webdriver.WebDriver): Promise<void> {
         console.log(`座席: ${num}`);
         await seats[num].click();
     }
-
+    await driver.findElement(webdriver.By.css('label[for=agree]')).click();
     await driver
         .findElement(webdriver.By.css('.button-area .next-button button'))
         .click();
@@ -128,14 +128,13 @@ async function input(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.name('mail_addr')).clear();
     await driver.findElement(webdriver.By.name('mail_confirm')).clear();
     await driver.findElement(webdriver.By.name('tel_num')).clear();
-    await driver.findElement(webdriver.By.css('label[for=agree]')).click();
+    
     console.log('入力削除');
     await driver.findElement(webdriver.By.name('last_name_hira')).sendKeys('もーしょん');
     await driver.findElement(webdriver.By.name('first_name_hira')).sendKeys('ぴくちゃー');
     await driver.findElement(webdriver.By.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(webdriver.By.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
     await driver.findElement(webdriver.By.name('tel_num')).sendKeys('0362778824');
-    await driver.findElement(webdriver.By.css('label[for=agree]')).click();
     await driver.findElement(webdriver.By.name('cardno')).sendKeys('4111111111111111');
     await driver.findElement(webdriver.By.name('credit_year')).sendKeys('2017');
     await driver.findElement(webdriver.By.name('credit_month')).sendKeys('10');
@@ -151,6 +150,7 @@ async function input(driver: webdriver.WebDriver): Promise<void> {
 async function confirm(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.css('.purchase-confirm'));
     console.log('購入者内容確認');
+    await driver.findElement(webdriver.By.css('label[for=notes]')).click();
     await driver
         .findElement(webdriver.By.css('.purchase-confirm .button-area .next-button button'))
         .click();

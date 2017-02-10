@@ -9,6 +9,7 @@ $(function () {
 
 function getPerformance() {
     var day = $('.date select').val();
+    console.log(day)
     $.ajax({
         dataType: 'json',
         url: '/performances',

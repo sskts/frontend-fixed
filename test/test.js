@@ -77,6 +77,7 @@ function seat(driver) {
             console.log(`座席: ${num}`);
             yield seats[num].click();
         }
+        yield driver.findElement(webdriver.By.css('label[for=agree]')).click();
         yield driver
             .findElement(webdriver.By.css('.button-area .next-button button'))
             .click();
@@ -113,14 +114,12 @@ function input(driver) {
         yield driver.findElement(webdriver.By.name('mail_addr')).clear();
         yield driver.findElement(webdriver.By.name('mail_confirm')).clear();
         yield driver.findElement(webdriver.By.name('tel_num')).clear();
-        yield driver.findElement(webdriver.By.css('label[for=agree]')).click();
         console.log('入力削除');
         yield driver.findElement(webdriver.By.name('last_name_hira')).sendKeys('もーしょん');
         yield driver.findElement(webdriver.By.name('first_name_hira')).sendKeys('ぴくちゃー');
         yield driver.findElement(webdriver.By.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
         yield driver.findElement(webdriver.By.name('mail_confirm')).sendKeys('hataguchi@motionpicture.jp');
         yield driver.findElement(webdriver.By.name('tel_num')).sendKeys('0362778824');
-        yield driver.findElement(webdriver.By.css('label[for=agree]')).click();
         yield driver.findElement(webdriver.By.name('cardno')).sendKeys('4111111111111111');
         yield driver.findElement(webdriver.By.name('credit_year')).sendKeys('2017');
         yield driver.findElement(webdriver.By.name('credit_month')).sendKeys('10');
@@ -136,6 +135,7 @@ function confirm(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-confirm'));
         console.log('購入者内容確認');
+        yield driver.findElement(webdriver.By.css('label[for=notes]')).click();
         yield driver
             .findElement(webdriver.By.css('.purchase-confirm .button-area .next-button button'))
             .click();

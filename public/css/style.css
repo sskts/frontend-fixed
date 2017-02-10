@@ -1848,16 +1848,6 @@ p a {
   font-weight: 500;
 }
 
-.purchase-confirm .notes input[type=checkbox] + label {
-  margin-bottom: 0;
-  padding-left: 30px;
-}
-
-.purchase-confirm .notes input[type=checkbox] + label:before, .purchase-confirm .notes input[type=checkbox] + label:after {
-  left: 0;
-  top: 11px;
-}
-
 .purchase-confirm .notes ol li {
   line-height: 1.5;
   margin: 0 0 10px;
@@ -2151,10 +2141,10 @@ p a {
   overflow: visible;
 }
 
-.inquiry-confirm .ticket .qr {
+.inquiry-confirm .ticket .qr-code {
 }
 
-.inquiry-confirm .ticket .not-qr {
+.inquiry-confirm .ticket .not-qr-code {
   padding: 40px;
   background-image: url(/images/common/bg_ticket.svg);
   background-size: 100px 60px;

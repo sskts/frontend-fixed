@@ -27,19 +27,26 @@
     
     <ul class="tickets mb-large">
         
-        <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
+        <% for (let ticket of stateReserve.list_ticket) { %>
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
                     <div>
-                        <strong class="large-text"><%= stateReserve.list_ticket[i].seat_num %></strong>
-                        <span>[<%= stateReserve.list_ticket[i].ticket_name %>]</span>
+                        <strong class="large-text"><%= ticket.seat_num %></strong>
+                        <span>[<%= ticket.ticket_name %>]</span>
                     </div>
-                    <!--<div><%- __('common.ticket_code') %> : </div>-->
                 </div>
-                <div class="box radius border-bottom-dot not-qr bg-white">
+                <% if (moment(`${performance.attributes.day} ${performance.attributes.time_start}`).subtract(24, 'hours').unix() < moment().unix()) { %>
+                <div class="box radius border-bottom-dot qr-code bg-white">
+                    <div class="text-center">
+                        <img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chl=<%- ticket.seat_qrcode %>" alt="QRコード">
+                    </div>
+                </div>
+                <% } else { %>
+                <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.ticket_text') %></p>
                 </div>
+                <% } %>
                 <div class="box">
                     <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= moment(performance.attributes.time_start, 'hmm').format('HH:mm') %>-</div>
                     <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>

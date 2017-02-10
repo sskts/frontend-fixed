@@ -3,7 +3,6 @@
     "postcss-import",
     "postcss-simple-vars",
     "postcss-nested",
-    "postcss-comment",
     "autoprefixer"
   ],
   "input": "public/post/import.css",
