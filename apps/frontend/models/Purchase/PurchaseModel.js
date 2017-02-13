@@ -57,20 +57,20 @@ class PurchaseModel {
         return result;
     }
     getReserveAmount() {
-        let reserveTickets = this.reserveTickets;
+        const reserveTickets = this.reserveTickets;
         let amount = 0;
         if (!reserveTickets)
             return amount;
-        for (let ticket of reserveTickets) {
+        for (const ticket of reserveTickets) {
             amount += ticket.sale_price;
         }
         return amount;
     }
     getTicketList() {
-        let results = [];
+        const results = [];
         if (!this.reserveTickets)
             return [];
-        for (let ticket of this.reserveTickets) {
+        for (const ticket of this.reserveTickets) {
             results.push({
                 ticket_code: ticket.ticket_code,
                 std_price: ticket.std_price,
@@ -78,7 +78,7 @@ class PurchaseModel {
                 dis_price: 0,
                 sale_price: ticket.sale_price,
                 ticket_count: 1,
-                seat_num: ticket.seat_code,
+                seat_num: ticket.seat_code
             });
         }
         return results;

@@ -1,3 +1,4 @@
+
 import express = require('express');
 import SeatForm from '../../forms/Purchase/SeatForm';
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
@@ -13,26 +14,26 @@ namespace SeatModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return next(new Error(req.__('common.error.access')));
 
 
         //パフォーマンス取得
         MP.getPerformance.call({
-            id: req.params['id']
+            id: req.params.id
         }).then((result) => {
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals['performance'] = result;
-            res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
-            res.locals['reserveSeats'] = null;
-            res.locals['transactionId'] = purchaseModel.transactionMP._id;
-            
+            res.locals.performance = result;
+            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+            res.locals.reserveSeats = null;
+            res.locals.transactionId = purchaseModel.transactionMP._id;
+
 
             //仮予約中
             if (purchaseModel.reserveSeats) {
                 console.log('仮予約中')
-                res.locals['reserveSeats'] = JSON.stringify(purchaseModel.reserveSeats);
+                res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
             }
             purchaseModel.performance = result;
 
@@ -40,7 +41,7 @@ namespace SeatModule {
             if (!req.session) return next(req.__('common.error.property'));
             req.session['purchase'] = purchaseModel.formatToSession();
 
-            res.locals['error'] = null;
+            res.locals.error = null;
             return res.render('purchase/seat');
         }, (err) => {
             return next(new Error(err.message));
@@ -52,20 +53,20 @@ namespace SeatModule {
      */
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property'))); 
         console.log('座席決定1',req.body.transaction_id, purchaseModel.transactionMP._id)
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));       
         console.log('座席決定2')
-        
+
         //バリデーション
-        let form = SeatForm(req);
+        const form = SeatForm(req);
         form(req, res, () => {
             if (!req.form) return next(req.__('common.error.property'));
             if (req.form.isValid) {
                 reserve(req, purchaseModel).then(() => {
-                    
+
                     //セッション更新
                     if (!req.session) return next(req.__('common.error.property'));
                     req.session['purchase'] = purchaseModel.formatToSession();
@@ -75,15 +76,15 @@ namespace SeatModule {
                     return next(new Error(err.message));
                 });
             } else {
-                if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
-                res.locals['transactionId'] = purchaseModel.transactionMP;
-                res.locals['performance'] = purchaseModel.performance;
-                res.locals['step'] = PurchaseSession.PurchaseModel.SEAT_STATE;
-                res.locals['reserveSeats'] = req.body.seats;
-                res.locals['error'] = req.form.getErrors();
-                
+                if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
+                res.locals.transactionId = purchaseModel.transactionMP;
+                res.locals.performance = purchaseModel.performance;
+                res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+                res.locals.reserveSeats = req.body.seats;
+                res.locals.error = req.form.getErrors();
+
                 return res.render('purchase/seat');
-                
+
             }
         });
     }
@@ -100,21 +101,15 @@ namespace SeatModule {
         //予約中
         if (purchaseModel.reserveSeats) {
             if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
-            let reserveSeats = purchaseModel.reserveSeats;
+            const reserveSeats = purchaseModel.reserveSeats;
 
             //COA仮予約削除
             await COA.deleteTmpReserveInterface.call({
-                /** 施設コード */
                 theater_code: performance.attributes.theater._id,
-                /** 上映日 */
                 date_jouei: performance.attributes.day,
-                /** 作品コード */
                 title_code: performance.attributes.film.coa_title_code,
-                /** 作品枝番 */
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
-                /** 上映時刻 */
                 time_begin: performance.attributes.time_start,
-                /** 座席チケット仮予約番号 */
                 tmp_reserve_num: reserveSeats.tmp_reserve_num,
             });
 
@@ -138,6 +133,7 @@ namespace SeatModule {
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID
                 });
+                
                 console.log('GMOオーソリ取消');
 
                 // GMOオーソリ削除
@@ -155,7 +151,7 @@ namespace SeatModule {
 
 
         //COA仮予約
-        let seats = JSON.parse(req.body.seats);
+        const seats = JSON.parse(req.body.seats);
 
         purchaseModel.reserveSeats = await COA.reserveSeatsTemporarilyInterface.call({
             /** 施設コード */
@@ -194,7 +190,7 @@ namespace SeatModule {
         });
 
         //COAオーソリ追加
-        let COAAuthorizationResult = await MP.addCOAAuthorization.call({
+        const COAAuthorizationResult = await MP.addCOAAuthorization.call({
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: purchaseModel.reserveTickets,

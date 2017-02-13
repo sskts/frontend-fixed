@@ -13,8 +13,8 @@ var UtilModule;
         if (typeof string !== 'string') {
             return string;
         }
-        let change = (match) => {
-            let changeList = {
+        const change = (match) => {
+            const changeList = {
                 '&': '&amp;',
                 "'": '&#x27;',
                 '`': '&#x60;',

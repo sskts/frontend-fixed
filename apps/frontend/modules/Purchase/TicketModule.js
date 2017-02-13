@@ -18,12 +18,12 @@ var TicketModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
             return next(new Error(req.__('common.error.property')));
-        let performance = purchaseModel.performance;
+        const performance = purchaseModel.performance;
         COA.salesTicketInterface.call({
             theater_code: performance.attributes.theater._id,
             date_jouei: performance.attributes.day,
@@ -33,12 +33,12 @@ var TicketModule;
         }).then((result) => {
             if (!purchaseModel.transactionMP)
                 return next(new Error(req.__('common.error.property')));
-            res.locals['tickets'] = result.list_ticket;
-            res.locals['performance'] = performance;
-            res.locals['reserveSeats'] = purchaseModel.reserveSeats;
-            res.locals['reserveTickets'] = purchaseModel.reserveTickets;
-            res.locals['step'] = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals['transactionId'] = purchaseModel.transactionMP._id;
+            res.locals.tickets = result.list_ticket;
+            res.locals.performance = performance;
+            res.locals.reserveSeats = purchaseModel.reserveSeats;
+            res.locals.reserveTickets = purchaseModel.reserveTickets;
+            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.transactionId = purchaseModel.transactionMP._id;
             if (!req.session)
                 return next(req.__('common.error.property'));
             req.session['purchase'] = purchaseModel.formatToSession();
@@ -51,12 +51,12 @@ var TicketModule;
     function select(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         if (req.body.transaction_id !== purchaseModel.transactionMP._id)
             return next(new Error(req.__('common.error.access')));
-        let form = TicketForm_1.default(req);
+        const form = TicketForm_1.default(req);
         form(req, res, () => {
             purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
             ticketValidation(req, purchaseModel).then(() => {
@@ -89,17 +89,17 @@ var TicketModule;
                 throw new Error(req.__('common.error.property'));
             if (!purchaseModel.reserveTickets)
                 throw new Error(req.__('common.error.property'));
-            let performance = purchaseModel.performance;
-            let salesTickets = yield COA.salesTicketInterface.call({
+            const performance = purchaseModel.performance;
+            const salesTickets = yield COA.salesTicketInterface.call({
                 theater_code: performance.attributes.theater._id,
                 date_jouei: performance.attributes.day,
                 title_code: performance.attributes.film.coa_title_code,
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
                 time_begin: performance.attributes.time_start,
             });
-            let reserveTickets = purchaseModel.reserveTickets;
-            for (let reserveTicket of reserveTickets) {
-                for (let salesTicket of salesTickets.list_ticket) {
+            const reserveTickets = purchaseModel.reserveTickets;
+            for (const reserveTicket of reserveTickets) {
+                for (const salesTicket of salesTickets.list_ticket) {
                     if (salesTicket.ticket_code === reserveTicket.ticket_code) {
                         if (salesTicket.sale_price !== reserveTicket.sale_price) {
                             console.log(`${reserveTicket.seat_code}: 券種検証NG`);
@@ -152,7 +152,7 @@ var TicketModule;
                 });
                 console.log('GMOオーソリ削除');
             }
-            let COAAuthorizationResult = yield MP.addCOAAuthorization.call({
+            const COAAuthorizationResult = yield MP.addCOAAuthorization.call({
                 transaction: purchaseModel.transactionMP,
                 reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                 salesTicketResults: purchaseModel.reserveTickets,

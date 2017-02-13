@@ -1,19 +1,20 @@
+
 import form = require('express-form');
 import express = require('express');
 
 interface seat {
-    seat_num: string,
-    seat_section: string,
+    seat_num: string;
+    seat_section: string;
 }
 
 export default (req: express.Request) => {
     return form(
         form.field('seats', '座席').trim().required().custom((value: string) => {
             try {
-                let seats: {
-                    list_tmp_reserve: Array<seat>
+                const seats: {
+                    list_tmp_reserve: seat[]
                 } = JSON.parse(value);
-                for (let seat of seats.list_tmp_reserve) {
+                for (const seat of seats.list_tmp_reserve) {
                     if (!seat.seat_num || !seat.seat_section) {
                         throw new Error();
                     }
@@ -24,5 +25,5 @@ export default (req: express.Request) => {
         }),
         form.field('agree', '利用規約').trim().required('', '%sに同意してください')
     );
-}
+};
 

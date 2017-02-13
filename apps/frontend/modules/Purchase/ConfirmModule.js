@@ -16,21 +16,21 @@ var ConfirmModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
-        res.locals['gmoTokenObject'] = (purchaseModel.gmo) ? purchaseModel.gmo : null;
-        res.locals['input'] = purchaseModel.input;
-        res.locals['performance'] = purchaseModel.performance;
-        res.locals['reserveSeats'] = purchaseModel.reserveSeats;
-        res.locals['reserveTickets'] = purchaseModel.reserveTickets;
-        res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
-        res.locals['price'] = purchaseModel.getReserveAmount();
-        res.locals['updateReserve'] = null;
-        res.locals['error'] = null;
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
+        res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
+        res.locals.input = purchaseModel.input;
+        res.locals.performance = purchaseModel.performance;
+        res.locals.reserveSeats = purchaseModel.reserveSeats;
+        res.locals.reserveTickets = purchaseModel.reserveTickets;
+        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+        res.locals.price = purchaseModel.getReserveAmount();
+        res.locals.updateReserve = null;
+        res.locals.error = null;
+        res.locals.transactionId = purchaseModel.transactionMP._id;
         if (!req.session)
             return next(req.__('common.error.property'));
         req.session['purchase'] = purchaseModel.formatToSession();
@@ -58,9 +58,9 @@ var ConfirmModule;
                     type: 'expired'
                 };
             }
-            let performance = purchaseModel.performance;
-            let reserveSeats = purchaseModel.reserveSeats;
-            let input = purchaseModel.input;
+            const performance = purchaseModel.performance;
+            const reserveSeats = purchaseModel.reserveSeats;
+            const input = purchaseModel.input;
             try {
                 purchaseModel.updateReserve = yield COA.updateReserveInterface.call({
                     theater_code: performance.attributes.theater._id,
@@ -105,7 +105,7 @@ var ConfirmModule;
                 to: purchaseModel.input.mail_addr,
                 subject: '購入完了',
                 content: `購入完了\n
-この度はご購入いただき誠にありがとうございます。`,
+この度はご購入いただき誠にありがとうございます。`
             });
             console.log('MPメール登録');
             yield MP.transactionClose.call({
@@ -117,7 +117,7 @@ var ConfirmModule;
     function purchase(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         if (req.body.transaction_id !== purchaseModel.transactionMP._id)
@@ -145,7 +145,7 @@ var ConfirmModule;
                 err: (err.error) ? err.error.message : err.message,
                 redirect: (err.error) ? false : true,
                 result: null,
-                type: (err.type) ? err.type : null,
+                type: (err.type) ? err.type : null
             });
         });
     }

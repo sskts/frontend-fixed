@@ -10,12 +10,12 @@ var PerformancesModule;
     }
     PerformancesModule.index = index;
     function getPerformances(req, res) {
-        let endpoint = config.get('mp_api_endpoint');
-        let method = 'performances';
-        let options = {
+        const endpoint = config.get('mp_api_endpoint');
+        const method = 'performances';
+        const options = {
             url: `${endpoint}/${method}/?day=${req.body.day}`,
             method: 'GET',
-            json: true,
+            json: true
         };
         request.get(options, (error, response, body) => {
             res.json({

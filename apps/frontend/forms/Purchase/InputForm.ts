@@ -26,4 +26,4 @@ export default (req: express.Request) => {
             .required('', `%s${req.__('common.validation.required')}`)
             .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`),
     );
-}
+};

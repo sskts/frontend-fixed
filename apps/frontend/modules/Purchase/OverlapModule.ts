@@ -1,3 +1,4 @@
+
 import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import config = require('config');
@@ -11,18 +12,18 @@ namespace OverlapModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
         //パフォーマンス取得
         MP.getPerformance.call({
-            id: req.params['id']
+            id: req.params.id
         }).then((result) => {
             res.locals['performances'] = {
                 after: result,
                 before: purchaseModel.performance,
-            }
-            
+            };
+
             return res.render('purchase/overlap');
         }, (err) => {
             return next(new Error(err.message));
@@ -34,13 +35,13 @@ namespace OverlapModule {
      */
     export function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         removeReserve(req, purchaseModel).then(()=>{
             if (!req.session) return next(req.__('common.error.property'));
             //購入スタートへ
             delete req.session['purchase'];
             return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
-            
+
         }, (err)=>{
             return next(new Error(err.message));
         });
@@ -66,22 +67,16 @@ namespace OverlapModule {
         if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
         if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
 
-        let performance = purchaseModel.performance;
-        let reserveSeats = purchaseModel.reserveSeats;
+        const performance = purchaseModel.performance;
+        const reserveSeats = purchaseModel.reserveSeats;
 
         //COA仮予約削除
         await COA.deleteTmpReserveInterface.call({
-            /** 施設コード */
             theater_code: performance.attributes.theater._id,
-            /** 上映日 */
             date_jouei: performance.attributes.day,
-            /** 作品コード */
             title_code: performance.attributes.film.coa_title_code,
-            /** 作品枝番 */
             title_branch_num: performance.attributes.film.coa_title_branch_num,
-            /** 上映時刻 */
             time_begin: performance.attributes.time_start,
-            /** 座席チケット仮予約番号 */
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
         });
 

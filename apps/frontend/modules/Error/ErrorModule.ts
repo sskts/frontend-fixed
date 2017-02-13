@@ -1,17 +1,20 @@
-import express = require('express');
+
+
+
+import express = require("express");
 
 namespace ErrorModule {
     /**
      * Not Found
      */
     export function notFound(req: express.Request, res: express.Response, _next: express.NextFunction): void {
-        let status = 404;
+        const status = 404;
 
         if (req.xhr) {
-            res.status(status).send({ error: 'Not Found.' });
+            res.status(status).send({ error: "Not Found." });
         } else {
             res.status(status);
-            return res.render('error/notFound');
+            return res.render("error/notFound");
         }
     }
 
@@ -20,18 +23,18 @@ namespace ErrorModule {
      */
     export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
         console.log(err.stack);
-        
-        if (req.session) delete req.session['purchase'];
-        
-        let status = 500;
+
+        if (req.session) delete req.session["purchase"];
+
+        const status = 500;
 
         if (req.xhr) {
-            res.status(status).send({ error: 'Something failed.' });
+            res.status(status).send({ error: "Something failed." });
         } else {
             res.status(status);
-            res.locals['message'] = err.message;
-            res.locals['error'] = err;
-            return res.render('error/error');
+            res.locals.message = err.message;
+            res.locals.error = err;
+            return res.render("error/error");
         }
     }
 }

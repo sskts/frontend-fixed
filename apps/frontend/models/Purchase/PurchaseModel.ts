@@ -4,50 +4,33 @@ import GMO = require("@motionpicture/gmo-service");
 
 
 export interface Args {
-    id: string
+    id: string;
 }
 
 export interface ReserveTicket {
-    /** 座席セクション */
-    section: string,
-    /** 座席番号 */
-    seat_code: string,
-    /** チケットコード */
-    ticket_code: string,
-    /** チケット名 */
-    ticket_name_ja: string,
-    /** チケット名（英） */
-    ticket_name_en: string,
-    /** チケット名（カナ） */
-    ticket_name_kana: string,
-    /** 標準単価 */
-    std_price: number,
-    /** 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金) */
-    add_price: number,
-    /** TODO */
-    dis_price: number,
-    /** 販売単価(標準単価＋加算単価) */
-    sale_price: number
+    section: string;
+    seat_code: string;
+    ticket_code: string;
+    ticket_name_ja: string;
+    ticket_name_en: string;
+    ticket_name_kana: string;
+    std_price: number;
+    add_price: number;
+    dis_price: number;
+    sale_price: number;
 }
 
 export interface Input {
-    /** せい */
-    last_name_hira: string,
-    /** めい */
-    first_name_hira: string,
-    /** メールアドレス */
-    mail_addr: string,
-    /** メールアドレス確認 */
-    mail_confirm: string,
-    /** 電話番号*/
-    tel_num: string,
-    /** 利用規約 */
-    agree: string,
+    last_name_hira: string;
+    first_name_hira: string;
+    mail_addr: string;
+    mail_confirm: string;
+    tel_num: string;
+    agree: string;
 }
 
 export interface GMO {
-    /** トークン */
-    token: string,
+    token: string;
 }
 
 /**
@@ -60,29 +43,17 @@ export class PurchaseModel {
     public static CONFIRM_STATE = 3;
     public static COMPLETE_STATE = 4;
 
-    /**パフォーマンス */
     public performance: MP.Performance | null;
-    /**COA仮予約 */
     public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
-    /**予約チケット */
-    public reserveTickets: Array<ReserveTicket> | null;
-    /**入力情報 */
+    public reserveTickets: ReserveTicket[] | null;
     public input: Input | null;
-    /**GMO TOKEN情報 */
     public gmo: GMO | null;
-    /**COA本予約 */
     public updateReserve: COA.updateReserveInterface.Result | null;
-    /**取引MP */
     public transactionMP: MP.transactionStart.Result | null;
-    /**取引GMO */
     public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
-    /**COAオーソリ */
     public authorizationCOA: MP.addCOAAuthorization.Result | null;
-    /**GMOオーソリ */
     public authorizationGMO: MP.addGMOAuthorization.Result | null;
-    /**オーダーID */
     public orderId: string | null;
-    /**有効期限 */
     public expired: number | null; 
 
     constructor(session: any) {
@@ -112,7 +83,7 @@ export class PurchaseModel {
     public formatToSession(): {
         performance: MP.Performance | null,
         reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null,
-        reserveTickets: Array<ReserveTicket> | null,
+        reserveTickets: ReserveTicket[] | null,
         input: Input | null,
         gmo: GMO | null,
         updateReserve: COA.updateReserveInterface.Result | null,
@@ -164,10 +135,10 @@ export class PurchaseModel {
      * 合計金額取得
      */
     public getReserveAmount(): number {
-        let reserveTickets = this.reserveTickets;
+        const reserveTickets = this.reserveTickets;
         let amount = 0;
         if (!reserveTickets) return amount;
-        for (let ticket of reserveTickets) {
+        for (const ticket of reserveTickets) {
             amount += ticket.sale_price;
         }
         return amount;
@@ -176,26 +147,26 @@ export class PurchaseModel {
     /**
      * チケットリスト返却
      */
-    public getTicketList(): Array<{
-        ticket_code: string, 
+    public getTicketList(): {
+        ticket_code: string,
         std_price: number,  /** 標準単価 */
         add_price: number, /** 加算単価 */
         dis_price: number, /** 割引額 */
         sale_price: number, /** 金額 */
         ticket_count: number, /** 枚数 */
         seat_num: string, /** 座席番号 */
-    }> {
-        let results = [];
+    }[] {
+        const results = [];
         if (!this.reserveTickets) return [];
-        for (let ticket of this.reserveTickets) {
+        for (const ticket of this.reserveTickets) {
             results.push({
-                ticket_code: ticket.ticket_code, /** チケットコード */
-                std_price: ticket.std_price,  /** 標準単価 */
-                add_price: ticket.add_price, /** 加算単価 */
-                dis_price: 0, /** 割引額 */
-                sale_price: ticket.sale_price, /** 金額 */
-                ticket_count: 1, /** 枚数 */
-                seat_num: ticket.seat_code, /** 座席番号 */
+                ticket_code: ticket.ticket_code,
+                std_price: ticket.std_price,
+                add_price: ticket.add_price,
+                dis_price: 0,
+                sale_price: ticket.sale_price,
+                ticket_count: 1,
+                seat_num: ticket.seat_code
             });
         }
         return results;

@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (req) => {
     return form(form.field('reserve_tickets', req.__('common.ticket')).trim().required().custom((value) => {
         try {
-            let tickets = JSON.parse(value);
-            for (let ticket of tickets) {
+            const tickets = JSON.parse(value);
+            for (const ticket of tickets) {
                 if (!ticket.seat_code
                     || !ticket.section
                     || !ticket.ticket_code) {

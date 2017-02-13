@@ -1,3 +1,4 @@
+
 import express = require('express');
 import moment = require('moment');
 
@@ -24,8 +25,8 @@ namespace UtilModule {
         if(typeof string !== 'string') {
             return string;
         }
-        let change = (match: string): string =>{
-            let changeList: any = {
+        const change = (match: string): string =>{
+            const changeList: any = {
             '&': '&amp;',
             "'": '&#x27;',
             '`': '&#x60;',

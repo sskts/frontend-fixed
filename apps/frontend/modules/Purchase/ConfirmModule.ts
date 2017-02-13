@@ -1,3 +1,4 @@
+
 import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import COA = require("@motionpicture/coa-service");
@@ -10,22 +11,22 @@ namespace ConfirmModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //購入者内容確認表示
-        res.locals['gmoTokenObject'] = (purchaseModel.gmo) ? purchaseModel.gmo : null;
-        res.locals['input'] = purchaseModel.input;
-        res.locals['performance'] = purchaseModel.performance;
-        res.locals['reserveSeats'] = purchaseModel.reserveSeats;
-        res.locals['reserveTickets'] = purchaseModel.reserveTickets;
-        res.locals['step'] = PurchaseSession.PurchaseModel.CONFIRM_STATE;
-        res.locals['price'] = purchaseModel.getReserveAmount();
-        res.locals['updateReserve'] = null;
-        res.locals['error'] = null;
-        res.locals['transactionId'] = purchaseModel.transactionMP._id;
-        
+        res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
+        res.locals.input = purchaseModel.input;
+        res.locals.performance = purchaseModel.performance;
+        res.locals.reserveSeats = purchaseModel.reserveSeats;
+        res.locals.reserveTickets = purchaseModel.reserveTickets;
+        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+        res.locals.price = purchaseModel.getReserveAmount();
+        res.locals.updateReserve = null;
+        res.locals.error = null;
+        res.locals.transactionId = purchaseModel.transactionMP._id;
+
 
         //セッション更新
         if (!req.session) return next(req.__('common.error.property'));
@@ -55,39 +56,27 @@ namespace ConfirmModule {
             };
         }
 
-        
-            
 
-        let performance = purchaseModel.performance;
-        let reserveSeats = purchaseModel.reserveSeats;
-        let input = purchaseModel.input;
+
+
+        const performance = purchaseModel.performance;
+        const reserveSeats = purchaseModel.reserveSeats;
+        const input = purchaseModel.input;
 
         try {
             // COA本予約
             purchaseModel.updateReserve = await COA.updateReserveInterface.call({
-                /** 施設コード */
                 theater_code: performance.attributes.theater._id,
-                /** 上映日 */
                 date_jouei: performance.attributes.day,
-                /** 作品コード */
                 title_code: performance.attributes.film.coa_title_code,
-                /** 作品枝番 */
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
-                /** 上映時刻 */
                 time_begin: performance.attributes.time_start,
-                /** 座席チケット仮予約番号 */
                 tmp_reserve_num: reserveSeats.tmp_reserve_num,
-                /** 予約者名 */
                 reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
-                /** 予約者名（かな） */
                 reserve_name_jkana: `${input.last_name_hira}　${input.first_name_hira}`,
-                /** 電話番号 */
                 tel_num: input.tel_num,
-                /** メールアドレス */
                 mail_addr: input.mail_addr,
-                /** 予約金額 */
                 reserve_amount: purchaseModel.getReserveAmount(),
-                /** 価格情報リスト */
                 list_ticket: purchaseModel.getTicketList(),
             });
             console.log('COA本予約', purchaseModel.updateReserve);
@@ -117,7 +106,7 @@ namespace ConfirmModule {
         });
         console.log('MP照会情報登録');
 
-        
+
         // MPメール登録
         await MP.addEmail.call({
             transactionId: purchaseModel.transactionMP._id,
@@ -125,7 +114,7 @@ namespace ConfirmModule {
             to: purchaseModel.input.mail_addr,
             subject: '購入完了',
             content: `購入完了\n
-この度はご購入いただき誠にありがとうございます。`,
+この度はご購入いただき誠にありがとうございます。`
         });
         console.log('MPメール登録');
 
@@ -142,9 +131,9 @@ namespace ConfirmModule {
      */
     export function purchase(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-        
+
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
 
@@ -176,7 +165,7 @@ namespace ConfirmModule {
                 err: (err.error) ? err.error.message : err.message,
                 redirect: (err.error) ? false : true,
                 result: null,
-                type: (err.type) ? err.type : null,
+                type: (err.type) ? err.type : null
             });
         });
     }

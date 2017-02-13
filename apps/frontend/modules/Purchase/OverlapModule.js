@@ -17,13 +17,13 @@ var OverlapModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!req.params || !req.params['id'])
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        if (!req.params || !req.params.id)
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
         MP.getPerformance.call({
-            id: req.params['id']
+            id: req.params.id
         }).then((result) => {
             res.locals['performances'] = {
                 after: result,
@@ -38,7 +38,7 @@ var OverlapModule;
     function newReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         removeReserve(req, purchaseModel).then(() => {
             if (!req.session)
                 return next(req.__('common.error.property'));
@@ -65,8 +65,8 @@ var OverlapModule;
                 throw new Error(req.__('common.error.property'));
             if (!purchaseModel.authorizationCOA)
                 throw new Error(req.__('common.error.property'));
-            let performance = purchaseModel.performance;
-            let reserveSeats = purchaseModel.reserveSeats;
+            const performance = purchaseModel.performance;
+            const reserveSeats = purchaseModel.reserveSeats;
             yield COA.deleteTmpReserveInterface.call({
                 theater_code: performance.attributes.theater._id,
                 date_jouei: performance.attributes.day,

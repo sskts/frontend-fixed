@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (req) => {
     return form(form.field('seats', '座席').trim().required().custom((value) => {
         try {
-            let seats = JSON.parse(value);
-            for (let seat of seats.list_tmp_reserve) {
+            const seats = JSON.parse(value);
+            for (const seat of seats.list_tmp_reserve) {
                 if (!seat.seat_num || !seat.seat_section) {
                     throw new Error();
                 }

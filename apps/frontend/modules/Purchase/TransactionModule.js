@@ -13,11 +13,11 @@ const moment = require("moment");
 var TransactionModule;
 (function (TransactionModule) {
     function start(req, res, next) {
-        if (!req.params || !req.params['id'])
+        if (!req.params || !req.params.id)
             return next(new Error(req.__('common.error.access')));
         if (!req.session)
             return next(req.__('common.error.property'));
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
             return res.redirect('/purchase/' + req.params['id'] + '/overlap');
         }
@@ -26,7 +26,7 @@ var TransactionModule;
                 return next(req.__('common.error.property'));
             delete req.session['purchase'];
             req.session['purchase'] = purchaseModel.formatToSession();
-            return res.redirect('/purchase/seat/' + req.params['id'] + '/');
+            return res.redirect('/purchase/seat/' + req.params.id + '/');
         }, (err) => {
             return next(new Error(err.message));
         });

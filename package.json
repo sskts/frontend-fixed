@@ -8,7 +8,8 @@
     "test": "node ./test/test.js",
     "scss": "node-sass public/scss/style.scss public/css/style.css --output-style expanded -w",
     "css": "postcss -c ./.postcssrc.json",
-    "css-w": "postcss -c ./.postcssrc.json -w"
+    "css-w": "postcss -c ./.postcssrc.json -w",
+    "lint": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json"
   },
   "dependencies": {
     "@motionpicture/coa-service": "^1.1.9",
@@ -55,7 +56,10 @@
     "postcss-import": "^9.1.0",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^3.0.0",
-    "selenium-webdriver": "^3.0.1"
+    "selenium-webdriver": "^3.0.1",
+    "tslint": "^4.4.2",
+    "tslint-microsoft-contrib": "^4.0.0",
+    "typescript": "^2.1.6"
   },
   "repository": {},
   "author": "",

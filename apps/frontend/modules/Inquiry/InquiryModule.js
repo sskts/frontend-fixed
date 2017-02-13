@@ -15,23 +15,23 @@ const UtilModule_1 = require("../Util/UtilModule");
 var InquiryModule;
 (function (InquiryModule) {
     function login(_req, res) {
-        res.locals['theater_code'] = '';
-        res.locals['reserve_num'] = '';
-        res.locals['tel_num'] = '';
+        res.locals.theater_code = '';
+        res.locals.reserve_num = '';
+        res.locals.tel_num = '';
         if (process.env.NODE_ENV === 'dev') {
-            res.locals['theater_code'] = '001';
-            res.locals['reserve_num'] = '11625';
-            res.locals['tel_num'] = '09040007648';
+            res.locals.theater_code = '001';
+            res.locals.reserve_num = '11625';
+            res.locals.tel_num = '09040007648';
         }
-        res.locals['error'] = null;
+        res.locals.error = null;
         return res.render('inquiry/login');
     }
     InquiryModule.login = login;
     function auth(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
-        let form = LoginForm_1.default(req);
+        const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        const form = LoginForm_1.default(req);
         form(req, res, () => {
             if (!req.form)
                 return next(req.__('common.error.property'));
@@ -43,7 +43,7 @@ var InquiryModule;
                 });
             }
             else {
-                res.locals['error'] = req.form.getErrors();
+                res.locals.error = req.form.getErrors();
                 return res.render('inquiry/login');
             }
         });
@@ -64,7 +64,7 @@ var InquiryModule;
                 tel_num: req.body.tel_num,
             });
             console.log('COA照会情報取得');
-            let performanceId = UtilModule_1.default.getPerformanceId({
+            const performanceId = UtilModule_1.default.getPerformanceId({
                 theaterCode: req.body.theater_code,
                 day: inquiryModel.stateReserve.date_jouei,
                 titleCode: inquiryModel.stateReserve.title_code,
@@ -85,15 +85,15 @@ var InquiryModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        let inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
         if (inquiryModel.stateReserve
             && inquiryModel.performance
             && inquiryModel.login
             && inquiryModel.transactionId) {
-            res.locals['stateReserve'] = inquiryModel.stateReserve;
-            res.locals['performance'] = inquiryModel.performance;
-            res.locals['login'] = inquiryModel.login;
-            res.locals['transactionId'] = inquiryModel.transactionId;
+            res.locals.stateReserve = inquiryModel.stateReserve;
+            res.locals.performance = inquiryModel.performance;
+            res.locals.login = inquiryModel.login;
+            res.locals.transactionId = inquiryModel.transactionId;
             return res.render('inquiry/index');
         }
         else {

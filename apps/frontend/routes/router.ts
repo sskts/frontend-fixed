@@ -8,7 +8,7 @@ import inquiry from './inquiry';
 import method from './method';
 
 
-let router = express.Router();
+const router = express.Router();
 export default (app: express.Application) => {
 
     app.use(UtilModule.setLocals);
