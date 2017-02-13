@@ -20,7 +20,7 @@ $(function () {
             cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
             expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
             securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
-            // holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+            holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
         }
         
         Multipayment.getToken(sendParam, someCallbackFunction);
@@ -33,17 +33,17 @@ $(function () {
  * トークン取得後イベント
  */
 function someCallbackFunction(response) {
-    console.log(response.resultCode)
+    //カード情報は念のため値を除去
+    var date = new Date();
+    $('input[name=cardno]').val('');
+    $('select[name=credit_year]').val((String(date.getFullYear())));
+    $('select[name=credit_month]').val((date.getMonth() + 1 < 10) ? '0' + String(date.getMonth() + 1) : String(date.getMonth() + 1));
+    $('input[name=securitycode]').val('');
+    $('input[name=holdername]').val('');
     if (response.resultCode != 000) {
         gmoValidation();
         validationScroll();
     } else {
-        //カード情報は念のため値を除去
-        $('input[name=cardno]').val('');
-        $('select[name=credit_year]').val('');
-        $('select[name=credit_month]').val('');
-        $('input[name=securitycode]').val('');
-        $('input[name=holdername]').val('');
         //予め購入フォームに用意した token フィールドに、値を設定
         $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
@@ -78,6 +78,7 @@ function validation() {
         { name: 'tel_num', label: locales.label.tel_num, required: true, regex: [/^[0-9]+$/, locales.validation.is_tel] },
         { name: 'cardno', label: locales.label.cardno, required: true },
         { name: 'securitycode', label: locales.label.securitycode, required: true },
+        { name: 'holdername', label: locales.label.holdername, required: true },
     ];
 
 
@@ -124,6 +125,7 @@ function gmoValidation() {
         { name: 'cardno', label: locales.label.cardno},
         { name: 'expire', label: locales.label.expire},
         { name: 'securitycode', label: locales.label.securitycode},
+        { name: 'holdername', label: locales.label.holdername},
     ];
 
     validationList.forEach(function (validation, index) {

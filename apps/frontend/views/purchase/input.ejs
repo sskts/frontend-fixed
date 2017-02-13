@@ -142,6 +142,17 @@
                     </dd>
                 </dl>
             </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.holdername') %></dt>
+                    <dd>
+                        <input type="text" pattern="\d*" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
+                        <% if (error && error.holdername) { %>
+                        <div class="validation-text"><%= error.holdername[0] %></div>
+                        <% } %>
+                    </dd>
+                </dl>
+            </li>
         </ul>
         <input type="hidden" name="gmo_token_object" value="">
         <div class="button-area clearfix">
