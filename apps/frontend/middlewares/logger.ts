@@ -1,10 +1,14 @@
 import log4js = require('log4js');
 
-let env = process.env.NODE_ENV || 'dev';
+/**
+ * ロガー
+ */
+
+const env = process.env.NODE_ENV || 'dev';
 
 // ディレクトリなければ作成(初回アクセス時だけ)
-let fs = require('fs-extra');
-let logDir = `${__dirname}/../../../logs/${env}/frontend`;
+const fs = require('fs-extra');
+const logDir = `${__dirname}/../../../logs/${env}/frontend`;
 fs.mkdirsSync(logDir);
 
 log4js.configure({
@@ -13,13 +17,13 @@ log4js.configure({
             category: 'access', // アクセスログ
             type: 'console',
             filename: `${logDir}/access.log`,
-            pattern: '-yyyy-MM-dd',
+            pattern: '-yyyy-MM-dd'
         },
         {
             category: 'system', // その他のアプリログ(DEBUG、INFO、ERRORなど)
             type: 'console',
             filename: `${logDir}/system.log`,
-            pattern: '-yyyy-MM-dd',
+            pattern: '-yyyy-MM-dd'
         }
     ],
     levels: {

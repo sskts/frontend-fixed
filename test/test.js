@@ -10,7 +10,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const webdriver = require("selenium-webdriver");
 let width = 1920;
 let height = 1080;
+// Input capabilities
 let capabilities = {
+    // 'browserstack.user': 'akitohataguchi1',
+    // 'browserstack.key': '91NcdgSQ6KR9vqHP33xp',
     'browserstack.user': 'tetsuyamazaki2',
     'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
     'browserName': 'Chrome',
@@ -20,6 +23,7 @@ let capabilities = {
     'resolution': `${width}x${height}`,
     'browserstack.debug': true
 };
+//設定
 console.log(`-------------------
 ブラウザ: ${capabilities.browserName} ${capabilities.browser_version}
 OS: ${capabilities.os} ${capabilities.os_version}
@@ -30,6 +34,7 @@ test().then(() => {
 }, (err) => {
     console.log(err);
 });
+//test
 function test() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('テスト開始-----------------------------------');
@@ -38,9 +43,13 @@ function test() {
             .withCapabilities(capabilities)
             .build();
         let url = 'https://devsasakiticketfrontendprototypewebapp-sasaki-ticket-11.azurewebsites.net/';
+        //要素表示待機10秒
         driver.manage().timeouts().implicitlyWait(10000);
+        //画面サイズfull
         driver.manage().window().setSize(width, height);
+        //アクセスURL
         yield driver.get(url);
+        //各ページ処理
         yield performanceSelect(driver);
         yield seat(driver);
         yield ticket(driver);
@@ -50,6 +59,7 @@ function test() {
         console.log('テスト終了-----------------------------------');
     });
 }
+//パフォーマンス一覧
 function performanceSelect(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElements(webdriver.By.css('.performances li'));
@@ -64,6 +74,7 @@ function performanceSelect(driver) {
         console.log('次へクリック');
     });
 }
+//座席選択
 function seat(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-seat'));
@@ -84,6 +95,7 @@ function seat(driver) {
         console.log('次へクリック');
     });
 }
+//券種選択
 function ticket(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-ticket'));
@@ -105,6 +117,7 @@ function ticket(driver) {
         console.log('次へクリック');
     });
 }
+//購入者情報入力
 function input(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-input'));
@@ -131,6 +144,7 @@ function input(driver) {
         console.log('次へクリック');
     });
 }
+//購入者内容確認
 function confirm(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-confirm'));

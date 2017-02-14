@@ -1,5 +1,12 @@
 "use strict";
+/**
+ * 購入セッション
+ * @class
+ */
 class PurchaseModel {
+    /**
+     * @constructor
+     */
     constructor(session) {
         if (!session) {
             session = {};
@@ -17,6 +24,10 @@ class PurchaseModel {
         this.orderId = (session.orderId) ? session.orderId : null;
         this.expired = (session.expired) ? session.expired : null;
     }
+    /**
+     * セッションObjectへ変換
+     * @method
+     */
     formatToSession() {
         return {
             performance: (this.performance) ? this.performance : null,
@@ -30,9 +41,13 @@ class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null,
+            expired: (this.expired) ? this.expired : null
         };
     }
+    /**
+     * ステータス確認
+     * @method
+     */
     accessAuth(value) {
         let result = false;
         if (value === PurchaseModel.SEAT_STATE) {
@@ -56,6 +71,10 @@ class PurchaseModel {
         }
         return result;
     }
+    /**
+     * 合計金額取得
+     * @method
+     */
     getReserveAmount() {
         const reserveTickets = this.reserveTickets;
         let amount = 0;
@@ -66,6 +85,10 @@ class PurchaseModel {
         }
         return amount;
     }
+    /**
+     * チケットリスト返却
+     * @method
+     */
     getTicketList() {
         const results = [];
         if (!this.reserveTickets)

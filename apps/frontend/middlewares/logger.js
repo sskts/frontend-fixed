@@ -1,8 +1,12 @@
 "use strict";
 const log4js = require("log4js");
-let env = process.env.NODE_ENV || 'dev';
-let fs = require('fs-extra');
-let logDir = `${__dirname}/../../../logs/${env}/frontend`;
+/**
+ * ロガー
+ */
+const env = process.env.NODE_ENV || 'dev';
+// ディレクトリなければ作成(初回アクセス時だけ)
+const fs = require('fs-extra');
+const logDir = `${__dirname}/../../../logs/${env}/frontend`;
 fs.mkdirsSync(logDir);
 log4js.configure({
     appenders: [
@@ -10,13 +14,13 @@ log4js.configure({
             category: 'access',
             type: 'console',
             filename: `${logDir}/access.log`,
-            pattern: '-yyyy-MM-dd',
+            pattern: '-yyyy-MM-dd'
         },
         {
             category: 'system',
             type: 'console',
             filename: `${logDir}/system.log`,
-            pattern: '-yyyy-MM-dd',
+            pattern: '-yyyy-MM-dd'
         }
     ],
     levels: {

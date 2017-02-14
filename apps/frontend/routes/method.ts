@@ -1,7 +1,12 @@
 import express = require('express');
 import MethodModule from '../modules/Method/MethodModule';
 
-let router = express.Router();
+
+/**
+ * ルーティング方法
+ */
+
+const router = express.Router();
 
 //入場方法説明
 router.get('/entry', MethodModule.entry);
@@ -12,4 +17,4 @@ router.get('/ticketing', MethodModule.ticketing);
 //ブックマーク方法説明
 router.get('/bookmark', MethodModule.bookmark);
 
-export default router; 
+export default router;

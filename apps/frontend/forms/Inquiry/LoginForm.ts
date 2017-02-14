@@ -14,6 +14,6 @@ export default (req: express.Request) => {
             .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`),
         form.field('tel_num', req.__('common.tel_num')).trim()
             .required('', `%s${req.__('common.validation.required')}`)
-            .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`),
+            .regex(/^[0-9]+$/, `%s${req.__('common.validation.is_number')}`)
     );
 };

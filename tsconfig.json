@@ -3,7 +3,8 @@
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "charset": "utf8",
-        "declaration": false,
+        "declaration": true,
+        "declarationDir": "./types",
         "diagnostics": false,
         "disableSizeLimit": false,
         "emitDecoratorMetadata": true,
@@ -20,26 +21,25 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
+        "noImplicitUseStrict": false,
         "noLib": false,
         "noResolve": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "preserveConstEnums": false,
         "pretty": false,
-        "removeComments": true,
+        "removeComments": false,
         "sourceMap": false,
         "strictNullChecks": true,
         "stripInternal": false,
         "suppressExcessPropertyErrors": false,
         "suppressImplicitAnyIndexErrors": false,
         "target": "es6",
-        "watch": true
+        "watch": false
     },
     "exclude": [
+        "docs",
         "node_modules",
-        "typings",
-        "definitions",
-        "logs",
-        "public"
+        "types"
     ]
 }

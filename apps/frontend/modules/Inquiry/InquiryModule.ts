@@ -2,13 +2,18 @@
 import express = require('express');
 import InquirySession = require('../../models/Inquiry/InquiryModel');
 import LoginForm from '../../forms/Inquiry/LoginForm';
-import COA = require("@motionpicture/coa-service");
+import COA = require('@motionpicture/coa-service');
 import MP = require('../../../../libs/MP');
 import UtilModule from '../Util/UtilModule';
 
+/**
+ * 照会
+ * @namespace
+ */
 namespace InquiryModule {
     /**
      * 照会認証ページ表示
+     * @function
      */
     export function login(_req: express.Request, res: express.Response) {
         res.locals.theater_code = '';
@@ -25,6 +30,7 @@ namespace InquiryModule {
 
     /**
      * 照会認証
+     * @function
      */
     export function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));
@@ -33,16 +39,15 @@ namespace InquiryModule {
         form(req, res, () => {
             if (!req.form) return next(req.__('common.error.property'));
             if (req.form.isValid) {
-                getStateReserve(req, inquiryModel).then(() => {
-
-                    //購入者内容確認へ
-                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-                }, (err) => {
-                    return next(new Error(err.message));
-                });
-
+                getStateReserve(req, inquiryModel).then(
+                    () => {
+                        //購入者内容確認へ
+                        return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+                    },
+                    (err) => {
+                        return next(new Error(err.message));
+                    });
             } else {
-
                 res.locals.error = req.form.getErrors();
                 return res.render('inquiry/login');
             }
@@ -51,27 +56,40 @@ namespace InquiryModule {
 
     /**
      * 照会情報取得
+     * @function
      */
     async function getStateReserve(req: express.Request, inquiryModel: InquirySession.InquiryModel): Promise<void> {
         inquiryModel.transactionId = await MP.makeInquiry.call({
-            /** 施設コード */
+            /**
+             * 施設コード
+             */
             inquiry_theater: req.body.theater_code,
-            /** 座席チケット購入番号 */
+            /**
+             * 座席チケット購入番号
+             */
             inquiry_id: req.body.reserve_num,
-            /** 電話番号 */
-            inquiry_pass: req.body.tel_num,
+            /**
+             * 電話番号
+             */
+            inquiry_pass: req.body.tel_num
         });
         console.log('MP取引Id取得', inquiryModel.transactionId);
 
         inquiryModel.login = req.body;
 
         inquiryModel.stateReserve = await COA.stateReserveInterface.call({
-            /** 施設コード */
+            /**
+             * 施設コード
+             */
             theater_code: req.body.theater_code,
-            /** 座席チケット購入番号 */
+            /**
+             * 座席チケット購入番号
+             */
             reserve_num: req.body.reserve_num,
-            /** 電話番号 */
-            tel_num: req.body.tel_num,
+            /**
+             * 電話番号
+             */
+            tel_num: req.body.tel_num
         });
         console.log('COA照会情報取得');
 
@@ -83,7 +101,6 @@ namespace InquiryModule {
             screenCode: inquiryModel.stateReserve.screen_code,
             timeBegin: inquiryModel.stateReserve.time_begin
         });
-
         console.log('パフォーマンスID取得', performanceId);
         inquiryModel.performance = await MP.getPerformance.call({
             id: performanceId
@@ -92,11 +109,11 @@ namespace InquiryModule {
 
         if (!req.session) throw req.__('common.error.property');
         req.session['inquiry'] = inquiryModel.formatToSession();
-
     }
 
     /**
      * 照会確認ページ表示
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -115,8 +132,6 @@ namespace InquiryModule {
             //照会認証ページへ
             return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
         }
-
-
     }
 }
 

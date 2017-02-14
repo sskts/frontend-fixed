@@ -1,19 +1,19 @@
 import express = require('express');
-let router = express.Router();
+const router = express.Router();
 
-
-import TransactionModule from '../modules/Purchase/TransactionModule';
+import CompleteModule from '../modules/Purchase/CompleteModule';
+import ConfirmModule from '../modules/Purchase/ConfirmModule';
+import InputModule from '../modules/Purchase/InputModule';
+import MvtkConfirmModule from '../modules/Purchase/Mvtk/MvtkConfirmModule';
+import MvtkInputModule from '../modules/Purchase/Mvtk/MvtkInputModule';
 import OverlapModule from '../modules/Purchase/OverlapModule';
 import SeatModule from '../modules/Purchase/SeatModule';
-import InputModule from '../modules/Purchase/InputModule';
 import TicketModule from '../modules/Purchase/TicketModule';
-import ConfirmModule from '../modules/Purchase/ConfirmModule';
-import CompleteModule from '../modules/Purchase/CompleteModule';
-import MvtkInputModule from '../modules/Purchase/Mvtk/MvtkInputModule';
-import MvtkConfirmModule from '../modules/Purchase/Mvtk/MvtkConfirmModule';
+import TransactionModule from '../modules/Purchase/TransactionModule';
 
-
-
+/**
+ * ルーティング購入
+ */
 
 //購入(取引開始)
 router.get('/:id/transaction', TransactionModule.start);
@@ -48,7 +48,6 @@ router.post('/confirm', ConfirmModule.purchase);
 //購入完了
 router.get('/complete', CompleteModule.index);
 
-
 //ムビチケ券入力
 router.get('/mvtk', MvtkInputModule.index);
 
@@ -59,22 +58,8 @@ router.get('/mvtk/confirm', MvtkConfirmModule.index);
 
 router.post('/mvtk/confirm', MvtkConfirmModule.submit);
 
-
-
-
-
-
 //座席状態取得
 router.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 
+export default router;
 
-
-
-
-
-
-
-
-
-
-export default router; 

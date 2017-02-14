@@ -1,6 +1,6 @@
-import COA = require("@motionpicture/coa-service");
+import COA = require('@motionpicture/coa-service');
 import MP = require('../../../../libs/MP');
-import GMO = require("@motionpicture/gmo-service");
+import GMO = require('@motionpicture/gmo-service');
 
 
 export interface Args {
@@ -8,33 +8,87 @@ export interface Args {
 }
 
 export interface ReserveTicket {
+    /**
+     * 座席セクション
+     */
     section: string;
+    /**
+     * 座席番号
+     */
     seat_code: string;
+    /**
+     * チケットコード
+     */
     ticket_code: string;
+    /**
+     * チケット名
+     */
     ticket_name_ja: string;
+    /**
+     * チケット名（英）
+     */
     ticket_name_en: string;
+    /**
+     * チケット名（カナ）
+     */
     ticket_name_kana: string;
+    /**
+     * 標準単価
+     */
     std_price: number;
+    /**
+     * 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
+     */
     add_price: number;
+    /**
+     * TODO
+     */
     dis_price: number;
+    /**
+     * 販売単価(標準単価＋加算単価)
+     */
     sale_price: number;
+
 }
 
 export interface Input {
+    /**
+     * せい
+     */
     last_name_hira: string;
+    /**
+     * めい
+     */
     first_name_hira: string;
+    /**
+     * メールアドレス
+     */
     mail_addr: string;
+    /**
+     * メールアドレス確認
+     */
     mail_confirm: string;
+    /**
+     * 電話番号
+     */
     tel_num: string;
+    /**
+     * 利用規約
+     */
     agree: string;
+
 }
 
 export interface GMO {
+    /**
+     * トークン
+     */
     token: string;
 }
 
 /**
  * 購入セッション
+ * @class
  */
 export class PurchaseModel {
     public static SEAT_STATE = 0;
@@ -43,19 +97,58 @@ export class PurchaseModel {
     public static CONFIRM_STATE = 3;
     public static COMPLETE_STATE = 4;
 
+    /**
+     * パフォーマンス
+     */
     public performance: MP.Performance | null;
+    /**
+     * COA仮予約
+     */
     public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
+    /**
+     * 予約チケット
+     */
     public reserveTickets: ReserveTicket[] | null;
+    /**
+     * 入力情報
+     */
     public input: Input | null;
+    /**
+     * GMO TOKEN情報
+     */
     public gmo: GMO | null;
+    /**
+     * COA本予約
+     */
     public updateReserve: COA.updateReserveInterface.Result | null;
+    /**
+     * 取引MP
+     */
     public transactionMP: MP.transactionStart.Result | null;
+    /**
+     * 取引GMO
+     */
     public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
+    /**
+     * COAオーソリ
+     */
     public authorizationCOA: MP.addCOAAuthorization.Result | null;
+    /**
+     * GMOオーソリ
+     */
     public authorizationGMO: MP.addGMOAuthorization.Result | null;
+    /**
+     * オーダーID
+     */
     public orderId: string | null;
-    public expired: number | null; 
+    /**
+     * 有効期限
+     */
+    public expired: number | null;
 
+    /**
+     * @constructor
+     */
     constructor(session: any) {
         if (!session) {
             session = {};
@@ -73,12 +166,11 @@ export class PurchaseModel {
         this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
         this.orderId = (session.orderId) ? session.orderId : null;
         this.expired = (session.expired) ? session.expired : null;
-
-
     }
 
     /**
      * セッションObjectへ変換
+     * @method
      */
     public formatToSession(): {
         performance: MP.Performance | null,
@@ -92,7 +184,7 @@ export class PurchaseModel {
         authorizationCOA: MP.addCOAAuthorization.Result | null,
         authorizationGMO: MP.addGMOAuthorization.Result | null,
         orderId: string | null,
-        expired: number | null,
+        expired: number | null
     } {
 
         return {
@@ -107,13 +199,13 @@ export class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null,
+            expired: (this.expired) ? this.expired : null
         };
     }
 
-
     /**
      * ステータス確認
+     * @method
      */
     public accessAuth(value: number): boolean {
         let result: boolean = false;
@@ -133,6 +225,7 @@ export class PurchaseModel {
 
     /**
      * 合計金額取得
+     * @method
      */
     public getReserveAmount(): number {
         const reserveTickets = this.reserveTickets;
@@ -146,16 +239,39 @@ export class PurchaseModel {
 
     /**
      * チケットリスト返却
+     * @method
      */
-    public getTicketList(): {
+    public getTicketList(): Array<{
+        /**
+         * チケット番号
+         */
         ticket_code: string,
-        std_price: number,  /** 標準単価 */
-        add_price: number, /** 加算単価 */
-        dis_price: number, /** 割引額 */
-        sale_price: number, /** 金額 */
-        ticket_count: number, /** 枚数 */
-        seat_num: string, /** 座席番号 */
-    }[] {
+        /**
+         * 標準単価
+         */
+        std_price: number,
+        /**
+         * 加算単価
+         */
+        add_price: number,
+        /**
+         * 割引額
+         */
+        dis_price: number,
+        /**
+         * 金額
+         */
+        sale_price: number,
+        /**
+         * 枚数
+         */
+        ticket_count: number,
+        /**
+         * 座席番号
+         */
+        // tslint:disable-next-line:trailing-comma
+        seat_num: string
+    }> {
         const results = [];
         if (!this.reserveTickets) return [];
         for (const ticket of this.reserveTickets) {

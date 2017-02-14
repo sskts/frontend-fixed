@@ -1,13 +1,18 @@
 
 import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
-import COA = require("@motionpicture/coa-service");
-import MP = require('../../../../libs/MP');
+import * as COA from '@motionpicture/coa-service';
+import * as MP from '../../../../libs/MP';
 import moment = require('moment');
 
+/**
+ * 購入確認
+ * @namespace
+ */
 namespace ConfirmModule {
     /**
      * 購入者内容確認
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -38,6 +43,7 @@ namespace ConfirmModule {
 
     /**
      * 座席本予約
+     * @function
      */
     async function updateReserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
         if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
@@ -55,9 +61,6 @@ namespace ConfirmModule {
                 type: 'expired'
             };
         }
-
-
-
 
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
@@ -77,7 +80,7 @@ namespace ConfirmModule {
                 tel_num: input.tel_num,
                 mail_addr: input.mail_addr,
                 reserve_amount: purchaseModel.getReserveAmount(),
-                list_ticket: purchaseModel.getTicketList(),
+                list_ticket: purchaseModel.getTicketList()
             });
             console.log('COA本予約', purchaseModel.updateReserve);
         } catch (err) {
@@ -93,7 +96,7 @@ namespace ConfirmModule {
             name_first: input.first_name_hira,
             name_last: input.last_name_hira,
             tel: input.tel_num,
-            email: input.mail_addr,
+            email: input.mail_addr
         });
         console.log('MP購入者情報登録');
 
@@ -102,7 +105,7 @@ namespace ConfirmModule {
             transactionId: purchaseModel.transactionMP._id,
             inquiry_theater: purchaseModel.performance.attributes.theater._id,
             inquiry_id: purchaseModel.updateReserve.reserve_num,
-            inquiry_pass: purchaseModel.input.tel_num,
+            inquiry_pass: purchaseModel.input.tel_num
         });
         console.log('MP照会情報登録');
 
@@ -120,14 +123,14 @@ namespace ConfirmModule {
 
         // MP取引成立
         await MP.transactionClose.call({
-            transactionId: purchaseModel.transactionMP._id,
+            transactionId: purchaseModel.transactionMP._id
         });
         console.log('MP取引成立');
     }
 
-
     /**
      * 購入確定
+     * @function
      */
     export function purchase(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -137,37 +140,39 @@ namespace ConfirmModule {
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
 
-        updateReserve(req, purchaseModel).then(() => {
-            //購入情報をセッションへ
-            if (!req.session) throw req.__('common.error.property');
-            req.session['complete'] = {
-                updateReserve: purchaseModel.updateReserve,
-                performance: purchaseModel.performance,
-                input: purchaseModel.input,
-                reserveSeats: purchaseModel.reserveSeats,
-                reserveTickets: purchaseModel.reserveTickets,
-                price: purchaseModel.getReserveAmount()
-            };
+        updateReserve(req, purchaseModel).then(
+            () => {
+                //購入情報をセッションへ
+                if (!req.session) throw req.__('common.error.property');
+                req.session['complete'] = {
+                    updateReserve: purchaseModel.updateReserve,
+                    performance: purchaseModel.performance,
+                    input: purchaseModel.input,
+                    reserveSeats: purchaseModel.reserveSeats,
+                    reserveTickets: purchaseModel.reserveTickets,
+                    price: purchaseModel.getReserveAmount()
+                };
 
-            //購入セッション削除
-            delete req.session['purchase'];
+                //購入セッション削除
+                delete req.session['purchase'];
 
-            //購入完了情報を返す
-            return res.json({
-                err: null,
-                redirect: false,
-                result: req.session['complete'].updateReserve,
-                type: null
+                //購入完了情報を返す
+                return res.json({
+                    err: null,
+                    redirect: false,
+                    result: req.session['complete'].updateReserve,
+                    type: null
+                });
+            },
+            (err) => {
+                //購入完了情報を返す
+                return res.json({
+                    err: (err.error) ? err.error.message : err.message,
+                    redirect: (err.error) ? false : true,
+                    result: null,
+                    type: (err.type) ? err.type : null
+                });
             });
-        }, (err) => {
-            //購入完了情報を返す
-            return res.json({
-                err: (err.error) ? err.error.message : err.message,
-                redirect: (err.error) ? false : true,
-                result: null,
-                type: (err.type) ? err.type : null
-            });
-        });
     }
 }
 

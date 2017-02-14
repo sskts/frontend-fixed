@@ -3,10 +3,13 @@ import express = require('express');
 import request = require('request');
 import config = require('config');
 
-
+/**
+ * パフォーマンス一覧
+ */
 namespace PerformancesModule {
     /**
      * パフォーマンス一覧表示
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -15,6 +18,7 @@ namespace PerformancesModule {
 
     /**
      * パフォーマンスリスト取得
+     * @function
      */
     export function getPerformances(req: express.Request, res: express.Response): void {
         const endpoint: string = config.get<string>('mp_api_endpoint');

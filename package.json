@@ -9,7 +9,8 @@
     "scss": "node-sass public/scss/style.scss public/css/style.css --output-style expanded -w",
     "css": "postcss -c ./.postcssrc.json",
     "css-w": "postcss -c ./.postcssrc.json -w",
-    "lint": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json"
+    "tslint": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json",
+    "tslint-fix": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json --fix"
   },
   "dependencies": {
     "@motionpicture/coa-service": "^1.1.9",

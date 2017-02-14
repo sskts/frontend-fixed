@@ -1,7 +1,11 @@
 import express = require('express');
 import InquiryModule from '../modules/Inquiry/InquiryModule';
 
-let router = express.Router();
+/**
+ * ルーティング照会
+ */
+
+const router = express.Router();
 
 //チケット照会ログイン
 router.get('/login', InquiryModule.login);
@@ -12,4 +16,4 @@ router.post('/login', InquiryModule.auth);
 //チケット照会
 router.get('/:transactionId/', InquiryModule.index);
 
-export default router; 
+export default router;

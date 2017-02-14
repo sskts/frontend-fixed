@@ -1,18 +1,22 @@
 import express = require('express');
-import PerformancesModule from '../modules/Performances/PerformancesModule';
 import ErrorModule from '../modules/Error/ErrorModule';
+import PerformancesModule from '../modules/Performances/PerformancesModule';
 import UtilModule from '../modules/Util/UtilModule';
 
-import purchase from './purchase';
 import inquiry from './inquiry';
 import method from './method';
-
+import purchase from './purchase';
 
 const router = express.Router();
+/**
+ * ルーティング
+ * @method
+ */
 export default (app: express.Application) => {
 
     app.use(UtilModule.setLocals);
 
+    // tslint:disable-next-line:variable-name
     router.get('/', (_req, res, _next) => {
         res.redirect('/performances');
     });
@@ -24,6 +28,7 @@ export default (app: express.Application) => {
     router.post('/performances', PerformancesModule.getPerformances);
 
     //再起動
+    // tslint:disable-next-line:variable-name
     router.get('/500', (_req, _res, _next) => {
         process.exit(1);
     });
@@ -46,5 +51,4 @@ export default (app: express.Application) => {
 
     // 404
     app.use(ErrorModule.notFound);
-}
-
+};

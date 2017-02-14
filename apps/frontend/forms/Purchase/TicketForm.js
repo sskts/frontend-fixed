@@ -1,6 +1,9 @@
 "use strict";
 const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 購入券種選択
+ */
 exports.default = (req) => {
     return form(form.field('reserve_tickets', req.__('common.ticket')).trim().required().custom((value) => {
         try {

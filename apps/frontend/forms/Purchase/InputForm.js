@@ -1,6 +1,9 @@
 "use strict";
 const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 購入情報入力フォーム
+ */
 exports.default = (req) => {
     return form(form.field('last_name_hira', req.__('common.last_name_hira')).trim()
         .required('', `%s${req.__('common.validation.required')}`)

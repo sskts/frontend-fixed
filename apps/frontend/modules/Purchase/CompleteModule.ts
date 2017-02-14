@@ -3,10 +3,14 @@ import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 
 
-
+/**
+ * 購入完了
+ * @namespace
+ */
 namespace CompleteModule {
     /**
      * 購入完了表示
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));

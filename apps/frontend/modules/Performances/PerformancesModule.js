@@ -1,14 +1,25 @@
 "use strict";
 const request = require("request");
 const config = require("config");
+/**
+ * パフォーマンス一覧
+ */
 var PerformancesModule;
 (function (PerformancesModule) {
+    /**
+     * パフォーマンス一覧表示
+     * @function
+     */
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
         return res.render('performance');
     }
     PerformancesModule.index = index;
+    /**
+     * パフォーマンスリスト取得
+     * @function
+     */
     function getPerformances(req, res) {
         const endpoint = config.get('mp_api_endpoint');
         const method = 'performances';

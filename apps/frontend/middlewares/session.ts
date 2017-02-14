@@ -1,10 +1,13 @@
 import session = require('express-session');
 import config = require('config');
 import connectRedis = require('connect-redis');
-// import redis = require('redis');
 const redis = require('redis');
 
-let redisClient = redis.createClient(
+/**
+ * セッション
+ */
+
+const redisClient = redis.createClient(
     config.get<number>('redis_port'),
     config.get<string>('redis_host'),
     {
@@ -16,10 +19,10 @@ let redisClient = redis.createClient(
     }
 );
 
-let RedisStore = connectRedis(session);
+const RedisStore = connectRedis(session);
 
 export default session({
-    secret: 'FrontendSecret', 
+    secret: 'FrontendSecret',
     resave: false,
     rolling: true,
     saveUninitialized: false,

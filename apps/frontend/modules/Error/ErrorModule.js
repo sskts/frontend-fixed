@@ -1,30 +1,42 @@
 "use strict";
+/**
+ * エラー
+ * @namespace
+ */
 var ErrorModule;
 (function (ErrorModule) {
+    /**
+     * Not Found
+     * @function
+     */
     function notFound(req, res, _next) {
         const status = 404;
         if (req.xhr) {
-            res.status(status).send({ error: "Not Found." });
+            res.status(status).send({ error: 'Not Found.' });
         }
         else {
             res.status(status);
-            return res.render("error/notFound");
+            return res.render('error/notFound');
         }
     }
     ErrorModule.notFound = notFound;
+    /**
+     * エラーページ
+     * @function
+     */
     function index(err, req, res, _next) {
         console.log(err.stack);
         if (req.session)
-            delete req.session["purchase"];
+            delete req.session['purchase'];
         const status = 500;
         if (req.xhr) {
-            res.status(status).send({ error: "Something failed." });
+            res.status(status).send({ error: 'Something failed.' });
         }
         else {
             res.status(status);
             res.locals.message = err.message;
             res.locals.error = err;
-            return res.render("error/error");
+            return res.render('error/error');
         }
     }
     ErrorModule.index = index;

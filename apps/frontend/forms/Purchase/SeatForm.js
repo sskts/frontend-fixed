@@ -1,6 +1,9 @@
 "use strict";
 const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 購入座席選択
+ */
 exports.default = (req) => {
     return form(form.field('seats', '座席').trim().required().custom((value) => {
         try {

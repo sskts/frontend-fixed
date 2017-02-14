@@ -11,6 +11,9 @@ const request = require("request-promise-native");
 const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
 const endPoint = config.get('mp_api_endpoint');
+/**
+ * パフォーマンス取得
+ */
 var getPerformance;
 (function (getPerformance) {
     function call(args) {
@@ -30,6 +33,9 @@ var getPerformance;
     }
     getPerformance.call = call;
 })(getPerformance = exports.getPerformance || (exports.getPerformance = {}));
+/**
+ * 取引開始
+ */
 var transactionStart;
 (function (transactionStart) {
     function call(args) {
@@ -52,6 +58,9 @@ var transactionStart;
     }
     transactionStart.call = call;
 })(transactionStart = exports.transactionStart || (exports.transactionStart = {}));
+/**
+ * COAオーソリ追加
+ */
 var addCOAAuthorization;
 (function (addCOAAuthorization) {
     function call(args) {
@@ -105,6 +114,9 @@ var addCOAAuthorization;
     }
     addCOAAuthorization.call = call;
 })(addCOAAuthorization = exports.addCOAAuthorization || (exports.addCOAAuthorization = {}));
+/**
+ * COAオーソリ削除
+ */
 var removeCOAAuthorization;
 (function (removeCOAAuthorization) {
     function call(args) {
@@ -123,6 +135,9 @@ var removeCOAAuthorization;
     }
     removeCOAAuthorization.call = call;
 })(removeCOAAuthorization = exports.removeCOAAuthorization || (exports.removeCOAAuthorization = {}));
+/**
+ * GMOオーソリ追加
+ */
 var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
@@ -160,6 +175,9 @@ var addGMOAuthorization;
     }
     addGMOAuthorization.call = call;
 })(addGMOAuthorization = exports.addGMOAuthorization || (exports.addGMOAuthorization = {}));
+/**
+ * GMOオーソリ削除
+ */
 var removeGMOAuthorization;
 (function (removeGMOAuthorization) {
     function call(args) {
@@ -178,6 +196,9 @@ var removeGMOAuthorization;
     }
     removeGMOAuthorization.call = call;
 })(removeGMOAuthorization = exports.removeGMOAuthorization || (exports.removeGMOAuthorization = {}));
+/**
+ * 購入者情報登録
+ */
 var ownersAnonymous;
 (function (ownersAnonymous) {
     function call(args) {
@@ -201,6 +222,7 @@ var ownersAnonymous;
     }
     ownersAnonymous.call = call;
 })(ownersAnonymous = exports.ownersAnonymous || (exports.ownersAnonymous = {}));
+// 照会情報登録(購入番号と電話番号で照会する場合)
 var transactionsEnableInquiry;
 (function (transactionsEnableInquiry) {
     function call(args) {
@@ -223,6 +245,9 @@ var transactionsEnableInquiry;
     }
     transactionsEnableInquiry.call = call;
 })(transactionsEnableInquiry = exports.transactionsEnableInquiry || (exports.transactionsEnableInquiry = {}));
+/**
+ * 取引成立
+ */
 var transactionClose;
 (function (transactionClose) {
     function call(args) {
@@ -241,6 +266,9 @@ var transactionClose;
     }
     transactionClose.call = call;
 })(transactionClose = exports.transactionClose || (exports.transactionClose = {}));
+/**
+ * メール追加
+ */
 var addEmail;
 (function (addEmail) {
     function call(args) {
@@ -265,6 +293,9 @@ var addEmail;
     }
     addEmail.call = call;
 })(addEmail = exports.addEmail || (exports.addEmail = {}));
+/**
+ * メール削除
+ */
 var removeEmail;
 (function (removeEmail) {
     function call(args) {
@@ -283,6 +314,9 @@ var removeEmail;
     }
     removeEmail.call = call;
 })(removeEmail = exports.removeEmail || (exports.removeEmail = {}));
+/**
+ * 照会取引情報取得
+ */
 var makeInquiry;
 (function (makeInquiry) {
     function call(args) {

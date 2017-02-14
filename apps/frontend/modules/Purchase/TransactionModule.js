@@ -10,8 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const MP = require("../../../../libs/MP");
 const moment = require("moment");
+/**
+ * 取引
+ * @namespace
+ */
 var TransactionModule;
 (function (TransactionModule) {
+    /**
+     * 取引開始
+     * @function
+     */
     function start(req, res, next) {
         if (!req.params || !req.params.id)
             return next(new Error(req.__('common.error.access')));
@@ -19,24 +27,33 @@ var TransactionModule;
             return next(req.__('common.error.property'));
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
+            //重複確認へ
             return res.redirect('/purchase/' + req.params['id'] + '/overlap');
         }
         transactionStart(purchaseModel).then(() => {
             if (!req.session)
                 return next(req.__('common.error.property'));
             delete req.session['purchase'];
+            //セッション更新
             req.session['purchase'] = purchaseModel.formatToSession();
+            //座席選択へ
             return res.redirect('/purchase/seat/' + req.params.id + '/');
         }, (err) => {
             return next(new Error(err.message));
         });
     }
     TransactionModule.start = start;
+    /**
+     * 取引開始
+     * @function
+     */
     function transactionStart(purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
-            purchaseModel.expired = moment().add('minutes', 30).unix();
+            // 取引開始
+            const minutes = 30;
+            purchaseModel.expired = moment().add('minutes', minutes).unix();
             purchaseModel.transactionMP = yield MP.transactionStart.call({
-                expired_at: purchaseModel.expired,
+                expired_at: purchaseModel.expired
             });
             console.log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
         });

@@ -10,10 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const config = require("config");
 const COA = require("@motionpicture/coa-service");
-const MP = require("../../../../libs/MP");
 const GMO = require("@motionpicture/gmo-service");
+const MP = require("../../../../libs/MP");
+/**
+ * 重複予約
+ * @namespace
+ */
 var OverlapModule;
 (function (OverlapModule) {
+    /**
+     * 仮予約重複
+     * @function
+     */
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -22,12 +30,13 @@ var OverlapModule;
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
+        //パフォーマンス取得
         MP.getPerformance.call({
             id: req.params.id
         }).then((result) => {
             res.locals['performances'] = {
                 after: result,
-                before: purchaseModel.performance,
+                before: purchaseModel.performance
             };
             return res.render('purchase/overlap');
         }, (err) => {
@@ -35,6 +44,10 @@ var OverlapModule;
         });
     }
     OverlapModule.index = index;
+    /**
+     * 新規予約へ
+     * @function
+     */
     function newReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -42,6 +55,7 @@ var OverlapModule;
         removeReserve(req, purchaseModel).then(() => {
             if (!req.session)
                 return next(req.__('common.error.property'));
+            //購入スタートへ
             delete req.session['purchase'];
             return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
         }, (err) => {
@@ -49,12 +63,21 @@ var OverlapModule;
         });
     }
     OverlapModule.newReserve = newReserve;
+    /**
+     * 前回の予約へ
+     * @function
+     */
     function prevReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
+        //座席選択へ
         return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
     }
     OverlapModule.prevReserve = prevReserve;
+    /**
+     * 仮予約取り消し
+     * @function
+     */
     function removeReserve(req, purchaseModel) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!purchaseModel.performance)
@@ -67,15 +90,17 @@ var OverlapModule;
                 throw new Error(req.__('common.error.property'));
             const performance = purchaseModel.performance;
             const reserveSeats = purchaseModel.reserveSeats;
+            //COA仮予約削除
             yield COA.deleteTmpReserveInterface.call({
                 theater_code: performance.attributes.theater._id,
                 date_jouei: performance.attributes.day,
                 title_code: performance.attributes.film.coa_title_code,
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
                 time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num,
+                tmp_reserve_num: reserveSeats.tmp_reserve_num
             });
             console.log('COA仮予約削除');
+            // COAオーソリ削除
             yield MP.removeCOAAuthorization.call({
                 transactionId: purchaseModel.transactionMP._id,
                 coaAuthorizationId: purchaseModel.authorizationCOA._id
@@ -84,6 +109,7 @@ var OverlapModule;
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO
                 && purchaseModel.orderId) {
+                //GMOオーソリ取消
                 yield GMO.CreditService.alterTranInterface.call({
                     shop_id: config.get('gmo_shop_id'),
                     shop_pass: config.get('gmo_shop_password'),
@@ -92,9 +118,10 @@ var OverlapModule;
                     job_cd: GMO.Util.JOB_CD_VOID
                 });
                 console.log('GMOオーソリ取消');
+                // GMOオーソリ削除
                 yield MP.removeGMOAuthorization.call({
                     transactionId: purchaseModel.transactionMP._id,
-                    gmoAuthorizationId: purchaseModel.authorizationGMO._id,
+                    gmoAuthorizationId: purchaseModel.authorizationGMO._id
                 });
                 console.log('GMOオーソリ削除');
             }

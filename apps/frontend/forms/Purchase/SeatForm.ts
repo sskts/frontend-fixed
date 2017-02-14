@@ -7,6 +7,9 @@ interface seat {
     seat_section: string;
 }
 
+/**
+ * 購入座席選択
+ */
 export default (req: express.Request) => {
     return form(
         form.field('seats', '座席').trim().required().custom((value: string) => {

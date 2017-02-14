@@ -12,8 +12,16 @@ const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 const UtilModule_1 = require("../Util/UtilModule");
+/**
+ * 照会
+ * @namespace
+ */
 var InquiryModule;
 (function (InquiryModule) {
+    /**
+     * 照会認証ページ表示
+     * @function
+     */
     function login(_req, res) {
         res.locals.theater_code = '';
         res.locals.reserve_num = '';
@@ -27,6 +35,10 @@ var InquiryModule;
         return res.render('inquiry/login');
     }
     InquiryModule.login = login;
+    /**
+     * 照会認証
+     * @function
+     */
     function auth(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -37,6 +49,7 @@ var InquiryModule;
                 return next(req.__('common.error.property'));
             if (req.form.isValid) {
                 getStateReserve(req, inquiryModel).then(() => {
+                    //購入者内容確認へ
                     return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 }, (err) => {
                     return next(new Error(err.message));
@@ -49,19 +62,41 @@ var InquiryModule;
         });
     }
     InquiryModule.auth = auth;
+    /**
+     * 照会情報取得
+     * @function
+     */
     function getStateReserve(req, inquiryModel) {
         return __awaiter(this, void 0, void 0, function* () {
             inquiryModel.transactionId = yield MP.makeInquiry.call({
+                /**
+                 * 施設コード
+                 */
                 inquiry_theater: req.body.theater_code,
+                /**
+                 * 座席チケット購入番号
+                 */
                 inquiry_id: req.body.reserve_num,
-                inquiry_pass: req.body.tel_num,
+                /**
+                 * 電話番号
+                 */
+                inquiry_pass: req.body.tel_num
             });
             console.log('MP取引Id取得', inquiryModel.transactionId);
             inquiryModel.login = req.body;
             inquiryModel.stateReserve = yield COA.stateReserveInterface.call({
+                /**
+                 * 施設コード
+                 */
                 theater_code: req.body.theater_code,
+                /**
+                 * 座席チケット購入番号
+                 */
                 reserve_num: req.body.reserve_num,
-                tel_num: req.body.tel_num,
+                /**
+                 * 電話番号
+                 */
+                tel_num: req.body.tel_num
             });
             console.log('COA照会情報取得');
             const performanceId = UtilModule_1.default.getPerformanceId({
@@ -82,6 +117,10 @@ var InquiryModule;
             req.session['inquiry'] = inquiryModel.formatToSession();
         });
     }
+    /**
+     * 照会確認ページ表示
+     * @function
+     */
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
@@ -97,6 +136,7 @@ var InquiryModule;
             return res.render('inquiry/index');
         }
         else {
+            //照会認証ページへ
             return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
         }
     }

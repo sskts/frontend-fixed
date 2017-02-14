@@ -3,14 +3,18 @@ import express = require('express');
 import SeatForm from '../../forms/Purchase/SeatForm';
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import config = require('config');
-import COA = require('@motionpicture/coa-service');
-import MP = require('../../../../libs/MP');
-import GMO = require("@motionpicture/gmo-service");
+import * as COA from '@motionpicture/coa-service';
+import * as GMO from '@motionpicture/gmo-service';
+import * as MP from '../../../../libs/MP';
 
-
+/**
+ * 購入座席選択
+ * @namespace
+ */
 namespace SeatModule {
     /**
      * 座席選択
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -22,59 +26,64 @@ namespace SeatModule {
         //パフォーマンス取得
         MP.getPerformance.call({
             id: req.params.id
-        }).then((result) => {
-            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals.performance = result;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-            res.locals.reserveSeats = null;
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+        }).then(
+            (result) => {
+                if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+                res.locals.performance = result;
+                res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+                res.locals.reserveSeats = null;
+                res.locals.transactionId = purchaseModel.transactionMP._id;
 
 
-            //仮予約中
-            if (purchaseModel.reserveSeats) {
-                console.log('仮予約中')
-                res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
-            }
-            purchaseModel.performance = result;
+                //仮予約中
+                if (purchaseModel.reserveSeats) {
+                    console.log('仮予約中');
+                    res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
+                }
+                purchaseModel.performance = result;
 
-            //セッション更新
-            if (!req.session) return next(req.__('common.error.property'));
-            req.session['purchase'] = purchaseModel.formatToSession();
+                //セッション更新
+                if (!req.session) return next(req.__('common.error.property'));
+                req.session['purchase'] = purchaseModel.formatToSession();
 
-            res.locals.error = null;
-            return res.render('purchase/seat');
-        }, (err) => {
-            return next(new Error(err.message));
-        });
+                res.locals.error = null;
+                return res.render('purchase/seat');
+            },
+            (err) => {
+                return next(new Error(err.message));
+            });
     }
 
     /**
      * 座席決定
+     * @function
      */
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property'))); 
-        console.log('座席決定1',req.body.transaction_id, purchaseModel.transactionMP._id)
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+        console.log('座席決定1', req.body.transaction_id, purchaseModel.transactionMP._id);
         //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));       
-        console.log('座席決定2')
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+        console.log('座席決定2');
 
         //バリデーション
         const form = SeatForm(req);
         form(req, res, () => {
             if (!req.form) return next(req.__('common.error.property'));
             if (req.form.isValid) {
-                reserve(req, purchaseModel).then(() => {
+                reserve(req, purchaseModel).then(
+                    () => {
 
-                    //セッション更新
-                    if (!req.session) return next(req.__('common.error.property'));
-                    req.session['purchase'] = purchaseModel.formatToSession();
-                    //券種選択へ
-                    return res.redirect('/purchase/ticket');
-                }, (err) => {
-                    return next(new Error(err.message));
-                });
+                        //セッション更新
+                        if (!req.session) return next(req.__('common.error.property'));
+                        req.session['purchase'] = purchaseModel.formatToSession();
+                        //券種選択へ
+                        return res.redirect('/purchase/ticket');
+                    },
+                    (err) => {
+                        return next(new Error(err.message));
+                    });
             } else {
                 if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
                 res.locals.transactionId = purchaseModel.transactionMP;
@@ -91,13 +100,12 @@ namespace SeatModule {
 
     /**
      * 座席仮予約
+     * @function
      */
     async function reserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
         if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
         if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
-
-        let performance = purchaseModel.performance;
-
+        const performance = purchaseModel.performance;
         //予約中
         if (purchaseModel.reserveSeats) {
             if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
@@ -110,19 +118,15 @@ namespace SeatModule {
                 title_code: performance.attributes.film.coa_title_code,
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
                 time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num,
+                tmp_reserve_num: reserveSeats.tmp_reserve_num
             });
-
             console.log('COA仮予約削除');
-
             // COAオーソリ削除
             await MP.removeCOAAuthorization.call({
                 transactionId: purchaseModel.transactionMP._id,
-                coaAuthorizationId: purchaseModel.authorizationCOA._id,
+                coaAuthorizationId: purchaseModel.authorizationCOA._id
             });
-
             console.log('MPCOAオーソリ削除');
-
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO) {
                 //GMOオーソリ取消
@@ -133,43 +137,26 @@ namespace SeatModule {
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID
                 });
-                
                 console.log('GMOオーソリ取消');
-
                 // GMOオーソリ削除
                 await MP.removeGMOAuthorization.call({
                     transactionId: purchaseModel.transactionMP._id,
-                    gmoAuthorizationId: purchaseModel.authorizationGMO._id,
+                    gmoAuthorizationId: purchaseModel.authorizationGMO._id
                 });
                 console.log('GMOオーソリ削除');
-
             }
         }
-
-
-
-
-
         //COA仮予約
         const seats = JSON.parse(req.body.seats);
-
         purchaseModel.reserveSeats = await COA.reserveSeatsTemporarilyInterface.call({
-            /** 施設コード */
             theater_code: performance.attributes.theater._id,
-            /** 上映日 */
             date_jouei: performance.attributes.day,
-            /** 作品コード */
             title_code: performance.attributes.film.coa_title_code,
-            /** 作品枝番 */
             title_branch_num: performance.attributes.film.coa_title_branch_num,
-            /** 上映時刻 */
             time_begin: performance.attributes.time_start,
-            /** 予約座席数 */
             // cnt_reserve_seat: number,
-            /** スクリーンコード */
             screen_code: performance.attributes.screen.coa_screen_code,
-            /** 予約座席リスト */
-            list_seat: seats.list_tmp_reserve,
+            list_seat: seats.list_tmp_reserve
         });
         console.log('COA仮予約', purchaseModel.reserveSeats);
 
@@ -185,8 +172,8 @@ namespace SeatModule {
                 std_price: 0,
                 add_price: 0,
                 dis_price: 0,
-                sale_price: 0,
-            }
+                sale_price: 0
+            };
         });
 
         //COAオーソリ追加
@@ -198,28 +185,28 @@ namespace SeatModule {
             totalPrice: purchaseModel.getReserveAmount()
         });
         console.log('MPCOAオーソリ追加', COAAuthorizationResult);
-
         purchaseModel.authorizationCOA = COAAuthorizationResult;
-
     }
-
 
     /**
      * スクリーン状態取得
+     * @function
      */
     export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
-        
-        COA.getStateReserveSeatInterface.call(req.body).then((result) => {
-            res.json({
-                err: null,
-                result: result
+
+        COA.getStateReserveSeatInterface.call(req.body).then(
+            (result) => {
+                res.json({
+                    err: null,
+                    result: result
+                });
+            },
+            (err) => {
+                res.json({
+                    err: err,
+                    result: null
+                });
             });
-        }, (err) => {
-            res.json({
-                err: err,
-                result: null
-            });
-        });
     }
 }
 

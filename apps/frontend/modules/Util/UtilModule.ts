@@ -2,13 +2,13 @@
 import express = require('express');
 import moment = require('moment');
 
-
-
-
+/**
+ * 共通
+ */
 namespace UtilModule {
     /**
      * テンプレート変数へ渡す
-     * 
+     * @function
      */
     export function setLocals(_req: express.Request, res: express.Response, next: express.NextFunction): void {
         res.locals.escapeHtml = escapeHtml;
@@ -19,42 +19,42 @@ namespace UtilModule {
 
     /**
      * HTMLエスケープ
-     * 
+     * @function
      */
     export function escapeHtml(string: string): string {
-        if(typeof string !== 'string') {
+        if (typeof string !== 'string') {
             return string;
         }
-        const change = (match: string): string =>{
+        const change = (match: string): string => {
             const changeList: any = {
             '&': '&amp;',
-            "'": '&#x27;',
+            '\'': '&#x27;',
             '`': '&#x60;',
             '"': '&quot;',
             '<': '&lt;',
-            '>': '&gt;',
+            '>': '&gt;'
             };
             return changeList[match];
-        }
+        };
         return string.replace(/[&'`"<>]/g, change);
     }
 
     /**
      * カンマ区切りへ変換
-     * 
+     * @function
      */
     export function formatPrice(price: number): string {
         return String(price).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
     }
 
     /**
-     * 
      * パフォーマンスID取得
+     * @function
      */
     export function getPerformanceId(args: {
-        theaterCode: string, 
-        day: string, 
-        titleCode: string, 
+        theaterCode: string,
+        day: string,
+        titleCode: string,
         titleBranchNum: string,
         screenCode: string,
         timeBegin: string

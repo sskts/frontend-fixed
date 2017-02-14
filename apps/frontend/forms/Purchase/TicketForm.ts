@@ -3,6 +3,9 @@ import form = require('express-form');
 import express = require('express');
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 
+/**
+ * 購入券種選択
+ */
 export default (req: express.Request) => {
     return form(
         form.field('reserve_tickets', req.__('common.ticket')).trim().required().custom((value: string) => {

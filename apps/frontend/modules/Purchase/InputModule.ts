@@ -4,13 +4,17 @@ import InputForm from '../../forms/Purchase/InputForm';
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import config = require('config');
 // import COA = require("@motionpicture/coa-service");
-import GMO = require("@motionpicture/gmo-service");
-import MP = require('../../../../libs/MP');
+import * as GMO from '@motionpicture/gmo-service';
+import * as MP from '../../../../libs/MP';
 
-
+/**
+ * 購入情報入力
+ * @namespace
+ */
 namespace InputModule {
     /**
      * 購入者情報入力
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -28,7 +32,6 @@ namespace InputModule {
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP._id;
 
-
         if (purchaseModel.input) {
             res.locals.input = purchaseModel.input;
         } else {
@@ -40,8 +43,7 @@ namespace InputModule {
                 tel_num: '',
                 agree: ''
             };
-        };
-
+        }
 
         if (process.env.NODE_ENV === 'dev' && !purchaseModel.input) {
             res.locals.input = {
@@ -50,7 +52,7 @@ namespace InputModule {
                 mail_addr: 'hataguchi@motionpicture.jp',
                 mail_confirm: 'hataguchi@motionpicture.jp',
                 tel_num: '09040007648'
-            }
+            };
         }
 
         //セッション更新
@@ -62,6 +64,7 @@ namespace InputModule {
 
     /**
      * 購入者情報入力完了
+     * @function
      */
     export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -90,30 +93,32 @@ namespace InputModule {
                     //決済情報をセッションへ
                     purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
                     //オーソリ追加
-                    addAuthorization(req, purchaseModel).then(() => {
-                        //セッション更新
-                        if (!req.session) return next(req.__('common.error.property'));
-                        req.session['purchase'] = purchaseModel.formatToSession();
-                        //購入者内容確認へ
-                        return res.redirect('/purchase/confirm');
-                    }, (err) => {
-                        if (!err.hasOwnProperty('type')) return next(new Error(err.message));
-                        if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
-                        //GMOオーソリ追加失敗
-                        res.locals.error = {
-                            cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
-                            expire: [`${req.__('common.expire')}${req.__('common.validation.card')}`],
-                            securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`]
-                        };;
-                        res.locals.input = req.body;
-                        res.locals.step = 2;
-                        res.locals.gmoModuleUrl = config.get<string>('gmo_module_url');
-                        res.locals.gmoShopId = config.get<string>('gmo_shop_id');
-                        res.locals.price = purchaseModel.getReserveAmount();
-                        res.locals.transactionId = purchaseModel.transactionMP._id;
+                    addAuthorization(req, purchaseModel).then(
+                        () => {
+                            //セッション更新
+                            if (!req.session) return next(req.__('common.error.property'));
+                            req.session['purchase'] = purchaseModel.formatToSession();
+                            //購入者内容確認へ
+                            return res.redirect('/purchase/confirm');
+                        },
+                        (err) => {
+                            if (!err.hasOwnProperty('type')) return next(new Error(err.message));
+                            if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
+                            //GMOオーソリ追加失敗
+                            res.locals.error = {
+                                cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
+                                expire: [`${req.__('common.expire')}${req.__('common.validation.card')}`],
+                                securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`]
+                            };
+                            res.locals.input = req.body;
+                            res.locals.step = 2;
+                            res.locals.gmoModuleUrl = config.get<string>('gmo_module_url');
+                            res.locals.gmoShopId = config.get<string>('gmo_shop_id');
+                            res.locals.price = purchaseModel.getReserveAmount();
+                            res.locals.transactionId = purchaseModel.transactionMP._id;
 
-                        return res.render('purchase/input');
-                    });
+                            return res.render('purchase/input');
+                        });
 
 
                 } else {
@@ -143,6 +148,7 @@ namespace InputModule {
 
     /**
      * オーソリ追加
+     * @function
      */
     async function addAuthorization(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
         if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
@@ -173,8 +179,6 @@ namespace InputModule {
                 gmoAuthorizationId: purchaseModel.authorizationGMO._id
             });
             console.log('GMOオーソリ削除');
-
-
         }
 
         try {
@@ -214,13 +218,7 @@ namespace InputModule {
                 type: 'addAuthorization'
             };
         }
-
     }
 }
 
 export default InputModule;
-
-
-
-
-

@@ -1,7 +1,14 @@
 "use strict";
 const moment = require("moment");
+/**
+ * 共通
+ */
 var UtilModule;
 (function (UtilModule) {
+    /**
+     * テンプレート変数へ渡す
+     * @function
+     */
     function setLocals(_req, res, next) {
         res.locals.escapeHtml = escapeHtml;
         res.locals.formatPrice = formatPrice;
@@ -9,6 +16,10 @@ var UtilModule;
         return next();
     }
     UtilModule.setLocals = setLocals;
+    /**
+     * HTMLエスケープ
+     * @function
+     */
     function escapeHtml(string) {
         if (typeof string !== 'string') {
             return string;
@@ -16,21 +27,29 @@ var UtilModule;
         const change = (match) => {
             const changeList = {
                 '&': '&amp;',
-                "'": '&#x27;',
+                '\'': '&#x27;',
                 '`': '&#x60;',
                 '"': '&quot;',
                 '<': '&lt;',
-                '>': '&gt;',
+                '>': '&gt;'
             };
             return changeList[match];
         };
         return string.replace(/[&'`"<>]/g, change);
     }
     UtilModule.escapeHtml = escapeHtml;
+    /**
+     * カンマ区切りへ変換
+     * @function
+     */
     function formatPrice(price) {
         return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
     }
     UtilModule.formatPrice = formatPrice;
+    /**
+     * パフォーマンスID取得
+     * @function
+     */
     function getPerformanceId(args) {
         return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
     }

@@ -3,14 +3,18 @@ import express = require('express');
 import TicketForm from '../../forms/Purchase/TicketForm';
 import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import config = require('config');
-import COA = require("@motionpicture/coa-service");
-import GMO = require("@motionpicture/gmo-service");
-import MP = require('../../../../libs/MP');
+import * as COA from '@motionpicture/coa-service';
+import * as GMO from '@motionpicture/gmo-service';
+import * as MP from '../../../../libs/MP';
 
-
+/**
+ * 購入券種選択
+ * @namespace
+ */
 namespace TicketModule {
     /**
      * 券種選択
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
@@ -25,72 +29,79 @@ namespace TicketModule {
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
-            time_begin: performance.attributes.time_start,
+            time_begin: performance.attributes.time_start
             // screen_code: performance.screen._id,
-        }).then((result) => {
-            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals.tickets = result.list_ticket;
-            res.locals.performance = performance;
-            res.locals.reserveSeats = purchaseModel.reserveSeats;
-            res.locals.reserveTickets = purchaseModel.reserveTickets;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+        }).then(
+            (result) => {
+                if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+                res.locals.tickets = result.list_ticket;
+                res.locals.performance = performance;
+                res.locals.reserveSeats = purchaseModel.reserveSeats;
+                res.locals.reserveTickets = purchaseModel.reserveTickets;
+                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                res.locals.transactionId = purchaseModel.transactionMP._id;
 
 
-            //セッション更新
-            if (!req.session) return next(req.__('common.error.property'));
-            req.session['purchase'] = purchaseModel.formatToSession();
-            //券種選択表示
-            return res.render('purchase/ticket');
-        }, (err) => {
-            return next(new Error(err.message));
-        });
+                //セッション更新
+                if (!req.session) return next(req.__('common.error.property'));
+                req.session['purchase'] = purchaseModel.formatToSession();
+                //券種選択表示
+                return res.render('purchase/ticket');
+            },
+            (err) => {
+                return next(new Error(err.message));
+            });
     }
 
     /**
      * 券種決定
+     * @function
      */
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property'))); 
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));  
-
+        if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
 
         //バリデーション
         const form = TicketForm(req);
         form(req, res, () => {
             //座席情報をセッションへ
             purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
-            ticketValidation(req, purchaseModel).then(() => {
-                console.log('券種決定完了');
-                if (req.body['mvtk']) {
-                    if (!req.session) return next(req.__('common.error.property'));
-                    //セッション更新
-                    req.session['purchase'] = purchaseModel.formatToSession();
-                    //ムビチケ入力へ
-                    return res.redirect('/purchase/mvtk');
-                } else {
-                    upDateAuthorization(req, purchaseModel).then(() => {
+            ticketValidation(req, purchaseModel).then(
+                () => {
+                    console.log('券種決定完了');
+                    if (req.body['mvtk']) {
                         if (!req.session) return next(req.__('common.error.property'));
                         //セッション更新
                         req.session['purchase'] = purchaseModel.formatToSession();
-                        //購入者情報入力へ
-                        return res.redirect('/purchase/input');
-                    }, (err) => {
-                        return next(new Error(err.message));
-                    });
-                }
-            }, (err) => {
-                return next(new Error(err.message));
-            });
+                        //ムビチケ入力へ
+                        return res.redirect('/purchase/mvtk');
+                    } else {
+                        upDateAuthorization(req, purchaseModel).then(
+                            () => {
+                                if (!req.session) return next(req.__('common.error.property'));
+                                //セッション更新
+                                req.session['purchase'] = purchaseModel.formatToSession();
+                                //購入者情報入力へ
+                                return res.redirect('/purchase/input');
+                            },
+                            (err) => {
+                                return next(new Error(err.message));
+                            });
+                    }
+                },
+                (err) => {
+                    return next(new Error(err.message));
+                });
         });
     }
 
     /**
      * 券種検証
+     * @function
      */
     async function ticketValidation(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
         if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
@@ -102,7 +113,7 @@ namespace TicketModule {
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
-            time_begin: performance.attributes.time_start,
+            time_begin: performance.attributes.time_start
             // screen_code: performance.screen._id,
         });
 
@@ -123,6 +134,7 @@ namespace TicketModule {
 
     /**
      * オーソリ追加
+     * @function
      */
     async function upDateAuthorization(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
         if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
@@ -161,7 +173,7 @@ namespace TicketModule {
             // GMOオーソリ削除
             await MP.removeGMOAuthorization.call({
                 transactionId: purchaseModel.transactionMP._id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO._id,
+                gmoAuthorizationId: purchaseModel.authorizationGMO._id
             });
             console.log('GMOオーソリ削除');
         }
@@ -175,11 +187,7 @@ namespace TicketModule {
             totalPrice: purchaseModel.getReserveAmount()
         });
         console.log('MPCOAオーソリ追加', COAAuthorizationResult);
-
         purchaseModel.authorizationCOA = COAAuthorizationResult;
-
-
-
     }
 }
 
