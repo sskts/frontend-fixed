@@ -15,28 +15,28 @@ export interface Theater {
         en: string,
         ja: string
     },
-    created_at: string,
+    created_at: string;
     name: {
         en: string,
         ja: string
-    },
-    name_kana: string,
-    updated_at: string
+    };
+    name_kana: string;
+    updated_at: string;
 }
 
 /**
  * screen
  */
 export interface Screen {
-    __v: string,
-    _id: string,
-    coa_screen_code: string,
-    created_at: string,
+    __v: string;
+    _id: string;
+    coa_screen_code: string;
+    created_at: string;
     name: {
         en: string,
         ja: string
-    },
-    seats_numbers_by_seat_grade: any[],
+    };
+    seats_numbers_by_seat_grade: any[];
     sections: Array<{
         code: string,
         name: {
@@ -46,45 +46,45 @@ export interface Screen {
         seats: Array<{
             code: string
         }>
-    }>,
-    theater: string,
-    updated_at: string
+    }>;
+    theater: string;
+    updated_at: string;
 }
 
 /**
  * film
  */
 export interface Film {
-    __v: string,
-    _id: string,
-    coa_title_branch_num: string,
-    coa_title_code: string,
-    created_at: string,
-    date_end: string,
-    date_start: string,
-    film_branch_code: string,
-    film_group: string,
-    kbn_eirin: string,
-    kbn_eizou: string,
-    kbn_jimakufukikae: string,
-    kbn_joueihousiki: string,
-    minutes: string,
+    __v: string;
+    _id: string;
+    coa_title_branch_num: string;
+    coa_title_code: string;
+    created_at: string;
+    date_end: string;
+    date_start: string;
+    film_branch_code: string;
+    film_group: string;
+    kbn_eirin: string;
+    kbn_eizou: string;
+    kbn_jimakufukikae: string;
+    kbn_joueihousiki: string;
+    minutes: string;
     name: {
         en: string,
         ja: string,
-    },
-    name_kana: string,
-    name_original: string,
-    name_short: string,
-    theater: string,
-    updated_at: string
+    };
+    name_kana: string;
+    name_original: string;
+    name_short: string;
+    theater: string;
+    updated_at: string;
 }
 
 /**
  * performance
  */
 export interface Performance {
-    _id: string,
+    _id: string;
     attributes: {
         canceled: boolean,
         day: string,
@@ -93,8 +93,8 @@ export interface Performance {
         theater: Theater,
         time_end: string,
         time_start: string
-    },
-    type: string
+    };
+    type: string;
 
 }
 
@@ -103,13 +103,13 @@ export interface Performance {
  */
 export namespace getPerformance {
     export interface Args {
-        id: string
+        id: string;
     }
     export interface Result {
         
     }
     export async function call(args: Args): Promise<Performance> {
-        let response = await request.get({
+        const response = await request.get({
             url: `${endPoint}/performances/${args.id}`,
             body: {},
             json: true,
@@ -127,11 +127,11 @@ export namespace getPerformance {
  */
 export namespace transactionStart {
     export interface Args {
-        expired_at: number,
+        expired_at: number;
     }
     export interface Result {
-        type: string,
-        _id: string,
+        type: string;
+        _id: string;
         attributes: {
             _id: string,
             status: string,
@@ -145,11 +145,11 @@ export namespace transactionStart {
             inquiry_id: string,
             inquiry_pass: string,
             queues_status: string,
-        }
+        };
     }
 
     export async function call(args: Args): Promise<Result> {
-        let response = await request.post({
+        const response = await request.post({
             url: `${endPoint}/transactions`,
             body: {
                 expired_at: args.expired_at,
@@ -159,7 +159,7 @@ export namespace transactionStart {
             resolveWithFullResponse: true,
         });
         if (response.statusCode !== 201) throw new Error(response.body.message);
-        let transaction = response.body.data;
+        const transaction = response.body.data;
         console.log('transaction:', transaction);
 
         return transaction;
@@ -171,8 +171,8 @@ export namespace transactionStart {
  */
 export namespace addCOAAuthorization {
     export interface Args {
-        transaction: transactionStart.Result,
-        reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result,
+        transaction: transactionStart.Result;
+        reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result;
         salesTicketResults: Array<{
             section: string,
             seat_code: string,
@@ -184,26 +184,26 @@ export namespace addCOAAuthorization {
             add_price: number,
             dis_price: number,
             sale_price: number
-        }>,
-        performance: Performance,
-        totalPrice: number,
+        }>;
+        performance: Performance;
+        totalPrice: number;
 
     }
     export interface Result {
-        type: string,
-        _id: string
+        type: string;
+        _id: string;
     }
     export async function call(args: Args): Promise<Result> {
-        let promoterOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === "PROMOTER");
+        const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'PROMOTER');
         });
-        let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
-        let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === "ANONYMOUS");
+        const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'ANONYMOUS');
         });
-        let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
 
-        let response = await request.post({
+        const response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
             body: {
                 owner_id_from: promoterOwnerId,
@@ -228,7 +228,7 @@ export namespace addCOAAuthorization {
                         add_price: tmpReserve.add_price,
                         dis_price: tmpReserve.dis_price,
                         sale_price: tmpReserve.sale_price,
-                    }
+                    };
                 }),
                 price: args.totalPrice,
             },
@@ -248,13 +248,13 @@ export namespace addCOAAuthorization {
  */
 export namespace removeCOAAuthorization {
     export interface Args {
-        transactionId: string,
-        coaAuthorizationId: string,
+        transactionId: string;
+        coaAuthorizationId: string;
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.del({
+        const response = await request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
             body: {
             },
@@ -274,25 +274,25 @@ export namespace removeCOAAuthorization {
  */
 export namespace addGMOAuthorization {
     export interface Args {
-        transaction: transactionStart.Result,
-        orderId: string,
-        amount: number,
-        entryTranResult: GMO.CreditService.entryTranInterface.Result
+        transaction: transactionStart.Result;
+        orderId: string;
+        amount: number;
+        entryTranResult: GMO.CreditService.entryTranInterface.Result;
     }
     export interface Result {
-        type: string,
-        _id: string
+        type: string;
+        _id: string;
     }
     export async function call(args: Args): Promise<Result> {
-        let promoterOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === "PROMOTER");
+        const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'PROMOTER');
         });
-        let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
-        let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === "ANONYMOUS");
+        const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'ANONYMOUS');
         });
-        let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
-        let response = await request.post({
+        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+        const response = await request.post({
             url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
             body: {
                 owner_id_from: anonymousOwnerId,
@@ -311,7 +311,7 @@ export namespace addGMOAuthorization {
         });
         if (response.statusCode !== 200) throw new Error(response.body.message);
 
-        console.log("addGMOAuthorization result:");
+        console.log('addGMOAuthorization result:');
         return response.body.data;
     }
 }
@@ -321,13 +321,13 @@ export namespace addGMOAuthorization {
  */
 export namespace removeGMOAuthorization {
     export interface Args {
-        transactionId: string,
-        gmoAuthorizationId: string,
+        transactionId: string;
+        gmoAuthorizationId: string;
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.del({
+        const response = await request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
             body: {
 
@@ -338,7 +338,7 @@ export namespace removeGMOAuthorization {
         });
         if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log("removeGMOAuthorization result:");
+        console.log('removeGMOAuthorization result:');
 
     }
 }
@@ -349,16 +349,16 @@ export namespace removeGMOAuthorization {
  */
 export namespace ownersAnonymous {
     export interface Args {
-        transactionId: string,
-        name_first: string,
-        name_last: string,
-        tel: string,
-        email: string,
+        transactionId: string;
+        name_first: string;
+        name_last: string;
+        tel: string;
+        email: string;
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.patch({
+        const response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
             body: {
                 name_first: args.name_first,
@@ -372,7 +372,7 @@ export namespace ownersAnonymous {
         });
         if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log("ownersAnonymous result:");
+        console.log('ownersAnonymous result:');
 
     }
 }
@@ -380,15 +380,15 @@ export namespace ownersAnonymous {
 // 照会情報登録(購入番号と電話番号で照会する場合)
 export namespace transactionsEnableInquiry {
     export interface Args {
-        transactionId: string,
-        inquiry_theater: string,
-        inquiry_id: number,
-        inquiry_pass: string,
+        transactionId: string;
+        inquiry_theater: string;
+        inquiry_id: number;
+        inquiry_pass: string;
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.patch({
+        const response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
             body: {
                 inquiry_theater: args.inquiry_theater,
@@ -401,7 +401,7 @@ export namespace transactionsEnableInquiry {
         });
         if (response.statusCode !== 204) throw new Error(response.body.message);
 
-        console.log("transactionsEnableInquiry result:");
+        console.log('transactionsEnableInquiry result:');
 
     }
 }
@@ -412,12 +412,12 @@ export namespace transactionsEnableInquiry {
  */
 export namespace transactionClose {
     export interface Args {
-        transactionId: string
+        transactionId: string;
     }
     export interface Result {
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.patch({
+        const response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/close`,
             body: {
 
@@ -437,17 +437,17 @@ export namespace transactionClose {
  */
 export namespace addEmail {
     export interface Args {
-        transactionId: string,
-        from: string,
-        to: string,
-        subject: string,
-        content: string,
+        transactionId: string;
+        from: string;
+        to: string;
+        subject: string;
+        content: string;
     }
     export interface Result {
-        _id: string,
+        _id: string;
     }
     export async function call(args: Args): Promise<Result> {
-        let response = await request.post({
+        const response = await request.post({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
             body: {
                 from: args.from,
@@ -470,14 +470,14 @@ export namespace addEmail {
  */
 export namespace removeEmail {
     export interface Args {
-        transactionId: string,
-        emailId: string,
+        transactionId: string;
+        emailId: string;
     }
     export interface Result {
-        _id: string,
+        _id: string;
     }
     export async function call(args: Args): Promise<void> {
-        let response = await request.del({
+        const response = await request.del({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
             body: {},
             json: true,
@@ -494,15 +494,15 @@ export namespace removeEmail {
  */
 export namespace makeInquiry {
     export interface Args {
-        inquiry_theater: string,
-        inquiry_id: number,
-        inquiry_pass: string,
+        inquiry_theater: string;
+        inquiry_id: number;
+        inquiry_pass: string;
     }
     export interface Result {
-        _id: string,
+        _id: string;
     }
     export async function call(args: Args): Promise<string> {
-        let response = await request.post({
+        const response = await request.post({
             url: `${endPoint}/transactions/makeInquiry`,
             body: {
                 inquiry_theater: args.inquiry_theater,
