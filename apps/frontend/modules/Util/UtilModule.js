@@ -9,6 +9,7 @@ var UtilModule;
      * テンプレート変数へ渡す
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function setLocals(_req, res, next) {
         res.locals.escapeHtml = escapeHtml;
         res.locals.formatPrice = formatPrice;

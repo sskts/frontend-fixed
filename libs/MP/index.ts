@@ -92,6 +92,7 @@ export interface Film {
 
 /**
  * performance
+ * @interface
  */
 export interface Performance {
     _id: string;

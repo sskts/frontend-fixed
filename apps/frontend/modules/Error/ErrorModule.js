@@ -9,6 +9,7 @@ var ErrorModule;
      * Not Found
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function notFound(req, res, _next) {
         const status = 404;
         if (req.xhr) {
@@ -24,6 +25,7 @@ var ErrorModule;
      * エラーページ
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function index(err, req, res, _next) {
         console.log(err.stack);
         if (req.session)

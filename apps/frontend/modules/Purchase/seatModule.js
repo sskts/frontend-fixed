@@ -67,11 +67,9 @@ var SeatModule;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
-        console.log('座席決定1', req.body.transaction_id, purchaseModel.transactionMP._id);
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP._id)
             return next(new Error(req.__('common.error.access')));
-        console.log('座席決定2');
         //バリデーション
         const form = SeatForm_1.default(req);
         form(req, res, () => {
@@ -182,21 +180,22 @@ var SeatModule;
                 };
             });
             //COAオーソリ追加
-            const COAAuthorizationResult = yield MP.addCOAAuthorization.call({
+            const coaAuthorizationResult = yield MP.addCOAAuthorization.call({
                 transaction: purchaseModel.transactionMP,
                 reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                 salesTicketResults: purchaseModel.reserveTickets,
                 performance: performance,
                 totalPrice: purchaseModel.getReserveAmount()
             });
-            console.log('MPCOAオーソリ追加', COAAuthorizationResult);
-            purchaseModel.authorizationCOA = COAAuthorizationResult;
+            console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+            purchaseModel.authorizationCOA = coaAuthorizationResult;
         });
     }
     /**
      * スクリーン状態取得
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function getScreenStateReserve(req, res, _next) {
         COA.getStateReserveSeatInterface.call(req.body).then((result) => {
             res.json({

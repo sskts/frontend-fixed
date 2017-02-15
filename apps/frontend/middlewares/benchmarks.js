@@ -4,6 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ベンチマーク
  */
+// tslint:disable-next-line:variable-name
 exports.default = (req, _res, next) => {
     if (process.env.NODE_ENV === 'dev') {
         const startMemory = process.memoryUsage();

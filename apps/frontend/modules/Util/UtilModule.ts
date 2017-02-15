@@ -10,6 +10,7 @@ namespace UtilModule {
      * テンプレート変数へ渡す
      * @function
      */
+    // tslint:disable-next-line:variable-name
     export function setLocals(_req: express.Request, res: express.Response, next: express.NextFunction): void {
         res.locals.escapeHtml = escapeHtml;
         res.locals.formatPrice = formatPrice;

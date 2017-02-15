@@ -29,8 +29,8 @@ $(function () {
         }).done(function (res) {
             if (res.err) {
                 if (res.err && res.type === 'expired') {
-                     //コンテンツ切り替え
-                     $('.error-expired .read').html(res.err);
+                    //コンテンツ切り替え
+                    $('.error-expired .read').html(res.err);
                     $('.purchase-confirm').remove();
                     $('.header .steps').remove();
                     $('.error-expired').show();

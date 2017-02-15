@@ -9,6 +9,7 @@ var MethodModule;
      * 発券方法ページ表示
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function ticketing(_req, res, _next) {
         return res.render('method/ticketing');
     }
@@ -17,6 +18,7 @@ var MethodModule;
      * 入場方法説明ページ表示
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function entry(_req, res, _next) {
         return res.render('method/entry');
     }
@@ -25,6 +27,7 @@ var MethodModule;
      * ブックマーク方法説明ページ表示
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function bookmark(_req, res, _next) {
         return res.render('method/bookmark');
     }

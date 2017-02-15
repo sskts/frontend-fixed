@@ -37,13 +37,11 @@
     "no-unbound-method": false,
     "no-unnecessary-initializer": true,
     "no-unnecessary-qualifier": false,
-    "no-string-literal": false,
     "object-literal-shorthand": false,
     "prefer-function-over-method": false,
     "prefer-method-signature": true,
     "restrict-plus-operands": false,
-    "strict-type-predicates": false,
-    "variable-name": false
+    "strict-type-predicates": false
   },
   "rulesDirectory": [
     "node_modules/tslint-microsoft-contrib"

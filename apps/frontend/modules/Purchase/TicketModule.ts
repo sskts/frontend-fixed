@@ -17,6 +17,7 @@ namespace TicketModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
+        // tslint:disable-next-line:no-string-literal
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance) return next(new Error(req.__('common.error.property')));
@@ -42,6 +43,7 @@ namespace TicketModule {
 
                 //セッション更新
                 if (!req.session) return next(req.__('common.error.property'));
+                // tslint:disable-next-line:no-string-literal
                 req.session['purchase'] = purchaseModel.formatToSession();
                 //券種選択表示
                 return res.render('purchase/ticket');
@@ -58,6 +60,7 @@ namespace TicketModule {
      */
     export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
+        // tslint:disable-next-line:no-string-literal
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
@@ -72,9 +75,10 @@ namespace TicketModule {
             ticketValidation(req, purchaseModel).then(
                 () => {
                     console.log('券種決定完了');
-                    if (req.body['mvtk']) {
+                    if (req.body.mvtk) {
                         if (!req.session) return next(req.__('common.error.property'));
                         //セッション更新
+                        // tslint:disable-next-line:no-string-literal
                         req.session['purchase'] = purchaseModel.formatToSession();
                         //ムビチケ入力へ
                         return res.redirect('/purchase/mvtk');
@@ -83,6 +87,7 @@ namespace TicketModule {
                             () => {
                                 if (!req.session) return next(req.__('common.error.property'));
                                 //セッション更新
+                                // tslint:disable-next-line:no-string-literal
                                 req.session['purchase'] = purchaseModel.formatToSession();
                                 //購入者情報入力へ
                                 return res.redirect('/purchase/input');
@@ -179,15 +184,15 @@ namespace TicketModule {
         }
 
         //COAオーソリ追加
-        const COAAuthorizationResult = await MP.addCOAAuthorization.call({
+        const coaAuthorizationResult = await MP.addCOAAuthorization.call({
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: purchaseModel.reserveTickets,
             performance: purchaseModel.performance,
             totalPrice: purchaseModel.getReserveAmount()
         });
-        console.log('MPCOAオーソリ追加', COAAuthorizationResult);
-        purchaseModel.authorizationCOA = COAAuthorizationResult;
+        console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+        purchaseModel.authorizationCOA = coaAuthorizationResult;
     }
 }
 

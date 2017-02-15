@@ -20,14 +20,12 @@ const redisClient = redis.createClient(
     }
 );
 
-const RedisStore = connectRedis(session);
-
 export default session({
     secret: 'FrontendSecret',
     resave: false,
     rolling: true,
     saveUninitialized: false,
-    store: new RedisStore({
+    store: new (connectRedis(session))({
         client: redisClient
     }),
     cookie: {

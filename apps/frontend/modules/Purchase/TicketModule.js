@@ -187,15 +187,15 @@ var TicketModule;
                 console.log('GMOオーソリ削除');
             }
             //COAオーソリ追加
-            const COAAuthorizationResult = yield MP.addCOAAuthorization.call({
+            const coaAuthorizationResult = yield MP.addCOAAuthorization.call({
                 transaction: purchaseModel.transactionMP,
                 reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                 salesTicketResults: purchaseModel.reserveTickets,
                 performance: purchaseModel.performance,
                 totalPrice: purchaseModel.getReserveAmount()
             });
-            console.log('MPCOAオーソリ追加', COAAuthorizationResult);
-            purchaseModel.authorizationCOA = COAAuthorizationResult;
+            console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+            purchaseModel.authorizationCOA = coaAuthorizationResult;
         });
     }
 })(TicketModule || (TicketModule = {}));

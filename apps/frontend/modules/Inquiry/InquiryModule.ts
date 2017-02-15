@@ -14,6 +14,7 @@ namespace InquiryModule {
      * 照会認証ページ表示
      * @function
      */
+    // tslint:disable-next-line:variable-name
     export function login(_req: express.Request, res: express.Response) {
         res.locals.theater_code = '';
         res.locals.reserve_num = '';
@@ -33,6 +34,7 @@ namespace InquiryModule {
      */
     export function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));
+        // tslint:disable-next-line:no-string-literal
         const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
         const form = LoginForm(req);
         form(req, res, () => {
@@ -108,6 +110,7 @@ namespace InquiryModule {
         console.log('MPパフォーマンス取得');
 
         if (!req.session) throw req.__('common.error.property');
+        // tslint:disable-next-line:no-string-literal
         req.session['inquiry'] = inquiryModel.formatToSession();
     }
 
@@ -117,6 +120,7 @@ namespace InquiryModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
+        // tslint:disable-next-line:no-string-literal
         const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
         if (inquiryModel.stateReserve
             && inquiryModel.performance

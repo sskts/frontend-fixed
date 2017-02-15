@@ -4,6 +4,7 @@ import * as log4js from 'log4js';
 /**
  * ベンチマーク
  */
+// tslint:disable-next-line:variable-name
 export default (req: express.Request, _res: express.Response, next: express.NextFunction) => {
 
     if (process.env.NODE_ENV === 'dev') {

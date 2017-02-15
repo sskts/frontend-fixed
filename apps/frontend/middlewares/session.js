@@ -13,14 +13,13 @@ const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.e
     },
     return_buffers: true
 });
-const RedisStore = connectRedis(session);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = session({
     secret: 'FrontendSecret',
     resave: false,
     rolling: true,
     saveUninitialized: false,
-    store: new RedisStore({
+    store: new (connectRedis(session))({
         client: redisClient
     }),
     cookie: {

@@ -22,6 +22,7 @@ var InquiryModule;
      * 照会認証ページ表示
      * @function
      */
+    // tslint:disable-next-line:variable-name
     function login(_req, res) {
         res.locals.theater_code = '';
         res.locals.reserve_num = '';

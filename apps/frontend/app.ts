@@ -38,7 +38,9 @@ if (process.env.NODE_ENV === 'dev') {
 //言語
 app.use((req, res, next) => {
     locales.init(req, res, next);
+    // tslint:disable-next-line:no-string-literal
     if (req.session && req.session['locale']) {
+        // tslint:disable-next-line:no-string-literal
         locales.setLocale(req, req.session['locale']);
     } else {
         locales.setLocale(req, 'ja');
