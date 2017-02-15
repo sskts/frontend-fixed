@@ -7,12 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const InputForm_1 = require("../../forms/Purchase/InputForm");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const config = require("config");
-// import COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const MP = require("../../../../libs/MP");
+const InputForm_1 = require("../../forms/Purchase/InputForm");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * 購入情報入力
  * @namespace
@@ -33,10 +31,9 @@ var InputModule;
             return next(req.__('common.error.property'));
         //購入者情報入力表示
         res.locals.error = null;
-        res.locals.moment = require('moment');
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-        res.locals.gmoModuleUrl = config.get('gmo_module_url');
-        res.locals.gmoShopId = config.get('gmo_shop_id');
+        res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+        res.locals.gmoShopId = process.env.GMO_SHOP_ID;
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP._id;
         if (purchaseModel.input) {
@@ -120,9 +117,9 @@ var InputModule;
                             securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`]
                         };
                         res.locals.input = req.body;
-                        res.locals.step = 2;
-                        res.locals.gmoModuleUrl = config.get('gmo_module_url');
-                        res.locals.gmoShopId = config.get('gmo_shop_id');
+                        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+                        res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+                        res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                         res.locals.price = purchaseModel.getReserveAmount();
                         res.locals.transactionId = purchaseModel.transactionMP._id;
                         return res.render('purchase/input');
@@ -143,9 +140,9 @@ var InputModule;
                     return next(req.__('common.error.property'));
                 res.locals.error = req.form.getErrors();
                 res.locals.input = req.body;
-                res.locals.step = 2;
-                res.locals.gmoModuleUrl = config.get('gmo_module_url');
-                res.locals.gmoShopId = config.get('gmo_shop_id');
+                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+                res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+                res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                 res.locals.price = purchaseModel.getReserveAmount();
                 res.locals.transactionId = purchaseModel.transactionMP._id;
                 return res.render('purchase/input');
@@ -175,8 +172,8 @@ var InputModule;
                     throw new Error(req.__('common.error.property'));
                 //GMOオーソリ取消
                 yield GMO.CreditService.alterTranInterface.call({
-                    shop_id: config.get('gmo_shop_id'),
-                    shop_pass: config.get('gmo_shop_password'),
+                    shop_id: process.env.GMO_SHOP_ID,
+                    shop_pass: process.env.GMO_SHOP_PASSWORD,
                     access_id: purchaseModel.transactionGMO.access_id,
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID
@@ -194,8 +191,8 @@ var InputModule;
                 purchaseModel.orderId = Date.now().toString();
                 const amount = purchaseModel.getReserveAmount();
                 purchaseModel.transactionGMO = yield GMO.CreditService.entryTranInterface.call({
-                    shop_id: config.get('gmo_shop_id'),
-                    shop_pass: config.get('gmo_shop_password'),
+                    shop_id: process.env.GMO_SHOP_ID,
+                    shop_pass: process.env.GMO_SHOP_PASSWORD,
                     order_id: purchaseModel.orderId,
                     job_cd: GMO.Util.JOB_CD_AUTH,
                     amount: amount

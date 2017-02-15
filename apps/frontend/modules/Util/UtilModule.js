@@ -20,9 +20,9 @@ var UtilModule;
      * HTMLエスケープ
      * @function
      */
-    function escapeHtml(string) {
-        if (typeof string !== 'string') {
-            return string;
+    function escapeHtml(str) {
+        if (typeof str !== 'string') {
+            return str;
         }
         const change = (match) => {
             const changeList = {
@@ -35,7 +35,7 @@ var UtilModule;
             };
             return changeList[match];
         };
-        return string.replace(/[&'`"<>]/g, change);
+        return str.replace(/[&'`"<>]/g, change);
     }
     UtilModule.escapeHtml = escapeHtml;
     /**

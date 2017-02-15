@@ -1,6 +1,5 @@
 "use strict";
 const express = require("express");
-const router = express.Router();
 const CompleteModule_1 = require("../modules/Purchase/CompleteModule");
 const ConfirmModule_1 = require("../modules/Purchase/ConfirmModule");
 const InputModule_1 = require("../modules/Purchase/InputModule");
@@ -13,6 +12,7 @@ const TransactionModule_1 = require("../modules/Purchase/TransactionModule");
 /**
  * ルーティング購入
  */
+const router = express.Router();
 //購入(取引開始)
 router.get('/:id/transaction', TransactionModule_1.default.start);
 //仮予約重複

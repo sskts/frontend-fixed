@@ -1,4 +1,4 @@
-import express = require('express');
+import * as express from 'express';
 import ErrorModule from '../modules/Error/ErrorModule';
 import PerformancesModule from '../modules/Performances/PerformancesModule';
 import UtilModule from '../modules/Util/UtilModule';
@@ -7,11 +7,11 @@ import inquiry from './inquiry';
 import method from './method';
 import purchase from './purchase';
 
-const router = express.Router();
 /**
  * ルーティング
- * @method
  */
+const router = express.Router();
+
 export default (app: express.Application) => {
 
     app.use(UtilModule.setLocals);
@@ -43,8 +43,6 @@ export default (app: express.Application) => {
 
     //方法
     app.use('/method', method);
-
-
 
     // error handlers
     app.use(ErrorModule.index);

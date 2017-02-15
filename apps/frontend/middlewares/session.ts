@@ -1,6 +1,7 @@
-import session = require('express-session');
-import config = require('config');
-import connectRedis = require('connect-redis');
+import * as connectRedis from 'connect-redis';
+import * as session from 'express-session';
+
+// tslint:disable-next-line:no-var-requires no-require-imports
 const redis = require('redis');
 
 /**
@@ -8,12 +9,12 @@ const redis = require('redis');
  */
 
 const redisClient = redis.createClient(
-    config.get<number>('redis_port'),
-    config.get<string>('redis_host'),
+    Number(process.env.REDIS_PORT),
+    process.env.REDIS_HOST,
     {
-        password: config.get<string>('redis_key'),
+        password: process.env.REDIS_KEY,
         tls: {
-            servername: config.get<string>('redis_host')
+            servername: process.env.REDIS_HOST
         },
         return_buffers: true
     }
@@ -32,6 +33,7 @@ export default session({
     cookie: {
         // secure: true,
         httpOnly: true,
+        // tslint:disable-next-line:no-magic-numbers
         maxAge: 60 * 60 * 1000
     }
 });

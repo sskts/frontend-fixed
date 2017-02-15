@@ -7,11 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const config = require("config");
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const MP = require("../../../../libs/MP");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * 重複予約
  * @namespace
@@ -111,8 +110,8 @@ var OverlapModule;
                 && purchaseModel.orderId) {
                 //GMOオーソリ取消
                 yield GMO.CreditService.alterTranInterface.call({
-                    shop_id: config.get('gmo_shop_id'),
-                    shop_pass: config.get('gmo_shop_password'),
+                    shop_id: process.env.GMO_SHOP_ID,
+                    shop_pass: process.env.GMO_SHOP_PASSWORD,
                     access_id: purchaseModel.transactionGMO.access_id,
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID

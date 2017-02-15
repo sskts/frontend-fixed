@@ -1,7 +1,6 @@
-
-import form = require('express-form');
-import express = require('express');
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
+import * as express from 'express';
+import * as form from 'express-form';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 購入券種選択

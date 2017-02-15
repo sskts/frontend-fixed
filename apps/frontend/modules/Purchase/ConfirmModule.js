@@ -7,10 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const COA = require("@motionpicture/coa-service");
-const MP = require("../../../../libs/MP");
 const moment = require("moment");
+const MP = require("../../../../libs/MP");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * 購入確認
  * @namespace
@@ -66,7 +66,8 @@ var ConfirmModule;
             if (!req.session)
                 throw Error(req.__('common.error.property'));
             //購入期限切れ
-            if (purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+            const minutes = 5;
+            if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
                 //購入セッション削除
                 delete req.session['purchase'];
                 throw {
@@ -125,7 +126,8 @@ var ConfirmModule;
                 to: purchaseModel.input.mail_addr,
                 subject: '購入完了',
                 content: `購入完了\n
-この度はご購入いただき誠にありがとうございます。`
+この度はご購入いただき誠にありがとうございます。
+購入番号 ${purchaseModel.updateReserve.reserve_num}`
             });
             console.log('MPメール登録');
             // MP取引成立

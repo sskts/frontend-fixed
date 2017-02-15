@@ -1,6 +1,5 @@
 "use strict";
 const request = require("request");
-const config = require("config");
 /**
  * パフォーマンス一覧
  */
@@ -21,7 +20,7 @@ var PerformancesModule;
      * @function
      */
     function getPerformances(req, res) {
-        const endpoint = config.get('mp_api_endpoint');
+        const endpoint = process.env.MP_API_ENDPOINT;
         const method = 'performances';
         const options = {
             url: `${endpoint}/${method}/?day=${req.body.day}`,

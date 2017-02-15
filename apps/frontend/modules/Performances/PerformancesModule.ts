@@ -1,7 +1,5 @@
-
-import express = require('express');
-import request = require('request');
-import config = require('config');
+import * as express from 'express';
+import * as request from 'request';
 
 /**
  * パフォーマンス一覧
@@ -21,7 +19,7 @@ namespace PerformancesModule {
      * @function
      */
     export function getPerformances(req: express.Request, res: express.Response): void {
-        const endpoint: string = config.get<string>('mp_api_endpoint');
+        const endpoint: string = process.env.MP_API_ENDPOINT;
         const method: string = 'performances';
 
         const options: request.Options = {
@@ -31,7 +29,6 @@ namespace PerformancesModule {
         };
 
         request.get(options, (error, response, body) => {
-
             res.json({
                 error: error,
                 response: response,

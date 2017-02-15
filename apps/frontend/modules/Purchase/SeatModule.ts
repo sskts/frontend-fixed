@@ -1,11 +1,9 @@
-
-import express = require('express');
-import SeatForm from '../../forms/Purchase/SeatForm';
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
-import config = require('config');
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as express from 'express';
 import * as MP from '../../../../libs/MP';
+import SeatForm from '../../forms/Purchase/SeatForm';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 購入座席選択
@@ -22,7 +20,6 @@ namespace SeatModule {
         if (!req.params || !req.params['id']) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return next(new Error(req.__('common.error.access')));
 
-
         //パフォーマンス取得
         MP.getPerformance.call({
             id: req.params.id
@@ -33,7 +30,6 @@ namespace SeatModule {
                 res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
                 res.locals.reserveSeats = null;
                 res.locals.transactionId = purchaseModel.transactionMP._id;
-
 
                 //仮予約中
                 if (purchaseModel.reserveSeats) {
@@ -51,7 +47,8 @@ namespace SeatModule {
             },
             (err) => {
                 return next(new Error(err.message));
-            });
+            }
+        );
     }
 
     /**
@@ -62,10 +59,9 @@ namespace SeatModule {
         if (!req.session) return next(req.__('common.error.property'));
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-        console.log('座席決定1', req.body.transaction_id, purchaseModel.transactionMP._id);
+
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
-        console.log('座席決定2');
 
         //バリデーション
         const form = SeatForm(req);
@@ -83,7 +79,8 @@ namespace SeatModule {
                     },
                     (err) => {
                         return next(new Error(err.message));
-                    });
+                    }
+                );
             } else {
                 if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
                 res.locals.transactionId = purchaseModel.transactionMP;
@@ -131,8 +128,8 @@ namespace SeatModule {
                 && purchaseModel.authorizationGMO) {
                 //GMOオーソリ取消
                 await GMO.CreditService.alterTranInterface.call({
-                    shop_id: config.get<string>('gmo_shop_id'),
-                    shop_pass: config.get<string>('gmo_shop_password'),
+                    shop_id: process.env.GMO_SHOP_ID,
+                    shop_pass: process.env.GMO_SHOP_PASSWORD,
                     access_id: purchaseModel.transactionGMO.access_id,
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID
@@ -206,7 +203,8 @@ namespace SeatModule {
                     err: err,
                     result: null
                 });
-            });
+            }
+        );
     }
 }
 

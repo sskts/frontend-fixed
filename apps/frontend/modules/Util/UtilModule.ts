@@ -1,6 +1,6 @@
 
-import express = require('express');
-import moment = require('moment');
+import * as express from 'express';
+import * as moment from 'moment';
 
 /**
  * 共通
@@ -21,9 +21,9 @@ namespace UtilModule {
      * HTMLエスケープ
      * @function
      */
-    export function escapeHtml(string: string): string {
-        if (typeof string !== 'string') {
-            return string;
+    export function escapeHtml(str: string): string {
+        if (typeof str !== 'string') {
+            return str;
         }
         const change = (match: string): string => {
             const changeList: any = {
@@ -36,7 +36,7 @@ namespace UtilModule {
             };
             return changeList[match];
         };
-        return string.replace(/[&'`"<>]/g, change);
+        return str.replace(/[&'`"<>]/g, change);
     }
 
     /**

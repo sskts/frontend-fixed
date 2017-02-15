@@ -1,11 +1,8 @@
-
-import express = require('express');
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
-import config = require('config');
-
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as express from 'express';
 import * as MP from '../../../../libs/MP';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 重複予約
@@ -35,7 +32,8 @@ namespace OverlapModule {
             },
             (err) => {
                 return next(new Error(err.message));
-            });
+            }
+        );
     }
 
     /**
@@ -55,7 +53,8 @@ namespace OverlapModule {
             },
             (err) => {
                 return next(new Error(err.message));
-            });
+            }
+        );
     }
 
     /**
@@ -106,8 +105,8 @@ namespace OverlapModule {
             && purchaseModel.orderId) {
             //GMOオーソリ取消
             await GMO.CreditService.alterTranInterface.call({
-                shop_id: config.get<string>('gmo_shop_id'),
-                shop_pass: config.get<string>('gmo_shop_password'),
+                shop_id: process.env.GMO_SHOP_ID,
+                shop_pass: process.env.GMO_SHOP_PASSWORD,
                 access_id: purchaseModel.transactionGMO.access_id,
                 access_pass: purchaseModel.transactionGMO.access_pass,
                 job_cd: GMO.Util.JOB_CD_VOID
@@ -123,6 +122,5 @@ namespace OverlapModule {
         }
     }
 }
-
 
 export default OverlapModule;

@@ -1,5 +1,5 @@
-import form = require('express-form');
-import express = require('express');
+import * as express from 'express';
+import * as form from 'express-form';
 
 /**
  * 購入者情報入力フォーム

@@ -1,5 +1,5 @@
-import express = require('express');
-import log4js = require('log4js');
+import * as express from 'express';
+import * as log4js from 'log4js';
 
 /**
  * ベンチマーク
@@ -16,6 +16,7 @@ export default (req: express.Request, _res: express.Response, next: express.Next
             const memoryUsage = endMemory.rss - startMemory.rss;
             const diff = process.hrtime(startTime);
             logger.debug(
+                // tslint:disable-next-line:max-line-length
                 `benchmark took ${diff[0]} seconds and ${diff[1]} nanoseconds. memoryUsage:${memoryUsage} (${startMemory.rss} - ${endMemory.rss})`
             );
         });

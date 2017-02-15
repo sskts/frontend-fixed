@@ -3,8 +3,6 @@
     "portal_site": "http://www.cinemasunshine.co.jp",
 
     "mp_api_endpoint": "https://devssktsapi.azurewebsites.net",
-    // "mp_api_endpoint": "http://localhost:8081",
-    "admin_id": "5868e16789cc75249cdbfa4b",
     
     "redis_host": "devsskts.redis.cache.windows.net",
     "redis_port": 6380,
@@ -21,6 +19,6 @@
     "gmo_shop_password": "xbxmkaa6",
 
     "coa_api_endpoint": "http://coacinema.aa0.netvolante.jp",
-    "coa_api_refresh_token": "eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkX2F0IjoxNDc5MjYwODQ4LCJhdXRoX2lkIjoiMzMxNSJ9.jx-w7D3YLP7UbY4mzJYC9xr368FiKWcpR2_L9mZfehQ",
+    "coa_api_refresh_token": "eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkX2F0IjoxNDc5MjYwODQ4LCJhdXRoX2lkIjoiMzMxNSJ9.jx-w7D3YLP7UbY4mzJYC9xr368FiKWcpR2_L9mZfehQ"
 
 }

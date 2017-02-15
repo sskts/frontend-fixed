@@ -7,10 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const request = require("request-promise-native");
-const config = require("config");
 const GMO = require("@motionpicture/gmo-service");
-const endPoint = config.get('mp_api_endpoint');
+const request = require("request-promise-native");
+const endPoint = process.env.MP_API_ENDPOINT;
+const STATUS_CODE_200 = 200;
+const STATUS_CODE_201 = 201;
+const STATUS_CODE_204 = 204;
 /**
  * パフォーマンス取得
  */
@@ -18,14 +20,14 @@ var getPerformance;
 (function (getPerformance) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.get({
+            const response = yield request.get({
                 url: `${endPoint}/performances/${args.id}`,
                 body: {},
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== STATUS_CODE_200)
                 throw new Error(response.body.message);
             console.log('performances:', response.body.data);
             return response.body.data;
@@ -40,18 +42,18 @@ var transactionStart;
 (function (transactionStart) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
+            const response = yield request.post({
                 url: `${endPoint}/transactions`,
                 body: {
-                    expired_at: args.expired_at,
+                    expired_at: args.expired_at
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 201)
+            if (response.statusCode !== STATUS_CODE_201)
                 throw new Error(response.body.message);
-            let transaction = response.body.data;
+            const transaction = response.body.data;
             console.log('transaction:', transaction);
             return transaction;
         });
@@ -65,15 +67,15 @@ var addCOAAuthorization;
 (function (addCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let promoterOwner = args.transaction.attributes.owners.find((owner) => {
-                return (owner.group === "PROMOTER");
+            const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === 'PROMOTER');
             });
-            let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
-            let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-                return (owner.group === "ANONYMOUS");
+            const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+            const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === 'ANONYMOUS');
             });
-            let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
-            let response = yield request.post({
+            const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+            const response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
                 body: {
                     owner_id_from: promoterOwnerId,
@@ -97,16 +99,16 @@ var addCOAAuthorization;
                             std_price: tmpReserve.std_price,
                             add_price: tmpReserve.add_price,
                             dis_price: tmpReserve.dis_price,
-                            sale_price: tmpReserve.sale_price,
+                            sale_price: tmpReserve.sale_price
                         };
                     }),
-                    price: args.totalPrice,
+                    price: args.totalPrice
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== STATUS_CODE_200)
                 throw new Error(response.body.message);
             console.log('addCOAAuthorization result');
             return response.body.data;
@@ -121,14 +123,14 @@ var removeCOAAuthorization;
 (function (removeCOAAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.del({
+            const response = yield request.del({
                 url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
                 body: {},
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
             console.log('addCOAAuthorization result');
         });
@@ -142,34 +144,34 @@ var addGMOAuthorization;
 (function (addGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let promoterOwner = args.transaction.attributes.owners.find((owner) => {
-                return (owner.group === "PROMOTER");
+            const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === 'PROMOTER');
             });
-            let promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
-            let anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-                return (owner.group === "ANONYMOUS");
+            const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+            const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+                return (owner.group === 'ANONYMOUS');
             });
-            let anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
-            let response = yield request.post({
+            const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+            const response = yield request.post({
                 url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
                 body: {
                     owner_id_from: anonymousOwnerId,
                     owner_id_to: promoterOwnerId,
-                    gmo_shop_id: config.get('gmo_shop_id'),
-                    gmo_shop_password: config.get('gmo_shop_password'),
+                    gmo_shop_id: process.env.GMO_SHOP_ID,
+                    gmo_shop_password: process.env.GMO_SHOP_PASSWORD,
                     gmo_order_id: args.orderId,
                     gmo_amount: args.amount,
                     gmo_access_id: args.entryTranResult.access_id,
                     gmo_access_password: args.entryTranResult.access_pass,
                     gmo_job_cd: GMO.Util.JOB_CD_SALES,
-                    gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT,
+                    gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
                 },
                 json: true,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== STATUS_CODE_200)
                 throw new Error(response.body.message);
-            console.log("addGMOAuthorization result:");
+            console.log('addGMOAuthorization result:');
             return response.body.data;
         });
     }
@@ -182,16 +184,16 @@ var removeGMOAuthorization;
 (function (removeGMOAuthorization) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.del({
+            const response = yield request.del({
                 url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
                 body: {},
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
-            console.log("removeGMOAuthorization result:");
+            console.log('removeGMOAuthorization result:');
         });
     }
     removeGMOAuthorization.call = call;
@@ -203,21 +205,21 @@ var ownersAnonymous;
 (function (ownersAnonymous) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.patch({
+            const response = yield request.patch({
                 url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
                 body: {
                     name_first: args.name_first,
                     name_last: args.name_last,
                     tel: args.tel,
-                    email: args.email,
+                    email: args.email
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
-            console.log("ownersAnonymous result:");
+            console.log('ownersAnonymous result:');
         });
     }
     ownersAnonymous.call = call;
@@ -227,7 +229,7 @@ var transactionsEnableInquiry;
 (function (transactionsEnableInquiry) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.patch({
+            const response = yield request.patch({
                 url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
                 body: {
                     inquiry_theater: args.inquiry_theater,
@@ -236,11 +238,11 @@ var transactionsEnableInquiry;
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
-            console.log("transactionsEnableInquiry result:");
+            console.log('transactionsEnableInquiry result:');
         });
     }
     transactionsEnableInquiry.call = call;
@@ -252,14 +254,14 @@ var transactionClose;
 (function (transactionClose) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.patch({
+            const response = yield request.patch({
                 url: `${endPoint}/transactions/${args.transactionId}/close`,
                 body: {},
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
             console.log('close result:');
         });
@@ -273,19 +275,19 @@ var addEmail;
 (function (addEmail) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
+            const response = yield request.post({
                 url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
                 body: {
                     from: args.from,
                     to: args.to,
                     subject: args.subject,
-                    content: args.content,
+                    content: args.content
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== STATUS_CODE_200)
                 throw new Error(response.body.message);
             console.log('addEmail result:' + response.body.data);
             return response.body.data;
@@ -300,14 +302,14 @@ var removeEmail;
 (function (removeEmail) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.del({
+            const response = yield request.del({
                 url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
                 body: {},
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 204)
+            if (response.statusCode !== STATUS_CODE_204)
                 throw new Error(response.body.message);
             console.log('removeEmail result:');
         });
@@ -321,18 +323,18 @@ var makeInquiry;
 (function (makeInquiry) {
     function call(args) {
         return __awaiter(this, void 0, void 0, function* () {
-            let response = yield request.post({
+            const response = yield request.post({
                 url: `${endPoint}/transactions/makeInquiry`,
                 body: {
                     inquiry_theater: args.inquiry_theater,
                     inquiry_id: args.inquiry_id,
-                    inquiry_pass: args.inquiry_pass,
+                    inquiry_pass: args.inquiry_pass
                 },
                 json: true,
                 simple: false,
-                resolveWithFullResponse: true,
+                resolveWithFullResponse: true
             });
-            if (response.statusCode !== 200)
+            if (response.statusCode !== STATUS_CODE_200)
                 throw new Error(response.body.message);
             console.log('makeInquiry result:' + response.body.data);
             return response.body.data._id;

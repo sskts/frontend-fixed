@@ -1,8 +1,7 @@
+import * as express from 'express';
+import * as form from 'express-form';
 
-import form = require('express-form');
-import express = require('express');
-
-interface seat {
+interface Seat {
     seat_num: string;
     seat_section: string;
 }
@@ -15,7 +14,7 @@ export default (req: express.Request) => {
         form.field('seats', '座席').trim().required().custom((value: string) => {
             try {
                 const seats: {
-                    list_tmp_reserve: seat[]
+                    list_tmp_reserve: Seat[]
                 } = JSON.parse(value);
                 for (const seat of seats.list_tmp_reserve) {
                     if (!seat.seat_num || !seat.seat_section) {
@@ -29,4 +28,3 @@ export default (req: express.Request) => {
         form.field('agree', '利用規約').trim().required('', '%sに同意してください')
     );
 };
-

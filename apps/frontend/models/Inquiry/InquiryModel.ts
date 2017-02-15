@@ -1,5 +1,5 @@
-import COA = require('@motionpicture/coa-service');
-import MP = require('../../../../libs/MP');
+import * as COA from '@motionpicture/coa-service';
+import * as MP from '../../../../libs/MP';
 
 /**
  * ログイン情報
@@ -73,4 +73,3 @@ export class InquiryModel {
         };
     }
 }
-

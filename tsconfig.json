@@ -3,8 +3,8 @@
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
         "charset": "utf8",
-        "declaration": true,
-        "declarationDir": "./types",
+        // "declaration": false,
+        // "declarationDir": "./types",
         "diagnostics": false,
         "disableSizeLimit": false,
         "emitDecoratorMetadata": true,
@@ -40,6 +40,6 @@
     "exclude": [
         "docs",
         "node_modules",
-        "types"
+        "definitions"
     ]
 }

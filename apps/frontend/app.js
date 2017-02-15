@@ -1,24 +1,26 @@
 "use strict";
-// tslint:disable-next-line:missing-jsdoc
-const benchmarks_1 = require("./middlewares/benchmarks");
+const COA = require("@motionpicture/coa-service");
+const GMO = require("@motionpicture/gmo-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const config = require("config");
 const express = require("express");
 const helmet = require("helmet");
+const benchmarks_1 = require("./middlewares/benchmarks");
 const locales_1 = require("./middlewares/locales");
 const logger_1 = require("./middlewares/logger");
 const session_1 = require("./middlewares/session");
 const router_1 = require("./routes/router");
-const COA = require("@motionpicture/coa-service");
-const GMO = require("@motionpicture/gmo-service");
+/**
+ * express設定
+ */
 const app = express();
 app.use(helmet()); //HTTP ヘッダー
 app.use(logger_1.default); // ロガー
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
-// view engine setup
+// tslint:disable-next-line:no-var-requires no-require-imports
 app.engine('ejs', require('ejs-locals'));
+// tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
@@ -39,12 +41,12 @@ app.use((req, res, next) => {
 });
 //COAサービス初期化
 COA.initialize({
-    endpoint: config.get('coa_api_endpoint'),
-    refresh_token: config.get('coa_api_refresh_token')
+    endpoint: process.env.COA_API_ENDPOINT,
+    refresh_token: process.env.COA_REFRESH_TOKEN
 });
 //GMOサービス初期化
 GMO.initialize({
-    endpoint: config.get('gmo_api_endpoint')
+    endpoint: process.env.GMO_API_ENDPOINT
 });
 // ルーティング
 router_1.default(app);

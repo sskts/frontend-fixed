@@ -1,6 +1,5 @@
-import express = require('express');
+import * as express from 'express';
 import MethodModule from '../modules/Method/MethodModule';
-
 
 /**
  * ルーティング方法

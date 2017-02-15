@@ -1,9 +1,8 @@
-
-import express = require('express');
-import InquirySession = require('../../models/Inquiry/InquiryModel');
+import * as COA from '@motionpicture/coa-service';
+import * as express from 'express';
+import * as MP from '../../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
-import COA = require('@motionpicture/coa-service');
-import MP = require('../../../../libs/MP');
+import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import UtilModule from '../Util/UtilModule';
 
 /**
@@ -46,7 +45,8 @@ namespace InquiryModule {
                     },
                     (err) => {
                         return next(new Error(err.message));
-                    });
+                    }
+                );
             } else {
                 res.locals.error = req.form.getErrors();
                 return res.render('inquiry/login');
@@ -136,4 +136,3 @@ namespace InquiryModule {
 }
 
 export default InquiryModule;
-

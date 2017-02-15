@@ -1,15 +1,15 @@
 "use strict";
-const session = require("express-session");
-const config = require("config");
 const connectRedis = require("connect-redis");
+const session = require("express-session");
+// tslint:disable-next-line:no-var-requires no-require-imports
 const redis = require('redis');
 /**
  * セッション
  */
-const redisClient = redis.createClient(config.get('redis_port'), config.get('redis_host'), {
-    password: config.get('redis_key'),
+const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.env.REDIS_HOST, {
+    password: process.env.REDIS_KEY,
     tls: {
-        servername: config.get('redis_host')
+        servername: process.env.REDIS_HOST
     },
     return_buffers: true
 });
@@ -26,6 +26,7 @@ exports.default = session({
     cookie: {
         // secure: true,
         httpOnly: true,
+        // tslint:disable-next-line:no-magic-numbers
         maxAge: 60 * 60 * 1000
     }
 });

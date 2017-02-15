@@ -1,8 +1,8 @@
 
-import express = require('express');
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
-import MP = require('../../../../libs/MP');
-import moment = require('moment');
+import * as express from 'express';
+import * as moment from 'moment';
+import * as MP from '../../../../libs/MP';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 取引
@@ -34,7 +34,8 @@ namespace TransactionModule {
             },
             (err) => {
                 return next(new Error(err.message));
-            });
+            }
+        );
     }
 
     /**

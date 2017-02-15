@@ -7,10 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const InquirySession = require("../../models/Inquiry/InquiryModel");
-const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
+const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
+const InquirySession = require("../../models/Inquiry/InquiryModel");
 const UtilModule_1 = require("../Util/UtilModule");
 /**
  * 照会

@@ -1,4 +1,5 @@
-import log4js = require('log4js');
+import * as fs from 'fs-extra';
+import * as log4js from 'log4js';
 
 /**
  * ロガー
@@ -7,7 +8,6 @@ import log4js = require('log4js');
 const env = process.env.NODE_ENV || 'dev';
 
 // ディレクトリなければ作成(初回アクセス時だけ)
-const fs = require('fs-extra');
 const logDir = `${__dirname}/../../../logs/${env}/frontend`;
 fs.mkdirsSync(logDir);
 

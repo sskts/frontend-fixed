@@ -1,10 +1,15 @@
 
-import express = require('express');
-import PurchaseSession = require('../../../models/Purchase/PurchaseModel');
+import * as express from 'express';
+import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 
+/**
+ * ムビチケ確認
+ * @namespace
+ */
 namespace MvtkConfirmModule {
     /**
      * ムビチケ券適用確認ページ表示
+     * @function
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));
@@ -12,7 +17,7 @@ namespace MvtkConfirmModule {
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
         //購入者情報入力表示
         res.locals.error = null;
-        res.locals.step = 2;
+        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.locals.transactionId = purchaseModel.transactionMP._id;
         return res.render('purchase/mvtk/confirm');
 
@@ -20,6 +25,7 @@ namespace MvtkConfirmModule {
 
     /**
      * 購入者情報入力へ
+     * @function
      */
     export function submit(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));

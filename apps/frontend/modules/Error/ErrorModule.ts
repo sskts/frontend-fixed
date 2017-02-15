@@ -1,5 +1,4 @@
-
-import express = require('express');
+import * as express from 'express';
 
 /**
  * エラー

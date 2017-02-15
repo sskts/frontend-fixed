@@ -1,9 +1,9 @@
 
-import express = require('express');
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
 import * as COA from '@motionpicture/coa-service';
+import * as express from 'express';
+import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
-import moment = require('moment');
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 購入確認
@@ -32,7 +32,6 @@ namespace ConfirmModule {
         res.locals.error = null;
         res.locals.transactionId = purchaseModel.transactionMP._id;
 
-
         //セッション更新
         if (!req.session) return next(req.__('common.error.property'));
         req.session['purchase'] = purchaseModel.formatToSession();
@@ -53,7 +52,8 @@ namespace ConfirmModule {
         if (!purchaseModel.expired) throw Error(req.__('common.error.property'));
         if (!req.session) throw Error(req.__('common.error.property'));
         //購入期限切れ
-        if (purchaseModel.expired < moment().add(5, 'minutes').unix()) {
+        const minutes = 5;
+        if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
             //購入セッション削除
             delete req.session['purchase'];
             throw {
@@ -109,7 +109,6 @@ namespace ConfirmModule {
         });
         console.log('MP照会情報登録');
 
-
         // MPメール登録
         await MP.addEmail.call({
             transactionId: purchaseModel.transactionMP._id,
@@ -117,7 +116,8 @@ namespace ConfirmModule {
             to: purchaseModel.input.mail_addr,
             subject: '購入完了',
             content: `購入完了\n
-この度はご購入いただき誠にありがとうございます。`
+この度はご購入いただき誠にありがとうございます。
+購入番号 ${purchaseModel.updateReserve.reserve_num}`
         });
         console.log('MPメール登録');
 
@@ -172,7 +172,8 @@ namespace ConfirmModule {
                     result: null,
                     type: (err.type) ? err.type : null
                 });
-            });
+            }
+        );
     }
 }
 

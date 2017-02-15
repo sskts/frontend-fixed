@@ -1,20 +1,22 @@
-import request = require('request-promise-native');
-import config = require('config');
-import COA = require('@motionpicture/coa-service');
-import GMO = require("@motionpicture/gmo-service");
+import * as COA from '@motionpicture/coa-service';
+import * as GMO from '@motionpicture/gmo-service';
+import * as request from 'request-promise-native';
 
-const endPoint = config.get<string>('mp_api_endpoint');
+const endPoint = process.env.MP_API_ENDPOINT;
+
+const STATUS_CODE_200 = 200;
+const STATUS_CODE_201 = 201;
+const STATUS_CODE_204 = 204;
 
 /**
  * theater
  */
 export interface Theater {
-    __v: string,
-    _id: string,
+    _id: string;
     address: {
         en: string,
         ja: string
-    },
+    };
     created_at: string;
     name: {
         en: string,
@@ -28,7 +30,6 @@ export interface Theater {
  * screen
  */
 export interface Screen {
-    __v: string;
     _id: string;
     coa_screen_code: string;
     created_at: string;
@@ -37,25 +38,34 @@ export interface Screen {
         ja: string
     };
     seats_numbers_by_seat_grade: any[];
-    sections: Array<{
-        code: string,
-        name: {
-            en: string,
-            ja: string
-        },
-        seats: Array<{
-            code: string
-        }>
-    }>;
+    sections: Section[];
     theater: string;
     updated_at: string;
+}
+
+/**
+ * section
+ */
+export interface Section {
+    code: string;
+    name: {
+        en: string,
+        ja: string
+    };
+    seats: Seat[];
+}
+
+/**
+ * seat
+ */
+export interface Seat {
+    code: string;
 }
 
 /**
  * film
  */
 export interface Film {
-    __v: string;
     _id: string;
     coa_title_branch_num: string;
     coa_title_code: string;
@@ -71,7 +81,7 @@ export interface Film {
     minutes: string;
     name: {
         en: string,
-        ja: string,
+        ja: string
     };
     name_kana: string;
     name_original: string;
@@ -94,8 +104,8 @@ export interface Performance {
         time_end: string,
         time_start: string
     };
+    // tslint:disable-next-line:no-reserved-keywords
     type: string;
-
 }
 
 /**
@@ -105,18 +115,15 @@ export namespace getPerformance {
     export interface Args {
         id: string;
     }
-    export interface Result {
-        
-    }
     export async function call(args: Args): Promise<Performance> {
         const response = await request.get({
             url: `${endPoint}/performances/${args.id}`,
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
         console.log('performances:', response.body.data);
         return response.body.data;
     }
@@ -130,35 +137,38 @@ export namespace transactionStart {
         expired_at: number;
     }
     export interface Result {
+        // tslint:disable-next-line:no-reserved-keywords
         type: string;
         _id: string;
         attributes: {
             _id: string,
             status: string,
             events: any[],
-            owners: Array<{
-                _id: string,
-                group: string
-            }>,
+            owners: Owner[],
             queues: any[],
             expired_at: string,
             inquiry_id: string,
             inquiry_pass: string,
-            queues_status: string,
+            queues_status: string
         };
+    }
+
+    interface Owner {
+        _id: string;
+        group: string;
     }
 
     export async function call(args: Args): Promise<Result> {
         const response = await request.post({
             url: `${endPoint}/transactions`,
             body: {
-                expired_at: args.expired_at,
+                expired_at: args.expired_at
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 201) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_201) throw new Error(response.body.message);
         const transaction = response.body.data;
         console.log('transaction:', transaction);
 
@@ -173,23 +183,25 @@ export namespace addCOAAuthorization {
     export interface Args {
         transaction: transactionStart.Result;
         reserveSeatsTemporarilyResult: COA.reserveSeatsTemporarilyInterface.Result;
-        salesTicketResults: Array<{
-            section: string,
-            seat_code: string,
-            ticket_code: string,
-            ticket_name_ja: string,
-            ticket_name_en: string,
-            ticket_name_kana: string,
-            std_price: number,
-            add_price: number,
-            dis_price: number,
-            sale_price: number
-        }>;
+        salesTicketResults: SalesTicketResult[];
         performance: Performance;
         totalPrice: number;
 
     }
+    interface SalesTicketResult {
+        section: string;
+        seat_code: string;
+        ticket_code: string;
+        ticket_name_ja: string;
+        ticket_name_en: string;
+        ticket_name_kana: string;
+        std_price: number;
+        add_price: number;
+        dis_price: number;
+        sale_price: number;
+    }
     export interface Result {
+        // tslint:disable-next-line:no-reserved-keywords
         type: string;
         _id: string;
     }
@@ -227,16 +239,16 @@ export namespace addCOAAuthorization {
                         std_price: tmpReserve.std_price,
                         add_price: tmpReserve.add_price,
                         dis_price: tmpReserve.dis_price,
-                        sale_price: tmpReserve.sale_price,
+                        sale_price: tmpReserve.sale_price
                     };
                 }),
-                price: args.totalPrice,
+                price: args.totalPrice
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
         console.log('addCOAAuthorization result');
         return response.body.data;
@@ -251,8 +263,6 @@ export namespace removeCOAAuthorization {
         transactionId: string;
         coaAuthorizationId: string;
     }
-    export interface Result {
-    }
     export async function call(args: Args): Promise<void> {
         const response = await request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
@@ -260,14 +270,13 @@ export namespace removeCOAAuthorization {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
         console.log('addCOAAuthorization result');
     }
 }
-
 
 /**
  * GMOオーソリ追加
@@ -280,6 +289,7 @@ export namespace addGMOAuthorization {
         entryTranResult: GMO.CreditService.entryTranInterface.Result;
     }
     export interface Result {
+        // tslint:disable-next-line:no-reserved-keywords
         type: string;
         _id: string;
     }
@@ -297,19 +307,19 @@ export namespace addGMOAuthorization {
             body: {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
-                gmo_shop_id: config.get<string>('gmo_shop_id'),
-                gmo_shop_password: config.get<string>('gmo_shop_password'),
+                gmo_shop_id: process.env.GMO_SHOP_ID,
+                gmo_shop_password: process.env.GMO_SHOP_PASSWORD,
                 gmo_order_id: args.orderId,
                 gmo_amount: args.amount,
                 gmo_access_id: args.entryTranResult.access_id,
                 gmo_access_password: args.entryTranResult.access_pass,
                 gmo_job_cd: GMO.Util.JOB_CD_SALES,
-                gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT,
+                gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
             },
             json: true,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
         console.log('addGMOAuthorization result:');
         return response.body.data;
@@ -324,8 +334,6 @@ export namespace removeGMOAuthorization {
         transactionId: string;
         gmoAuthorizationId: string;
     }
-    export interface Result {
-    }
     export async function call(args: Args): Promise<void> {
         const response = await request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
@@ -334,15 +342,14 @@ export namespace removeGMOAuthorization {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
         console.log('removeGMOAuthorization result:');
 
     }
 }
-
 
 /**
  * 購入者情報登録
@@ -355,8 +362,6 @@ export namespace ownersAnonymous {
         tel: string;
         email: string;
     }
-    export interface Result {
-    }
     export async function call(args: Args): Promise<void> {
         const response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
@@ -364,13 +369,13 @@ export namespace ownersAnonymous {
                 name_first: args.name_first,
                 name_last: args.name_last,
                 tel: args.tel,
-                email: args.email,
+                email: args.email
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
         console.log('ownersAnonymous result:');
 
@@ -385,8 +390,6 @@ export namespace transactionsEnableInquiry {
         inquiry_id: number;
         inquiry_pass: string;
     }
-    export interface Result {
-    }
     export async function call(args: Args): Promise<void> {
         const response = await request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
@@ -397,15 +400,14 @@ export namespace transactionsEnableInquiry {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
         console.log('transactionsEnableInquiry result:');
 
     }
 }
-
 
 /**
  * 取引成立
@@ -413,8 +415,6 @@ export namespace transactionsEnableInquiry {
 export namespace transactionClose {
     export interface Args {
         transactionId: string;
-    }
-    export interface Result {
     }
     export async function call(args: Args): Promise<void> {
         const response = await request.patch({
@@ -424,13 +424,12 @@ export namespace transactionClose {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
         console.log('close result:');
     }
 }
-
 
 /**
  * メール追加
@@ -438,6 +437,7 @@ export namespace transactionClose {
 export namespace addEmail {
     export interface Args {
         transactionId: string;
+        // tslint:disable-next-line:no-reserved-keywords
         from: string;
         to: string;
         subject: string;
@@ -453,13 +453,13 @@ export namespace addEmail {
                 from: args.from,
                 to: args.to,
                 subject: args.subject,
-                content: args.content,
+                content: args.content
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
         console.log('addEmail result:' + response.body.data);
         return response.body.data;
     }
@@ -482,9 +482,9 @@ export namespace removeEmail {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 204) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
         console.log('removeEmail result:');
     }
 }
@@ -507,13 +507,13 @@ export namespace makeInquiry {
             body: {
                 inquiry_theater: args.inquiry_theater,
                 inquiry_id: args.inquiry_id,
-                inquiry_pass: args.inquiry_pass,
+                inquiry_pass: args.inquiry_pass
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true,
+            resolveWithFullResponse: true
         });
-        if (response.statusCode !== 200) throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
         console.log('makeInquiry result:' + response.body.data);
         return response.body.data._id;
     }

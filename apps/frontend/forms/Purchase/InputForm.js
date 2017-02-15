@@ -1,5 +1,6 @@
 "use strict";
 const form = require("express-form");
+const maxLength = 30;
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 購入情報入力フォーム
@@ -7,10 +8,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (req) => {
     return form(form.field('last_name_hira', req.__('common.last_name_hira')).trim()
         .required('', `%s${req.__('common.validation.required')}`)
-        .maxLength(30, `%s${req.__('common.validation.maxlength %s', '30')}`)
+        .maxLength(maxLength, `%s${req.__('common.validation.maxlength %s', String(maxLength))}`)
         .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_hira')}`), form.field('first_name_hira', req.__('common.first_name_hira')).trim()
         .required('', `%s${req.__('common.validation.required')}`)
-        .maxLength(30, `%s${req.__('common.validation.maxlength %s', '30')}`)
+        .maxLength(maxLength, `%s${req.__('common.validation.maxlength %s', String(maxLength))}`)
         .regex(/^[ぁ-ゞー]+$/, `%s${req.__('common.validation.is_hira')}`), form.field('mail_addr', req.__('common.mail_addr')).trim()
         .required('', `%s${req.__('common.validation.required')}`)
         .isEmail(`%s${req.__('common.validation.is_email')}`), form.field('mail_confirm', req.__('common.mail_confirm')).trim()

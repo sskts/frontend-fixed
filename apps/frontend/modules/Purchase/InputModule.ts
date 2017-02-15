@@ -1,11 +1,8 @@
-
-import express = require('express');
-import InputForm from '../../forms/Purchase/InputForm';
-import PurchaseSession = require('../../models/Purchase/PurchaseModel');
-import config = require('config');
-// import COA = require("@motionpicture/coa-service");
 import * as GMO from '@motionpicture/gmo-service';
+import * as express from 'express';
 import * as MP from '../../../../libs/MP';
+import InputForm from '../../forms/Purchase/InputForm';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * 購入情報入力
@@ -22,13 +19,11 @@ namespace InputModule {
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
 
-
         //購入者情報入力表示
         res.locals.error = null;
-        res.locals.moment = require('moment');
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-        res.locals.gmoModuleUrl = config.get<string>('gmo_module_url');
-        res.locals.gmoShopId = config.get<string>('gmo_shop_id');
+        res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+        res.locals.gmoShopId = process.env.GMO_SHOP_ID;
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP._id;
 
@@ -111,15 +106,15 @@ namespace InputModule {
                                 securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`]
                             };
                             res.locals.input = req.body;
-                            res.locals.step = 2;
-                            res.locals.gmoModuleUrl = config.get<string>('gmo_module_url');
-                            res.locals.gmoShopId = config.get<string>('gmo_shop_id');
+                            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+                            res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+                            res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                             res.locals.price = purchaseModel.getReserveAmount();
                             res.locals.transactionId = purchaseModel.transactionMP._id;
 
                             return res.render('purchase/input');
-                        });
-
+                        }
+                    );
 
                 } else {
                     //クレジット決済なし
@@ -134,9 +129,9 @@ namespace InputModule {
                 if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
                 res.locals.error = req.form.getErrors();
                 res.locals.input = req.body;
-                res.locals.step = 2;
-                res.locals.gmoModuleUrl = config.get<string>('gmo_module_url');
-                res.locals.gmoShopId = config.get<string>('gmo_shop_id');
+                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+                res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+                res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                 res.locals.price = purchaseModel.getReserveAmount();
                 res.locals.transactionId = purchaseModel.transactionMP._id;
 
@@ -162,11 +157,10 @@ namespace InputModule {
             if (!purchaseModel.authorizationGMO) throw new Error(req.__('common.error.property'));
             if (!purchaseModel.orderId) throw new Error(req.__('common.error.property'));
 
-
             //GMOオーソリ取消
             await GMO.CreditService.alterTranInterface.call({
-                shop_id: config.get<string>('gmo_shop_id'),
-                shop_pass: config.get<string>('gmo_shop_password'),
+                shop_id: process.env.GMO_SHOP_ID,
+                shop_pass: process.env.GMO_SHOP_PASSWORD,
                 access_id: purchaseModel.transactionGMO.access_id,
                 access_pass: purchaseModel.transactionGMO.access_pass,
                 job_cd: GMO.Util.JOB_CD_VOID
@@ -186,8 +180,8 @@ namespace InputModule {
             purchaseModel.orderId = Date.now().toString();
             const amount: number = purchaseModel.getReserveAmount();
             purchaseModel.transactionGMO = await GMO.CreditService.entryTranInterface.call({
-                shop_id: config.get<string>('gmo_shop_id'),
-                shop_pass: config.get<string>('gmo_shop_password'),
+                shop_id: process.env.GMO_SHOP_ID,
+                shop_pass: process.env.GMO_SHOP_PASSWORD,
                 order_id: purchaseModel.orderId,
                 job_cd: GMO.Util.JOB_CD_AUTH,
                 amount: amount

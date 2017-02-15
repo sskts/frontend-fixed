@@ -7,12 +7,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const TicketForm_1 = require("../../forms/Purchase/TicketForm");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const config = require("config");
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const MP = require("../../../../libs/MP");
+const TicketForm_1 = require("../../forms/Purchase/TicketForm");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * 購入券種選択
  * @namespace
@@ -173,8 +172,8 @@ var TicketModule;
                     throw new Error(req.__('common.error.property'));
                 //GMOオーソリ取消
                 yield GMO.CreditService.alterTranInterface.call({
-                    shop_id: config.get('gmo_shop_id'),
-                    shop_pass: config.get('gmo_shop_password'),
+                    shop_id: process.env.GMO_SHOP_ID,
+                    shop_pass: process.env.GMO_SHOP_PASSWORD,
                     access_id: purchaseModel.transactionGMO.access_id,
                     access_pass: purchaseModel.transactionGMO.access_pass,
                     job_cd: GMO.Util.JOB_CD_VOID

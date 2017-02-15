@@ -13,7 +13,9 @@ exports.default = (req, _res, next) => {
             const endMemory = process.memoryUsage();
             const memoryUsage = endMemory.rss - startMemory.rss;
             const diff = process.hrtime(startTime);
-            logger.debug(`benchmark took ${diff[0]} seconds and ${diff[1]} nanoseconds. memoryUsage:${memoryUsage} (${startMemory.rss} - ${endMemory.rss})`);
+            logger.debug(
+            // tslint:disable-next-line:max-line-length
+            `benchmark took ${diff[0]} seconds and ${diff[1]} nanoseconds. memoryUsage:${memoryUsage} (${startMemory.rss} - ${endMemory.rss})`);
         });
     }
     next();

@@ -1,6 +1,4 @@
-import express = require('express');
-const router = express.Router();
-
+import * as express from 'express';
 import CompleteModule from '../modules/Purchase/CompleteModule';
 import ConfirmModule from '../modules/Purchase/ConfirmModule';
 import InputModule from '../modules/Purchase/InputModule';
@@ -14,6 +12,8 @@ import TransactionModule from '../modules/Purchase/TransactionModule';
 /**
  * ルーティング購入
  */
+
+const router = express.Router();
 
 //購入(取引開始)
 router.get('/:id/transaction', TransactionModule.start);
@@ -62,4 +62,3 @@ router.post('/mvtk/confirm', MvtkConfirmModule.submit);
 router.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 
 export default router;
-

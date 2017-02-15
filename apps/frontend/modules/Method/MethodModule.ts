@@ -1,5 +1,5 @@
 
-import express = require('express');
+import * as express from 'express';
 
 /**
  * 方法

@@ -1,7 +1,6 @@
-import COA = require('@motionpicture/coa-service');
-import MP = require('../../../../libs/MP');
-import GMO = require('@motionpicture/gmo-service');
-
+import * as COA from '@motionpicture/coa-service';
+import * as GMO from '@motionpicture/gmo-service';
+import * as MP from '../../../../libs/MP';
 
 export interface Args {
     id: string;
@@ -41,7 +40,7 @@ export interface ReserveTicket {
      */
     add_price: number;
     /**
-     * TODO
+     * todo
      */
     dis_price: number;
     /**
@@ -84,6 +83,38 @@ export interface GMO {
      * トークン
      */
     token: string;
+}
+
+export interface Ticket {
+    /**
+     * チケット番号
+     */
+    ticket_code: string;
+    /**
+     * 標準単価
+     */
+    std_price: number;
+    /**
+     * 加算単価
+     */
+    add_price: number;
+    /**
+     * 割引額
+     */
+    dis_price: number;
+    /**
+     * 金額
+     */
+    sale_price: number;
+    /**
+     * 枚数
+     */
+    ticket_count: number;
+    /**
+     * 座席番号
+     */
+    // tslint:disable-next-line:trailing-comma
+    seat_num: string;
 }
 
 /**
@@ -241,37 +272,7 @@ export class PurchaseModel {
      * チケットリスト返却
      * @method
      */
-    public getTicketList(): Array<{
-        /**
-         * チケット番号
-         */
-        ticket_code: string,
-        /**
-         * 標準単価
-         */
-        std_price: number,
-        /**
-         * 加算単価
-         */
-        add_price: number,
-        /**
-         * 割引額
-         */
-        dis_price: number,
-        /**
-         * 金額
-         */
-        sale_price: number,
-        /**
-         * 枚数
-         */
-        ticket_count: number,
-        /**
-         * 座席番号
-         */
-        // tslint:disable-next-line:trailing-comma
-        seat_num: string
-    }> {
+    public getTicketList(): Ticket[] {
         const results = [];
         if (!this.reserveTickets) return [];
         for (const ticket of this.reserveTickets) {
@@ -288,4 +289,3 @@ export class PurchaseModel {
         return results;
     }
 }
-
