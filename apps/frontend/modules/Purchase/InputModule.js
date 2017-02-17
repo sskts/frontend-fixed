@@ -24,7 +24,7 @@ var InputModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP)
@@ -61,7 +61,7 @@ var InputModule;
         //セッション更新
         if (!req.session)
             return next(req.__('common.error.property'));
-        req.session['purchase'] = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.formatToSession();
         return res.render('purchase/input');
     }
     InputModule.index = index;
@@ -72,7 +72,7 @@ var InputModule;
     function submit(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //取引id確認
@@ -102,7 +102,7 @@ var InputModule;
                         //セッション更新
                         if (!req.session)
                             return next(req.__('common.error.property'));
-                        req.session['purchase'] = purchaseModel.formatToSession();
+                        req.session.purchase = purchaseModel.formatToSession();
                         //購入者内容確認へ
                         return res.redirect('/purchase/confirm');
                     }, (err) => {
@@ -130,7 +130,7 @@ var InputModule;
                     //セッション更新
                     if (!req.session)
                         return next(req.__('common.error.property'));
-                    req.session['purchase'] = purchaseModel.formatToSession();
+                    req.session.purchase = purchaseModel.formatToSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
                 }

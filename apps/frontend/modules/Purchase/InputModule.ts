@@ -15,8 +15,7 @@ namespace InputModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
 
@@ -53,8 +52,7 @@ namespace InputModule {
 
         //セッション更新
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        req.session['purchase'] = purchaseModel.formatToSession();
+        (<any>req.session).purchase = purchaseModel.formatToSession();
 
         return res.render('purchase/input');
     }
@@ -65,8 +63,7 @@ namespace InputModule {
      */
     export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //取引id確認
@@ -95,8 +92,7 @@ namespace InputModule {
                         () => {
                             //セッション更新
                             if (!req.session) return next(req.__('common.error.property'));
-                            // tslint:disable-next-line:no-string-literal
-                            req.session['purchase'] = purchaseModel.formatToSession();
+                            (<any>req.session).purchase = purchaseModel.formatToSession();
                             //購入者内容確認へ
                             return res.redirect('/purchase/confirm');
                         },
@@ -124,8 +120,7 @@ namespace InputModule {
                     //クレジット決済なし
                     //セッション更新
                     if (!req.session) return next(req.__('common.error.property'));
-                    // tslint:disable-next-line:no-string-literal
-                    req.session['purchase'] = purchaseModel.formatToSession();
+                    (<any>req.session).purchase = purchaseModel.formatToSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
                 }

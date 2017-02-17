@@ -12,8 +12,7 @@ namespace MvtkInputModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //購入者情報入力表示
@@ -30,8 +29,7 @@ namespace MvtkInputModule {
      */
     export function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //取引id確認

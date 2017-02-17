@@ -24,7 +24,7 @@ var ConfirmModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP)
@@ -43,7 +43,7 @@ var ConfirmModule;
         //セッション更新
         if (!req.session)
             return next(req.__('common.error.property'));
-        req.session['purchase'] = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.formatToSession();
         return res.render('purchase/confirm');
     }
     ConfirmModule.index = index;
@@ -69,7 +69,7 @@ var ConfirmModule;
             const minutes = 5;
             if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
                 //購入セッション削除
-                delete req.session['purchase'];
+                delete req.session.purchase;
                 throw {
                     error: new Error(req.__('common.error.expire')),
                     type: 'expired'
@@ -144,7 +144,7 @@ var ConfirmModule;
     function purchase(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //取引id確認
@@ -154,7 +154,7 @@ var ConfirmModule;
             //購入情報をセッションへ
             if (!req.session)
                 throw req.__('common.error.property');
-            req.session['complete'] = {
+            req.session.complete = {
                 updateReserve: purchaseModel.updateReserve,
                 performance: purchaseModel.performance,
                 input: purchaseModel.input,
@@ -163,12 +163,12 @@ var ConfirmModule;
                 price: purchaseModel.getReserveAmount()
             };
             //購入セッション削除
-            delete req.session['purchase'];
+            delete req.session.purchase;
             //購入完了情報を返す
             return res.json({
                 err: null,
                 redirect: false,
-                result: req.session['complete'].updateReserve,
+                result: req.session.complete.updateReserve,
                 type: null
             });
         }, (err) => {

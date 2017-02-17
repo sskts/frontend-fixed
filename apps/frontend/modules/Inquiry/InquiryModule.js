@@ -43,7 +43,7 @@ var InquiryModule;
     function auth(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
         const form = LoginForm_1.default(req);
         form(req, res, () => {
             if (!req.form)
@@ -115,7 +115,7 @@ var InquiryModule;
             console.log('MPパフォーマンス取得');
             if (!req.session)
                 throw req.__('common.error.property');
-            req.session['inquiry'] = inquiryModel.formatToSession();
+            req.session.inquiry = inquiryModel.formatToSession();
         });
     }
     /**
@@ -125,7 +125,7 @@ var InquiryModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const inquiryModel = new InquirySession.InquiryModel(req.session['inquiry']);
+        const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
         if (inquiryModel.stateReserve
             && inquiryModel.performance
             && inquiryModel.login

@@ -13,7 +13,7 @@ var MvtkConfirmModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //購入者情報入力表示
@@ -30,7 +30,7 @@ var MvtkConfirmModule;
     function submit(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //取引id確認

@@ -13,12 +13,10 @@ namespace CompleteModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        if (!req.session['complete']) return next(new Error(req.__('common.error.access')));
+        if (!(<any>req.session).complete) return next(new Error(req.__('common.error.access')));
 
         //購入者内容確認表示
-        // tslint:disable-next-line:no-string-literal
-        const complete = req.session['complete'];
+        const complete = (<any>req.session).complete;
         res.locals.input = complete.input;
         res.locals.performance = complete.performance;
         res.locals.reserveSeats = complete.reserveSeats;

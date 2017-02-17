@@ -16,8 +16,7 @@ namespace ConfirmModule {
      */
     export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
@@ -35,8 +34,7 @@ namespace ConfirmModule {
 
         //セッション更新
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        req.session['purchase'] = purchaseModel.formatToSession();
+        (<any>req.session).purchase = purchaseModel.formatToSession();
 
         return res.render('purchase/confirm');
 
@@ -57,8 +55,7 @@ namespace ConfirmModule {
         const minutes = 5;
         if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
             //購入セッション削除
-            // tslint:disable-next-line:no-string-literal
-            delete req.session['purchase'];
+            delete (<any>req.session).purchase;
             throw {
                 error: new Error(req.__('common.error.expire')),
                 type: 'expired'
@@ -137,8 +134,7 @@ namespace ConfirmModule {
      */
     export function purchase(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
         //取引id確認
@@ -148,8 +144,7 @@ namespace ConfirmModule {
             () => {
                 //購入情報をセッションへ
                 if (!req.session) throw req.__('common.error.property');
-                // tslint:disable-next-line:no-string-literal
-                req.session['complete'] = {
+                (<any>req.session).complete = {
                     updateReserve: purchaseModel.updateReserve,
                     performance: purchaseModel.performance,
                     input: purchaseModel.input,
@@ -159,15 +154,13 @@ namespace ConfirmModule {
                 };
 
                 //購入セッション削除
-                // tslint:disable-next-line:no-string-literal
-                delete req.session['purchase'];
+                delete (<any>req.session).purchase;
 
                 //購入完了情報を返す
                 return res.json({
                     err: null,
                     redirect: false,
-                    // tslint:disable-next-line:no-string-literal
-                    result: req.session['complete'].updateReserve,
+                    result: (<any>req.session).complete.updateReserve,
                     type: null
                 });
             },

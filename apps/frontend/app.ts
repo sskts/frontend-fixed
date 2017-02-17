@@ -9,6 +9,8 @@ import locales from './middlewares/locales';
 import logger from './middlewares/logger';
 import session from './middlewares/session';
 import router from './routes/router';
+// tslint:disable-next-line:no-var-requires no-require-imports
+const engine = require('ejs-mate');
 
 /**
  * express設定
@@ -21,8 +23,7 @@ app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-// tslint:disable-next-line:no-var-requires no-require-imports
-app.engine('ejs', require('ejs-locals'));
+app.engine('ejs', engine);
 // tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -38,10 +39,8 @@ if (process.env.NODE_ENV === 'dev') {
 //言語
 app.use((req, res, next) => {
     locales.init(req, res, next);
-    // tslint:disable-next-line:no-string-literal
-    if (req.session && req.session['locale']) {
-        // tslint:disable-next-line:no-string-literal
-        locales.setLocale(req, req.session['locale']);
+    if (req.session && (<any>req.session).locale) {
+        locales.setLocale(req, (<any>req.session).locale);
     } else {
         locales.setLocale(req, 'ja');
     }

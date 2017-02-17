@@ -25,7 +25,7 @@ var TicketModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
@@ -50,7 +50,7 @@ var TicketModule;
             //セッション更新
             if (!req.session)
                 return next(req.__('common.error.property'));
-            req.session['purchase'] = purchaseModel.formatToSession();
+            req.session.purchase = purchaseModel.formatToSession();
             //券種選択表示
             return res.render('purchase/ticket');
         }, (err) => {
@@ -65,7 +65,7 @@ var TicketModule;
     function select(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //取引id確認
@@ -78,11 +78,11 @@ var TicketModule;
             purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
             ticketValidation(req, purchaseModel).then(() => {
                 console.log('券種決定完了');
-                if (req.body['mvtk']) {
+                if (req.body.mvtk) {
                     if (!req.session)
                         return next(req.__('common.error.property'));
                     //セッション更新
-                    req.session['purchase'] = purchaseModel.formatToSession();
+                    req.session.purchase = purchaseModel.formatToSession();
                     //ムビチケ入力へ
                     return res.redirect('/purchase/mvtk');
                 }
@@ -91,7 +91,7 @@ var TicketModule;
                         if (!req.session)
                             return next(req.__('common.error.property'));
                         //セッション更新
-                        req.session['purchase'] = purchaseModel.formatToSession();
+                        req.session.purchase = purchaseModel.formatToSession();
                         //購入者情報入力へ
                         return res.redirect('/purchase/input');
                     }, (err) => {

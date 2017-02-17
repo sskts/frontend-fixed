@@ -25,17 +25,17 @@ var TransactionModule;
             return next(new Error(req.__('common.error.access')));
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
             //重複確認へ
-            return res.redirect('/purchase/' + req.params['id'] + '/overlap');
+            return res.redirect('/purchase/' + req.params.id + '/overlap');
         }
         transactionStart(purchaseModel).then(() => {
             if (!req.session)
                 return next(req.__('common.error.property'));
-            delete req.session['purchase'];
+            delete req.session.purchase;
             //セッション更新
-            req.session['purchase'] = purchaseModel.formatToSession();
+            req.session.purchase = purchaseModel.formatToSession();
             //座席選択へ
             return res.redirect('/purchase/seat/' + req.params.id + '/');
         }, (err) => {

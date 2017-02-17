@@ -1,31 +1,24 @@
-/// <reference path='./typings/index.d.ts' />
 /**
  * Module dependencies.
  */
-
-import app = require('./apps/frontend/app');
-import debugModule = require('debug');
-import http = require('http');
-
-let debug = debugModule('app:server');
+import * as http from 'http';
+import * as app from './apps/frontend/app';
 
 /**
  * Get port from environment and store in Express.
  */
-
-let port = normalizePort(process.env.PORT || '8080');
+const port = normalizePort(process.env.PORT || '8080');
+// tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('port', port);
 
 /**
  * Create HTTP server.
  */
-
-let server = http.createServer(app);
+const server = http.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -33,9 +26,10 @@ server.on('listening', onListening);
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val: any) {
-    let port = parseInt(val, 10);
+    const radix = 10;
+    // tslint:disable-next-line:no-shadowed-variable
+    const port = parseInt(val, radix);
 
     if (isNaN(port)) {
         // named pipe
@@ -59,7 +53,7 @@ function onError(error: any) {
         throw error;
     }
 
-    let bind = typeof port === 'string'
+    const bind = typeof port === 'string'
         ? 'Pipe ' + port
         : 'Port ' + port;
 
@@ -83,9 +77,9 @@ function onError(error: any) {
  */
 
 function onListening() {
-    let addr = server.address();
-    let bind = typeof addr === 'string'
+    const addr = server.address();
+    // tslint:disable-next-line:no-unused-variable
+    const bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
-    debug('Listening on ' + bind);
 }

@@ -24,7 +24,7 @@ var OverlapModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!req.params || !req.params.id)
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.performance)
@@ -33,7 +33,7 @@ var OverlapModule;
         MP.getPerformance.call({
             id: req.params.id
         }).then((result) => {
-            res.locals['performances'] = {
+            res.locals.performances = {
                 after: result,
                 before: purchaseModel.performance
             };
@@ -50,12 +50,12 @@ var OverlapModule;
     function newReserve(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         removeReserve(req, purchaseModel).then(() => {
             if (!req.session)
                 return next(req.__('common.error.property'));
             //購入スタートへ
-            delete req.session['purchase'];
+            delete req.session.purchase;
             return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
         }, (err) => {
             return next(new Error(err.message));

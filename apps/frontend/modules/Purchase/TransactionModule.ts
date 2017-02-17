@@ -16,8 +16,7 @@ namespace TransactionModule {
     export function start(req: express.Request, res: express.Response, next: express.NextFunction): void {
         if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
         if (!req.session) return next(req.__('common.error.property'));
-        // tslint:disable-next-line:no-string-literal
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
         if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
 
             //重複確認へ
@@ -27,11 +26,9 @@ namespace TransactionModule {
         transactionStart(purchaseModel).then(
             () => {
                 if (!req.session) return next(req.__('common.error.property'));
-                // tslint:disable-next-line:no-string-literal
-                delete req.session['purchase'];
+                delete (<any>req.session).purchase;
                 //セッション更新
-                // tslint:disable-next-line:no-string-literal
-                req.session['purchase'] = purchaseModel.formatToSession();
+                (<any>req.session).purchase = purchaseModel.formatToSession();
                 //座席選択へ
                 return res.redirect('/purchase/seat/' + req.params.id + '/');
             },

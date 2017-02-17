@@ -29,8 +29,7 @@ namespace ErrorModule {
     export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
         console.log(err.stack);
 
-        // tslint:disable-next-line:no-string-literal
-        if (req.session) delete req.session['purchase'];
+        if (req.session) delete (<any>req.session).purchase;
 
         const status = 500;
 

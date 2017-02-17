@@ -25,8 +25,8 @@ var SeatModule;
     function index(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
-        if (!req.params || !req.params['id'])
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!req.params || !req.params.id)
             return next(new Error(req.__('common.error.access')));
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
             return next(new Error(req.__('common.error.access')));
@@ -49,7 +49,7 @@ var SeatModule;
             //セッション更新
             if (!req.session)
                 return next(req.__('common.error.property'));
-            req.session['purchase'] = purchaseModel.formatToSession();
+            req.session.purchase = purchaseModel.formatToSession();
             res.locals.error = null;
             return res.render('purchase/seat');
         }, (err) => {
@@ -64,7 +64,7 @@ var SeatModule;
     function select(req, res, next) {
         if (!req.session)
             return next(req.__('common.error.property'));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session['purchase']);
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         //取引id確認
@@ -80,7 +80,7 @@ var SeatModule;
                     //セッション更新
                     if (!req.session)
                         return next(req.__('common.error.property'));
-                    req.session['purchase'] = purchaseModel.formatToSession();
+                    req.session.purchase = purchaseModel.formatToSession();
                     //券種選択へ
                     return res.redirect('/purchase/ticket');
                 }, (err) => {
