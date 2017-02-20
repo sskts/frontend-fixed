@@ -1,45 +1,45 @@
-"use strict";
-const express = require("express");
-const CompleteModule_1 = require("../modules/Purchase/CompleteModule");
-const ConfirmModule_1 = require("../modules/Purchase/ConfirmModule");
-const InputModule_1 = require("../modules/Purchase/InputModule");
-const MvtkConfirmModule_1 = require("../modules/Purchase/Mvtk/MvtkConfirmModule");
-const MvtkInputModule_1 = require("../modules/Purchase/Mvtk/MvtkInputModule");
-const OverlapModule_1 = require("../modules/Purchase/OverlapModule");
-const SeatModule_1 = require("../modules/Purchase/SeatModule");
-const TicketModule_1 = require("../modules/Purchase/TicketModule");
-const TransactionModule_1 = require("../modules/Purchase/TransactionModule");
 /**
  * ルーティング購入
  */
+"use strict";
+const express = require("express");
+const CompleteModule = require("../modules/Purchase/CompleteModule");
+const ConfirmModule = require("../modules/Purchase/ConfirmModule");
+const InputModule = require("../modules/Purchase/InputModule");
+const MvtkConfirmModule = require("../modules/Purchase/Mvtk/MvtkConfirmModule");
+const MvtkInputModule = require("../modules/Purchase/Mvtk/MvtkInputModule");
+const OverlapModule = require("../modules/Purchase/OverlapModule");
+const SeatModule = require("../modules/Purchase/SeatModule");
+const TicketModule = require("../modules/Purchase/TicketModule");
+const TransactionModule = require("../modules/Purchase/TransactionModule");
 const router = express.Router();
 //購入(取引開始)
-router.get('/:id/transaction', TransactionModule_1.default.start);
+router.get('/:id/transaction', TransactionModule.start);
 //仮予約重複
-router.get('/:id/overlap', OverlapModule_1.default.index);
-router.post('/overlap/new', OverlapModule_1.default.newReserve);
-router.post('/overlap/prev', OverlapModule_1.default.prevReserve);
+router.get('/:id/overlap', OverlapModule.index);
+router.post('/overlap/new', OverlapModule.newReserve);
+router.post('/overlap/prev', OverlapModule.prevReserve);
 //座席選択
-router.get('/seat/:id/', SeatModule_1.default.index);
-router.post('/seat/:id/', SeatModule_1.default.select);
+router.get('/seat/:id/', SeatModule.index);
+router.post('/seat/:id/', SeatModule.select);
 //券種選択
-router.get('/ticket', TicketModule_1.default.index);
-router.post('/ticket', TicketModule_1.default.select);
+router.get('/ticket', TicketModule.index);
+router.post('/ticket', TicketModule.select);
 //購入者情報入力
-router.get('/input', InputModule_1.default.index);
-router.post('/input', InputModule_1.default.submit);
+router.get('/input', InputModule.index);
+router.post('/input', InputModule.submit);
 //購入内容確認
-router.get('/confirm', ConfirmModule_1.default.index);
-router.post('/confirm', ConfirmModule_1.default.purchase);
+router.get('/confirm', ConfirmModule.index);
+router.post('/confirm', ConfirmModule.purchase);
 //購入完了
-router.get('/complete', CompleteModule_1.default.index);
+router.get('/complete', CompleteModule.index);
 //ムビチケ券入力
-router.get('/mvtk', MvtkInputModule_1.default.index);
-router.post('/mvtk', MvtkInputModule_1.default.auth);
+router.get('/mvtk', MvtkInputModule.index);
+router.post('/mvtk', MvtkInputModule.auth);
 //ムビチケ券適用確認
-router.get('/mvtk/confirm', MvtkConfirmModule_1.default.index);
-router.post('/mvtk/confirm', MvtkConfirmModule_1.default.submit);
+router.get('/mvtk/confirm', MvtkConfirmModule.index);
+router.post('/mvtk/confirm', MvtkConfirmModule.submit);
 //座席状態取得
-router.post('/getScreenStateReserve', SeatModule_1.default.getScreenStateReserve);
+router.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = router;

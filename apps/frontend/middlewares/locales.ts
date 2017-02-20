@@ -1,7 +1,9 @@
-import * as i18n from 'i18n';
 /**
  * 多言語
  */
+
+import * as i18n from 'i18n';
+
 i18n.configure({
     // 利用するlocalesを設定。これが辞書ファイルとひも付きます
     locales: ['ja', 'en'],

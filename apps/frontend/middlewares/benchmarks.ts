@@ -1,9 +1,10 @@
-import * as express from 'express';
-import * as log4js from 'log4js';
-
 /**
  * ベンチマーク
  */
+
+import * as express from 'express';
+import * as log4js from 'log4js';
+
 // tslint:disable-next-line:variable-name
 export default (req: express.Request, _res: express.Response, next: express.NextFunction) => {
 

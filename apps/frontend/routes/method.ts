@@ -1,9 +1,9 @@
-import * as express from 'express';
-import MethodModule from '../modules/Method/MethodModule';
-
 /**
  * ルーティング方法
  */
+
+import * as express from 'express';
+import * as MethodModule from '../modules/Method/MethodModule';
 
 const router = express.Router();
 

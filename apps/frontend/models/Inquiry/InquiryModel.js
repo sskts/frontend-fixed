@@ -1,10 +1,11 @@
 "use strict";
 /**
  * 照会セッション
- * @class
+ * @class InquiryModel
  */
 class InquiryModel {
     /**
+     * @memberOf InquiryModel
      * @constructor
      */
     constructor(session) {
@@ -18,7 +19,9 @@ class InquiryModel {
     }
     /**
      * セッションObjectへ変換
-     * @method
+     * @memberOf InquiryModel
+     * @method formatToSession
+     * @returns {Object}
      */
     formatToSession() {
         return {

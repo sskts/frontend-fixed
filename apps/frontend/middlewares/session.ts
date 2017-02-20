@@ -1,13 +1,12 @@
+/**
+ * セッション
+ */
+
 import * as connectRedis from 'connect-redis';
 import * as session from 'express-session';
 
 // tslint:disable-next-line:no-var-requires no-require-imports
 const redis = require('redis');
-
-/**
- * セッション
- */
-
 const redisClient = redis.createClient(
     Number(process.env.REDIS_PORT),
     process.env.REDIS_HOST,
@@ -20,6 +19,8 @@ const redisClient = redis.createClient(
     }
 );
 
+const maxAge = 3600000; //60 * 60 * 1000
+const secure = (process.env.NODE_ENV === 'dev') ? false : true;
 export default session({
     secret: 'FrontendSecret',
     resave: false,
@@ -29,9 +30,8 @@ export default session({
         client: redisClient
     }),
     cookie: {
-        // secure: true,
+        secure: secure,
         httpOnly: true,
-        // tslint:disable-next-line:no-magic-numbers
-        maxAge: 60 * 60 * 1000
+        maxAge: maxAge
     }
 });

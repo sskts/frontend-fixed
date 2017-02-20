@@ -1,9 +1,9 @@
-import * as express from 'express';
-import InquiryModule from '../modules/Inquiry/InquiryModule';
-
 /**
  * ルーティング照会
  */
+
+import * as express from 'express';
+import * as InquiryModule from '../modules/Inquiry/InquiryModule';
 
 const router = express.Router();
 

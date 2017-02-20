@@ -10,7 +10,7 @@ process.env.REDIS_HOST = 'devsskts.redis.cache.windows.net';
 process.env.REDIS_PORT = '6380';
 process.env.REDIS_KEY = 'W/yjVruvypTFz3nl8teXxBYfunq6teXnyvIN5xuVLWU=';
 process.env.GMO_CLIENT_MODULE = 'https://pt01.mul-pay.jp/ext/js/token.js';
-process.env.GMO_API_ENDPOINT = 'https://pt01.mul-pay.jp';
+process.env.GMO_ENDPOINT = 'https://pt01.mul-pay.jp';
 process.env.GMO_SHOP_ID = 'tshop00026096';
 process.env.GMO_SHOP_PASSWORD = 'xbxmkaa6';
 process.env.COA_API_ENDPOINT = 'http://coacinema.aa0.netvolante.jp';

@@ -3,6 +3,7 @@ import * as MP from '../../../../libs/MP';
 
 /**
  * ログイン情報
+ * @interface Login
  */
 export interface Login {
     /**
@@ -21,7 +22,7 @@ export interface Login {
 
 /**
  * 照会セッション
- * @class
+ * @class InquiryModel
  */
 export class InquiryModel {
     /**
@@ -42,6 +43,7 @@ export class InquiryModel {
     public login: Login | null;
 
     /**
+     * @memberOf InquiryModel
      * @constructor
      */
     constructor(session: any) {
@@ -56,7 +58,9 @@ export class InquiryModel {
 
     /**
      * セッションObjectへ変換
-     * @method
+     * @memberOf InquiryModel
+     * @method formatToSession
+     * @returns {Object}
      */
     public formatToSession(): {
         transactionId: string | null,

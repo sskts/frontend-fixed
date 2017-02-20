@@ -1,9 +1,9 @@
-import * as fs from 'fs-extra';
-import * as log4js from 'log4js';
-
 /**
  * ロガー
  */
+
+import * as fs from 'fs-extra';
+import * as log4js from 'log4js';
 
 const env = process.env.NODE_ENV || 'dev';
 

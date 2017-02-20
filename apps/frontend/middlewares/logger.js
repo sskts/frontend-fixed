@@ -1,9 +1,9 @@
-"use strict";
-const fs = require("fs-extra");
-const log4js = require("log4js");
 /**
  * ロガー
  */
+"use strict";
+const fs = require("fs-extra");
+const log4js = require("log4js");
 const env = process.env.NODE_ENV || 'dev';
 // ディレクトリなければ作成(初回アクセス時だけ)
 const logDir = `${__dirname}/../../../logs/${env}/frontend`;

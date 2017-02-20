@@ -82,4 +82,6 @@ function onListening() {
     const bind = typeof addr === 'string'
         ? 'pipe ' + addr
         : 'port ' + addr.port;
+    // tslint:disable-next-line:no-unused-expression
+    bind;
 }

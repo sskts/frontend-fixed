@@ -1,17 +1,17 @@
-import * as express from 'express';
-import CompleteModule from '../modules/Purchase/CompleteModule';
-import ConfirmModule from '../modules/Purchase/ConfirmModule';
-import InputModule from '../modules/Purchase/InputModule';
-import MvtkConfirmModule from '../modules/Purchase/Mvtk/MvtkConfirmModule';
-import MvtkInputModule from '../modules/Purchase/Mvtk/MvtkInputModule';
-import OverlapModule from '../modules/Purchase/OverlapModule';
-import SeatModule from '../modules/Purchase/SeatModule';
-import TicketModule from '../modules/Purchase/TicketModule';
-import TransactionModule from '../modules/Purchase/TransactionModule';
-
 /**
  * ルーティング購入
  */
+
+import * as express from 'express';
+import * as CompleteModule from '../modules/Purchase/CompleteModule';
+import * as ConfirmModule from '../modules/Purchase/ConfirmModule';
+import * as InputModule from '../modules/Purchase/InputModule';
+import * as MvtkConfirmModule from '../modules/Purchase/Mvtk/MvtkConfirmModule';
+import * as MvtkInputModule from '../modules/Purchase/Mvtk/MvtkInputModule';
+import * as OverlapModule from '../modules/Purchase/OverlapModule';
+import * as SeatModule from '../modules/Purchase/SeatModule';
+import * as TicketModule from '../modules/Purchase/TicketModule';
+import * as TransactionModule from '../modules/Purchase/TransactionModule';
 
 const router = express.Router();
 

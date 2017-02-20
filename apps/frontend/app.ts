@@ -1,5 +1,4 @@
 import * as COA from '@motionpicture/coa-service';
-import * as GMO from '@motionpicture/gmo-service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -50,11 +49,6 @@ app.use((req, res, next) => {
 COA.initialize({
     endpoint: process.env.COA_API_ENDPOINT,
     refresh_token: process.env.COA_REFRESH_TOKEN
-});
-
-//GMOサービス初期化
-GMO.initialize({
-    endpoint: process.env.GMO_API_ENDPOINT
 });
 
 // ルーティング

@@ -2,10 +2,14 @@ import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as MP from '../../../../libs/MP';
 
-export interface Args {
-    id: string;
-}
+/**
+ * 購入セッション
+ */
 
+/**
+ * ReserveTicket
+ * @interface ReserveTicket
+ */
 export interface ReserveTicket {
     /**
      * 座席セクション
@@ -50,6 +54,10 @@ export interface ReserveTicket {
 
 }
 
+/**
+ * Input
+ * @interface Input
+ */
 export interface Input {
     /**
      * せい
@@ -78,6 +86,10 @@ export interface Input {
 
 }
 
+/**
+ * GMO
+ * @interface GMO
+ */
 export interface GMO {
     /**
      * トークン
@@ -85,6 +97,10 @@ export interface GMO {
     token: string;
 }
 
+/**
+ * Ticket
+ * @interface Ticket
+ */
 export interface Ticket {
     /**
      * チケット番号
@@ -119,7 +135,7 @@ export interface Ticket {
 
 /**
  * 購入セッション
- * @class
+ * @class PurchaseModel
  */
 export class PurchaseModel {
     public static SEAT_STATE = 0;
@@ -155,19 +171,19 @@ export class PurchaseModel {
     /**
      * 取引MP
      */
-    public transactionMP: MP.transactionStart.Result | null;
+    public transactionMP: MP.TransactionStartResult | null;
     /**
      * 取引GMO
      */
-    public transactionGMO: GMO.CreditService.entryTranInterface.Result | null;
+    public transactionGMO: GMO.CreditService.EntryTranResult | null;
     /**
      * COAオーソリ
      */
-    public authorizationCOA: MP.addCOAAuthorization.Result | null;
+    public authorizationCOA: MP.AddCOAAuthorizationResult | null;
     /**
      * GMOオーソリ
      */
-    public authorizationGMO: MP.addGMOAuthorization.Result | null;
+    public authorizationGMO: MP.AddGMOAuthorizationResult | null;
     /**
      * オーダーID
      */
@@ -178,7 +194,9 @@ export class PurchaseModel {
     public expired: number | null;
 
     /**
+     * @memberOf PurchaseModel
      * @constructor
+     * @param {any} session
      */
     constructor(session: any) {
         if (!session) {
@@ -201,7 +219,9 @@ export class PurchaseModel {
 
     /**
      * セッションObjectへ変換
-     * @method
+     * @memberOf PurchaseModel
+     * @method formatToSession
+     * @returns {Object} result
      */
     public formatToSession(): {
         performance: MP.Performance | null,
@@ -210,14 +230,13 @@ export class PurchaseModel {
         input: Input | null,
         gmo: GMO | null,
         updateReserve: COA.updateReserveInterface.Result | null,
-        transactionMP: MP.transactionStart.Result | null,
-        transactionGMO: GMO.CreditService.entryTranInterface.Result | null,
-        authorizationCOA: MP.addCOAAuthorization.Result | null,
-        authorizationGMO: MP.addGMOAuthorization.Result | null,
+        transactionMP: MP.TransactionStartResult | null,
+        transactionGMO: GMO.CreditService.EntryTranResult | null,
+        authorizationCOA: MP.AddCOAAuthorizationResult | null,
+        authorizationGMO: MP.AddGMOAuthorizationResult | null,
         orderId: string | null,
         expired: number | null
     } {
-
         return {
             performance: (this.performance) ? this.performance : null,
             reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
@@ -236,7 +255,10 @@ export class PurchaseModel {
 
     /**
      * ステータス確認
-     * @method
+     * @memberOf PurchaseModel
+     * @method accessAuth
+     * @param {number} value
+     * @returns {boolean}
      */
     public accessAuth(value: number): boolean {
         let result: boolean = false;
@@ -256,7 +278,9 @@ export class PurchaseModel {
 
     /**
      * 合計金額取得
-     * @method
+     * @memberOf PurchaseModel
+     * @method getReserveAmount
+     * @returns {number}
      */
     public getReserveAmount(): number {
         const reserveTickets = this.reserveTickets;
@@ -270,7 +294,9 @@ export class PurchaseModel {
 
     /**
      * チケットリスト返却
-     * @method
+     * @memberOf PurchaseModel
+     * @method getTicketList
+     * @returns {Ticket[]}
      */
     public getTicketList(): Ticket[] {
         const results = [];

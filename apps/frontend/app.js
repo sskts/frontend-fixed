@@ -1,6 +1,5 @@
 "use strict";
 const COA = require("@motionpicture/coa-service");
-const GMO = require("@motionpicture/gmo-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -44,10 +43,6 @@ app.use((req, res, next) => {
 COA.initialize({
     endpoint: process.env.COA_API_ENDPOINT,
     refresh_token: process.env.COA_REFRESH_TOKEN
-});
-//GMOサービス初期化
-GMO.initialize({
-    endpoint: process.env.GMO_API_ENDPOINT
 });
 // ルーティング
 router_1.default(app);
