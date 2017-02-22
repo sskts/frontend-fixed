@@ -38,13 +38,7 @@
             <dl>
                 <dt><%- __('common.seat') %></dt>
                 <dd>
-                    <% 
-                    let seats = [];
-                    for (let seat of reserveSeats.list_tmp_reserve) { 
-                        seats.push(seat.seat_num);
-                    } 
-                    %>
-                    <div><%= seats.join('、') %></div> 
+                    <div><%= seatStr %></div> 
                 </dd>
             </dl>
         </li>
@@ -52,25 +46,7 @@
             <dl>
                 <dt><%- __('common.ticket') %></dt>
                 <dd>
-                    <%
-                    let ticketObj = {};
-                    let tickets = [];
-                    for (let ticket of reserveTickets) {
-                        if (ticketObj[ticket.ticket_code]) {
-                            ticketObj[ticket.ticket_code].length++;
-                        }　else {
-                            ticketObj[ticket.ticket_code] = {
-                                name: ticket.ticket_name_ja,
-                                length: 1
-                            }
-                        }
-                    }
-                    for (let key in ticketObj) {
-                        let ticket = ticketObj[key];
-                        tickets.push(`${ticket.name} × ${ticket.length}`);
-                    }
-                    %>
-                    <div><%= tickets.join('、') %></div>
+                    <div><%= ticketStr %></div>
                 </dd>
             </dl>
         </li>

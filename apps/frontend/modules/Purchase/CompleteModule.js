@@ -20,12 +20,18 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.access')));
     //購入者内容確認表示
     const complete = req.session.complete;
+    const purchaseModel = new PurchaseSession.PurchaseModel({
+        reserveSeats: complete.reserveSeats,
+        reserveTickets: complete.reserveTickets
+    });
     res.locals.input = complete.input;
     res.locals.performance = complete.performance;
     res.locals.reserveSeats = complete.reserveSeats;
     res.locals.reserveTickets = complete.reserveTickets;
     res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
     res.locals.price = complete.price;
+    res.locals.seatStr = purchaseModel.seatToString();
+    res.locals.ticketStr = purchaseModel.ticketToString();
     res.locals.updateReserve = complete.updateReserve;
     return res.render('purchase/complete');
 }

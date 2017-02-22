@@ -18,7 +18,7 @@ export default (req: express.Request) => {
             try {
                 const mvtkList: Mvtk[] = JSON.parse(value);
                 for (const mvtk of mvtkList) {
-                    if (!mvtk.code || !mvtk.password {
+                    if (!mvtk.code || !mvtk.password) {
                         throw new Error();
                     }
                 }

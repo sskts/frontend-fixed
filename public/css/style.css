@@ -2016,7 +2016,7 @@ p a {
 }
 
 .screen .screen-scroll {
-    
+  height: 500px;
 }
 
 .screen .screen-inner {

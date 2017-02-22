@@ -34,6 +34,8 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.price = purchaseModel.getReserveAmount();
     res.locals.updateReserve = null;
     res.locals.error = null;
+    res.locals.seatStr = purchaseModel.seatToString();
+    res.locals.ticketStr = purchaseModel.ticketToString();
     res.locals.transactionId = purchaseModel.transactionMP._id;
 
     //セッション更新
@@ -159,9 +161,9 @@ ${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd'
 ${moment(purchaseModel.performance.attributes.time_start, 'hmm').format('HH:mm')}\n
 ・${purchaseModel.performance.attributes.film.name.ja}\n
 ・${purchaseModel.performance.attributes.screen.name.ja}\n
-・[チケット、枚数]\n
+・${purchaseModel.ticketToString()}\n
 　合計 ${purchaseModel.getReserveAmount()}\n
-・座席番号：[座席番号]\n
+・座席番号：${purchaseModel.seatToString()}\n
 \n
 [チケット発券について]\n
 チケットの発券/入場方法は2通りからお選び頂けます。\n

@@ -2,7 +2,8 @@
     visibility: hidden;
     position: relative;
     overflow: hidden;
-    .screen-scroll {        
+    .screen-scroll {
+        height: 500px;        
     }
     .screen-inner {
         position: relative;
