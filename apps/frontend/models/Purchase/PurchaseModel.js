@@ -112,6 +112,7 @@ class PurchaseModel {
                 dis_price: 0,
                 sale_price: ticket.sale_price,
                 ticket_count: 1,
+                mvtk_app_price: 0,
                 seat_num: ticket.seat_code
             });
         }

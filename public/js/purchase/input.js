@@ -11,21 +11,25 @@ $(function () {
             validationScroll();
             return;
         }
-
-        var cardno = $('input[name=cardno]').val();
-        var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
-        var securitycode = $('input[name=securitycode]').val();
-        var holdername = $('input[name=holdername]').val();
-        var sendParam = {
-            cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
-            expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
-            securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
-            holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+        var price = $('input[name=price]').val();
+        if (Number(price) === 0) {
+            loadingStart(function () {
+                $('#purchaseform').submit();
+            });
+        } else {
+            var cardno = $('input[name=cardno]').val();
+            var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
+            var securitycode = $('input[name=securitycode]').val();
+            var holdername = $('input[name=holdername]').val();
+            var sendParam = {
+                cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
+                expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
+                securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
+                holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+            }
+            
+            Multipayment.getToken(sendParam, someCallbackFunction);
         }
-        
-        Multipayment.getToken(sendParam, someCallbackFunction);
-        
-
     });
 });
 
@@ -48,9 +52,8 @@ function someCallbackFunction(response) {
         $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
         loadingStart(function () {
-            document.getElementById('purchaseform').submit();
+            $('#purchaseform').submit();
         });
-        
     }
 }
 
@@ -85,6 +88,11 @@ function validation() {
     validationList.forEach(function (validation, index) {
 
         var target = $('input[name=' + validation.name + ']');
+
+        if (target.length === 0) {
+            continue;
+        }
+
         var value = target.val();
 
         if (validation.required
@@ -93,10 +101,17 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
         } else if (validation.maxLength
+            && value
             && value.length > validation.maxLength) {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.maxlength.replace('30', validation.maxLength) + '</div>');
+        } else if (validation.minLength
+            && value
+            && value.length <= validation.minLength - 1) {
+            target.addClass('validation');
+            target.after('<div class="validation-text">' + validation.label + locales.validation.minlength.replace('30', validation.minLength) + '</div>');
         } else if (validation.regex
+            && value
             && !value.match(validation.regex[0])) {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');

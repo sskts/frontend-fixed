@@ -108,6 +108,7 @@ body {
 }
 
 @media screen and (max-width: 767px){
+    
 }
 
 input[type=text],
@@ -637,6 +638,21 @@ p a {
   .center-button{
     width:auto;
   }
+}
+
+.not-link {
+    position: relative;
+    cursor: default !important;
+}
+
+.not-link:after {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .button a, .button button, .button label {
@@ -1478,6 +1494,7 @@ p a {
 }
 
 .purchase-seat .screen {
+    
 }
 
 .purchase-seat .zoom-btn {
@@ -1601,17 +1618,18 @@ p a {
 }
 
 .purchase-ticket .seats {
+    
 }
 
-.purchase-ticket .mvtk-button label {
+.purchase-ticket .mvtk-button label, .purchase-ticket .mvtk-button a {
   border: 1px solid #d82918;
 }
 
-.purchase-ticket .mvtk-button label:before {
+.purchase-ticket .mvtk-button label:before, .purchase-ticket .mvtk-button a:before {
   left: 15px;
 }
 
-.purchase-ticket .mvtk-button label:after {
+.purchase-ticket .mvtk-button label:after, .purchase-ticket .mvtk-button a:after {
   left: 15px;
 }
 
@@ -1669,6 +1687,7 @@ p a {
 }
 
 .purchase-input dl dt {
+    
 }
 
 .purchase-input dl dd {
@@ -1876,6 +1895,7 @@ p a {
 }
 
 .purchase-complete .info {
+    
 }
 
 .purchase-complete .entry-method {
@@ -1927,6 +1947,21 @@ p a {
   }
 }
 
+.purchase-mvtk-input input[type=text],
+    .purchase-mvtk-input input[type=number],
+    .purchase-mvtk-input input[type=password],
+    .purchase-mvtk-input input[type=tel],
+    .purchase-mvtk-input input[type=email],
+    .purchase-mvtk-input input[type=number],
+    .purchase-mvtk-input select,
+    .purchase-mvtk-input textarea {
+  margin: 0 0 10px;
+}
+
+.purchase-mvtk-input input[type=text]:last-child, .purchase-mvtk-input input[type=number]:last-child, .purchase-mvtk-input input[type=password]:last-child, .purchase-mvtk-input input[type=tel]:last-child, .purchase-mvtk-input input[type=email]:last-child, .purchase-mvtk-input input[type=number]:last-child, .purchase-mvtk-input select:last-child, .purchase-mvtk-input textarea:last-child {
+  margin-bottom: 0;
+}
+
 .purchase-mvtk-input .clone {
   display: none;
 }
@@ -1958,10 +1993,19 @@ p a {
   max-width: 400px;
 }
 
-.purchase-mvtk-auth {
+@media screen and (max-width: 767px){
+
+  .purchase-mvtk-confirm .mvtk-lists li dt{
+    display:block;
+  }
 }
 
-.purchase-mvtk-confirm {
+@media screen and (max-width: 767px){
+
+  .purchase-mvtk-confirm .mvtk-lists li dd{
+    display:block;
+    width:100%;
+  }
 }
 
 .screen {
@@ -1972,6 +2016,7 @@ p a {
 }
 
 .screen .screen-scroll {
+    
 }
 
 .screen .screen-inner {
@@ -2142,6 +2187,7 @@ p a {
 }
 
 .inquiry-confirm .ticket .qr-code {
+    
 }
 
 .inquiry-confirm .ticket .not-qr-code {

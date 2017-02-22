@@ -24,8 +24,8 @@ export function login(_req: express.Request, res: express.Response): void {
     res.locals.reserve_num = '';
     res.locals.tel_num = '';
     if (process.env.NODE_ENV === 'dev') {
-        res.locals.theater_code = '001';
-        res.locals.reserve_num = '11625';
+        res.locals.theater_code = '118';
+        res.locals.reserve_num = '18';
         res.locals.tel_num = '09040007648';
     }
     res.locals.error = null;

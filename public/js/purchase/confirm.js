@@ -28,15 +28,20 @@ $(function () {
             }
         }).done(function (res) {
             if (res.err) {
-                if (res.err && res.type === 'expired') {
+                console.log(res);
+                if (res.err.type === 'expired') {
                     //コンテンツ切り替え
-                    $('.error-expired .read').html(res.err);
+                    $('.error-expired .read').html(res.err.message);
                     $('.purchase-confirm').remove();
                     $('.header .steps').remove();
                     $('.error-expired').show();
                     $(window).scrollTop(0);
                     history.pushState(null, null, '/error');
+                } else if (res.err.type === 'updateReserve') {
+                    $('.modal[data-modal=update_reserve_error] .modal-ttl strong').text(res.err.message);
+                    modal.open('update_reserve_error');
                 }
+                
             } else {
                 //購入番号
                 $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);

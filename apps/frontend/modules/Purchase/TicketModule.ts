@@ -53,7 +53,7 @@ export function index(req: express.Request, res: express.Response, next: express
         (err) => {
             return next(new Error(err.message));
         }
-        );
+    );
 }
 
 /**
@@ -80,27 +80,18 @@ export function select(req: express.Request, res: express.Response, next: expres
         purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
         ticketValidation(req, purchaseModel).then(
             () => {
-                console.log('券種決定完了');
-                if (req.body.mvtk) {
-                    if (!req.session) return next(req.__('common.error.property'));
-                    //セッション更新
-                    (<any>req.session).purchase = purchaseModel.formatToSession();
-                    //ムビチケ入力へ
-                    return res.redirect('/purchase/mvtk');
-                } else {
-                    upDateAuthorization(req, purchaseModel).then(
-                        () => {
-                            if (!req.session) return next(req.__('common.error.property'));
-                            //セッション更新
-                            (<any>req.session).purchase = purchaseModel.formatToSession();
-                            //購入者情報入力へ
-                            return res.redirect('/purchase/input');
-                        },
-                        (err) => {
-                            return next(new Error(err.message));
-                        }
-                    );
-                }
+                upDateAuthorization(req, purchaseModel).then(
+                    () => {
+                        if (!req.session) return next(req.__('common.error.property'));
+                        //セッション更新
+                        (<any>req.session).purchase = purchaseModel.formatToSession();
+                        //購入者情報入力へ
+                        return res.redirect('/purchase/input');
+                    },
+                    (err) => {
+                        return next(new Error(err.message));
+                    }
+                );
             },
             (err) => {
                 return next(new Error(err.message));

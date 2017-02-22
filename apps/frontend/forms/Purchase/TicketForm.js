@@ -19,5 +19,5 @@ exports.default = (req) => {
         catch (err) {
             throw new Error(`%s${req.__('common.validation.is_json')}`);
         }
-    }), form.field('mvtk').trim());
+    }));
 };

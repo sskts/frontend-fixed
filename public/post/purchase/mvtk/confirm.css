@@ -1,2 +1,18 @@
 .purchase-mvtk-confirm {
+    .mvtk-lists {
+        li {
+            dt {
+                @media screen and (max-width: $mobile){
+                    display: block;
+                }
+            }
+            dd {
+                @media screen and (max-width: $mobile){
+                    display: block;
+                    width: 100%;
+                }
+            }
+        }
+    }
+    
 }

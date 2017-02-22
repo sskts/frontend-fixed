@@ -123,6 +123,10 @@ export interface Ticket {
      */
     sale_price: number;
     /**
+     * ムビチケ計上単価
+     */
+    mvtk_app_price: number;
+    /**
      * 枚数
      */
     ticket_count: number;
@@ -309,6 +313,7 @@ export class PurchaseModel {
                 dis_price: 0,
                 sale_price: ticket.sale_price,
                 ticket_count: 1,
+                mvtk_app_price: 0,
                 seat_num: ticket.seat_code
             });
         }

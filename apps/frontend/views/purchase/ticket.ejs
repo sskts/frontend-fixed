@@ -6,26 +6,25 @@
         <p class="read"><%- __('purchase.ticket.read') %></p>
         <ul class="box radius bg-light-gray mb-medium seats">
             <% for (let ticket of reserveTickets) { %>
-                <li>
-                    <dl class="d-table">
-                        <dt class="d-td seat-code" data-ticket="<%= JSON.stringify(ticket) %>"><%= ticket.seat_code %></dt>
-                        <% if (ticket.ticket_code) { %>
-                            <dd class="d-td width-medium">                                
-                                <div class="ghost-button blue-button">
-                                    <a href="#" data-modal="ticket_type"><%= ticket.ticket_name_ja %> ￥<%= ticket.sale_price %></a>
-                                </div>
-                            </dd>
-                        <% } else { %>
-                            <dd class="d-td width-medium" data-ticket="">
-                                <div class="button blue-button">
-                                    <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
-                                </div>
-                            </dd>
-                        <% } %>
-                    </dl>
-                </li>
+            <li>
+                <dl class="d-table">
+                    <dt class="d-td seat-code" data-ticket="<%= JSON.stringify(ticket) %>"><%= ticket.seat_code %></dt>
+                    <% if (ticket.ticket_code) { %>
+                        <dd class="d-td width-medium">                                
+                            <div class="ghost-button blue-button">
+                                <a href="#" data-modal="ticket_type"><%= ticket.ticket_name_ja %> ￥<%= ticket.sale_price %></a>
+                            </div>
+                        </dd>
+                    <% } else { %>
+                        <dd class="d-td width-medium" data-ticket="">
+                            <div class="button blue-button">
+                                <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
+                            </div>
+                        </dd>
+                    <% } %>
+                </dl>
+            </li>
             <% } %>
-            
         </ul>
 
         <div class="box radius bg-light-gray mb-large total">
@@ -39,8 +38,7 @@
 
         <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>
         <div class="mvtk-button mb-medium ghost-button  yellow-button center-button">
-            <input type="checkbox" name="mvtk" value="true" id="mvtk">
-            <label for="mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></label>
+            <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
         </div>
 
         

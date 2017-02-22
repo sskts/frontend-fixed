@@ -1,51 +1,36 @@
-<% layout('./../layouts/purchase/layout') -%>
+<% layout('./layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/mvtk/confirm.js"></script>') -%>
 <div class="purchase-mvtk-confirm">
     <h1 class="page-ttl"><%- __('purchase.mvtk.confirm.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.confirm.read') %></p>
 
     <form method="post">
-        <ul class="box radius bg-light-gray mb-medium">
+        <ul class="box radius bg-light-gray mb-medium mvtk-lists">
             <li>
                 <dl class="d-table">
-                    <dt class="d-td">Ａ－１</dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %> 1111111111</dt>
                     <dd class="d-td width-medium">
-                        <div class="button gray-button">
+                        <div class="button gray-button not-link">
                             <a href="#">
-                                <div class="mb-xx-small">ムビチケ一般</div>
-                                <div class="small-text">ムビチケ購入番号1111111111</div>
+                                <div>ムビチケ一般</div>
+                            </a>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl class="d-table">
+                    <dt class="d-td"><%- __('common.mvtk_code') %> 1111111111</dt>
+                    <dd class="d-td width-medium">
+                        <div class="button gray-button not-link">
+                            <a href="#">
+                                <div>ムビチケ一般</div>
                             </a>
                         </div>
                     </dd>
                 </dl>
             </li>
         </ul>
-
-
-        <div class="section-ttl"><%- __('purchase.mvtk.confirm.remaining') %></div>
-        <div class="box radius bg-light-gray mb-medium">
-            <div class="box-ttl">ムビチケ購入番号:1111111111</div>
-            <ul>
-                <li>
-                    <div class="d-table">
-                        <div class="d-td">一般</div>
-                        <div class="d-td text-right  large-text"><strong><%- __n('%s ticket', 2) %></strong> → <strong class="red-text"><%- __n('%s ticket', 1) %></strong></div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        
-        <div class="box radius bg-light-gray mb-small">
-            <div class="text-right mb-small">
-                <div class="mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', 0) %></strong></div>
-                <div class="mb-x-small"><%- __('common.difference_3d') %> <strong class="red-text large-text"><span><%= formatPrice(1200) %></span><%- __('common.price') %></strong></div>
-                <div><%- __('common.total_fee') %> <strong class="red-text large-text"><span><%= formatPrice(1200) %></span><%- __('common.price') %></strong></div>
-            </div>
-            <div class="border-bottom-dot mb-small"></div>
-            <p class="small-x-text"><%- __('purchase.mvtk.confirm.note') %></p>
-        </div>
-
-       
         
 
         <div class="button-area clearfix">

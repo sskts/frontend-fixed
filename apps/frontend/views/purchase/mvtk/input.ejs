@@ -1,40 +1,11 @@
-<% layout('./../layouts/purchase/layout') -%>
+<% layout('./layouts/purchase/layout') -%>
 <% block('script', '<script src="/js/purchase/mvtk/input.js"></script>') -%>
 <div class="purchase-mvtk-input">
     <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
-
-    <form method="post">
         
-        <div class="ticket-list mb-medium">
-            <ul class="box radius bg-light-gray mb-small form-layout">
-                <li>
-                    <dl>
-                        <dt><%- __('common.mvtk_code') %></dt>
-                        <dd>
-                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
-                            <% if (error) { %>
-                            <div class="validation-text"></div> 
-                            <% } %>
-                        </dd>
-                    </dl>
-                </li>
-                <li>
-                    <dl>
-                        <dt><%- __('common.mvtk_password') %></dt>
-                        <dd>
-                            <input type="text" name="mvtk_password" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
-                            <% if (error) { %>
-                            <div class="validation-text"></div>
-                            <% } %>
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
-        </div>
-
-
-        <ul class="box radius bg-light-gray mb-small form-layout zoom clone">
+    <div class="ticket-list mb-medium">
+        <ul class="box radius bg-light-gray mb-small form-layout">
             <li>
                 <dl>
                     <dt><%- __('common.mvtk_code') %></dt>
@@ -50,7 +21,7 @@
                 <dl>
                     <dt><%- __('common.mvtk_password') %></dt>
                     <dd>
-                        <input type="text" name="mvtk_password" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                        <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
                         <% if (error) { %>
                         <div class="validation-text"></div>
                         <% } %>
@@ -58,27 +29,57 @@
                 </dl>
             </li>
         </ul>
+    </div>
+
+
+    <ul class="box radius bg-light-gray mb-small form-layout zoom clone">
+        <li>
+            <dl>
+                <dt><%- __('common.mvtk_code') %></dt>
+                <dd>
+                    <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                    <% if (error) { %>
+                    <div class="validation-text"></div> 
+                    <% } %>
+                </dd>
+            </dl>
+        </li>
+        <li>
+            <dl>
+                <dt><%- __('common.mvtk_password') %></dt>
+                <dd>
+                    <input type="password" name="mvtk_password" autocomplete="off" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                    <% if (error) { %>
+                    <div class="validation-text"></div>
+                    <% } %>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+
+    
+
+    <div class="button dark-blue-button add-button mb-medium center-button">
+        <a class="icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
+    </div>
+    
+    
+    <div class="box radius bg-light-gray mb-small">
+        <div class="box-ttl"><%- __('purchase.mvtk.input.select_seat') %></div>
+        <div class="text-right large-text"><strong><%- __n('%s seat', reserveSeatLength) %></strong></div>
+    </div>
+
+    <p class="small-text"><%- __('purchase.mvtk.input.note') %></p>
 
         
-
-        <div class="button dark-blue-button add-button mb-medium center-button">
-            <a class="icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
-        </div>
-        
-        
-        <div class="box radius bg-light-gray mb-small">
-            <div class="box-ttl"><%- __('purchase.mvtk.input.select_seat') %></div>
-            <div class="text-right large-text"><strong><%- __n('%s seat', 2) %></strong></div>
-        </div>
-
-        <p class="small-text"><%- __('purchase.mvtk.input.note') %></p>
-
-        
-
+    <form method="post">
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket"><%- __('purchase.mvtk.input.prev') %></a></div>
         </div>
+        <input type="hidden" name="mvtk" value="">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>
+
+<%- partial('../../locales/validation') %>

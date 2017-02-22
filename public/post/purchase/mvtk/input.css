@@ -1,4 +1,17 @@
 .purchase-mvtk-input {
+    input[type=text],
+    input[type=number],
+    input[type=password],
+    input[type=tel],
+    input[type=email],
+    input[type=number],
+    select,
+    textarea {
+        margin: 0 0 10px;
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
     .clone {
         display: none;
     }

@@ -11,7 +11,7 @@ interface Seat {
  */
 export default (req: express.Request) => {
     return form(
-        form.field('seats', '座席').trim().required().custom((value: string) => {
+        form.field('seats', req.__('common.seat')).trim().required().custom((value: string) => {
             try {
                 const seats: {
                     list_tmp_reserve: Seat[]
@@ -25,6 +25,6 @@ export default (req: express.Request) => {
                 throw new Error(`%s${req.__('common.validation.is_json')}`);
             }
         }),
-        form.field('agree', '利用規約').trim().required('', '%sに同意してください')
+        form.field('agree', req.__('common.agreement')).trim().required('', `%s${req.__('common.validation.agree')}`)
     );
 };

@@ -498,6 +498,20 @@ p {
     }
 }
 
+.not-link {
+    position: relative;
+    cursor: default !important;
+    &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+}
+
 .button {
     a, button, label {
         line-height: 1;

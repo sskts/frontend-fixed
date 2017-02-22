@@ -14,7 +14,6 @@
 @import "purchase/complete";
 
 @import "purchase/mvtk/input";
-@import "purchase/mvtk/auth";
 @import "purchase/mvtk/confirm";
 
 @import "screen/style";

@@ -3,7 +3,7 @@
         
     }
     .mvtk-button {
-        label {
+        label, a {
             border: 1px solid #d82918;
             &:before {
                 left: 15px;

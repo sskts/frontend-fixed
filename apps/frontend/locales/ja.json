@@ -140,6 +140,9 @@
 			"next": "仮予約を削除して次へ進む",
 			"next_ttl": "新しく選択した上映スケジュール",
 			"next_read": "仮予約を削除し、新しく選択した上映スケジュールの購入手続きを進めます。"
+		},
+		"common": {
+			"mvtk_code": "purchase.common.mvtk_code"
 		}
 	},
 	"inquiry": {
@@ -246,8 +249,8 @@
 		"securitycode": "セキュリティーコード",
 		"purchase_number": "購入番号",
 		"password": "パスワード",
-		"mvtk_code": "ムビチケ購入番号(10桁)",
-		"mvtk_password": "ムビチケ暗証番号(4桁)",
+		"mvtk_code": "ムビチケ購入番号",
+		"mvtk_password": "ムビチケ暗証番号",
 		"agreement": "利用規約",
 		"agreement_read": "利用規約に同意した上で次へお進みください。",
 		"strong": "重要",
@@ -283,7 +286,9 @@
 			"equals": "が一致しません",
 			"agree": "に同意してください",
 			"card": "をご確認ください",
-			"equals_email": "common.validation.equals_email"
+			"equals_email": "common.validation.equals_email",
+			"mvtk_code": "common.validation.mvtk_code",
+			"mvtk_password": "common.validation.mvtk_password"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",

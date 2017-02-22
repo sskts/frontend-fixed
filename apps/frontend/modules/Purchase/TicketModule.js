@@ -85,27 +85,16 @@ function select(req, res, next) {
         //座席情報をセッションへ
         purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
         ticketValidation(req, purchaseModel).then(() => {
-            console.log('券種決定完了');
-            if (req.body.mvtk) {
+            upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session)
                     return next(req.__('common.error.property'));
                 //セッション更新
                 req.session.purchase = purchaseModel.formatToSession();
-                //ムビチケ入力へ
-                return res.redirect('/purchase/mvtk');
-            }
-            else {
-                upDateAuthorization(req, purchaseModel).then(() => {
-                    if (!req.session)
-                        return next(req.__('common.error.property'));
-                    //セッション更新
-                    req.session.purchase = purchaseModel.formatToSession();
-                    //購入者情報入力へ
-                    return res.redirect('/purchase/input');
-                }, (err) => {
-                    return next(new Error(err.message));
-                });
-            }
+                //購入者情報入力へ
+                return res.redirect('/purchase/input');
+            }, (err) => {
+                return next(new Error(err.message));
+            });
         }, (err) => {
             return next(new Error(err.message));
         });
