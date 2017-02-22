@@ -56,7 +56,7 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {Promise<void>}
  */
 async function updateReserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    console.log('座席本予約開始')
+    console.log('座席本予約開始');
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.input) throw new Error(req.__('common.error.property'));

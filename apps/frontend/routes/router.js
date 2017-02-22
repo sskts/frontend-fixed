@@ -5,14 +5,14 @@
 const express = require("express");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const PerformancesModule = require("../modules/Performances/PerformancesModule");
-const UtilModule_1 = require("../modules/Util/UtilModule");
+const UtilModule = require("../modules/Util/UtilModule");
 const inquiry_1 = require("./inquiry");
 const method_1 = require("./method");
 const purchase_1 = require("./purchase");
 const router = express.Router();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
-    app.use(UtilModule_1.default.setLocals);
+    app.use(UtilModule.setLocals);
     // tslint:disable-next-line:variable-name
     router.get('/', (_req, res, _next) => {
         res.redirect('/performances');

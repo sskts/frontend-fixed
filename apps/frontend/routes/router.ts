@@ -5,7 +5,7 @@
 import * as express from 'express';
 import * as ErrorModule from '../modules/Error/ErrorModule';
 import * as PerformancesModule from '../modules/Performances/PerformancesModule';
-import UtilModule from '../modules/Util/UtilModule';
+import * as UtilModule from '../modules/Util/UtilModule';
 import inquiry from './inquiry';
 import method from './method';
 import purchase from './purchase';

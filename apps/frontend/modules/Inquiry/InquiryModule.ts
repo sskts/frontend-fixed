@@ -8,7 +8,7 @@ import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
-import UtilModule from '../Util/UtilModule';
+import * as UtilModule from '../Util/UtilModule';
 
 /**
  * 照会認証ページ表示

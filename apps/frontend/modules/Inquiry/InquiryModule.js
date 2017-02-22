@@ -15,7 +15,7 @@ const COA = require("@motionpicture/coa-service");
 const MP = require("../../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
-const UtilModule_1 = require("../Util/UtilModule");
+const UtilModule = require("../Util/UtilModule");
 /**
  * 照会認証ページ表示
  * @memberOf InquiryModule
@@ -111,7 +111,7 @@ function getStateReserve(req, inquiryModel) {
             tel_num: req.body.tel_num
         });
         console.log('COA照会情報取得');
-        const performanceId = UtilModule_1.default.getPerformanceId({
+        const performanceId = UtilModule.getPerformanceId({
             theaterCode: req.body.theater_code,
             day: inquiryModel.stateReserve.date_jouei,
             titleCode: inquiryModel.stateReserve.title_code,
