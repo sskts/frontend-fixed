@@ -65,6 +65,8 @@ $(function () {
 
 /**
  * 合計金額計算
+ * @function totalPrice
+ * @returns {void}
  */
 function totalPrice() {
     var price = 0;

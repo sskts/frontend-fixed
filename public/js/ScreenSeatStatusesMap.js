@@ -1,9 +1,13 @@
 "use strict";
 (function () {
+    /**
+     * スクリーンクラス
+     * @class ScreenSeatStatusesMap
+     */
     var ScreenSeatStatusesMap = function (target) {
         this.screen = target;
         this.scale = 0;
-        this.permission = true;
+        this._permission = true;
         this.scaleDownCallback = function () { };
         this.scaleUpCallback = function () { };
         this.init();
@@ -12,17 +16,27 @@
     }
 
     ScreenSeatStatusesMap.prototype = {
-        //初期化
+        /**
+         * 初期化
+         * @memberOf ScreenSeatStatusesMap
+         * @method init
+         * @returns {void}
+         */
         init: function () {
             this.state = ScreenSeatStatusesMap.STATE_DEFAULT;
             this.scaleDown();
         },
-        //イベント登録
+        /**
+         * イベント登録
+         * @memberOf ScreenSeatStatusesMap
+         * @method 
+         * @returns {void}
+         */
         setEvent: function () {
             var _this = this;
             this.screen.on('click', '.screen-inner', function (event) {
                 event.preventDefault();
-                if (!_this.permission) return;
+                if (!_this._permission) return;
                 if (!_this.isZoom() && $('.screen .device-type-sp').is(':visible')) {
                     var scroll = _this.screen.find('.screen-scroll');
 
@@ -49,7 +63,12 @@
                 }
             });
         },
-        //拡大
+        /**
+         * 拡大
+         * @memberOf ScreenSeatStatusesMap
+         * @method scaleUp
+         * @returns {void}
+         */
         scaleUp: function () {
             var scroll = this.screen.find('.screen-scroll');
             var inner = this.screen.find('.screen-inner');
@@ -62,7 +81,12 @@
             });
             this.scaleUpCallback();
         },
-        //縮小
+        /**
+         * 縮小
+         * @memberOf ScreenSeatStatusesMap
+         * @method scaleDown
+         * @returns {void}
+         */
         scaleDown: function () {
             var scroll = this.screen.find('.screen-scroll');
             var inner = this.screen.find('.screen-inner');
@@ -76,23 +100,45 @@
             });
             this.scaleDownCallback();
         },
-        //拡大判定
+        /**
+         * 拡大判定
+         * @memberOf ScreenSeatStatusesMap
+         * @method isZoom
+         * @returns {boolean}
+         */
         isZoom: function () {
             var result = false;
             if (this.state === ScreenSeatStatusesMap.STATE_ZOOM) result = true;
             return result;
         },
-        //拡大許可
+        /**
+         * 拡大許可
+         * @memberOf ScreenSeatStatusesMap
+         * @method setPermission
+         * @returns {void}
+         */
         setPermission: function (value) {
-            this.permission = value;
+            this._permission = value;
         },
-        //拡大コールバック設定
-        setScaleUpCallback: function (_cb) {
-            this.scaleUpCallback = _cb;
+        /**
+         * 拡大コールバック設定
+         * @memberOf ScreenSeatStatusesMap
+         * @method setScaleUpCallback
+         * @param {function} cb
+         * @returns {void}
+         */
+        setScaleUpCallback: function (cb) {
+            this.scaleUpCallback = cb;
         },
-        //縮小コールバック設定
-        setScaleDownCallback: function (_cb) {
-            this.scaleDownCallback = _cb;
+        /**
+         * 縮小コールバック設定
+         * @memberOf ScreenSeatStatusesMap
+         * @method setScaleDownCallback
+         * @param {function} cb
+         * @returns {void}
+         */
+        setScaleDownCallback: function (cb) {
+            this.scaleDownCallback = cb;
         }
     };
 

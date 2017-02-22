@@ -35,6 +35,11 @@ $(function () {
 
 /**
  * トークン取得後イベント
+ * @function someCallbackFunction
+ * @param {Object} response
+ * @param {Object} response.tokenObject
+ * @param {number} response.resultCode
+ * @returns {void}
  */
 function someCallbackFunction(response) {
     //カード情報は念のため値を除去
@@ -59,6 +64,8 @@ function someCallbackFunction(response) {
 
 /**
  * バリデーションスクロール
+ * @function validationScroll
+ * @returns {void}
  */
 function validationScroll() {
     var target = $('.validation').eq(0);
@@ -68,6 +75,8 @@ function validationScroll() {
 
 /**
  * バリデーション
+ * @function validation
+ * @returns {void}
  */
 function validation() {
     $('.validation').removeClass('validation');
@@ -84,13 +93,12 @@ function validation() {
         { name: 'holdername', label: locales.label.holdername, required: true },
     ];
 
-
     validationList.forEach(function (validation, index) {
 
         var target = $('input[name=' + validation.name + ']');
 
         if (target.length === 0) {
-            continue;
+            return;
         }
 
         var value = target.val();
@@ -130,7 +138,9 @@ function validation() {
 }
 
 /**
- * バリデーション
+ * GMOバリデーション
+ * @function gmoValidation
+ * @returns {void}
  */
 function gmoValidation() {
     $('.validation').removeClass('validation');
@@ -144,7 +154,6 @@ function gmoValidation() {
     ];
 
     validationList.forEach(function (validation, index) {
-
         var target = $('input[name=' + validation.name + ']');
         if (validation.name === 'expire') {
             $('select[name=credit_month], select[name=credit_year]').addClass('validation');
@@ -152,8 +161,6 @@ function gmoValidation() {
             target.addClass('validation');
         }
         target.after('<div class="validation-text">' + validation.label + locales.validation.card + '</div>');
-        
     });
-
 }
 

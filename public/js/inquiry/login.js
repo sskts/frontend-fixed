@@ -4,6 +4,8 @@ $(function () {
 
 /**
  * 照会情報取得して照会
+ * @function toInquiry
+ * @returns {void}
  */
 function toInquiry() {
     var params = location.search.replace('?', '').split('&');
@@ -46,12 +48,10 @@ function toInquiry() {
     }
 
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
-
+    
     if (submitFlg) {
         loadingStart(function () {
             $('form').submit();
         });
     }
-
-
 }

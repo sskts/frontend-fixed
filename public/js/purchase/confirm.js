@@ -88,16 +88,16 @@ $(function () {
             });
         });
     });
-
-
-
 });
 
 
 /**
  * スクリーン状態取得
+ * @function getScreenStateReserve
+ * @param {function} cb
+ * @returns {void}
  */
-function getScreenStateReserve(_cb) {
+function getScreenStateReserve(cb) {
     var target = $('.screen-cover');
     $.ajax({
         dataType: 'json',
@@ -120,7 +120,7 @@ function getScreenStateReserve(_cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        _cb(res.result);
+        cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
     }).always(function () {
@@ -130,8 +130,10 @@ function getScreenStateReserve(_cb) {
 
 /**
  * スクリーン状態更新
+ * @function screenStateChange
+ * @returns {void}
  */
-function screenStateChange(result) {
+function screenStateChange() {
     var screen = $('.screen');
     //席状態変更
     $('.seat a').addClass('disabled');
@@ -153,20 +155,24 @@ function screenStateChange(result) {
 
 /**
  * スクリーン状態更新
+ * @function screenStateUpdate
+ * @returns {void}
  */
-function screenStateUpdate(_cb) {
+function screenStateUpdate(cb) {
     getScreenStateReserve(function (result) {
         screenStateChange(result);
         var screen = $('.screen');
         screen.css('visibility', 'visible');
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
         screenSeatStatusesMap.setPermission(false);
-        _cb();
+        cb();
     });
 }
 
 /**
  * バリデーションスクロール
+ * @function validationScroll
+ * @returns {void}
  */
 function validationScroll() {
     var target = $('.validation').eq(0);
@@ -176,6 +182,8 @@ function validationScroll() {
 
 /**
  * バリデーション
+ * @function validation
+ * @returns {void}
  */
 function validation() {
     $('.validation').removeClass('validation');
@@ -215,5 +223,4 @@ function validation() {
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
     });
-
 }

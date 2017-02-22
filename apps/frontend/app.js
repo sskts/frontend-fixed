@@ -15,7 +15,7 @@ const engine = require('ejs-mate');
  * express設定
  */
 const app = express();
-app.use(helmet()); //HTTP ヘッダー
+app.use(helmet()); //セキュリティー対策
 app.use(logger_1.default); // ロガー
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション

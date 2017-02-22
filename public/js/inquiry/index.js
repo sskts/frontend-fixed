@@ -30,6 +30,8 @@ $(function () {
 
 /**
  * 照会情報保存
+ * @function saveInquiry
+ * @returns {void}
  */
 function saveInquiry() {
     var inquiryInfo = {

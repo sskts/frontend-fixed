@@ -58,6 +58,8 @@ function addTicket() {
 
 /**
  * バリデーションスクロール
+ * @function validationScroll
+ * @returns {void}
  */
 function validationScroll() {
     var target = $('.validation').eq(0);
@@ -67,10 +69,13 @@ function validationScroll() {
 
 /**
  * バリデーション
+ * @function validation
+ * @param {JQuery} parent
+ * @returns {void}
  */
-function validation(_parent) {
-    _parent.find('.validation').removeClass('validation');
-    _parent.find('.validation-text').remove();
+function validation(parent) {
+    parent.find('.validation').removeClass('validation');
+    parent.find('.validation-text').remove();
 
     var validationList = [
         { name: 'mvtk_code', label: locales.label.mvtk_code, required: false, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number]  },
@@ -79,7 +84,7 @@ function validation(_parent) {
 
     validationList.forEach(function (validation, index) {
 
-        var target = _parent.find('input[name=' + validation.name + ']');
+        var target = parent.find('input[name=' + validation.name + ']');
         var value = target.val();
 
         if (validation.required

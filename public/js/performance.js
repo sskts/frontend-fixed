@@ -1,5 +1,4 @@
 $(function () {
-    
     getPerformance();
     $(document).on('click', '.search a', function (event) {
         event.preventDefault();
@@ -7,6 +6,10 @@ $(function () {
     });
 });
 
+/**
+ * パフォーマンスリスト取得
+ * @returns {void}
+ */
 function getPerformance() {
     var day = $('.date select').val();
     console.log(day)

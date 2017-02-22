@@ -7,7 +7,6 @@ $(function () {
         });
     });
 
-
     /**
      * 座席クリックイベント
      */
@@ -88,6 +87,8 @@ $(function () {
 
 /**
  * ズームボタンスクロール
+ * @function zoomButtonScroll
+ * @returns {void}
  */
 function zoomButtonScroll() {
     if (screenSeatStatusesMap && !screenSeatStatusesMap.isZoom()) return;
@@ -120,14 +121,16 @@ function zoomButtonScroll() {
         });
         target.removeClass('scroll');
     }
-    
 }
 
 
 /**
  * スクリーン状態取得
+ * @function getScreenStateReserve
+ * @param {function} cb
+ * @returns {void}
  */
-function getScreenStateReserve(_cb) {
+function getScreenStateReserve(cb) {
     var target = $('.screen-cover');
     $.ajax({
         dataType: 'json',
@@ -150,7 +153,7 @@ function getScreenStateReserve(_cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        _cb(res.result);
+        cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('スケジュール取得失敗');
     }).always(function () {
@@ -160,6 +163,9 @@ function getScreenStateReserve(_cb) {
 
 /**
  * スクリーン状態更新
+ * @function screenStateChange
+ * @param {Object} result
+ * @returns {void}
  */
 function screenStateChange(result) {
     var screen = $('.screen');
@@ -196,8 +202,11 @@ function screenStateChange(result) {
 
 /**
  * スクリーン状態更新
+ * @function screenStateUpdate
+ * @param {function} cb
+ * @returns {void}
  */
-function screenStateUpdate(_cb) {
+function screenStateUpdate(cb) {
     getScreenStateReserve(function (result) {
         screenStateChange(result);
         var screen = $('.screen');
@@ -210,12 +219,14 @@ function screenStateUpdate(_cb) {
         screenSeatStatusesMap.setScaleDownCallback(function () {
             $('.zoom-btn').hide();
         });
-        _cb();
+        cb();
     });
 }   
 
 /**
  * バリデーションスクロール
+ * @function validationScroll
+ * @returns {void}
  */
 function validationScroll() {
     var target = $('.validation').eq(0);
@@ -225,6 +236,8 @@ function validationScroll() {
 
 /**
  * バリデーション
+ * @function validation
+ * @returns {void}
  */
 function validation() {
     $('.validation').removeClass('validation');
@@ -264,5 +277,4 @@ function validation() {
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
     });
-
 }

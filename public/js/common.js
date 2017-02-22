@@ -19,6 +19,8 @@ $(function () {
 
 /**
  * サーバーバリデーション時設定
+ * @function settingValidation
+ * @returns {void}
  */
 function settingValidation() {
     $('.validation-text').each(function (index, elem) {
@@ -44,6 +46,9 @@ function settingValidation() {
 
 /**
  * 全角=>半角
+ * @function toHalfWidth
+ * @param {string} value
+ * @returns {string}
  */
 function toHalfWidth(value) {
     return value.replace(/./g, function (s) {
@@ -53,6 +58,9 @@ function toHalfWidth(value) {
 
 /**
  * 半角=>全角
+ * @function toFullWidth
+ * @param {string} value
+ * @returns {string}
  */
 function toFullWidth(value) {
     return value.replace(/./g, function (s) {
@@ -62,6 +70,9 @@ function toFullWidth(value) {
 
 /**
  * カンマ区切りへ変換
+ * @function formatPrice
+ * @param {number} price
+ * @returns {string}
  */
 function formatPrice(price) {
     return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
@@ -69,6 +80,8 @@ function formatPrice(price) {
 
 /**
  * 高さ統一
+ * @function heightFix
+ * @returns {void}
  */
 function heightFix() {
     $('.heighfix-group').each(function (index, elem) {
@@ -86,22 +99,26 @@ function heightFix() {
 
 /**
  * ローディングスタート
+ * @function loadingStart
+ * @param {function} cb
+ * @returns {void}
  */
-function loadingStart(_cb) {
+function loadingStart(cb) {
     $('.loading-cover').addClass('active');
     $('.loading').addClass('active');
     $('.wrapper').addClass('blur');
     setTimeout(function() {
-        if (_cb) _cb();
+        if (cb) cb();
     }, 1000);
 }
 
 /**
  * ローディングエンド
+ * @function loadingEnd
+ * @returns {void}
  */
 function loadingEnd() {
     $('.loading-cover').removeClass('active');
     $('.loading').removeClass('active');
     $('.wrapper').removeClass('blur');
 }
-

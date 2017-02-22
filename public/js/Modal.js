@@ -1,16 +1,32 @@
 "use strict";
 (function () {
+    /**
+     * Modal
+     * @class Modal
+     */
     var Modal = function () {
         this.cover = null;
         this.modal = null;
-        this.trigger = null;
+        this._trigger = null;
         this.init();
     }
     Modal.prototype = {
+        /**
+         * 初期化
+         * @memberOf Modal
+         * @method init
+         * @returns {void}
+         */
         init: function () {
             this.cover = $('.modal-cover');
             this.setEvent();
         },
+        /**
+         * イベント登録
+         * @memberOf Modal
+         * @method setEvent
+         * @returns {void}
+         */
         setEvent: function () {
             var _this = this;
             //トリガー
@@ -18,7 +34,7 @@
                 event.preventDefault();
                 event.stopPropagation();
                 var modalName = $(event.target).attr('data-modal');
-                _this.trigger = $(this);
+                _this._trigger = $(this);
                 _this.open(modalName);
             });
             //閉じる
@@ -38,8 +54,15 @@
                 }
             });
         },
-        open: function (_modalName) {
-            var target = $('.modal[data-modal=' + _modalName + ']');
+        /**
+         * モーダル開く
+         * @memberOf open
+         * @method init
+         * @param {string} modalName
+         * @returns {void}
+         */
+        open: function (modalName) {
+            var target = $('.modal[data-modal=' + modalName + ']');
             if (target.length !== 1) return;
             this.modal = target;
             this.cover
@@ -51,6 +74,12 @@
             $('.wrapper').addClass('blur');
             this.resize();
         },
+        /**
+         * モーダル閉じる
+         * @memberOf Modal
+         * @method close
+         * @returns {void}
+         */
         close: function () {
             if (this.modal && this.cover) {
                 this.modal
@@ -62,9 +91,21 @@
                 $('.wrapper').removeClass('blur');
             }
         },
+        /**
+         * トリガー取得
+         * @memberOf Modal
+         * @method getTrigger
+         * @returns {JQuery}
+         */
         getTrigger: function () {
-            return this.trigger;
+            return this._trigger;
         },
+        /**
+         * モーダル表示判定
+         * @memberOf Modal
+         * @method isOpen
+         * @returns {boolean}
+         */
         isOpen: function () {
             var result = false;
             if (this.modal && this.modal.is(':visible')) {
@@ -72,6 +113,12 @@
             }
             return result;
         },
+        /**
+         * リサイズ処理
+         * @memberOf Modal
+         * @method resize
+         * @returns {void}
+         */
         resize: function () {
             this.modal.removeClass('scroll');
             this.modal.find('.inner').height('auto');
@@ -89,4 +136,4 @@
     }
     SASAKI = SASAKI || {};
     SASAKI.Modal = Modal;
-} ());
+}());
