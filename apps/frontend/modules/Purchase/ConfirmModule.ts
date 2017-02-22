@@ -8,6 +8,7 @@ import * as express from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as UtilModule from '../Util/UtilModule';
 
 /**
  * 購入者内容確認
@@ -158,7 +159,7 @@ function getMailContent(req: express.Request, purchaseModel: PurchaseSession.Pur
 ・予約番号：${purchaseModel.updateReserve.reserve_num}\n
 ・${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')}
 ${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')}
-${moment(purchaseModel.performance.attributes.time_start, 'hmm').format('HH:mm')}\n
+${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 ・${purchaseModel.performance.attributes.film.name.ja}\n
 ・${purchaseModel.performance.attributes.screen.name.ja}\n
 ・${purchaseModel.ticketToString()}\n

@@ -48,7 +48,7 @@
                 </div>
                 <% } %>
                 <div class="box">
-                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= moment(performance.attributes.time_start, 'hmm').format('HH:mm') %>-</div>
+                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>-</div>
                     <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>
                     <div class="mb-x-small"><%= performance.attributes.screen.name[__('lang')] %></div>
                     <div><%= performance.attributes.film.name[__('lang')] %></div>

@@ -40,7 +40,7 @@
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
                 <dd class="border-bottom-dot"><%= performance.attributes.theater.name[__('lang')] %> / <%= performance.attributes.screen.name[__('lang')] %></dd>
                 <dt><%- __('common.appreciation_date') %></dt>
-                <dd class="border-bottom-dot"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= moment(performance.attributes.time_start, 'hmm').format('HH:mm') %> - <%= moment(performance.attributes.time_end, 'hmm').format('HH:mm') %></dd>
+                <dd class="border-bottom-dot"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></dd>
                 <dt><%- __('common.film_title') %></dt>
                 <dd><%= performance.attributes.film.name[__('lang')] %></dd>
             </dl>
