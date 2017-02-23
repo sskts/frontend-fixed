@@ -1,5 +1,4 @@
 "use strict";
-const COA = require("@motionpicture/coa-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -38,11 +37,6 @@ app.use((req, res, next) => {
     else {
         locales_1.default.setLocale(req, 'ja');
     }
-});
-//COAサービス初期化
-COA.initialize({
-    endpoint: process.env.COA_API_ENDPOINT,
-    refresh_token: process.env.COA_REFRESH_TOKEN
 });
 // ルーティング
 router_1.default(app);

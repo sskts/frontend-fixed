@@ -107,7 +107,7 @@ function removeReserve(req, purchaseModel) {
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
         //COA仮予約削除
-        yield COA.deleteTmpReserveInterface.call({
+        yield COA.ReserveService.deleteTmpReserve({
             theater_code: performance.attributes.theater._id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,

@@ -123,7 +123,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         const reserveSeats = purchaseModel.reserveSeats;
 
         //COA仮予約削除
-        await COA.deleteTmpReserveInterface.call({
+        await COA.ReserveService.deleteTmpReserve({
             theater_code: performance.attributes.theater._id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
@@ -159,7 +159,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
     }
     //COA仮予約
     const seats = JSON.parse(req.body.seats);
-    purchaseModel.reserveSeats = await COA.reserveSeatsTemporarilyInterface.call({
+    purchaseModel.reserveSeats = await COA.ReserveService.reserveSeatsTemporarily({
         theater_code: performance.attributes.theater._id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
@@ -211,7 +211,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
 // tslint:disable-next-line:variable-name
 export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
 
-    COA.getStateReserveSeatInterface.call(req.body).then(
+    COA.ReserveService.getStateReserveSeat(req.body).then(
         (result) => {
             res.json({
                 err: null,

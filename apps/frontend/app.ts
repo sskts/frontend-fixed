@@ -1,4 +1,3 @@
-import * as COA from '@motionpicture/coa-service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -43,12 +42,6 @@ app.use((req, res, next) => {
     } else {
         locales.setLocale(req, 'ja');
     }
-});
-
-//COAサービス初期化
-COA.initialize({
-    endpoint: process.env.COA_API_ENDPOINT,
-    refresh_token: process.env.COA_REFRESH_TOKEN
 });
 
 // ルーティング

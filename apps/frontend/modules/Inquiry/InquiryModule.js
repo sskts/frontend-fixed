@@ -96,7 +96,7 @@ function getStateReserve(req, inquiryModel) {
         });
         console.log('MP取引Id取得', inquiryModel.transactionId);
         inquiryModel.login = req.body;
-        inquiryModel.stateReserve = yield COA.stateReserveInterface.call({
+        inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
             /**
              * 施設コード
              */

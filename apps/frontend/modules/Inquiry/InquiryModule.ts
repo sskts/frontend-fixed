@@ -91,7 +91,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
 
     inquiryModel.login = req.body;
 
-    inquiryModel.stateReserve = await COA.stateReserveInterface.call({
+    inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
         /**
          * 施設コード
          */

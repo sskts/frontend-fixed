@@ -191,6 +191,7 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
 
     try {
         // GMOオーソリ取得
+        // todo orderIdをユニークに
         purchaseModel.orderId = Date.now().toString();
         const amount: number = purchaseModel.getReserveAmount();
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran({

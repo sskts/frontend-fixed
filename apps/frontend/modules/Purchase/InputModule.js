@@ -200,6 +200,7 @@ function addAuthorization(req, purchaseModel) {
         }
         try {
             // GMOオーソリ取得
+            // todo orderIdをユニークに
             purchaseModel.orderId = Date.now().toString();
             const amount = purchaseModel.getReserveAmount();
             purchaseModel.transactionGMO = yield GMO.CreditService.entryTran({

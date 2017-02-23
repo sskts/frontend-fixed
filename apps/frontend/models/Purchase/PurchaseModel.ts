@@ -155,7 +155,7 @@ export class PurchaseModel {
     /**
      * COA仮予約
      */
-    public reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null;
+    public reserveSeats: COA.ReserveService.ReserveSeatsTemporarilyResult | null;
     /**
      * 予約チケット
      */
@@ -171,7 +171,7 @@ export class PurchaseModel {
     /**
      * COA本予約
      */
-    public updateReserve: COA.updateReserveInterface.Result | null;
+    public updateReserve: COA.ReserveService.UpdateReserveResult | null;
     /**
      * 取引MP
      */
@@ -229,11 +229,11 @@ export class PurchaseModel {
      */
     public formatToSession(): {
         performance: MP.Performance | null,
-        reserveSeats: COA.reserveSeatsTemporarilyInterface.Result | null,
+        reserveSeats: COA.ReserveService.ReserveSeatsTemporarilyResult | null,
         reserveTickets: ReserveTicket[] | null,
         input: Input | null,
         gmo: GMO | null,
-        updateReserve: COA.updateReserveInterface.Result | null,
+        updateReserve: COA.ReserveService.UpdateReserveResult | null,
         transactionMP: MP.TransactionStartResult | null,
         transactionGMO: GMO.CreditService.EntryTranResult | null,
         authorizationCOA: MP.AddCOAAuthorizationResult | null,

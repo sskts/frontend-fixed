@@ -27,7 +27,7 @@ export function index(req: express.Request, res: express.Response, next: express
 
     //コアAPI券種取得
     const performance = purchaseModel.performance;
-    COA.salesTicketInterface.call({
+    COA.ReserveService.salesTicket({
         theater_code: performance.attributes.theater._id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
@@ -37,7 +37,7 @@ export function index(req: express.Request, res: express.Response, next: express
     }).then(
         (result) => {
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals.tickets = result.list_ticket;
+            res.locals.tickets = result;
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = purchaseModel.reserveTickets;
@@ -113,7 +113,7 @@ async function ticketValidation(req: express.Request, purchaseModel: PurchaseSes
     if (!purchaseModel.reserveTickets) throw new Error(req.__('common.error.property'));
     //コアAPI券種取得
     const performance = purchaseModel.performance;
-    const salesTickets = await COA.salesTicketInterface.call({
+    const salesTickets = await COA.ReserveService.salesTicket({
         theater_code: performance.attributes.theater._id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
@@ -124,7 +124,7 @@ async function ticketValidation(req: express.Request, purchaseModel: PurchaseSes
 
     const reserveTickets = purchaseModel.reserveTickets;
     for (const reserveTicket of reserveTickets) {
-        for (const salesTicket of salesTickets.list_ticket) {
+        for (const salesTicket of salesTickets) {
             if (salesTicket.ticket_code === reserveTicket.ticket_code) {
                 if (salesTicket.sale_price !== reserveTicket.sale_price) {
                     console.log(`${reserveTicket.seat_code}: 券種検証NG`);

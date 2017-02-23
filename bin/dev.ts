@@ -18,7 +18,7 @@ process.env.GMO_ENDPOINT = 'https://pt01.mul-pay.jp';
 process.env.GMO_SHOP_ID = 'tshop00026096';
 process.env.GMO_SHOP_PASSWORD = 'xbxmkaa6';
 
-process.env.COA_API_ENDPOINT = 'http://coacinema.aa0.netvolante.jp';
+process.env.COA_ENDPOINT = 'http://coacinema.aa0.netvolante.jp';
 process.env.COA_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkX2F0IjoxNDc5MjYwODQ4LCJhdXRoX2lkIjoiMzMxNSJ9.jx-w7D3YLP7UbY4mzJYC9xr368FiKWcpR2_L9mZfehQ';
 
 // tslint:disable-next-line:no-var-requires no-require-imports
