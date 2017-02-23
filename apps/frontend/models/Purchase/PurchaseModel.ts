@@ -196,9 +196,12 @@ export class PurchaseModel {
      * 有効期限
      */
     public expired: number | null;
+    /**
+     * ムビチケ
+     */
+    public mvtk: null;
 
     /**
-     * @memberOf PurchaseModel
      * @constructor
      * @param {any} session
      */
@@ -219,6 +222,7 @@ export class PurchaseModel {
         this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
         this.orderId = (session.orderId) ? session.orderId : null;
         this.expired = (session.expired) ? session.expired : null;
+        this.mvtk = (session.mvtk) ? session.mvtk : null;
     }
 
     /**
@@ -239,7 +243,8 @@ export class PurchaseModel {
         authorizationCOA: MP.AddCOAAuthorizationResult | null,
         authorizationGMO: MP.AddGMOAuthorizationResult | null,
         orderId: string | null,
-        expired: number | null
+        expired: number | null,
+        mvtk: null
     } {
         return {
             performance: (this.performance) ? this.performance : null,
@@ -253,7 +258,8 @@ export class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null
+            expired: (this.expired) ? this.expired : null,
+            mvtk: (this.mvtk) ? this.mvtk : null
         };
     }
 
@@ -281,7 +287,7 @@ export class PurchaseModel {
     }
 
     /**
-     * 合計金額取得
+     * 予約金額取得（決済する分）
      * @memberOf PurchaseModel
      * @method getReserveAmount
      * @returns {number}

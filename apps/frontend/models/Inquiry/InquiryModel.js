@@ -5,8 +5,8 @@
  */
 class InquiryModel {
     /**
-     * @memberOf InquiryModel
      * @constructor
+     * @param {any} session
      */
     constructor(session) {
         if (!session) {

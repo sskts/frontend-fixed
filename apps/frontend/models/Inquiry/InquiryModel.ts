@@ -43,8 +43,8 @@ export class InquiryModel {
     public login: Login | null;
 
     /**
-     * @memberOf InquiryModel
      * @constructor
+     * @param {any} session
      */
     constructor(session: any) {
         if (!session) {

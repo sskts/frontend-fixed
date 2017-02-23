@@ -5,7 +5,6 @@
  */
 class PurchaseModel {
     /**
-     * @memberOf PurchaseModel
      * @constructor
      * @param {any} session
      */
@@ -25,6 +24,7 @@ class PurchaseModel {
         this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
         this.orderId = (session.orderId) ? session.orderId : null;
         this.expired = (session.expired) ? session.expired : null;
+        this.mvtk = (session.mvtk) ? session.mvtk : null;
     }
     /**
      * セッションObjectへ変換
@@ -45,7 +45,8 @@ class PurchaseModel {
             authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null
+            expired: (this.expired) ? this.expired : null,
+            mvtk: (this.mvtk) ? this.mvtk : null
         };
     }
     /**
@@ -79,7 +80,7 @@ class PurchaseModel {
         return result;
     }
     /**
-     * 合計金額取得
+     * 予約金額取得（決済する分）
      * @memberOf PurchaseModel
      * @method getReserveAmount
      * @returns {number}
