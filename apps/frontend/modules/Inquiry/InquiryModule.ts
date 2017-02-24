@@ -25,7 +25,7 @@ export function login(_req: express.Request, res: express.Response): void {
     res.locals.tel_num = '';
     if (process.env.NODE_ENV === 'dev') {
         res.locals.theater_code = '118';
-        res.locals.reserve_num = '18';
+        res.locals.reserve_num = '59';
         res.locals.tel_num = '09040007648';
     }
     res.locals.error = null;
@@ -78,7 +78,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
         /**
          * 座席チケット購入番号
          */
-        inquiry_id: req.body.reserve_num,
+        inquiry_id: Number(req.body.reserve_num),
         /**
          * 電話番号
          */

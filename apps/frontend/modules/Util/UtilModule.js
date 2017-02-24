@@ -15,6 +15,8 @@ function setLocals(_req, res, next) {
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
+    // tslint:disable-next-line:no-http-string
+    res.locals.portalSite = 'http://www.cinemasunshine.co.jp';
     return next();
 }
 exports.setLocals = setLocals;
