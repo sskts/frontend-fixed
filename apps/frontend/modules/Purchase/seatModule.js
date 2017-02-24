@@ -129,7 +129,7 @@ function reserve(req, purchaseModel) {
                 throw new Error(req.__('common.error.property'));
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
-            yield COA.ReserveService.deleteTmpReserve({
+            yield COA.ReserveService.delTmpReserve({
                 theater_code: performance.attributes.theater._id,
                 date_jouei: performance.attributes.day,
                 title_code: performance.attributes.film.coa_title_code,
@@ -165,7 +165,7 @@ function reserve(req, purchaseModel) {
         }
         //COA仮予約
         const seats = JSON.parse(req.body.seats);
-        purchaseModel.reserveSeats = yield COA.ReserveService.reserveSeatsTemporarily({
+        purchaseModel.reserveSeats = yield COA.ReserveService.updTmpReserveSeat({
             theater_code: performance.attributes.theater._id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
@@ -214,7 +214,7 @@ function reserve(req, purchaseModel) {
  */
 // tslint:disable-next-line:variable-name
 function getScreenStateReserve(req, res, _next) {
-    COA.ReserveService.getStateReserveSeat(req.body).then((result) => {
+    COA.ReserveService.stateReserveSeat(req.body).then((result) => {
         res.json({
             err: null,
             result: result

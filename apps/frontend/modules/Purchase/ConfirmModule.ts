@@ -81,7 +81,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     try {
         // COA本予約
-        purchaseModel.updateReserve = await COA.ReserveService.updateReserve({
+        purchaseModel.updateReserve = await COA.ReserveService.updReserve({
             theater_code: performance.attributes.theater._id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,

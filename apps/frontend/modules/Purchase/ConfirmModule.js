@@ -92,7 +92,7 @@ function updateReserve(req, purchaseModel) {
         const input = purchaseModel.input;
         try {
             // COA本予約
-            purchaseModel.updateReserve = yield COA.ReserveService.updateReserve({
+            purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
                 theater_code: performance.attributes.theater._id,
                 date_jouei: performance.attributes.day,
                 title_code: performance.attributes.film.coa_title_code,
