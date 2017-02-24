@@ -59,7 +59,7 @@ function auth(req, res, next) {
             getStateReserve(req, inquiryModel).then(() => {
                 //購入者内容確認へ
                 return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-            }, (err) => {
+            }).catch((err) => {
                 return next(new Error(err.message));
             });
         }

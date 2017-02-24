@@ -48,15 +48,12 @@ export function auth(req: express.Request, res: express.Response, next: express.
     form(req, res, () => {
         if (!(<any>req).form) return next(req.__('common.error.property'));
         if ((<any>req).form.isValid) {
-            getStateReserve(req, inquiryModel).then(
-                () => {
-                    //購入者内容確認へ
-                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-                },
-                (err) => {
-                    return next(new Error(err.message));
-                }
-            );
+            getStateReserve(req, inquiryModel).then(() => {
+                //購入者内容確認へ
+                return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+            }).catch((err) => {
+                return next(new Error(err.message));
+            });
         } else {
             res.locals.error = (<any>req).form.getErrors();
             return res.render('inquiry/login');

@@ -26,19 +26,15 @@ export function index(req: express.Request, res: express.Response, next: express
     //パフォーマンス取得
     MP.getPerformance({
         id: req.params.id
-    }).then(
-        (result) => {
-            res.locals.performances = {
-                after: result,
-                before: purchaseModel.performance
-            };
-
-            return res.render('purchase/overlap');
-        },
-        (err) => {
-            return next(new Error(err.message));
-        }
-    );
+    }).then((result) => {
+        res.locals.performances = {
+            after: result,
+            before: purchaseModel.performance
+        };
+        return res.render('purchase/overlap');
+    }).catch((err) => {
+        return next(new Error(err.message));
+    });
 }
 
 /**
@@ -53,18 +49,15 @@ export function index(req: express.Request, res: express.Response, next: express
 export function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(req.__('common.error.property'));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
-    removeReserve(req, purchaseModel).then(
-        () => {
-            if (!req.session) return next(req.__('common.error.property'));
-            //購入スタートへ
-            delete (<any>req.session).purchase;
-            return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
+    removeReserve(req, purchaseModel).then(() => {
+        if (!req.session) return next(req.__('common.error.property'));
+        //購入スタートへ
+        delete (<any>req.session).purchase;
+        return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
 
-        },
-        (err) => {
-            return next(new Error(err.message));
-        }
-    );
+    }).catch((err) => {
+        return next(new Error(err.message));
+    });
 }
 
 /**

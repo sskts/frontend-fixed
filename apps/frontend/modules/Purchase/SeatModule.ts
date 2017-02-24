@@ -28,32 +28,29 @@ export function index(req: express.Request, res: express.Response, next: express
     //パフォーマンス取得
     MP.getPerformance({
         id: req.params.id
-    }).then(
-        (result) => {
-            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals.performance = result;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-            res.locals.reserveSeats = null;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+    }).then((result) => {
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+        res.locals.performance = result;
+        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+        res.locals.reserveSeats = null;
+        res.locals.transactionId = purchaseModel.transactionMP.id;
 
-            //仮予約中
-            if (purchaseModel.reserveSeats) {
-                console.log('仮予約中');
-                res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
-            }
-            purchaseModel.performance = result;
-
-            //セッション更新
-            if (!req.session) return next(req.__('common.error.property'));
-            (<any>req.session).purchase = purchaseModel.formatToSession();
-
-            res.locals.error = null;
-            return res.render('purchase/seat');
-        },
-        (err) => {
-            return next(new Error(err.message));
+        //仮予約中
+        if (purchaseModel.reserveSeats) {
+            console.log('仮予約中');
+            res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
         }
-    );
+        purchaseModel.performance = result;
+
+        //セッション更新
+        if (!req.session) return next(req.__('common.error.property'));
+        (<any>req.session).purchase = purchaseModel.formatToSession();
+
+        res.locals.error = null;
+        return res.render('purchase/seat');
+    }).catch((err) => {
+        return next(new Error(err.message));
+    });
 }
 
 /**
@@ -78,19 +75,15 @@ export function select(req: express.Request, res: express.Response, next: expres
     form(req, res, () => {
         if (!(<any>req).form) return next(req.__('common.error.property'));
         if ((<any>req).form.isValid) {
-            reserve(req, purchaseModel).then(
-                () => {
-
-                    //セッション更新
-                    if (!req.session) return next(req.__('common.error.property'));
-                    (<any>req.session).purchase = purchaseModel.formatToSession();
-                    //券種選択へ
-                    return res.redirect('/purchase/ticket');
-                },
-                (err) => {
-                    return next(new Error(err.message));
-                }
-            );
+            reserve(req, purchaseModel).then(() => {
+                //セッション更新
+                if (!req.session) return next(req.__('common.error.property'));
+                (<any>req.session).purchase = purchaseModel.formatToSession();
+                //券種選択へ
+                return res.redirect('/purchase/ticket');
+            }).catch((err) => {
+                return next(new Error(err.message));
+            });
         } else {
             if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
             res.locals.transactionId = purchaseModel.transactionMP;
@@ -211,18 +204,15 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
 // tslint:disable-next-line:variable-name
 export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
 
-    COA.ReserveService.stateReserveSeat(req.body).then(
-        (result) => {
-            res.json({
-                err: null,
-                result: result
-            });
-        },
-        (err) => {
-            res.json({
-                err: err,
-                result: null
-            });
-        }
-    );
+    COA.ReserveService.stateReserveSeat(req.body).then((result) => {
+        res.json({
+            err: null,
+            result: result
+        });
+    }).catch((err) => {
+        res.json({
+            err: err,
+            result: null
+        });
+    });
 }

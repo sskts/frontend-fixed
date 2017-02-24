@@ -41,7 +41,7 @@ function index(req, res, next) {
             before: purchaseModel.performance
         };
         return res.render('purchase/overlap');
-    }, (err) => {
+    }).catch((err) => {
         return next(new Error(err.message));
     });
 }
@@ -65,7 +65,7 @@ function newReserve(req, res, next) {
         //購入スタートへ
         delete req.session.purchase;
         return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
-    }, (err) => {
+    }).catch((err) => {
         return next(new Error(err.message));
     });
 }

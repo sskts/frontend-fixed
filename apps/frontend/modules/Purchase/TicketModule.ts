@@ -34,26 +34,23 @@ export function index(req: express.Request, res: express.Response, next: express
         title_branch_num: performance.attributes.film.coa_title_branch_num,
         time_begin: performance.attributes.time_start
         // screen_code: performance.screen.id,
-    }).then(
-        (result) => {
-            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            res.locals.tickets = result;
-            res.locals.performance = performance;
-            res.locals.reserveSeats = purchaseModel.reserveSeats;
-            res.locals.reserveTickets = purchaseModel.reserveTickets;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+    }).then((result) => {
+        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+        res.locals.tickets = result;
+        res.locals.performance = performance;
+        res.locals.reserveSeats = purchaseModel.reserveSeats;
+        res.locals.reserveTickets = purchaseModel.reserveTickets;
+        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.transactionId = purchaseModel.transactionMP.id;
 
-            //セッション更新
-            if (!req.session) return next(req.__('common.error.property'));
-            (<any>req.session).purchase = purchaseModel.formatToSession();
-            //券種選択表示
-            return res.render('purchase/ticket');
-        },
-        (err) => {
-            return next(new Error(err.message));
-        }
-    );
+        //セッション更新
+        if (!req.session) return next(req.__('common.error.property'));
+        (<any>req.session).purchase = purchaseModel.formatToSession();
+        //券種選択表示
+        return res.render('purchase/ticket');
+    }).catch((err) => {
+        return next(new Error(err.message));
+    });
 }
 
 /**
@@ -78,25 +75,19 @@ export function select(req: express.Request, res: express.Response, next: expres
     form(req, res, () => {
         //座席情報をセッションへ
         purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
-        ticketValidation(req, purchaseModel).then(
-            () => {
-                upDateAuthorization(req, purchaseModel).then(
-                    () => {
-                        if (!req.session) return next(req.__('common.error.property'));
-                        //セッション更新
-                        (<any>req.session).purchase = purchaseModel.formatToSession();
-                        //購入者情報入力へ
-                        return res.redirect('/purchase/input');
-                    },
-                    (err) => {
-                        return next(new Error(err.message));
-                    }
-                );
-            },
-            (err) => {
+        ticketValidation(req, purchaseModel).then(() => {
+            upDateAuthorization(req, purchaseModel).then(() => {
+                if (!req.session) return next(req.__('common.error.property'));
+                //セッション更新
+                (<any>req.session).purchase = purchaseModel.formatToSession();
+                //購入者情報入力へ
+                return res.redirect('/purchase/input');
+            }).catch((err) => {
                 return next(new Error(err.message));
-            }
-        );
+            });
+        }).catch((err) => {
+            return next(new Error(err.message));
+        });
     });
 }
 

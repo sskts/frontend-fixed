@@ -32,7 +32,7 @@ OS: ${capabilities.os} ${capabilities.os_version}
 -------------------`);
 test().then(() => {
     console.log('DONE');
-}, (err) => {
+}).catch((err) => {
     console.log(err);
 });
 //test

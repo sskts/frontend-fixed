@@ -210,39 +210,36 @@ export function purchase(req: express.Request, res: express.Response, next: expr
     //取引id確認
     if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
-    updateReserve(req, purchaseModel).then(
-        () => {
-            //購入情報をセッションへ
-            if (!req.session) throw req.__('common.error.property');
-            (<any>req.session).complete = {
-                updateReserve: purchaseModel.updateReserve,
-                performance: purchaseModel.performance,
-                input: purchaseModel.input,
-                reserveSeats: purchaseModel.reserveSeats,
-                reserveTickets: purchaseModel.reserveTickets,
-                price: purchaseModel.getReserveAmount()
-            };
+    updateReserve(req, purchaseModel).then(() => {
+        //購入情報をセッションへ
+        if (!req.session) throw req.__('common.error.property');
+        (<any>req.session).complete = {
+            updateReserve: purchaseModel.updateReserve,
+            performance: purchaseModel.performance,
+            input: purchaseModel.input,
+            reserveSeats: purchaseModel.reserveSeats,
+            reserveTickets: purchaseModel.reserveTickets,
+            price: purchaseModel.getReserveAmount()
+        };
 
-            //購入セッション削除
-            delete (<any>req.session).purchase;
+        //購入セッション削除
+        delete (<any>req.session).purchase;
 
-            //購入完了情報を返す
-            return res.json({
-                err: null,
-                redirect: false,
-                result: (<any>req.session).complete.updateReserve
-            });
-        },
-        (err) => {
-            //購入完了情報を返す
-            return res.json({
-                err: {
-                    message: (err.error) ? err.error.message : err.message,
-                    type: (err.type) ? err.type : null
-                },
-                redirect: (err.error) ? false : true,
-                result: null
-            });
-        }
-    );
+        //購入完了情報を返す
+        return res.json({
+            err: null,
+            redirect: false,
+            result: (<any>req.session).complete.updateReserve
+        });
+    }).catch((err) => {
+        //購入完了情報を返す
+        return res.json({
+            err: {
+                message: (err.error) ? err.error.message : err.message,
+                type: (err.type) ? err.type : null
+            },
+            redirect: (err.error) ? false : true,
+            result: null
+        });
+    });
 }

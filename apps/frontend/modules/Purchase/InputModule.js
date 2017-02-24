@@ -113,7 +113,7 @@ function submit(req, res, next) {
                     req.session.purchase = purchaseModel.formatToSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
-                }, (err) => {
+                }).catch((err) => {
                     if (!err.hasOwnProperty('type'))
                         return next(new Error(err.message));
                     if (!purchaseModel.transactionMP)

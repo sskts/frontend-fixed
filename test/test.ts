@@ -23,14 +23,11 @@ OS: ${capabilities.os} ${capabilities.os_version}
 画面: ${capabilities.resolution}
 -------------------`);
 
-test().then(
-    () => {
-        console.log('DONE');
-    },
-    (err) => {
-        console.log(err);
-    }
-);
+test().then(() => {
+    console.log('DONE');
+}).catch((err) => {
+    console.log(err);
+});
 
 //test
 async function test(): Promise<void> {

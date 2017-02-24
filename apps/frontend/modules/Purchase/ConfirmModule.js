@@ -242,7 +242,7 @@ function purchase(req, res, next) {
             redirect: false,
             result: req.session.complete.updateReserve
         });
-    }, (err) => {
+    }).catch((err) => {
         //購入完了情報を返す
         return res.json({
             err: {

@@ -41,7 +41,7 @@ function start(req, res, next) {
         req.session.purchase = purchaseModel.formatToSession();
         //座席選択へ
         return res.redirect('/purchase/seat/' + req.params.id + '/');
-    }, (err) => {
+    }).catch((err) => {
         return next(new Error(err.message));
     });
 }

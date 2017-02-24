@@ -56,7 +56,7 @@ function index(req, res, next) {
         req.session.purchase = purchaseModel.formatToSession();
         //券種選択表示
         return res.render('purchase/ticket');
-    }, (err) => {
+    }).catch((err) => {
         return next(new Error(err.message));
     });
 }
@@ -92,10 +92,10 @@ function select(req, res, next) {
                 req.session.purchase = purchaseModel.formatToSession();
                 //購入者情報入力へ
                 return res.redirect('/purchase/input');
-            }, (err) => {
+            }).catch((err) => {
                 return next(new Error(err.message));
             });
-        }, (err) => {
+        }).catch((err) => {
             return next(new Error(err.message));
         });
     });

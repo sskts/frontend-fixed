@@ -27,19 +27,16 @@ export function start(req: express.Request, res: express.Response, next: express
         return res.redirect('/purchase/' + req.params.id + '/overlap');
     }
 
-    transactionStart(purchaseModel).then(
-        () => {
-            if (!req.session) return next(req.__('common.error.property'));
-            delete (<any>req.session).purchase;
-            //セッション更新
-            (<any>req.session).purchase = purchaseModel.formatToSession();
-            //座席選択へ
-            return res.redirect('/purchase/seat/' + req.params.id + '/');
-        },
-        (err) => {
-            return next(new Error(err.message));
-        }
-    );
+    transactionStart(purchaseModel).then(() => {
+        if (!req.session) return next(req.__('common.error.property'));
+        delete (<any>req.session).purchase;
+        //セッション更新
+        (<any>req.session).purchase = purchaseModel.formatToSession();
+        //座席選択へ
+        return res.redirect('/purchase/seat/' + req.params.id + '/');
+    }).catch((err) => {
+        return next(new Error(err.message));
+    });
 }
 
 /**

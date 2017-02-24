@@ -55,7 +55,7 @@ function index(req, res, next) {
         req.session.purchase = purchaseModel.formatToSession();
         res.locals.error = null;
         return res.render('purchase/seat');
-    }, (err) => {
+    }).catch((err) => {
         return next(new Error(err.message));
     });
 }
@@ -91,7 +91,7 @@ function select(req, res, next) {
                 req.session.purchase = purchaseModel.formatToSession();
                 //券種選択へ
                 return res.redirect('/purchase/ticket');
-            }, (err) => {
+            }).catch((err) => {
                 return next(new Error(err.message));
             });
         }
@@ -219,7 +219,7 @@ function getScreenStateReserve(req, res, _next) {
             err: null,
             result: result
         });
-    }, (err) => {
+    }).catch((err) => {
         res.json({
             err: err,
             result: null
