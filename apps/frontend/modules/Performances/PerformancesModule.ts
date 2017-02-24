@@ -29,7 +29,7 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function getPerformances(req: express.Request, res: express.Response): void {
-    const endpoint: string = process.env.MP_API_ENDPOINT;
+    const endpoint: string = process.env.MP_ENDPOINT;
     const method: string = 'performances';
 
     const options: request.Options = {

@@ -45,7 +45,7 @@ function index(req, res, next) {
     res.locals.error = null;
     res.locals.seatStr = purchaseModel.seatToString();
     res.locals.ticketStr = purchaseModel.ticketToString();
-    res.locals.transactionId = purchaseModel.transactionMP._id;
+    res.locals.transactionId = purchaseModel.transactionMP.id;
     //セッション更新
     if (!req.session)
         return next(req.__('common.error.property'));
@@ -93,7 +93,7 @@ function updateReserve(req, purchaseModel) {
         try {
             // COA本予約
             purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
-                theater_code: performance.attributes.theater._id,
+                theater_code: performance.attributes.theater.id,
                 date_jouei: performance.attributes.day,
                 title_code: performance.attributes.film.coa_title_code,
                 title_branch_num: performance.attributes.film.coa_title_branch_num,
@@ -117,7 +117,7 @@ function updateReserve(req, purchaseModel) {
         }
         // MP購入者情報登録
         yield MP.ownersAnonymous({
-            transactionId: purchaseModel.transactionMP._id,
+            transactionId: purchaseModel.transactionMP.id,
             name_first: input.first_name_hira,
             name_last: input.last_name_hira,
             tel: input.tel_num,
@@ -126,15 +126,15 @@ function updateReserve(req, purchaseModel) {
         console.log('MP購入者情報登録');
         // MP照会情報登録
         yield MP.transactionsEnableInquiry({
-            transactionId: purchaseModel.transactionMP._id,
-            inquiry_theater: purchaseModel.performance.attributes.theater._id,
+            transactionId: purchaseModel.transactionMP.id,
+            inquiry_theater: purchaseModel.performance.attributes.theater.id,
             inquiry_id: purchaseModel.updateReserve.reserve_num,
             inquiry_pass: purchaseModel.input.tel_num
         });
         console.log('MP照会情報登録');
         // MPメール登録
         yield MP.addEmail({
-            transactionId: purchaseModel.transactionMP._id,
+            transactionId: purchaseModel.transactionMP.id,
             from: 'noreply@localhost',
             to: purchaseModel.input.mail_addr,
             subject: '購入完了',
@@ -143,7 +143,7 @@ function updateReserve(req, purchaseModel) {
         console.log('MPメール登録');
         // MP取引成立
         yield MP.transactionClose({
-            transactionId: purchaseModel.transactionMP._id
+            transactionId: purchaseModel.transactionMP.id
         });
         console.log('MP取引成立');
     });
@@ -220,7 +220,7 @@ function purchase(req, res, next) {
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id)
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
     updateReserve(req, purchaseModel).then(() => {
         //購入情報をセッションへ

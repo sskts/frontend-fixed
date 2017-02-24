@@ -38,7 +38,7 @@ function index(req, res, next) {
     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
     res.locals.gmoShopId = process.env.GMO_SHOP_ID;
     res.locals.price = purchaseModel.getReserveAmount();
-    res.locals.transactionId = purchaseModel.transactionMP._id;
+    res.locals.transactionId = purchaseModel.transactionMP.id;
     if (purchaseModel.input) {
         res.locals.input = purchaseModel.input;
     }
@@ -84,7 +84,7 @@ function submit(req, res, next) {
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id)
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
     //バリデーション
     const form = InputForm_1.default(req);
@@ -129,7 +129,7 @@ function submit(req, res, next) {
                     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                     res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                     res.locals.price = purchaseModel.getReserveAmount();
-                    res.locals.transactionId = purchaseModel.transactionMP._id;
+                    res.locals.transactionId = purchaseModel.transactionMP.id;
                     return res.render('purchase/input');
                 });
             }
@@ -152,7 +152,7 @@ function submit(req, res, next) {
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
             res.locals.gmoShopId = process.env.GMO_SHOP_ID;
             res.locals.price = purchaseModel.getReserveAmount();
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
             return res.render('purchase/input');
         }
     });
@@ -193,8 +193,8 @@ function addAuthorization(req, purchaseModel) {
             console.log('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
-                transactionId: purchaseModel.transactionMP._id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO._id
+                transactionId: purchaseModel.transactionMP.id,
+                gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
             console.log('GMOオーソリ削除');
         }

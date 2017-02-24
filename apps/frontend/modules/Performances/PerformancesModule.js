@@ -28,7 +28,7 @@ exports.index = index;
  * @returns {void}
  */
 function getPerformances(req, res) {
-    const endpoint = process.env.MP_API_ENDPOINT;
+    const endpoint = process.env.MP_ENDPOINT;
     const method = 'performances';
     const options = {
         url: `${endpoint}/${method}/?day=${req.body.day}`,

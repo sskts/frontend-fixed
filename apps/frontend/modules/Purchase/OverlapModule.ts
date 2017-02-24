@@ -101,7 +101,7 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     //COA仮予約削除
     await COA.ReserveService.delTmpReserve({
-        theater_code: performance.attributes.theater._id,
+        theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
         title_branch_num: performance.attributes.film.coa_title_branch_num,
@@ -113,8 +113,8 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // COAオーソリ削除
     await MP.removeCOAAuthorization({
-        transactionId: purchaseModel.transactionMP._id,
-        coaAuthorizationId: purchaseModel.authorizationCOA._id
+        transactionId: purchaseModel.transactionMP.id,
+        coaAuthorizationId: purchaseModel.authorizationCOA.id
     });
 
     console.log('COAオーソリ削除');
@@ -134,8 +134,8 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
-            transactionId: purchaseModel.transactionMP._id,
-            gmoAuthorizationId: purchaseModel.authorizationGMO._id
+            transactionId: purchaseModel.transactionMP.id,
+            gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
         console.log('GMOオーソリ削除');
     }

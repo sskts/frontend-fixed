@@ -78,18 +78,18 @@ function addCOAAuthorization(args) {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
-        const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'ANONYMOUS');
         });
-        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
         const response = yield request.post({
-            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
+            url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             body: {
                 owner_id_from: promoterOwnerId,
                 owner_id_to: anonymousOwnerId,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-                coa_theater_code: args.performance.attributes.theater._id,
+                coa_theater_code: args.performance.attributes.theater.id,
                 coa_date_jouei: args.performance.attributes.day,
                 coa_title_code: args.performance.attributes.film.coa_title_code,
                 coa_title_branch_num: args.performance.attributes.film.coa_title_branch_num,
@@ -97,7 +97,7 @@ function addCOAAuthorization(args) {
                 coa_screen_code: args.performance.attributes.screen.coa_screen_code,
                 seats: args.salesTicketResults.map((tmpReserve) => {
                     return {
-                        performance: args.performance._id,
+                        performance: args.performance.id,
                         section: tmpReserve.section,
                         seat_code: tmpReserve.seat_code,
                         ticket_code: tmpReserve.ticket_code,
@@ -157,13 +157,13 @@ function addGMOAuthorization(args) {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
-        const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+        const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'ANONYMOUS');
         });
-        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
         const response = yield request.post({
-            url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
+            url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             body: {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
@@ -356,7 +356,7 @@ function makeInquiry(args) {
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
         console.log('makeInquiry result:' + response.body.data);
-        return response.body.data._id;
+        return response.body.data.id;
     });
 }
 exports.makeInquiry = makeInquiry;

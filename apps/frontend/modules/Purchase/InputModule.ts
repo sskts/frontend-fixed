@@ -30,7 +30,7 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
     res.locals.gmoShopId = process.env.GMO_SHOP_ID;
     res.locals.price = purchaseModel.getReserveAmount();
-    res.locals.transactionId = purchaseModel.transactionMP._id;
+    res.locals.transactionId = purchaseModel.transactionMP.id;
 
     if (purchaseModel.input) {
         res.locals.input = purchaseModel.input;
@@ -77,7 +77,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     //バリデーション
     const form = InputForm(req);
@@ -120,7 +120,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
                         res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                         res.locals.gmoShopId = process.env.GMO_SHOP_ID;
                         res.locals.price = purchaseModel.getReserveAmount();
-                        res.locals.transactionId = purchaseModel.transactionMP._id;
+                        res.locals.transactionId = purchaseModel.transactionMP.id;
 
                         return res.render('purchase/input');
                     }
@@ -143,7 +143,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
             res.locals.gmoShopId = process.env.GMO_SHOP_ID;
             res.locals.price = purchaseModel.getReserveAmount();
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
 
             return res.render('purchase/input');
         }
@@ -183,8 +183,8 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
-            transactionId: purchaseModel.transactionMP._id,
-            gmoAuthorizationId: purchaseModel.authorizationGMO._id
+            transactionId: purchaseModel.transactionMP.id,
+            gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
         console.log('GMOオーソリ削除');
     }

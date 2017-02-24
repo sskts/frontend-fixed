@@ -24,7 +24,7 @@ export function index(req: express.Request, res: express.Response, next: express
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-    res.locals.transactionId = purchaseModel.transactionMP._id;
+    res.locals.transactionId = purchaseModel.transactionMP.id;
     res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
     return res.render('purchase/mvtk/input');
 }
@@ -45,7 +45,7 @@ export function auth(req: express.Request, res: express.Response, next: express.
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     return res.redirect('/purchase/mvtk/confirm');
 }

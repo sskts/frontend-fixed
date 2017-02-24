@@ -37,7 +37,7 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.error = null;
     res.locals.seatStr = purchaseModel.seatToString();
     res.locals.ticketStr = purchaseModel.ticketToString();
-    res.locals.transactionId = purchaseModel.transactionMP._id;
+    res.locals.transactionId = purchaseModel.transactionMP.id;
 
     //セッション更新
     if (!req.session) return next(req.__('common.error.property'));
@@ -82,7 +82,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
     try {
         // COA本予約
         purchaseModel.updateReserve = await COA.ReserveService.updReserve({
-            theater_code: performance.attributes.theater._id,
+            theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
@@ -106,7 +106,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // MP購入者情報登録
     await MP.ownersAnonymous({
-        transactionId: purchaseModel.transactionMP._id,
+        transactionId: purchaseModel.transactionMP.id,
         name_first: input.first_name_hira,
         name_last: input.last_name_hira,
         tel: input.tel_num,
@@ -116,8 +116,8 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // MP照会情報登録
     await MP.transactionsEnableInquiry({
-        transactionId: purchaseModel.transactionMP._id,
-        inquiry_theater: purchaseModel.performance.attributes.theater._id,
+        transactionId: purchaseModel.transactionMP.id,
+        inquiry_theater: purchaseModel.performance.attributes.theater.id,
         inquiry_id: purchaseModel.updateReserve.reserve_num,
         inquiry_pass: purchaseModel.input.tel_num
     });
@@ -125,7 +125,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // MPメール登録
     await MP.addEmail({
-        transactionId: purchaseModel.transactionMP._id,
+        transactionId: purchaseModel.transactionMP.id,
         from: 'noreply@localhost',
         to: purchaseModel.input.mail_addr,
         subject: '購入完了',
@@ -135,7 +135,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // MP取引成立
     await MP.transactionClose({
-        transactionId: purchaseModel.transactionMP._id
+        transactionId: purchaseModel.transactionMP.id
     });
     console.log('MP取引成立');
 }
@@ -208,7 +208,7 @@ export function purchase(req: express.Request, res: express.Response, next: expr
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     updateReserve(req, purchaseModel).then(
         () => {

@@ -34,7 +34,7 @@ export function index(req: express.Request, res: express.Response, next: express
             res.locals.performance = result;
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = null;
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
 
             //仮予約中
             if (purchaseModel.reserveSeats) {
@@ -71,7 +71,7 @@ export function select(req: express.Request, res: express.Response, next: expres
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     //バリデーション
     const form = SeatForm(req);
@@ -124,7 +124,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
 
         //COA仮予約削除
         await COA.ReserveService.delTmpReserve({
-            theater_code: performance.attributes.theater._id,
+            theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
@@ -134,8 +134,8 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         console.log('COA仮予約削除');
         // COAオーソリ削除
         await MP.removeCOAAuthorization({
-            transactionId: purchaseModel.transactionMP._id,
-            coaAuthorizationId: purchaseModel.authorizationCOA._id
+            transactionId: purchaseModel.transactionMP.id,
+            coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
         console.log('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO
@@ -151,8 +151,8 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
             console.log('GMOオーソリ取消');
             // GMOオーソリ削除
             await MP.removeGMOAuthorization({
-                transactionId: purchaseModel.transactionMP._id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO._id
+                transactionId: purchaseModel.transactionMP.id,
+                gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
             console.log('GMOオーソリ削除');
         }
@@ -160,7 +160,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
     //COA仮予約
     const seats = JSON.parse(req.body.seats);
     purchaseModel.reserveSeats = await COA.ReserveService.updTmpReserveSeat({
-        theater_code: performance.attributes.theater._id,
+        theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
         title_branch_num: performance.attributes.film.coa_title_branch_num,

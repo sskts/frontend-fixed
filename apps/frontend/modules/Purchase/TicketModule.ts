@@ -28,12 +28,12 @@ export function index(req: express.Request, res: express.Response, next: express
     //コアAPI券種取得
     const performance = purchaseModel.performance;
     COA.ReserveService.salesTicket({
-        theater_code: performance.attributes.theater._id,
+        theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
         title_branch_num: performance.attributes.film.coa_title_branch_num,
         time_begin: performance.attributes.time_start
-        // screen_code: performance.screen._id,
+        // screen_code: performance.screen.id,
     }).then(
         (result) => {
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
@@ -42,7 +42,7 @@ export function index(req: express.Request, res: express.Response, next: express
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = purchaseModel.reserveTickets;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals.transactionId = purchaseModel.transactionMP._id;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
 
             //セッション更新
             if (!req.session) return next(req.__('common.error.property'));
@@ -71,7 +71,7 @@ export function select(req: express.Request, res: express.Response, next: expres
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP._id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     //バリデーション
     const form = TicketForm(req);
@@ -114,12 +114,12 @@ async function ticketValidation(req: express.Request, purchaseModel: PurchaseSes
     //コアAPI券種取得
     const performance = purchaseModel.performance;
     const salesTickets = await COA.ReserveService.salesTicket({
-        theater_code: performance.attributes.theater._id,
+        theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
         title_code: performance.attributes.film.coa_title_code,
         title_branch_num: performance.attributes.film.coa_title_branch_num,
         time_begin: performance.attributes.time_start
-        // screen_code: performance.screen._id,
+        // screen_code: performance.screen.id,
     });
 
     const reserveTickets = purchaseModel.reserveTickets;
@@ -154,8 +154,8 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
 
     // COAオーソリ削除
     await MP.removeCOAAuthorization({
-        transactionId: purchaseModel.transactionMP._id,
-        coaAuthorizationId: purchaseModel.authorizationCOA._id
+        transactionId: purchaseModel.transactionMP.id,
+        coaAuthorizationId: purchaseModel.authorizationCOA.id
     });
 
     console.log('MPCOAオーソリ削除');
@@ -180,8 +180,8 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
-            transactionId: purchaseModel.transactionMP._id,
-            gmoAuthorizationId: purchaseModel.authorizationGMO._id
+            transactionId: purchaseModel.transactionMP.id,
+            gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
         console.log('GMOオーソリ削除');
     }

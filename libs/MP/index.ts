@@ -18,7 +18,7 @@ const STATUS_CODE_204 = 204;
  * @interface Theater
  */
 export interface Theater {
-    _id: string;
+    id: string;
     address: {
         en: string,
         ja: string
@@ -37,7 +37,7 @@ export interface Theater {
  * @interface Screen
  */
 export interface Screen {
-    _id: string;
+    id: string;
     coa_screen_code: string;
     created_at: string;
     name: {
@@ -76,7 +76,7 @@ export interface Seat {
  * @interface Film
  */
 export interface Film {
-    _id: string;
+    id: string;
     coa_title_branch_num: string;
     coa_title_code: string;
     created_at: string;
@@ -105,7 +105,7 @@ export interface Film {
  * @interface Performance
  */
 export interface Performance {
-    _id: string;
+    id: string;
     attributes: {
         canceled: boolean,
         day: string,
@@ -163,9 +163,9 @@ export interface TransactionStartArgs {
 export interface TransactionStartResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
-    _id: string;
+    id: string;
     attributes: {
-        _id: string,
+        id: string,
         status: string,
         events: any[],
         owners: Owner[],
@@ -178,7 +178,7 @@ export interface TransactionStartResult {
 }
 
 interface Owner {
-    _id: string;
+    id: string;
     group: string;
 }
 
@@ -243,7 +243,7 @@ interface SalesTicketResult {
 export interface AddCOAAuthorizationResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
-    _id: string;
+    id: string;
 }
 /**
  * COAオーソリ追加
@@ -256,19 +256,19 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
-    const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+    const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'ANONYMOUS');
     });
-    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
 
     const response = await request.post({
-        url: `${endPoint}/transactions/${args.transaction._id}/authorizations/coaSeatReservation`,
+        url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
         body: {
             owner_id_from: promoterOwnerId,
             owner_id_to: anonymousOwnerId,
             coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-            coa_theater_code: args.performance.attributes.theater._id,
+            coa_theater_code: args.performance.attributes.theater.id,
             coa_date_jouei: args.performance.attributes.day,
             coa_title_code: args.performance.attributes.film.coa_title_code,
             coa_title_branch_num: args.performance.attributes.film.coa_title_branch_num,
@@ -276,7 +276,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
             coa_screen_code: args.performance.attributes.screen.coa_screen_code,
             seats: args.salesTicketResults.map((tmpReserve) => {
                 return {
-                    performance: args.performance._id,
+                    performance: args.performance.id,
                     section: tmpReserve.section,
                     seat_code: tmpReserve.seat_code,
                     ticket_code: tmpReserve.ticket_code,
@@ -350,7 +350,7 @@ export interface AddGMOAuthorizationArgs {
 export interface AddGMOAuthorizationResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
-    _id: string;
+    id: string;
 }
 /**
  * GMOオーソリ追加
@@ -363,13 +363,13 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
-    const promoterOwnerId = (promoterOwner) ? promoterOwner._id : null;
+    const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'ANONYMOUS');
     });
-    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner._id : null;
+    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
     const response = await request.post({
-        url: `${endPoint}/transactions/${args.transaction._id}/authorizations/gmo`,
+        url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
         body: {
             owner_id_from: anonymousOwnerId,
             owner_id_to: promoterOwnerId,
@@ -543,7 +543,7 @@ export interface AddEmailArgs {
  * @interface AddEmailResult
  */
 export interface AddEmailResult {
-    _id: string;
+    id: string;
 }
 /**
  * メール追加
@@ -629,5 +629,5 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
     console.log('makeInquiry result:' + response.body.data);
-    return response.body.data._id;
+    return response.body.data.id;
 }

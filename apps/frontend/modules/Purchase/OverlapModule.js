@@ -108,7 +108,7 @@ function removeReserve(req, purchaseModel) {
         const reserveSeats = purchaseModel.reserveSeats;
         //COA仮予約削除
         yield COA.ReserveService.delTmpReserve({
-            theater_code: performance.attributes.theater._id,
+            theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
@@ -118,8 +118,8 @@ function removeReserve(req, purchaseModel) {
         console.log('COA仮予約削除');
         // COAオーソリ削除
         yield MP.removeCOAAuthorization({
-            transactionId: purchaseModel.transactionMP._id,
-            coaAuthorizationId: purchaseModel.authorizationCOA._id
+            transactionId: purchaseModel.transactionMP.id,
+            coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
         console.log('COAオーソリ削除');
         if (purchaseModel.transactionGMO
@@ -136,8 +136,8 @@ function removeReserve(req, purchaseModel) {
             console.log('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
-                transactionId: purchaseModel.transactionMP._id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO._id
+                transactionId: purchaseModel.transactionMP.id,
+                gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
             console.log('GMOオーソリ削除');
         }
