@@ -44,7 +44,7 @@ export interface ReserveTicket {
      */
     add_price: number;
     /**
-     * todo
+     * 割引額
      */
     dis_price: number;
     /**

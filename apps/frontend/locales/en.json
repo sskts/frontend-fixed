@@ -51,6 +51,31 @@
 		"year": "common.year",
 		"month": "common.month",
 		"holdername": "common.holdername",
-		"securitycode": "common.securitycode"
+		"securitycode": "common.securitycode",
+		"purchase_number": "common.purchase_number"
+	},
+	"inquiry": {
+		"confirm": {
+			"page_ttl": "inquiry.confirm.page_ttl",
+			"read": "inquiry.confirm.read",
+			"ticket_button": "inquiry.confirm.ticket_button",
+			"section_ttl": "inquiry.confirm.section_ttl",
+			"section_text": "inquiry.confirm.section_text",
+			"section_button": "inquiry.confirm.section_button",
+			"note": "inquiry.confirm.note",
+			"qr_ttl": "inquiry.confirm.qr_ttl",
+			"qr_read": "inquiry.confirm.qr_read",
+			"prev": "inquiry.confirm.prev"
+		}
+	},
+	"week[Fri]": "week[Fri]",
+	"noscript": "noscript",
+	"header": {
+		"logo": "header.logo"
+	},
+	"footer": {
+		"privacy_policy": "footer.privacy_policy",
+		"Specified_Commercial_Transaction_Law": "footer.Specified_Commercial_Transaction_Law",
+		"copyright": "footer.copyright"
 	}
 }

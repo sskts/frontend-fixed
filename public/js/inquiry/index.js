@@ -22,7 +22,7 @@ $(function () {
      */
     $(document).on('click', '.ticket-scroll-button a', function(event) {
         event.preventDefault();
-        var target = $('.tickets');
+        var target = $('.qr-tickets');
         var top = target.offset().top - 20;
         $('html,body').animate({scrollTop: top}, 300);
     });

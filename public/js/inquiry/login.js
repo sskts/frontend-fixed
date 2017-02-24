@@ -41,7 +41,7 @@ function toInquiry() {
     var saveData = [];
     for (var i = 0; i < inquiryInfo.length; i++) {
         var info = inquiryInfo[i];
-        if (Date.now() < Number(info.expire) {
+        if (Date.now() < Number(info.expire)) {
             //対象取引データ
             saveData.push(info);
         }

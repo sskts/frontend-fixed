@@ -146,7 +146,7 @@
                 <dl>
                     <dt><%- __('common.holdername') %></dt>
                     <dd>
-                        <input type="text" pattern="\d*" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
+                        <input type="text" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
                         <% if (error && error.holdername) { %>
                         <div class="validation-text"><%= error.holdername[0] %></div>
                         <% } %>
@@ -163,7 +163,9 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">
+<%- partial('../layouts/site_seal') %>
 </div>
+
 
 <% block('modals', partial('modals/securitycode')) -%>
 <% block('modals', partial('modals/creditcard_alert')) -%>

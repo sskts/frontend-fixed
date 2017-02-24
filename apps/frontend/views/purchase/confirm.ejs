@@ -136,7 +136,10 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
+<%- partial('../layouts/site_seal') %>
 </div>
+
+
 
 <% block('modals', partial('modals/screen')) -%>
 <% block('modals', partial('modals/update_reserve_error')) -%>

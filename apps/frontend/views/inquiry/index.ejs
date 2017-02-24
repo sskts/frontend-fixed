@@ -24,9 +24,10 @@
             <dd class="small-text red-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
-    
+
+    <h2 class="page-ttl qr-tickets"><%- __('inquiry.confirm.qr_ttl') %></h2>
+    <p class="read"><%- __('inquiry.confirm.qr_read') %></p>
     <ul class="tickets mb-large">
-        
         <% for (let ticket of stateReserve.list_ticket) { %>
         <li class="ticket">
             <div class="inner bg-light-gray">
@@ -57,7 +58,7 @@
         </li>
         <% } %>
     </ul>
-    <p class="text-center"><%- __('inquiry.confirm.qr_read') %></p>
+    
     <div class="button-area clearfix">
         <div class="prev-link"><a class="icon-prev-black" href="/inquiry/login"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
@@ -69,4 +70,6 @@
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
 <input type="hidden" name="transaction_id" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+
+
 

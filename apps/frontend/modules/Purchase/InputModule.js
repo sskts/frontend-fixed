@@ -122,7 +122,8 @@ function submit(req, res, next) {
                     res.locals.error = {
                         cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
                         expire: [`${req.__('common.expire')}${req.__('common.validation.card')}`],
-                        securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`]
+                        securitycode: [`${req.__('common.securitycode')}${req.__('common.validation.card')}`],
+                        holdername: [`${req.__('common.holdername')}${req.__('common.validation.card')}`]
                     };
                     res.locals.input = req.body;
                     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;

@@ -50,7 +50,9 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
+<%- partial('../layouts/site_seal') %>
 </div>
+
 
 <% block('modals', partial('modals/ticket_type')) -%>
 <% block('modals', partial('modals/ticket_not_select')) -%>
