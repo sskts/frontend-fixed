@@ -5,7 +5,7 @@
  */
 process.env.NODE_ENV = 'dev';
 process.env.NPM_TOKEN = '9f435339-8720-44dc-91f1-66eaacaa466d';
-process.env.MP_API_ENDPOINT = 'https://devssktsapi.azurewebsites.net';
+process.env.MP_ENDPOINT = 'https://devssktsapi.azurewebsites.net';
 process.env.REDIS_HOST = 'devsskts.redis.cache.windows.net';
 process.env.REDIS_PORT = '6380';
 process.env.REDIS_KEY = 'W/yjVruvypTFz3nl8teXxBYfunq6teXnyvIN5xuVLWU=';

@@ -7,20 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+/**
+ * UIテスト
+ */
 const webdriver = require("selenium-webdriver");
-let width = 1920;
-let height = 1080;
+const width = 1920;
+const height = 1080;
 // Input capabilities
-let capabilities = {
-    // 'browserstack.user': 'akitohataguchi1',
-    // 'browserstack.key': '91NcdgSQ6KR9vqHP33xp',
+const capabilities = {
     'browserstack.user': 'tetsuyamazaki2',
     'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
-    'browserName': 'Chrome',
-    'browser_version': '55.0',
-    'os': 'Windows',
-    'os_version': '10',
-    'resolution': `${width}x${height}`,
+    browserName: 'Chrome',
+    browser_version: '55.0',
+    os: 'Windows',
+    os_version: '10',
+    resolution: `${width}x${height}`,
     'browserstack.debug': true
 };
 //設定
@@ -38,13 +39,14 @@ test().then(() => {
 function test() {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('テスト開始-----------------------------------');
-        let driver = new webdriver.Builder()
+        const driver = new webdriver.Builder()
             .usingServer('http://hub-cloud.browserstack.com/wd/hub')
             .withCapabilities(capabilities)
             .build();
-        let url = 'https://devsasakiticketfrontendprototypewebapp-sasaki-ticket-11.azurewebsites.net/';
+        const url = 'https://devsasakiticketfrontendprototypewebapp-sasaki-ticket-11.azurewebsites.net/';
         //要素表示待機10秒
-        driver.manage().timeouts().implicitlyWait(10000);
+        const waitTime = 10000;
+        driver.manage().timeouts().implicitlyWait(waitTime);
         //画面サイズfull
         driver.manage().window().setSize(width, height);
         //アクセスURL
@@ -59,32 +61,39 @@ function test() {
         console.log('テスト終了-----------------------------------');
     });
 }
-//パフォーマンス一覧
+/**
+ * パフォーマンス一覧
+ */
 function performanceSelect(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElements(webdriver.By.css('.performances li'));
         console.log('パフォーマンス一覧');
-        let lists = yield driver.findElements(webdriver.By.css('.performances li'));
-        let num = Math.floor(Math.random() * lists.length);
+        const lists = yield driver.findElements(webdriver.By.css('.performances li'));
+        const num = Math.floor(Math.random() * lists.length);
         console.log('パフォーマンス' + num);
-        let performances = yield driver.findElements(webdriver.By.css('.performances li'));
+        const performances = yield driver.findElements(webdriver.By.css('.performances li'));
         yield performances[num]
             .findElement(webdriver.By.css('.blue-button a'))
             .click();
         console.log('次へクリック');
     });
 }
-//座席選択
+/**
+ * 座席選択
+ */
 function seat(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-seat'));
         console.log('座席選択');
-        let defaultSeats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
-        let count = (defaultSeats.length > 5) ? Math.floor(Math.random() * (5 - 1) + 1) : Math.floor(Math.random() * defaultSeats.length);
+        const defaultSeats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
+        const maxCount = 5;
+        const count = (defaultSeats.length > maxCount)
+            ? Math.floor(Math.random() * (maxCount - 1) + 1)
+            : Math.floor(Math.random() * defaultSeats.length);
         console.log(`座席選択数: ${count}`);
         for (let i = 0; i < count; i++) {
-            let seats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
-            let num = Math.floor(Math.random() * seats.length);
+            const seats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
+            const num = Math.floor(Math.random() * seats.length);
             console.log(`座席: ${num}`);
             yield seats[num].click();
         }
@@ -95,17 +104,19 @@ function seat(driver) {
         console.log('次へクリック');
     });
 }
-//券種選択
+/**
+ * 券種選択
+ */
 function ticket(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-ticket'));
         console.log('券種選択');
-        let seats = yield driver.findElements(webdriver.By.css('.seats li'));
+        const seats = yield driver.findElements(webdriver.By.css('.seats li'));
         console.log(`座席数: ${seats.length}`);
-        for (let i = 0; i < seats.length; i++) {
-            yield seats[i].findElement(webdriver.By.tagName('a')).click();
-            let tickets = yield driver.findElements(webdriver.By.css('.modal .blue-button'));
-            let num = Math.floor(Math.random() * tickets.length);
+        for (const seat of seats) {
+            yield seat.findElement(webdriver.By.tagName('a')).click();
+            const tickets = yield driver.findElements(webdriver.By.css('.modal .blue-button'));
+            const num = Math.floor(Math.random() * tickets.length);
             console.log(`券種: ${num}`);
             yield tickets[num]
                 .findElement(webdriver.By.tagName('a'))
@@ -117,7 +128,9 @@ function ticket(driver) {
         console.log('次へクリック');
     });
 }
-//購入者情報入力
+/**
+ * 購入者情報入力
+ */
 function input(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-input'));
@@ -144,7 +157,9 @@ function input(driver) {
         console.log('次へクリック');
     });
 }
-//購入者内容確認
+/**
+ * 購入者内容確認
+ */
 function confirm(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-confirm'));
@@ -156,6 +171,7 @@ function confirm(driver) {
         console.log('次へクリック');
         yield driver.findElement(webdriver.By.css('.purchase-complete'));
         console.log('購入完了');
-        yield driver.sleep(5000);
+        const sleepTime = 5000;
+        yield driver.sleep(sleepTime);
     });
 }

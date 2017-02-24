@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const GMO = require("@motionpicture/gmo-service");
 const request = require("request-promise-native");
-const endPoint = process.env.MP_API_ENDPOINT;
+const endPoint = process.env.MP_ENDPOINT;
 const STATUS_CODE_200 = 200;
 const STATUS_CODE_201 = 201;
 const STATUS_CODE_204 = 204;

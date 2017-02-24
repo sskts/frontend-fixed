@@ -7,7 +7,7 @@ import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as request from 'request-promise-native';
 
-const endPoint = process.env.MP_API_ENDPOINT;
+const endPoint = process.env.MP_ENDPOINT;
 
 const STATUS_CODE_200 = 200;
 const STATUS_CODE_201 = 201;
