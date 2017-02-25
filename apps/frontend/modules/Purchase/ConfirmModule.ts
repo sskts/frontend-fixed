@@ -20,7 +20,7 @@ import * as UtilModule from '../Util/UtilModule';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
@@ -40,7 +40,7 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.transactionId = purchaseModel.transactionMP.id;
 
     //セッション更新
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     (<any>req.session).purchase = purchaseModel.formatToSession();
 
     return res.render('purchase/confirm');
@@ -203,7 +203,7 @@ TEL：XX-XXXX-XXXX`;
  * @returns {void}
  */
 export function purchase(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 

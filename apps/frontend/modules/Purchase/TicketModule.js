@@ -28,7 +28,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
         return next(new Error(req.__('common.error.access')));
@@ -54,7 +54,7 @@ function index(req, res, next) {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         //セッション更新
         if (!req.session)
-            return next(req.__('common.error.property'));
+            return next(new Error(req.__('common.error.property')));
         req.session.purchase = purchaseModel.formatToSession();
         //券種選択表示
         return res.render('purchase/ticket');
@@ -74,7 +74,7 @@ exports.index = index;
  */
 function select(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
@@ -89,7 +89,7 @@ function select(req, res, next) {
         ticketValidation(req, purchaseModel).then(() => {
             upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session)
-                    return next(req.__('common.error.property'));
+                    return next(new Error(req.__('common.error.property')));
                 //セッション更新
                 req.session.purchase = purchaseModel.formatToSession();
                 //購入者情報入力へ

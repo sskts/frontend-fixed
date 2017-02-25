@@ -1,4 +1,5 @@
 "use strict";
+const MVTK = require("@motionpicture/mvtk-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -38,6 +39,8 @@ app.use((req, res, next) => {
         locales_1.default.setLocale(req, 'ja');
     }
 });
+//ムビチケサービス初期化
+MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
 // ルーティング
 router_1.default(app);
 module.exports = app;

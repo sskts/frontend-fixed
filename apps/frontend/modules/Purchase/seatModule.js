@@ -28,7 +28,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!req.params || !req.params.id)
         return next(new Error(req.__('common.error.access')));
@@ -52,7 +52,7 @@ function index(req, res, next) {
         purchaseModel.performance = result;
         //セッション更新
         if (!req.session)
-            return next(req.__('common.error.property'));
+            return next(new Error(req.__('common.error.property')));
         req.session.purchase = purchaseModel.formatToSession();
         res.locals.error = null;
         return res.render('purchase/seat');
@@ -72,7 +72,7 @@ exports.index = index;
  */
 function select(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
@@ -83,12 +83,12 @@ function select(req, res, next) {
     const form = SeatForm_1.default(req);
     form(req, res, () => {
         if (!req.form)
-            return next(req.__('common.error.property'));
+            return next(new Error(req.__('common.error.property')));
         if (req.form.isValid) {
             reserve(req, purchaseModel).then(() => {
                 //セッション更新
                 if (!req.session)
-                    return next(req.__('common.error.property'));
+                    return next(new Error(req.__('common.error.property')));
                 req.session.purchase = purchaseModel.formatToSession();
                 //券種選択へ
                 return res.redirect('/purchase/ticket');

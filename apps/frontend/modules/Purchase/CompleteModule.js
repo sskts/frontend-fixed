@@ -16,7 +16,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     if (!req.session.complete)
         return next(new Error(req.__('common.error.access')));
     //購入者内容確認表示

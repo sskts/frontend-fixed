@@ -20,7 +20,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.performance) return next(new Error(req.__('common.error.property')));
@@ -44,7 +44,7 @@ export function index(req: express.Request, res: express.Response, next: express
         res.locals.transactionId = purchaseModel.transactionMP.id;
 
         //セッション更新
-        if (!req.session) return next(req.__('common.error.property'));
+        if (!req.session) return next(new Error(req.__('common.error.property')));
         (<any>req.session).purchase = purchaseModel.formatToSession();
         //券種選択表示
         return res.render('purchase/ticket');
@@ -63,7 +63,7 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
@@ -77,7 +77,7 @@ export function select(req: express.Request, res: express.Response, next: expres
         purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
         ticketValidation(req, purchaseModel).then(() => {
             upDateAuthorization(req, purchaseModel).then(() => {
-                if (!req.session) return next(req.__('common.error.property'));
+                if (!req.session) return next(new Error(req.__('common.error.property')));
                 //セッション更新
                 (<any>req.session).purchase = purchaseModel.formatToSession();
                 //購入者情報入力へ

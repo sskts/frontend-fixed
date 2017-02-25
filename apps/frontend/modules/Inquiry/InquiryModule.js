@@ -50,12 +50,12 @@ exports.login = login;
  */
 function auth(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     const form = LoginForm_1.default(req);
     form(req, res, () => {
         if (!req.form)
-            return next(req.__('common.error.property'));
+            return next(new Error(req.__('common.error.property')));
         if (req.form.isValid) {
             getStateReserve(req, inquiryModel).then(() => {
                 //購入者内容確認へ
@@ -141,7 +141,7 @@ function getStateReserve(req, inquiryModel) {
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     if (inquiryModel.stateReserve
         && inquiryModel.performance

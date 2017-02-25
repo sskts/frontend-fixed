@@ -42,11 +42,11 @@ export function login(_req: express.Request, res: express.Response): void {
  * @returns {void}
  */
 export function auth(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const inquiryModel = new InquirySession.InquiryModel((<any>req.session).inquiry);
     const form = LoginForm(req);
     form(req, res, () => {
-        if (!(<any>req).form) return next(req.__('common.error.property'));
+        if (!(<any>req).form) return next(new Error(req.__('common.error.property')));
         if ((<any>req).form.isValid) {
             getStateReserve(req, inquiryModel).then(() => {
                 //購入者内容確認へ
@@ -132,7 +132,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const inquiryModel = new InquirySession.InquiryModel((<any>req.session).inquiry);
     if (inquiryModel.stateReserve
         && inquiryModel.performance

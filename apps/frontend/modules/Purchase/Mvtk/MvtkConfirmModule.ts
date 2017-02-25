@@ -16,7 +16,7 @@ import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
     //購入者情報入力表示
@@ -36,12 +36,12 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認
     if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
-    return res.redirect('/purchase/input');
+    return res.redirect('/purchase/ticket');
 }

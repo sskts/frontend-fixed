@@ -16,7 +16,7 @@ const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
@@ -38,13 +38,13 @@ exports.index = index;
  */
 function submit(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
     //取引id確認
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
-    return res.redirect('/purchase/input');
+    return res.redirect('/purchase/ticket');
 }
 exports.submit = submit;

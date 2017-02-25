@@ -16,7 +16,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     if (!(<any>req.session).complete) return next(new Error(req.__('common.error.access')));
     //購入者内容確認表示
     const complete = (<any>req.session).complete;

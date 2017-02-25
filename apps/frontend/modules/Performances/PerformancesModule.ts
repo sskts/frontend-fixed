@@ -16,7 +16,7 @@ import * as MP from '../../../../libs/MP';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     return res.render('performance');
 }
 

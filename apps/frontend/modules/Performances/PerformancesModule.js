@@ -16,7 +16,7 @@ const MP = require("../../../../libs/MP");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     return res.render('performance');
 }
 exports.index = index;

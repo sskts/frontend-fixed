@@ -19,7 +19,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
@@ -47,10 +47,10 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     removeReserve(req, purchaseModel).then(() => {
-        if (!req.session) return next(req.__('common.error.property'));
+        if (!req.session) return next(new Error(req.__('common.error.property')));
         //購入スタートへ
         delete (<any>req.session).purchase;
         return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
@@ -70,7 +70,7 @@ export function newReserve(req: express.Request, res: express.Response, next: ex
  * @returns {void}
  */
 export function prevReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     //座席選択へ
     return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
 }

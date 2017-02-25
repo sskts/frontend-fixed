@@ -19,10 +19,10 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
-    if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
+    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //購入者情報入力表示
     res.locals.error = null;
@@ -56,7 +56,7 @@ export function index(req: express.Request, res: express.Response, next: express
     }
 
     //セッション更新
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     (<any>req.session).purchase = purchaseModel.formatToSession();
 
     return res.render('purchase/input');
@@ -72,7 +72,7 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(req.__('common.error.property'));
+    if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
@@ -82,7 +82,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
     //バリデーション
     const form = InputForm(req);
     form(req, res, () => {
-        if (!(<any>req).form) return next(req.__('common.error.property'));
+        if (!(<any>req).form) return next(new Error(req.__('common.error.property')));
         if ((<any>req).form.isValid) {
             //入力情報をセッションへ
             purchaseModel.input = {
@@ -100,13 +100,13 @@ export function submit(req: express.Request, res: express.Response, next: expres
                 //オーソリ追加
                 addAuthorization(req, purchaseModel).then(() => {
                     //セッション更新
-                    if (!req.session) return next(req.__('common.error.property'));
+                    if (!req.session) return next(new Error(req.__('common.error.property')));
                     (<any>req.session).purchase = purchaseModel.formatToSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
                 }).catch((err) => {
                     if (!err.hasOwnProperty('type')) return next(new Error(err.message));
-                    if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
+                    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
                     //GMOオーソリ追加失敗
                     res.locals.error = {
                         cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
@@ -127,14 +127,14 @@ export function submit(req: express.Request, res: express.Response, next: expres
             } else {
                 //クレジット決済なし
                 //セッション更新
-                if (!req.session) return next(req.__('common.error.property'));
+                if (!req.session) return next(new Error(req.__('common.error.property')));
                 (<any>req.session).purchase = purchaseModel.formatToSession();
                 //購入者内容確認へ
                 return res.redirect('/purchase/confirm');
             }
 
         } else {
-            if (!purchaseModel.transactionMP) return next(req.__('common.error.property'));
+            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
             res.locals.error = (<any>req).form.getErrors();
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;

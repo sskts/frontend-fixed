@@ -28,7 +28,7 @@ const UtilModule = require("../Util/UtilModule");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
         return next(new Error(req.__('common.error.access')));
@@ -49,7 +49,7 @@ function index(req, res, next) {
     res.locals.transactionId = purchaseModel.transactionMP.id;
     //セッション更新
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     req.session.purchase = purchaseModel.formatToSession();
     return res.render('purchase/confirm');
 }
@@ -216,7 +216,7 @@ TEL：XX-XXXX-XXXX`;
  */
 function purchase(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));

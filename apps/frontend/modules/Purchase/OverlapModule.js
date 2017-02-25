@@ -27,7 +27,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!req.params || !req.params.id)
         return next(new Error(req.__('common.error.access')));
@@ -58,11 +58,11 @@ exports.index = index;
  */
 function newReserve(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     removeReserve(req, purchaseModel).then(() => {
         if (!req.session)
-            return next(req.__('common.error.property'));
+            return next(new Error(req.__('common.error.property')));
         //購入スタートへ
         delete req.session.purchase;
         return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
@@ -82,7 +82,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (!req.session)
-        return next(req.__('common.error.property'));
+        return next(new Error(req.__('common.error.property')));
     //座席選択へ
     return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
 }

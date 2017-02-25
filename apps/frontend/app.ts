@@ -1,3 +1,4 @@
+import * as MVTK from '@motionpicture/mvtk-service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -43,6 +44,13 @@ app.use((req, res, next) => {
         locales.setLocale(req, 'ja');
     }
 });
+
+//ムビチケサービス初期化
+MVTK.initialize(
+    process.env.MVTK_ENDPOINT_SERVICE_01,
+    process.env.MVTK_ENDPOINT_SERVICE_02,
+    process.env.MVTK_ENDPOINT_RESERVE_SERVICE
+);
 
 // ルーティング
 router(app);
