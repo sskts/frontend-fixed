@@ -4,7 +4,7 @@
  */
 
 import * as express from 'express';
-import * as request from 'request';
+import * as MP from '../../../../libs/MP';
 
 /**
  * パフォーマンス一覧表示
@@ -29,20 +29,15 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function getPerformances(req: express.Request, res: express.Response): void {
-    const endpoint: string = process.env.MP_ENDPOINT;
-    const method: string = 'performances';
-
-    const options: request.Options = {
-        url: `${endpoint}/${method}/?day=${req.body.day}`,
-        method: 'GET',
-        json: true
-    };
-
-    request.get(options, (error, response, body) => {
+    MP.getPerformances(req.body.day).then((result) => {
         res.json({
-            error: error,
-            response: response,
-            result: body
+            error: null,
+            result: result
+        });
+    }).catch((err) => {
+        res.json({
+            error: err,
+            result: null
         });
     });
 }

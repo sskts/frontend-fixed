@@ -2,6 +2,7 @@
  * ルーティング方法
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const MethodModule = require("../modules/Method/MethodModule");
 const router = express.Router();
@@ -11,5 +12,4 @@ router.get('/entry', MethodModule.entry);
 router.get('/ticketing', MethodModule.ticketing);
 //ブックマーク方法説明
 router.get('/bookmark', MethodModule.bookmark);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = router;

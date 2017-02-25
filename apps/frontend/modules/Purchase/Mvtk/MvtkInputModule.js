@@ -3,6 +3,7 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 /**
  * ムビチケ券入力ページ表示

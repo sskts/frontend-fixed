@@ -3,6 +3,7 @@
  * @namespace ErrorModule
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Not Found
  * @memberOf ErrorModule

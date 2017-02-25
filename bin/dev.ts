@@ -21,5 +21,7 @@ process.env.GMO_SHOP_PASSWORD = 'xbxmkaa6';
 process.env.COA_ENDPOINT = 'http://coacinema.aa0.netvolante.jp';
 process.env.COA_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJjcmVhdGVkX2F0IjoxNDc5MjYwODQ4LCJhdXRoX2lkIjoiMzMxNSJ9.jx-w7D3YLP7UbY4mzJYC9xr368FiKWcpR2_L9mZfehQ';
 
+process.env.SSKTS_API_SECRET = 'VBLhYDmX/7bcVC5H_YGs-=JRX+DXTNdbJAtt(7NN';
+process.env.SSKTS_API_REFRESH_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJncmFudF90eXBlIjoidXJuOmlldGY6cGFyYW1zOm9hdXRoOmdyYW50LXR5cGU6and0LWJlYXJlciIsImlhdCI6MTQ4NzkyOTExOH0.W-VfmRRdBxrNDvE-x8aVGOGOCvWz2Xbq7_-iToXaXUY';
 // tslint:disable-next-line:no-var-requires no-require-imports
 require('../index');

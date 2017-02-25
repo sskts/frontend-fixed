@@ -3,7 +3,8 @@
  * @namespace PerformancesModule
  */
 "use strict";
-const request = require("request");
+Object.defineProperty(exports, "__esModule", { value: true });
+const MP = require("../../../../libs/MP");
 /**
  * パフォーマンス一覧表示
  * @memberOf PerformancesModule
@@ -28,18 +29,15 @@ exports.index = index;
  * @returns {void}
  */
 function getPerformances(req, res) {
-    const endpoint = process.env.MP_ENDPOINT;
-    const method = 'performances';
-    const options = {
-        url: `${endpoint}/${method}/?day=${req.body.day}`,
-        method: 'GET',
-        json: true
-    };
-    request.get(options, (error, response, body) => {
+    MP.getPerformances(req.body.day).then((result) => {
         res.json({
-            error: error,
-            response: response,
-            result: body
+            error: null,
+            result: result
+        });
+    }).catch((err) => {
+        res.json({
+            error: err,
+            result: null
         });
     });
 }

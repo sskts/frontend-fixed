@@ -3,6 +3,7 @@
  * @namespace Purchase.Mvtks.MvtkConfirmModule
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 /**
  * ムビチケ券適用確認ページ表示

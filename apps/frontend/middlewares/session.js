@@ -2,6 +2,7 @@
  * セッション
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const connectRedis = require("connect-redis");
 const session = require("express-session");
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -15,7 +16,6 @@ const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.e
 });
 const maxAge = 3600000; //60 * 60 * 1000
 const secure = (process.env.NODE_ENV === 'dev') ? false : true;
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = session({
     secret: 'FrontendSecret',
     resave: false,

@@ -120,6 +120,50 @@ export interface Performance {
 }
 
 /**
+ * アクセストークン取得
+ * @memberOf MP
+ * @function oauthToken
+ * @requires {Promise<Performance[]>}
+ */
+export async function oauthToken(): Promise<string> {
+    const response = await request.get({
+        url: `${endPoint}/oauth/token`,
+        body: {
+            assertion: process.env.SSKTS_API_REFRESH_TOKEN,
+            scope: 'admin'
+        },
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true
+    });
+
+    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    console.log('oauthToken:', response.body.access_token);
+    return response.body.access_token;
+}
+
+/**
+ * パフォーマンス一覧取得
+ * @memberOf MP
+ * @function getPerformances
+ * @param {GetPerformancesArgs} args
+ * @requires {Promise<Performance[]>}
+ */
+export async function getPerformances(day: string): Promise<Performance[]> {
+    const response = await request.get({
+        url: `${endPoint}/performances/${day}`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true
+    });
+    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    console.log('performances:', response.body.data);
+    return response.body.data;
+}
+
+/**
  * パフォーマンス取得in
  * @memberOf MP
  * @interface getPerformanceArgs
@@ -137,6 +181,7 @@ export interface GetPerformanceArgs {
 export async function getPerformance(args: GetPerformanceArgs): Promise<Performance> {
     const response = await request.get({
         url: `${endPoint}/performances/${args.id}`,
+        auth: { bearer: await oauthToken() },
         body: {},
         json: true,
         simple: false,
@@ -192,6 +237,7 @@ interface Owner {
 export async function transactionStart(args: TransactionStartArgs): Promise<TransactionStartResult> {
     const response = await request.post({
         url: `${endPoint}/transactions`,
+        auth: { bearer: await oauthToken() },
         body: {
             expired_at: args.expired_at
         },
@@ -264,6 +310,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
 
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
+        auth: { bearer: await oauthToken() },
         body: {
             owner_id_from: promoterOwnerId,
             owner_id_to: anonymousOwnerId,
@@ -320,6 +367,7 @@ export interface RemoveCOAAuthorizationArgs {
 export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): Promise<void> {
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
+        auth: { bearer: await oauthToken() },
         body: {
         },
         json: true,
@@ -370,6 +418,7 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
     const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
+        auth: { bearer: await oauthToken() },
         body: {
             owner_id_from: anonymousOwnerId,
             owner_id_to: promoterOwnerId,
@@ -410,9 +459,8 @@ export interface RemoveGMOAuthorizationArgs {
 export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): Promise<void> {
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
-        body: {
-
-        },
+        auth: { bearer: await oauthToken() },
+        body: {},
         json: true,
         simple: false,
         resolveWithFullResponse: true
@@ -445,6 +493,7 @@ export interface OwnersAnonymousArgs {
 export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> {
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
+        auth: { bearer: await oauthToken() },
         body: {
             name_first: args.name_first,
             name_last: args.name_last,
@@ -481,6 +530,7 @@ export interface TransactionsEnableInquiryArgs {
 export async function transactionsEnableInquiry(args: TransactionsEnableInquiryArgs): Promise<void> {
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
+        auth: { bearer: await oauthToken() },
         body: {
             inquiry_theater: args.inquiry_theater,
             inquiry_id: args.inquiry_id,
@@ -513,6 +563,7 @@ export interface TransactionCloseArgs {
 export async function transactionClose(args: TransactionCloseArgs): Promise<void> {
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/close`,
+        auth: { bearer: await oauthToken() },
         body: {
 
         },
@@ -555,6 +606,7 @@ export interface AddEmailResult {
 export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
+        auth: { bearer: await oauthToken() },
         body: {
             from: args.from,
             to: args.to,
@@ -589,6 +641,7 @@ export interface RemoveEmailArgs {
 export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
+        auth: { bearer: await oauthToken() },
         body: {},
         json: true,
         simple: false,
@@ -618,6 +671,7 @@ export interface MakeInquiryArgs {
 export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
     const response = await request.post({
         url: `${endPoint}/transactions/makeInquiry`,
+        auth: { bearer: await oauthToken() },
         body: {
             inquiry_theater: args.inquiry_theater,
             inquiry_id: args.inquiry_id,

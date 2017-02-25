@@ -11,12 +11,62 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const request = require("request-promise-native");
 const endPoint = process.env.MP_ENDPOINT;
 const STATUS_CODE_200 = 200;
 const STATUS_CODE_201 = 201;
 const STATUS_CODE_204 = 204;
+/**
+ * アクセストークン取得
+ * @memberOf MP
+ * @function oauthToken
+ * @requires {Promise<Performance[]>}
+ */
+function oauthToken() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield request.get({
+            url: `${endPoint}/oauth/token`,
+            body: {
+                assertion: process.env.SSKTS_API_REFRESH_TOKEN,
+                scope: 'admin'
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true
+        });
+        if (response.statusCode !== STATUS_CODE_200)
+            throw new Error(response.body.message);
+        console.log('oauthToken:', response.body.access_token);
+        return response.body.access_token;
+    });
+}
+exports.oauthToken = oauthToken;
+/**
+ * パフォーマンス一覧取得
+ * @memberOf MP
+ * @function getPerformances
+ * @param {GetPerformancesArgs} args
+ * @requires {Promise<Performance[]>}
+ */
+function getPerformances(day) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield request.get({
+            url: `${endPoint}/performances/${day}`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true
+        });
+        if (response.statusCode !== STATUS_CODE_200)
+            throw new Error(response.body.message);
+        console.log('performances:', response.body.data);
+        return response.body.data;
+    });
+}
+exports.getPerformances = getPerformances;
 /**
  * パフォーマンス取得
  * @memberOf MP
@@ -28,6 +78,7 @@ function getPerformance(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
             url: `${endPoint}/performances/${args.id}`,
+            auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
             simple: false,
@@ -51,6 +102,7 @@ function transactionStart(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.post({
             url: `${endPoint}/transactions`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 expired_at: args.expired_at
             },
@@ -85,6 +137,7 @@ function addCOAAuthorization(args) {
         const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 owner_id_from: promoterOwnerId,
                 owner_id_to: anonymousOwnerId,
@@ -134,6 +187,7 @@ function removeCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
+            auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
             simple: false,
@@ -164,6 +218,7 @@ function addGMOAuthorization(args) {
         const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
@@ -197,6 +252,7 @@ function removeGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
+            auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
             simple: false,
@@ -219,6 +275,7 @@ function ownersAnonymous(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 name_first: args.name_first,
                 name_last: args.name_last,
@@ -246,6 +303,7 @@ function transactionsEnableInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 inquiry_theater: args.inquiry_theater,
                 inquiry_id: args.inquiry_id,
@@ -272,6 +330,7 @@ function transactionClose(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/close`,
+            auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
             simple: false,
@@ -294,6 +353,7 @@ function addEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 from: args.from,
                 to: args.to,
@@ -322,6 +382,7 @@ function removeEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
+            auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
             simple: false,
@@ -344,6 +405,7 @@ function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.post({
             url: `${endPoint}/transactions/makeInquiry`,
+            auth: { bearer: yield oauthToken() },
             body: {
                 inquiry_theater: args.inquiry_theater,
                 inquiry_id: args.inquiry_id,
