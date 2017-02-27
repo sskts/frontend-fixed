@@ -33,15 +33,15 @@ export function index(req: express.Request, res: express.Response, next: express
 }
 
 /**
- * 認証
+ * 券種選択
  * @memberOf Purchase.Mvtk.MvtkInputModule
- * @function auth
+ * @function select
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
  * @returns {void}
  */
-export function auth(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
@@ -53,25 +53,7 @@ export function auth(req: express.Request, res: express.Response, next: express.
     form(req, res, () => {
         if (!(<any>req).form) return next(new Error(req.__('common.error.property')));
         if ((<any>req).form.isValid) {
-            if (!purchaseModel.performance) return next(new Error(req.__('common.error.property')));
-            const mvtkService = MVTK.createPurchaseNumberAuthService();
-            mvtkService.purchaseNumberAuth({
-                kgygishCd: 'SSK000', //興行会社コード
-                jhshbtsCd: '1', //情報種別コード
-                knyknrNoInfoIn: req.body.mvtk.map((value: {
-                    code: string,
-                    password: string
-                }) => {
-                    return {
-                        KNYKNR_NO: value.code, //購入管理番号
-                        PIN_CD: value.password // PINコード
-                    };
-                }),
-                skhnCd: purchaseModel.performance.attributes.film.coa_title_code + '00', //作品コード
-                stCd: '18', //サイトコード
-                jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
-            }).then((result) => {
-                console.log(result);
+            auth(req, purchaseModel).then(() => {
                 return res.redirect('/purchase/mvtk/confirm');
             }).catch((err) => {
                 return next(new Error(err.message));
@@ -87,5 +69,38 @@ export function auth(req: express.Request, res: express.Response, next: express.
             return res.render('purchase/mvtk/input');
         }
     });
+}
 
+/**
+ * 認証
+ * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @function auth
+ * @param {express.Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {Promise<void>}
+ */
+export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
+
+    const mvtkService = MVTK.createPurchaseNumberAuthService();
+    const result = await mvtkService.purchaseNumberAuth({
+        kgygishCd: 'SSK000', //興行会社コード
+        jhshbtsCd: '1', //情報種別コード
+        knyknrNoInfoIn: JSON.parse(req.body.mvtk).map((value: {
+            code: string,
+            password: string
+        }) => {
+            return {
+                KNYKNR_NO: value.code, //購入管理番号
+                PIN_CD: value.password // PINコード
+            };
+        }),
+        skhnCd: purchaseModel.performance.attributes.film.coa_title_code + '00', //作品コード
+        stCd: '15', //todoサイトコード
+        jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
+    });
+
+    purchaseModel.mvtk = result;
+    (<any>req.session).purchase = purchaseModel.formatToSession();
 }

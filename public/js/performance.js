@@ -30,7 +30,7 @@ function getPerformance() {
 
         } else {
             console.log(res)
-            var performances = res.result.data;
+            var performances = res.result;
             var dom = '';
             for (var i = 0, len = performances.length; i < len; i++) {
                 var performance = performances[i].attributes;

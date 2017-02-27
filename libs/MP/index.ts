@@ -126,7 +126,7 @@ export interface Performance {
  * @requires {Promise<Performance[]>}
  */
 export async function oauthToken(): Promise<string> {
-    const response = await request.get({
+    const response = await request.post({
         url: `${endPoint}/oauth/token`,
         body: {
             assertion: process.env.SSKTS_API_REFRESH_TOKEN,
@@ -151,7 +151,7 @@ export async function oauthToken(): Promise<string> {
  */
 export async function getPerformances(day: string): Promise<Performance[]> {
     const response = await request.get({
-        url: `${endPoint}/performances/${day}`,
+        url: `${endPoint}/performances/?day=${day}`,
         auth: { bearer: await oauthToken() },
         body: {},
         json: true,
@@ -159,7 +159,7 @@ export async function getPerformances(day: string): Promise<Performance[]> {
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    console.log('performances:', response.body.data);
+    // console.log('performances:', response.body.data);
     return response.body.data;
 }
 

@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const request = require("request-promise-native");
 const endPoint = process.env.MP_ENDPOINT;
@@ -26,7 +25,7 @@ const STATUS_CODE_204 = 204;
  */
 function oauthToken() {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield request.get({
+        const response = yield request.post({
             url: `${endPoint}/oauth/token`,
             body: {
                 assertion: process.env.SSKTS_API_REFRESH_TOKEN,
@@ -53,7 +52,7 @@ exports.oauthToken = oauthToken;
 function getPerformances(day) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${endPoint}/performances/${day}`,
+            url: `${endPoint}/performances/?day=${day}`,
             auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
@@ -62,7 +61,7 @@ function getPerformances(day) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('performances:', response.body.data);
+        // console.log('performances:', response.body.data);
         return response.body.data;
     });
 }

@@ -51,7 +51,7 @@ router.get('/complete', CompleteModule.index);
 //ムビチケ券入力
 router.get('/mvtk', MvtkInputModule.index);
 
-router.post('/mvtk', MvtkInputModule.auth);
+router.post('/mvtk', MvtkInputModule.select);
 
 //ムビチケ券適用確認
 router.get('/mvtk/confirm', MvtkConfirmModule.index);

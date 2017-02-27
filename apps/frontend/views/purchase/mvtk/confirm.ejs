@@ -6,30 +6,24 @@
 
     <form method="post">
         <ul class="box radius bg-light-gray mb-medium mvtk-lists">
+            <% for (const tickets of mvtk) { %>
+            <% if (tickets.ykknInfo.length > 0) { %>
+            <% for (const ticket of tickets.ykknInfo) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> 1111111111</dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= tickets.knyknrNo %></dt>
                     <dd class="d-td width-medium">
                         <div class="button gray-button not-link">
                             <a href="#">
-                                <div>ムビチケ一般</div>
+                                <div><%= MVTK_TICKET_TYPE[ticket.ykknshTyp] %></div>
                             </a>
                         </div>
                     </dd>
                 </dl>
             </li>
-            <li>
-                <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> 1111111111</dt>
-                    <dd class="d-td width-medium">
-                        <div class="button gray-button not-link">
-                            <a href="#">
-                                <div>ムビチケ一般</div>
-                            </a>
-                        </div>
-                    </dd>
-                </dl>
-            </li>
+            <% } %>
+            <% } %>
+            <% } %>
         </ul>
         
 

@@ -39,7 +39,7 @@ export function notFound(req: express.Request, res: express.Response, _next: exp
 export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
     console.log(err.stack);
 
-    if (req.session) delete (<any>req.session).purchase;
+    // if (req.session) delete (<any>req.session).purchase;
 
     const status = 500;
 

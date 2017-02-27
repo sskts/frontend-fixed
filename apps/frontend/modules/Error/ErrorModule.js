@@ -3,7 +3,6 @@
  * @namespace ErrorModule
  */
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -37,8 +36,7 @@ exports.notFound = notFound;
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
     console.log(err.stack);
-    if (req.session)
-        delete req.session.purchase;
+    // if (req.session) delete (<any>req.session).purchase;
     const status = 500;
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });

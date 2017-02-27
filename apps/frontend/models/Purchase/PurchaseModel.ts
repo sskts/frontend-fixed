@@ -2,6 +2,7 @@ import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as MP from '../../../../libs/MP';
 
+
 /**
  * 購入セッション
  */
@@ -95,6 +96,123 @@ export interface GMO {
      * トークン
      */
     token: string;
+}
+
+/**
+ * ムビチケ券
+ * @interface Mvtk
+ */
+export interface Mvtk {
+    /**
+     * 購入管理番号
+     */
+    knyknrNo: string;
+    /**
+     * KNYKNR_NO_MKUJYU_CD
+     */
+    knyknrNomkujyuCd: string;
+    /**
+     * 興行ギフト券購入年月日
+     */
+    kgygftknknyYmd: string;
+    /**
+     * 興行ギフト券有効期間
+     */
+    kgygftknykTm: string;
+    /**
+     * DNSH_KM_TYP
+     */
+    dnshKmTyp: string;
+    /**
+     * ZNKKKYTSKN_GKJKN_TYP
+     */
+    znkkkytsknGkjknTyp: string;
+    /**
+     * 有効券枚数
+     */
+    ykknmiNum: string;
+    /**
+     * 無効券枚数
+     */
+    mkknmiNum: string;
+    /**
+     * 有効券情報リスト
+     */
+    ykknInfo: ValidTickettResult[];
+    /**
+     * 無効券情報リスト
+     */
+    mkknInfo: InvalidTicketResult[];
+}
+
+/**
+ * 有効券情報
+ * @interface ValidTickettResult
+ */
+export interface ValidTickettResult {
+    /**
+     * 有効券種区分
+     */
+    ykknshTyp: string;
+    /**
+     * 映写方式区分
+     */
+    eishhshkTyp: string;
+    /**
+     * 有効期限券種別枚数
+     */
+    ykknKnshbtsmiNum: string;
+    /**
+     * 鑑賞券販売単価
+     */
+    knshknhmbiUnip: string;
+    /**
+     * 計上単価
+     */
+    kijUnip: string;
+}
+
+/**
+ * 無効券情報
+ * @interface InvalidTicketResult
+ */
+export interface InvalidTicketResult {
+    /**
+     * 無効券種区分
+     */
+    mkknshTyp: string;
+    /**
+     * MKKN_KNSHBTSMI_NUM
+     */
+    mkknKnshbtsmiNum: string;
+    /**
+     * MKJY_TYP
+     */
+    mkjyTyp: string;
+    /**
+     * YYK_DT
+     */
+    yykDt: string;
+    /**
+     * SHY_JEI_DT
+     */
+    shyJeiDt: string;
+    /**
+     * SHY_ST_CD
+     */
+    shyStCd: string;
+    /**
+     * SHY_SCRN_CD
+     */
+    shyScrnCd: string;
+    /**
+     * SHY_SKHN_CD
+     */
+    shySkhnCd: string;
+    /**
+     * SHY_SKHN_NM
+     */
+    shySkhnNm: string;
 }
 
 /**
@@ -199,7 +317,7 @@ export class PurchaseModel {
     /**
      * ムビチケ
      */
-    public mvtk: null;
+    public mvtk: Mvtk[] | null;
 
     /**
      * @constructor
@@ -244,7 +362,7 @@ export class PurchaseModel {
         authorizationGMO: MP.AddGMOAuthorizationResult | null,
         orderId: string | null,
         expired: number | null,
-        mvtk: null
+        mvtk: Mvtk[] | null
     } {
         return {
             performance: (this.performance) ? this.performance : null,

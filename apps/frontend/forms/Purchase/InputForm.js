@@ -1,7 +1,7 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const form = require("express-form");
 const maxLength = 30;
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 購入情報入力フォーム
  */
