@@ -121,7 +121,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
     debugLog('MPパフォーマンス取得');
 
     if (!req.session) throw req.__('common.error.property');
-    (<any>req.session).inquiry = inquiryModel.formatToSession();
+    (<any>req.session).inquiry = inquiryModel.toSession();
 }
 
 /**

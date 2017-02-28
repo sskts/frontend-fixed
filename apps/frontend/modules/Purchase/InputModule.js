@@ -66,7 +66,7 @@ function index(req, res, next) {
     //セッション更新
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
-    req.session.purchase = purchaseModel.formatToSession();
+    req.session.purchase = purchaseModel.toSession();
     return res.render('purchase/input');
 }
 exports.index = index;
@@ -112,7 +112,7 @@ function submit(req, res, next) {
                     //セッション更新
                     if (!req.session)
                         return next(new Error(req.__('common.error.property')));
-                    req.session.purchase = purchaseModel.formatToSession();
+                    req.session.purchase = purchaseModel.toSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
                 }).catch((err) => {
@@ -141,7 +141,7 @@ function submit(req, res, next) {
                 //セッション更新
                 if (!req.session)
                     return next(new Error(req.__('common.error.property')));
-                req.session.purchase = purchaseModel.formatToSession();
+                req.session.purchase = purchaseModel.toSession();
                 //購入者内容確認へ
                 return res.redirect('/purchase/confirm');
             }

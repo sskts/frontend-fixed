@@ -345,10 +345,10 @@ export class PurchaseModel {
     /**
      * セッションObjectへ変換
      * @memberOf PurchaseModel
-     * @method formatToSession
+     * @method toSession
      * @returns {Object} result
      */
-    public formatToSession(): {
+    public toSession(): {
         performance: MP.Performance | null,
         reserveSeats: COA.ReserveService.UpdTmpReserveSeatResult | null,
         reserveTickets: ReserveTicket[] | null,

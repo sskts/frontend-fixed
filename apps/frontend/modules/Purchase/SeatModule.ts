@@ -46,7 +46,7 @@ export function index(req: express.Request, res: express.Response, next: express
 
         //セッション更新
         if (!req.session) return next(new Error(req.__('common.error.property')));
-        (<any>req.session).purchase = purchaseModel.formatToSession();
+        (<any>req.session).purchase = purchaseModel.toSession();
 
         res.locals.error = null;
         return res.render('purchase/seat');
@@ -80,7 +80,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             reserve(req, purchaseModel).then(() => {
                 //セッション更新
                 if (!req.session) return next(new Error(req.__('common.error.property')));
-                (<any>req.session).purchase = purchaseModel.formatToSession();
+                (<any>req.session).purchase = purchaseModel.toSession();
                 //券種選択へ
                 return res.redirect('/purchase/ticket');
             }).catch((err) => {

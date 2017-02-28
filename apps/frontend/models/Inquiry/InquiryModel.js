@@ -20,10 +20,10 @@ class InquiryModel {
     /**
      * セッションObjectへ変換
      * @memberOf InquiryModel
-     * @method formatToSession
+     * @method toSession
      * @returns {Object}
      */
-    formatToSession() {
+    toSession() {
         return {
             transactionId: (this.transactionId) ? this.transactionId : null,
             performance: (this.performance) ? this.performance : null,

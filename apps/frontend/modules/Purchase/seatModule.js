@@ -54,7 +54,7 @@ function index(req, res, next) {
         //セッション更新
         if (!req.session)
             return next(new Error(req.__('common.error.property')));
-        req.session.purchase = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.toSession();
         res.locals.error = null;
         return res.render('purchase/seat');
     }).catch((err) => {
@@ -90,7 +90,7 @@ function select(req, res, next) {
                 //セッション更新
                 if (!req.session)
                     return next(new Error(req.__('common.error.property')));
-                req.session.purchase = purchaseModel.formatToSession();
+                req.session.purchase = purchaseModel.toSession();
                 //券種選択へ
                 return res.redirect('/purchase/ticket');
             }).catch((err) => {

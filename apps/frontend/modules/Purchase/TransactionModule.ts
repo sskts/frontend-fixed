@@ -33,7 +33,7 @@ export function start(req: express.Request, res: express.Response, next: express
         if (!req.session) return next(new Error(req.__('common.error.property')));
         delete (<any>req.session).purchase;
         //セッション更新
-        (<any>req.session).purchase = purchaseModel.formatToSession();
+        (<any>req.session).purchase = purchaseModel.toSession();
         //座席選択へ
         return res.redirect('/purchase/seat/' + req.params.id + '/');
     }).catch((err) => {

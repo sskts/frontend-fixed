@@ -40,7 +40,7 @@ function start(req, res, next) {
             return next(new Error(req.__('common.error.property')));
         delete req.session.purchase;
         //セッション更新
-        req.session.purchase = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.toSession();
         //座席選択へ
         return res.redirect('/purchase/seat/' + req.params.id + '/');
     }).catch((err) => {

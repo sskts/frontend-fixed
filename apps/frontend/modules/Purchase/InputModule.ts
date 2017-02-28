@@ -59,7 +59,7 @@ export function index(req: express.Request, res: express.Response, next: express
 
     //セッション更新
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    (<any>req.session).purchase = purchaseModel.formatToSession();
+    (<any>req.session).purchase = purchaseModel.toSession();
 
     return res.render('purchase/input');
 }
@@ -103,7 +103,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
                 addAuthorization(req, purchaseModel).then(() => {
                     //セッション更新
                     if (!req.session) return next(new Error(req.__('common.error.property')));
-                    (<any>req.session).purchase = purchaseModel.formatToSession();
+                    (<any>req.session).purchase = purchaseModel.toSession();
                     //購入者内容確認へ
                     return res.redirect('/purchase/confirm');
                 }).catch((err) => {
@@ -130,7 +130,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
                 //クレジット決済なし
                 //セッション更新
                 if (!req.session) return next(new Error(req.__('common.error.property')));
-                (<any>req.session).purchase = purchaseModel.formatToSession();
+                (<any>req.session).purchase = purchaseModel.toSession();
                 //購入者内容確認へ
                 return res.redirect('/purchase/confirm');
             }

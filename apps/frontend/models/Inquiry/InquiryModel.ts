@@ -59,10 +59,10 @@ export class InquiryModel {
     /**
      * セッションObjectへ変換
      * @memberOf InquiryModel
-     * @method formatToSession
+     * @method toSession
      * @returns {Object}
      */
-    public formatToSession(): {
+    public toSession(): {
         transactionId: string | null,
         performance: MP.Performance | null,
         stateReserve: COA.ReserveService.StateReserveResult | null,

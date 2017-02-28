@@ -29,10 +29,10 @@ class PurchaseModel {
     /**
      * セッションObjectへ変換
      * @memberOf PurchaseModel
-     * @method formatToSession
+     * @method toSession
      * @returns {Object} result
      */
-    formatToSession() {
+    toSession() {
         return {
             performance: (this.performance) ? this.performance : null,
             reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,

@@ -51,7 +51,7 @@ function index(req, res, next) {
     //セッション更新
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
-    req.session.purchase = purchaseModel.formatToSession();
+    req.session.purchase = purchaseModel.toSession();
     return res.render('purchase/confirm');
 }
 exports.index = index;

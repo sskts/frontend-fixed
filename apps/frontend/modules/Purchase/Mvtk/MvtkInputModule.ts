@@ -100,5 +100,5 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
     });
 
     purchaseModel.mvtk = result;
-    (<any>req.session).purchase = purchaseModel.formatToSession();
+    (<any>req.session).purchase = purchaseModel.toSession();
 }

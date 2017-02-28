@@ -55,7 +55,7 @@ function index(req, res, next) {
         //セッション更新
         if (!req.session)
             return next(new Error(req.__('common.error.property')));
-        req.session.purchase = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.toSession();
         //券種選択表示
         return res.render('purchase/ticket');
     }).catch((err) => {
@@ -91,7 +91,7 @@ function select(req, res, next) {
                 if (!req.session)
                     return next(new Error(req.__('common.error.property')));
                 //セッション更新
-                req.session.purchase = purchaseModel.formatToSession();
+                req.session.purchase = purchaseModel.toSession();
                 //購入者情報入力へ
                 return res.redirect('/purchase/input');
             }).catch((err) => {

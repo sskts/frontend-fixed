@@ -47,7 +47,7 @@ export function index(req: express.Request, res: express.Response, next: express
 
         //セッション更新
         if (!req.session) return next(new Error(req.__('common.error.property')));
-        (<any>req.session).purchase = purchaseModel.formatToSession();
+        (<any>req.session).purchase = purchaseModel.toSession();
         //券種選択表示
         return res.render('purchase/ticket');
     }).catch((err) => {
@@ -81,7 +81,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session) return next(new Error(req.__('common.error.property')));
                 //セッション更新
-                (<any>req.session).purchase = purchaseModel.formatToSession();
+                (<any>req.session).purchase = purchaseModel.toSession();
                 //購入者情報入力へ
                 return res.redirect('/purchase/input');
             }).catch((err) => {

@@ -111,7 +111,7 @@ function auth(req, purchaseModel) {
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
         purchaseModel.mvtk = result;
-        req.session.purchase = purchaseModel.formatToSession();
+        req.session.purchase = purchaseModel.toSession();
     });
 }
 exports.auth = auth;

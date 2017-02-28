@@ -128,7 +128,7 @@ function getStateReserve(req, inquiryModel) {
         debugLog('MPパフォーマンス取得');
         if (!req.session)
             throw req.__('common.error.property');
-        req.session.inquiry = inquiryModel.formatToSession();
+        req.session.inquiry = inquiryModel.toSession();
     });
 }
 /**
