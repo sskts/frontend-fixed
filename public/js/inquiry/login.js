@@ -23,7 +23,12 @@ function toInquiry() {
     var data = localStorage.getItem('inquiryInfo');
     //照会データなければ終了
     if (!data) return;
-    var inquiryInfo = JSON.parse(data);
+    try {
+        var inquiryInfo = JSON.parse(data);
+    } catch (err) {
+        console.log(err);
+        return;
+    }
 
     var submitFlg = false;
     for (var i = 0; i < inquiryInfo.length; i++) {
@@ -48,7 +53,7 @@ function toInquiry() {
     }
 
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
-    
+
     if (submitFlg) {
         loadingStart(function () {
             $('form').submit();

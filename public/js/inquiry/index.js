@@ -44,7 +44,11 @@ function saveInquiry() {
     var data = localStorage.getItem('inquiryInfo');
     var saveData = [];
     if (data) {
-        saveData = JSON.parse(data);
+        try {
+            saveData = JSON.parse(data);
+        } catch (err) {
+            console.log(err);
+        }
     }
     saveData.push(inquiryInfo);
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
