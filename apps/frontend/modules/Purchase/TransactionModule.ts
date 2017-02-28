@@ -3,10 +3,12 @@
  * @namespace Purchase.TransactionModule
  */
 
+import * as debug from 'debug';
 import * as express from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+const debugLog = debug('SSKTS: ');
 
 /**
  * 取引開始
@@ -53,5 +55,5 @@ async function transactionStart(purchaseModel: PurchaseSession.PurchaseModel): P
     purchaseModel.transactionMP = await MP.transactionStart({
         expired_at: purchaseModel.expired
     });
-    console.log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+    debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
 }

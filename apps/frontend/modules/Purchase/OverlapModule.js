@@ -13,8 +13,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
+const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * 仮予約重複
  * @memberOf Purchase.OverlapModule
@@ -115,13 +117,13 @@ function removeReserve(req, purchaseModel) {
             time_begin: performance.attributes.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num
         });
-        console.log('COA仮予約削除');
+        debugLog('COA仮予約削除');
         // COAオーソリ削除
         yield MP.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
-        console.log('COAオーソリ削除');
+        debugLog('COAオーソリ削除');
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
@@ -133,13 +135,13 @@ function removeReserve(req, purchaseModel) {
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            console.log('GMOオーソリ取消');
+            debugLog('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            console.log('GMOオーソリ削除');
+            debugLog('GMOオーソリ削除');
         }
     });
 }

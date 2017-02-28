@@ -5,9 +5,11 @@
 
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as debug from 'debug';
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+const debugLog = debug('SSKTS: ');
 
 /**
  * 仮予約重複
@@ -102,7 +104,7 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
         tmp_reserve_num: reserveSeats.tmp_reserve_num
     });
 
-    console.log('COA仮予約削除');
+    debugLog('COA仮予約削除');
 
     // COAオーソリ削除
     await MP.removeCOAAuthorization({
@@ -110,7 +112,7 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
         coaAuthorizationId: purchaseModel.authorizationCOA.id
     });
 
-    console.log('COAオーソリ削除');
+    debugLog('COAオーソリ削除');
 
     if (purchaseModel.transactionGMO
         && purchaseModel.authorizationGMO
@@ -123,13 +125,13 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
         });
-        console.log('GMOオーソリ取消');
+        debugLog('GMOオーソリ取消');
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
-        console.log('GMOオーソリ削除');
+        debugLog('GMOオーソリ削除');
     }
 }

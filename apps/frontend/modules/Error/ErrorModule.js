@@ -3,6 +3,8 @@
  * @namespace ErrorModule
  */
 "use strict";
+const debug = require("debug");
+const debugLog = debug('SSKTS: ');
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -35,7 +37,8 @@ exports.notFound = notFound;
  */
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
-    console.log(err.stack);
+    debugLog(err.stack);
+    // todo
     // if (req.session) delete (<any>req.session).purchase;
     const status = 500;
     if (req.xhr) {

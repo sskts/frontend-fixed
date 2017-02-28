@@ -13,9 +13,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
+const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * 券種選択
  * @memberOf Purchase.TicketModule
@@ -129,10 +131,10 @@ function ticketValidation(req, purchaseModel) {
             for (const salesTicket of salesTickets) {
                 if (salesTicket.ticket_code === reserveTicket.ticket_code) {
                     if (salesTicket.sale_price !== reserveTicket.sale_price) {
-                        console.log(`${reserveTicket.seat_code}: 券種検証NG`);
+                        debugLog(`${reserveTicket.seat_code}: 券種検証NG`);
                         throw new Error(req.__('common.error.access'));
                     }
-                    console.log(`${reserveTicket.seat_code}: 券種検証OK`);
+                    debugLog(`${reserveTicket.seat_code}: 券種検証OK`);
                     break;
                 }
             }
@@ -164,7 +166,7 @@ function upDateAuthorization(req, purchaseModel) {
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
-        console.log('MPCOAオーソリ削除');
+        debugLog('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
@@ -183,13 +185,13 @@ function upDateAuthorization(req, purchaseModel) {
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            console.log('GMOオーソリ取消');
+            debugLog('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            console.log('GMOオーソリ削除');
+            debugLog('GMOオーソリ削除');
         }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.addCOAAuthorization({
@@ -199,7 +201,7 @@ function upDateAuthorization(req, purchaseModel) {
             performance: purchaseModel.performance,
             totalPrice: purchaseModel.getReserveAmount()
         });
-        console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+        debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
         purchaseModel.authorizationCOA = coaAuthorizationResult;
     });
 }

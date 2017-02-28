@@ -12,9 +12,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const GMO = require("@motionpicture/gmo-service");
+const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * 購入者情報入力
  * @memberOf Purchase.InputModule
@@ -191,13 +193,13 @@ function addAuthorization(req, purchaseModel) {
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            console.log('GMOオーソリ取消');
+            debugLog('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            console.log('GMOオーソリ削除');
+            debugLog('GMOオーソリ削除');
         }
         try {
             // GMOオーソリ取得
@@ -211,7 +213,7 @@ function addAuthorization(req, purchaseModel) {
                 jobCd: GMO.Util.JOB_CD_AUTH,
                 amount: amount
             });
-            console.log('GMOオーソリ取得', purchaseModel.orderId);
+            debugLog('GMOオーソリ取得', purchaseModel.orderId);
             yield GMO.CreditService.execTran({
                 accessId: purchaseModel.transactionGMO.accessId,
                 accessPass: purchaseModel.transactionGMO.accessPass,
@@ -219,7 +221,7 @@ function addAuthorization(req, purchaseModel) {
                 method: '1',
                 token: purchaseModel.gmo.token
             });
-            console.log('GMO決済');
+            debugLog('GMO決済');
             // GMOオーソリ追加
             purchaseModel.authorizationGMO = yield MP.addGMOAuthorization({
                 transaction: purchaseModel.transactionMP,
@@ -227,7 +229,7 @@ function addAuthorization(req, purchaseModel) {
                 amount: amount,
                 entryTranResult: purchaseModel.transactionGMO
             });
-            console.log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+            debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
         }
         catch (err) {
             throw {

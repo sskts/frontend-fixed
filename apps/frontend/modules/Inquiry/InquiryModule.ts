@@ -4,11 +4,13 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
+import * as debug from 'debug';
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import * as UtilModule from '../Util/UtilModule';
+const debugLog = debug('SSKTS: ');
 
 /**
  * 照会認証ページ表示
@@ -84,7 +86,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
          */
         inquiry_pass: req.body.tel_num
     });
-    console.log('MP取引Id取得', inquiryModel.transactionId);
+    debugLog('MP取引Id取得', inquiryModel.transactionId);
 
     inquiryModel.login = req.body;
 
@@ -102,7 +104,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
          */
         tel_num: req.body.tel_num
     });
-    console.log('COA照会情報取得');
+    debugLog('COA照会情報取得');
 
     const performanceId = UtilModule.getPerformanceId({
         theaterCode: req.body.theater_code,
@@ -112,11 +114,11 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
         screenCode: inquiryModel.stateReserve.screen_code,
         timeBegin: inquiryModel.stateReserve.time_begin
     });
-    console.log('パフォーマンスID取得', performanceId);
+    debugLog('パフォーマンスID取得', performanceId);
     inquiryModel.performance = await MP.getPerformance({
         id: performanceId
     });
-    console.log('MPパフォーマンス取得');
+    debugLog('MPパフォーマンス取得');
 
     if (!req.session) throw req.__('common.error.property');
     (<any>req.session).inquiry = inquiryModel.formatToSession();

@@ -60,7 +60,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             });
         } else {
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')))
+            if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
             //購入者情報入力表示
             res.locals.error = null;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;

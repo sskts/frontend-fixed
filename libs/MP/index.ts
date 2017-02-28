@@ -5,8 +5,9 @@
 
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as debug from 'debug';
 import * as request from 'request-promise-native';
-
+const debugLog = debug('SSKTS: ');
 const endPoint = process.env.MP_ENDPOINT;
 
 const STATUS_CODE_200 = 200;
@@ -138,7 +139,7 @@ export async function oauthToken(): Promise<string> {
     });
 
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    console.log('oauthToken:', response.body.access_token);
+    debugLog('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
 
@@ -159,7 +160,7 @@ export async function getPerformances(day: string): Promise<Performance[]> {
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    // console.log('performances:', response.body.data);
+    // debugLog('performances:', response.body.data);
     return response.body.data;
 }
 
@@ -188,7 +189,7 @@ export async function getPerformance(args: GetPerformanceArgs): Promise<Performa
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    console.log('performances:', response.body.data);
+    debugLog('performances:', response.body.data);
     return response.body.data;
 }
 
@@ -247,7 +248,7 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
     });
     if (response.statusCode !== STATUS_CODE_201) throw new Error(response.body.message);
     const transaction = response.body.data;
-    console.log('transaction:', transaction);
+    debugLog('transaction:', transaction);
 
     return transaction;
 }
@@ -344,7 +345,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
-    console.log('addCOAAuthorization result');
+    debugLog('addCOAAuthorization result');
     return response.body.data;
 }
 
@@ -376,7 +377,7 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
-    console.log('addCOAAuthorization result');
+    debugLog('addCOAAuthorization result');
 }
 
 /**
@@ -436,7 +437,7 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
-    console.log('addGMOAuthorization result:');
+    debugLog('addGMOAuthorization result:');
     return response.body.data;
 }
 
@@ -467,7 +468,7 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
-    console.log('removeGMOAuthorization result:');
+    debugLog('removeGMOAuthorization result:');
 
 }
 
@@ -506,7 +507,7 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
-    console.log('ownersAnonymous result:');
+    debugLog('ownersAnonymous result:');
 }
 
 /**
@@ -542,7 +543,7 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
-    console.log('transactionsEnableInquiry result:');
+    debugLog('transactionsEnableInquiry result:');
 }
 
 /**
@@ -572,7 +573,7 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
-    console.log('close result:');
+    debugLog('close result:');
 }
 
 /**
@@ -618,7 +619,7 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    console.log('addEmail result:' + response.body.data);
+    debugLog('addEmail result:' + response.body.data);
     return response.body.data;
 }
 
@@ -648,7 +649,7 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
-    console.log('removeEmail result:');
+    debugLog('removeEmail result:');
 }
 
 /**
@@ -682,6 +683,6 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
-    console.log('makeInquiry result:' + response.body.data);
+    debugLog('makeInquiry result:' + response.body.data);
     return response.body.data.id;
 }

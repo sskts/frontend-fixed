@@ -28,5 +28,7 @@ process.env.MVTK_ENDPOINT_SERVICE_01 = 'https://ssl.movieticket.jp';
 process.env.MVTK_ENDPOINT_SERVICE_02 = 'https://testservices.movieticket.jp';
 process.env.MVTK_ENDPOINT_RESERVE_SERVICE = 'https://reservetest.movieticket.jp';
 
+process.env.DEBUG = 'SSKTS*';
+
 // tslint:disable-next-line:no-var-requires no-require-imports
 require('../index');

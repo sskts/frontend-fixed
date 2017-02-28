@@ -12,10 +12,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const COA = require("@motionpicture/coa-service");
+const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
 const UtilModule = require("../Util/UtilModule");
+const debugLog = debug('SSKTS: ');
 /**
  * 照会認証ページ表示
  * @memberOf InquiryModule
@@ -94,7 +96,7 @@ function getStateReserve(req, inquiryModel) {
              */
             inquiry_pass: req.body.tel_num
         });
-        console.log('MP取引Id取得', inquiryModel.transactionId);
+        debugLog('MP取引Id取得', inquiryModel.transactionId);
         inquiryModel.login = req.body;
         inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
             /**
@@ -110,7 +112,7 @@ function getStateReserve(req, inquiryModel) {
              */
             tel_num: req.body.tel_num
         });
-        console.log('COA照会情報取得');
+        debugLog('COA照会情報取得');
         const performanceId = UtilModule.getPerformanceId({
             theaterCode: req.body.theater_code,
             day: inquiryModel.stateReserve.date_jouei,
@@ -119,11 +121,11 @@ function getStateReserve(req, inquiryModel) {
             screenCode: inquiryModel.stateReserve.screen_code,
             timeBegin: inquiryModel.stateReserve.time_begin
         });
-        console.log('パフォーマンスID取得', performanceId);
+        debugLog('パフォーマンスID取得', performanceId);
         inquiryModel.performance = yield MP.getPerformance({
             id: performanceId
         });
-        console.log('MPパフォーマンス取得');
+        debugLog('MPパフォーマンス取得');
         if (!req.session)
             throw req.__('common.error.property');
         req.session.inquiry = inquiryModel.formatToSession();

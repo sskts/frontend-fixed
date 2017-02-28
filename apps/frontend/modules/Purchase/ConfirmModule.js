@@ -12,10 +12,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const COA = require("@motionpicture/coa-service");
+const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const UtilModule = require("../Util/UtilModule");
+const debugLog = debug('SSKTS: ');
 /**
  * 購入者内容確認
  * @memberOf Purchase.ConfirmModule
@@ -63,7 +65,7 @@ exports.index = index;
  */
 function updateReserve(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('座席本予約開始');
+        debugLog('座席本予約開始');
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.reserveSeats)
@@ -79,7 +81,7 @@ function updateReserve(req, purchaseModel) {
         //購入期限切れ
         const minutes = 5;
         if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-            console.log('購入期限切れ');
+            debugLog('購入期限切れ');
             //購入セッション削除
             delete req.session.purchase;
             throw {
@@ -106,10 +108,10 @@ function updateReserve(req, purchaseModel) {
                 reserve_amount: purchaseModel.getReserveAmount(),
                 list_ticket: purchaseModel.getTicketList()
             });
-            console.log('COA本予約', purchaseModel.updateReserve);
+            debugLog('COA本予約', purchaseModel.updateReserve);
         }
         catch (err) {
-            console.log('COA本予約エラー', err);
+            debugLog('COA本予約エラー', err);
             throw {
                 error: new Error(err.message),
                 type: 'updateReserve'
@@ -123,7 +125,7 @@ function updateReserve(req, purchaseModel) {
             tel: input.tel_num,
             email: input.mail_addr
         });
-        console.log('MP購入者情報登録');
+        debugLog('MP購入者情報登録');
         // MP照会情報登録
         yield MP.transactionsEnableInquiry({
             transactionId: purchaseModel.transactionMP.id,
@@ -131,7 +133,7 @@ function updateReserve(req, purchaseModel) {
             inquiry_id: purchaseModel.updateReserve.reserve_num,
             inquiry_pass: purchaseModel.input.tel_num
         });
-        console.log('MP照会情報登録');
+        debugLog('MP照会情報登録');
         // MPメール登録
         yield MP.addEmail({
             transactionId: purchaseModel.transactionMP.id,
@@ -140,12 +142,12 @@ function updateReserve(req, purchaseModel) {
             subject: '購入完了',
             content: getMailContent(req, purchaseModel)
         });
-        console.log('MPメール登録');
+        debugLog('MPメール登録');
         // MP取引成立
         yield MP.transactionClose({
             transactionId: purchaseModel.transactionMP.id
         });
-        console.log('MP取引成立');
+        debugLog('MP取引成立');
     });
 }
 /**

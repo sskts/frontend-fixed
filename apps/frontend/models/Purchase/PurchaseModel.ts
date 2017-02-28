@@ -2,7 +2,6 @@ import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as MP from '../../../../libs/MP';
 
-
 /**
  * 購入セッション
  */

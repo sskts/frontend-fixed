@@ -5,10 +5,12 @@
 
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as debug from 'debug';
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+const debugLog = debug('SSKTS: ');
 
 /**
  * 券種選択
@@ -118,10 +120,10 @@ async function ticketValidation(req: express.Request, purchaseModel: PurchaseSes
         for (const salesTicket of salesTickets) {
             if (salesTicket.ticket_code === reserveTicket.ticket_code) {
                 if (salesTicket.sale_price !== reserveTicket.sale_price) {
-                    console.log(`${reserveTicket.seat_code}: 券種検証NG`);
+                    debugLog(`${reserveTicket.seat_code}: 券種検証NG`);
                     throw new Error(req.__('common.error.access'));
                 }
-                console.log(`${reserveTicket.seat_code}: 券種検証OK`);
+                debugLog(`${reserveTicket.seat_code}: 券種検証OK`);
                 break;
             }
         }
@@ -149,7 +151,7 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
         coaAuthorizationId: purchaseModel.authorizationCOA.id
     });
 
-    console.log('MPCOAオーソリ削除');
+    debugLog('MPCOAオーソリ削除');
 
     if (purchaseModel.transactionGMO
         && purchaseModel.authorizationGMO
@@ -167,14 +169,14 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
         });
-        console.log('GMOオーソリ取消');
+        debugLog('GMOオーソリ取消');
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
-        console.log('GMOオーソリ削除');
+        debugLog('GMOオーソリ削除');
     }
 
     //COAオーソリ追加
@@ -185,6 +187,6 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
         performance: purchaseModel.performance,
         totalPrice: purchaseModel.getReserveAmount()
     });
-    console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+    debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
     purchaseModel.authorizationCOA = coaAuthorizationResult;
 }

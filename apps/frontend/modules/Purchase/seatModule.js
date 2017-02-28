@@ -13,9 +13,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
+const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * 座席選択
  * @memberOf Purchase.SeatModule
@@ -45,7 +47,7 @@ function index(req, res, next) {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         //仮予約中
         if (purchaseModel.reserveSeats) {
-            console.log('仮予約中');
+            debugLog('仮予約中');
             res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
         }
         purchaseModel.performance = result;
@@ -137,13 +139,13 @@ function reserve(req, purchaseModel) {
                 time_begin: performance.attributes.time_start,
                 tmp_reserve_num: reserveSeats.tmp_reserve_num
             });
-            console.log('COA仮予約削除');
+            debugLog('COA仮予約削除');
             // COAオーソリ削除
             yield MP.removeCOAAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
-            console.log('MPCOAオーソリ削除');
+            debugLog('MPCOAオーソリ削除');
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO) {
                 //GMOオーソリ取消
@@ -154,13 +156,13 @@ function reserve(req, purchaseModel) {
                     accessPass: purchaseModel.transactionGMO.accessPass,
                     jobCd: GMO.Util.JOB_CD_VOID
                 });
-                console.log('GMOオーソリ取消');
+                debugLog('GMOオーソリ取消');
                 // GMOオーソリ削除
                 yield MP.removeGMOAuthorization({
                     transactionId: purchaseModel.transactionMP.id,
                     gmoAuthorizationId: purchaseModel.authorizationGMO.id
                 });
-                console.log('GMOオーソリ削除');
+                debugLog('GMOオーソリ削除');
             }
         }
         //COA仮予約
@@ -175,7 +177,7 @@ function reserve(req, purchaseModel) {
             screen_code: performance.attributes.screen.coa_screen_code,
             list_seat: seats.list_tmp_reserve
         });
-        console.log('COA仮予約', purchaseModel.reserveSeats);
+        debugLog('COA仮予約', purchaseModel.reserveSeats);
         //予約チケット作成
         purchaseModel.reserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
             return {
@@ -199,7 +201,7 @@ function reserve(req, purchaseModel) {
             performance: performance,
             totalPrice: purchaseModel.getReserveAmount()
         });
-        console.log('MPCOAオーソリ追加', coaAuthorizationResult);
+        debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
         purchaseModel.authorizationCOA = coaAuthorizationResult;
     });
 }

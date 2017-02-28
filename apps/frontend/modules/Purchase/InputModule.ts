@@ -4,10 +4,12 @@
  */
 
 import * as GMO from '@motionpicture/gmo-service';
+import * as debug from 'debug';
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+const debugLog = debug('SSKTS: ');
 
 /**
  * 購入者情報入力
@@ -177,14 +179,14 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
         });
-        console.log('GMOオーソリ取消');
+        debugLog('GMOオーソリ取消');
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
-        console.log('GMOオーソリ削除');
+        debugLog('GMOオーソリ削除');
     }
 
     try {
@@ -199,7 +201,7 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
             jobCd: GMO.Util.JOB_CD_AUTH,
             amount: amount
         });
-        console.log('GMOオーソリ取得', purchaseModel.orderId);
+        debugLog('GMOオーソリ取得', purchaseModel.orderId);
 
         await GMO.CreditService.execTran({
             accessId: purchaseModel.transactionGMO.accessId,
@@ -208,7 +210,7 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
             method: '1',
             token: purchaseModel.gmo.token
         });
-        console.log('GMO決済');
+        debugLog('GMO決済');
 
         // GMOオーソリ追加
         purchaseModel.authorizationGMO = await MP.addGMOAuthorization({
@@ -217,7 +219,7 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
             amount: amount,
             entryTranResult: purchaseModel.transactionGMO
         });
-        console.log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+        debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
 
     } catch (err) {
         throw {

@@ -11,9 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * 取引開始
  * @memberOf Purchase.TransactionModule
@@ -61,6 +63,6 @@ function transactionStart(purchaseModel) {
         purchaseModel.transactionMP = yield MP.transactionStart({
             expired_at: purchaseModel.expired
         });
-        console.log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+        debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
     });
 }

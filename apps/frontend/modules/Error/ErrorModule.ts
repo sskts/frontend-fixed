@@ -3,7 +3,9 @@
  * @namespace ErrorModule
  */
 
+import * as debug from 'debug';
 import * as express from 'express';
+const debugLog = debug('SSKTS: ');
 
 /**
  * Not Found
@@ -37,8 +39,9 @@ export function notFound(req: express.Request, res: express.Response, _next: exp
  */
 // tslint:disable-next-line:variable-name
 export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
-    console.log(err.stack);
+    debugLog(err.stack);
 
+    // todo
     // if (req.session) delete (<any>req.session).purchase;
 
     const status = 500;

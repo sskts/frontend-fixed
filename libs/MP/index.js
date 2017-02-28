@@ -12,7 +12,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const GMO = require("@motionpicture/gmo-service");
+const debug = require("debug");
 const request = require("request-promise-native");
+const debugLog = debug('SSKTS: ');
 const endPoint = process.env.MP_ENDPOINT;
 const STATUS_CODE_200 = 200;
 const STATUS_CODE_201 = 201;
@@ -37,7 +39,7 @@ function oauthToken() {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('oauthToken:', response.body.access_token);
+        debugLog('oauthToken:', response.body.access_token);
         return response.body.access_token;
     });
 }
@@ -61,7 +63,7 @@ function getPerformances(day) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        // console.log('performances:', response.body.data);
+        // debugLog('performances:', response.body.data);
         return response.body.data;
     });
 }
@@ -85,7 +87,7 @@ function getPerformance(args) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('performances:', response.body.data);
+        debugLog('performances:', response.body.data);
         return response.body.data;
     });
 }
@@ -112,7 +114,7 @@ function transactionStart(args) {
         if (response.statusCode !== STATUS_CODE_201)
             throw new Error(response.body.message);
         const transaction = response.body.data;
-        console.log('transaction:', transaction);
+        debugLog('transaction:', transaction);
         return transaction;
     });
 }
@@ -170,7 +172,7 @@ function addCOAAuthorization(args) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('addCOAAuthorization result');
+        debugLog('addCOAAuthorization result');
         return response.body.data;
     });
 }
@@ -194,7 +196,7 @@ function removeCOAAuthorization(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('addCOAAuthorization result');
+        debugLog('addCOAAuthorization result');
     });
 }
 exports.removeCOAAuthorization = removeCOAAuthorization;
@@ -235,7 +237,7 @@ function addGMOAuthorization(args) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('addGMOAuthorization result:');
+        debugLog('addGMOAuthorization result:');
         return response.body.data;
     });
 }
@@ -259,7 +261,7 @@ function removeGMOAuthorization(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('removeGMOAuthorization result:');
+        debugLog('removeGMOAuthorization result:');
     });
 }
 exports.removeGMOAuthorization = removeGMOAuthorization;
@@ -287,7 +289,7 @@ function ownersAnonymous(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('ownersAnonymous result:');
+        debugLog('ownersAnonymous result:');
     });
 }
 exports.ownersAnonymous = ownersAnonymous;
@@ -314,7 +316,7 @@ function transactionsEnableInquiry(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('transactionsEnableInquiry result:');
+        debugLog('transactionsEnableInquiry result:');
     });
 }
 exports.transactionsEnableInquiry = transactionsEnableInquiry;
@@ -337,7 +339,7 @@ function transactionClose(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('close result:');
+        debugLog('close result:');
     });
 }
 exports.transactionClose = transactionClose;
@@ -365,7 +367,7 @@ function addEmail(args) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('addEmail result:' + response.body.data);
+        debugLog('addEmail result:' + response.body.data);
         return response.body.data;
     });
 }
@@ -389,7 +391,7 @@ function removeEmail(args) {
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
-        console.log('removeEmail result:');
+        debugLog('removeEmail result:');
     });
 }
 exports.removeEmail = removeEmail;
@@ -416,7 +418,7 @@ function makeInquiry(args) {
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
-        console.log('makeInquiry result:' + response.body.data);
+        debugLog('makeInquiry result:' + response.body.data);
         return response.body.data.id;
     });
 }
