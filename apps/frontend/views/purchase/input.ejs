@@ -163,10 +163,10 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">
-<%- partial('../layouts/site_seal') %>
+<%- partial('../layouts/siteSeal') %>
 </div>
 
 
 <% block('modals', partial('modals/securitycode')) -%>
-<% block('modals', partial('modals/creditcard_alert')) -%>
+<% block('modals', partial('modals/creditcardAlert')) -%>
 <%- partial('../locales/validation') %>

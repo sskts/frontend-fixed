@@ -943,3 +943,12 @@ p {
     animation-delay: 0.9s;
 }
 
+.site-seal {
+    margin-top: 60px;
+    @media screen and (max-width: $mobile){
+        margin-top: 50px;
+    }
+    p {
+        color: #737373;
+    }
+}

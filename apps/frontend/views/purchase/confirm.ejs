@@ -136,13 +136,13 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- partial('../layouts/site_seal') %>
+<%- partial('../layouts/siteSeal') %>
 </div>
 
 
 
 <% block('modals', partial('modals/screen')) -%>
-<% block('modals', partial('modals/update_reserve_error')) -%>
+<% block('modals', partial('modals/updateReserveError')) -%>
 
 <%- partial('complete') %>
 <%- partial('../error/expired') %>

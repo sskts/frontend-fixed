@@ -1169,6 +1169,21 @@ p a {
             animation-delay: 0.9s;
 }
 
+.site-seal {
+    margin-top: 60px;
+}
+
+@media screen and (max-width: 767px){
+
+  .site-seal{
+    margin-top:50px;
+  }
+}
+
+.site-seal p {
+  color: #737373;
+}
+
 @-webkit-keyframes loading {
     30% {
         -webkit-transform: scaleY(2);
