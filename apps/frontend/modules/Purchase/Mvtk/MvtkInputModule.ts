@@ -81,8 +81,6 @@ export function select(req: express.Request, res: express.Response, next: expres
  */
 export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
-
     const mvtkService = MVTK.createPurchaseNumberAuthService();
     const result = await mvtkService.purchaseNumberAuth({
         kgygishCd: 'SSK000', //興行会社コード

@@ -96,8 +96,6 @@ function auth(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
-        if (!purchaseModel.mvtk)
-            throw new Error(req.__('common.error.property'));
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const result = yield mvtkService.purchaseNumberAuth({
             kgygishCd: 'SSK000',

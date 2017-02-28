@@ -15,7 +15,7 @@
                     <dd class="d-td width-medium">
                         <div class="button gray-button not-link">
                             <a href="#">
-                                <div><%= MVTK_TICKET_TYPE[ticket.ykknshTyp] %></div>
+                                <div><%= MVTK_TICKET_TYPE.find((ticketType) => {return (ticketType.code === ticket.ykknshTyp)}).name %></div>
                             </a>
                         </div>
                     </dd>
