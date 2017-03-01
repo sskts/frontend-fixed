@@ -3,8 +3,10 @@
  * @namespace Purchase.Mvtks.MvtkConfirmModule
  */
 import * as MVTK from '@motionpicture/mvtk-service';
+import * as debug from 'debug';
 import * as express from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+const debugLog = debug('SSKTS: ');
 
 /**
  * ムビチケ券適用確認ページ表示
@@ -20,8 +22,8 @@ export function index(req: express.Request, res: express.Response, next: express
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.mvtk) return next(new Error(req.__('common.error.property')));
-
-    //購入者情報入力表示
+    debugLog((<any>req.session).mvtk);
+    // ムビチケ券適用確認ページ表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;

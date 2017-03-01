@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// import * as COA from '@motionpicture/coa-service';
+const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
@@ -132,22 +132,21 @@ function auth(req, purchaseModel) {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
                 if (!input)
-                    break;
-                // ムビチケチケットコード取得
-                // const ticketCode = await COA.MasterService.mvtkTicketcode({
-                //     theater_code: purchaseModel.performance.attributes.theater.id,
-                //     kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
-                //     kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
-                //     kbn_kensyu: info.ykknshTyp,
-                //     sales_price: Number(info.knshknhmbiUnip),
-                //     app_price: Number(info.kijUnip)
-                // });
-                const ticketCode = '01';
+                    continue;
                 const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
                     return (value.code === info.ykknshTyp);
                 });
                 if (!ticketType)
-                    break;
+                    continue;
+                // ムビチケチケットコード取得
+                const ticketCode = yield COA.MasterService.mvtkTicketcode({
+                    theater_code: purchaseModel.performance.attributes.theater.id,
+                    kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
+                    kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
+                    kbn_kensyu: info.ykknshTyp,
+                    sales_price: Number(info.knshknhmbiUnip),
+                    app_price: Number(info.kijUnip)
+                });
                 mvtkList.push({
                     code: purchaseNumberAuthResult.knyknrNo,
                     password: Util.bace64Encode(input.password),

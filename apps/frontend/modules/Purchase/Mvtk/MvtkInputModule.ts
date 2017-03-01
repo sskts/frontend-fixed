@@ -3,7 +3,7 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 
-// import * as COA from '@motionpicture/coa-service';
+import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import * as express from 'express';
@@ -120,21 +120,22 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
             const input = inputInfo.find((value) => {
                 return (value.code === purchaseNumberAuthResult.knyknrNo);
             });
-            if (!input) break;
-            // ムビチケチケットコード取得
-            // const ticketCode = await COA.MasterService.mvtkTicketcode({
-            //     theater_code: purchaseModel.performance.attributes.theater.id,
-            //     kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
-            //     kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
-            //     kbn_kensyu: info.ykknshTyp,
-            //     sales_price: Number(info.knshknhmbiUnip),
-            //     app_price: Number(info.kijUnip)
-            // });
-            const ticketCode = '01';
+            if (!input) continue;
+
             const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
                 return (value.code === info.ykknshTyp);
             });
-            if (!ticketType) break;
+            if (!ticketType) continue;
+
+            // ムビチケチケットコード取得
+            const ticketCode = await COA.MasterService.mvtkTicketcode({
+                theater_code: purchaseModel.performance.attributes.theater.id,
+                kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
+                kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
+                kbn_kensyu: info.ykknshTyp,
+                sales_price: Number(info.knshknhmbiUnip),
+                app_price: Number(info.kijUnip)
+            });
 
             mvtkList.push({
                 code: purchaseNumberAuthResult.knyknrNo,

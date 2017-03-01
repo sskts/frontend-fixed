@@ -4,7 +4,9 @@
  * @namespace Purchase.Mvtks.MvtkConfirmModule
  */
 const MVTK = require("@motionpicture/mvtk-service");
+const debug = require("debug");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * ムビチケ券適用確認ページ表示
  * @memberOf Purchase.Mvtk.MvtkConfirmModule
@@ -22,7 +24,8 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.mvtk)
         return next(new Error(req.__('common.error.property')));
-    //購入者情報入力表示
+    debugLog(req.session.mvtk);
+    // ムビチケ券適用確認ページ表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
