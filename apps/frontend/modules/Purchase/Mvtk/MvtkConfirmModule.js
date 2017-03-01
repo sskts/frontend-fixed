@@ -22,6 +22,7 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.mvtk)
         return next(new Error(req.__('common.error.property')));
+    console.log(purchaseModel.mvtk);
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;

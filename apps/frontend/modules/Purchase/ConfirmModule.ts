@@ -62,6 +62,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.input) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.reserveTickets) throw Error(req.__('common.error.property'));
     if (!purchaseModel.transactionMP) throw Error(req.__('common.error.property'));
     if (!purchaseModel.expired) throw Error(req.__('common.error.property'));
     if (!req.session) throw Error(req.__('common.error.property'));
@@ -95,7 +96,18 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
             tel_num: input.tel_num,
             mail_addr: input.mail_addr,
             reserve_amount: purchaseModel.getReserveAmount(),
-            list_ticket: purchaseModel.getTicketList()
+            list_ticket: purchaseModel.reserveTickets.map((ticket) => {
+                return {
+                    ticket_code: ticket.ticket_code,
+                    std_price: ticket.std_price,
+                    add_price: ticket.add_price,
+                    dis_price: 0,
+                    sale_price: ticket.sale_price,
+                    ticket_count: 1,
+                    mvtk_app_price: 0,
+                    seat_num: ticket.seat_code
+                };
+            })
         });
         debugLog('COA本予約', purchaseModel.updateReserve);
     } catch (err) {

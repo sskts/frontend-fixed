@@ -55,7 +55,7 @@ export interface ReserveTicket {
 }
 
 /**
- * Input
+ * 購入者情報
  * @interface Input
  */
 export interface Input {
@@ -98,50 +98,30 @@ export interface GMO {
 }
 
 /**
- * ムビチケ券
+ * ムビチケ情報
  * @interface Mvtk
  */
 export interface Mvtk {
     /**
      * 購入管理番号
      */
-    knyknrNo: string;
+    code: string;
     /**
-     * KNYKNR_NO_MKUJYU_CD
+     * 暗証番号
      */
-    knyknrNomkujyuCd: string;
+    password: string;
     /**
-     * 興行ギフト券購入年月日
+     * 有効券情報
      */
-    kgygftknknyYmd: string;
+    ykknInfo: ValidTickettResult;
     /**
-     * 興行ギフト券有効期間
+     * チケットコード
      */
-    kgygftknykTm: string;
+    ticketCode: string;
     /**
-     * DNSH_KM_TYP
+     * チケット名
      */
-    dnshKmTyp: string;
-    /**
-     * ZNKKKYTSKN_GKJKN_TYP
-     */
-    znkkkytsknGkjknTyp: string;
-    /**
-     * 有効券枚数
-     */
-    ykknmiNum: string;
-    /**
-     * 無効券枚数
-     */
-    mkknmiNum: string;
-    /**
-     * 有効券情報リスト
-     */
-    ykknInfo: ValidTickettResult[];
-    /**
-     * 無効券情報リスト
-     */
-    mkknInfo: InvalidTicketResult[];
+    ticketName: string;
 }
 
 /**
@@ -169,89 +149,6 @@ export interface ValidTickettResult {
      * 計上単価
      */
     kijUnip: string;
-}
-
-/**
- * 無効券情報
- * @interface InvalidTicketResult
- */
-export interface InvalidTicketResult {
-    /**
-     * 無効券種区分
-     */
-    mkknshTyp: string;
-    /**
-     * MKKN_KNSHBTSMI_NUM
-     */
-    mkknKnshbtsmiNum: string;
-    /**
-     * MKJY_TYP
-     */
-    mkjyTyp: string;
-    /**
-     * YYK_DT
-     */
-    yykDt: string;
-    /**
-     * SHY_JEI_DT
-     */
-    shyJeiDt: string;
-    /**
-     * SHY_ST_CD
-     */
-    shyStCd: string;
-    /**
-     * SHY_SCRN_CD
-     */
-    shyScrnCd: string;
-    /**
-     * SHY_SKHN_CD
-     */
-    shySkhnCd: string;
-    /**
-     * SHY_SKHN_NM
-     */
-    shySkhnNm: string;
-}
-
-/**
- * Ticket
- * @interface Ticket
- */
-export interface Ticket {
-    /**
-     * チケット番号
-     */
-    ticket_code: string;
-    /**
-     * 標準単価
-     */
-    std_price: number;
-    /**
-     * 加算単価
-     */
-    add_price: number;
-    /**
-     * 割引額
-     */
-    dis_price: number;
-    /**
-     * 金額
-     */
-    sale_price: number;
-    /**
-     * ムビチケ計上単価
-     */
-    mvtk_app_price: number;
-    /**
-     * 枚数
-     */
-    ticket_count: number;
-    /**
-     * 座席番号
-     */
-    // tslint:disable-next-line:trailing-comma
-    seat_num: string;
 }
 
 /**
@@ -417,30 +314,6 @@ export class PurchaseModel {
             amount += ticket.sale_price;
         }
         return amount;
-    }
-
-    /**
-     * チケットリスト返却
-     * @memberOf PurchaseModel
-     * @method getTicketList
-     * @returns {Ticket[]}
-     */
-    public getTicketList(): Ticket[] {
-        const results = [];
-        if (!this.reserveTickets) return [];
-        for (const ticket of this.reserveTickets) {
-            results.push({
-                ticket_code: ticket.ticket_code,
-                std_price: ticket.std_price,
-                add_price: ticket.add_price,
-                dis_price: 0,
-                sale_price: ticket.sale_price,
-                ticket_count: 1,
-                mvtk_app_price: 0,
-                seat_num: ticket.seat_code
-            });
-        }
-        return results;
     }
 
     /**

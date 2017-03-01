@@ -13,7 +13,7 @@
     "jsdoc": "grunt jsdoc"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^1.4.2",
+    "@motionpicture/coa-service": "^1.4.3",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "git+https://hata:1q2w3e4r5t@m-p.backlog.jp/git/MWSR/src_service.git#SSKTS-102",
     "body-parser": "^1.15.2",

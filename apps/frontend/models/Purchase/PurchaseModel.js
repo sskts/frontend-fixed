@@ -96,30 +96,6 @@ class PurchaseModel {
         return amount;
     }
     /**
-     * チケットリスト返却
-     * @memberOf PurchaseModel
-     * @method getTicketList
-     * @returns {Ticket[]}
-     */
-    getTicketList() {
-        const results = [];
-        if (!this.reserveTickets)
-            return [];
-        for (const ticket of this.reserveTickets) {
-            results.push({
-                ticket_code: ticket.ticket_code,
-                std_price: ticket.std_price,
-                add_price: ticket.add_price,
-                dis_price: 0,
-                sale_price: ticket.sale_price,
-                ticket_count: 1,
-                mvtk_app_price: 0,
-                seat_num: ticket.seat_code
-            });
-        }
-        return results;
-    }
-    /**
      * 座席文言返却
      * @memberOf PurchaseModel
      * @method seatToString

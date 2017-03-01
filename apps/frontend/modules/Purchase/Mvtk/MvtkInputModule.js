@@ -12,9 +12,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MVTK = require("@motionpicture/mvtk-service");
+const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const debugLog = debug('SSKTS: ');
 /**
  * ムビチケ券入力ページ表示
  * @memberOf Purchase.Mvtk.MvtkInputModule
@@ -97,20 +99,57 @@ function auth(req, purchaseModel) {
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
         const mvtkService = MVTK.createPurchaseNumberAuthService();
+        const inputInfo = JSON.parse(req.body.mvtk);
+        const siteCode = (process.env.NODE_ENV === 'dev')
+            ? '15'
+            : String(Number(purchaseModel.performance.attributes.theater.id));
+        const num = 10;
+        const branchNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
+            ? '0' + purchaseModel.performance.attributes.film.coa_title_branch_num
+            : purchaseModel.performance.attributes.film.coa_title_branch_num;
         const result = yield mvtkService.purchaseNumberAuth({
             kgygishCd: 'SSK000',
             jhshbtsCd: '1',
-            knyknrNoInfoIn: JSON.parse(req.body.mvtk).map((value) => {
+            knyknrNoInfoIn: inputInfo.map((value) => {
                 return {
                     KNYKNR_NO: value.code,
                     PIN_CD: value.password // PINコード
                 };
             }),
-            skhnCd: purchaseModel.performance.attributes.film.coa_title_code + '00',
-            stCd: '15',
+            skhnCd: purchaseModel.performance.attributes.film.coa_title_code + branchNo,
+            stCd: siteCode,
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
-        purchaseModel.mvtk = result;
+        debugLog('ムビチケ認証: ', result);
+        const mvtkList = [];
+        for (const purchaseNumberAuthResult of result) {
+            for (const info of purchaseNumberAuthResult.ykknInfo) {
+                const input = inputInfo.find((value) => {
+                    return (value.code === purchaseNumberAuthResult.knyknrNo);
+                });
+                // ムビチケチケットコード取得
+                // const ticketCode = await COA.MasterService.mvtkTicketcode({
+                //     theater_code: purchaseModel.performance.attributes.theater.id,
+                //     kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
+                //     kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
+                //     kbn_kensyu: info.ykknshTyp,
+                //     sales_price: Number(info.knshknhmbiUnip),
+                //     app_price: Number(info.kijUnip)
+                // });
+                const ticketCode = '01';
+                const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
+                    return (value.code === info.ykknshTyp);
+                });
+                mvtkList.push({
+                    code: purchaseNumberAuthResult.knyknrNo,
+                    password: (input) ? input.password : '',
+                    ykknInfo: info,
+                    ticketCode: ticketCode,
+                    ticketName: (ticketType) ? ticketType.name : ''
+                });
+            }
+        }
+        purchaseModel.mvtk = mvtkList;
         req.session.purchase = purchaseModel.toSession();
     });
 }

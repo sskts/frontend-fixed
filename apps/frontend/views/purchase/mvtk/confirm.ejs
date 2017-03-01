@@ -6,23 +6,19 @@
 
     <form method="post">
         <ul class="box radius bg-light-gray mb-medium mvtk-lists">
-            <% for (const tickets of mvtk) { %>
-            <% if (tickets.ykknInfo.length > 0) { %>
-            <% for (const ticket of tickets.ykknInfo) { %>
+            <% for (const ticket of mvtk) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= tickets.knyknrNo %></dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= ticket.code %></dt>
                     <dd class="d-td width-medium">
                         <div class="button gray-button not-link">
                             <a href="#">
-                                <div><%= MVTK_TICKET_TYPE.find((ticketType) => {return (ticketType.code === ticket.ykknshTyp)}).name %></div>
+                                <div><%= ticket.ticketName %></div>
                             </a>
                         </div>
                     </dd>
                 </dl>
             </li>
-            <% } %>
-            <% } %>
             <% } %>
         </ul>
         
