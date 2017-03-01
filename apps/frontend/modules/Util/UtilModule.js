@@ -89,3 +89,25 @@ function getPerformanceId(args) {
     return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
 }
 exports.getPerformanceId = getPerformanceId;
+/**
+ * ベース64エンコード
+ * @memberOf Util.UtilModule
+ * @function bace64Encode
+ * @param {string} str
+ * @returns {string}
+ */
+function bace64Encode(str) {
+    return new Buffer(str).toString('base64');
+}
+exports.bace64Encode = bace64Encode;
+/**
+ * ベース64デコード
+ * @memberOf Util.UtilModule
+ * @function base64Decode
+ * @param {string} str
+ * @returns {string}
+ */
+function base64Decode(str) {
+    return new Buffer(str, 'base64').toString();
+}
+exports.base64Decode = base64Decode;

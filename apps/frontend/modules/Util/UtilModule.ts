@@ -100,3 +100,25 @@ export function getPerformanceId(args: {
 }): string  {
     return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
 }
+
+/**
+ * ベース64エンコード
+ * @memberOf Util.UtilModule
+ * @function bace64Encode
+ * @param {string} str
+ * @returns {string}
+ */
+export function bace64Encode(str: string): string {
+   return new Buffer(str).toString('base64');
+}
+
+/**
+ * ベース64デコード
+ * @memberOf Util.UtilModule
+ * @function base64Decode
+ * @param {string} str
+ * @returns {string}
+ */
+export function base64Decode(str: string): string {
+    return new Buffer(str, 'base64').toString();
+}

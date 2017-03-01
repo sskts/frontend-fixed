@@ -22,12 +22,11 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.mvtk)
         return next(new Error(req.__('common.error.property')));
-    console.log(purchaseModel.mvtk);
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
-    res.locals.mvtk = purchaseModel.mvtk;
+    res.locals.mvtk = req.session.mvtk;
     res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
     return res.render('purchase/mvtk/confirm');
 }
@@ -50,6 +49,11 @@ function submit(req, res, next) {
     //取引id確認
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
+    // ムビチケ情報を購入セッションへ保存
+    purchaseModel.mvtk = req.session.mvtk;
+    req.session.purchase = purchaseModel.toSession();
+    // ムビチケセッション削除
+    delete req.session.mvtk;
     return res.redirect('/purchase/ticket');
 }
 exports.submit = submit;

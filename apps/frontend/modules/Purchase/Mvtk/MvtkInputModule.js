@@ -11,11 +11,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+// import * as COA from '@motionpicture/coa-service';
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const Util = require("../../Util/UtilModule");
 const debugLog = debug('SSKTS: ');
 /**
  * ムビチケ券入力ページ表示
@@ -34,7 +36,9 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.reserveSeats)
         return next(new Error(req.__('common.error.property')));
-    //購入者情報入力表示
+    // ムビチケセッション削除
+    delete req.session.mvtk;
+    // 購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
@@ -120,13 +124,15 @@ function auth(req, purchaseModel) {
             stCd: siteCode,
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
-        debugLog('ムビチケ認証: ', result);
+        debugLog('ムビチケ認証');
         const mvtkList = [];
         for (const purchaseNumberAuthResult of result) {
             for (const info of purchaseNumberAuthResult.ykknInfo) {
                 const input = inputInfo.find((value) => {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
+                if (!input)
+                    break;
                 // ムビチケチケットコード取得
                 // const ticketCode = await COA.MasterService.mvtkTicketcode({
                 //     theater_code: purchaseModel.performance.attributes.theater.id,
@@ -140,17 +146,18 @@ function auth(req, purchaseModel) {
                 const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
                     return (value.code === info.ykknshTyp);
                 });
+                if (!ticketType)
+                    break;
                 mvtkList.push({
                     code: purchaseNumberAuthResult.knyknrNo,
-                    password: (input) ? input.password : '',
+                    password: Util.bace64Encode(input.password),
                     ykknInfo: info,
                     ticketCode: ticketCode,
-                    ticketName: (ticketType) ? ticketType.name : ''
+                    ticketName: ticketType.name
                 });
             }
         }
-        purchaseModel.mvtk = mvtkList;
-        req.session.purchase = purchaseModel.toSession();
+        req.session.mvtk = mvtkList;
     });
 }
 exports.auth = auth;

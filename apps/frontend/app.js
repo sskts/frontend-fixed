@@ -29,7 +29,7 @@ app.use(cookieParser());
 if (process.env.NODE_ENV === 'dev') {
     app.use(express.static(`${__dirname}/../../public`));
 }
-//言語
+// 言語
 app.use((req, res, next) => {
     locales_1.default.init(req, res, next);
     if (req.session && req.session.locale) {
@@ -39,7 +39,7 @@ app.use((req, res, next) => {
         locales_1.default.setLocale(req, 'ja');
     }
 });
-//ムビチケサービス初期化
+// ムビチケサービス初期化
 MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
 // ルーティング
 router_1.default(app);

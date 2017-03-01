@@ -179,7 +179,7 @@ function getMailContent(req, purchaseModel) {
         throw new Error(req.__('common.error.property'));
     if (!purchaseModel.updateReserve)
         throw new Error(req.__('common.error.property'));
-    return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira}　様\n
+    return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様\n
 \n
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
 \n

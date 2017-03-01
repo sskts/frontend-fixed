@@ -3,13 +3,14 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 
-import * as COA from '@motionpicture/coa-service';
+// import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import * as express from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import * as Util from '../../Util/UtilModule';
 const debugLog = debug('SSKTS: ');
 
 /**
@@ -27,7 +28,10 @@ export function index(req: express.Request, res: express.Response, next: express
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
 
-    //購入者情報入力表示
+    // ムビチケセッション削除
+    delete (<any>req.session).mvtk;
+
+    // 購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
@@ -108,7 +112,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
         jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
     });
 
-    debugLog('ムビチケ認証: ', result);
+    debugLog('ムビチケ認証');
 
     const mvtkList: PurchaseSession.Mvtk[] = [];
     for (const purchaseNumberAuthResult of result) {
@@ -116,6 +120,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
             const input = inputInfo.find((value) => {
                 return (value.code === purchaseNumberAuthResult.knyknrNo);
             });
+            if (!input) break;
             // ムビチケチケットコード取得
             // const ticketCode = await COA.MasterService.mvtkTicketcode({
             //     theater_code: purchaseModel.performance.attributes.theater.id,
@@ -129,17 +134,18 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
             const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
                 return (value.code === info.ykknshTyp);
             });
+            if (!ticketType) break;
+
             mvtkList.push({
                 code: purchaseNumberAuthResult.knyknrNo,
-                password: (input) ? input.password : '',
+                password: Util.bace64Encode(input.password),
                 ykknInfo: info,
                 ticketCode: ticketCode,
-                ticketName: (ticketType) ? ticketType.name : ''
+                ticketName: ticketType.name
             });
         }
     }
-    purchaseModel.mvtk = mvtkList;
-    (<any>req.session).purchase = purchaseModel.toSession();
+    (<any>req.session).mvtk = mvtkList;
 }
 
 /**
