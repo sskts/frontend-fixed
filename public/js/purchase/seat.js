@@ -136,7 +136,7 @@ function getScreenStateReserve(cb) {
         dataType: 'json',
         url: '/purchase/getScreenStateReserve',
         type: 'POST',
-        timeout: 1000,
+        timeout: 10000,
         data: {
             /** 施設コード */
             theater_code: target.attr('data-theater'),
@@ -155,7 +155,7 @@ function getScreenStateReserve(cb) {
     }).done(function (res) {
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
-        alert('スケジュール取得失敗');
+        alert('座席取得失敗');
     }).always(function () {
         loadingEnd();
     });
