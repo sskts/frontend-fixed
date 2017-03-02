@@ -35,17 +35,12 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.performance)
         return next(new Error(req.__('common.error.property')));
-    //コアAPI券種取得
-    const performance = purchaseModel.performance;
-    COA.ReserveService.salesTicket({
-        theater_code: performance.attributes.theater.id,
-        date_jouei: performance.attributes.day,
-        title_code: performance.attributes.film.coa_title_code,
-        title_branch_num: performance.attributes.film.coa_title_branch_num,
-        time_begin: performance.attributes.time_start
-    }).then((result) => {
+    //券種取得
+    getSalesTickets(req, purchaseModel).then((result) => {
+        console.log(result);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
+        const performance = purchaseModel.performance;
         res.locals.tickets = result;
         res.locals.performance = performance;
         res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -103,6 +98,62 @@ function select(req, res, next) {
     });
 }
 exports.select = select;
+/**
+ * 券種リスト取得
+ * @memberOf Purchase.TicketModule
+ * @function getSalesTickets
+ * @param {express.Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {Promise<COA.ReserveService.SalesTicketResult[]>}
+ */
+function getSalesTickets(req, purchaseModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!purchaseModel.performance)
+            throw new Error(req.__('common.error.property'));
+        //コアAPI券種取得
+        const performance = purchaseModel.performance;
+        const salesTickets = yield COA.ReserveService.salesTicket({
+            theater_code: performance.attributes.theater.id,
+            date_jouei: performance.attributes.day,
+            title_code: performance.attributes.film.coa_title_code,
+            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            time_begin: performance.attributes.time_start
+        });
+        if (!purchaseModel.mvtk)
+            return salesTickets;
+        // ムビチケ情報からチケット情報へ変換
+        const mvtkTickets = [];
+        const lang = req.__('lang');
+        if (lang !== 'ja' && lang !== 'en') {
+            throw new Error(req.__('common.error.property'));
+        }
+        for (const mvtk of purchaseModel.mvtk) {
+            mvtkTickets.push({
+                // チケットコード
+                ticket_code: mvtk.ticket.code,
+                // チケット名
+                ticket_name: mvtk.ticket.name[lang],
+                // チケット名（カナ）
+                ticket_name_kana: '',
+                // チケット名（英）
+                ticket_name_eng: mvtk.ticket.name.en,
+                // 標準単価
+                std_price: 0,
+                // 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
+                add_price: 0,
+                // 販売単価(標準単価＋加算単価)
+                sale_price: 0,
+                // 人数制限(制限が無い場合は１)
+                limit_count: 1,
+                // 制限単位(１：ｎ人単位、２：ｎ人以上)
+                limit_unit: '001',
+                // チケット備考(注意事項等)
+                ticket_note: ''
+            });
+        }
+        return mvtkTickets.concat(salesTickets);
+    });
+}
 /**
  * 券種検証
  * @memberOf Purchase.TicketModule

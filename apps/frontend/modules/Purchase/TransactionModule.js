@@ -39,6 +39,8 @@ function start(req, res, next) {
         if (!req.session)
             return next(new Error(req.__('common.error.property')));
         delete req.session.purchase;
+        delete req.session.mvtk;
+        delete req.session.complete;
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ

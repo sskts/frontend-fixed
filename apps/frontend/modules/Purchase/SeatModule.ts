@@ -112,6 +112,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
     const performance = purchaseModel.performance;
+
     //予約中
     if (purchaseModel.reserveSeats) {
         if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));

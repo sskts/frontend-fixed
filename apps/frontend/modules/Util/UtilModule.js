@@ -111,3 +111,8 @@ function base64Decode(str) {
     return new Buffer(str, 'base64').toString();
 }
 exports.base64Decode = base64Decode;
+/**
+ * 興行会社コード
+ * @const COMPANY_CODE
+ */
+exports.COMPANY_CODE = 'SSK000';

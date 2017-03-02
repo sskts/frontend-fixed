@@ -104,13 +104,15 @@ function auth(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo = JSON.parse(req.body.mvtk);
+        // サイトコード
         const siteCode = (process.env.NODE_ENV === 'dev')
             ? '15'
             : String(Number(purchaseModel.performance.attributes.theater.id));
+        // 作品コード
         const num = 10;
-        const branchNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
-            ? '0' + purchaseModel.performance.attributes.film.coa_title_branch_num
-            : purchaseModel.performance.attributes.film.coa_title_branch_num;
+        const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
+            ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
+            : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
         const result = yield mvtkService.purchaseNumberAuth({
             kgygishCd: 'SSK000',
             jhshbtsCd: '1',
@@ -120,11 +122,14 @@ function auth(req, purchaseModel) {
                     PIN_CD: value.password // PINコード
                 };
             }),
-            skhnCd: purchaseModel.performance.attributes.film.coa_title_code + branchNo,
+            skhnCd: filmNo,
             stCd: siteCode,
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
         debugLog('ムビチケ認証');
+        const ticketMaster = yield COA.MasterService.ticket({
+            theater_code: purchaseModel.performance.attributes.theater.id
+        });
         const mvtkList = [];
         for (const purchaseNumberAuthResult of result) {
             for (const info of purchaseNumberAuthResult.ykknInfo) {
@@ -132,11 +137,6 @@ function auth(req, purchaseModel) {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
                 if (!input)
-                    continue;
-                const ticketType = MVTK.Constants.TICKET_TYPE.find((value) => {
-                    return (value.code === info.ykknshTyp);
-                });
-                if (!ticketType)
                     continue;
                 // ムビチケチケットコード取得
                 const ticketCode = yield COA.MasterService.mvtkTicketcode({
@@ -147,12 +147,23 @@ function auth(req, purchaseModel) {
                     sales_price: Number(info.knshknhmbiUnip),
                     app_price: Number(info.kijUnip)
                 });
+                // チケットマスター取得
+                const ticket = ticketMaster.find((value) => {
+                    return (value.ticket_code === ticketCode);
+                });
+                if (!ticket)
+                    continue;
                 mvtkList.push({
                     code: purchaseNumberAuthResult.knyknrNo,
                     password: Util.bace64Encode(input.password),
                     ykknInfo: info,
-                    ticketCode: ticketCode,
-                    ticketName: ticketType.name
+                    ticket: {
+                        code: ticketCode,
+                        name: {
+                            ja: ticket.ticket_name,
+                            en: ticket.ticket_name_eng
+                        }
+                    }
                 });
             }
         }

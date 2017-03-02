@@ -22,9 +22,6 @@ function index(req, res, next) {
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
-    if (!purchaseModel.mvtk)
-        return next(new Error(req.__('common.error.property')));
-    debugLog(req.session.mvtk);
     // ムビチケ券適用確認ページ表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -53,6 +50,7 @@ function submit(req, res, next) {
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
     // ムビチケ情報を購入セッションへ保存
+    debugLog('ムビチケ情報を購入セッションへ保存');
     purchaseModel.mvtk = req.session.mvtk;
     req.session.purchase = purchaseModel.toSession();
     // ムビチケセッション削除

@@ -71,7 +71,7 @@ class PurchaseModel {
                 result = true;
         }
         else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo)
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input)
                 result = true;
         }
         else if (value === PurchaseModel.COMPLETE_STATE) {

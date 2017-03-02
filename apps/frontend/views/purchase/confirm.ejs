@@ -95,12 +95,14 @@
                     <dd><%= input.tel_num %></dd>
                 </dl>
             </li>
+            <% if (gmoTokenObject) { %>
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
                     <dd><%= gmoTokenObject.maskedCardNo %></dd>
                 </dl>
             </li>
+            <% } %>
             <li>
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>
@@ -109,10 +111,11 @@
             </li>
         </ul>
         
-
+        <% if (gmoTokenObject) { %>
         <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
         <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
         <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
+        <% } %>
 
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>

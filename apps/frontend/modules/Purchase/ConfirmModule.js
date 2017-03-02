@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const COA = require("@motionpicture/coa-service");
+const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../../libs/MP");
@@ -55,6 +56,87 @@ function index(req, res, next) {
     return res.render('purchase/confirm');
 }
 exports.index = index;
+/**
+ * ムビチケ決済
+ * @memberOf Purchase.ConfirmModule
+ * @function reserveMvtk
+ * @param {express.Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {Promise<void>}
+ */
+function reserveMvtk(req, purchaseModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!purchaseModel.reserveTickets)
+            throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.reserveSeats)
+            throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.updateReserve)
+            throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performance)
+            throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.mvtk)
+            throw new Error(req.__('common.error.property'));
+        // 購入管理番号情報
+        const mvtkTickets = [];
+        // 座席情報
+        const reserveSeats = [];
+        for (const ticket of purchaseModel.reserveTickets) {
+            const mvtkTicket = purchaseModel.mvtk.find((value) => {
+                return (value.ticket.code === ticket.ticket_code);
+            });
+            if (!mvtkTicket)
+                continue;
+            mvtkTickets.push({
+                KNYKNR_NO: mvtkTicket.code,
+                PIN_CD: UtilModule.base64Decode(mvtkTicket.password),
+                KNSH_INFO: [
+                    {
+                        KNSH_TYP: mvtkTicket.ykknInfo.ykknshTyp,
+                        MI_NUM: '1' //枚数
+                    }
+                ]
+            });
+            reserveSeats.push({
+                ZSK_CD: ticket.seat_code //座席コード
+            });
+        }
+        if (mvtkTickets.length === 0 || reserveSeats.length === 0)
+            return;
+        // 興行会社システム座席予約番号
+        const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
+        // 興行会社ユーザー座席予約番号
+        const startDate = {
+            day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
+            time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
+        };
+        // サイトコード
+        const siteCode = (process.env.NODE_ENV === 'dev')
+            ? '15'
+            : String(Number(purchaseModel.performance.attributes.theater.id));
+        // 作品コード
+        const num = 10;
+        const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
+            ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
+            : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
+        const seatInfoSyncService = MVTK.createSeatInfoSyncService();
+        const result = yield seatInfoSyncService.seatInfoSync({
+            kgygishCd: UtilModule.COMPANY_CODE,
+            yykDvcTyp: '02',
+            trkshFlg: '0',
+            kgygishSstmZskyykNo: reserveNo,
+            kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
+            jeiDt: `${startDate.day} ${startDate.time}`,
+            kijYmd: startDate.day,
+            stCd: siteCode,
+            screnCd: purchaseModel.performance.attributes.screen.coa_screen_code,
+            knyknrNoInfo: mvtkTickets,
+            zskInfo: reserveSeats,
+            skhnCd: filmNo // 作品コード
+        });
+        if (result.ZSKYYK_RESULT !== '01')
+            throw new Error(req.__('common.error.property'));
+    });
+}
 /**
  * 座席本予約
  * @memberOf Purchase.ConfirmModule
@@ -130,6 +212,9 @@ function updateReserve(req, purchaseModel) {
                 type: 'updateReserve'
             };
         }
+        // ムビチケ使用
+        yield reserveMvtk(req, purchaseModel);
+        debugLog('ムビチケ決済');
         // MP購入者情報登録
         yield MP.ownersAnonymous({
             transactionId: purchaseModel.transactionMP.id,

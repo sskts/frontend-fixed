@@ -4,6 +4,7 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
+import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import * as express from 'express';
 import * as moment from 'moment';
@@ -47,6 +48,82 @@ export function index(req: express.Request, res: express.Response, next: express
 
     return res.render('purchase/confirm');
 
+}
+
+/**
+ * ムビチケ決済
+ * @memberOf Purchase.ConfirmModule
+ * @function reserveMvtk
+ * @param {express.Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {Promise<void>}
+ */
+async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (!purchaseModel.reserveTickets) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.updateReserve) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
+    // 購入管理番号情報
+    const mvtkTickets = [];
+    // 座席情報
+    const reserveSeats = [];
+    for (const ticket of purchaseModel.reserveTickets) {
+        const mvtkTicket = purchaseModel.mvtk.find((value) => {
+            return (value.ticket.code === ticket.ticket_code);
+        });
+        if (!mvtkTicket) continue;
+        mvtkTickets.push({
+            KNYKNR_NO: mvtkTicket.code, //購入管理番号（ムビチケ購入番号）
+            PIN_CD: UtilModule.base64Decode(mvtkTicket.password), //PINコード（ムビチケ暗証番号）
+            KNSH_INFO: [
+                {
+                    KNSH_TYP: mvtkTicket.ykknInfo.ykknshTyp, //券種区分
+                    MI_NUM: '1' //枚数
+                }
+            ]
+        });
+        reserveSeats.push({
+            ZSK_CD: ticket.seat_code //座席コード
+        });
+    }
+
+    if (mvtkTickets.length === 0 || reserveSeats.length === 0) return;
+
+    // 興行会社システム座席予約番号
+    const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
+    // 興行会社ユーザー座席予約番号
+    const startDate = {
+        day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
+        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
+    };
+    // サイトコード
+    const siteCode = (process.env.NODE_ENV === 'dev')
+        ? '15'
+        : String(Number(purchaseModel.performance.attributes.theater.id));
+    // 作品コード
+    const num = 10;
+    const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
+        ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
+        : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
+    const seatInfoSyncService = MVTK.createSeatInfoSyncService();
+
+    const result = await seatInfoSyncService.seatInfoSync({
+        kgygishCd: UtilModule.COMPANY_CODE, // 興行会社コード
+        yykDvcTyp: '02', // 予約デバイス区分
+        trkshFlg: '0', // 取消フラグ
+        kgygishSstmZskyykNo: reserveNo, // 興行会社システム座席予約番号
+        kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num), // 興行会社ユーザー座席予約番号
+        jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
+        kijYmd: startDate.day, // 計上年月日
+        stCd: siteCode, // サイトコード
+        screnCd: purchaseModel.performance.attributes.screen.coa_screen_code, // スクリーンコード
+        knyknrNoInfo: mvtkTickets, // 購入管理番号情報
+        zskInfo: reserveSeats, // 座席情報（itemArray）
+        skhnCd: filmNo // 作品コード
+    });
+
+    if (result.ZSKYYK_RESULT !== '01') throw new Error(req.__('common.error.property'));
 }
 
 /**
@@ -117,6 +194,10 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
             type: 'updateReserve'
         };
     }
+
+    // ムビチケ使用
+    await reserveMvtk(req, purchaseModel);
+    debugLog('ムビチケ決済');
 
     // MP購入者情報登録
     await MP.ownersAnonymous({

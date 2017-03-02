@@ -32,6 +32,8 @@ export function start(req: express.Request, res: express.Response, next: express
     transactionStart(purchaseModel).then(() => {
         if (!req.session) return next(new Error(req.__('common.error.property')));
         delete (<any>req.session).purchase;
+        delete (<any>req.session).mvtk;
+        delete (<any>req.session).complete;
         //セッション更新
         (<any>req.session).purchase = purchaseModel.toSession();
         //座席選択へ

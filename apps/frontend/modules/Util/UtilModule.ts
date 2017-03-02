@@ -122,3 +122,9 @@ export function bace64Encode(str: string): string {
 export function base64Decode(str: string): string {
     return new Buffer(str, 'base64').toString();
 }
+
+/**
+ * 興行会社コード
+ * @const COMPANY_CODE
+ */
+export const COMPANY_CODE = 'SSK000';

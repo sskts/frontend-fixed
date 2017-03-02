@@ -115,13 +115,27 @@ export interface Mvtk {
      */
     ykknInfo: ValidTickettResult;
     /**
-     * チケットコード
+     * チケット情報
      */
-    ticketCode: string;
-    /**
-     * チケット名
-     */
-    ticketName: string;
+    ticket: {
+        /**
+         * チケットコード
+         */
+        code: string;
+        /**
+         * チケット名
+         */
+        name: {
+            /**
+             * 日本語
+             */
+            ja: string;
+            /**
+             * 英語
+             */
+            en: string;
+        }
+    }
 }
 
 /**
@@ -293,7 +307,7 @@ export class PurchaseModel {
         } else if (value === PurchaseModel.INPUT_STATE) {
             if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets) result = true;
         } else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input && this.gmo) result = true;
+            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input) result = true;
         } else if (value === PurchaseModel.COMPLETE_STATE) {
             result = true;
         }
