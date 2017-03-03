@@ -37,7 +37,6 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     //券種取得
     getSalesTickets(req, purchaseModel).then((result) => {
-        console.log(result);
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
         const performance = purchaseModel.performance;
@@ -124,9 +123,6 @@ function getSalesTickets(req, purchaseModel) {
         // ムビチケ情報からチケット情報へ変換
         const mvtkTickets = [];
         const lang = req.__('lang');
-        if (lang !== 'ja' && lang !== 'en') {
-            throw new Error(req.__('common.error.property'));
-        }
         for (const mvtk of purchaseModel.mvtk) {
             mvtkTickets.push({
                 // チケットコード
@@ -178,16 +174,19 @@ function ticketValidation(req, purchaseModel) {
             time_begin: performance.attributes.time_start
         });
         const reserveTickets = purchaseModel.reserveTickets;
-        for (const reserveTicket of reserveTickets) {
-            for (const salesTicket of salesTickets) {
-                if (salesTicket.ticket_code === reserveTicket.ticket_code) {
-                    if (salesTicket.sale_price !== reserveTicket.sale_price) {
-                        debugLog(`${reserveTicket.seat_code}: 券種検証NG`);
-                        throw new Error(req.__('common.error.access'));
-                    }
-                    debugLog(`${reserveTicket.seat_code}: 券種検証OK`);
-                    break;
-                }
+        for (const ticket of reserveTickets) {
+            const salesTicket = salesTickets.find((value) => {
+                return (value.ticket_code === ticket.ticket_code);
+            });
+            if (salesTicket) {
+                // 通常券種
+                if (salesTicket.sale_price !== ticket.sale_price)
+                    throw new Error(req.__('common.error.access'));
+            }
+            else {
+                // ムビチケ
+                if (!purchaseModel.mvtk)
+                    throw new Error(req.__('common.error.property'));
             }
         }
     });

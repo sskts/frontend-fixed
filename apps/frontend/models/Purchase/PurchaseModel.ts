@@ -135,7 +135,7 @@ export interface Mvtk {
              */
             en: string;
         }
-    }
+    };
 }
 
 /**

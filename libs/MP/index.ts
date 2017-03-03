@@ -10,9 +10,26 @@ import * as request from 'request-promise-native';
 const debugLog = debug('SSKTS: ');
 const endPoint = process.env.MP_ENDPOINT;
 
+/**
+ * ステータスコード200
+ * @const STATUS_CODE_200
+ */
 const STATUS_CODE_200 = 200;
+/**
+ * ステータスコード201
+ * @const STATUS_CODE_201
+ */
 const STATUS_CODE_201 = 201;
+/**
+ * ステータスコード204
+ * @const STATUS_CODE_204
+ */
 const STATUS_CODE_204 = 204;
+/**
+ * 時間切れ
+ * @const TIMEOUT
+ */
+const TIMEOUT = 1000;
 
 /**
  * Theater
@@ -135,7 +152,8 @@ export async function oauthToken(): Promise<string> {
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
 
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
@@ -157,7 +175,8 @@ export async function getPerformances(day: string): Promise<Performance[]> {
         body: {},
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
     // debugLog('performances:', response.body.data);
@@ -186,7 +205,8 @@ export async function getPerformance(args: GetPerformanceArgs): Promise<Performa
         body: {},
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
     debugLog('performances:', response.body.data);
@@ -244,7 +264,8 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_201) throw new Error(response.body.message);
     const transaction = response.body.data;
@@ -341,7 +362,8 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
@@ -373,7 +395,8 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
@@ -433,7 +456,8 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
             gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
         },
         json: true,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
 
@@ -464,7 +488,8 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
         body: {},
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
@@ -503,7 +528,8 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
@@ -539,7 +565,8 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
 
@@ -570,7 +597,8 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
     debugLog('close result:');
@@ -616,7 +644,8 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
     debugLog('addEmail result:' + response.body.data);
@@ -646,7 +675,8 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         body: {},
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
     debugLog('removeEmail result:');
@@ -680,7 +710,8 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         },
         json: true,
         simple: false,
-        resolveWithFullResponse: true
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
     });
     if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
     debugLog('makeInquiry result:' + response.body.data);

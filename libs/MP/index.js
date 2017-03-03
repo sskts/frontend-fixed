@@ -16,9 +16,26 @@ const debug = require("debug");
 const request = require("request-promise-native");
 const debugLog = debug('SSKTS: ');
 const endPoint = process.env.MP_ENDPOINT;
+/**
+ * ステータスコード200
+ * @const STATUS_CODE_200
+ */
 const STATUS_CODE_200 = 200;
+/**
+ * ステータスコード201
+ * @const STATUS_CODE_201
+ */
 const STATUS_CODE_201 = 201;
+/**
+ * ステータスコード204
+ * @const STATUS_CODE_204
+ */
 const STATUS_CODE_204 = 204;
+/**
+ * 時間切れ
+ * @const TIMEOUT
+ */
+const TIMEOUT = 1000;
 /**
  * アクセストークン取得
  * @memberOf MP
@@ -35,7 +52,8 @@ function oauthToken() {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -59,7 +77,8 @@ function getPerformances(day) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -83,7 +102,8 @@ function getPerformance(args) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -109,7 +129,8 @@ function transactionStart(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_201)
             throw new Error(response.body.message);
@@ -168,7 +189,8 @@ function addCOAAuthorization(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -192,7 +214,8 @@ function removeCOAAuthorization(args) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -233,7 +256,8 @@ function addGMOAuthorization(args) {
                 gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
             },
             json: true,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -257,7 +281,8 @@ function removeGMOAuthorization(args) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -285,7 +310,8 @@ function ownersAnonymous(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -312,7 +338,8 @@ function transactionsEnableInquiry(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -335,7 +362,8 @@ function transactionClose(args) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -363,7 +391,8 @@ function addEmail(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
@@ -387,7 +416,8 @@ function removeEmail(args) {
             body: {},
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_204)
             throw new Error(response.body.message);
@@ -414,7 +444,8 @@ function makeInquiry(args) {
             },
             json: true,
             simple: false,
-            resolveWithFullResponse: true
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
         });
         if (response.statusCode !== STATUS_CODE_200)
             throw new Error(response.body.message);
