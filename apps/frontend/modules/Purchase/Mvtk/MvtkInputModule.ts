@@ -10,7 +10,7 @@ import * as express from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
-import * as Util from '../../Util/UtilModule';
+import * as UtilModule from '../../Util/UtilModule';
 const debugLog = debug('SSKTS: ');
 
 /**
@@ -101,8 +101,8 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
         : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
 
     const result = await mvtkService.purchaseNumberAuth({
-        kgygishCd: 'SSK000', //興行会社コード
-        jhshbtsCd: '1', //情報種別コード
+        kgygishCd: UtilModule.COMPANY_CODE, //興行会社コード
+        jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
         knyknrNoInfoIn: inputInfo.map((value) => {
             return {
                 KNYKNR_NO: value.code, //購入管理番号
@@ -144,7 +144,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
 
             mvtkList.push({
                 code: purchaseNumberAuthResult.knyknrNo,
-                password: Util.bace64Encode(input.password),
+                password: UtilModule.bace64Encode(input.password),
                 ykknInfo: info,
                 ticket: {
                     code: ticketCode,

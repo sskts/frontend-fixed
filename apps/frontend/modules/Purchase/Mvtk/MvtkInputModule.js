@@ -17,7 +17,7 @@ const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
-const Util = require("../../Util/UtilModule");
+const UtilModule = require("../../Util/UtilModule");
 const debugLog = debug('SSKTS: ');
 /**
  * ムビチケ券入力ページ表示
@@ -114,8 +114,8 @@ function auth(req, purchaseModel) {
             ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
             : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
         const result = yield mvtkService.purchaseNumberAuth({
-            kgygishCd: 'SSK000',
-            jhshbtsCd: '1',
+            kgygishCd: UtilModule.COMPANY_CODE,
+            jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID,
             knyknrNoInfoIn: inputInfo.map((value) => {
                 return {
                     KNYKNR_NO: value.code,
@@ -155,7 +155,7 @@ function auth(req, purchaseModel) {
                     continue;
                 mvtkList.push({
                     code: purchaseNumberAuthResult.knyknrNo,
-                    password: Util.bace64Encode(input.password),
+                    password: UtilModule.bace64Encode(input.password),
                     ykknInfo: info,
                     ticket: {
                         code: ticketCode,

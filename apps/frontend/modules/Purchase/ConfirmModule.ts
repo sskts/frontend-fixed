@@ -110,8 +110,8 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
 
     const result = await seatInfoSyncService.seatInfoSync({
         kgygishCd: UtilModule.COMPANY_CODE, // 興行会社コード
-        yykDvcTyp: '02', // 予約デバイス区分
-        trkshFlg: '0', // 取消フラグ
+        yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
+        trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
         kgygishSstmZskyykNo: reserveNo, // 興行会社システム座席予約番号
         kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
@@ -123,7 +123,7 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
         skhnCd: filmNo // 作品コード
     });
 
-    if (result.ZSKYYK_RESULT !== '01') throw new Error(req.__('common.error.property'));
+    if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw new Error(req.__('common.error.property'));
 }
 
 /**
@@ -270,7 +270,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 \n
 <発券/入場方法2 入場用QRコードで入場>\n
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。\n
-http://XXXXXX\n
+https://${req.headers.host}//inquiry/login\n
 \n
 [ご注意事項]\n
 ・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。\n
