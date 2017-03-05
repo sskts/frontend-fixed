@@ -2,6 +2,7 @@
  * ルーティング
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const PerformancesModule = require("../modules/Performances/PerformancesModule");
@@ -10,7 +11,6 @@ const inquiry_1 = require("./inquiry");
 const method_1 = require("./method");
 const purchase_1 = require("./purchase");
 const router = express.Router();
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
     app.use(UtilModule.setLocals);
     // tslint:disable-next-line:variable-name
@@ -21,11 +21,18 @@ exports.default = (app) => {
     router.get('/performances', PerformancesModule.index);
     //パフォーマンス一覧
     router.post('/performances', PerformancesModule.getPerformances);
-    //再起動
-    // tslint:disable-next-line:variable-name
-    router.get('/500', (_req, _res, _next) => {
-        process.exit(1);
-    });
+    if (process.env.NODE_ENV === 'dev') {
+        //再起動
+        // tslint:disable-next-line:variable-name
+        router.get('/500', (_req, _res, _next) => {
+            process.exit(1);
+        });
+        //スクリーンテスト
+        // tslint:disable-next-line:variable-name
+        router.get('/screen', (_req, res, _next) => {
+            res.render('screens/test');
+        });
+    }
     app.use('', router);
     //購入
     app.use('/purchase', purchase_1.default);

@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
@@ -117,6 +118,7 @@ function getSalesTickets(req, purchaseModel) {
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         if (!purchaseModel.mvtk)
             return salesTickets;
@@ -172,6 +174,7 @@ function ticketValidation(req, purchaseModel) {
             title_code: performance.attributes.film.coa_title_code,
             title_branch_num: performance.attributes.film.coa_title_branch_num,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         const reserveTickets = purchaseModel.reserveTickets;
         for (const ticket of reserveTickets) {

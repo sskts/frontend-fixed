@@ -27,11 +27,19 @@ export default (app: express.Application) => {
     //パフォーマンス一覧
     router.post('/performances', PerformancesModule.getPerformances);
 
-    //再起動
-    // tslint:disable-next-line:variable-name
-    router.get('/500', (_req, _res, _next) => {
-        process.exit(1);
-    });
+    if (process.env.NODE_ENV === 'dev') {
+        //再起動
+        // tslint:disable-next-line:variable-name
+        router.get('/500', (_req, _res, _next) => {
+            process.exit(1);
+        });
+
+        //スクリーンテスト
+        // tslint:disable-next-line:variable-name
+        router.get('/screen', (_req, res, _next) => {
+            res.render('screens/test');
+        });
+    }
 
     app.use('', router);
 

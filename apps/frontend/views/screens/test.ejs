@@ -1,0 +1,25 @@
+<% layout('./layouts/layout') -%>
+
+<div class="screen">
+    <div class="screen-scroll">
+        <%- partial('../screens/018/03') %>
+    </div>
+    <div class="device-type-pc"></div>
+    <div class="device-type-sp"></div>
+</div>
+<style>
+    .screen {
+        height: 1000px;
+        transform-origin: 0 0;
+        transform: scale(0.5);
+        visibility: visible;
+        position: relative;
+        overflow: visible;
+    }
+    .screen-inner {
+        background-color: #f9f5f6;
+    }
+    .screen .seat a span {
+        display: block;
+    }
+</style>
