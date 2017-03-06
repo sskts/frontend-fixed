@@ -264,8 +264,9 @@ function createScreen(setting, map) {
             }
             if (map.data[y][x] === 1 || map.data[y][x] === 4 || map.data[y][x] === 5) {
                 //座席HTML生成
-                var code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`; //Ａ－１９
-                var label = `${labels[labelCount]}${x + 1}`;
+                var code = toFullWidth(labels[labelCount])+ '－' + toFullWidth(String(x + 1)); //Ａ－１９
+                var label = labels[labelCount] + String(x + 1);
+                
                 seatHtml.push('<div class="seat seat-normal" style="top:'+ pos.y +'px; left:'+ pos.x +'px">'+
                     '<a href="#" data-seat-code="'+ code +'"><span>'+ label +'</span></a>'+
                 '</div>');
