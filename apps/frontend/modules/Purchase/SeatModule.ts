@@ -7,6 +7,7 @@ import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import * as express from 'express';
+import * as fs from 'fs-extra-promise';
 import * as MP from '../../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
@@ -206,16 +207,49 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
  */
 // tslint:disable-next-line:variable-name
 export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
-
-    COA.ReserveService.stateReserveSeat(req.body).then((result) => {
+    getScreenData(req).then((result) => {
         res.json({
             err: null,
             result: result
         });
     }).catch((err) => {
+        console.log(err)
         res.json({
             err: err,
             result: null
         });
     });
+}
+
+/**
+ * スクリーン情報取得
+ * @memberOf Purchase.SeatModule
+ * @function getScreenStateReserve
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns {Promise<ScreenData>}
+ */
+async function getScreenData(req: express.Request): Promise<ScreenData> {
+    const num = 10;
+    const screenCode: string = (Number(req.body.screen_code) < num)
+        ? `0${req.body.screen_code}`
+        : req.body.screen_code;
+    const map = await fs.readJSONAsync(`./apps/frontend/screens/${req.body.theater_code}/${screenCode}.json`);
+    const setting = await fs.readJSONAsync('./apps/frontend/screens/setting.json');
+    const state = await COA.ReserveService.stateReserveSeat(req.body);
+    return {
+        map: map,
+        setting: setting,
+        state: state
+    };
+}
+
+/**
+ * スクリーン情報
+ */
+interface ScreenData {
+    map: any;
+    setting: any;
+    state: COA.ReserveService.StateReserveSeatResult;
 }

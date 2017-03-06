@@ -11,10 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
+const fs = require("fs-extra-promise");
 const MP = require("../../../../libs/MP");
 const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
@@ -217,12 +217,13 @@ function reserve(req, purchaseModel) {
  */
 // tslint:disable-next-line:variable-name
 function getScreenStateReserve(req, res, _next) {
-    COA.ReserveService.stateReserveSeat(req.body).then((result) => {
+    getScreenData(req).then((result) => {
         res.json({
             err: null,
             result: result
         });
     }).catch((err) => {
+        console.log(err);
         res.json({
             err: err,
             result: null
@@ -230,3 +231,28 @@ function getScreenStateReserve(req, res, _next) {
     });
 }
 exports.getScreenStateReserve = getScreenStateReserve;
+/**
+ * スクリーン情報取得
+ * @memberOf Purchase.SeatModule
+ * @function getScreenStateReserve
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns {Promise<ScreenData>}
+ */
+function getScreenData(req) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const num = 10;
+        const screenCode = (Number(req.body.screen_code) < num)
+            ? `0${req.body.screen_code}`
+            : req.body.screen_code;
+        const map = yield fs.readJSONAsync(`./apps/frontend/screens/${req.body.theater_code}/${screenCode}.json`);
+        const setting = yield fs.readJSONAsync('./apps/frontend/screens/setting.json');
+        const state = yield COA.ReserveService.stateReserveSeat(req.body);
+        return {
+            map: map,
+            setting: setting,
+            state: state
+        };
+    });
+}

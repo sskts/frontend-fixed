@@ -1,17 +1,46 @@
 <% layout('./layouts/layout') -%>
+<% block('script', '<script src="/js/purchase/seat.js"></script>') -%>
+<% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
 
-<div class="screen">
-    <div class="screen-scroll">
-        <%- partial('../screens/018/03') %>
+<div class="purchase-seat">
+    <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.seat.read') %></p>
+
+    <div>
+        <div class="screen-cover mb-medium" 
+        data-limit="4" 
+        data-theater="118" 
+        data-day="20170306" 
+        data-coa-title-code="17020"
+        data-coa-title-branch-num="0" 
+        data-time-start="0940" 
+        data-screen-code="5">
+            <div class="radius bg-light-gray">
+                <div class="screen">
+                    <div class="screen-scroll">
+                    </div>
+                    <div class="device-type-pc"></div>
+                    <div class="device-type-sp"></div>
+                </div>
+                <div class="seat-info">
+                    <div class="box radius bg-white">
+                        <div class="seat"><strong><%- __('purchase.seat.seats.default') %></strong></div>
+                        <div class="seat active"><strong><%- __('purchase.seat.seats.active') %></strong></div>
+                        <div class="seat disabled"><strong><%- __('purchase.seat.seats.disabled') %></strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <div class="device-type-pc"></div>
-    <div class="device-type-sp"></div>
+    
+    
 </div>
 <style>
     .screen {
         height: 1000px;
         transform-origin: 0 0;
-        transform: scale(0.5);
+        transform: scale(1);
         visibility: visible;
         position: relative;
         overflow: visible;

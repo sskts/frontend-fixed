@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const request = require("request-promise-native");
@@ -56,8 +55,10 @@ function oauthToken() {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('oauthToken:', response.body.access_token);
         return response.body.access_token;
     });
@@ -67,22 +68,28 @@ exports.oauthToken = oauthToken;
  * パフォーマンス一覧取得
  * @memberOf MP
  * @function getPerformances
- * @param {GetPerformancesArgs} args
+ * @param {string} theater 劇場コード
+ * @param {string} day 日付
  * @requires {Promise<Performance[]>}
  */
-function getPerformances(day) {
+function getPerformances(theater, day) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${endPoint}/performances/?day=${day}`,
+            url: `${endPoint}/performances`,
             auth: { bearer: yield oauthToken() },
-            body: {},
+            qs: {
+                theater: theater,
+                day: day
+            },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         // debugLog('performances:', response.body.data);
         return response.body.data;
     });
@@ -106,8 +113,10 @@ function getPerformance(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('performances:', response.body.data);
         return response.body.data;
     });
@@ -133,8 +142,10 @@ function transactionStart(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_201)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_201) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         const transaction = response.body.data;
         debugLog('transaction:', transaction);
         return transaction;
@@ -193,8 +204,10 @@ function addCOAAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('addCOAAuthorization result');
         return response.body.data;
     });
@@ -218,8 +231,10 @@ function removeCOAAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('addCOAAuthorization result');
     });
 }
@@ -260,8 +275,10 @@ function addGMOAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('addGMOAuthorization result:');
         return response.body.data;
     });
@@ -285,8 +302,10 @@ function removeGMOAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('removeGMOAuthorization result:');
     });
 }
@@ -314,8 +333,10 @@ function ownersAnonymous(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('ownersAnonymous result:');
     });
 }
@@ -342,8 +363,10 @@ function transactionsEnableInquiry(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('transactionsEnableInquiry result:');
     });
 }
@@ -366,8 +389,10 @@ function transactionClose(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('close result:');
     });
 }
@@ -395,8 +420,10 @@ function addEmail(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('addEmail result:' + response.body.data);
         return response.body.data;
     });
@@ -420,8 +447,10 @@ function removeEmail(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_204) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('removeEmail result:');
     });
 }
@@ -448,8 +477,10 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200)
-            throw new Error(response.body.message);
+        if (response.statusCode !== STATUS_CODE_200) {
+            const message = (response.body.errors) ? response.body.errors.description : response.body;
+            throw new Error(message);
+        }
         debugLog('makeInquiry result:' + response.body.data);
         return response.body.data.id;
     });

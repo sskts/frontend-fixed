@@ -3,7 +3,6 @@
  * @namespace PerformancesModule
  */
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const MP = require("../../../../libs/MP");
 /**
  * パフォーマンス一覧表示
@@ -29,7 +28,7 @@ exports.index = index;
  * @returns {void}
  */
 function getPerformances(req, res) {
-    MP.getPerformances(req.body.day).then((result) => {
+    MP.getPerformances(req.body.theater, req.body.day).then((result) => {
         res.json({
             error: null,
             result: result

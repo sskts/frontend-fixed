@@ -156,7 +156,10 @@ export async function oauthToken(): Promise<string> {
         timeout: TIMEOUT
     });
 
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
@@ -165,20 +168,27 @@ export async function oauthToken(): Promise<string> {
  * パフォーマンス一覧取得
  * @memberOf MP
  * @function getPerformances
- * @param {GetPerformancesArgs} args
+ * @param {string} theater 劇場コード
+ * @param {string} day 日付
  * @requires {Promise<Performance[]>}
  */
-export async function getPerformances(day: string): Promise<Performance[]> {
+export async function getPerformances(theater: string, day: string): Promise<Performance[]> {
     const response = await request.get({
-        url: `${endPoint}/performances/?day=${day}`,
+        url: `${endPoint}/performances`,
         auth: { bearer: await oauthToken() },
-        body: {},
+        qs: {
+            theater: theater,
+            day: day
+        },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     // debugLog('performances:', response.body.data);
     return response.body.data;
 }
@@ -208,7 +218,10 @@ export async function getPerformance(args: GetPerformanceArgs): Promise<Performa
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('performances:', response.body.data);
     return response.body.data;
 }
@@ -267,7 +280,10 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_201) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_201) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     const transaction = response.body.data;
     debugLog('transaction:', transaction);
 
@@ -365,7 +381,10 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('addCOAAuthorization result');
     return response.body.data;
@@ -398,7 +417,10 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('addCOAAuthorization result');
 }
@@ -459,7 +481,10 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('addGMOAuthorization result:');
     return response.body.data;
@@ -491,7 +516,10 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('removeGMOAuthorization result:');
 
@@ -531,7 +559,10 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('ownersAnonymous result:');
 }
@@ -568,7 +599,10 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
 
     debugLog('transactionsEnableInquiry result:');
 }
@@ -600,7 +634,10 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('close result:');
 }
 
@@ -647,7 +684,10 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('addEmail result:' + response.body.data);
     return response.body.data;
 }
@@ -678,7 +718,10 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_204) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('removeEmail result:');
 }
 
@@ -713,7 +756,10 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) throw new Error(response.body.message);
+    if (response.statusCode !== STATUS_CODE_200) {
+        const message = (response.body.errors) ? response.body.errors.description : response.body;
+        throw new Error(message);
+    }
     debugLog('makeInquiry result:' + response.body.data);
     return response.body.data.id;
 }

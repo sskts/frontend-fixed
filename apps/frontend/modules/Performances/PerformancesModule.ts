@@ -29,7 +29,7 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function getPerformances(req: express.Request, res: express.Response): void {
-    MP.getPerformances(req.body.day).then((result) => {
+    MP.getPerformances(req.body.theater, req.body.day).then((result) => {
         res.json({
             error: null,
             result: result

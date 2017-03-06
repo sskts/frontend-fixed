@@ -11,6 +11,7 @@ $(function () {
  * @returns {void}
  */
 function getPerformance() {
+    var theater = $('.theater select').val();
     var day = $('.date select').val();
     console.log(day)
     $.ajax({
@@ -19,6 +20,7 @@ function getPerformance() {
         type: 'POST',
         timeout: 100000,
         data: {
+            theater: theater,
             day: day
         },
         beforeSend: function () {
@@ -27,7 +29,7 @@ function getPerformance() {
     }).done(function (res) {
         $('.performances').html('');
         if (res.error) {
-
+            console.log(res.error);
         } else {
             console.log(res)
             var performances = res.result;

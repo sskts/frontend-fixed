@@ -82,7 +82,7 @@ $(function () {
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
     });
-    
+
 });
 
 /**
@@ -164,10 +164,10 @@ function getScreenStateReserve(cb) {
 /**
  * スクリーン状態更新
  * @function screenStateChange
- * @param {Object} result
+ * @param {Object} state
  * @returns {void}
  */
-function screenStateChange(result) {
+function screenStateChange(state) {
     var screen = $('.screen');
     //席状態変更
     $('.seat a').addClass('disabled');
@@ -184,9 +184,9 @@ function screenStateChange(result) {
             seat.addClass('active');
         }
     }
-    if (result && result.cnt_reserve_free > 0) {
+    if (state && state.cnt_reserve_free > 0) {
         //空いている座席設定
-        var freeSeats = result.list_seat[0].list_free_seat;
+        var freeSeats = state.list_seat[0].list_free_seat;
         for (var i = 0, len = freeSeats.length; i < len; i++) {
             var freeSeat = freeSeats[i];
             // var seatNum = replaceHalfSize(freeSeat.seat_num);
@@ -199,6 +199,100 @@ function screenStateChange(result) {
     }
 }
 
+/**
+ * スクリーン生成
+ * @function createScreen
+ * @param {Object} setting スクリーン共通設定
+ * @param {Object} map スクリーン固有設定
+ * @returns {void}
+ */
+function createScreen(setting, map) {
+    var screen = $('.screen .screen-scroll');
+
+    //y軸ラベル
+    var labels = [];
+    var startLabelNo = 65;
+    var endLabelNo = 91;
+    for (var i = startLabelNo; i < endLabelNo; i++) {
+        labels.push(String.fromCharCode(i));
+    }
+
+    //ポジション
+    var pos = { x: 0, y: 0 };
+
+    //HTML
+    var objectsHtml = [];
+    var seatNumberHtml = [];
+    var seatLabelHtml = [];
+    var seatHtml = [];
+    var labelCount = 0;
+
+    for (var i = 0; i < map.objects.length; i++) {
+        var object = map.objects[i];
+        objectsHtml.push('<div class="object" style="'+
+            'width: '+ object.w +'px; '+
+            'height: '+ object.h +'px; '+
+            'top: '+ object.y +'px; '+
+            'left: '+ object.x +'px; '+
+            'background-image: url('+ object.image +'); '+
+            'background-size: '+ object.w +'px '+ object.h +'px; '+
+        '"></div>');
+    }
+
+    for (var y = 0; y < map.data.length; y++) {
+        if (y === 0) pos.y = 0;
+        //ポジション設定
+        if (y === 0) {
+            pos.y += map.seatStart.y;
+        } else if (map.data[y].length === 0) {
+            pos.y += setting.aisle.h;
+        } else {
+            labelCount++;
+            pos.y += setting.seatSize.h + setting.seatMargin.h;
+        }
+
+        for (var x = 0; x < map.data[y].length; x++) {
+            if (x === 0) pos.x = map.seatStart.x;
+
+            //座席ラベルHTML生成
+            if (x === 0) {
+                seatLabelHtml.push('<div class="object label-object" style="top:'+ pos.y +'px; left:'+ (pos.x - setting.seatLabelPos) +'px">'+ labels[labelCount] +'</div>');
+            }
+            //座席番号HTML生成
+            if (y === 0) {
+                seatNumberHtml.push('<div class="object label-object" style="top:'+ (pos.y - setting.seatNumberPos) +'px; left:'+ pos.x +'px">'+ (x + 1) +'</div>');
+            }
+            if (map.data[y][x] === 1 || map.data[y][x] === 4 || map.data[y][x] === 5) {
+                //座席HTML生成
+                var code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`; //Ａ－１９
+                var label = `${labels[labelCount]}${x + 1}`;
+                seatHtml.push('<div class="seat seat-normal" style="top:'+ pos.y +'px; left:'+ pos.x +'px">'+
+                    '<a href="#" data-seat-code="'+ code +'"><span>'+ label +'</span></a>'+
+                '</div>');
+            }
+            //ポジション設定
+            if (map.data[y][x] === 2) {
+                pos.x += setting.aisle.w + setting.seatMargin.w;
+            } else if (map.data[y][x] === 3) {
+                pos.x += setting.aisle.w - setting.seatSize.w + setting.seatMargin.w;
+            } else if (map.data[y][x] === 4) {
+                pos.x += setting.aisle.w + setting.seatSize.w + setting.seatMargin.w;
+            } else if (map.data[y][x] === 5) {
+                pos.x += setting.aisle.w - setting.seatSize.w + setting.seatSize.w + setting.seatMargin.w;
+            } else {
+                pos.x += setting.seatSize.w + setting.seatMargin.w;
+            }
+        }
+    }
+    var html = '<div class="screen-inner" style=" width: '+ map.screenSize.w +'px; height: '+ map.screenSize.h +'px;">'+
+        objectsHtml.join('\n') + 
+        seatNumberHtml.join('\n') + 
+        seatLabelHtml.join('\n') + 
+        seatHtml.join('\n') + 
+    '<div>';
+    
+    screen.append(html);
+}
 
 /**
  * スクリーン状態更新
@@ -208,7 +302,8 @@ function screenStateChange(result) {
  */
 function screenStateUpdate(cb) {
     getScreenStateReserve(function (result) {
-        screenStateChange(result);
+        createScreen(result.setting, result.map);
+        screenStateChange(result.state);
         var screen = $('.screen');
         screen.css('visibility', 'visible');
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
@@ -221,7 +316,7 @@ function screenStateUpdate(cb) {
         });
         cb();
     });
-}   
+}
 
 /**
  * バリデーションスクロール
@@ -276,5 +371,12 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
+    });
+}
+
+//半角 => 全角
+function toFullWidth(value) {
+    return value.replace(/./g, function (s) {
+        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
     });
 }

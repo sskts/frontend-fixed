@@ -2,7 +2,7 @@
     width: 1346px; 
     height: 975px;
 ">
-<div class="object" style="
+    <div class="object" style="
     width: 1148px; 
     height: 126px;
     top: 90px; 
@@ -10,7 +10,7 @@
     background-image: url(/images/screen/screen.svg);
     background-size: 1148px 126px;
 "></div>
-<div class="object" style="
+    <div class="object" style="
     width: 126px; 
     height: 490px;
     top: 312px; 
@@ -18,132 +18,22 @@
     background-image: url(/images/screen/theater_ent.svg);
     background-size: 126px 490px;
 "></div>
-    <% 
-    
-//座席の大きさ
-const seat = {
-    w: 40, h: 50
-};
-//座席の数(ベース)
-const base = {
-    x: 13, y: 9
-}
-//座席同士の間隔
-const margin = {
-    w: 2, h: 20
-};
+<%
 //基準の座席位置
-const start = {
-    x: 377, y: 275
-};
-//y軸ラベル
-const labels = [];
-const startLabelNo = 65;
-const endLabelNo = 91;
-for (let i = startLabelNo; i < endLabelNo; i++) {
-    labels.push(String.fromCharCode(i));
-}
-
-//座席ラベル位置
-const seatLabelPos = 50;
-//座席番号位置
-const seatNumberPos = 50;
-
-//座席HTML
-const seatHtml = [];
-//座席ラベルHTML
-const seatLabelHtml = [];
-//座席番号HTML
-const seatNumberHtml = [];
-
-//通路
-const aisle = {
-    x: 0,
-    y: 0
-};
-
-//通路
-const aisleMargin = {
-    w: 50,
-    h: 58
-};
-
-//半角 => 全角
-function toFullWidth(value) {
-    return value.replace(/./g, (s) => {
-        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
-    });
-}
-
-//ベースにない座席削除
-const removeList = {
-    A: [1, 2, 7, 8, 9, 10, 11, 12, 13],
-    B: [11, 12, 13],
-    C: [11, 12, 13],
-    D: [11, 12, 13],
-    E: [11, 12, 13],
-    F: [11, 12, 13],
-    G: [11, 12, 13],
-    H: [4, 5, 6, 7],
-    I: [5, 6, 7, 8],
-}
-
-for (let y = 0; y < base.y; y++) {
-    //y軸通路設定
-
-    for (let x = 0; x < base.x; x++) {
-        //x軸通路設定
-        if (x === 0) {
-            aisle.x = 0;
-        } else if (x === 2) {
-            aisle.x += aisleMargin.w;
-        }
-
-         //例外
-        if (labels[y] === 'I') {
-            //x軸通路設定
-            if (x === 2) {
-                aisle.x -= aisleMargin.w;
-            } else if (x === 4) {
-                aisle.x += aisleMargin.w;
-            } 
-        }
-        //ポジション
-        const top = (seat.h + margin.h) * y + aisle.y + start.y;
-        const left = (seat.w + margin.w) * x + aisle.x + start.x;
-        
-        //座席ラベルHTML生成
-        if (x === 0) {
-            seatLabelHtml.push(`
-                <div class="object label-object" style="top:${top}px; left:${left - seatLabelPos}px">${labels[y]}</div>
-            `);
-        }
-        //座席番号HTML生成
-        if (y === 0) {
-            seatNumberHtml.push(`
-                <div class="object label-object" style="top:${top - seatNumberPos}px; left:${left}px">${x + 1}</div>
-            `);
-        }
-        //非表示座席判定
-        if (removeList[labels[y]] && removeList[labels[y]].indexOf(x + 1) !== -1) continue;
-        //座席HTML生成
-        const code = `${toFullWidth(labels[y])}－${toFullWidth(String(x + 1))}`; //Ａ－１９
-        const label = `${labels[y]}${x + 1}`;
-        seatHtml.push(`
-            <div class="seat seat-normal" style="top:${top}px; left:${left}px">
-                <a href="#" data-seat-code="${code}"><span>${label}</span></a>
-            </div>
-        `);
-    }
-}
-    %>
-    <% for (let html of seatNumberHtml) { %>
-    <%- html %>
-    <% } %>
-    <% for (let html of seatLabelHtml) { %>
-    <%- html %>
-    <% } %>
-    <% for (let html of seatHtml) { %>
-    <%- html %>
-    <% } %>
+const start = { x: 377, y: 275 };
+//座席データ(座席なし: 0, 座席あり: 1, 通路大: 2, 右通路小: 3, 座席あり+右通路大: 4, 座席あり+右通路小: 5)
+const data = [
+    [0, 0, 2, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [],
+    [1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 5, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+]; 
+%>
+<%- partial('../screen', {data: data, start: start}) %>
 </div>

@@ -1,0 +1,14 @@
+{
+    "description": {
+        "seatSize": "座席の大きさ",
+        "seatMargin": "座席同士の間隔",
+        "aisle": "通路大きさ",
+        "seatLabelPos": "座席ラベル位置",
+        "seatNumberPos": "座席番号位置"
+    },
+    "seatSize": { "w": 40, "h": 50 },
+    "seatMargin": { "w": 2, "h": 20 },
+    "aisle": { "w": 48, "h": 50 },
+    "seatLabelPos": 50,
+    "seatNumberPos": 50
+}
