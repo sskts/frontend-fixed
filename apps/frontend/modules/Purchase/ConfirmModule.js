@@ -313,19 +313,44 @@ TEL：XX-XXXX-XXXX`;
  * @param {express.NextFunction} next
  * @returns {void}
  */
-function purchase(req, res, next) {
-    if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+// tslint:disable-next-line:variable-name
+function purchase(req, res, _next) {
+    if (!req.session) {
+        return res.json({
+            err: {
+                message: req.__('common.error.property'),
+                type: null
+            },
+            redirect: false,
+            result: null
+        });
+    }
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.transactionMP) {
+        return res.json({
+            err: {
+                message: req.__('common.error.property'),
+                type: null
+            },
+            redirect: false,
+            result: null
+        });
+    }
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-        return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return res.json({
+            err: {
+                message: req.__('common.error.access'),
+                type: null
+            },
+            redirect: false,
+            result: null
+        });
+    }
     updateReserve(req, purchaseModel).then(() => {
         //購入情報をセッションへ
         if (!req.session)
-            throw req.__('common.error.property');
+            throw new Error(req.__('common.error.property'));
         req.session.complete = {
             updateReserve: purchaseModel.updateReserve,
             performance: purchaseModel.performance,
