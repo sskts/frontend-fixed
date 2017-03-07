@@ -17,29 +17,47 @@ const debugLog = debug('SSKTS: ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {void | express.Response}
  */
-export function start(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+// tslint:disable-next-line:variable-name
+export function start(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
+    if (!req.session || !req.body.id) {
+        return res.json({
+            redirect: null,
+            err: req.__('common.error.property')
+        });
+    }
     const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
     if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
-
         //重複確認へ
-        return res.redirect('/purchase/' + req.params.id + '/overlap');
+        return res.json({
+            redirect: '/purchase/' + req.body.id + '/overlap',
+            err: null
+        });
     }
 
     transactionStart(purchaseModel).then(() => {
-        if (!req.session) return next(new Error(req.__('common.error.property')));
+        if (!req.session) {
+            return res.json({
+                redirect: null,
+                err: req.__('common.error.property')
+            });
+        }
         delete (<any>req.session).purchase;
         delete (<any>req.session).mvtk;
         delete (<any>req.session).complete;
         //セッション更新
         (<any>req.session).purchase = purchaseModel.toSession();
         //座席選択へ
-        return res.redirect('/purchase/seat/' + req.params.id + '/');
+        return res.json({
+            redirect: '/purchase/seat/' + req.body.id + '/',
+            err: null
+        });
     }).catch((err) => {
-        return next(new Error(err.message));
+        return res.json({
+            redirect: null,
+            err: err.message
+        });
     });
 }
 

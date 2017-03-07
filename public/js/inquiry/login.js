@@ -8,16 +8,8 @@ $(function () {
  * @returns {void}
  */
 function toInquiry() {
-    var params = location.search.replace('?', '').split('&');
-    var transactionId = null;
-    for (var i = 0; i < params.length; i++) {
-        var param = params[i].split('=');
-        var key = param[0];
-        var value = param[1];
-        if (key && value && key === 'transaction_id') {
-            transactionId = value;
-        }
-    }
+    var transactionId = getParameter()['transaction_id'];
+    
     //取引IDなければ終了
     if (!transactionId) return;
     var data = localStorage.getItem('inquiryInfo');

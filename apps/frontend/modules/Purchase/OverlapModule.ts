@@ -55,7 +55,7 @@ export function newReserve(req: express.Request, res: express.Response, next: ex
         if (!req.session) return next(new Error(req.__('common.error.property')));
         //購入スタートへ
         delete (<any>req.session).purchase;
-        return res.redirect('/purchase/' + req.body.performance_id + '/transaction');
+        return res.redirect(`/purchase?id=${req.body.performance_id}`);
 
     }).catch((err) => {
         return next(new Error(err.message));

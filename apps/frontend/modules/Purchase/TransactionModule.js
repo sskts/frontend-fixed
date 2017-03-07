@@ -23,30 +23,46 @@ const debugLog = debug('SSKTS: ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {void | express.Response}
  */
-function start(req, res, next) {
-    if (!req.params || !req.params.id)
-        return next(new Error(req.__('common.error.access')));
-    if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+// tslint:disable-next-line:variable-name
+function start(req, res, _next) {
+    if (!req.session || !req.body.id) {
+        return res.json({
+            redirect: null,
+            err: req.__('common.error.property')
+        });
+    }
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
         //重複確認へ
-        return res.redirect('/purchase/' + req.params.id + '/overlap');
+        return res.json({
+            redirect: '/purchase/' + req.body.id + '/overlap',
+            err: null
+        });
     }
     transactionStart(purchaseModel).then(() => {
-        if (!req.session)
-            return next(new Error(req.__('common.error.property')));
+        if (!req.session) {
+            return res.json({
+                redirect: null,
+                err: req.__('common.error.property')
+            });
+        }
         delete req.session.purchase;
         delete req.session.mvtk;
         delete req.session.complete;
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
-        return res.redirect('/purchase/seat/' + req.params.id + '/');
+        return res.json({
+            redirect: '/purchase/seat/' + req.body.id + '/',
+            err: null
+        });
     }).catch((err) => {
-        return next(new Error(err.message));
+        return res.json({
+            redirect: null,
+            err: err.message
+        });
     });
 }
 exports.start = start;

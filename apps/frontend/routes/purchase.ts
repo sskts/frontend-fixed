@@ -16,7 +16,7 @@ import * as TransactionModule from '../modules/Purchase/TransactionModule';
 const router = express.Router();
 
 //購入(取引開始)
-router.get('/:id/transaction', TransactionModule.start);
+router.post('/transaction', TransactionModule.start);
 
 //仮予約重複
 router.get('/:id/overlap', OverlapModule.index);
