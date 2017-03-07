@@ -2074,6 +2074,15 @@ p a {
   display: none;
 }
 
+.screen .seat-hc a {
+  background-image: url(/images/screen/seat_hc.svg);
+  background-size: 120px 50px;
+}
+
+.screen .seat-hc a span {
+  display: none !important;
+}
+
 .screen .object {
   position: absolute;
   background-repeat: no-repeat;

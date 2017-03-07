@@ -37,6 +37,15 @@
             }
         }
     }
+    .seat-hc {
+        a {
+            background-image: url(/images/screen/seat_hc.svg);
+            background-size: 120px 50px;
+            span {
+                display: none !important;
+            }
+        }
+    }
     .object {
         position: absolute;
         background-repeat: no-repeat;

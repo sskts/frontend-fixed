@@ -234,14 +234,14 @@ function createScreen(setting, screen) {
 
     for (var i = 0; i < screen.objects.length; i++) {
         var object = screen.objects[i];
-        objectsHtml.push('<div class="object" style="'+
-            'width: '+ object.w +'px; '+
-            'height: '+ object.h +'px; '+
-            'top: '+ object.y +'px; '+
-            'left: '+ object.x +'px; '+
-            'background-image: url('+ object.image +'); '+
-            'background-size: '+ object.w +'px '+ object.h +'px; '+
-        '"></div>');
+        objectsHtml.push('<div class="object" style="' +
+            'width: ' + object.w + 'px; ' +
+            'height: ' + object.h + 'px; ' +
+            'top: ' + object.y + 'px; ' +
+            'left: ' + object.x + 'px; ' +
+            'background-image: url(' + object.image + '); ' +
+            'background-size: ' + object.w + 'px ' + object.h + 'px; ' +
+            '"></div>');
     }
 
     for (var y = 0; y < screen.map.length; y++) {
@@ -261,20 +261,26 @@ function createScreen(setting, screen) {
 
             //座席ラベルHTML生成
             if (x === 0) {
-                seatLabelHtml.push('<div class="object label-object" style="top:'+ pos.y +'px; left:'+ (pos.x - setting.seatLabelPos) +'px">'+ labels[labelCount] +'</div>');
+                seatLabelHtml.push('<div class="object label-object" style="top:' + pos.y + 'px; left:' + (pos.x - setting.seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
             //座席番号HTML生成
             if (y === 0) {
-                seatNumberHtml.push('<div class="object label-object" style="top:'+ (pos.y - setting.seatNumberPos) +'px; left:'+ pos.x +'px">'+ (x + 1) +'</div>');
+                seatNumberHtml.push('<div class="object label-object" style="top:' + (pos.y - setting.seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
             if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
                 //座席HTML生成
-                var code = toFullWidth(labels[labelCount])+ '－' + toFullWidth(String(x + 1)); //Ａ－１９
+                var code = toFullWidth(labels[labelCount]) + '－' + toFullWidth(String(x + 1)); //Ａ－１９
                 var label = labels[labelCount] + String(x + 1);
-                
-                seatHtml.push('<div class="seat seat-normal" style="top:'+ pos.y +'px; left:'+ pos.x +'px">'+
-                    '<a href="#" data-seat-code="'+ code +'"><span>'+ label +'</span></a>'+
-                '</div>');
+                if (screen.hc.indexOf(label) !== -1) {
+                    seatHtml.push('<div class="seat seat-hc" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
+                        '<a href="#" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '</div>');
+                } else {
+                    seatHtml.push('<div class="seat" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
+                        '<a href="#" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '</div>');
+                }
+
             }
             //ポジション設定
             if (screen.map[y][x] === 2) {
@@ -290,12 +296,25 @@ function createScreen(setting, screen) {
             }
         }
     }
-    var html = '<div class="screen-inner" style=" width: '+ screen.screenSize.w +'px; height: '+ screen.screenSize.h +'px;">'+
-        objectsHtml.join('\n') + 
-        seatNumberHtml.join('\n') + 
-        seatLabelHtml.join('\n') + 
-        seatHtml.join('\n') + 
-    '<div>';
+    //スクリーンタイプ
+    var type = '';
+    switch (screen.type) {
+        case 1:
+            type = 'screen-imax';
+            break;
+        case 2:
+            type = 'screen-4dx';
+            break;
+        default:
+            type = '';
+            break;
+    }
+    var html = '<div class="screen-inner ' + type + '" style=" width: ' + screen.size.w + 'px; height: ' + screen.size.h + 'px;">' +
+        objectsHtml.join('\n') +
+        seatNumberHtml.join('\n') +
+        seatLabelHtml.join('\n') +
+        seatHtml.join('\n') +
+        '<div>';
 
     var screenDom = $('.screen .screen-scroll');
     screenDom.append(html);
