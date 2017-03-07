@@ -15,12 +15,12 @@
         {
             "w": 1148, "h": 126,
             "x": 100, "y": 90,
-            "image": "/images/screen/screen.svg"
+            "image": "/images/screen/screen/001.svg"
         },
         {
             "w": 126, "h": 490,
             "x": 1186, "y": 312,
-            "image": "/images/screen/theater_ent.svg"
+            "image": "/images/screen/entrance/001.svg"
         }
     ],
     "seatStart": { "x": 80, "y": 312 },

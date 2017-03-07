@@ -1573,7 +1573,7 @@ p a {
   height: 20px;
   content: '';
   display: block;
-  background-image: url(/images/screen/seat.svg);
+  background-image: url(/images/screen/seat/normal.svg);
   background-size: 48px 20px;
   position: absolute;
   top: 50%;
@@ -2054,7 +2054,7 @@ p a {
   display: block;
   color: #9a9a9b;
   padding-top: 20px;
-  background-image: url(/images/screen/seat.svg);
+  background-image: url(/images/screen/seat/normal.svg);
   background-size: 120px 50px;
   background-repeat: no-repeat;
 }
@@ -2075,7 +2075,7 @@ p a {
 }
 
 .screen .seat-hc a {
-  background-image: url(/images/screen/seat_hc.svg);
+  background-image: url(/images/screen/seat/hc.svg);
   background-size: 120px 50px;
 }
 
