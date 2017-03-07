@@ -213,7 +213,7 @@ export function getScreenStateReserve(req: express.Request, res: express.Respons
             result: result
         });
     }).catch((err) => {
-        console.log(err)
+        debugLog(err);
         res.json({
             err: err,
             result: null
@@ -235,11 +235,11 @@ async function getScreenData(req: express.Request): Promise<ScreenData> {
     const screenCode: string = (Number(req.body.screen_code) < num)
         ? `0${req.body.screen_code}`
         : req.body.screen_code;
-    const map = await fs.readJSONAsync(`./apps/frontend/screens/${req.body.theater_code}/${screenCode}.json`);
+    const screen = await fs.readJSONAsync(`./apps/frontend/screens/${req.body.theater_code}/${screenCode}.json`);
     const setting = await fs.readJSONAsync('./apps/frontend/screens/setting.json');
     const state = await COA.ReserveService.stateReserveSeat(req.body);
     return {
-        map: map,
+        screen: screen,
         setting: setting,
         state: state
     };
@@ -249,7 +249,7 @@ async function getScreenData(req: express.Request): Promise<ScreenData> {
  * スクリーン情報
  */
 interface ScreenData {
-    map: any;
+    screen: any;
     setting: any;
     state: COA.ReserveService.StateReserveSeatResult;
 }

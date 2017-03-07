@@ -203,11 +203,16 @@ function screenStateChange(state) {
  * スクリーン生成
  * @function createScreen
  * @param {Object} setting スクリーン共通設定
- * @param {Object} map スクリーン固有設定
+ * @param {Object} screen スクリーン固有設定
  * @returns {void}
  */
-function createScreen(setting, map) {
-    var screen = $('.screen .screen-scroll');
+function createScreen(setting, screen) {
+    //通路大きさ
+    var aisle = (screen.aisle) ? screen.aisle : setting.aisle;
+    //座席同士の間隔
+    var seatMargin = (screen.seatMargin) ? screen.seatMargin : setting.seatMargin;
+    //座席の大きさ
+    var seatSize = (screen.seatSize) ? screen.seatSize : setting.seatSize;
 
     //y軸ラベル
     var labels = [];
@@ -227,8 +232,8 @@ function createScreen(setting, map) {
     var seatHtml = [];
     var labelCount = 0;
 
-    for (var i = 0; i < map.objects.length; i++) {
-        var object = map.objects[i];
+    for (var i = 0; i < screen.objects.length; i++) {
+        var object = screen.objects[i];
         objectsHtml.push('<div class="object" style="'+
             'width: '+ object.w +'px; '+
             'height: '+ object.h +'px; '+
@@ -239,20 +244,20 @@ function createScreen(setting, map) {
         '"></div>');
     }
 
-    for (var y = 0; y < map.data.length; y++) {
+    for (var y = 0; y < screen.map.length; y++) {
         if (y === 0) pos.y = 0;
         //ポジション設定
         if (y === 0) {
-            pos.y += map.seatStart.y;
-        } else if (map.data[y].length === 0) {
-            pos.y += setting.aisle.h;
+            pos.y += screen.seatStart.y;
+        } else if (screen.map[y].length === 0) {
+            pos.y += aisle.h;
         } else {
             labelCount++;
-            pos.y += setting.seatSize.h + setting.seatMargin.h;
+            pos.y += seatSize.h + seatMargin.h;
         }
 
-        for (var x = 0; x < map.data[y].length; x++) {
-            if (x === 0) pos.x = map.seatStart.x;
+        for (var x = 0; x < screen.map[y].length; x++) {
+            if (x === 0) pos.x = screen.seatStart.x;
 
             //座席ラベルHTML生成
             if (x === 0) {
@@ -262,7 +267,7 @@ function createScreen(setting, map) {
             if (y === 0) {
                 seatNumberHtml.push('<div class="object label-object" style="top:'+ (pos.y - setting.seatNumberPos) +'px; left:'+ pos.x +'px">'+ (x + 1) +'</div>');
             }
-            if (map.data[y][x] === 1 || map.data[y][x] === 4 || map.data[y][x] === 5) {
+            if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
                 //座席HTML生成
                 var code = toFullWidth(labels[labelCount])+ '－' + toFullWidth(String(x + 1)); //Ａ－１９
                 var label = labels[labelCount] + String(x + 1);
@@ -272,27 +277,28 @@ function createScreen(setting, map) {
                 '</div>');
             }
             //ポジション設定
-            if (map.data[y][x] === 2) {
-                pos.x += setting.aisle.w + setting.seatMargin.w;
-            } else if (map.data[y][x] === 3) {
-                pos.x += setting.aisle.w - setting.seatSize.w + setting.seatMargin.w;
-            } else if (map.data[y][x] === 4) {
-                pos.x += setting.aisle.w + setting.seatSize.w + setting.seatMargin.w;
-            } else if (map.data[y][x] === 5) {
-                pos.x += setting.aisle.w - setting.seatSize.w + setting.seatSize.w + setting.seatMargin.w;
+            if (screen.map[y][x] === 2) {
+                pos.x += aisle.w + seatMargin.w;
+            } else if (screen.map[y][x] === 3) {
+                pos.x += aisle.w - seatSize.w + seatMargin.w;
+            } else if (screen.map[y][x] === 4) {
+                pos.x += aisle.w + seatSize.w + seatMargin.w;
+            } else if (screen.map[y][x] === 5) {
+                pos.x += aisle.w - seatSize.w + seatSize.w + seatMargin.w;
             } else {
-                pos.x += setting.seatSize.w + setting.seatMargin.w;
+                pos.x += seatSize.w + seatMargin.w;
             }
         }
     }
-    var html = '<div class="screen-inner" style=" width: '+ map.screenSize.w +'px; height: '+ map.screenSize.h +'px;">'+
+    var html = '<div class="screen-inner" style=" width: '+ screen.screenSize.w +'px; height: '+ screen.screenSize.h +'px;">'+
         objectsHtml.join('\n') + 
         seatNumberHtml.join('\n') + 
         seatLabelHtml.join('\n') + 
         seatHtml.join('\n') + 
     '<div>';
-    
-    screen.append(html);
+
+    var screenDom = $('.screen .screen-scroll');
+    screenDom.append(html);
 }
 
 /**
@@ -303,8 +309,9 @@ function createScreen(setting, map) {
  */
 function screenStateUpdate(cb) {
     getScreenStateReserve(function (result) {
-        createScreen(result.setting, result.map);
+        createScreen(result.setting, result.screen);
         screenStateChange(result.state);
+        console.log(result.state)
         var screen = $('.screen');
         screen.css('visibility', 'visible');
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
