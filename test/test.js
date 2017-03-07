@@ -10,10 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /**
  * UIテスト
  */
+const debug = require("debug");
 const webdriver = require("selenium-webdriver");
+const debugLog = debug('SSKTS: ');
 const width = 1920;
 const height = 1080;
-// Input capabilities
 const capabilities = {
     'browserstack.user': 'tetsuyamazaki2',
     'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
@@ -25,20 +26,20 @@ const capabilities = {
     'browserstack.debug': true
 };
 //設定
-console.log(`-------------------
+debugLog(`-------------------
 ブラウザ: ${capabilities.browserName} ${capabilities.browser_version}
 OS: ${capabilities.os} ${capabilities.os_version}
 画面: ${capabilities.resolution}
 -------------------`);
 test().then(() => {
-    console.log('DONE');
+    debugLog('DONE');
 }).catch((err) => {
-    console.log(err);
+    debugLog(err);
 });
 //test
 function test() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('テスト開始-----------------------------------');
+        debugLog('テスト開始-----------------------------------');
         const driver = new webdriver.Builder()
             .usingServer('http://hub-cloud.browserstack.com/wd/hub')
             .withCapabilities(capabilities)
@@ -58,7 +59,7 @@ function test() {
         yield input(driver);
         yield confirm(driver);
         driver.quit();
-        console.log('テスト終了-----------------------------------');
+        debugLog('テスト終了-----------------------------------');
     });
 }
 /**
@@ -67,15 +68,15 @@ function test() {
 function performanceSelect(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElements(webdriver.By.css('.performances li'));
-        console.log('パフォーマンス一覧');
+        debugLog('パフォーマンス一覧');
         const lists = yield driver.findElements(webdriver.By.css('.performances li'));
         const num = Math.floor(Math.random() * lists.length);
-        console.log('パフォーマンス' + num);
+        debugLog('パフォーマンス' + num);
         const performances = yield driver.findElements(webdriver.By.css('.performances li'));
         yield performances[num]
             .findElement(webdriver.By.css('.blue-button a'))
             .click();
-        console.log('次へクリック');
+        debugLog('次へクリック');
     });
 }
 /**
@@ -84,24 +85,24 @@ function performanceSelect(driver) {
 function seat(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-seat'));
-        console.log('座席選択');
+        debugLog('座席選択');
         const defaultSeats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
         const maxCount = 5;
         const count = (defaultSeats.length > maxCount)
             ? Math.floor(Math.random() * (maxCount - 1) + 1)
             : Math.floor(Math.random() * defaultSeats.length);
-        console.log(`座席選択数: ${count}`);
+        debugLog(`座席選択数: ${count}`);
         for (let i = 0; i < count; i++) {
             const seats = yield driver.findElements(webdriver.By.css('.screen .seat .default'));
             const num = Math.floor(Math.random() * seats.length);
-            console.log(`座席: ${num}`);
+            debugLog(`座席: ${num}`);
             yield seats[num].click();
         }
         yield driver.findElement(webdriver.By.css('label[for=agree]')).click();
         yield driver
             .findElement(webdriver.By.css('.button-area .next-button button'))
             .click();
-        console.log('次へクリック');
+        debugLog('次へクリック');
     });
 }
 /**
@@ -110,14 +111,14 @@ function seat(driver) {
 function ticket(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-ticket'));
-        console.log('券種選択');
+        debugLog('券種選択');
         const seats = yield driver.findElements(webdriver.By.css('.seats li'));
-        console.log(`座席数: ${seats.length}`);
+        debugLog(`座席数: ${seats.length}`);
         for (const seat of seats) {
             yield seat.findElement(webdriver.By.tagName('a')).click();
             const tickets = yield driver.findElements(webdriver.By.css('.modal .blue-button'));
             const num = Math.floor(Math.random() * tickets.length);
-            console.log(`券種: ${num}`);
+            debugLog(`券種: ${num}`);
             yield tickets[num]
                 .findElement(webdriver.By.tagName('a'))
                 .click();
@@ -125,7 +126,7 @@ function ticket(driver) {
         yield driver
             .findElement(webdriver.By.css('.button-area .next-button button'))
             .click();
-        console.log('次へクリック');
+        debugLog('次へクリック');
     });
 }
 /**
@@ -134,13 +135,13 @@ function ticket(driver) {
 function input(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.className('purchase-input'));
-        console.log('購入者情報入力');
+        debugLog('購入者情報入力');
         yield driver.findElement(webdriver.By.name('last_name_hira')).clear();
         yield driver.findElement(webdriver.By.name('first_name_hira')).clear();
         yield driver.findElement(webdriver.By.name('mail_addr')).clear();
         yield driver.findElement(webdriver.By.name('mail_confirm')).clear();
         yield driver.findElement(webdriver.By.name('tel_num')).clear();
-        console.log('入力削除');
+        debugLog('入力削除');
         yield driver.findElement(webdriver.By.name('last_name_hira')).sendKeys('もーしょん');
         yield driver.findElement(webdriver.By.name('first_name_hira')).sendKeys('ぴくちゃー');
         yield driver.findElement(webdriver.By.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
@@ -150,11 +151,11 @@ function input(driver) {
         yield driver.findElement(webdriver.By.name('credit_year')).sendKeys('2017');
         yield driver.findElement(webdriver.By.name('credit_month')).sendKeys('10');
         yield driver.findElement(webdriver.By.name('securitycode')).sendKeys('123');
-        console.log('入力完了');
+        debugLog('入力完了');
         yield driver
             .findElement(webdriver.By.css('.button-area .next-button button'))
             .click();
-        console.log('次へクリック');
+        debugLog('次へクリック');
     });
 }
 /**
@@ -163,14 +164,14 @@ function input(driver) {
 function confirm(driver) {
     return __awaiter(this, void 0, void 0, function* () {
         yield driver.findElement(webdriver.By.css('.purchase-confirm'));
-        console.log('購入者内容確認');
+        debugLog('購入者内容確認');
         yield driver.findElement(webdriver.By.css('label[for=notes]')).click();
         yield driver
             .findElement(webdriver.By.css('.purchase-confirm .button-area .next-button button'))
             .click();
-        console.log('次へクリック');
+        debugLog('次へクリック');
         yield driver.findElement(webdriver.By.css('.purchase-complete'));
-        console.log('購入完了');
+        debugLog('購入完了');
         const sleepTime = 5000;
         yield driver.sleep(sleepTime);
     });

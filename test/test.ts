@@ -1,10 +1,12 @@
 /**
  * UIテスト
  */
+import * as debug from 'debug';
 import * as webdriver from 'selenium-webdriver';
+
+const debugLog = debug('SSKTS: ');
 const width = 1920;
 const height = 1080;
-// Input capabilities
 const capabilities = {
     'browserstack.user': 'tetsuyamazaki2',
     'browserstack.key': 'mguKp7EvNcdzPiyJi7yp',
@@ -17,21 +19,21 @@ const capabilities = {
 };
 
 //設定
-console.log(`-------------------
+debugLog(`-------------------
 ブラウザ: ${capabilities.browserName} ${capabilities.browser_version}
 OS: ${capabilities.os} ${capabilities.os_version}
 画面: ${capabilities.resolution}
 -------------------`);
 
 test().then(() => {
-    console.log('DONE');
+    debugLog('DONE');
 }).catch((err) => {
-    console.log(err);
+    debugLog(err);
 });
 
 //test
 async function test(): Promise<void> {
-    console.log('テスト開始-----------------------------------');
+    debugLog('テスト開始-----------------------------------');
     const driver = new webdriver.Builder()
         .usingServer('http://hub-cloud.browserstack.com/wd/hub')
         .withCapabilities(capabilities)
@@ -53,7 +55,7 @@ async function test(): Promise<void> {
     await input(driver);
     await confirm(driver);
     driver.quit();
-    console.log('テスト終了-----------------------------------');
+    debugLog('テスト終了-----------------------------------');
 }
 
 /**
@@ -61,15 +63,15 @@ async function test(): Promise<void> {
  */
 async function performanceSelect(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElements(webdriver.By.css('.performances li'));
-    console.log('パフォーマンス一覧');
+    debugLog('パフォーマンス一覧');
     const lists = await driver.findElements(webdriver.By.css('.performances li'));
     const num = Math.floor(Math.random() * lists.length);
-    console.log('パフォーマンス' + num);
+    debugLog('パフォーマンス' + num);
     const performances = await driver.findElements(webdriver.By.css('.performances li'));
     await performances[num]
         .findElement(webdriver.By.css('.blue-button a'))
         .click();
-    console.log('次へクリック');
+    debugLog('次へクリック');
 }
 
 /**
@@ -77,24 +79,24 @@ async function performanceSelect(driver: webdriver.WebDriver): Promise<void> {
  */
 async function seat(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.css('.purchase-seat'));
-    console.log('座席選択');
+    debugLog('座席選択');
     const defaultSeats = await driver.findElements(webdriver.By.css('.screen .seat .default'));
     const maxCount = 5;
     const count = (defaultSeats.length > maxCount)
         ? Math.floor(Math.random() * (maxCount - 1) + 1)
         : Math.floor(Math.random() * defaultSeats.length);
-    console.log(`座席選択数: ${count}`);
+    debugLog(`座席選択数: ${count}`);
     for (let i = 0; i < count; i++) {
         const seats = await driver.findElements(webdriver.By.css('.screen .seat .default'));
         const num = Math.floor(Math.random() * seats.length);
-        console.log(`座席: ${num}`);
+        debugLog(`座席: ${num}`);
         await seats[num].click();
     }
     await driver.findElement(webdriver.By.css('label[for=agree]')).click();
     await driver
         .findElement(webdriver.By.css('.button-area .next-button button'))
         .click();
-    console.log('次へクリック');
+    debugLog('次へクリック');
 }
 
 /**
@@ -102,14 +104,14 @@ async function seat(driver: webdriver.WebDriver): Promise<void> {
  */
 async function ticket(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.className('purchase-ticket'));
-    console.log('券種選択');
+    debugLog('券種選択');
     const seats = await driver.findElements(webdriver.By.css('.seats li'));
-    console.log(`座席数: ${seats.length}`);
+    debugLog(`座席数: ${seats.length}`);
     for (const seat of seats) {
         await seat.findElement(webdriver.By.tagName('a')).click();
         const tickets = await driver.findElements(webdriver.By.css('.modal .blue-button'));
         const num = Math.floor(Math.random() * tickets.length);
-        console.log(`券種: ${num}`);
+        debugLog(`券種: ${num}`);
         await tickets[num]
             .findElement(webdriver.By.tagName('a'))
             .click();
@@ -118,7 +120,7 @@ async function ticket(driver: webdriver.WebDriver): Promise<void> {
     await driver
         .findElement(webdriver.By.css('.button-area .next-button button'))
         .click();
-    console.log('次へクリック');
+    debugLog('次へクリック');
 }
 
 /**
@@ -126,14 +128,14 @@ async function ticket(driver: webdriver.WebDriver): Promise<void> {
  */
 async function input(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.className('purchase-input'));
-    console.log('購入者情報入力');
+    debugLog('購入者情報入力');
     await driver.findElement(webdriver.By.name('last_name_hira')).clear();
     await driver.findElement(webdriver.By.name('first_name_hira')).clear();
     await driver.findElement(webdriver.By.name('mail_addr')).clear();
     await driver.findElement(webdriver.By.name('mail_confirm')).clear();
     await driver.findElement(webdriver.By.name('tel_num')).clear();
 
-    console.log('入力削除');
+    debugLog('入力削除');
     await driver.findElement(webdriver.By.name('last_name_hira')).sendKeys('もーしょん');
     await driver.findElement(webdriver.By.name('first_name_hira')).sendKeys('ぴくちゃー');
     await driver.findElement(webdriver.By.name('mail_addr')).sendKeys('hataguchi@motionpicture.jp');
@@ -143,11 +145,11 @@ async function input(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.name('credit_year')).sendKeys('2017');
     await driver.findElement(webdriver.By.name('credit_month')).sendKeys('10');
     await driver.findElement(webdriver.By.name('securitycode')).sendKeys('123');
-    console.log('入力完了');
+    debugLog('入力完了');
     await driver
         .findElement(webdriver.By.css('.button-area .next-button button'))
         .click();
-    console.log('次へクリック');
+    debugLog('次へクリック');
 }
 
 /**
@@ -155,14 +157,14 @@ async function input(driver: webdriver.WebDriver): Promise<void> {
  */
 async function confirm(driver: webdriver.WebDriver): Promise<void> {
     await driver.findElement(webdriver.By.css('.purchase-confirm'));
-    console.log('購入者内容確認');
+    debugLog('購入者内容確認');
     await driver.findElement(webdriver.By.css('label[for=notes]')).click();
     await driver
         .findElement(webdriver.By.css('.purchase-confirm .button-area .next-button button'))
         .click();
-    console.log('次へクリック');
+    debugLog('次へクリック');
     await driver.findElement(webdriver.By.css('.purchase-complete'));
-    console.log('購入完了');
+    debugLog('購入完了');
     const sleepTime = 5000;
     await driver.sleep(sleepTime);
 }
