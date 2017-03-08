@@ -17,7 +17,7 @@ const MP = require("../../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
 const UtilModule = require("../Util/UtilModule");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 照会認証ページ表示
  * @memberOf InquiryModule

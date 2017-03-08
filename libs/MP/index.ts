@@ -6,25 +6,12 @@
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
+import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
-const debugLog = debug('SSKTS: ');
+
+const debugLog = debug('SSKTS ');
 const endPoint = process.env.MP_ENDPOINT;
 
-/**
- * ステータスコード200
- * @const STATUS_CODE_200
- */
-const STATUS_CODE_200 = 200;
-/**
- * ステータスコード201
- * @const STATUS_CODE_201
- */
-const STATUS_CODE_201 = 201;
-/**
- * ステータスコード204
- * @const STATUS_CODE_204
- */
-const STATUS_CODE_204 = 204;
 /**
  * 時間切れ
  * @const TIMEOUT
@@ -138,6 +125,26 @@ export interface Performance {
 }
 
 /**
+ * エラー
+ * @function getErrorMessage
+ * @param {any} response
+ * @requires {string}
+ */
+function getErrorMessage(response: any): string {
+    let message: string = '';
+    if (response.body.errors && Array.isArray(response.body.errors)) {
+        for (const error of response.body.errors) {
+            if (error.description) {
+                message = error.description;
+                break;
+            }
+        }
+        debugLog('errors--------------', response.body.errors)
+    }
+    return message;
+}
+
+/**
  * アクセストークン取得
  * @memberOf MP
  * @function oauthToken
@@ -156,10 +163,7 @@ export async function oauthToken(): Promise<string> {
         timeout: TIMEOUT
     });
 
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     debugLog('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
@@ -185,10 +189,7 @@ export async function getPerformances(theater: string, day: string): Promise<Per
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     // debugLog('performances:', response.body.data);
     return response.body.data;
 }
@@ -218,10 +219,7 @@ export async function getPerformance(args: GetPerformanceArgs): Promise<Performa
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     debugLog('performances:', response.body.data);
     return response.body.data;
 }
@@ -280,10 +278,7 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_201) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.CREATED) throw new Error(getErrorMessage(response));
     const transaction = response.body.data;
     debugLog('transaction:', transaction);
 
@@ -381,10 +376,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
 
     debugLog('addCOAAuthorization result');
     return response.body.data;
@@ -417,10 +409,7 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
 
     debugLog('addCOAAuthorization result');
 }
@@ -469,22 +458,20 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
             owner_id_from: anonymousOwnerId,
             owner_id_to: promoterOwnerId,
             gmo_shop_id: process.env.GMO_SHOP_ID,
-            gmo_shop_password: process.env.GMO_SHOP_PASSWORD,
+            gmo_shop_pass: process.env.GMO_SHOP_PASSWORD,
             gmo_order_id: args.orderId,
             gmo_amount: args.amount,
             gmo_access_id: args.entryTranResult.accessId,
-            gmo_access_password: args.entryTranResult.accessPass,
+            gmo_access_pass: args.entryTranResult.accessPass,
             gmo_job_cd: GMO.Util.JOB_CD_SALES,
             gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
         },
         json: true,
+        simple: false,
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
 
     debugLog('addGMOAuthorization result:');
     return response.body.data;
@@ -516,10 +503,7 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
 
     debugLog('removeGMOAuthorization result:');
 
@@ -559,10 +543,7 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
 
     debugLog('ownersAnonymous result:');
 }
@@ -599,10 +580,7 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
 
     debugLog('transactionsEnableInquiry result:');
 }
@@ -634,10 +612,7 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
     debugLog('close result:');
 }
 
@@ -684,10 +659,7 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     debugLog('addEmail result:' + response.body.data);
     return response.body.data;
 }
@@ -718,10 +690,7 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_204) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
     debugLog('removeEmail result:');
 }
 
@@ -756,10 +725,7 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== STATUS_CODE_200) {
-        const message = (response.body.errors) ? response.body.errors.description : response.body;
-        throw new Error(message);
-    }
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     debugLog('makeInquiry result:' + response.body.data);
     return response.body.data.id;
 }

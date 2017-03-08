@@ -250,7 +250,7 @@ function createScreen(setting, screen) {
         if (y === 0) {
             pos.y += screen.seatStart.y;
         } else if (screen.map[y].length === 0) {
-            pos.y += aisle.h;
+            pos.y += aisle.h - seatMargin.h;
         } else {
             labelCount++;
             pos.y += seatSize.h + seatMargin.h;
@@ -368,7 +368,6 @@ function validation() {
     var validationList = [
         { name: 'agree', label: locales.label.agree, agree: true },
     ];
-
 
     validationList.forEach(function (validation, index) {
 

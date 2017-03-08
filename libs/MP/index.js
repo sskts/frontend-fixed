@@ -13,29 +13,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 const endPoint = process.env.MP_ENDPOINT;
-/**
- * ステータスコード200
- * @const STATUS_CODE_200
- */
-const STATUS_CODE_200 = 200;
-/**
- * ステータスコード201
- * @const STATUS_CODE_201
- */
-const STATUS_CODE_201 = 201;
-/**
- * ステータスコード204
- * @const STATUS_CODE_204
- */
-const STATUS_CODE_204 = 204;
 /**
  * 時間切れ
  * @const TIMEOUT
  */
 const TIMEOUT = 1000;
+/**
+ * エラー
+ * @function getErrorMessage
+ * @param {any} response
+ * @requires {string}
+ */
+function getErrorMessage(response) {
+    let message = '';
+    if (response.body.errors && Array.isArray(response.body.errors)) {
+        for (const error of response.body.errors) {
+            if (error.description) {
+                message = error.description;
+                break;
+            }
+        }
+        debugLog('errors--------------', response.body.errors);
+    }
+    return message;
+}
 /**
  * アクセストークン取得
  * @memberOf MP
@@ -55,10 +60,8 @@ function oauthToken() {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('oauthToken:', response.body.access_token);
         return response.body.access_token;
     });
@@ -86,10 +89,8 @@ function getPerformances(theater, day) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         // debugLog('performances:', response.body.data);
         return response.body.data;
     });
@@ -113,10 +114,8 @@ function getPerformance(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('performances:', response.body.data);
         return response.body.data;
     });
@@ -142,10 +141,8 @@ function transactionStart(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_201) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.CREATED)
+            throw new Error(getErrorMessage(response));
         const transaction = response.body.data;
         debugLog('transaction:', transaction);
         return transaction;
@@ -204,10 +201,8 @@ function addCOAAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('addCOAAuthorization result');
         return response.body.data;
     });
@@ -231,10 +226,8 @@ function removeCOAAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('addCOAAuthorization result');
     });
 }
@@ -263,22 +256,21 @@ function addGMOAuthorization(args) {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
                 gmo_shop_id: process.env.GMO_SHOP_ID,
-                gmo_shop_password: process.env.GMO_SHOP_PASSWORD,
+                gmo_shop_pass: process.env.GMO_SHOP_PASSWORD,
                 gmo_order_id: args.orderId,
                 gmo_amount: args.amount,
                 gmo_access_id: args.entryTranResult.accessId,
-                gmo_access_password: args.entryTranResult.accessPass,
+                gmo_access_pass: args.entryTranResult.accessPass,
                 gmo_job_cd: GMO.Util.JOB_CD_SALES,
                 gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
             },
             json: true,
+            simple: false,
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('addGMOAuthorization result:');
         return response.body.data;
     });
@@ -302,10 +294,8 @@ function removeGMOAuthorization(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('removeGMOAuthorization result:');
     });
 }
@@ -333,10 +323,8 @@ function ownersAnonymous(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('ownersAnonymous result:');
     });
 }
@@ -363,10 +351,8 @@ function transactionsEnableInquiry(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('transactionsEnableInquiry result:');
     });
 }
@@ -389,10 +375,8 @@ function transactionClose(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('close result:');
     });
 }
@@ -420,10 +404,8 @@ function addEmail(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('addEmail result:' + response.body.data);
         return response.body.data;
     });
@@ -447,10 +429,8 @@ function removeEmail(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_204) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            throw new Error(getErrorMessage(response));
         debugLog('removeEmail result:');
     });
 }
@@ -477,10 +457,8 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: TIMEOUT
         });
-        if (response.statusCode !== STATUS_CODE_200) {
-            const message = (response.body.errors) ? response.body.errors.description : response.body;
-            throw new Error(message);
-        }
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
         debugLog('makeInquiry result:' + response.body.data);
         return response.body.data.id;
     });

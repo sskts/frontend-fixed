@@ -11,7 +11,7 @@ import * as fs from 'fs-extra-promise';
 import * as MP from '../../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * 座席選択
@@ -208,16 +208,10 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
 // tslint:disable-next-line:variable-name
 export function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): void {
     getScreenData(req).then((result) => {
-        res.json({
-            err: null,
-            result: result
-        });
+        return res.json({ err: null, result: result });
     }).catch((err) => {
         debugLog(err);
-        res.json({
-            err: err,
-            result: null
-        });
+        return res.json({ err: err, result: null });
     });
 }
 

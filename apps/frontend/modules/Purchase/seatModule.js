@@ -18,7 +18,7 @@ const fs = require("fs-extra-promise");
 const MP = require("../../../../libs/MP");
 const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 座席選択
  * @memberOf Purchase.SeatModule
@@ -218,16 +218,10 @@ function reserve(req, purchaseModel) {
 // tslint:disable-next-line:variable-name
 function getScreenStateReserve(req, res, _next) {
     getScreenData(req).then((result) => {
-        res.json({
-            err: null,
-            result: result
-        });
+        return res.json({ err: null, result: result });
     }).catch((err) => {
         debugLog(err);
-        res.json({
-            err: err,
-            result: null
-        });
+        return res.json({ err: err, result: null });
     });
 }
 exports.getScreenStateReserve = getScreenStateReserve;

@@ -18,7 +18,7 @@ const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const UtilModule = require("../Util/UtilModule");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 購入者内容確認
  * @memberOf Purchase.ConfirmModule
@@ -162,59 +162,41 @@ function updateReserve(req, purchaseModel) {
             throw Error(req.__('common.error.property'));
         if (!req.session)
             throw Error(req.__('common.error.property'));
-        //購入期限切れ
-        const minutes = 5;
-        if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-            debugLog('購入期限切れ');
-            //購入セッション削除
-            delete req.session.purchase;
-            throw {
-                error: new Error(req.__('common.error.expire')),
-                type: 'expired'
-            };
-        }
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
         const input = purchaseModel.input;
-        try {
-            // COA本予約
-            purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
-                theater_code: performance.attributes.theater.id,
-                date_jouei: performance.attributes.day,
-                title_code: performance.attributes.film.coa_title_code,
-                title_branch_num: performance.attributes.film.coa_title_branch_num,
-                time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num,
-                reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
-                reserve_name_jkana: `${input.last_name_hira}　${input.first_name_hira}`,
-                tel_num: input.tel_num,
-                mail_addr: input.mail_addr,
-                reserve_amount: purchaseModel.getReserveAmount(),
-                list_ticket: purchaseModel.reserveTickets.map((ticket) => {
-                    return {
-                        ticket_code: ticket.ticket_code,
-                        std_price: ticket.std_price,
-                        add_price: ticket.add_price,
-                        dis_price: 0,
-                        sale_price: ticket.sale_price,
-                        ticket_count: 1,
-                        mvtk_app_price: 0,
-                        seat_num: ticket.seat_code
-                    };
-                })
-            });
-            debugLog('COA本予約', purchaseModel.updateReserve);
-        }
-        catch (err) {
-            debugLog('COA本予約エラー', err);
-            throw {
-                error: new Error(err.message),
-                type: 'updateReserve'
-            };
-        }
+        // COA本予約
+        purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
+            theater_code: performance.attributes.theater.id,
+            date_jouei: performance.attributes.day,
+            title_code: performance.attributes.film.coa_title_code,
+            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            time_begin: performance.attributes.time_start,
+            tmp_reserve_num: reserveSeats.tmp_reserve_num,
+            reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,
+            reserve_name_jkana: `${input.last_name_hira}　${input.first_name_hira}`,
+            tel_num: input.tel_num,
+            mail_addr: input.mail_addr,
+            reserve_amount: purchaseModel.getReserveAmount(),
+            list_ticket: purchaseModel.reserveTickets.map((ticket) => {
+                return {
+                    ticket_code: ticket.ticket_code,
+                    std_price: ticket.std_price,
+                    add_price: ticket.add_price,
+                    dis_price: 0,
+                    sale_price: ticket.sale_price,
+                    ticket_count: 1,
+                    mvtk_app_price: 0,
+                    seat_num: ticket.seat_code
+                };
+            })
+        });
+        debugLog('COA本予約', purchaseModel.updateReserve);
         // ムビチケ使用
-        yield reserveMvtk(req, purchaseModel);
-        debugLog('ムビチケ決済');
+        if (purchaseModel.mvtk) {
+            yield reserveMvtk(req, purchaseModel);
+            debugLog('ムビチケ決済');
+        }
         // MP購入者情報登録
         yield MP.ownersAnonymous({
             transactionId: purchaseModel.transactionMP.id,
@@ -312,40 +294,27 @@ TEL：XX-XXXX-XXXX`;
  * @param {express.Response} res
  * @param {express.NextFunction} next
  * @returns {void}
+ * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
 function purchase(req, res, _next) {
-    if (!req.session) {
-        return res.json({
-            err: {
-                message: req.__('common.error.property'),
-                type: null
-            },
-            redirect: false,
-            result: null
-        });
-    }
+    if (!req.session)
+        return res.json({ err: req.__('common.error.expire'), result: null });
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) {
-        return res.json({
-            err: {
-                message: req.__('common.error.property'),
-                type: null
-            },
-            redirect: false,
-            result: null
-        });
-    }
+    if (!purchaseModel.transactionMP)
+        return res.json({ err: req.__('common.error.property'), result: null });
+    if (!purchaseModel.expired)
+        return res.json({ err: req.__('common.error.property'), result: null });
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-        return res.json({
-            err: {
-                message: req.__('common.error.access'),
-                type: null
-            },
-            redirect: false,
-            result: null
-        });
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+        return res.json({ err: req.__('common.error.access'), result: null });
+    //購入期限切れ
+    const minutes = 5;
+    if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
+        debugLog('購入期限切れ');
+        //購入セッション削除
+        delete req.session.purchase;
+        return res.json({ err: req.__('common.error.expired'), result: null });
     }
     updateReserve(req, purchaseModel).then(() => {
         //購入情報をセッションへ
@@ -362,21 +331,9 @@ function purchase(req, res, _next) {
         //購入セッション削除
         delete req.session.purchase;
         //購入完了情報を返す
-        return res.json({
-            err: null,
-            redirect: false,
-            result: req.session.complete.updateReserve
-        });
+        return res.json({ err: null, result: req.session.complete.updateReserve });
     }).catch((err) => {
-        //購入完了情報を返す
-        return res.json({
-            err: {
-                message: (err.error) ? err.error.message : err.message,
-                type: (err.type) ? err.type : null
-            },
-            redirect: (err.error) ? false : true,
-            result: null
-        });
+        return res.json({ err: err.message, result: null });
     });
 }
 exports.purchase = purchase;

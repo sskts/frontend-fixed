@@ -16,7 +16,7 @@ const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 購入者情報入力
  * @memberOf Purchase.InputModule

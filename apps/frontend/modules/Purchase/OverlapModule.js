@@ -16,7 +16,7 @@ const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 仮予約重複
  * @memberOf Purchase.OverlapModule

@@ -18,7 +18,7 @@ const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const UtilModule = require("../../Util/UtilModule");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * ムビチケ券入力ページ表示
  * @memberOf Purchase.Mvtk.MvtkInputModule

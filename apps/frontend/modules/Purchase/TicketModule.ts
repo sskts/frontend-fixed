@@ -10,7 +10,7 @@ import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * 券種選択

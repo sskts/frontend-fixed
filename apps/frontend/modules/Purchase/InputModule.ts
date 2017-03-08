@@ -9,7 +9,7 @@ import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * 購入者情報入力

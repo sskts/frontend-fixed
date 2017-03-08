@@ -5,7 +5,7 @@
 
 import * as debug from 'debug';
 import * as express from 'express';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * Not Found

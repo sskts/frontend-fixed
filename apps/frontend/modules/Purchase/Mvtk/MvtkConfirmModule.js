@@ -6,7 +6,7 @@
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * ムビチケ券適用確認ページ表示
  * @memberOf Purchase.Mvtk.MvtkConfirmModule

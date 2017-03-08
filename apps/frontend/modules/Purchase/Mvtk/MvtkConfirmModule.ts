@@ -6,7 +6,7 @@ import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import * as express from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * ムビチケ券適用確認ページ表示

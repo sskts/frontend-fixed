@@ -10,7 +10,7 @@ import * as MP from '../../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import * as UtilModule from '../Util/UtilModule';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * 照会認証ページ表示

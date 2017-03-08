@@ -4,7 +4,7 @@
  */
 "use strict";
 const debug = require("debug");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * Not Found
  * @memberOf ErrorModule

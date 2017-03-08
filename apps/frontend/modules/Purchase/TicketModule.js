@@ -17,7 +17,7 @@ const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 /**
  * 券種選択
  * @memberOf Purchase.TicketModule

@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../../Util/UtilModule';
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 
 /**
  * ムビチケ券入力ページ表示

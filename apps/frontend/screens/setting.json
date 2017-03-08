@@ -7,7 +7,7 @@
         "seatNumberPos": "座席番号位置"
     },
     "seatSize": { "w": 40, "h": 50 },
-    "seatMargin": { "w": 2, "h": 20 },
+    "seatMargin": { "w": 4, "h": 20 },
     "aisle": { "w": 48, "h": 50 },
     "seatLabelPos": 50,
     "seatNumberPos": 50

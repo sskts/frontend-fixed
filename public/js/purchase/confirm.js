@@ -13,54 +13,7 @@ $(function () {
             validationScroll();
             return;
         }
-        $.ajax({
-            dataType: 'json',
-            url: '/purchase/confirm',
-            type: 'POST',
-            timeout: 100000,
-            data: {
-                toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
-                isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
-                transaction_id: $('input[name=transaction_id]').val()
-            },
-            beforeSend: function () {
-                loadingStart();
-            }
-        }).done(function (res) {
-            if (res.err) {
-                console.log(res);
-                if (res.err.type === 'expired') {
-                    //コンテンツ切り替え
-                    $('.error-expired .read').html(res.err.message);
-                    $('.purchase-confirm').remove();
-                    $('.header .steps').remove();
-                    $('.error-expired').show();
-                    $(window).scrollTop(0);
-                    history.pushState(null, null, '/error');
-                } else if (res.err.type === 'updateReserve') {
-                    $('.modal[data-modal=update_reserve_error] .modal-ttl strong').text(res.err.message);
-                    modal.open('update_reserve_error');
-                }
-                
-            } else {
-                //購入番号
-                $('.purchase-complete .purchase-number dd strong').text(res.result.reserve_num);
-                //step変更
-                $('.steps li').removeClass('active');
-                $('.steps li:last-child').addClass('active');
-                //コンテンツ切り替え
-                $('.purchase-confirm').remove();
-                $('.purchase-complete').show();
-                $(window).scrollTop(0);
-                history.pushState(null, null, '/purchase/complete');
-                heightFix();
-            }
-
-        }).fail(function (jqxhr, textStatus, error) {
-
-        }).always(function () {
-            loadingEnd();
-        });
+        purchase();
     });
 
     var timer = false;
@@ -90,83 +43,109 @@ $(function () {
     });
 });
 
-
 /**
- * スクリーン状態取得
- * @function getScreenStateReserve
- * @param {function} cb
+ * 購入完了
+ * @function purchase
  * @returns {void}
  */
-function getScreenStateReserve(cb) {
-    var target = $('.screen-cover');
+function purchase() {
     $.ajax({
         dataType: 'json',
-        url: '/purchase/getScreenStateReserve',
+        url: '/purchase/confirm',
         type: 'POST',
-        timeout: 1000,
+        timeout: 100000,
         data: {
-            /** 施設コード */
-            theater_code: target.attr('data-theater'),
-            /** 上映日 */
-            date_jouei: target.attr('data-day'),
-            /** 作品コード */
-            title_code: target.attr('data-coa-title-code'),
-            /** 作品枝番 */
-            title_branch_num: target.attr('data-coa-title-branch-num'),
-            /** 上映時刻 */
-            time_begin: target.attr('data-time-start'),
-            /** スクリーンコード */
-            screen_code: target.attr('data-screen-code'),
+            toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
+            isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
+            transaction_id: $('input[name=transaction_id]').val()
         },
-        beforeSend: function () { }
-    }).done(function (res) {
-        cb(res.result);
-    }).fail(function (jqxhr, textStatus, error) {
-        alert('スケジュール取得失敗');
-    }).always(function () {
-        loadingEnd();
-    });
-}
-
-/**
- * スクリーン状態更新
- * @function screenStateChange
- * @returns {void}
- */
-function screenStateChange() {
-    var screen = $('.screen');
-    //席状態変更
-    $('.seat a').addClass('disabled');
-
-    var purchaseSeats = JSON.parse($('div[data-seats]').attr('data-seats'));
-    if (purchaseSeats) {
-        console.log(purchaseSeats)
-        //予約している席設定
-        for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
-            var seatNum = purchaseSeat.seat_num;
-            var seat = $('.seat a[data-seat-code=' + seatNum + ']');
-            seat.removeClass('disabled');
-            seat.addClass('active');
+        beforeSend: function () {
+            loadingStart();
         }
-    }
+    }).done(function (res) {
+        if (res.err) {
+            //エラー表示
+            showError(res.err.message);
+        } else {
+            //完了画面表示
+            showComplete(res.result);
+        }
+        loadingEnd();
+    }).fail(function (jqxhr, textStatus, error) {
+
+    }).always(function () {
+
+    });
 }
 
-
 /**
- * スクリーン状態更新
- * @function screenStateUpdate
+ * 購入情報取得
+ * @function getComplete
  * @returns {void}
  */
-function screenStateUpdate(cb) {
-    getScreenStateReserve(function (result) {
-        screenStateChange(result);
-        var screen = $('.screen');
-        screen.css('visibility', 'visible');
-        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
-        screenSeatStatusesMap.setPermission(false);
-        cb();
+function getComplete() {
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/confirm',
+        type: 'POST',
+        timeout: 100000,
+        data: {
+            toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
+            isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
+            transaction_id: $('input[name=transaction_id]').val()
+        },
+        beforeSend: function () {
+            loadingStart();
+        }
+    }).done(function (res) {
+        if (res.err) {
+            //エラー表示
+            showError(res.err.message);
+        } else {
+            //完了画面表示
+            showComplete(res.result);
+        }
+        loadingEnd();
+    }).fail(function (jqxhr, textStatus, error) {
+
+    }).always(function () {
+
     });
+}
+
+/**
+ * エラー画面表示
+ * @function showError
+ * @param {string} message
+ * @returns {void}
+ */
+function showError(message) {
+    $('.error .read').html(message);
+    $('.purchase-confirm').remove();
+    $('.header .steps').remove();
+    $('.error').show();
+    $(window).scrollTop(0);
+    history.pushState(null, null, '/error');
+}
+
+/**
+ * 完了画面表示
+ * @function showError
+ * @param {any} result
+ * @returns {void}
+ */
+function showComplete(result) {
+    //購入番号
+    $('.purchase-complete .purchase-number dd strong').text(result.reserve_num);
+    //step変更
+    $('.steps li').removeClass('active');
+    $('.steps li:last-child').addClass('active');
+    //コンテンツ切り替え
+    $('.purchase-confirm').remove();
+    $('.purchase-complete').show();
+    $(window).scrollTop(0);
+    history.pushState(null, null, '/purchase/complete');
+    heightFix();
 }
 
 /**

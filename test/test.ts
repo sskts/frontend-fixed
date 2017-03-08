@@ -4,7 +4,7 @@
 import * as debug from 'debug';
 import * as webdriver from 'selenium-webdriver';
 
-const debugLog = debug('SSKTS: ');
+const debugLog = debug('SSKTS ');
 const width = 1920;
 const height = 1080;
 const capabilities = {
