@@ -10,20 +10,20 @@
         "pair": "ペア席"
     },
     "type": 0,
-    "size": { "w": 1346, "h": 1422 },
+    "size": { "w": 1346, "h": 1054 },
     "objects": [
         {
-            "w": 1148, "h": 126,
-            "x": 100, "y": 90,
-            "image": "/images/screen/screen/001.svg"
+            "w": 804, "h": 73,
+            "x": 293, "y": 90,
+            "image": "/images/screen/118/screen/002.svg"
         },
         {
-            "w": 126, "h": 490,
-            "x": 1186, "y": 312,
-            "image": "/images/screen/entrance/001.svg"
+            "w": 126, "h": 500,
+            "x": 205, "y": 252,
+            "image": "/images/screen/118/entrance/002.svg"
         }
     ],
-    "seatStart": { "x": 80, "y": 312 },
+    "seatStart": { "x": 228, "y": 253 },
     "map": [
         [0, 0, 2, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 2, 0, 0],
         [0, 0, 2, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
@@ -39,5 +39,6 @@
     ],
     "special": [],
     "hc": ["A11", "A12"],
-    "pair": []
+    "pair": [],
+    "seatLabelPos": 80
 }

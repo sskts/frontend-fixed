@@ -214,6 +214,12 @@ function createScreen(setting, screen) {
     var seatMargin = (screen.seatMargin) ? screen.seatMargin : setting.seatMargin;
     //座席の大きさ
     var seatSize = (screen.seatSize) ? screen.seatSize : setting.seatSize;
+    //座席の大きさ
+    var seatSize = (screen.seatSize) ? screen.seatSize : setting.seatSize;
+    //座席ラベル位置
+    var seatLabelPos = (screen.seatLabelPos) ? screen.seatLabelPos : setting.seatLabelPos;
+    //座席番号位置
+    var seatNumberPos = (screen.seatNumberPos) ? screen.seatNumberPos : setting.seatNumberPos;
 
     //y軸ラベル
     var labels = [];
@@ -262,11 +268,11 @@ function createScreen(setting, screen) {
 
             //座席ラベルHTML生成
             if (x === 0) {
-                seatLabelHtml.push('<div class="object label-object" style="top:' + pos.y + 'px; left:' + (pos.x - setting.seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
+                seatLabelHtml.push('<div class="object label-object" style="top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
             //座席番号HTML生成
             if (y === 0) {
-                seatNumberHtml.push('<div class="object label-object" style="top:' + (pos.y - setting.seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
+                seatNumberHtml.push('<div class="object label-object" style="top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
             if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
                 //座席HTML生成
