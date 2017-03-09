@@ -16,19 +16,22 @@ $(function () {
         ticket = JSON.parse(ticket);
         var ticketBefore = JSON.parse(target.find('dt').attr('data-ticket'));
         var ticketAfter = {
-            section: ticketBefore.section,
-            seat_code: ticketBefore.seat_code,
-            ticket_code: ticket.ticket_code,
-            ticket_name_ja: ticket.ticket_name,
-            ticket_name_en: ticket.ticket_name_eng,
-            ticket_name_kana: ticket.ticket_name_kana,
-            std_price: ticket.std_price,
-            add_price: ticket.add_price,
-            dis_price: 0,
-            sale_price: ticket.sale_price,
+            section: ticketBefore.section, // 座席セクション
+            seat_code: ticketBefore.seat_code, // 座席番号
+            ticket_code: ticket.ticket_code, // チケットコード
+            ticket_name: ticket.ticket_name, // チケット名
+            ticket_name_eng: ticket.ticket_name_eng, // チケット名（英）
+            ticket_name_kana: ticket.ticket_name_kana, // チケット名（カナ）
+            std_price: ticket.std_price, // 標準単価
+            add_price: ticket.add_price, // 加算単価
+            dis_price: 0, // 割引額
+            sale_price: ticket.sale_price, // 販売単価
+            add_price_glasses: ticket.add_price_glasses, // メガネ単価
+            glasses: ticket.glasses, // メガネ有り無し
+            mvtk_num: ticket.mvtk_num // ムビチケ購入番号
         };
 
-        target.find('dd a').text(ticketAfter.ticket_name_ja + ' ￥' + ticketAfter.sale_price);
+        target.find('dd a').text(ticketAfter.ticket_name + ' ￥' + ticketAfter.sale_price);
         target.find('dt').attr('data-ticket', JSON.stringify(ticketAfter));
         modal.close();
         totalPrice();

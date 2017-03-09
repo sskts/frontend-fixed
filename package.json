@@ -10,7 +10,10 @@
     "tslint": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json",
     "tslint-fix": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json --fix",
     "tsc": "tsc -p ./ -w",
-    "jsdoc": "grunt jsdoc"
+    "jsdoc": "grunt jsdoc",
+    "clean": "rimraf examples/**/*.js apps/**/*.js test/**/*.js types/**/*.d.ts",
+    "build": "npm run clean && npm run tslint && tsc -p ./ && postcss -c ./.postcssrc.json"
+    
   },
   "dependencies": {
     "@motionpicture/coa-service": "^1.4.3",
@@ -65,6 +68,7 @@
     "postcss-import": "^9.1.0",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^3.0.0",
+    "rimraf": "^2.6.1",
     "selenium-webdriver": "^3.0.1",
     "tslint": "^4.4.2",
     "tslint-microsoft-contrib": "^4.0.0",

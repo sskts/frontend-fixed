@@ -129,7 +129,7 @@ class PurchaseModel {
             }
             else {
                 ticketObj[ticket.ticket_code] = {
-                    name: ticket.ticket_name_ja,
+                    name: ticket.ticket_name,
                     length: 1
                 };
             }

@@ -139,7 +139,7 @@ function getErrorMessage(response: any): string {
                 break;
             }
         }
-        debugLog('errors--------------', response.body.errors)
+        debugLog('errors--------------', response.body.errors);
     }
     return message;
 }
@@ -306,8 +306,8 @@ interface SalesTicketResult {
     section: string;
     seat_code: string;
     ticket_code: string;
-    ticket_name_ja: string;
-    ticket_name_en: string;
+    ticket_name: string;
+    ticket_name_eng: string;
     ticket_name_kana: string;
     std_price: number;
     add_price: number;
@@ -360,8 +360,8 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
                     section: tmpReserve.section,
                     seat_code: tmpReserve.seat_code,
                     ticket_code: tmpReserve.ticket_code,
-                    ticket_name_ja: tmpReserve.ticket_name_ja,
-                    ticket_name_en: tmpReserve.ticket_name_en,
+                    ticket_name_ja: tmpReserve.ticket_name,
+                    ticket_name_en: tmpReserve.ticket_name_eng,
                     ticket_name_kana: tmpReserve.ticket_name_kana,
                     std_price: tmpReserve.std_price,
                     add_price: tmpReserve.add_price,

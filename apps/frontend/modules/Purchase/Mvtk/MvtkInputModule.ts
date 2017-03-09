@@ -115,9 +115,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
     });
 
     debugLog('ムビチケ認証');
-    const ticketMaster = await COA.MasterService.ticket({
-        theater_code: purchaseModel.performance.attributes.theater.id
-    });
+
     const mvtkList: PurchaseSession.Mvtk[] = [];
     for (const purchaseNumberAuthResult of result) {
         for (const info of purchaseNumberAuthResult.ykknInfo) {
@@ -127,32 +125,23 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
             if (!input) continue;
 
             // ムビチケチケットコード取得
-            const ticketCode = await COA.MasterService.mvtkTicketcode({
+            const ticket = await COA.MasterService.mvtkTicketcode({
                 theater_code: purchaseModel.performance.attributes.theater.id,
-                kbn_denshiken: MVTK.Constants.ELECTRONIC_TICKET_ELECTRONIC,
-                kbn_maeuriken: MVTK.Constants.ADVANCE_TICKET_COMMON,
+                kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
+                kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
                 kbn_kensyu: info.ykknshTyp,
                 sales_price: Number(info.knshknhmbiUnip),
-                app_price: Number(info.kijUnip)
+                app_price: Number(info.kijUnip),
+                kbn_eisyahousiki: info.eishhshkTyp,
+                title_code: purchaseModel.performance.attributes.film.coa_title_code,
+                title_branch_num: purchaseModel.performance.attributes.film.coa_title_branch_num
             });
-
-            // チケットマスター取得
-            const ticket = ticketMaster.find((value) => {
-                return (value.ticket_code === ticketCode);
-            });
-            if (!ticket) continue;
 
             mvtkList.push({
                 code: purchaseNumberAuthResult.knyknrNo,
                 password: UtilModule.bace64Encode(input.password),
                 ykknInfo: info,
-                ticket: {
-                    code: ticketCode,
-                    name: {
-                        ja: ticket.ticket_name,
-                        en: ticket.ticket_name_eng
-                    }
-                }
+                ticket: ticket
             });
         }
     }

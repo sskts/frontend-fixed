@@ -185,13 +185,16 @@ function reserve(req, purchaseModel) {
                 section: tmpReserve.seat_section,
                 seat_code: tmpReserve.seat_num,
                 ticket_code: '',
-                ticket_name_ja: '',
-                ticket_name_en: '',
+                ticket_name: '',
+                ticket_name_eng: '',
                 ticket_name_kana: '',
                 std_price: 0,
                 add_price: 0,
                 dis_price: 0,
-                sale_price: 0
+                sale_price: 0,
+                add_price_glasses: 0,
+                glasses: false,
+                mvtk_num: null
             };
         });
         //COAオーソリ追加

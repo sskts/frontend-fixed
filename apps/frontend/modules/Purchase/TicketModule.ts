@@ -67,9 +67,10 @@ export function select(req: express.Request, res: express.Response, next: expres
     //バリデーション
     const form = TicketForm(req);
     form(req, res, () => {
-        //座席情報をセッションへ
-        purchaseModel.reserveTickets = JSON.parse(req.body.reserve_tickets);
-        ticketValidation(req, purchaseModel).then(() => {
+        const reserveTickets: PurchaseSession.ReserveTicket[] = JSON.parse(req.body.reserve_tickets);
+        ticketValidation(req, purchaseModel, reserveTickets).then((result) => {
+            if (!req.session) return next(new Error(req.__('common.error.property')));
+            purchaseModel.reserveTickets = result;
             upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session) return next(new Error(req.__('common.error.property')));
                 //セッション更新
@@ -86,18 +87,65 @@ export function select(req: express.Request, res: express.Response, next: expres
 }
 
 /**
+ * ムビチケ券種情報
+ */
+export interface SalesTicket {
+    /**
+     * チケットコード
+     */
+    ticket_code: string;
+    /**
+     * チケット名
+     */
+    ticket_name: string;
+    /**
+     * チケット名(カナ)
+     */
+    ticket_name_kana: string;
+    /**
+     * チケット名(英)
+     */
+    ticket_name_eng: string;
+    /**
+     * 標準単価
+     */
+    std_price: number;
+    /**
+     * 加算単価
+     */
+    add_price: number;
+    /**
+     * 販売単価
+     */
+    sale_price: number;
+    /**
+     * チケット備考
+     */
+    ticket_note: string;
+    /**
+     * メガネ単価
+     */
+    add_price_glasses: number;
+    /**
+     * ムビチケ購入番号
+     */
+    mvtk_num: string | null;
+}
+
+/**
  * 券種リスト取得
  * @memberOf Purchase.TicketModule
  * @function getSalesTickets
  * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<COA.ReserveService.SalesTicketResult[]>}
+ * @returns {Promise<SalesTicket[]>}
  */
 async function getSalesTickets(
     req: express.Request,
     purchaseModel: PurchaseSession.PurchaseModel
-): Promise<COA.ReserveService.SalesTicketResult[]> {
+): Promise<SalesTicket[]> {
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
+    const result: SalesTicket[] = [];
     //コアAPI券種取得
     const performance = purchaseModel.performance;
     const salesTickets = await COA.ReserveService.salesTicket({
@@ -109,38 +157,62 @@ async function getSalesTickets(
         // screen_code: performance.screen.id,
     });
 
-    if (!purchaseModel.mvtk) return salesTickets;
+    for (const ticket of salesTickets) {
+        result.push({
+            // チケットコード
+            ticket_code: ticket.ticket_code,
+            // チケット名
+            ticket_name: ticket.ticket_name,
+            // チケット名(カナ)
+            ticket_name_kana: ticket.ticket_name_kana,
+            // チケット名(英)
+            ticket_name_eng: ticket.ticket_name_eng,
+            // 標準単価
+            std_price: ticket.std_price,
+            // 加算単価
+            add_price: ticket.add_price,
+            // 販売単価
+            sale_price: ticket.sale_price,
+            // チケット備考
+            ticket_note: ticket.ticket_note,
+            // メガネ単価
+            add_price_glasses: 0,
+            // ムビチケ購入番号
+            mvtk_num: null
+        });
+    }
+
+    if (!purchaseModel.mvtk) return result;
 
     // ムビチケ情報からチケット情報へ変換
-    const mvtkTickets: COA.ReserveService.SalesTicketResult[] = [];
-    const lang = req.__('lang');
+    const mvtkTickets: SalesTicket[] = [];
 
     for (const mvtk of purchaseModel.mvtk) {
         mvtkTickets.push({
             // チケットコード
-            ticket_code: mvtk.ticket.code,
+            ticket_code: mvtk.ticket.ticket_code,
             // チケット名
-            ticket_name: (<any>mvtk.ticket.name)[lang],
-            // チケット名（カナ）
-            ticket_name_kana: '',
-            // チケット名（英）
-            ticket_name_eng: mvtk.ticket.name.en,
+            ticket_name: mvtk.ticket.ticket_name,
+            // チケット名(カナ)
+            ticket_name_kana: mvtk.ticket.ticket_name_kana,
+            // チケット名(英)
+            ticket_name_eng: mvtk.ticket.ticket_name_eng,
             // 標準単価
             std_price: 0,
-            // 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
-            add_price: 0,
-            // 販売単価(標準単価＋加算単価)
-            sale_price: 0,
-            // 人数制限(制限が無い場合は１)
-            limit_count: 1,
-            // 制限単位(１：ｎ人単位、２：ｎ人以上)
-            limit_unit: '001',
-            // チケット備考(注意事項等)
-            ticket_note: ''
+            // 加算単価
+            add_price: mvtk.ticket.add_price,
+            // 販売単価
+            sale_price: (0 + mvtk.ticket.add_price),
+            // チケット備考
+            ticket_note: req.__('common.mvtk_code') + mvtk.code,
+            // メガネ単価
+            add_price_glasses: mvtk.ticket.add_price_glasses,
+            // ムビチケ購入番号
+            mvtk_num: mvtk.code
         });
     }
 
-    return mvtkTickets.concat(salesTickets);
+    return mvtkTickets.concat(result);
 }
 
 /**
@@ -149,11 +221,16 @@ async function getSalesTickets(
  * @function ticketValidation
  * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @param {PurchaseSession.ReserveTicket[]} reserveTickets
  * @returns {Promise<void>}
  */
-async function ticketValidation(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+async function ticketValidation(
+    req: express.Request,
+    purchaseModel: PurchaseSession.PurchaseModel,
+    reserveTickets: PurchaseSession.ReserveTicket[]
+): Promise<PurchaseSession.ReserveTicket[]> {
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.reserveTickets) throw new Error(req.__('common.error.property'));
+    const result: PurchaseSession.ReserveTicket[] = [];
     //コアAPI券種取得
     const performance = purchaseModel.performance;
     const salesTickets = await COA.ReserveService.salesTicket({
@@ -165,20 +242,56 @@ async function ticketValidation(req: express.Request, purchaseModel: PurchaseSes
         // screen_code: performance.screen.id,
     });
 
-    const reserveTickets = purchaseModel.reserveTickets;
     for (const ticket of reserveTickets) {
-        const salesTicket = salesTickets.find((value) => {
-            return (value.ticket_code === ticket.ticket_code);
-        });
-        if (salesTicket) {
-            // 通常券種
-            if (salesTicket.sale_price !== ticket.sale_price) throw new Error(req.__('common.error.access'));
-        } else {
+
+        if (ticket.mvtk_num) {
             // ムビチケ
             if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
-
+            const mvtkTicket = purchaseModel.mvtk.find((value) => {
+                return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+            });
+            if (!mvtkTicket) throw new Error(req.__('common.error.access'));
+            result.push({
+                section: ticket.section, // 座席セクション
+                seat_code: ticket.seat_code, // 座席番号
+                ticket_code: mvtkTicket.ticket.ticket_code, // チケットコード
+                ticket_name: mvtkTicket.ticket.ticket_name, // チケット名
+                ticket_name_eng: mvtkTicket.ticket.ticket_name_eng, // チケット名（英）
+                ticket_name_kana: mvtkTicket.ticket.ticket_name_kana, // チケット名（カナ）
+                std_price: 0, // 標準単価
+                add_price: mvtkTicket.ticket.add_price, // 加算単価
+                dis_price: 0, // 割引額
+                sale_price: (ticket.glasses)
+                    ? (mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses)
+                    : mvtkTicket.ticket.add_price, // 販売単価
+                add_price_glasses: mvtkTicket.ticket.add_price_glasses, // メガネ単価
+                glasses: ticket.glasses, // メガネ有り無し
+                mvtk_num: mvtkTicket.code // ムビチケ購入番号
+            });
+        } else {
+            // 通常券種
+            const salesTicket = salesTickets.find((value) => {
+                return (value.ticket_code === ticket.ticket_code);
+            });
+            if (!salesTicket) throw new Error(req.__('common.error.access'));
+            result.push({
+                section: ticket.section, // 座席セクション
+                seat_code: ticket.seat_code, // 座席番号
+                ticket_code: salesTicket.ticket_code, // チケットコード
+                ticket_name: salesTicket.ticket_name, // チケット名
+                ticket_name_eng: salesTicket.ticket_name_eng, // チケット名（英）
+                ticket_name_kana: salesTicket.ticket_name_kana, // チケット名（カナ）
+                std_price: salesTicket.std_price, // 標準単価
+                add_price: salesTicket.add_price, // 加算単価
+                dis_price: 0, // 割引額
+                sale_price: salesTicket.sale_price, // 販売単価
+                add_price_glasses: ticket.add_price_glasses, // メガネ単価
+                glasses: ticket.glasses, // メガネ有り無し
+                mvtk_num: ticket.mvtk_num // ムビチケ購入番号
+            });
         }
     }
+    return result;
 }
 
 /**

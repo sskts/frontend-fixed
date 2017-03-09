@@ -26,11 +26,11 @@ export interface ReserveTicket {
     /**
      * チケット名
      */
-    ticket_name_ja: string;
+    ticket_name: string;
     /**
      * チケット名（英）
      */
-    ticket_name_en: string;
+    ticket_name_eng: string;
     /**
      * チケット名（カナ）
      */
@@ -51,7 +51,18 @@ export interface ReserveTicket {
      * 販売単価(標準単価＋加算単価)
      */
     sale_price: number;
-
+    /**
+     * メガネ単価
+     */
+    add_price_glasses: number;
+    /**
+     * メガネ有り無し(現状ムビチケ)
+     */
+    glasses: boolean;
+    /**
+     * ムビチケ購入番号
+     */
+    mvtk_num: string | null;
 }
 
 /**
@@ -117,25 +128,7 @@ export interface Mvtk {
     /**
      * チケット情報
      */
-    ticket: {
-        /**
-         * チケットコード
-         */
-        code: string;
-        /**
-         * チケット名
-         */
-        name: {
-            /**
-             * 日本語
-             */
-            ja: string;
-            /**
-             * 英語
-             */
-            en: string;
-        }
-    };
+    ticket: COA.MasterService.MvtkTicketcodeResult;
 }
 
 /**
@@ -361,7 +354,7 @@ export class PurchaseModel {
                 ticketObj[ticket.ticket_code].length = ticketObj[ticket.ticket_code].length + 1;
             } 　else {
                 ticketObj[ticket.ticket_code] = {
-                    name: ticket.ticket_name_ja,
+                    name: ticket.ticket_name,
                     length: 1
                 };
             }

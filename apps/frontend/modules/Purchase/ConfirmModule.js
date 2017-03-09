@@ -82,7 +82,7 @@ function reserveMvtk(req, purchaseModel) {
         const reserveSeats = [];
         for (const ticket of purchaseModel.reserveTickets) {
             const mvtkTicket = purchaseModel.mvtk.find((value) => {
-                return (value.ticket.code === ticket.ticket_code);
+                return (value.ticket.ticket_code === ticket.ticket_code);
             });
             if (!mvtkTicket)
                 continue;
@@ -179,15 +179,26 @@ function updateReserve(req, purchaseModel) {
             mail_addr: input.mail_addr,
             reserve_amount: purchaseModel.getReserveAmount(),
             list_ticket: purchaseModel.reserveTickets.map((ticket) => {
+                let mvtkAppPrice = 0;
+                // ムビチケ計上単価取得
+                if (purchaseModel.mvtk) {
+                    const mvtkTicket = purchaseModel.mvtk.find((value) => {
+                        return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+                    });
+                    if (mvtkTicket) {
+                        mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
+                    }
+                }
                 return {
                     ticket_code: ticket.ticket_code,
                     std_price: ticket.std_price,
                     add_price: ticket.add_price,
                     dis_price: 0,
-                    sale_price: ticket.sale_price,
+                    sale_price: (ticket.std_price + ticket.add_price),
                     ticket_count: 1,
-                    mvtk_app_price: 0,
-                    seat_num: ticket.seat_code
+                    mvtk_app_price: mvtkAppPrice,
+                    seat_num: ticket.seat_code,
+                    add_glasses: (ticket.glasses) ? ticket.add_price_glasses : 0
                 };
             })
         });
