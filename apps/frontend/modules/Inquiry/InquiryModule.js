@@ -122,9 +122,7 @@ function getStateReserve(req, inquiryModel) {
             timeBegin: inquiryModel.stateReserve.time_begin
         });
         debugLog('パフォーマンスID取得', performanceId);
-        inquiryModel.performance = yield MP.getPerformance({
-            id: performanceId
-        });
+        inquiryModel.performance = yield MP.getPerformance(performanceId);
         debugLog('MPパフォーマンス取得');
         if (!req.session)
             throw req.__('common.error.property');

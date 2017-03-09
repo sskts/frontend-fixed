@@ -26,9 +26,7 @@ export function index(req: express.Request, res: express.Response, next: express
     if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     //パフォーマンス取得
-    MP.getPerformance({
-        id: req.params.id
-    }).then((result) => {
+    MP.getPerformance(req.params.id).then((result) => {
         res.locals.performances = {
             after: result,
             before: purchaseModel.performance
@@ -90,6 +88,7 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
     if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
 
     const performance = purchaseModel.performance;
     const reserveSeats = purchaseModel.reserveSeats;
@@ -98,8 +97,8 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
     await COA.ReserveService.delTmpReserve({
         theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
-        title_code: performance.attributes.film.coa_title_code,
-        title_branch_num: performance.attributes.film.coa_title_branch_num,
+        title_code: purchaseModel.performanceCOA.titleCode,
+        title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
         time_begin: performance.attributes.time_start,
         tmp_reserve_num: reserveSeats.tmp_reserve_num
     });

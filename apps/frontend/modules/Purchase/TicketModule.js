@@ -111,14 +111,16 @@ function getSalesTickets(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw new Error(req.__('common.error.property'));
         const result = [];
         //コアAPI券種取得
         const performance = purchaseModel.performance;
         const salesTickets = yield COA.ReserveService.salesTicket({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
-            title_code: performance.attributes.film.coa_title_code,
-            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
         });
         for (const ticket of salesTickets) {
@@ -189,14 +191,16 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
             throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw new Error(req.__('common.error.property'));
         const result = [];
         //コアAPI券種取得
         const performance = purchaseModel.performance;
         const salesTickets = yield COA.ReserveService.salesTicket({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
-            title_code: performance.attributes.film.coa_title_code,
-            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
         });
         for (const ticket of reserveTickets) {
@@ -274,6 +278,8 @@ function upDateAuthorization(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.authorizationCOA)
             throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw new Error(req.__('common.error.property'));
         // COAオーソリ削除
         yield MP.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
@@ -312,6 +318,7 @@ function upDateAuthorization(req, purchaseModel) {
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: purchaseModel.reserveTickets,
             performance: purchaseModel.performance,
+            performanceCOA: purchaseModel.performanceCOA,
             totalPrice: purchaseModel.getReserveAmount()
         });
         debugLog('MPCOAオーソリ追加', coaAuthorizationResult);

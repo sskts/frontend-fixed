@@ -64,6 +64,8 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
     if (!purchaseModel.updateReserve) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
+
     // 購入管理番号情報
     const mvtkTickets = [];
     // 座席情報
@@ -103,9 +105,9 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
         : String(Number(purchaseModel.performance.attributes.theater.id));
     // 作品コード
     const num = 10;
-    const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
-        ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
-        : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
+    const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
+        ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
+        : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
 
     const result = await seatInfoSyncService.seatInfoSync({
@@ -117,7 +119,7 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
         stCd: siteCode, // サイトコード
-        screnCd: purchaseModel.performance.attributes.screen.coa_screen_code, // スクリーンコード
+        screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkTickets, // 購入管理番号情報
         zskInfo: reserveSeats, // 座席情報（itemArray）
         skhnCd: filmNo // 作品コード
@@ -142,6 +144,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
     if (!purchaseModel.reserveTickets) throw Error(req.__('common.error.property'));
     if (!purchaseModel.transactionMP) throw Error(req.__('common.error.property'));
     if (!purchaseModel.expired) throw Error(req.__('common.error.property'));
+    if (!purchaseModel.performanceCOA) throw Error(req.__('common.error.property'));
     if (!req.session) throw Error(req.__('common.error.property'));
 
     const performance = purchaseModel.performance;
@@ -152,8 +155,8 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
     purchaseModel.updateReserve = await COA.ReserveService.updReserve({
         theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
-        title_code: performance.attributes.film.coa_title_code,
-        title_branch_num: performance.attributes.film.coa_title_branch_num,
+        title_code: purchaseModel.performanceCOA.titleCode,
+        title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
         time_begin: performance.attributes.time_start,
         tmp_reserve_num: reserveSeats.tmp_reserve_num,
         reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,

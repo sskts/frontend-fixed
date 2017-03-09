@@ -25,6 +25,7 @@ class PurchaseModel {
         this.orderId = (session.orderId) ? session.orderId : null;
         this.expired = (session.expired) ? session.expired : null;
         this.mvtk = (session.mvtk) ? session.mvtk : null;
+        this.performanceCOA = (session.performanceCOA) ? session.performanceCOA : null;
     }
     /**
      * セッションObjectへ変換
@@ -46,7 +47,8 @@ class PurchaseModel {
             authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
             orderId: (this.orderId) ? this.orderId : null,
             expired: (this.expired) ? this.expired : null,
-            mvtk: (this.mvtk) ? this.mvtk : null
+            mvtk: (this.mvtk) ? this.mvtk : null,
+            performanceCOA: (this.performanceCOA) ? this.performanceCOA : null
         };
     }
     /**

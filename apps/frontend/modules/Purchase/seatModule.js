@@ -32,37 +32,52 @@ function index(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!req.params || !req.params.id)
-        return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
         return next(new Error(req.__('common.error.access')));
-    //パフォーマンス取得
-    MP.getPerformance({
-        id: req.params.id
-    }).then((result) => {
+    preparation(req, purchaseModel).then(() => {
         if (!purchaseModel.transactionMP)
             return next(new Error(req.__('common.error.property')));
-        res.locals.performance = result;
+        res.locals.performance = purchaseModel.performance;
+        res.locals.performanceCOA = purchaseModel.performanceCOA;
         res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-        res.locals.reserveSeats = null;
+        res.locals.reserveSeats = (purchaseModel.reserveSeats)
+            ? JSON.stringify(purchaseModel.reserveSeats)
+            : null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
-        //仮予約中
-        if (purchaseModel.reserveSeats) {
-            debugLog('仮予約中');
-            res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
-        }
-        purchaseModel.performance = result;
+        res.locals.error = null;
         //セッション更新
         if (!req.session)
             return next(new Error(req.__('common.error.property')));
         req.session.purchase = purchaseModel.toSession();
-        res.locals.error = null;
         return res.render('purchase/seat');
     }).catch((err) => {
         return next(new Error(err.message));
     });
 }
 exports.index = index;
+/**
+ * 購入フロー準備
+ * @memberOf Purchase.SeatModule
+ * @function preparation
+ * @param {express.Request} req
+ * @param {PurchaseSession.ReserveTicket} purchaseModel
+ * @returns {void}
+ */
+function preparation(req, purchaseModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.params || !req.params.id)
+            throw new Error(req.__('common.error.access'));
+        // パフォーマンス取得
+        const performance = yield MP.getPerformance(req.params.id);
+        debugLog('パフォーマンス取得');
+        // COAパフォーマンス取得
+        const performanceCOA = yield MP.getPerformanceCOA(performance.attributes.theater.id, performance.attributes.screen.id, performance.attributes.film.id);
+        debugLog('COAパフォーマンス取得');
+        purchaseModel.performance = performance;
+        purchaseModel.performanceCOA = performanceCOA;
+    });
+}
+exports.preparation = preparation;
 /**
  * 座席決定
  * @memberOf Purchase.SeatModule
@@ -125,6 +140,8 @@ function reserve(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.transactionMP)
             throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw new Error(req.__('common.error.property'));
         const performance = purchaseModel.performance;
         //予約中
         if (purchaseModel.reserveSeats) {
@@ -135,8 +152,8 @@ function reserve(req, purchaseModel) {
             yield COA.ReserveService.delTmpReserve({
                 theater_code: performance.attributes.theater.id,
                 date_jouei: performance.attributes.day,
-                title_code: performance.attributes.film.coa_title_code,
-                title_branch_num: performance.attributes.film.coa_title_branch_num,
+                title_code: purchaseModel.performanceCOA.titleCode,
+                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
                 time_begin: performance.attributes.time_start,
                 tmp_reserve_num: reserveSeats.tmp_reserve_num
             });
@@ -171,11 +188,11 @@ function reserve(req, purchaseModel) {
         purchaseModel.reserveSeats = yield COA.ReserveService.updTmpReserveSeat({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
-            title_code: performance.attributes.film.coa_title_code,
-            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start,
             // cnt_reserve_seat: number,
-            screen_code: performance.attributes.screen.coa_screen_code,
+            screen_code: purchaseModel.performanceCOA.screenCode,
             list_seat: seats.list_tmp_reserve
         });
         debugLog('COA仮予約', purchaseModel.reserveSeats);
@@ -203,6 +220,7 @@ function reserve(req, purchaseModel) {
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: purchaseModel.reserveTickets,
             performance: performance,
+            performanceCOA: purchaseModel.performanceCOA,
             totalPrice: purchaseModel.getReserveAmount()
         });
         debugLog('MPCOAオーソリ追加', coaAuthorizationResult);

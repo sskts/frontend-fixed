@@ -88,6 +88,8 @@ export function select(req: express.Request, res: express.Response, next: expres
  */
 export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
+
     const mvtkService = MVTK.createPurchaseNumberAuthService();
     const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
     // サイトコード
@@ -96,9 +98,9 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
         : String(Number(purchaseModel.performance.attributes.theater.id));
     // 作品コード
     const num = 10;
-    const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
-        ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
-        : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
+    const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
+        ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
+        : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
 
     const result = await mvtkService.purchaseNumberAuth({
         kgygishCd: UtilModule.COMPANY_CODE, //興行会社コード
@@ -133,8 +135,8 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
                 sales_price: Number(info.knshknhmbiUnip),
                 app_price: Number(info.kijUnip),
                 kbn_eisyahousiki: info.eishhshkTyp,
-                title_code: purchaseModel.performance.attributes.film.coa_title_code,
-                title_branch_num: purchaseModel.performance.attributes.film.coa_title_branch_num
+                title_code: purchaseModel.performanceCOA.titleCode,
+                title_branch_num: purchaseModel.performanceCOA.titleBranchNum
             });
 
             mvtkList.push({

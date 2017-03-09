@@ -76,6 +76,8 @@ function reserveMvtk(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.mvtk)
             throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw new Error(req.__('common.error.property'));
         // 購入管理番号情報
         const mvtkTickets = [];
         // 座席情報
@@ -115,9 +117,9 @@ function reserveMvtk(req, purchaseModel) {
             : String(Number(purchaseModel.performance.attributes.theater.id));
         // 作品コード
         const num = 10;
-        const filmNo = (Number(purchaseModel.performance.attributes.film.coa_title_branch_num) < num)
-            ? `${purchaseModel.performance.attributes.film.coa_title_code}0${purchaseModel.performance.attributes.film.coa_title_branch_num}`
-            : `${purchaseModel.performance.attributes.film.coa_title_code}${purchaseModel.performance.attributes.film.coa_title_branch_num}`;
+        const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
+            ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
+            : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const result = yield seatInfoSyncService.seatInfoSync({
             kgygishCd: UtilModule.COMPANY_CODE,
@@ -128,7 +130,7 @@ function reserveMvtk(req, purchaseModel) {
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
             stCd: siteCode,
-            screnCd: purchaseModel.performance.attributes.screen.coa_screen_code,
+            screnCd: purchaseModel.performanceCOA.screenCode,
             knyknrNoInfo: mvtkTickets,
             zskInfo: reserveSeats,
             skhnCd: filmNo // 作品コード
@@ -160,6 +162,8 @@ function updateReserve(req, purchaseModel) {
             throw Error(req.__('common.error.property'));
         if (!purchaseModel.expired)
             throw Error(req.__('common.error.property'));
+        if (!purchaseModel.performanceCOA)
+            throw Error(req.__('common.error.property'));
         if (!req.session)
             throw Error(req.__('common.error.property'));
         const performance = purchaseModel.performance;
@@ -169,8 +173,8 @@ function updateReserve(req, purchaseModel) {
         purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
-            title_code: performance.attributes.film.coa_title_code,
-            title_branch_num: performance.attributes.film.coa_title_branch_num,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num,
             reserve_name: `${input.last_name_hira}　${input.first_name_hira}`,

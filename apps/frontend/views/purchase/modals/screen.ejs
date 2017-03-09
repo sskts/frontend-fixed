@@ -2,13 +2,13 @@
 <div class="modal" data-modal="screen">
     <div class="inner">
         <div class="screen-cover bg-light-gray" 
-        data-limit="5" 
+        data-limit="4" 
         data-theater="<%= performance.attributes.theater.id %>" 
         data-day="<%= performance.attributes.day %>" 
-        data-coa-title-code="<%= performance.attributes.film.coa_title_code %>"
-        data-coa-title-branch-num="<%= performance.attributes.film.coa_title_branch_num %>"
+        data-coa-title-code="<%= performanceCOA.titleCode %>"
+        data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
         data-time-start="<%= performance.attributes.time_start %>"
-        data-screen-code="<%= performance.attributes.screen.coa_screen_code %>">
+        data-screen-code="<%= performanceCOA.screenCode %>">
             <div class="screen">
                 <div class="screen-scroll">
                     <%- partial('../../screens/00101') %>

@@ -11,10 +11,10 @@
         data-limit="4" 
         data-theater="<%= performance.attributes.theater.id %>" 
         data-day="<%= performance.attributes.day %>" 
-        data-coa-title-code="<%= performance.attributes.film.coa_title_code %>"
-        data-coa-title-branch-num="<%= performance.attributes.film.coa_title_branch_num %>"
+        data-coa-title-code="<%= performanceCOA.titleCode %>"
+        data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
         data-time-start="<%= performance.attributes.time_start %>"
-        data-screen-code="<%= performance.attributes.screen.coa_screen_code %>">
+        data-screen-code="<%= performanceCOA.screenCode %>">
             <div class="radius bg-light-gray">
                 <div class="screen">
                     <div class="zoom-btn"><a class="icon-zoom-out bg-white text-center small-text" href="#"><%- __('purchase.seat.zoom.out') %></a></div>

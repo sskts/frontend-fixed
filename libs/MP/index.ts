@@ -19,57 +19,54 @@ const endPoint = process.env.MP_ENDPOINT;
 const TIMEOUT = 1000;
 
 /**
- * Theater
+ * 言語
+ * @interface Language
+ */
+export interface Language {
+    en: string;
+    ja: string;
+}
+
+/**
+ * 劇場詳細
  * @interface Theater
  */
 export interface Theater {
     id: string;
-    address: {
-        en: string,
-        ja: string
+    attributes: {
+        address: Language;
+        name: Language;
+        name_kana: string;
     };
-    created_at: string;
-    name: {
-        en: string,
-        ja: string
-    };
-    name_kana: string;
-    updated_at: string;
 }
 
 /**
- * Screen
+ * スクリーン詳細
  * @interface Screen
  */
 export interface Screen {
     id: string;
-    coa_screen_code: string;
-    created_at: string;
-    name: {
-        en: string,
-        ja: string
+    attributes: {
+        coa_screen_code: string;
+        name: Language;
+        seats_numbers_by_seat_grade: any[];
+        sections: Section[];
+        theater: string;
     };
-    seats_numbers_by_seat_grade: any[];
-    sections: Section[];
-    theater: string;
-    updated_at: string;
 }
 
 /**
- * Section
+ * セクション
  * @interface Section
  */
 export interface Section {
     code: string;
-    name: {
-        en: string,
-        ja: string
-    };
+    name: Language;
     seats: Seat[];
 }
 
 /**
- * Seat
+ * 座席
  * @interface Seat
  */
 export interface Seat {
@@ -77,36 +74,34 @@ export interface Seat {
 }
 
 /**
- * Film
+ * 作品詳細
  * @interface Film
  */
 export interface Film {
     id: string;
-    coa_title_branch_num: string;
-    coa_title_code: string;
-    created_at: string;
-    date_end: string;
-    date_start: string;
-    film_branch_code: string;
-    film_group: string;
-    kbn_eirin: string;
-    kbn_eizou: string;
-    kbn_jimakufukikae: string;
-    kbn_joueihousiki: string;
-    minutes: string;
-    name: {
-        en: string,
-        ja: string
+    attributes: {
+        coa_title_branch_num: string;
+        coa_title_code: string;
+        created_at: string;
+        date_end: string;
+        date_start: string;
+        film_branch_code: string;
+        film_group: string;
+        kbn_eirin: string;
+        kbn_eizou: string;
+        kbn_jimakufukikae: string;
+        kbn_joueihousiki: string;
+        minutes: number;
+        name: Language;
+        name_kana: string;
+        name_original: string;
+        name_short: string;
+        theater: string;
     };
-    name_kana: string;
-    name_original: string;
-    name_short: string;
-    theater: string;
-    updated_at: string;
 }
 
 /**
- * Performance
+ * パフォーマンス詳細
  * @interface Performance
  */
 export interface Performance {
@@ -114,14 +109,25 @@ export interface Performance {
     attributes: {
         canceled: boolean,
         day: string,
-        film: Film,
-        screen: Screen,
-        theater: Theater,
+        film: {
+            id: string;
+            name: Language;
+            name_kana: string;
+            name_short: string;
+            name_original: string;
+            minutes: number;
+        },
+        screen: {
+            id: string;
+            name: Language;
+        },
+        theater: {
+            id: string;
+            name: Language;
+        },
         time_end: string,
         time_start: string
     };
-    // tslint:disable-next-line:no-reserved-keywords
-    type: string;
 }
 
 /**
@@ -169,6 +175,75 @@ export async function oauthToken(): Promise<string> {
 }
 
 /**
+ * 劇場取得
+ * @memberOf MP
+ * @function getTheater
+ * @param {GetTheaterArgs} args
+ * @requires {Promise<Theater>}
+ */
+export async function getTheater(id: string): Promise<Theater> {
+    debugLog('getTheater args:', id);
+    const response = await request.get({
+        url: `${endPoint}/theaters/${id}`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
+    });
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    debugLog('getTheater:', response.body.data);
+    return response.body.data;
+}
+
+/**
+ * スクリーン取得
+ * @memberOf MP
+ * @function getScreen
+ * @param {GetScreenArgs} args
+ * @requires {Promise<Screen>}
+ */
+export async function getScreen(id: string): Promise<Screen> {
+    debugLog('getScreen args:', id);
+    const response = await request.get({
+        url: `${endPoint}/screens/${id}`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
+    });
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    debugLog('getScreen:', response.body.data);
+    return response.body.data;
+}
+
+/**
+ * 作品取得
+ * @memberOf MP
+ * @function getFilm
+ * @param {GetFilmArgs} args
+ * @requires {Promise<Film>}
+ */
+export async function getFilm(id: string): Promise<Film> {
+    debugLog('getFilm args:', id);
+    const response = await request.get({
+        url: `${endPoint}/films/${id}`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: TIMEOUT
+    });
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    debugLog('getFilm:', response.body.data);
+    return response.body.data;
+}
+
+/**
  * パフォーマンス一覧取得
  * @memberOf MP
  * @function getPerformances
@@ -177,6 +252,7 @@ export async function oauthToken(): Promise<string> {
  * @requires {Promise<Performance[]>}
  */
 export async function getPerformances(theater: string, day: string): Promise<Performance[]> {
+    debugLog('getPerformances args:', theater, day);
     const response = await request.get({
         url: `${endPoint}/performances`,
         auth: { bearer: await oauthToken() },
@@ -195,23 +271,16 @@ export async function getPerformances(theater: string, day: string): Promise<Per
 }
 
 /**
- * パフォーマンス取得in
- * @memberOf MP
- * @interface getPerformanceArgs
- */
-export interface GetPerformanceArgs {
-    id: string;
-}
-/**
  * パフォーマンス取得
  * @memberOf MP
  * @function getPerformance
  * @param {GetPerformanceArgs} args
  * @requires {Promise<Performance>}
  */
-export async function getPerformance(args: GetPerformanceArgs): Promise<Performance> {
+export async function getPerformance(id: string): Promise<Performance> {
+    debugLog('getPerformance args:', id);
     const response = await request.get({
-        url: `${endPoint}/performances/${args.id}`,
+        url: `${endPoint}/performances/${id}`,
         auth: { bearer: await oauthToken() },
         body: {},
         json: true,
@@ -220,7 +289,7 @@ export async function getPerformance(args: GetPerformanceArgs): Promise<Performa
         timeout: TIMEOUT
     });
     if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
-    debugLog('performances:', response.body.data);
+    debugLog('performance:', response.body.data);
     return response.body.data;
 }
 
@@ -267,6 +336,7 @@ interface Owner {
  * @returns {Promise<TransactionStartResult>}
  */
 export async function transactionStart(args: TransactionStartArgs): Promise<TransactionStartResult> {
+    debugLog('transactionStart args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions`,
         auth: { bearer: await oauthToken() },
@@ -295,6 +365,7 @@ export interface AddCOAAuthorizationArgs {
     reserveSeatsTemporarilyResult: COA.ReserveService.UpdTmpReserveSeatResult;
     salesTicketResults: SalesTicketResult[];
     performance: Performance;
+    performanceCOA: PerformanceCOA;
     totalPrice: number;
 
 }
@@ -332,6 +403,7 @@ export interface AddCOAAuthorizationResult {
  * @returns {Promise<AddCOAAuthorizationResult>}
  */
 export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promise<AddCOAAuthorizationResult> {
+    debugLog('addCOAAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -348,12 +420,12 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
             owner_id_from: promoterOwnerId,
             owner_id_to: anonymousOwnerId,
             coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-            coa_theater_code: args.performance.attributes.theater.id,
+            coa_theater_code: args.performanceCOA.theaterCode,
             coa_date_jouei: args.performance.attributes.day,
-            coa_title_code: args.performance.attributes.film.coa_title_code,
-            coa_title_branch_num: args.performance.attributes.film.coa_title_branch_num,
+            coa_title_code: args.performanceCOA.titleCode,
+            coa_title_branch_num: args.performanceCOA.titleBranchNum,
             coa_time_begin: args.performance.attributes.time_start,
-            coa_screen_code: args.performance.attributes.screen.coa_screen_code,
+            coa_screen_code: args.performanceCOA.screenCode,
             seats: args.salesTicketResults.map((tmpReserve) => {
                 return {
                     performance: args.performance.id,
@@ -399,6 +471,7 @@ export interface RemoveCOAAuthorizationArgs {
  * @requires {Promise<void>}
  */
 export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): Promise<void> {
+    debugLog('removeCOAAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
         auth: { bearer: await oauthToken() },
@@ -443,6 +516,7 @@ export interface AddGMOAuthorizationResult {
  * @requires {Promise<AddGMOAuthorizationResult>}
  */
 export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promise<AddGMOAuthorizationResult> {
+    debugLog('addGMOAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -494,6 +568,7 @@ export interface RemoveGMOAuthorizationArgs {
  * @returns {Promise<void>}
  */
 export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): Promise<void> {
+    debugLog('removeGMOAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
         auth: { bearer: await oauthToken() },
@@ -529,6 +604,7 @@ export interface OwnersAnonymousArgs {
  * @returns {Promise<void>}
  */
 export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> {
+    debugLog('ownersAnonymous args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
         auth: { bearer: await oauthToken() },
@@ -567,6 +643,7 @@ export interface TransactionsEnableInquiryArgs {
  * @returns {Promise<void>}
  */
 export async function transactionsEnableInquiry(args: TransactionsEnableInquiryArgs): Promise<void> {
+    debugLog('transactionsEnableInquiry args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
         auth: { bearer: await oauthToken() },
@@ -601,6 +678,7 @@ export interface TransactionCloseArgs {
  * @returns {Promise<void>}
  */
 export async function transactionClose(args: TransactionCloseArgs): Promise<void> {
+    debugLog('transactionClose args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/close`,
         auth: { bearer: await oauthToken() },
@@ -645,6 +723,7 @@ export interface AddEmailResult {
  * @returns {Promise<AddEmailResult>}
  */
 export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
+    debugLog('addEmail args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
         auth: { bearer: await oauthToken() },
@@ -681,6 +760,7 @@ export interface RemoveEmailArgs {
  * @returns {Promise<void>}
  */
 export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
+    debugLog('removeEmail args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
         auth: { bearer: await oauthToken() },
@@ -712,6 +792,7 @@ export interface MakeInquiryArgs {
  * @returns {Promise<string>}
  */
 export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
+    debugLog('makeInquiry args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/makeInquiry`,
         auth: { bearer: await oauthToken() },
@@ -728,4 +809,41 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
     if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     debugLog('makeInquiry result:' + response.body.data);
     return response.body.data.id;
+}
+
+/**
+ * CAO情報
+ * @memberOf MP
+ * @interface PerformanceCOA
+ */
+export interface PerformanceCOA {
+    theaterCode: string;
+    screenCode: string;
+    titleCode: string;
+    titleBranchNum: string;
+}
+
+/**
+ * COA情報取得
+ * @memberOf MP
+ * @function getPerformanceCOA
+ * @param {string} theater 劇場id
+ * @param {string} screenId スクリーンid
+ * @param {string} filmId 作品id
+ * @returns {Promise<COAPerformance>}
+ */
+export async function getPerformanceCOA(theaterId: string, screenId: string, filmId: string): Promise<PerformanceCOA> {
+    debugLog('getPerformanceCOA args:', theaterId, screenId, filmId);
+    const theater = await getTheater(theaterId);
+    debugLog('劇場取得');
+    const screen = await getScreen(screenId);
+    debugLog('スクリーン取得');
+    const film = await getFilm(filmId);
+    debugLog('作品取得');
+    return {
+        theaterCode: theater.id,
+        screenCode: screen.attributes.coa_screen_code,
+        titleCode: film.attributes.coa_title_code,
+        titleBranchNum: film.attributes.coa_title_branch_num
+    };
 }

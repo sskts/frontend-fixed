@@ -115,9 +115,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
         timeBegin: inquiryModel.stateReserve.time_begin
     });
     debugLog('パフォーマンスID取得', performanceId);
-    inquiryModel.performance = await MP.getPerformance({
-        id: performanceId
-    });
+    inquiryModel.performance = await MP.getPerformance(performanceId);
     debugLog('MPパフォーマンス取得');
 
     if (!req.session) throw req.__('common.error.property');

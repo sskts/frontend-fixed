@@ -153,6 +153,7 @@ function getScreenStateReserve(cb) {
         },
         beforeSend: function () { }
     }).done(function (res) {
+        console.log(res);
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
         alert('座席取得失敗');

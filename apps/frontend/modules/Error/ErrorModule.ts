@@ -41,10 +41,10 @@ export function notFound(req: express.Request, res: express.Response, _next: exp
 export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
     debugLog(err.stack);
 
-    if (req.session) {
-        delete (<any>req.session).purchase;
-        delete (<any>req.session).mvtk;
-    }
+    // if (req.session) {
+    //     delete (<any>req.session).purchase;
+    //     delete (<any>req.session).mvtk;
+    // }
 
     const status = 500;
 

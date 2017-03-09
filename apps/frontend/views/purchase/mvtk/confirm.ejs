@@ -6,14 +6,14 @@
 
     <form method="post">
         <ul class="box radius bg-light-gray mb-medium mvtk-lists">
-            <% for (const ticket of mvtk) { %>
+            <% for (const mvtkTicket of mvtk) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= ticket.code %></dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= mvtkTicket.code %></dt>
                     <dd class="d-td width-medium">
                         <div class="button gray-button not-link">
                             <a href="#">
-                                <div><%= ticket.ticket.name[__('lang')] %></div>
+                                <div><%= mvtkTicket.ticket.ticket_name %></div>
                             </a>
                         </div>
                     </dd>

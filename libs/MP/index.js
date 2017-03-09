@@ -68,6 +68,84 @@ function oauthToken() {
 }
 exports.oauthToken = oauthToken;
 /**
+ * 劇場取得
+ * @memberOf MP
+ * @function getTheater
+ * @param {GetTheaterArgs} args
+ * @requires {Promise<Theater>}
+ */
+function getTheater(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getTheater args:', id);
+        const response = yield request.get({
+            url: `${endPoint}/theaters/${id}`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
+        });
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
+        debugLog('getTheater:', response.body.data);
+        return response.body.data;
+    });
+}
+exports.getTheater = getTheater;
+/**
+ * スクリーン取得
+ * @memberOf MP
+ * @function getScreen
+ * @param {GetScreenArgs} args
+ * @requires {Promise<Screen>}
+ */
+function getScreen(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getScreen args:', id);
+        const response = yield request.get({
+            url: `${endPoint}/screens/${id}`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
+        });
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
+        debugLog('getScreen:', response.body.data);
+        return response.body.data;
+    });
+}
+exports.getScreen = getScreen;
+/**
+ * 作品取得
+ * @memberOf MP
+ * @function getFilm
+ * @param {GetFilmArgs} args
+ * @requires {Promise<Film>}
+ */
+function getFilm(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getFilm args:', id);
+        const response = yield request.get({
+            url: `${endPoint}/films/${id}`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: TIMEOUT
+        });
+        if (response.statusCode !== HTTPStatus.OK)
+            throw new Error(getErrorMessage(response));
+        debugLog('getFilm:', response.body.data);
+        return response.body.data;
+    });
+}
+exports.getFilm = getFilm;
+/**
  * パフォーマンス一覧取得
  * @memberOf MP
  * @function getPerformances
@@ -77,6 +155,7 @@ exports.oauthToken = oauthToken;
  */
 function getPerformances(theater, day) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getPerformances args:', theater, day);
         const response = yield request.get({
             url: `${endPoint}/performances`,
             auth: { bearer: yield oauthToken() },
@@ -103,10 +182,11 @@ exports.getPerformances = getPerformances;
  * @param {GetPerformanceArgs} args
  * @requires {Promise<Performance>}
  */
-function getPerformance(args) {
+function getPerformance(id) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getPerformance args:', id);
         const response = yield request.get({
-            url: `${endPoint}/performances/${args.id}`,
+            url: `${endPoint}/performances/${id}`,
             auth: { bearer: yield oauthToken() },
             body: {},
             json: true,
@@ -116,7 +196,7 @@ function getPerformance(args) {
         });
         if (response.statusCode !== HTTPStatus.OK)
             throw new Error(getErrorMessage(response));
-        debugLog('performances:', response.body.data);
+        debugLog('performance:', response.body.data);
         return response.body.data;
     });
 }
@@ -130,6 +210,7 @@ exports.getPerformance = getPerformance;
  */
 function transactionStart(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('transactionStart args:', args);
         const response = yield request.post({
             url: `${endPoint}/transactions`,
             auth: { bearer: yield oauthToken() },
@@ -158,6 +239,7 @@ exports.transactionStart = transactionStart;
  */
 function addCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('addCOAAuthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
@@ -173,12 +255,12 @@ function addCOAAuthorization(args) {
                 owner_id_from: promoterOwnerId,
                 owner_id_to: anonymousOwnerId,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-                coa_theater_code: args.performance.attributes.theater.id,
+                coa_theater_code: args.performanceCOA.theaterCode,
                 coa_date_jouei: args.performance.attributes.day,
-                coa_title_code: args.performance.attributes.film.coa_title_code,
-                coa_title_branch_num: args.performance.attributes.film.coa_title_branch_num,
+                coa_title_code: args.performanceCOA.titleCode,
+                coa_title_branch_num: args.performanceCOA.titleBranchNum,
                 coa_time_begin: args.performance.attributes.time_start,
-                coa_screen_code: args.performance.attributes.screen.coa_screen_code,
+                coa_screen_code: args.performanceCOA.screenCode,
                 seats: args.salesTicketResults.map((tmpReserve) => {
                     return {
                         performance: args.performance.id,
@@ -217,6 +299,7 @@ exports.addCOAAuthorization = addCOAAuthorization;
  */
 function removeCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('removeCOAAuthorization args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
             auth: { bearer: yield oauthToken() },
@@ -241,6 +324,7 @@ exports.removeCOAAuthorization = removeCOAAuthorization;
  */
 function addGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('addGMOAuthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
@@ -285,6 +369,7 @@ exports.addGMOAuthorization = addGMOAuthorization;
  */
 function removeGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('removeGMOAuthorization args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
             auth: { bearer: yield oauthToken() },
@@ -309,6 +394,7 @@ exports.removeGMOAuthorization = removeGMOAuthorization;
  */
 function ownersAnonymous(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('ownersAnonymous args:', args);
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
             auth: { bearer: yield oauthToken() },
@@ -338,6 +424,7 @@ exports.ownersAnonymous = ownersAnonymous;
  */
 function transactionsEnableInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('transactionsEnableInquiry args:', args);
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
             auth: { bearer: yield oauthToken() },
@@ -366,6 +453,7 @@ exports.transactionsEnableInquiry = transactionsEnableInquiry;
  */
 function transactionClose(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('transactionClose args:', args);
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/close`,
             auth: { bearer: yield oauthToken() },
@@ -390,6 +478,7 @@ exports.transactionClose = transactionClose;
  */
 function addEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('addEmail args:', args);
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
             auth: { bearer: yield oauthToken() },
@@ -420,6 +509,7 @@ exports.addEmail = addEmail;
  */
 function removeEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('removeEmail args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
             auth: { bearer: yield oauthToken() },
@@ -444,6 +534,7 @@ exports.removeEmail = removeEmail;
  */
 function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
+        debugLog('makeInquiry args:', args);
         const response = yield request.post({
             url: `${endPoint}/transactions/makeInquiry`,
             auth: { bearer: yield oauthToken() },
@@ -464,3 +555,30 @@ function makeInquiry(args) {
     });
 }
 exports.makeInquiry = makeInquiry;
+/**
+ * COA情報取得
+ * @memberOf MP
+ * @function getPerformanceCOA
+ * @param {string} theater 劇場id
+ * @param {string} screenId スクリーンid
+ * @param {string} filmId 作品id
+ * @returns {Promise<COAPerformance>}
+ */
+function getPerformanceCOA(theaterId, screenId, filmId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        debugLog('getPerformanceCOA args:', theaterId, screenId, filmId);
+        const theater = yield getTheater(theaterId);
+        debugLog('劇場取得');
+        const screen = yield getScreen(screenId);
+        debugLog('スクリーン取得');
+        const film = yield getFilm(filmId);
+        debugLog('作品取得');
+        return {
+            theaterCode: theater.id,
+            screenCode: screen.attributes.coa_screen_code,
+            titleCode: film.attributes.coa_title_code,
+            titleBranchNum: film.attributes.coa_title_branch_num
+        };
+    });
+}
+exports.getPerformanceCOA = getPerformanceCOA;
