@@ -3,8 +3,7 @@
 <% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
 
 <div class="purchase-seat">
-    <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
-    <p class="read"><%- __('purchase.seat.read') %></p>
+    <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %>TEST</h1>
 
     <div>
         <div class="screen-cover mb-medium" 
@@ -14,7 +13,7 @@
         data-coa-title-code="17020"
         data-coa-title-branch-num="0" 
         data-time-start="0940" 
-        data-screen-code="7">
+        data-screen-code="6">
             <div class="radius bg-light-gray">
                 <div class="screen">
                     <div class="screen-scroll">
@@ -37,18 +36,8 @@
     
 </div>
 <style>
-    .screen {
-        height: 1000px;
-        transform-origin: 0 0;
-        transform: scale(1);
-        visibility: visible;
-        position: relative;
-        overflow: visible;
-    }
-    .screen-inner {
-        background-color: #f9f5f6;
-    }
     .screen .seat a span {
         display: block;
+        font-size: 18px;
     }
 </style>

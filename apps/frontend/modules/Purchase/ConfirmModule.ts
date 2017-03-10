@@ -335,3 +335,15 @@ export function purchase(req: express.Request, res: express.Response, _next: exp
         return res.json({ err: err.message, result: null });
     });
 }
+
+/**
+ * 完了情報取得
+ * @function getCompleteData
+ * @returns {express.Response}
+ */
+// tslint:disable-next-line:variable-name
+export function getCompleteData(req: express.Request, res: express.Response, _next: express.NextFunction): express.Response {
+    if (!req.session) return res.json({ err: req.__('common.error.property'), result: null });
+    if (!(<any>req.session).complete) return res.json({ err: req.__('common.error.access'), result: null });
+    return res.json({ err: null, result: (<any>req.session).complete });
+}

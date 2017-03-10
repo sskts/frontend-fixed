@@ -54,7 +54,7 @@
                 height: 20px;
                 content: '';
                 display: block;
-                background-image: url(/images/screen/seat/normal.svg);
+                background-image: url(/images/theater/seat/normal.svg);
                 background-size: 48px 20px;
                 position: absolute;
                 top: 50%;

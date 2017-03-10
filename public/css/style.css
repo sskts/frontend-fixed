@@ -1574,7 +1574,7 @@ p a {
   height: 20px;
   content: '';
   display: block;
-  background-image: url(/images/screen/seat/normal.svg);
+  background-image: url(/images/theater/seat/normal.svg);
   background-size: 48px 20px;
   position: absolute;
   top: 50%;
@@ -2050,12 +2050,10 @@ p a {
 
 .screen .seat a {
   font-weight: bold;
-  width: 40px;
-  height: 50px;
   display: block;
   color: #9a9a9b;
   padding-top: 20px;
-  background-image: url(/images/screen/seat/normal.svg);
+  background-image: url(/images/theater/seat/normal.svg);
   background-size: 120px 50px;
   background-repeat: no-repeat;
 }
@@ -2076,7 +2074,7 @@ p a {
 }
 
 .screen .seat-hc a {
-  background-image: url(/images/screen/seat/hc.svg);
+  background-image: url(/images/theater/seat/hc.svg);
   background-size: 120px 50px;
 }
 
@@ -2090,13 +2088,31 @@ p a {
 }
 
 .screen .label-object {
-  width: 40px;
-  height: 50px;
   text-align: center;
   line-height: 50px;
   font-size: 24px;
   color: #9a9a9b;
   font-weight: bold;
+}
+
+.screen .screen-4dx .seat a {
+  background-image: url(/images/theater/seat/4dx.svg);
+  background-size: 150px 50px;
+}
+
+.screen .screen-4dx .seat a.active {
+  color: #FFF;
+  background-position: -50px 0;
+}
+
+.screen .screen-4dx .seat a.disabled {
+  color: #FFF;
+  background-position: -100px 0;
+  cursor: default;
+}
+
+.screen .screen-4dx .seat a span {
+  display: none;
 }
 
 .screen-cover .device-type-sp {

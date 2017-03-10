@@ -366,7 +366,7 @@ export interface AddCOAAuthorizationArgs {
     salesTicketResults: SalesTicketResult[];
     performance: Performance;
     performanceCOA: PerformanceCOA;
-    totalPrice: number;
+    price: number;
 
 }
 /**
@@ -441,7 +441,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
                     sale_price: tmpReserve.sale_price
                 };
             }),
-            price: args.totalPrice
+            price: args.price
         },
         json: true,
         simple: false,

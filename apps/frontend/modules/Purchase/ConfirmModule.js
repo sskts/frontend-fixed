@@ -352,3 +352,17 @@ function purchase(req, res, _next) {
     });
 }
 exports.purchase = purchase;
+/**
+ * 完了情報取得
+ * @function getCompleteData
+ * @returns {express.Response}
+ */
+// tslint:disable-next-line:variable-name
+function getCompleteData(req, res, _next) {
+    if (!req.session)
+        return res.json({ err: req.__('common.error.property'), result: null });
+    if (!req.session.complete)
+        return res.json({ err: req.__('common.error.access'), result: null });
+    return res.json({ err: null, result: req.session.complete });
+}
+exports.getCompleteData = getCompleteData;

@@ -211,7 +211,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         salesTicketResults: purchaseModel.reserveTickets,
         performance: performance,
         performanceCOA: purchaseModel.performanceCOA,
-        totalPrice: purchaseModel.getReserveAmount()
+        price: purchaseModel.getReserveAmount()
     });
     debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
     purchaseModel.authorizationCOA = coaAuthorizationResult;
@@ -250,8 +250,8 @@ async function getScreenData(req: express.Request): Promise<ScreenData> {
     const screenCode: string = (Number(req.body.screen_code) < num)
         ? `0${req.body.screen_code}`
         : req.body.screen_code;
-    const screen = await fs.readJSONAsync(`./apps/frontend/screens/${req.body.theater_code}/${screenCode}.json`);
-    const setting = await fs.readJSONAsync('./apps/frontend/screens/setting.json');
+    const screen = await fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
+    const setting = await fs.readJSONAsync('./apps/frontend/theaters/setting.json');
     const state = await COA.ReserveService.stateReserveSeat(req.body);
     return {
         screen: screen,

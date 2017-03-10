@@ -38,10 +38,10 @@ exports.notFound = notFound;
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
     debugLog(err.stack);
-    // if (req.session) {
-    //     delete (<any>req.session).purchase;
-    //     delete (<any>req.session).mvtk;
-    // }
+    if (req.session) {
+        delete req.session.purchase;
+        delete req.session.mvtk;
+    }
     const status = 500;
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });

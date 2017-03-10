@@ -355,7 +355,7 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
         salesTicketResults: purchaseModel.reserveTickets,
         performance: purchaseModel.performance,
         performanceCOA: purchaseModel.performanceCOA,
-        totalPrice: purchaseModel.getReserveAmount()
+        price: purchaseModel.getReserveAmount()
     });
     debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
     purchaseModel.authorizationCOA = coaAuthorizationResult;

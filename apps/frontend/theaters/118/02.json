@@ -1,26 +1,16 @@
 {
-    "description": {
-        "type": "スクリーンタイプ(通常: 0, IMAX: 1, 4DX: 2)",
-        "size": "スクリーンサイズ",
-        "objects": "オブジェクト",
-        "seatStart": "基準の座席位置",
-        "data": "座席データ(座席なし: 0, 座席あり: 1, 通路大: 2, 右通路小: 3, 座席あり+右通路大: 4, 座席あり+右通路小: 5)",
-        "special": "特別席",
-        "hc": "車いす席",
-        "pair": "ペア席"
-    },
     "type": 0,
     "size": { "w": 1346, "h": 1054 },
     "objects": [
         {
             "w": 804, "h": 73,
             "x": 293, "y": 90,
-            "image": "/images/screen/118/screen/002.svg"
+            "image": "/images/theater/118/screen/002.svg"
         },
         {
             "w": 126, "h": 500,
             "x": 205, "y": 252,
-            "image": "/images/screen/118/entrance/002.svg"
+            "image": "/images/theater/118/entrance/002.svg"
         }
     ],
     "seatStart": { "x": 228, "y": 253 },

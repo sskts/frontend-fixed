@@ -205,9 +205,16 @@ function screenStateChange(state) {
  * @function createScreen
  * @param {Object} setting スクリーン共通設定
  * @param {Object} screen スクリーン固有設定
- * @returns {void}
+ * @returns {JQuery}
  */
 function createScreen(setting, screen) {
+    var screenDom = $('.screen .screen-scroll');
+
+    //html挿入の場合
+    if (screen.html) {
+        return screenDom.append(screen.html);
+    }
+
     //通路大きさ
     var aisle = (screen.aisle) ? screen.aisle : setting.aisle;
     //座席同士の間隔
@@ -257,7 +264,7 @@ function createScreen(setting, screen) {
         if (y === 0) {
             pos.y += screen.seatStart.y;
         } else if (screen.map[y].length === 0) {
-            pos.y += aisle.h - seatMargin.h;
+            pos.y += aisle.middle.h - seatMargin.h;
         } else {
             labelCount++;
             pos.y += seatSize.h + seatMargin.h;
@@ -268,11 +275,11 @@ function createScreen(setting, screen) {
 
             //座席ラベルHTML生成
             if (x === 0) {
-                seatLabelHtml.push('<div class="object label-object" style="top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
+                seatLabelHtml.push('<div class="object label-object" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
             //座席番号HTML生成
             if (y === 0) {
-                seatNumberHtml.push('<div class="object label-object" style="top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
+                seatNumberHtml.push('<div class="object label-object" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
             if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
                 //座席HTML生成
@@ -280,24 +287,28 @@ function createScreen(setting, screen) {
                 var label = labels[labelCount] + String(x + 1);
                 if (screen.hc.indexOf(label) !== -1) {
                     seatHtml.push('<div class="seat seat-hc" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
                         '</div>');
                 } else {
                     seatHtml.push('<div class="seat" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
                         '</div>');
                 }
 
             }
             //ポジション設定
             if (screen.map[y][x] === 2) {
-                pos.x += aisle.w + seatMargin.w;
+                pos.x += aisle.middle.w + seatMargin.w;
             } else if (screen.map[y][x] === 3) {
-                pos.x += aisle.w - seatSize.w + seatMargin.w;
+                pos.x += aisle.small.w + seatMargin.w;
             } else if (screen.map[y][x] === 4) {
-                pos.x += aisle.w + seatSize.w + seatMargin.w;
+                pos.x += aisle.middle.w + seatSize.w + seatMargin.w;
             } else if (screen.map[y][x] === 5) {
-                pos.x += aisle.w - seatSize.w + seatSize.w + seatMargin.w;
+                pos.x += aisle.small.w + seatSize.w + seatMargin.w;
+            } else if (screen.map[y][x] === 6) {
+                pos.x += aisle.middle.w + seatSize.w + seatMargin.w;
+            } else if (screen.map[y][x] === 7) {
+                pos.x += aisle.small.w + seatSize.w + seatMargin.w;
             } else {
                 pos.x += seatSize.w + seatMargin.w;
             }
@@ -323,8 +334,7 @@ function createScreen(setting, screen) {
         seatHtml.join('\n') +
         '<div>';
 
-    var screenDom = $('.screen .screen-scroll');
-    screenDom.append(html);
+    return screenDom.append(html);
 }
 
 /**

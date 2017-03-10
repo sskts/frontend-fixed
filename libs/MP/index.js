@@ -276,7 +276,7 @@ function addCOAAuthorization(args) {
                         sale_price: tmpReserve.sale_price
                     };
                 }),
-                price: args.totalPrice
+                price: args.price
             },
             json: true,
             simple: false,

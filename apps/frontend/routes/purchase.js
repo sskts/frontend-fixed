@@ -31,6 +31,7 @@ router.post('/input', InputModule.submit);
 //購入内容確認
 router.get('/confirm', ConfirmModule.index);
 router.post('/confirm', ConfirmModule.purchase);
+router.get('/getComplete', ConfirmModule.getCompleteData);
 //購入完了
 router.get('/complete', CompleteModule.index);
 //ムビチケ券入力

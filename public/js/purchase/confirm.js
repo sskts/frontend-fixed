@@ -72,7 +72,7 @@ function purchase() {
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
-
+        getComplete();
     }).always(function () {
 
     });
@@ -86,17 +86,11 @@ function purchase() {
 function getComplete() {
     $.ajax({
         dataType: 'json',
-        url: '/purchase/confirm',
+        url: '/purchase//getComplete',
         type: 'POST',
         timeout: 100000,
-        data: {
-            toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
-            isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
-            transaction_id: $('input[name=transaction_id]').val()
-        },
-        beforeSend: function () {
-            loadingStart();
-        }
+        data: {},
+        beforeSend: function () {}
     }).done(function (res) {
         if (res.err) {
             //エラー表示
@@ -107,7 +101,10 @@ function getComplete() {
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
-
+        var timer = 3000;
+        setTimeout(function() {
+            getComplete();
+        }, timer);
     }).always(function () {
 
     });
