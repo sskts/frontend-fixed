@@ -190,7 +190,7 @@ async function getSalesTickets(
     const mvtkTickets: SalesTicket[] = [];
 
     for (const mvtk of purchaseModel.mvtk) {
-        mvtkTickets.push({
+        const data = {
             // チケットコード
             ticket_code: mvtk.ticket.ticket_code,
             // チケット名
@@ -210,8 +210,17 @@ async function getSalesTickets(
             // メガネ単価
             add_price_glasses: mvtk.ticket.add_price_glasses,
             // ムビチケ購入番号
-            mvtk_num: mvtk.code
-        });
+            mvtk_num: mvtk.code,
+            // glasses
+            glasses: false
+        }
+        mvtkTickets.push(data);
+
+        if (mvtk.ticket.add_price_glasses > 0) {
+            data.ticket_name = data.ticket_name + req.__('common.glasses');
+            data.glasses = true;
+            mvtkTickets.push(data);
+        }
     }
 
     return mvtkTickets.concat(result);
@@ -259,7 +268,9 @@ async function ticketValidation(
                 section: ticket.section, // 座席セクション
                 seat_code: ticket.seat_code, // 座席番号
                 ticket_code: mvtkTicket.ticket.ticket_code, // チケットコード
-                ticket_name: mvtkTicket.ticket.ticket_name, // チケット名
+                ticket_name: (ticket.glasses)
+                    ? mvtkTicket.ticket.ticket_name + req.__('common.glasses')
+                    : mvtkTicket.ticket.ticket_name, // チケット名
                 ticket_name_eng: mvtkTicket.ticket.ticket_name_eng, // チケット名（英）
                 ticket_name_kana: mvtkTicket.ticket.ticket_name_kana, // チケット名（カナ）
                 std_price: 0, // 標準単価

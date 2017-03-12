@@ -1,6 +1,6 @@
 "use strict";
-const form = require("express-form");
 Object.defineProperty(exports, "__esModule", { value: true });
+const form = require("express-form");
 /**
  * 購入情報入力フォーム
  */

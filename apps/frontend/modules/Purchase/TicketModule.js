@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
@@ -122,6 +123,7 @@ function getSalesTickets(req, purchaseModel) {
             title_code: purchaseModel.performanceCOA.titleCode,
             title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         for (const ticket of salesTickets) {
             result.push({
@@ -152,7 +154,7 @@ function getSalesTickets(req, purchaseModel) {
         // ムビチケ情報からチケット情報へ変換
         const mvtkTickets = [];
         for (const mvtk of purchaseModel.mvtk) {
-            mvtkTickets.push({
+            const data = {
                 // チケットコード
                 ticket_code: mvtk.ticket.ticket_code,
                 // チケット名
@@ -172,8 +174,16 @@ function getSalesTickets(req, purchaseModel) {
                 // メガネ単価
                 add_price_glasses: mvtk.ticket.add_price_glasses,
                 // ムビチケ購入番号
-                mvtk_num: mvtk.code
-            });
+                mvtk_num: mvtk.code,
+                // glasses
+                glasses: false
+            };
+            mvtkTickets.push(data);
+            if (mvtk.ticket.add_price_glasses > 0) {
+                data.ticket_name = data.ticket_name + req.__('common.glasses');
+                data.glasses = true;
+                mvtkTickets.push(data);
+            }
         }
         return mvtkTickets.concat(result);
     });
@@ -202,6 +212,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
             title_code: purchaseModel.performanceCOA.titleCode,
             title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         for (const ticket of reserveTickets) {
             if (ticket.mvtk_num) {
@@ -217,7 +228,9 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                     section: ticket.section,
                     seat_code: ticket.seat_code,
                     ticket_code: mvtkTicket.ticket.ticket_code,
-                    ticket_name: mvtkTicket.ticket.ticket_name,
+                    ticket_name: (ticket.glasses)
+                        ? mvtkTicket.ticket.ticket_name + req.__('common.glasses')
+                        : mvtkTicket.ticket.ticket_name,
                     ticket_name_eng: mvtkTicket.ticket.ticket_name_eng,
                     ticket_name_kana: mvtkTicket.ticket.ticket_name_kana,
                     std_price: 0,

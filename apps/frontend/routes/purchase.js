@@ -2,6 +2,7 @@
  * ルーティング購入
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const CompleteModule = require("../modules/Purchase/CompleteModule");
 const ConfirmModule = require("../modules/Purchase/ConfirmModule");
@@ -42,5 +43,4 @@ router.get('/mvtk/confirm', MvtkConfirmModule.index);
 router.post('/mvtk/confirm', MvtkConfirmModule.submit);
 //座席状態取得
 router.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = router;

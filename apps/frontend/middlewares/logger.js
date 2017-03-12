@@ -2,6 +2,7 @@
  * ロガー
  */
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const log4js = require("log4js");
 const env = process.env.NODE_ENV || 'dev';
@@ -29,5 +30,4 @@ log4js.configure({
     },
     replaceConsole: (env === 'prod') ? false : false
 });
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = log4js.connectLogger(log4js.getLogger('access'), {});

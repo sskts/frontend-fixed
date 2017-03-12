@@ -13,7 +13,6 @@
     "jsdoc": "grunt jsdoc",
     "clean": "rimraf examples/**/*.js apps/**/*.js test/**/*.js types/**/*.d.ts",
     "build": "npm run clean && npm run tslint && tsc -p ./ && postcss -c ./.postcssrc.json"
-    
   },
   "dependencies": {
     "@motionpicture/coa-service": "^1.4.3",
@@ -72,7 +71,7 @@
     "selenium-webdriver": "^3.0.1",
     "tslint": "^4.4.2",
     "tslint-microsoft-contrib": "^4.0.0",
-    "typescript": "^2.1.6"
+    "typescript": "^2.2.1"
   },
   "repository": {},
   "author": {
