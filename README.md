@@ -12,18 +12,23 @@ When using the COA Service SDK, you must provide connection information. This ca
 
 * set environment variables - For example,
 ```shell
-set NODE_ENV=*****
-set NPM_TOKEN=*****
-set MP_ENDPOINT=*****
-set REDIS_HOST=*****
-set REDIS_PORT=*****
-set REDIS_KEY=*****
-set GMO_CLIENT_MODULE=*****
-set GMO_ENDPOINT=*****
-set GMO_SHOP_ID=*****
-set GMO_SHOP_PASSWORD=*****
-set COA_ENDPOINT=*****
-set COA_REFRESH_TOKEN=*****
+set NODE_ENV=**********環境名**********
+set NPM_TOKEN=**********npm motionpicture トークン**********
+set MP_ENDPOINT=**********mp apiのエンドポイント**********
+set REDIS_HOST=**********REDISホスト**********
+set REDIS_PORT=**********REDISポート**********
+set REDIS_KEY=**********REDISキー**********
+set GMO_CLIENT_MODULE=**********GMOCLIENTモージュールURL=**********
+set GMO_ENDPOINT=**********gmo apiのエンドポイント**********
+set COA_ENDPOINT=**********coa apiのエンドポイント**********
+set COA_REFRESH_TOKEN=**********coa apiのリフレッシュトークン**********
+```
+
+only on Aure WebApps
+
+```shell
+set WEBSITE_NODE_DEFAULT_VERSION=**********node.jsバージョン=**********
+set WEBSITE_TIME_ZONE=Tokyo Standard Time
 ```
 
 # Tests

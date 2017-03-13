@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
@@ -122,6 +123,7 @@ function getSalesTickets(req, purchaseModel) {
             title_code: purchaseModel.performanceCOA.titleCode,
             title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         for (const ticket of salesTickets) {
             result.push({
@@ -143,6 +145,7 @@ function getSalesTickets(req, purchaseModel) {
         // ムビチケ情報からチケット情報へ変換
         const mvtkTickets = [];
         for (const mvtk of purchaseModel.mvtk) {
+            // tslint:disable-next-line:no-increment-decrement
             for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i++) {
                 mvtkTickets.push({
                     ticket_code: mvtk.ticket.ticket_code,
@@ -151,7 +154,7 @@ function getSalesTickets(req, purchaseModel) {
                     ticket_name_eng: mvtk.ticket.ticket_name_eng,
                     std_price: 0,
                     add_price: mvtk.ticket.add_price,
-                    sale_price: (0 + mvtk.ticket.add_price),
+                    sale_price: mvtk.ticket.add_price,
                     ticket_note: req.__('common.mvtk_code') + mvtk.code,
                     add_price_glasses: mvtk.ticket.add_price_glasses,
                     mvtk_num: mvtk.code,
@@ -165,7 +168,7 @@ function getSalesTickets(req, purchaseModel) {
                         ticket_name_eng: mvtk.ticket.ticket_name_eng,
                         std_price: 0,
                         add_price: mvtk.ticket.add_price,
-                        sale_price: (0 + mvtk.ticket.add_price),
+                        sale_price: mvtk.ticket.add_price + mvtk.ticket.add_price_glasses,
                         ticket_note: req.__('common.mvtk_code') + mvtk.code,
                         add_price_glasses: mvtk.ticket.add_price_glasses,
                         mvtk_num: mvtk.code,
@@ -201,6 +204,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
             title_code: purchaseModel.performanceCOA.titleCode,
             title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: performance.attributes.time_start
+            // screen_code: performance.screen.id,
         });
         for (const ticket of reserveTickets) {
             if (ticket.mvtk_num) {

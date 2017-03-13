@@ -185,6 +185,7 @@ async function getSalesTickets(
     const mvtkTickets: SalesTicket[] = [];
 
     for (const mvtk of purchaseModel.mvtk) {
+        // tslint:disable-next-line:no-increment-decrement
         for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i++) {
             mvtkTickets.push({
                 ticket_code: mvtk.ticket.ticket_code, // チケットコード
@@ -193,7 +194,7 @@ async function getSalesTickets(
                 ticket_name_eng: mvtk.ticket.ticket_name_eng, // チケット名(英)
                 std_price: 0, // 標準単価
                 add_price: mvtk.ticket.add_price, // 加算単価
-                sale_price: (0 + mvtk.ticket.add_price), // 販売単価
+                sale_price: mvtk.ticket.add_price, // 販売単価
                 ticket_note: req.__('common.mvtk_code') + mvtk.code, // チケット備考
                 add_price_glasses: mvtk.ticket.add_price_glasses, // メガネ単価
                 mvtk_num: mvtk.code, // ムビチケ購入番号
@@ -208,7 +209,7 @@ async function getSalesTickets(
                     ticket_name_eng: mvtk.ticket.ticket_name_eng, // チケット名(英)
                     std_price: 0, // 標準単価
                     add_price: mvtk.ticket.add_price, // 加算単価
-                    sale_price: (0 + mvtk.ticket.add_price), // 販売単価
+                    sale_price: mvtk.ticket.add_price + mvtk.ticket.add_price_glasses, // 販売単価
                     ticket_note: req.__('common.mvtk_code') + mvtk.code, // チケット備考
                     add_price_glasses: mvtk.ticket.add_price_glasses, // メガネ単価
                     mvtk_num: mvtk.code, // ムビチケ購入番号
