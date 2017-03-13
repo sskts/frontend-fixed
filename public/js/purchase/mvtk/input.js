@@ -19,7 +19,8 @@ $(function () {
             if (code && password) {
                 mvtkList.push({
                     code: code,
-                    password: password
+                    password: password,
+                    error: null
                 });
             }
             validation(target);

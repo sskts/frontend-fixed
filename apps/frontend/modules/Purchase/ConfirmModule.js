@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
@@ -273,7 +272,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 ・${purchaseModel.performance.attributes.film.name.ja}\n
 ・${purchaseModel.performance.attributes.screen.name.ja}\n
 ・${purchaseModel.ticketToString()}\n
-　合計 ${purchaseModel.getReserveAmount()}\n
+　合計 ￥${purchaseModel.getReserveAmount()}\n
 ・座席番号：${purchaseModel.seatToString()}\n
 \n
 [チケット発券について]\n

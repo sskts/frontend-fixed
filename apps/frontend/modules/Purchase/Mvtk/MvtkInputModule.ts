@@ -32,7 +32,9 @@ export function index(req: express.Request, res: express.Response, next: express
     delete (<any>req.session).mvtk;
 
     // 購入者情報入力表示
-    res.locals.error = null;
+    res.locals.mvtkInfo = (process.env.NODE_ENV === 'dev')
+        ? [{ code: '3400999842', password: '7648' }]
+        : [{ code: '', password: '' }];
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
     res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
@@ -60,8 +62,21 @@ export function select(req: express.Request, res: express.Response, next: expres
     form(req, res, () => {
         if (!(<any>req).form) return next(new Error(req.__('common.error.property')));
         if ((<any>req).form.isValid) {
-            auth(req, purchaseModel).then(() => {
-                return res.redirect('/purchase/mvtk/confirm');
+            auth(req, purchaseModel).then((result) => {
+                if (result) {
+                    return res.redirect('/purchase/mvtk/confirm');
+                } else {
+                    // 認証エラー有効券無し
+                    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+                    if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
+                    //購入者情報入力表示
+                    res.locals.mvtkInfo = mvtkValidation(req);
+                    res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                    res.locals.transactionId = purchaseModel.transactionMP.id;
+                    res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+                    return res.render('purchase/mvtk/input');
+                }
+
             }).catch((err) => {
                 return next(new Error(err.message));
             });
@@ -69,7 +84,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
             if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
             //購入者情報入力表示
-            res.locals.error = null;
+            res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
@@ -79,14 +94,35 @@ export function select(req: express.Request, res: express.Response, next: expres
 }
 
 /**
+ * ムビチケ検証
+ * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @function mvtkValidation
+ * @param {express.Request} req
+ * @returns {}
+ */
+function mvtkValidation(req: express.Request): InputInfo[] {
+    const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
+    return inputInfo.map((input) => {
+        const ticket = (<any>req.session).mvtk.find((value) => {
+            return (input.code === value.code);
+        });
+        return {
+            code: input.code,
+            password: (ticket) ? input.password : '',
+            error: (ticket) ? null : req.__('common.validation.mvtk')
+        };
+    });
+}
+
+/**
  * 認証
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function auth
  * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>}
  */
-export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<boolean> {
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
 
@@ -117,9 +153,10 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
     });
 
     debugLog('ムビチケ認証');
-
+    let isSuccess = true;
     const mvtkList: PurchaseSession.Mvtk[] = [];
     for (const purchaseNumberAuthResult of result) {
+        if (purchaseNumberAuthResult.ykknInfo.length === 0) isSuccess = false;
         for (const info of purchaseNumberAuthResult.ykknInfo) {
             const input = inputInfo.find((value) => {
                 return (value.code === purchaseNumberAuthResult.knyknrNo);
@@ -149,6 +186,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
     }
 
     (<any>req.session).mvtk = mvtkList;
+    return isSuccess;
 }
 
 /**
@@ -164,4 +202,8 @@ interface InputInfo {
      * PINコード
      */
     password: string;
+    /**
+     * エラー
+     */
+    error: string | null;
 }

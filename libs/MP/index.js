@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
@@ -334,13 +333,14 @@ function addGMOAuthorization(args) {
             return (owner.group === 'ANONYMOUS');
         });
         const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+        const gmoShopId = 'tshop00026096';
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },
             body: {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
-                gmo_shop_id: process.env.GMO_SHOP_ID,
+                gmo_shop_id: gmoShopId,
                 gmo_shop_pass: process.env.GMO_SHOP_PASSWORD,
                 gmo_order_id: args.orderId,
                 gmo_amount: args.amount,

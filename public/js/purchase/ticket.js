@@ -91,12 +91,12 @@ function mvtkToggle(beforeData, afterData) {
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
             var data = JSON.parse(target.find('.button a').attr('data-ticket'));
-            if (data.mvtk_num === beforeData.mvtk_num 
-            && data.ticket_code === beforeData.ticket_code) {
-                target.show();
-                count++;
-                if (count === limit) {
-                    return;
+            if (data.mvtk_num === beforeData.mvtk_num
+                && data.ticket_code === beforeData.ticket_code
+                && target.is(':hidden')) {
+                if (count < limit) {
+                    target.show();
+                    count++;
                 }
             }
         });
@@ -107,12 +107,12 @@ function mvtkToggle(beforeData, afterData) {
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
             var data = JSON.parse(target.find('.button a').attr('data-ticket'));
-            if (data.mvtk_num === afterData.mvtk_num 
-            && data.ticket_code === afterData.ticket_code) {
-                target.hide();
-                count++;
-                if (count === limit) {
-                    return;
+            if (data.mvtk_num === afterData.mvtk_num
+                && data.ticket_code === afterData.ticket_code
+                && target.is(':visible')) {
+                if (count < limit) {
+                    target.hide();
+                    count++;
                 }
             }
         });

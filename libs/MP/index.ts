@@ -525,13 +525,14 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         return (owner.group === 'ANONYMOUS');
     });
     const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+    const gmoShopId = 'tshop00026096';
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
         auth: { bearer: await oauthToken() },
         body: {
             owner_id_from: anonymousOwnerId,
             owner_id_to: promoterOwnerId,
-            gmo_shop_id: process.env.GMO_SHOP_ID,
+            gmo_shop_id: gmoShopId,
             gmo_shop_pass: process.env.GMO_SHOP_PASSWORD,
             gmo_order_id: args.orderId,
             gmo_amount: args.amount,

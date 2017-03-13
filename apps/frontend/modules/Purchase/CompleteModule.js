@@ -3,7 +3,6 @@
  * @namespace Purchase.CompleteModule
  */
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * 購入完了表示

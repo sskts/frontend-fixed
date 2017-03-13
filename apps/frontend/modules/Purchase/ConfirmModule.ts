@@ -255,7 +255,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 ・${purchaseModel.performance.attributes.film.name.ja}\n
 ・${purchaseModel.performance.attributes.screen.name.ja}\n
 ・${purchaseModel.ticketToString()}\n
-　合計 ${purchaseModel.getReserveAmount()}\n
+　合計 ￥${purchaseModel.getReserveAmount()}\n
 ・座席番号：${purchaseModel.seatToString()}\n
 \n
 [チケット発券について]\n

@@ -154,10 +154,12 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         debugLog('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO) {
+            const gmoShopId = 'tshop00026096';
+            const gmoShopPassword = 'xbxmkaa6';
             //GMOオーソリ取消
             await GMO.CreditService.alterTran({
-                shopId: process.env.GMO_SHOP_ID,
-                shopPass: process.env.GMO_SHOP_PASSWORD,
+                shopId: gmoShopId,
+                shopPass: gmoShopPassword,
                 accessId: purchaseModel.transactionGMO.accessId,
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID

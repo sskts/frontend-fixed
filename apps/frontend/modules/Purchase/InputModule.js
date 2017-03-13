@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const MP = require("../../../../libs/MP");
@@ -35,11 +34,12 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
+    const gmoShopId = 'tshop00026096';
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-    res.locals.gmoShopId = process.env.GMO_SHOP_ID;
+    res.locals.gmoShopId = gmoShopId;
     res.locals.price = purchaseModel.getReserveAmount();
     res.locals.transactionId = purchaseModel.transactionMP.id;
     if (purchaseModel.input) {
@@ -121,6 +121,7 @@ function submit(req, res, next) {
                         return next(new Error(err.message));
                     if (!purchaseModel.transactionMP)
                         return next(new Error(req.__('common.error.property')));
+                    const gmoShopId = 'tshop00026096';
                     //GMOオーソリ追加失敗
                     res.locals.error = {
                         cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
@@ -131,7 +132,7 @@ function submit(req, res, next) {
                     res.locals.input = req.body;
                     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-                    res.locals.gmoShopId = process.env.GMO_SHOP_ID;
+                    res.locals.gmoShopId = gmoShopId;
                     res.locals.price = purchaseModel.getReserveAmount();
                     res.locals.transactionId = purchaseModel.transactionMP.id;
                     return res.render('purchase/input');
@@ -176,6 +177,8 @@ function addAuthorization(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.gmo)
             throw new Error(req.__('common.error.property'));
+        const gmoShopId = 'tshop00026096';
+        const gmoShopPassword = 'xbxmkaa6';
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
@@ -188,8 +191,8 @@ function addAuthorization(req, purchaseModel) {
                 throw new Error(req.__('common.error.property'));
             //GMOオーソリ取消
             yield GMO.CreditService.alterTran({
-                shopId: process.env.GMO_SHOP_ID,
-                shopPass: process.env.GMO_SHOP_PASSWORD,
+                shopId: gmoShopId,
+                shopPass: gmoShopPassword,
                 accessId: purchaseModel.transactionGMO.accessId,
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
@@ -208,8 +211,8 @@ function addAuthorization(req, purchaseModel) {
             purchaseModel.orderId = Date.now().toString();
             const amount = purchaseModel.getReserveAmount();
             purchaseModel.transactionGMO = yield GMO.CreditService.entryTran({
-                shopId: process.env.GMO_SHOP_ID,
-                shopPass: process.env.GMO_SHOP_PASSWORD,
+                shopId: gmoShopId,
+                shopPass: gmoShopPassword,
                 orderId: purchaseModel.orderId,
                 jobCd: GMO.Util.JOB_CD_AUTH,
                 amount: amount

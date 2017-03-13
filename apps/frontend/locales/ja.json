@@ -288,6 +288,7 @@
 			"equals": "が一致しません",
 			"agree": "に同意してください",
 			"card": "をご確認ください",
+			"mvtk": "入力内容をご確認ください",
 			"equals_email": "common.validation.equals_email",
 			"mvtk_code": "common.validation.mvtk_code",
 			"mvtk_password": "common.validation.mvtk_password"
@@ -304,7 +305,8 @@
 			"access": "お手続きの途中でエラーが発生いたしました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。",
 			"expire": "お手続きの有効期限がきれました。<br>お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。"
 		},
-		"mail": "common.mail"
+		"mail": "common.mail",
+		"glasses": "メガネ有り"
 	},
 	"%s ticket": {
 		"one": "%s枚",

@@ -130,6 +130,10 @@ export interface SalesTicket {
      * ムビチケ購入番号
      */
     mvtk_num: string | null;
+    /**
+     * メガネ有り無し
+     */
+    glasses: boolean;
 }
 
 /**
@@ -161,26 +165,17 @@ async function getSalesTickets(
 
     for (const ticket of salesTickets) {
         result.push({
-            // チケットコード
-            ticket_code: ticket.ticket_code,
-            // チケット名
-            ticket_name: ticket.ticket_name,
-            // チケット名(カナ)
-            ticket_name_kana: ticket.ticket_name_kana,
-            // チケット名(英)
-            ticket_name_eng: ticket.ticket_name_eng,
-            // 標準単価
-            std_price: ticket.std_price,
-            // 加算単価
-            add_price: ticket.add_price,
-            // 販売単価
-            sale_price: ticket.sale_price,
-            // チケット備考
-            ticket_note: ticket.ticket_note,
-            // メガネ単価
-            add_price_glasses: 0,
-            // ムビチケ購入番号
-            mvtk_num: null
+            ticket_code: ticket.ticket_code, // チケットコード
+            ticket_name: ticket.ticket_name, // チケット名
+            ticket_name_kana: ticket.ticket_name_kana, // チケット名(カナ)
+            ticket_name_eng: ticket.ticket_name_eng, // チケット名(英)
+            std_price: ticket.std_price, // 標準単価
+            add_price: ticket.add_price, // 加算単価
+            sale_price: ticket.sale_price, // 販売単価
+            ticket_note: ticket.ticket_note, // チケット備考
+            add_price_glasses: 0, // メガネ単価
+            mvtk_num: null, // ムビチケ購入番号
+            glasses: false // メガネ有無
         });
     }
 
@@ -190,36 +185,36 @@ async function getSalesTickets(
     const mvtkTickets: SalesTicket[] = [];
 
     for (const mvtk of purchaseModel.mvtk) {
-        const data = {
-            // チケットコード
-            ticket_code: mvtk.ticket.ticket_code,
-            // チケット名
-            ticket_name: mvtk.ticket.ticket_name,
-            // チケット名(カナ)
-            ticket_name_kana: mvtk.ticket.ticket_name_kana,
-            // チケット名(英)
-            ticket_name_eng: mvtk.ticket.ticket_name_eng,
-            // 標準単価
-            std_price: 0,
-            // 加算単価
-            add_price: mvtk.ticket.add_price,
-            // 販売単価
-            sale_price: (0 + mvtk.ticket.add_price),
-            // チケット備考
-            ticket_note: req.__('common.mvtk_code') + mvtk.code,
-            // メガネ単価
-            add_price_glasses: mvtk.ticket.add_price_glasses,
-            // ムビチケ購入番号
-            mvtk_num: mvtk.code,
-            // glasses
-            glasses: false
-        }
-        mvtkTickets.push(data);
+        for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i++) {
+            mvtkTickets.push({
+                ticket_code: mvtk.ticket.ticket_code, // チケットコード
+                ticket_name: mvtk.ticket.ticket_name, // チケット名
+                ticket_name_kana: mvtk.ticket.ticket_name_kana, // チケット名(カナ)
+                ticket_name_eng: mvtk.ticket.ticket_name_eng, // チケット名(英)
+                std_price: 0, // 標準単価
+                add_price: mvtk.ticket.add_price, // 加算単価
+                sale_price: (0 + mvtk.ticket.add_price), // 販売単価
+                ticket_note: req.__('common.mvtk_code') + mvtk.code, // チケット備考
+                add_price_glasses: mvtk.ticket.add_price_glasses, // メガネ単価
+                mvtk_num: mvtk.code, // ムビチケ購入番号
+                glasses: false  // メガネ有無
+            });
 
-        if (mvtk.ticket.add_price_glasses > 0) {
-            data.ticket_name = data.ticket_name + req.__('common.glasses');
-            data.glasses = true;
-            mvtkTickets.push(data);
+            if (mvtk.ticket.add_price_glasses > 0) {
+                mvtkTickets.push({
+                    ticket_code: mvtk.ticket.ticket_code, // チケットコード
+                    ticket_name: mvtk.ticket.ticket_name + req.__('common.glasses'), // チケット名
+                    ticket_name_kana: mvtk.ticket.ticket_name_kana, // チケット名(カナ)
+                    ticket_name_eng: mvtk.ticket.ticket_name_eng, // チケット名(英)
+                    std_price: 0, // 標準単価
+                    add_price: mvtk.ticket.add_price, // 加算単価
+                    sale_price: (0 + mvtk.ticket.add_price), // 販売単価
+                    ticket_note: req.__('common.mvtk_code') + mvtk.code, // チケット備考
+                    add_price_glasses: mvtk.ticket.add_price_glasses, // メガネ単価
+                    mvtk_num: mvtk.code, // ムビチケ購入番号
+                    glasses: true  // メガネ有無
+                });
+            }
         }
     }
 
@@ -340,11 +335,12 @@ async function upDateAuthorization(req: express.Request, purchaseModel: Purchase
         if (!purchaseModel.transactionGMO) throw new Error(req.__('common.error.property'));
         if (!purchaseModel.authorizationGMO) throw new Error(req.__('common.error.property'));
         if (!purchaseModel.orderId) throw new Error(req.__('common.error.property'));
-
+        const gmoShopId = 'tshop00026096';
+        const gmoShopPassword = 'xbxmkaa6';
         //GMOオーソリ取消
         await GMO.CreditService.alterTran({
-            shopId: process.env.GMO_SHOP_ID,
-            shopPass: process.env.GMO_SHOP_PASSWORD,
+            shopId: gmoShopId,
+            shopPass: gmoShopPassword,
             accessId: purchaseModel.transactionGMO.accessId,
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID

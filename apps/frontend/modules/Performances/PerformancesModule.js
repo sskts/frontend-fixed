@@ -3,7 +3,6 @@
  * @namespace PerformancesModule
  */
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const MP = require("../../../../libs/MP");
 /**
  * パフォーマンス一覧表示

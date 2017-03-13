@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ムビチケ確認
  * @namespace Purchase.Mvtks.MvtkConfirmModule
@@ -23,6 +22,8 @@ function index(req, res, next) {
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
+    if (!req.session.mvtk)
+        return res.redirect('/purchase/mvtk');
     // ムビチケ券適用確認ページ表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;

@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
@@ -40,7 +39,9 @@ function index(req, res, next) {
     // ムビチケセッション削除
     delete req.session.mvtk;
     // 購入者情報入力表示
-    res.locals.error = null;
+    res.locals.mvtkInfo = (process.env.NODE_ENV === 'dev')
+        ? [{ code: '3400999842', password: '7648' }]
+        : [{ code: '', password: '' }];
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
     res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
@@ -70,8 +71,23 @@ function select(req, res, next) {
         if (!req.form)
             return next(new Error(req.__('common.error.property')));
         if (req.form.isValid) {
-            auth(req, purchaseModel).then(() => {
-                return res.redirect('/purchase/mvtk/confirm');
+            auth(req, purchaseModel).then((result) => {
+                if (result) {
+                    return res.redirect('/purchase/mvtk/confirm');
+                }
+                else {
+                    // 認証エラー有効券無し
+                    if (!purchaseModel.transactionMP)
+                        return next(new Error(req.__('common.error.property')));
+                    if (!purchaseModel.reserveSeats)
+                        return next(new Error(req.__('common.error.property')));
+                    //購入者情報入力表示
+                    res.locals.mvtkInfo = mvtkValidation(req);
+                    res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                    res.locals.transactionId = purchaseModel.transactionMP.id;
+                    res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+                    return res.render('purchase/mvtk/input');
+                }
             }).catch((err) => {
                 return next(new Error(err.message));
             });
@@ -82,7 +98,7 @@ function select(req, res, next) {
             if (!purchaseModel.reserveSeats)
                 return next(new Error(req.__('common.error.property')));
             //購入者情報入力表示
-            res.locals.error = null;
+            res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
@@ -92,12 +108,32 @@ function select(req, res, next) {
 }
 exports.select = select;
 /**
+ * ムビチケ検証
+ * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @function mvtkValidation
+ * @param {express.Request} req
+ * @returns {}
+ */
+function mvtkValidation(req) {
+    const inputInfo = JSON.parse(req.body.mvtk);
+    return inputInfo.map((input) => {
+        const ticket = req.session.mvtk.find((value) => {
+            return (input.code === value.code);
+        });
+        return {
+            code: input.code,
+            password: (ticket) ? input.password : '',
+            error: (ticket) ? null : req.__('common.validation.mvtk')
+        };
+    });
+}
+/**
  * 認証
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function auth
  * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
+ * @returns {Promise<boolean>}
  */
 function auth(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -130,8 +166,11 @@ function auth(req, purchaseModel) {
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
         debugLog('ムビチケ認証');
+        let isSuccess = true;
         const mvtkList = [];
         for (const purchaseNumberAuthResult of result) {
+            if (purchaseNumberAuthResult.ykknInfo.length === 0)
+                isSuccess = false;
             for (const info of purchaseNumberAuthResult.ykknInfo) {
                 const input = inputInfo.find((value) => {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
@@ -159,6 +198,7 @@ function auth(req, purchaseModel) {
             }
         }
         req.session.mvtk = mvtkList;
+        return isSuccess;
     });
 }
 exports.auth = auth;

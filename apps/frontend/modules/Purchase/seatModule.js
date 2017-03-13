@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
@@ -167,10 +166,12 @@ function reserve(req, purchaseModel) {
             debugLog('MPCOAオーソリ削除');
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO) {
+                const gmoShopId = 'tshop00026096';
+                const gmoShopPassword = 'xbxmkaa6';
                 //GMOオーソリ取消
                 yield GMO.CreditService.alterTran({
-                    shopId: process.env.GMO_SHOP_ID,
-                    shopPass: process.env.GMO_SHOP_PASSWORD,
+                    shopId: gmoShopId,
+                    shopPass: gmoShopPassword,
                     accessId: purchaseModel.transactionGMO.accessId,
                     accessPass: purchaseModel.transactionGMO.accessPass,
                     jobCd: GMO.Util.JOB_CD_VOID

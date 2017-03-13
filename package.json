@@ -12,10 +12,11 @@
     "tsc": "tsc -p ./ -w",
     "jsdoc": "grunt jsdoc",
     "clean": "rimraf examples/**/*.js apps/**/*.js test/**/*.js types/**/*.d.ts",
-    "build": "npm run clean && npm run tslint && tsc -p ./ && postcss -c ./.postcssrc.json"
+    "build": "npm run clean && npm run tslint && tsc -p ./ && postcss -c ./.postcssrc.json",
+    "nsp": "nsp check --output summary"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^1.4.3",
+    "@motionpicture/coa-service": "^1.5.0",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "git+https://hata:1q2w3e4r5t@m-p.backlog.jp/git/MWSR/src_service.git#SSKTS-102",
     "@types/fs-extra-promise": "0.0.31",
@@ -61,6 +62,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-jsdoc": "^2.1.0",
     "ink-docstrap": "^1.3.0",
+    "nsp": "^2.6.3",
     "postcss": "^5.2.12",
     "postcss-cli": "^2.6.0",
     "postcss-comment": "^1.0.3",

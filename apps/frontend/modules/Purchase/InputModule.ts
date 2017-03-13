@@ -26,11 +26,12 @@ export function index(req: express.Request, res: express.Response, next: express
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
+    const gmoShopId = 'tshop00026096';
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-    res.locals.gmoShopId = process.env.GMO_SHOP_ID;
+    res.locals.gmoShopId = gmoShopId;
     res.locals.price = purchaseModel.getReserveAmount();
     res.locals.transactionId = purchaseModel.transactionMP.id;
 
@@ -109,6 +110,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
                 }).catch((err) => {
                     if (!err.hasOwnProperty('type')) return next(new Error(err.message));
                     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+                    const gmoShopId = 'tshop00026096';
                     //GMOオーソリ追加失敗
                     res.locals.error = {
                         cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
@@ -119,7 +121,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
                     res.locals.input = req.body;
                     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-                    res.locals.gmoShopId = process.env.GMO_SHOP_ID;
+                    res.locals.gmoShopId = gmoShopId;
                     res.locals.price = purchaseModel.getReserveAmount();
                     res.locals.transactionId = purchaseModel.transactionMP.id;
 
@@ -163,6 +165,9 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
     if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.gmo) throw new Error(req.__('common.error.property'));
 
+    const gmoShopId = 'tshop00026096';
+    const gmoShopPassword = 'xbxmkaa6';
+
     if (purchaseModel.transactionGMO
         && purchaseModel.authorizationGMO
         && purchaseModel.orderId) {
@@ -173,8 +178,8 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
 
         //GMOオーソリ取消
         await GMO.CreditService.alterTran({
-            shopId: process.env.GMO_SHOP_ID,
-            shopPass: process.env.GMO_SHOP_PASSWORD,
+            shopId: gmoShopId,
+            shopPass: gmoShopPassword,
             accessId: purchaseModel.transactionGMO.accessId,
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
@@ -195,8 +200,8 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
         purchaseModel.orderId = Date.now().toString();
         const amount: number = purchaseModel.getReserveAmount();
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran({
-            shopId: process.env.GMO_SHOP_ID,
-            shopPass: process.env.GMO_SHOP_PASSWORD,
+            shopId: gmoShopId,
+            shopPass: gmoShopPassword,
             orderId: purchaseModel.orderId,
             jobCd: GMO.Util.JOB_CD_AUTH,
             amount: amount
