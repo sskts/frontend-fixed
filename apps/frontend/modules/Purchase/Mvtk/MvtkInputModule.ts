@@ -103,7 +103,7 @@ export function select(req: express.Request, res: express.Response, next: expres
 function mvtkValidation(req: express.Request): InputInfo[] {
     const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
     return inputInfo.map((input) => {
-        const ticket = (<any>req.session).mvtk.find((value) => {
+        const ticket = (<any>req.session).mvtk.find((value: InputInfo) => {
             return (input.code === value.code);
         });
         return {

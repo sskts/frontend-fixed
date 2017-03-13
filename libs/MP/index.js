@@ -335,6 +335,7 @@ function addGMOAuthorization(args) {
         });
         const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
         const gmoShopId = 'tshop00026096';
+        const gmoShopPassword = 'xbxmkaa6';
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },
@@ -342,7 +343,7 @@ function addGMOAuthorization(args) {
                 owner_id_from: anonymousOwnerId,
                 owner_id_to: promoterOwnerId,
                 gmo_shop_id: gmoShopId,
-                gmo_shop_pass: process.env.GMO_SHOP_PASSWORD,
+                gmo_shop_pass: gmoShopPassword,
                 gmo_order_id: args.orderId,
                 gmo_amount: args.amount,
                 gmo_access_id: args.entryTranResult.accessId,
