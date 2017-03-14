@@ -49,8 +49,10 @@ export function index(err: Error, req: express.Request, res: express.Response, _
     const status = 500;
 
     if (req.xhr) {
+        console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     } else {
+        console.error(err);
         res.status(status);
         res.locals.message = err.message;
         res.locals.error = err;

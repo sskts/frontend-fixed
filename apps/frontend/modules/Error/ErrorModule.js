@@ -45,9 +45,11 @@ function index(err, req, res, _next) {
     }
     const status = 500;
     if (req.xhr) {
+        console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     }
     else {
+        console.error(err);
         res.status(status);
         res.locals.message = err.message;
         res.locals.error = err;
