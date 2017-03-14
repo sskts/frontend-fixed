@@ -17,3 +17,4 @@ app.yml*
 
 !.elasticbeanstalk/*.global.yml
 
+bin/env/

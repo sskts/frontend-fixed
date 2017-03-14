@@ -100,7 +100,7 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
     };
     // サイトコード
-    const siteCode = (process.env.NODE_ENV === 'dev')
+    const siteCode = (process.env.NODE_ENV === 'development')
         ? '15'
         : String(Number(purchaseModel.performance.attributes.theater.id));
     // 作品コード

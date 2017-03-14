@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "node bin/dev.js",
+    "development": "node bin/env/development.js",
     "start": "node ./index.js",
     "test": "node ./test/test.js",
     "css": "postcss -c ./.postcssrc.json -w",
@@ -11,7 +11,7 @@
     "tslint-fix": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json --fix",
     "tsc": "tsc -p ./ -w",
     "jsdoc": "grunt jsdoc",
-    "clean": "rimraf examples/**/*.js apps/**/*.js test/**/*.js",
+    "clean": "rimraf libs/**/*.js apps/**/*.js test/**/*.js",
     "build": "npm run clean && npm run tslint && tsc -p ./ && postcss -c ./.postcssrc.json",
     "nsp": "nsp check --output summary"
   },

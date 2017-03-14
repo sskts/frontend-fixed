@@ -32,7 +32,7 @@ function login(_req, res) {
     res.locals.theater_code = '';
     res.locals.reserve_num = '';
     res.locals.tel_num = '';
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'development') {
         res.locals.theater_code = '118';
         res.locals.reserve_num = '59';
         res.locals.tel_num = '09040007648';

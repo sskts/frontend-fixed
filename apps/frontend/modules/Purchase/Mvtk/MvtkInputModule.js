@@ -40,7 +40,7 @@ function index(req, res, next) {
     // ムビチケセッション削除
     delete req.session.mvtk;
     // 購入者情報入力表示
-    res.locals.mvtkInfo = (process.env.NODE_ENV === 'dev')
+    res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')
         ? [{ code: '3400999842', password: '7648' }]
         : [{ code: '', password: '' }];
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -145,7 +145,7 @@ function auth(req, purchaseModel) {
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo = JSON.parse(req.body.mvtk);
         // サイトコード
-        const siteCode = (process.env.NODE_ENV === 'dev')
+        const siteCode = (process.env.NODE_ENV === 'development')
             ? '15'
             : String(Number(purchaseModel.performance.attributes.theater.id));
         // 作品コード

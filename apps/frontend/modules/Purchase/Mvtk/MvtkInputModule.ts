@@ -32,7 +32,7 @@ export function index(req: express.Request, res: express.Response, next: express
     delete (<any>req.session).mvtk;
 
     // 購入者情報入力表示
-    res.locals.mvtkInfo = (process.env.NODE_ENV === 'dev')
+    res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')
         ? [{ code: '3400999842', password: '7648' }]
         : [{ code: '', password: '' }];
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -129,7 +129,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
     const mvtkService = MVTK.createPurchaseNumberAuthService();
     const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
     // サイトコード
-    const siteCode = (process.env.NODE_ENV === 'dev')
+    const siteCode = (process.env.NODE_ENV === 'development')
         ? '15'
         : String(Number(purchaseModel.performance.attributes.theater.id));
     // 作品コード

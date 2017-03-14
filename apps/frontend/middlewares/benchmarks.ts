@@ -9,7 +9,7 @@ const debugLog = debug('SSKTS ');
 // tslint:disable-next-line:variable-name
 export default (req: express.Request, _res: express.Response, next: express.NextFunction) => {
 
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'development') {
         const startMemory = process.memoryUsage();
         const startTime = process.hrtime();
 

@@ -48,7 +48,7 @@ export function index(req: express.Request, res: express.Response, next: express
         };
     }
 
-    if (process.env.NODE_ENV === 'dev' && !purchaseModel.input) {
+    if (process.env.NODE_ENV === 'development' && !purchaseModel.input) {
         res.locals.input = {
             last_name_hira: 'はたぐち',
             first_name_hira: 'あきと',

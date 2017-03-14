@@ -27,7 +27,7 @@ export default (app: express.Application) => {
     //パフォーマンス一覧
     router.post('/performances', PerformancesModule.getPerformances);
 
-    if (process.env.NODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'development') {
         //再起動
         // tslint:disable-next-line:variable-name
         router.get('/500', (_req, _res, _next) => {

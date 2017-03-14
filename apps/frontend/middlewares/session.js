@@ -15,7 +15,6 @@ const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.e
     return_buffers: true
 });
 const maxAge = 3600000; //60 * 60 * 1000
-const secure = (process.env.NODE_ENV === 'dev') ? false : true;
 exports.default = session({
     secret: 'FrontendSecret',
     resave: false,
@@ -25,7 +24,6 @@ exports.default = session({
         client: redisClient
     }),
     cookie: {
-        secure: secure,
         httpOnly: true,
         maxAge: maxAge
     }
