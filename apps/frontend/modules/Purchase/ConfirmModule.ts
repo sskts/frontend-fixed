@@ -65,36 +65,62 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
-
+    debugLog('ムビチケ決済開始');
     // 購入管理番号情報
     const mvtkTickets = [];
     // 座席情報
     const reserveSeats = [];
-    for (const ticket of purchaseModel.reserveTickets) {
-        const mvtkTicket = purchaseModel.mvtk.find((value) => {
-            return (value.ticket.ticket_code === ticket.ticket_code);
+    for (const reserveTicket of purchaseModel.reserveTickets) {
+        const mvtk = purchaseModel.mvtk.find((value) => {
+            return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
         });
-        if (!mvtkTicket) continue;
-        mvtkTickets.push({
-            KNYKNR_NO: mvtkTicket.code, //購入管理番号（ムビチケ購入番号）
-            PIN_CD: UtilModule.base64Decode(mvtkTicket.password), //PINコード（ムビチケ暗証番号）
-            KNSH_INFO: [
-                {
-                    KNSH_TYP: mvtkTicket.ykknInfo.ykknshTyp, //券種区分
+        if (!mvtk) continue;
+
+        const mvtkTicket = mvtkTickets.find((value) => {
+            return (value.KNYKNR_NO === mvtk.code);
+        });
+
+        if (mvtkTicket) {
+            // 券種追加
+            const tcket = mvtkTicket.KNSH_INFO.find((value) => {
+                return (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp);
+            });
+            if (tcket) {
+                // 枚数追加
+                tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
+            } else {
+                // 新規券種作成
+                mvtkTicket.KNSH_INFO.push({
+                    KNSH_TYP: mvtk.ykknInfo.ykknshTyp, //券種区分
                     MI_NUM: '1' //枚数
-                }
-            ]
-        });
+                });
+            }
+        } else {
+            // 新規購入番号作成
+            mvtkTickets.push({
+                KNYKNR_NO: mvtk.code, //購入管理番号（ムビチケ購入番号）
+                PIN_CD: UtilModule.base64Decode(mvtk.password), //PINコード（ムビチケ暗証番号）
+                KNSH_INFO: [
+                    {
+                        KNSH_TYP: mvtk.ykknInfo.ykknshTyp, //券種区分
+                        MI_NUM: '1' //枚数
+                    }
+                ]
+            });
+        }
+
         reserveSeats.push({
-            ZSK_CD: ticket.seat_code //座席コード
+            ZSK_CD: reserveTicket.seat_code //座席コード
         });
     }
 
+    debugLog('購入管理番号情報', mvtkTickets);
+
     if (mvtkTickets.length === 0 || reserveSeats.length === 0) return;
 
-    // 興行会社システム座席予約番号
+    // 興行会社システム座席予約番号(劇場コード + 予約番号)
     const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
-    // 興行会社ユーザー座席予約番号
+    // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
@@ -332,6 +358,9 @@ export function purchase(req: express.Request, res: express.Response, _next: exp
         //購入完了情報を返す
         return res.json({ err: null, result: (<any>req.session).complete.updateReserve });
     }).catch((err) => {
+        debugLog('ERROR', err);
+        //購入セッション削除
+        delete (<any>req.session).purchase;
         return res.json({ err: err.message, result: null });
     });
 }

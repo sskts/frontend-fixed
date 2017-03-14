@@ -63,7 +63,7 @@ function purchase() {
             loadingStart();
         }
     }).done(function (res) {
-        if (res.err) {
+        if (res.err || !res.result) {
             //エラー表示
             showError(res.err.message);
         } else {
@@ -92,7 +92,7 @@ function getComplete() {
         data: {},
         beforeSend: function () {}
     }).done(function (res) {
-        if (res.err) {
+        if (res.err || !res.result) {
             //エラー表示
             showError(res.err.message);
         } else {
