@@ -334,8 +334,13 @@ function addGMOAuthorization(args) {
             return (owner.group === 'ANONYMOUS');
         });
         const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
-        const gmoShopId = 'tshop00026096';
-        const gmoShopPassword = 'xbxmkaa6';
+        // todo GMO情報取得API作成中
+        let gmoShopId = 'tshop00026096';
+        let gmoShopPassword = 'xbxmkaa6';
+        if (process.env.NODE_ENV === 'test') {
+            gmoShopId = 'tshop00026715';
+            gmoShopPassword = 'ybmbptww';
+        }
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },

@@ -301,8 +301,13 @@ function upDateAuthorization(req, purchaseModel) {
                 throw new Error(req.__('common.error.property'));
             if (!purchaseModel.orderId)
                 throw new Error(req.__('common.error.property'));
-            const gmoShopId = 'tshop00026096';
-            const gmoShopPassword = 'xbxmkaa6';
+            // todo GMO情報取得API作成中
+            let gmoShopId = 'tshop00026096';
+            let gmoShopPassword = 'xbxmkaa6';
+            if (process.env.NODE_ENV === 'test') {
+                gmoShopId = 'tshop00026715';
+                gmoShopPassword = 'ybmbptww';
+            }
             //GMOオーソリ取消
             yield GMO.CreditService.alterTran({
                 shopId: gmoShopId,
