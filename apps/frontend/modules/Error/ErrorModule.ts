@@ -3,8 +3,8 @@
  * @namespace ErrorModule
  */
 
-import * as debug from 'debug';
 import * as express from 'express';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 
 /**
  * Not Found
@@ -40,9 +40,18 @@ export function notFound(req: express.Request, res: express.Response, _next: exp
 export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
     console.error(err.stack);
 
+    if (req.session && req.session.purchase) {
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        res.locals.prevLink = (purchaseModel.performance)
+            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
+            : '';
+    } else {
+        res.locals.prevLink = '';
+    }
+
     if (req.session) {
-        delete (<any>req.session).purchase;
-        delete (<any>req.session).mvtk;
+        delete req.session.purchase;
+        delete req.session.mvtk;
     }
 
     const status = 500;

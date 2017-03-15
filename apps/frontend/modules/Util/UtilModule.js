@@ -16,8 +16,17 @@ function setLocals(_req, res, next) {
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
-    // tslint:disable-next-line:no-http-string
-    res.locals.portalSite = 'http://www.cinemasunshine.co.jp';
+    if (process.env.NODE_ENV === 'prod') {
+        // tslint:disable-next-line:no-http-string
+        res.locals.portalSite = 'http://www.cinemasunshine.co.jp';
+    }
+    else if (process.env.NODE_ENV === 'test') {
+        // tslint:disable-next-line:no-http-string
+        res.locals.portalSite = 'http://devssktsportal.azurewebsites.net';
+    }
+    else {
+        res.locals.portalSite = '/';
+    }
     return next();
 }
 exports.setLocals = setLocals;

@@ -4,6 +4,7 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -37,6 +38,15 @@ exports.notFound = notFound;
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
     console.error(err.stack);
+    if (req.session && req.session.purchase) {
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        res.locals.prevLink = (purchaseModel.performance)
+            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
+            : '';
+    }
+    else {
+        res.locals.prevLink = '';
+    }
     if (req.session) {
         delete req.session.purchase;
         delete req.session.mvtk;
