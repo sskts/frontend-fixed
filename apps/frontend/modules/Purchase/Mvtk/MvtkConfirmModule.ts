@@ -19,7 +19,8 @@ const debugLog = debug('SSKTS ');
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     if (!(<any>req.session).mvtk) return res.redirect('/purchase/mvtk');
@@ -44,7 +45,8 @@ export function index(req: express.Request, res: express.Response, next: express
  */
 export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認

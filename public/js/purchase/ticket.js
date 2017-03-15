@@ -1,5 +1,6 @@
 $(function () {
-    totalPrice();
+    // 初期化
+    pageInit();
     var modal = new SASAKI.Modal();
     // 券種クリックイベント
     $(document).on('click', '.modal[data-modal=ticket_type] a', function (event) {
@@ -39,6 +40,20 @@ $(function () {
         }
     });
 })
+
+/**
+ * 初期化
+ * @function pageInit
+ * @returns {void}
+ */
+function pageInit() {
+    $('.seats li').each(function (index, elem) {
+        var target = $(elem);
+        var beforeData = JSON.parse(target.find('dt').attr('data-ticket'));
+        mvtkToggle(beforeData, null);
+    });
+    totalPrice();
+}
 
 /**
  * 券種選択
@@ -85,7 +100,7 @@ function ticketSelect(target, ticket) {
  */
 function mvtkToggle(beforeData, afterData) {
     var modalDom = $('.modal[data-modal=ticket_type]');
-    if (beforeData.mvtk_num) {
+    if (beforeData && beforeData.mvtk_num) {
         var limit = (beforeData.add_price_glasses > 0) ? 2 : 1;
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
@@ -101,7 +116,7 @@ function mvtkToggle(beforeData, afterData) {
             }
         });
     }
-    if (afterData.mvtk_num) {
+    if (afterData && afterData.mvtk_num) {
         var limit = (afterData.add_price_glasses > 0) ? 2 : 1;
         var count = 0;
         modalDom.find('li').each(function (index, elem) {

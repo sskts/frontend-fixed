@@ -24,7 +24,8 @@ const debugLog = debug('SSKTS ');
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
@@ -324,7 +325,8 @@ TEL：XX-XXXX-XXXX`;
 // tslint:disable-next-line:variable-name
 export function purchase(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
     if (!req.session) return res.json({ err: req.__('common.error.expire'), result: null });
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    if (!req.session.purchase) return res.json({ err: req.__('common.error.expire'), result: null });
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return res.json({ err: req.__('common.error.property'), result: null });
     if (!purchaseModel.expired) return res.json({ err: req.__('common.error.property'), result: null });
 

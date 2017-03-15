@@ -31,6 +31,8 @@ const debugLog = debug('SSKTS ');
 function index(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
+    if (!req.session.purchase)
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
         return next(new Error(req.__('common.error.access')));
@@ -69,6 +71,8 @@ exports.index = index;
  */
 function select(req, res, next) {
     if (!req.session)
+        return next(new Error(req.__('common.error.property')));
+    if (!req.session.purchase)
         return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)

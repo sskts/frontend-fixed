@@ -20,6 +20,8 @@ const debugLog = debug('SSKTS ');
 function index(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
+    if (!req.session.purchase)
+        return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
@@ -45,6 +47,8 @@ exports.index = index;
  */
 function submit(req, res, next) {
     if (!req.session)
+        return next(new Error(req.__('common.error.property')));
+    if (!req.session.purchase)
         return next(new Error(req.__('common.error.property')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)

@@ -68,7 +68,6 @@ export class InquiryModel {
         stateReserve: COA.ReserveService.StateReserveResult | null,
         login: Login | null
     } {
-
         return {
             transactionId: (this.transactionId) ? this.transactionId : null,
             performance: (this.performance) ? this.performance : null,

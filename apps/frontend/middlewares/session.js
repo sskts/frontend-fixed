@@ -14,7 +14,7 @@ const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.e
     },
     return_buffers: true
 });
-const maxAge = 3600000; //60 * 60 * 1000
+const maxAge = 1800000; //30 * 60 * 1000
 exports.default = session({
     secret: 'FrontendSecret',
     resave: false,

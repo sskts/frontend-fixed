@@ -21,8 +21,8 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function login(_req: express.Request, res: express.Response): void {
-    res.locals.theater_code = '';
+export function login(req: express.Request, res: express.Response): void {
+    res.locals.theater_code = (req.query && req.query.theater) ? req.query.theater : '';
     res.locals.reserve_num = '';
     res.locals.tel_num = '';
     if (process.env.NODE_ENV === 'development') {

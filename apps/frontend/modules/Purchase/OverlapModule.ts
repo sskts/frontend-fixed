@@ -22,7 +22,7 @@ const debugLog = debug('SSKTS ');
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     //パフォーマンス取得
@@ -48,7 +48,7 @@ export function index(req: express.Request, res: express.Response, next: express
  */
 export function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     removeReserve(req, purchaseModel).then(() => {
         if (!req.session) return next(new Error(req.__('common.error.property')));
         //購入スタートへ

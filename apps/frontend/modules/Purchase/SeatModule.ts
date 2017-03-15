@@ -24,7 +24,7 @@ const debugLog = debug('SSKTS ');
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return next(new Error(req.__('common.error.access')));
 
     preparation(req, purchaseModel).then(() => {
@@ -83,7 +83,8 @@ export async function preparation(req: express.Request, purchaseModel: PurchaseS
  */
 export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
     //取引id確認

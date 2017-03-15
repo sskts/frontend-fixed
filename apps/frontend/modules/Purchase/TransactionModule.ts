@@ -22,7 +22,7 @@ const debugLog = debug('SSKTS ');
 // tslint:disable-next-line:variable-name
 export function start(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
     if (!req.session || !req.body.id) return res.json({ redirect: null, err: req.__('common.error.property') });
-    const purchaseModel = new PurchaseSession.PurchaseModel((<any>req.session).purchase);
+    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
 
     if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
         //重複確認へ
