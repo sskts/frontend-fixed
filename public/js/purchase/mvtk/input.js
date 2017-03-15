@@ -1,14 +1,11 @@
 $(function () {
-    /**
-     * 追加クリックイベント
-     */
+    var modal = new SASAKI.Modal();
+    // 追加クリックイベント
     $(document).on('click', '.add-button a', function (event) {
         event.preventDefault();
         addTicket();
     });
-    /**
-     * 次へクリックイベント
-     */
+    // 次へクリックイベント
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         var mvtkList = [];
@@ -32,7 +29,7 @@ $(function () {
         }
 
         if (mvtkList.length === 0) {
-            alert('ムビチケ券が1件も入力されていません');
+            modal.open('mvtkNotInput');
             return;
         }
 
@@ -47,6 +44,8 @@ $(function () {
 
 /**
  * チケット追加
+ * @function addTicket
+ * @returns {void}
  */
 function addTicket() {
     var dom = $('.clone').clone();

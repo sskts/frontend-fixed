@@ -120,7 +120,13 @@
 				"prev": "戻る",
 				"add": "ムビチケ券を追加",
 				"select_seat": "選択中の座席",
-				"note": "※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。"
+				"note": "※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。",
+				"modal": {
+					"not_input": {
+						"ttl": "未入力項目があります。",
+						"text": "ムビチケ購入番号、ムビチケ暗証番号を入力してください。"
+					}
+				}
 			},
 			"confirm": {
 				"page_ttl": "ムビチケ券適用内容確認",
@@ -289,7 +295,6 @@
 			"agree": "に同意してください",
 			"card": "をご確認ください",
 			"mvtk": "入力内容をご確認ください",
-			"equals_email": "common.validation.equals_email",
 			"mvtk_code": "common.validation.mvtk_code",
 			"mvtk_password": "common.validation.mvtk_password"
 		},
