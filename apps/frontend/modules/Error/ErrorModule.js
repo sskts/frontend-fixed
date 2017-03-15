@@ -4,8 +4,6 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const debug = require("debug");
-const debugLog = debug('SSKTS ');
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -38,7 +36,7 @@ exports.notFound = notFound;
  */
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
-    debugLog(err.stack);
+    console.error(err.stack);
     if (req.session) {
         delete req.session.purchase;
         delete req.session.mvtk;

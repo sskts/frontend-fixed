@@ -40,6 +40,10 @@ exports.default = (app) => {
     app.use('/inquiry', inquiry_1.default);
     //方法
     app.use('/method', method_1.default);
+    //エラー
+    router.get('/error', (req, res, next) => {
+        ErrorModule.index(new Error(), req, res, next);
+    });
     // error handlers
     app.use(ErrorModule.index);
     // 404

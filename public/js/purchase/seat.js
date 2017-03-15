@@ -7,9 +7,7 @@ $(function () {
         });
     });
 
-    /**
-     * 座席クリックイベント
-     */
+    // 座席クリックイベント
     $(document).on('click', '.zoom-btn a', function (event) {
         event.preventDefault();
         if (screenSeatStatusesMap.isZoom()) {
@@ -17,9 +15,7 @@ $(function () {
         }
     });
 
-    /**
-     * 座席クリックイベント
-     */
+    // 座席クリックイベント
     $('.screen').on('click', '.seat a', function () {
         //スマホで拡大操作
         if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
@@ -40,9 +36,7 @@ $(function () {
         $(this).toggleClass('active');
     });
 
-    /**
-     * 次へクリックイベント
-     */
+    // 次へクリックイベント
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         // 座席コードリストを取得
@@ -55,7 +49,6 @@ $(function () {
                 seat_section: '0'
             });
         });
-
 
         if (seats.list_tmp_reserve.length < 1) {
             modal.open('seat_not_select');
@@ -76,13 +69,10 @@ $(function () {
         });
     });
 
-    /**
-     * スクロール
-     */
+    // スクロール
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
     });
-
 });
 
 /**
@@ -101,24 +91,14 @@ function zoomButtonScroll() {
     var target = $('.zoom-btn');
     var targetH = target.height();
     var fixH = 10;
-    if (screenTop < winTop
-        && (screenTop + screenH - targetH - fixH * 2) > winTop) {
-        target.css({
-            top: fixH + 'px',
-            right: screenRight + fixH + 'px'
-        });
+    if (screenTop < winTop && (screenTop + screenH - targetH - fixH * 2) > winTop) {
+        target.css({ top: fixH + 'px', right: screenRight + fixH + 'px' });
         target.addClass('scroll');
     } else if ((screenTop + screenH - targetH - fixH * 2) < winTop) {
-        target.css({
-            top: screenH - targetH - fixH + 'px',
-            right: fixH + 'px'
-        });
+        target.css({ top: screenH - targetH - fixH + 'px', right: fixH + 'px' });
         target.removeClass('scroll');
     } else {
-        target.css({
-            top: fixH + 'px',
-            right: fixH + 'px'
-        });
+        target.css({ top: fixH + 'px', right: fixH + 'px' });
         target.removeClass('scroll');
     }
 }
@@ -138,25 +118,22 @@ function getScreenStateReserve(cb) {
         type: 'POST',
         timeout: 10000,
         data: {
-            /** 施設コード */
-            theater_code: target.attr('data-theater'),
-            /** 上映日 */
-            date_jouei: target.attr('data-day'),
-            /** 作品コード */
-            title_code: target.attr('data-coa-title-code'),
-            /** 作品枝番 */
-            title_branch_num: target.attr('data-coa-title-branch-num'),
-            /** 上映時刻 */
-            time_begin: target.attr('data-time-start'),
-            /** スクリーンコード */
-            screen_code: target.attr('data-screen-code'),
+            theater_code: target.attr('data-theater'), // 施設コード
+            date_jouei: target.attr('data-day'), // 上映日
+            title_code: target.attr('data-coa-title-code'), // 作品コード
+            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
+            time_begin: target.attr('data-time-start'), // 上映時刻
+            screen_code: target.attr('data-screen-code'), // スクリーンコード
         },
         beforeSend: function () { }
     }).done(function (res) {
         console.log(res);
+        if (!res.result) {
+            location.href = '/error';
+        }
         cb(res.result);
     }).fail(function (jqxhr, textStatus, error) {
-        alert('座席取得失敗');
+        location.href = '/error';
     }).always(function () {
         loadingEnd();
     });
@@ -275,11 +252,11 @@ function createScreen(setting, screen) {
 
             //座席ラベルHTML生成
             if (x === 0) {
-                seatLabelHtml.push('<div class="object label-object" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
+                seatLabelHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
             //座席番号HTML生成
             if (y === 0) {
-                seatNumberHtml.push('<div class="object label-object" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
+                seatNumberHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
             if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
                 //座席HTML生成
@@ -287,11 +264,11 @@ function createScreen(setting, screen) {
                 var label = labels[labelCount] + String(x + 1);
                 if (screen.hc.indexOf(label) !== -1) {
                     seatHtml.push('<div class="seat seat-hc" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
                         '</div>');
                 } else {
                     seatHtml.push('<div class="seat" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: '+ seatSize.w +'px; height: '+ seatSize.h +'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
                         '</div>');
                 }
 
@@ -347,7 +324,6 @@ function screenStateUpdate(cb) {
     getScreenStateReserve(function (result) {
         createScreen(result.setting, result.screen);
         screenStateChange(result.state);
-        console.log(result.state)
         var screen = $('.screen');
         screen.css('visibility', 'visible');
         screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);

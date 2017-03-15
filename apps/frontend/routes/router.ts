@@ -52,6 +52,10 @@ export default (app: express.Application) => {
     //方法
     app.use('/method', method);
 
+    //エラー
+    router.get('/error', (req, res, next) => {
+        ErrorModule.index(new Error(), req, res, next);
+    });
     // error handlers
     app.use(ErrorModule.index);
 
