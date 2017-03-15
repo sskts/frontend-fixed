@@ -31,7 +31,7 @@ function index(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.property')));
+        return next(new Error(req.__('common.error.expire')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE))
         return next(new Error(req.__('common.error.access')));
@@ -91,7 +91,7 @@ function submit(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.property')));
+        return next(new Error(req.__('common.error.expire')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));

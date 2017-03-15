@@ -33,7 +33,7 @@ function index(req, res, next) {
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.property')));
+        return next(new Error(req.__('common.error.expire')));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
         return next(new Error(req.__('common.error.access')));
@@ -342,7 +342,7 @@ TEL：XX-XXXX-XXXX`;
 // tslint:disable-next-line:variable-name
 function purchase(req, res, _next) {
     if (!req.session)
-        return res.json({ err: req.__('common.error.expire'), result: null });
+        return res.json({ err: req.__('common.error.property'), result: null });
     if (!req.session.purchase)
         return res.json({ err: req.__('common.error.expire'), result: null });
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);

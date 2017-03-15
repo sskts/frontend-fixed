@@ -324,7 +324,7 @@ TEL：XX-XXXX-XXXX`;
  */
 // tslint:disable-next-line:variable-name
 export function purchase(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
-    if (!req.session) return res.json({ err: req.__('common.error.expire'), result: null });
+    if (!req.session) return res.json({ err: req.__('common.error.property'), result: null });
     if (!req.session.purchase) return res.json({ err: req.__('common.error.expire'), result: null });
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return res.json({ err: req.__('common.error.property'), result: null });
