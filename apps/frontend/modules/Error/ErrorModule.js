@@ -40,7 +40,7 @@ function index(err, req, res, _next) {
     console.error(err.stack);
     if (req.session && req.session.purchase) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        res.locals.prevLink = (purchaseModel.performance)
+        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
             ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
             : '';
     }

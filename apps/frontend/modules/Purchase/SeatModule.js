@@ -46,6 +46,9 @@ function index(req, res, next) {
             : null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.error = null;
+        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
+            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
+            : '';
         //セッション更新
         if (!req.session)
             return next(new Error(req.__('common.error.property')));
@@ -124,6 +127,9 @@ function select(req, res, next) {
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = req.form.getErrors();
+            res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
+                ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
+                : '';
             return res.render('purchase/seat');
         }
     });
