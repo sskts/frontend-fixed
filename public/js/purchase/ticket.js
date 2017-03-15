@@ -49,8 +49,8 @@ $(function () {
 function pageInit() {
     $('.seats li').each(function (index, elem) {
         var target = $(elem);
-        var beforeData = JSON.parse(target.find('dt').attr('data-ticket'));
-        mvtkToggle(beforeData, null);
+        var afterData = JSON.parse(target.find('dt').attr('data-ticket'));
+        mvtkToggle(null, afterData);
     });
     totalPrice();
 }
