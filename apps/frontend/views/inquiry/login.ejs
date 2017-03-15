@@ -6,7 +6,7 @@
     <form method="post">
         <div class="box radius bg-light-gray">
             <dl>
-                <% if (!theater_code) %>
+                <% if (!theater_code) { %>
                 <dt><%- __('common.theater_code') %></dt>
                 <dd>
                     <input type="text" pattern="\d*" name="theater_code" autocomplete="off" placeholder="<%- __('common.placeholder.theater_code') %>" value="<%= theater_code %>">
@@ -32,7 +32,7 @@
             </dl>
         </div>
 
-        <% if (theater_code) %>
+        <% if (theater_code) { %>
             <input type="hidden" name="theater_code" value="<%= theater_code %>">
         <% } %>
         
