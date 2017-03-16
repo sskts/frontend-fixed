@@ -299,7 +299,7 @@ export async function getPerformance(id: string): Promise<Performance> {
  * @interface TransactionStartArgs
  */
 export interface TransactionStartArgs {
-    expired_at: number;
+    expires_at: number;
 }
 /**
  * 取引開始out
@@ -338,17 +338,18 @@ interface Owner {
 export async function transactionStart(args: TransactionStartArgs): Promise<TransactionStartResult> {
     debugLog('transactionStart args:', args);
     const response = await request.post({
-        url: `${endPoint}/transactions`,
+        url: `${endPoint}/transactions/startIfPossible`,
         auth: { bearer: await oauthToken() },
         body: {
-            expired_at: args.expired_at
+            expires_at: args.expires_at
         },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.CREATED) throw new Error(getErrorMessage(response));
+    debugLog('--------------------transaction:', response.body);
+    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
     const transaction = response.body.data;
     debugLog('transaction:', transaction);
 

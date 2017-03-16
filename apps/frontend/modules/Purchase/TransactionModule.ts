@@ -55,7 +55,7 @@ async function transactionStart(purchaseModel: PurchaseSession.PurchaseModel): P
     const minutes = 30;
     purchaseModel.expired = moment().add('minutes', minutes).unix();
     purchaseModel.transactionMP = await MP.transactionStart({
-        expired_at: purchaseModel.expired
+        expires_at: purchaseModel.expired
     });
     debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
 }

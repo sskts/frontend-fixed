@@ -63,7 +63,7 @@ function transactionStart(purchaseModel) {
         const minutes = 30;
         purchaseModel.expired = moment().add('minutes', minutes).unix();
         purchaseModel.transactionMP = yield MP.transactionStart({
-            expired_at: purchaseModel.expired
+            expires_at: purchaseModel.expired
         });
         debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
     });

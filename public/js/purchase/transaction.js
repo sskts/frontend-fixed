@@ -41,10 +41,10 @@ function getTransaction(id) {
  * @returns {void}
  */
 function retry() {
-    var timer = 3000;
+    var timer = 30000;
     $('.wrapper-inner').show();
 
     setTimeout(function(){
         getTransaction();
-    }, timer)
+    }, timer);
 }
