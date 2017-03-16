@@ -304,7 +304,8 @@ function createScreen(setting, screen) {
             type = '';
             break;
     }
-    var html = '<div class="screen-inner ' + type + '" style=" width: ' + screen.size.w + 'px; height: ' + screen.size.h + 'px;">' +
+    $('.screen-cover').addClass(type);
+    var html = '<div class="screen-inner" style=" width: ' + screen.size.w + 'px; height: ' + screen.size.h + 'px;">' +
         objectsHtml.join('\n') +
         seatNumberHtml.join('\n') +
         seatLabelHtml.join('\n') +

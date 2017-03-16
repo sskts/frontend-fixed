@@ -1555,41 +1555,6 @@ p a {
           justify-content: center;
 }
 
-.purchase-seat .seat-info .seat {
-  margin: 0 10px;
-  position: relative;
-  padding-left: 24px;
-}
-
-@media screen and (max-width: 767px) {
-
-  .purchase-seat .seat-info .seat{
-    margin:0 7px;
-    font-size:12px;
-  }
-}
-
-.purchase-seat .seat-info .seat:before {
-  width: 16px;
-  height: 20px;
-  content: '';
-  display: block;
-  background-image: url(/images/theater/seat/normal.svg);
-  background-size: 48px 20px;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  margin-top: -10px;
-}
-
-.purchase-seat .seat-info .active:before {
-  background-position: -16px 0;
-}
-
-.purchase-seat .seat-info .disabled:before {
-  background-position: -32px 0;
-}
-
 .purchase-seat .film-info {
   background-color: #3e3a39;
   color: #FFF;
@@ -2029,8 +1994,7 @@ p a {
 .screen {
     visibility: hidden;
     position: relative;
-    overflow: hidden;
-    
+    overflow: hidden;   
 }
 
 .screen .screen-scroll {
@@ -2095,24 +2059,80 @@ p a {
   font-weight: bold;
 }
 
-.screen .screen-4dx .seat a {
+.seat-info .seat {
+  margin: 0 10px;
+  position: relative;
+  padding-left: 24px;
+}
+
+@media screen and (max-width: 767px) {
+
+  .seat-info .seat{
+    margin:0 7px;
+    font-size:12px;
+  }
+}
+
+.seat-info .seat:before {
+  width: 16px;
+  height: 20px;
+  content: '';
+  display: block;
+  background-image: url(/images/theater/seat/normal.svg);
+  background-size: 48px 20px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: -10px;
+}
+
+.seat-info .active:before {
+  background-position: -16px 0;
+}
+
+.seat-info .disabled:before {
+  background-position: -32px 0;
+}
+
+.screen-4dx .seat a {
   background-image: url(/images/theater/seat/4dx.svg);
   background-size: 150px 50px;
 }
 
-.screen .screen-4dx .seat a.active {
+.screen-4dx .seat a.active {
   color: #FFF;
   background-position: -50px 0;
 }
 
-.screen .screen-4dx .seat a.disabled {
+.screen-4dx .seat a.disabled {
   color: #FFF;
   background-position: -100px 0;
   cursor: default;
 }
 
-.screen .screen-4dx .seat a span {
+.screen-4dx .seat a span {
   display: none;
+}
+
+.screen-4dx .seat-info .seat:before {
+  width: 20px;
+  height: 20px;
+  content: '';
+  display: block;
+  background-image: url(/images/theater/seat/4dx.svg);
+  background-size: 60px 20px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin-top: -10px;
+}
+
+.screen-4dx .seat-info .active:before {
+  background-position: -20px 0;
+}
+
+.screen-4dx .seat-info .disabled:before {
+  background-position: -40px 0;
 }
 
 .screen-cover .device-type-sp {

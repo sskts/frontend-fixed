@@ -54,9 +54,43 @@
         font-size: 24px;
         color: #9a9a9b;
         font-weight: bold;
+    }   
+}
+.seat-info {
+    .seat {
+        margin: 0 10px;
+        position: relative;
+        padding-left: 24px;
+        @media screen and (max-width: $mobile) {
+            margin: 0 7px;
+            font-size: 12px;
+        }
+        &:before {
+            width: 16px;
+            height: 20px;
+            content: '';
+            display: block;
+            background-image: url(/images/theater/seat/normal.svg);
+            background-size: 48px 20px;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            margin-top: -10px;
+        } 
     }
-    .screen-4dx {
-        .seat {
+    .active {
+        &:before {
+            background-position: -16px 0;
+        }
+    }
+    .disabled {
+        &:before {
+            background-position: -32px 0;
+        }
+    } 
+} 
+.screen-4dx {
+    .seat {
         a {
             background-image: url(/images/theater/seat/4dx.svg);
             background-size: 150px 50px;
@@ -74,8 +108,32 @@
             }
         }
     }
-    }
-    
+    .seat-info {
+        .seat {
+            &:before {
+                width: 20px;
+                height: 20px;
+                content: '';
+                display: block;
+                background-image: url(/images/theater/seat/4dx.svg);
+                background-size: 60px 20px;
+                position: absolute;
+                top: 50%;
+                left: 0;
+                margin-top: -10px;
+            } 
+        }
+        .active {
+            &:before {
+                background-position: -20px 0;
+            }
+        }
+        .disabled {
+            &:before {
+                background-position: -40px 0;
+            }
+        } 
+    } 
 }
 .screen-cover {
     .device-type-sp {
