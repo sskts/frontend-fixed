@@ -52,6 +52,14 @@ function index(req, res, next) {
     res.locals.seatStr = purchaseModel.seatToString();
     res.locals.ticketStr = purchaseModel.ticketToString();
     res.locals.transactionId = purchaseModel.transactionMP.id;
+    if (req.session && req.session.purchase) {
+        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
+            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
+            : '';
+    }
+    else {
+        res.locals.prevLink = '';
+    }
     //セッション更新
     if (!req.session)
         return next(new Error(req.__('common.error.property')));
@@ -312,7 +320,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 \n
 <発券/入場方法2 入場用QRコードで入場>\n
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。\n
-https://${req.headers.host}//inquiry/login\n
+https://${req.headers.host}/inquiry/login\n
 \n
 [ご注意事項]\n
 ・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。\n
