@@ -25,11 +25,15 @@ const endPoint = process.env.MP_ENDPOINT;
 const TIMEOUT = 1000;
 /**
  * エラー
- * @function getErrorMessage
+ * @function errorHandler
  * @param {any} response
- * @requires {string}
+ * @requires {void}
  */
-function getErrorMessage(response) {
+function errorHandler(response) {
+    if (response.statusCode === HTTPStatus.NOT_FOUND) {
+        console.error('NOT_FOUND');
+        throw new Error('NOT_FOUND');
+    }
     let message = '';
     if (response.body.errors && Array.isArray(response.body.errors)) {
         for (const error of response.body.errors) {
@@ -38,9 +42,9 @@ function getErrorMessage(response) {
                 break;
             }
         }
-        debugLog('errors--------------', response.body.errors);
+        console.error(response.body.errors);
     }
-    return message;
+    throw new Error(message);
 }
 /**
  * アクセストークン取得
@@ -62,7 +66,7 @@ function oauthToken() {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('oauthToken:', response.body.access_token);
         return response.body.access_token;
     });
@@ -88,7 +92,7 @@ function getTheater(id) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('getTheater:', response.body.data);
         return response.body.data;
     });
@@ -114,7 +118,7 @@ function getScreen(id) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('getScreen:', response.body.data);
         return response.body.data;
     });
@@ -140,7 +144,7 @@ function getFilm(id) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('getFilm:', response.body.data);
         return response.body.data;
     });
@@ -170,7 +174,7 @@ function getPerformances(theater, day) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         // debugLog('performances:', response.body.data);
         return response.body.data;
     });
@@ -196,7 +200,7 @@ function getPerformance(id) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('performance:', response.body.data);
         return response.body.data;
     });
@@ -225,7 +229,7 @@ function transactionStart(args) {
         });
         debugLog('--------------------transaction:', response.body);
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         const transaction = response.body.data;
         debugLog('transaction:', transaction);
         return transaction;
@@ -286,7 +290,7 @@ function addCOAAuthorization(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('addCOAAuthorization result');
         return response.body.data;
     });
@@ -312,7 +316,7 @@ function removeCOAAuthorization(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('addCOAAuthorization result');
     });
 }
@@ -363,7 +367,7 @@ function addGMOAuthorization(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('addGMOAuthorization result:');
         return response.body.data;
     });
@@ -389,7 +393,7 @@ function removeGMOAuthorization(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('removeGMOAuthorization result:');
     });
 }
@@ -419,7 +423,7 @@ function ownersAnonymous(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('ownersAnonymous result:');
     });
 }
@@ -448,7 +452,7 @@ function transactionsEnableInquiry(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('transactionsEnableInquiry result:');
     });
 }
@@ -473,7 +477,7 @@ function transactionClose(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('close result:');
     });
 }
@@ -503,7 +507,7 @@ function addEmail(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('addEmail result:' + response.body.data);
         return response.body.data;
     });
@@ -529,7 +533,7 @@ function removeEmail(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('removeEmail result:');
     });
 }
@@ -558,7 +562,7 @@ function makeInquiry(args) {
             timeout: TIMEOUT
         });
         if (response.statusCode !== HTTPStatus.OK)
-            throw new Error(getErrorMessage(response));
+            errorHandler(response);
         debugLog('makeInquiry result:' + response.body.data);
         return response.body.data.id;
     });

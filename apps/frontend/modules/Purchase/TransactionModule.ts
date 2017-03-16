@@ -31,11 +31,11 @@ export function start(req: express.Request, res: express.Response, _next: expres
 
     transactionStart(purchaseModel).then(() => {
         if (!req.session) return res.json({ redirect: null, err: req.__('common.error.property') });
-        delete (<any>req.session).purchase;
-        delete (<any>req.session).mvtk;
-        delete (<any>req.session).complete;
+        delete req.session.purchase;
+        delete req.session.mvtk;
+        delete req.session.complete;
         //セッション更新
-        (<any>req.session).purchase = purchaseModel.toSession();
+        req.session.purchase = purchaseModel.toSession();
         //座席選択へ
         return res.json({ redirect: '/purchase/seat/' + req.body.id + '/', err: null });
     }).catch((err) => {

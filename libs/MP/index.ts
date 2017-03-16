@@ -132,11 +132,15 @@ export interface Performance {
 
 /**
  * エラー
- * @function getErrorMessage
+ * @function errorHandler
  * @param {any} response
- * @requires {string}
+ * @requires {void}
  */
-function getErrorMessage(response: any): string {
+function errorHandler(response: any): void {
+    if (response.statusCode === HTTPStatus.NOT_FOUND) {
+        console.error('NOT_FOUND');
+        throw new Error('NOT_FOUND');
+    }
     let message: string = '';
     if (response.body.errors && Array.isArray(response.body.errors)) {
         for (const error of response.body.errors) {
@@ -145,9 +149,9 @@ function getErrorMessage(response: any): string {
                 break;
             }
         }
-        debugLog('errors--------------', response.body.errors);
+        console.error(response.body.errors);
     }
-    return message;
+    throw new Error(message);
 }
 
 /**
@@ -169,7 +173,7 @@ export async function oauthToken(): Promise<string> {
         timeout: TIMEOUT
     });
 
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
@@ -192,7 +196,7 @@ export async function getTheater(id: string): Promise<Theater> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getTheater:', response.body.data);
     return response.body.data;
 }
@@ -215,7 +219,7 @@ export async function getScreen(id: string): Promise<Screen> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getScreen:', response.body.data);
     return response.body.data;
 }
@@ -238,7 +242,7 @@ export async function getFilm(id: string): Promise<Film> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getFilm:', response.body.data);
     return response.body.data;
 }
@@ -265,7 +269,7 @@ export async function getPerformances(theater: string, day: string): Promise<Per
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     // debugLog('performances:', response.body.data);
     return response.body.data;
 }
@@ -288,7 +292,7 @@ export async function getPerformance(id: string): Promise<Performance> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('performance:', response.body.data);
     return response.body.data;
 }
@@ -349,7 +353,7 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
         timeout: TIMEOUT
     });
     debugLog('--------------------transaction:', response.body);
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     const transaction = response.body.data;
     debugLog('transaction:', transaction);
 
@@ -449,7 +453,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
     debugLog('addCOAAuthorization result');
     return response.body.data;
@@ -483,7 +487,7 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
     debugLog('addCOAAuthorization result');
 }
@@ -553,7 +557,7 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
     debugLog('addGMOAuthorization result:');
     return response.body.data;
@@ -586,7 +590,7 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
     debugLog('removeGMOAuthorization result:');
 
@@ -627,7 +631,7 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
     debugLog('ownersAnonymous result:');
 }
@@ -665,7 +669,7 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
     debugLog('transactionsEnableInquiry result:');
 }
@@ -698,7 +702,7 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
     debugLog('close result:');
 }
 
@@ -746,7 +750,7 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('addEmail result:' + response.body.data);
     return response.body.data;
 }
@@ -778,7 +782,7 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
     debugLog('removeEmail result:');
 }
 
@@ -814,7 +818,7 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: TIMEOUT
     });
-    if (response.statusCode !== HTTPStatus.OK) throw new Error(getErrorMessage(response));
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('makeInquiry result:' + response.body.data);
     return response.body.data.id;
 }

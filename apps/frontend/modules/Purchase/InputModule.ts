@@ -6,6 +6,7 @@
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import * as express from 'express';
+import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
@@ -219,7 +220,7 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
         const theaterId = purchaseModel.performance.attributes.theater.id;
         const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
         // オーダーID （予約時間 + 劇場ID + 予約番号）
-        purchaseModel.orderId = `${Date.now().toString()}${theaterId}${reservenum}`;
+        purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}`;
         const amount: number = purchaseModel.getReserveAmount();
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran({
             shopId: gmoShopId,

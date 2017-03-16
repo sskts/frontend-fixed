@@ -14,6 +14,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
+const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
@@ -232,7 +233,7 @@ function addAuthorization(req, purchaseModel) {
             const theaterId = purchaseModel.performance.attributes.theater.id;
             const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
             // オーダーID （予約時間 + 劇場ID + 予約番号）
-            purchaseModel.orderId = `${Date.now().toString()}${theaterId}${reservenum}`;
+            purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}`;
             const amount = purchaseModel.getReserveAmount();
             purchaseModel.transactionGMO = yield GMO.CreditService.entryTran({
                 shopId: gmoShopId,
