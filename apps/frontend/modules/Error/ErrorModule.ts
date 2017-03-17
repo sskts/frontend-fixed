@@ -38,6 +38,7 @@ export function notFound(req: express.Request, res: express.Response, _next: exp
  */
 // tslint:disable-next-line:variable-name
 export function index(err: Error, req: express.Request, res: express.Response, _next: express.NextFunction): void {
+    if (process.env.NODE_ENV === 'development') console.error('show Error');
     console.error(err.stack);
 
     if (req.session && req.session.purchase) {
@@ -60,7 +61,7 @@ export function index(err: Error, req: express.Request, res: express.Response, _
         console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     } else {
-        console.error(err);
+        console.error(err.message);
         res.status(status);
         res.locals.message = err.message;
         res.locals.error = err;

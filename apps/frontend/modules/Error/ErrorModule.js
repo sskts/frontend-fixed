@@ -38,6 +38,8 @@ exports.notFound = notFound;
  */
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
+    if (process.env.NODE_ENV === 'development')
+        console.error('show Error');
     console.error(err.stack);
     if (req.session && req.session.purchase) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
@@ -58,7 +60,7 @@ function index(err, req, res, _next) {
         res.status(status).send({ error: 'Something failed.' });
     }
     else {
-        console.error(err);
+        console.error(err.message);
         res.status(status);
         res.locals.message = err.message;
         res.locals.error = err;
