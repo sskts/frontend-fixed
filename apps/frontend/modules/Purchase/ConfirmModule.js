@@ -297,8 +297,8 @@ function getMailContent(req, purchaseModel) {
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
 \n
 ・[予約番号] ${purchaseModel.updateReserve.reserve_num}\n
-・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')}
-${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')}
+・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')} 
+${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')} 
 ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 ・[作品名] ${purchaseModel.performance.attributes.film.name.ja}\n
 ・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}\n
@@ -329,7 +329,7 @@ https://${req.headers.host}/inquiry/login\n
 ご不明な点がございましたら、下記番号までお問合わせ下さい。\n
 \n
 お問い合わせはこちら\n
-シネマサンシャイン姶良\n
+${purchaseModel.performance.attributes.theater.name.ja}\n
 TEL：XX-XXXX-XXXX`;
 }
 /**
