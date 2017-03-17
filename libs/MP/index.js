@@ -22,7 +22,7 @@ const endPoint = process.env.MP_ENDPOINT;
  * 時間切れ
  * @const TIMEOUT
  */
-const TIMEOUT = 1000;
+const TIMEOUT = 10000;
 /**
  * エラー
  * @function errorHandler

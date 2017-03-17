@@ -18,7 +18,7 @@ function getPerformance() {
         dataType: 'json',
         url: '/performances',
         type: 'POST',
-        timeout: 100000,
+        timeout: 10000,
         data: {
             theater: theater,
             day: day
