@@ -42,13 +42,9 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.seatStr = purchaseModel.seatToString();
     res.locals.ticketStr = purchaseModel.ticketToString();
     res.locals.transactionId = purchaseModel.transactionMP.id;
-    if (req.session && req.session.purchase) {
-        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
-            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
-            : '';
-    } else {
-        res.locals.prevLink = '';
-    }
+    res.locals.prevLink = (purchaseModel.performance)
+        ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+        : UtilModule.getPortalUrl();
 
     //セッション更新
     if (!req.session) return next(new Error(req.__('common.error.property')));

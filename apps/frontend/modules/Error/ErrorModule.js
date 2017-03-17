@@ -5,6 +5,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const UtilModule = require("../Util/UtilModule");
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -40,12 +41,12 @@ function index(err, req, res, _next) {
     console.error(err.stack);
     if (req.session && req.session.purchase) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
-            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
-            : '';
+        res.locals.prevLink = (purchaseModel.performance)
+            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+            : UtilModule.getPortalUrl();
     }
     else {
-        res.locals.prevLink = '';
+        res.locals.prevLink = UtilModule.getPortalUrl();
     }
     if (req.session) {
         delete req.session.purchase;

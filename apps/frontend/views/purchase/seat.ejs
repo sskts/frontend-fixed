@@ -63,7 +63,7 @@
     
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.seat.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev-black" href="<%- portalSite %><%= prevLink %>"><%- __('purchase.seat.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev-black" href="<%= prevLink %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">

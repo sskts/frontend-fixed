@@ -5,7 +5,7 @@
 
 import * as express from 'express';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
-
+import * as UtilModule from '../Util/UtilModule';
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -42,11 +42,11 @@ export function index(err: Error, req: express.Request, res: express.Response, _
 
     if (req.session && req.session.purchase) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
-            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
-            : '';
+        res.locals.prevLink = (purchaseModel.performance)
+            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+            : UtilModule.getPortalUrl();
     } else {
-        res.locals.prevLink = '';
+        res.locals.prevLink = UtilModule.getPortalUrl();
     }
 
     if (req.session) {

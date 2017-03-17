@@ -20,15 +20,7 @@ export function setLocals(_req: express.Request, res: express.Response, next: ex
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
-    if (process.env.NODE_ENV === 'prod') {
-        // tslint:disable-next-line:no-http-string
-        res.locals.portalSite = 'http://www.cinemasunshine.co.jp';
-    } else if (process.env.NODE_ENV === 'test') {
-        // tslint:disable-next-line:no-http-string
-        res.locals.portalSite = 'http://devssktsportal.azurewebsites.net';
-    } else {
-        res.locals.portalSite = '/';
-    }
+    res.locals.portalSite = getPortalUrl();
 
     return next();
 }
@@ -129,6 +121,45 @@ export function bace64Encode(str: string): string {
  */
 export function base64Decode(str: string): string {
     return new Buffer(str, 'base64').toString();
+}
+
+/**
+ * 劇場ポータルURL取得
+ * @memberOf Util.UtilModule
+ * @function getTheaterUrl
+ * @param {string} name
+ * @returns {string}
+ */
+export function getTheaterUrl(name: string): string {
+    let result: string;
+    if (process.env.NODE_ENV !== 'development') {
+        const theaterName = name.toLowerCase();
+        result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
+    } else {
+        result = getPortalUrl();
+    }
+    return result;
+}
+
+/**
+ * ポータルURL取得
+ * @memberOf Util.UtilModule
+ * @function getPortalUrl
+ * @returns {string}
+ */
+export function getPortalUrl(): string {
+    let result: string;
+    if (process.env.NODE_ENV === 'prod') {
+        // tslint:disable-next-line:no-http-string
+        result = 'http://www.cinemasunshine.co.jp';
+    } else if (process.env.NODE_ENV === 'test') {
+        // tslint:disable-next-line:no-http-string
+        result = 'http://devssktsportal.azurewebsites.net';
+    } else {
+        // tslint:disable-next-line:no-http-string
+        result = 'http://devssktsportal.azurewebsites.net';
+    }
+    return result;
 }
 
 /**

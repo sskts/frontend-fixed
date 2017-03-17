@@ -11,6 +11,7 @@ import * as fs from 'fs-extra-promise';
 import * as MP from '../../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as UtilModule from '../Util/UtilModule';
 const debugLog = debug('SSKTS ');
 
 /**
@@ -38,9 +39,9 @@ export function index(req: express.Request, res: express.Response, next: express
             : null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.error = null;
-        res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
-            ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
-            : '';
+        res.locals.prevLink = (purchaseModel.performance)
+            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+            : UtilModule.getPortalUrl();
 
         //セッション更新
         if (!req.session) return next(new Error(req.__('common.error.property')));
@@ -114,9 +115,9 @@ export function select(req: express.Request, res: express.Response, next: expres
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = (<any>req).form.getErrors();
-            res.locals.prevLink = (purchaseModel.performance && process.env.NODE_ENV !== 'development')
-                ? `/theater/${purchaseModel.performance.attributes.theater.name.en}`
-                : '';
+            res.locals.prevLink = (purchaseModel.performance)
+                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+                : UtilModule.getPortalUrl();
 
             return res.render('purchase/seat');
 
