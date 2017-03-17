@@ -296,17 +296,17 @@ function getMailContent(req, purchaseModel) {
 \n
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
 \n
-・予約番号：${purchaseModel.updateReserve.reserve_num}\n
-・${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')}
+・[予約番号] ${purchaseModel.updateReserve.reserve_num}\n
+・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')}
 ${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')}
 ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
-・${purchaseModel.performance.attributes.film.name.ja}\n
-・${purchaseModel.performance.attributes.screen.name.ja}\n
-・${purchaseModel.ticketToString()}\n
-　合計 ￥${purchaseModel.getReserveAmount()}\n
-・座席番号：${purchaseModel.seatToString()}\n
+・[作品名] ${purchaseModel.performance.attributes.film.name.ja}\n
+・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}\n
+・[券種] ${purchaseModel.ticketToString()}\n
+・[合計] ￥${purchaseModel.getReserveAmount()}\n
+・[座席番号] ${purchaseModel.seatToString()}\n
 \n
-[チケット発券について]\n
+【チケット発券について】\n
 チケットの発券/入場方法は2通りからお選び頂けます。\n
 \n
 <発券/入場方法1 劇場発券機で発券>\n
@@ -317,7 +317,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。\n
 https://${req.headers.host}/inquiry/login\n
 \n
-[ご注意事項]\n
+【ご注意事項】\n
 ・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。\n
 ・チケットの発券にお時間がかかる場合もございますので、お時間の余裕を持ってご来場ください。\n
 ・メンバーズカード会員のお客様は、ポイントは付与いたしますので、発券したチケットまたは、表示されたQRコードとメンバーズカードをチケット売場までお持ち下さいませ。\n
@@ -325,7 +325,7 @@ https://${req.headers.host}/inquiry/login\n
 ご提示頂けない場合は、一般料金との差額を頂きます。\n
 \n
 なお、このメールは、シネマサンシャイン姶良の予約システムでチケットをご購入頂いた方にお送りしておりますが、チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。\n
-※尚、このメールアドレスは送信専用となっておりますでので、ご返信頂けません。\n
+※なお、このメールアドレスは送信専用となっておりますでので、ご返信頂けません。\n
 ご不明な点がございましたら、下記番号までお問合わせ下さい。\n
 \n
 お問い合わせはこちら\n
