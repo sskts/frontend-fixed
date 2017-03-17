@@ -32,10 +32,29 @@ function index(req, res, next) {
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
     res.locals.mvtk = req.session.mvtk;
+    res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
     res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
     return res.render('purchase/mvtk/confirm');
 }
 exports.index = index;
+/**
+ * 購入番号リスト生成
+ * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @function creatPurchaseNoList
+ * @param {PurchaseSession.Mvtk[]} mvtk
+ * @returns {string[]}
+ */
+function creatPurchaseNoList(mvtk) {
+    const result = [];
+    for (const target of mvtk) {
+        const purchaseNo = result.find((value) => {
+            return (value === target.code);
+        });
+        if (!purchaseNo)
+            result.push(target.code);
+    }
+    return result;
+}
 /**
  * 券種選択へ
  * @memberOf Purchase.Mvtk.MvtkConfirmModule

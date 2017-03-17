@@ -23,15 +23,34 @@ export function index(req: express.Request, res: express.Response, next: express
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
 
-    if (!(<any>req.session).mvtk) return res.redirect('/purchase/mvtk');
+    if (!req.session.mvtk) return res.redirect('/purchase/mvtk');
 
     // ムビチケ券適用確認ページ表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
-    res.locals.mvtk = (<any>req.session).mvtk;
+    res.locals.mvtk = req.session.mvtk;
+    res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
     res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
     return res.render('purchase/mvtk/confirm');
+}
+
+/**
+ * 購入番号リスト生成
+ * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @function creatPurchaseNoList
+ * @param {PurchaseSession.Mvtk[]} mvtk
+ * @returns {string[]}
+ */
+function creatPurchaseNoList(mvtk: PurchaseSession.Mvtk[]) {
+    const result: string[] = [];
+    for (const target of mvtk) {
+        const purchaseNo = result.find((value) => {
+            return (value === target.code);
+        });
+        if (!purchaseNo) result.push(target.code);
+    }
+    return result;
 }
 
 /**
