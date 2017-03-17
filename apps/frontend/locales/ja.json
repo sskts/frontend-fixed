@@ -276,7 +276,7 @@
 			"tel": "(例)08012345678",
 			"purchase_number": "(例)12345678",
 			"theater_code": "(例)1234",
-			"cardno": "(例)4111111111111111",
+			"cardno": "(例)1234567890",
 			"securitycode": "(例)123",
 			"holdername": "(例)TARO CINEMA",
 			"mvtk_code": "(例)012345789",
@@ -300,7 +300,7 @@
 			"equals_email": "common.validation.equals_email"
 		},
 		"note": {
-			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@cinemasunshine.co.jp」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
+			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@ticket-cinemasunshine.com」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@cinemasunshine.co.jp」の追加設定をしてください。",
 			"credit": "クレジットカード決済の必要事項をご記入ください。",
 			"tel": "※半角数字、ハイフン「-」なしで入力してください",
 			"cardno": "※半角数字、ハイフン「-」なしで入力してください",

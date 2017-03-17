@@ -88,7 +88,7 @@
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
                     <dd>
-                        <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" placeholder="<%- __('common.placeholder.cardno') %>">
+                        <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" maxlength="16" placeholder="<%- __('common.placeholder.cardno') %>">
                         <% if (error && error.cardno) { %>
                         <div class="validation-text"><%= error.cardno[0] %></div>
                         <% } %>

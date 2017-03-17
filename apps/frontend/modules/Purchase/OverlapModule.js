@@ -128,13 +128,10 @@ function removeReserve(req, purchaseModel) {
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
-            // todo GMO情報取得API作成中
-            let gmoShopId = 'tshop00026096';
-            let gmoShopPassword = 'xbxmkaa6';
-            if (process.env.NODE_ENV === 'test') {
-                gmoShopId = 'tshop00026715';
-                gmoShopPassword = 'ybmbptww';
-            }
+            if (!purchaseModel.theater)
+                throw new Error(req.__('common.error.property'));
+            const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+            const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
             //GMOオーソリ取消
             yield GMO.CreditService.alterTran({
                 shopId: gmoShopId,

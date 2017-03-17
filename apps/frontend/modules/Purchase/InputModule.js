@@ -38,11 +38,9 @@ function index(req, res, next) {
         return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP)
         return next(new Error(req.__('common.error.property')));
-    // todo GMO情報取得API作成中
-    let gmoShopId = 'tshop00026096';
-    if (process.env.NODE_ENV === 'test') {
-        gmoShopId = 'tshop00026715';
-    }
+    if (!purchaseModel.theater)
+        return next(new Error(req.__('common.error.property')));
+    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -131,11 +129,9 @@ function submit(req, res, next) {
                         return next(new Error(err.message));
                     if (!purchaseModel.transactionMP)
                         return next(new Error(req.__('common.error.property')));
-                    // todo GMO情報取得API作成中
-                    let gmoShopId = 'tshop00026096';
-                    if (process.env.NODE_ENV === 'test') {
-                        gmoShopId = 'tshop00026715';
-                    }
+                    if (!purchaseModel.theater)
+                        return next(new Error(req.__('common.error.property')));
+                    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
                     //GMOオーソリ追加失敗
                     res.locals.error = {
                         cardno: [`${req.__('common.cardno')}${req.__('common.validation.card')}`],
@@ -195,13 +191,10 @@ function addAuthorization(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         if (!purchaseModel.reserveSeats)
             throw new Error(req.__('common.error.property'));
-        // todo GMO情報取得API作成中
-        let gmoShopId = 'tshop00026096';
-        let gmoShopPassword = 'xbxmkaa6';
-        if (process.env.NODE_ENV === 'test') {
-            gmoShopId = 'tshop00026715';
-            gmoShopPassword = 'ybmbptww';
-        }
+        if (!purchaseModel.theater)
+            throw new Error(req.__('common.error.property'));
+        const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+        const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
@@ -256,7 +249,9 @@ function addAuthorization(req, purchaseModel) {
                 transaction: purchaseModel.transactionMP,
                 orderId: purchaseModel.orderId,
                 amount: amount,
-                entryTranResult: purchaseModel.transactionGMO
+                entryTranResult: purchaseModel.transactionGMO,
+                gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
+                gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass,
             });
             debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
         }

@@ -174,6 +174,10 @@ export class PurchaseModel {
      */
     public performance: MP.Performance | null;
     /**
+     * 劇場
+     */
+    public theater: MP.Theater | null;
+    /**
      * COA仮予約
      */
     public reserveSeats: COA.ReserveService.UpdTmpReserveSeatResult | null;
@@ -236,6 +240,7 @@ export class PurchaseModel {
         }
 
         this.performance = (session.performance) ? session.performance : null;
+        this.theater = (session.theater) ? session.theater : null;
         this.reserveSeats = (session.reserveSeats) ? session.reserveSeats : null;
         this.reserveTickets = (session.reserveTickets) ? session.reserveTickets : null;
         this.input = (session.input) ? session.input : null;
@@ -259,6 +264,7 @@ export class PurchaseModel {
      */
     public toSession(): {
         performance: MP.Performance | null,
+        theater: MP.Theater | null;
         reserveSeats: COA.ReserveService.UpdTmpReserveSeatResult | null,
         reserveTickets: ReserveTicket[] | null,
         input: Input | null,
@@ -275,6 +281,7 @@ export class PurchaseModel {
     } {
         return {
             performance: (this.performance) ? this.performance : null,
+            theater: (this.theater) ? this.theater : null,
             reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
             reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
             input: (this.input) ? this.input : null,

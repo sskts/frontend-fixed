@@ -27,12 +27,9 @@ export function index(req: express.Request, res: express.Response, next: express
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
 
-    // todo GMO情報取得API作成中
-    let gmoShopId = 'tshop00026096';
-    if (process.env.NODE_ENV === 'test') {
-        gmoShopId = 'tshop00026715';
-    }
+    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
 
     //購入者情報入力表示
     res.locals.error = null;
@@ -118,12 +115,9 @@ export function submit(req: express.Request, res: express.Response, next: expres
                 }).catch((err) => {
                     if (!err.hasOwnProperty('type')) return next(new Error(err.message));
                     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+                    if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
 
-                    // todo GMO情報取得API作成中
-                    let gmoShopId = 'tshop00026096';
-                    if (process.env.NODE_ENV === 'test') {
-                        gmoShopId = 'tshop00026715';
-                    }
+                    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
 
                     //GMOオーソリ追加失敗
                     res.locals.error = {
@@ -180,14 +174,10 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
     if (!purchaseModel.gmo) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
     if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.theater) throw new Error(req.__('common.error.property'));
 
-    // todo GMO情報取得API作成中
-    let gmoShopId = 'tshop00026096';
-    let gmoShopPassword = 'xbxmkaa6';
-    if (process.env.NODE_ENV === 'test') {
-        gmoShopId = 'tshop00026715';
-        gmoShopPassword = 'ybmbptww';
-    }
+    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+    const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
 
     if (purchaseModel.transactionGMO
         && purchaseModel.authorizationGMO
@@ -245,7 +235,9 @@ async function addAuthorization(req: express.Request, purchaseModel: PurchaseSes
             transaction: purchaseModel.transactionMP,
             orderId: purchaseModel.orderId,
             amount: amount,
-            entryTranResult: purchaseModel.transactionGMO
+            entryTranResult: purchaseModel.transactionGMO,
+            gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
+            gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass,
         });
         debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
 

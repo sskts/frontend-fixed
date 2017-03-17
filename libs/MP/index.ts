@@ -37,6 +37,9 @@ export interface Theater {
         address: Language;
         name: Language;
         name_kana: string;
+        gmo_site_id: string;
+        gmo_shop_id: string;
+        gmo_shop_pass: string;
     };
 }
 
@@ -502,6 +505,8 @@ export interface AddGMOAuthorizationArgs {
     orderId: string;
     amount: number;
     entryTranResult: GMO.CreditService.EntryTranResult;
+    gmoShopId: string;
+    gmoShopPassword: string;
 }
 /**
  * GMOオーソリ追加out
@@ -530,21 +535,15 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         return (owner.group === 'ANONYMOUS');
     });
     const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
-    // todo GMO情報取得API作成中
-    let gmoShopId = 'tshop00026096';
-    let gmoShopPassword = 'xbxmkaa6';
-    if (process.env.NODE_ENV === 'test') {
-        gmoShopId = 'tshop00026715';
-        gmoShopPassword = 'ybmbptww';
-    }
+
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
         auth: { bearer: await oauthToken() },
         body: {
             owner_id_from: anonymousOwnerId,
             owner_id_to: promoterOwnerId,
-            gmo_shop_id: gmoShopId,
-            gmo_shop_pass: gmoShopPassword,
+            gmo_shop_id: args.gmoShopId,
+            gmo_shop_pass: args.gmoShopPassword,
             gmo_order_id: args.orderId,
             gmo_amount: args.amount,
             gmo_access_id: args.entryTranResult.accessId,

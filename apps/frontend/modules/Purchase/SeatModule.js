@@ -75,10 +75,14 @@ function preparation(req, purchaseModel) {
         // パフォーマンス取得
         const performance = yield MP.getPerformance(req.params.id);
         debugLog('パフォーマンス取得');
+        // 劇場詳細取得
+        const theater = yield MP.getTheater(performance.attributes.theater.id);
+        debugLog('劇場詳細取得');
         // COAパフォーマンス取得
         const performanceCOA = yield MP.getPerformanceCOA(performance.attributes.theater.id, performance.attributes.screen.id, performance.attributes.film.id);
         debugLog('COAパフォーマンス取得');
         purchaseModel.performance = performance;
+        purchaseModel.theater = theater;
         purchaseModel.performanceCOA = performanceCOA;
     });
 }
@@ -176,13 +180,10 @@ function reserve(req, purchaseModel) {
             debugLog('MPCOAオーソリ削除');
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO) {
-                // todo GMO情報取得API作成中
-                let gmoShopId = 'tshop00026096';
-                let gmoShopPassword = 'xbxmkaa6';
-                if (process.env.NODE_ENV === 'test') {
-                    gmoShopId = 'tshop00026715';
-                    gmoShopPassword = 'ybmbptww';
-                }
+                if (!purchaseModel.theater)
+                    throw new Error(req.__('common.error.property'));
+                const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+                const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
                 //GMOオーソリ取消
                 yield GMO.CreditService.alterTran({
                     shopId: gmoShopId,

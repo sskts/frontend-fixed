@@ -14,6 +14,7 @@ class PurchaseModel {
             session = {};
         }
         this.performance = (session.performance) ? session.performance : null;
+        this.theater = (session.theater) ? session.theater : null;
         this.reserveSeats = (session.reserveSeats) ? session.reserveSeats : null;
         this.reserveTickets = (session.reserveTickets) ? session.reserveTickets : null;
         this.input = (session.input) ? session.input : null;
@@ -37,6 +38,7 @@ class PurchaseModel {
     toSession() {
         return {
             performance: (this.performance) ? this.performance : null,
+            theater: (this.theater) ? this.theater : null,
             reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
             reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
             input: (this.input) ? this.input : null,
