@@ -1,0 +1,5 @@
+/**
+ * seatModuleテスト
+ *
+ * @ignore
+ */
