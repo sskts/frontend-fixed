@@ -251,7 +251,7 @@ function addAuthorization(req, purchaseModel) {
                 amount: amount,
                 entryTranResult: purchaseModel.transactionGMO,
                 gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
-                gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass,
+                gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass
             });
             debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
         }

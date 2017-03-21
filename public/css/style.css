@@ -1976,6 +1976,11 @@ p a {
   max-width: 400px;
 }
 
+.purchase-mvtk-confirm .mvtk-lists li dt {
+  line-height: 1.5;
+  vertical-align: top;
+}
+
 @media screen and (max-width: 767px){
 
   .purchase-mvtk-confirm .mvtk-lists li dt{

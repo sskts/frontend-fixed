@@ -11,6 +11,7 @@ import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../Util/UtilModule';
+import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
 const debugLog = debug('SSKTS ');
 
 /**
@@ -129,30 +130,23 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
         day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
     };
-    // サイトコード
-    const siteCode = (process.env.NODE_ENV === 'development')
-        ? '15'
-        : String(Number(purchaseModel.performance.attributes.theater.id));
-    // 作品コード
-    const num = 10;
-    const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
-        ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
-        : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
 
     const result = await seatInfoSyncService.seatInfoSync({
-        kgygishCd: UtilModule.COMPANY_CODE, // 興行会社コード
+        kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
         kgygishSstmZskyykNo: reserveNo, // 興行会社システム座席予約番号
         kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
-        stCd: siteCode, // サイトコード
+        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
         screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkTickets, // 購入管理番号情報
         zskInfo: reserveSeats, // 座席情報（itemArray）
-        skhnCd: filmNo // 作品コード
+        skhnCd: MvtkUtilModule.getfilmCode(
+            purchaseModel.performanceCOA.titleCode,
+            purchaseModel.performanceCOA.titleBranchNum) // 作品コード
     });
 
     if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw new Error(req.__('common.error.property'));

@@ -2,6 +2,8 @@
     .mvtk-lists {
         li {
             dt {
+                line-height: 1.5;
+                vertical-align: top;
                 @media screen and (max-width: $mobile){
                     display: block;
                 }

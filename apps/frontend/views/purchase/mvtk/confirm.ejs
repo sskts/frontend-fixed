@@ -5,13 +5,18 @@
     <p class="read"><%- __('purchase.mvtk.confirm.read') %></p>
 
     <form method="post">
+
         <ul class="box radius bg-light-gray mb-medium mvtk-lists">
-            <% for (const mvtkTicket of mvtk) { %>
+            <% for (const purchaseNo of purchaseNoList) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= mvtkTicket.code %></dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= purchaseNo %></dt>
                     <dd class="d-td width-medium">
-                        <div><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></div>
+                        <% for (const mvtkTicket of mvtk) { %>
+                        <% if (mvtkTicket.code === purchaseNo) { %>
+                        <p><strong><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
+                        <% } %>
+                        <% } %>
                     </dd>
                 </dl>
             </li>

@@ -18,6 +18,7 @@ const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
 const UtilModule = require("../../Util/UtilModule");
 const debugLog = debug('SSKTS ');
 /**
@@ -148,17 +149,8 @@ function auth(req, purchaseModel) {
             throw new Error(req.__('common.error.property'));
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo = JSON.parse(req.body.mvtk);
-        // サイトコード
-        const siteCode = (process.env.NODE_ENV === 'development')
-            ? '15'
-            : String(Number(purchaseModel.performance.attributes.theater.id));
-        // 作品コード
-        const num = 10;
-        const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
-            ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
-            : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
         const result = yield mvtkService.purchaseNumberAuth({
-            kgygishCd: UtilModule.COMPANY_CODE,
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
             jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID,
             knyknrNoInfoIn: inputInfo.map((value) => {
                 return {
@@ -166,8 +158,8 @@ function auth(req, purchaseModel) {
                     PIN_CD: value.password // PINコード
                 };
             }),
-            skhnCd: filmNo,
-            stCd: siteCode,
+            skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum),
+            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
         debugLog('ムビチケ認証');

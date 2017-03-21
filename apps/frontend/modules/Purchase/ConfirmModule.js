@@ -19,6 +19,7 @@ const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const UtilModule = require("../Util/UtilModule");
+const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const debugLog = debug('SSKTS ');
 /**
  * 購入者内容確認
@@ -142,29 +143,20 @@ function reserveMvtk(req, purchaseModel) {
             day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
             time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
         };
-        // サイトコード
-        const siteCode = (process.env.NODE_ENV === 'development')
-            ? '15'
-            : String(Number(purchaseModel.performance.attributes.theater.id));
-        // 作品コード
-        const num = 10;
-        const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
-            ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
-            : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const result = yield seatInfoSyncService.seatInfoSync({
-            kgygishCd: UtilModule.COMPANY_CODE,
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
             kgygishSstmZskyykNo: reserveNo,
             kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
-            stCd: siteCode,
+            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
             screnCd: purchaseModel.performanceCOA.screenCode,
             knyknrNoInfo: mvtkTickets,
             zskInfo: reserveSeats,
-            skhnCd: filmNo // 作品コード
+            skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum) // 作品コード
         });
         if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
             throw new Error(req.__('common.error.property'));

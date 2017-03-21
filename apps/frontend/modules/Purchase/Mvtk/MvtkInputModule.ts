@@ -10,6 +10,7 @@ import * as express from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
 const debugLog = debug('SSKTS ');
 
@@ -130,18 +131,9 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
 
     const mvtkService = MVTK.createPurchaseNumberAuthService();
     const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
-    // サイトコード
-    const siteCode = (process.env.NODE_ENV === 'development')
-        ? '15'
-        : String(Number(purchaseModel.performance.attributes.theater.id));
-    // 作品コード
-    const num = 10;
-    const filmNo = (Number(purchaseModel.performanceCOA.titleBranchNum) < num)
-        ? `${purchaseModel.performanceCOA.titleCode}0${purchaseModel.performanceCOA.titleBranchNum}`
-        : `${purchaseModel.performanceCOA.titleCode}${purchaseModel.performanceCOA.titleBranchNum}`;
 
     const result = await mvtkService.purchaseNumberAuth({
-        kgygishCd: UtilModule.COMPANY_CODE, //興行会社コード
+        kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
         jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
         knyknrNoInfoIn: inputInfo.map((value) => {
             return {
@@ -149,8 +141,10 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
                 PIN_CD: value.password // PINコード
             };
         }),
-        skhnCd: filmNo, // 作品コード
-        stCd: siteCode, // サイトコード
+        skhnCd: MvtkUtilModule.getfilmCode(
+            purchaseModel.performanceCOA.titleCode,
+            purchaseModel.performanceCOA.titleBranchNum), // 作品コード
+        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
         jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
     });
 

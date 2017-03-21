@@ -161,9 +161,3 @@ export function getPortalUrl(): string {
     }
     return result;
 }
-
-/**
- * 興行会社コード
- * @const COMPANY_CODE
- */
-export const COMPANY_CODE = 'SSK000';
