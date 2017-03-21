@@ -29,13 +29,11 @@ export function index(req: express.Request, res: express.Response, next: express
     if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
     if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
 
-    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
     res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-    res.locals.gmoShopId = gmoShopId;
+    res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
     res.locals.price = purchaseModel.getReserveAmount();
     res.locals.transactionId = purchaseModel.transactionMP.id;
 
@@ -147,11 +145,12 @@ export function submit(req: express.Request, res: express.Response, next: expres
 
         } else {
             if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+            if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
             res.locals.error = (<any>req).form.getErrors();
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-            res.locals.gmoShopId = process.env.GMO_SHOP_ID;
+            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
 
