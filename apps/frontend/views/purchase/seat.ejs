@@ -49,7 +49,7 @@
     <h2 class="section-ttl"><%- __('common.agreement') %></h2>
     <p class="mb-small"><%- __('common.agreement_read') %></p>
     <div class="box radius bg-ultra-light-gray mb-medium agree small-text">
-        <%- partial('agreement/ja') %>
+        <%- partial('agreement/ja/' + performance.attributes.theater.id) %>
     </div>
     <form method="post">
         <div class="mb-x-large text-center">
