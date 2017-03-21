@@ -33,7 +33,7 @@ function start(req, res, _next) {
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
         //重複確認へ
-        return res.json({ redirect: '/purchase/' + req.body.id + '/overlap', err: null });
+        return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
     }
     transactionStart(purchaseModel).then(() => {
         if (!req.session)
@@ -44,7 +44,7 @@ function start(req, res, _next) {
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
-        return res.json({ redirect: '/purchase/seat/' + req.body.id + '/', err: null });
+        return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
     }).catch((err) => {
         return res.json({ redirect: null, err: err.message });
     });

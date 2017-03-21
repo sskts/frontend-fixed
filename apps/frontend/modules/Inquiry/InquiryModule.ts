@@ -146,6 +146,6 @@ export function index(req: express.Request, res: express.Response, next: express
         return res.render('inquiry/index');
     } else {
         //照会認証ページへ
-        return res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
+        return res.redirect('/inquiry/login?transaction_id=' + (<string>req.params.transactionId));
     }
 }

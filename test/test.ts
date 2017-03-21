@@ -86,7 +86,7 @@ async function seat(driver: webdriver.WebDriver): Promise<void> {
         ? Math.floor(Math.random() * (maxCount - 1) + 1)
         : Math.floor(Math.random() * defaultSeats.length);
     debugLog(`座席選択数: ${count}`);
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < count; i += 1) {
         const seats = await driver.findElements(webdriver.By.css('.screen .seat .default'));
         const num = Math.floor(Math.random() * seats.length);
         debugLog(`座席: ${num}`);

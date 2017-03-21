@@ -182,13 +182,10 @@ async function getSalesTickets(
     }
 
     if (!purchaseModel.mvtk) return result;
-
     // ムビチケ情報からチケット情報へ変換
     const mvtkTickets: SalesTicket[] = [];
-
     for (const mvtk of purchaseModel.mvtk) {
-        // tslint:disable-next-line:no-increment-decrement
-        for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i++) {
+        for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i += 1) {
             mvtkTickets.push({
                 ticket_code: mvtk.ticket.ticket_code, // チケットコード
                 ticket_name: mvtk.ticket.ticket_name, // チケット名
@@ -206,12 +203,12 @@ async function getSalesTickets(
             if (mvtk.ticket.add_price_glasses > 0) {
                 mvtkTickets.push({
                     ticket_code: mvtk.ticket.ticket_code, // チケットコード
-                    ticket_name: mvtk.ticket.ticket_name + req.__('common.glasses'), // チケット名
+                    ticket_name: `${mvtk.ticket.ticket_name}${req.__('common.glasses')}`, // チケット名
                     ticket_name_kana: mvtk.ticket.ticket_name_kana, // チケット名(カナ)
                     ticket_name_eng: mvtk.ticket.ticket_name_eng, // チケット名(英)
                     std_price: 0, // 標準単価
                     add_price: mvtk.ticket.add_price, // 加算単価
-                    sale_price: mvtk.ticket.add_price + mvtk.ticket.add_price_glasses, // 販売単価
+                    sale_price: (<number>mvtk.ticket.add_price) + (<number>mvtk.ticket.add_price_glasses), // 販売単価
                     ticket_note: req.__('common.mvtk_code') + mvtk.code, // チケット備考
                     add_price_glasses: mvtk.ticket.add_price_glasses, // メガネ単価
                     mvtk_num: mvtk.code, // ムビチケ購入番号
@@ -267,7 +264,7 @@ async function ticketValidation(
                 seat_code: ticket.seat_code, // 座席番号
                 ticket_code: mvtkTicket.ticket.ticket_code, // チケットコード
                 ticket_name: (ticket.glasses)
-                    ? mvtkTicket.ticket.ticket_name + req.__('common.glasses')
+                    ? `${mvtkTicket.ticket.ticket_name}${req.__('common.glasses')}`
                     : mvtkTicket.ticket.ticket_name, // チケット名
                 ticket_name_eng: mvtkTicket.ticket.ticket_name_eng, // チケット名（英）
                 ticket_name_kana: mvtkTicket.ticket.ticket_name_kana, // チケット名（カナ）
@@ -275,7 +272,7 @@ async function ticketValidation(
                 add_price: mvtkTicket.ticket.add_price, // 加算単価
                 dis_price: 0, // 割引額
                 sale_price: (ticket.glasses)
-                    ? (mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses)
+                    ? (<number>mvtkTicket.ticket.add_price) + (<number>mvtkTicket.ticket.add_price_glasses)
                     : mvtkTicket.ticket.add_price, // 販売単価
                 add_price_glasses: mvtkTicket.ticket.add_price_glasses, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し

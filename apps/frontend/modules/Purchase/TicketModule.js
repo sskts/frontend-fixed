@@ -149,8 +149,7 @@ function getSalesTickets(req, purchaseModel) {
         // ムビチケ情報からチケット情報へ変換
         const mvtkTickets = [];
         for (const mvtk of purchaseModel.mvtk) {
-            // tslint:disable-next-line:no-increment-decrement
-            for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i++) {
+            for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i += 1) {
                 mvtkTickets.push({
                     ticket_code: mvtk.ticket.ticket_code,
                     ticket_name: mvtk.ticket.ticket_name,
@@ -167,7 +166,7 @@ function getSalesTickets(req, purchaseModel) {
                 if (mvtk.ticket.add_price_glasses > 0) {
                     mvtkTickets.push({
                         ticket_code: mvtk.ticket.ticket_code,
-                        ticket_name: mvtk.ticket.ticket_name + req.__('common.glasses'),
+                        ticket_name: `${mvtk.ticket.ticket_name}${req.__('common.glasses')}`,
                         ticket_name_kana: mvtk.ticket.ticket_name_kana,
                         ticket_name_eng: mvtk.ticket.ticket_name_eng,
                         std_price: 0,
@@ -225,7 +224,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                     seat_code: ticket.seat_code,
                     ticket_code: mvtkTicket.ticket.ticket_code,
                     ticket_name: (ticket.glasses)
-                        ? mvtkTicket.ticket.ticket_name + req.__('common.glasses')
+                        ? `${mvtkTicket.ticket.ticket_name}${req.__('common.glasses')}`
                         : mvtkTicket.ticket.ticket_name,
                     ticket_name_eng: mvtkTicket.ticket.ticket_name_eng,
                     ticket_name_kana: mvtkTicket.ticket.ticket_name_kana,
@@ -233,7 +232,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                     add_price: mvtkTicket.ticket.add_price,
                     dis_price: 0,
                     sale_price: (ticket.glasses)
-                        ? (mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses)
+                        ? mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses
                         : mvtkTicket.ticket.add_price,
                     add_price_glasses: mvtkTicket.ticket.add_price_glasses,
                     glasses: ticket.glasses,

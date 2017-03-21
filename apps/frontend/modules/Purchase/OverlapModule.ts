@@ -72,7 +72,7 @@ export function newReserve(req: express.Request, res: express.Response, next: ex
 export function prevReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
     //座席選択へ
-    return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
+    return res.redirect('/purchase/seat/' + (<string>req.body.performance_id) + '/');
 }
 
 /**

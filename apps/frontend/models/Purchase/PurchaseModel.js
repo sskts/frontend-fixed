@@ -130,7 +130,7 @@ class PurchaseModel {
         const tickets = [];
         for (const ticket of this.reserveTickets) {
             if (ticketObj[ticket.ticket_code]) {
-                ticketObj[ticket.ticket_code].length = ticketObj[ticket.ticket_code].length + 1;
+                ticketObj[ticket.ticket_code].length = (ticketObj[ticket.ticket_code].length) + 1;
             }
             else {
                 ticketObj[ticket.ticket_code] = {
