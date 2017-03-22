@@ -258,8 +258,8 @@ function addCOAAuthorization(args) {
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             auth: { bearer: yield oauthToken() },
             body: {
-                owner_id_from: promoterOwnerId,
-                owner_id_to: anonymousOwnerId,
+                owner_from: promoterOwnerId,
+                owner_to: anonymousOwnerId,
                 coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
                 coa_theater_code: args.performanceCOA.theaterCode,
                 coa_date_jouei: args.performance.attributes.day,
@@ -343,8 +343,8 @@ function addGMOAuthorization(args) {
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },
             body: {
-                owner_id_from: anonymousOwnerId,
-                owner_id_to: promoterOwnerId,
+                owner_from: anonymousOwnerId,
+                owner_to: promoterOwnerId,
                 gmo_shop_id: args.gmoShopId,
                 gmo_shop_pass: args.gmoShopPassword,
                 gmo_order_id: args.orderId,

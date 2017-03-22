@@ -425,8 +425,8 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
         auth: { bearer: await oauthToken() },
         body: {
-            owner_id_from: promoterOwnerId,
-            owner_id_to: anonymousOwnerId,
+            owner_from: promoterOwnerId,
+            owner_to: anonymousOwnerId,
             coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
             coa_theater_code: args.performanceCOA.theaterCode,
             coa_date_jouei: args.performance.attributes.day,
@@ -540,8 +540,8 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
         auth: { bearer: await oauthToken() },
         body: {
-            owner_id_from: anonymousOwnerId,
-            owner_id_to: promoterOwnerId,
+            owner_from: anonymousOwnerId,
+            owner_to: promoterOwnerId,
             gmo_shop_id: args.gmoShopId,
             gmo_shop_pass: args.gmoShopPassword,
             gmo_order_id: args.orderId,
@@ -592,7 +592,6 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
     debugLog('removeGMOAuthorization result:');
-
 }
 
 /**

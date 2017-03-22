@@ -55,48 +55,61 @@ function auth(req, res, next) {
         return next(new Error(req.__('common.error.property')));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     LoginForm_1.default(req);
-    const error = req.validationErrors(true);
-    if (error) {
-        res.locals.theater_code = req.body.theater_code;
-        res.locals.reserve_num = req.body.reserve_num;
-        res.locals.tel_num = req.body.tel_num;
-        res.locals.error = error;
-        return res.render('inquiry/login');
-    }
-    else {
-        MP.makeInquiry({
-            inquiry_theater: req.body.theater_code,
-            inquiry_id: Number(req.body.reserve_num),
-            inquiry_pass: req.body.tel_num // 電話番号
-        }).then((result) => {
-            inquiryModel.transactionId = result;
-            debugLog('MP取引Id取得', inquiryModel.transactionId);
-            getStateReserve(req, inquiryModel).then(() => {
-                //購入者内容確認へ
-                return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-            }).catch((err) => {
-                return next(new Error(err.message));
-            });
-        }).catch(() => {
+    req.getValidationResult().then((result) => {
+        if (result.isEmpty()) {
             res.locals.theater_code = req.body.theater_code;
             res.locals.reserve_num = req.body.reserve_num;
             res.locals.tel_num = req.body.tel_num;
-            res.locals.error = {
-                theater_code: {
-                    parm: 'theater_code', msg: `${req.__('common.theater_code')}${req.__('common.validation.inquiry')}`, value: ''
-                },
-                reserve_num: {
-                    parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
-                },
-                tel_num: {
-                    parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
-                }
-            };
+            res.locals.error = result.mapped();
             return res.render('inquiry/login');
-        });
-    }
+        }
+        else {
+            MP.makeInquiry({
+                inquiry_theater: req.body.theater_code,
+                inquiry_id: Number(req.body.reserve_num),
+                inquiry_pass: req.body.tel_num // 電話番号
+            }).then((transactionId) => {
+                inquiryModel.transactionId = transactionId;
+                debugLog('MP取引Id取得', inquiryModel.transactionId);
+                getStateReserve(req, inquiryModel).then(() => {
+                    //購入者内容確認へ
+                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+                }).catch((err) => {
+                    return next(new Error(err.message));
+                });
+            }).catch(() => {
+                res.locals.theater_code = req.body.theater_code;
+                res.locals.reserve_num = req.body.reserve_num;
+                res.locals.tel_num = req.body.tel_num;
+                res.locals.error = getInquiryError(req);
+                return res.render('inquiry/login');
+            });
+        }
+    }).catch(() => {
+        return next(new Error(req.__('common.error.property')));
+    });
 }
 exports.auth = auth;
+/**
+ * 照会エラー取得
+ * @memberOf InquiryModule
+ * @function getGMOError
+ * @param {express.Request} req
+ * @returns {any}
+ */
+function getInquiryError(req) {
+    return {
+        theater_code: {
+            parm: 'theater_code', msg: `${req.__('common.theater_code')}${req.__('common.validation.inquiry')}`, value: ''
+        },
+        reserve_num: {
+            parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+        },
+        tel_num: {
+            parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+        }
+    };
+}
 /**
  * 照会情報取得
  * @memberOf InquiryModule

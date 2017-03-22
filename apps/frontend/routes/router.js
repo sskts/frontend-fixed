@@ -27,6 +27,9 @@ exports.default = (app) => {
         router.get('/500', (_req, _res, _next) => {
             process.exit(1);
         });
+        //セッション作成
+        // tslint:disable-next-line:variable-name
+        router.get('/create/session', createSession);
         //スクリーンテスト
         // tslint:disable-next-line:variable-name
         router.get('/screen', (_req, res, _next) => {
@@ -49,3 +52,20 @@ exports.default = (app) => {
     // 404
     app.use(ErrorModule.notFound);
 };
+/**
+ * セッション作成
+ * @function createSession
+ * @param {express.Request} req
+ * @param {express.Response} res
+ * @param {express.NextFunction} next
+ * @returns {void}
+ */
+// tslint:disable-next-line:variable-name
+function createSession(req, _res, next) {
+    if (!req.session)
+        return next();
+    req.session.purchase = (req.body.purchase) ? req.body.purchase : null;
+    req.session.inquiry = (req.body.inquiry) ? req.body.inquiry : null;
+    req.session.complete = (req.body.complete) ? req.body.complete : null;
+    return next();
+}
