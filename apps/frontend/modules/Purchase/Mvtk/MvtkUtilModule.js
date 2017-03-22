@@ -33,8 +33,8 @@ exports.getfilmCode = getfilmCode;
  * @returns {string}
  */
 function getSiteCode(id) {
-    return (process.env.NODE_ENV === 'development')
-        ? '15'
+    return (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
+        ? '18'
         : String(Number(id));
 }
 exports.getSiteCode = getSiteCode;

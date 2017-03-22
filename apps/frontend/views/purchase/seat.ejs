@@ -56,7 +56,7 @@
             <input type="checkbox" name="agree" value="true" id="agree">
             <label for="agree" class="agree-label"><strong><%- __('common.agree') %></strong></label>
             <% if (error && error.agree) { %>
-                <div class="validation-text"><%= error.agree[0] %></div>
+                <div class="validation-text"><%= error.agree.msg %></div>
             <% } %>
         </div>    
 

@@ -9,7 +9,7 @@ export default (req: express.Request): void => {
         `${req.__('common.mvtk')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'seats',
+        'mvtk',
         `${req.__('common.mvtk')}${req.__('common.validation.is_json')}`
     ).isJSON();
 };

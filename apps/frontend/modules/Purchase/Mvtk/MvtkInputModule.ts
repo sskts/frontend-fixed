@@ -40,6 +40,7 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
     res.locals.transactionId = purchaseModel.transactionMP.id;
     res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+    res.locals.error = null;
     return res.render('purchase/mvtk/input');
 }
 
@@ -66,6 +67,7 @@ export function select(req: express.Request, res: express.Response, next: expres
     if (error) {
         if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
         //購入者情報入力表示
+        res.locals.error = error;
         res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
@@ -80,6 +82,7 @@ export function select(req: express.Request, res: express.Response, next: expres
                 if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
                 if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
                 //購入者情報入力表示
+                res.locals.error = null;
                 res.locals.mvtkInfo = mvtkValidation(req);
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
