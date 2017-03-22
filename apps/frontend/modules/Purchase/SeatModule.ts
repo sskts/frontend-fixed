@@ -100,20 +100,20 @@ export function select(req: express.Request, res: express.Response, next: expres
 
     //バリデーション
     SeatForm(req);
-    const error = req.validationErrors(true);
-    if (error) {
-        if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
-        res.locals.transactionId = purchaseModel.transactionMP;
-        res.locals.performance = purchaseModel.performance;
-        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-        res.locals.reserveSeats = req.body.seats;
-        res.locals.error = error;
-        res.locals.prevLink = (purchaseModel.performance)
-            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-            : UtilModule.getPortalUrl();
+    req.getValidationResult().then((result) => {
+        if (!result.isEmpty()) {
+            if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
+            res.locals.transactionId = purchaseModel.transactionMP;
+            res.locals.performance = purchaseModel.performance;
+            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+            res.locals.reserveSeats = req.body.seats;
+            res.locals.error = result.mapped();
+            res.locals.prevLink = (purchaseModel.performance)
+                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+                : UtilModule.getPortalUrl();
 
-        return res.render('purchase/seat');
-    } else {
+            return res.render('purchase/seat');
+        }
         reserve(req, purchaseModel).then(() => {
             //セッション更新
             if (!req.session) return next(new Error(req.__('common.error.property')));
@@ -123,7 +123,9 @@ export function select(req: express.Request, res: express.Response, next: expres
         }).catch((err) => {
             return next(new Error(err.message));
         });
-    }
+    }).catch(() => {
+        return next(new Error(req.__('common.error.property')));
+    });
 }
 
 /**

@@ -63,19 +63,20 @@ export function select(req: express.Request, res: express.Response, next: expres
     if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     MvtkInputForm(req);
-    const error = req.validationErrors(true);
-    if (error) {
-        if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
-        //購入者情報入力表示
-        res.locals.error = error;
-        res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-        return res.render('purchase/mvtk/input');
-    } else {
-        auth(req, purchaseModel).then((result) => {
-            if (result) {
+    req.getValidationResult().then((result) => {
+        if (!result.isEmpty()) {
+            if (!purchaseModel.reserveSeats) return next(new Error(req.__('common.error.property')));
+            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+            //購入者情報入力表示
+            res.locals.error = result.mapped();
+            res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
+            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+            return res.render('purchase/mvtk/input');
+        }
+        auth(req, purchaseModel).then((authResult) => {
+            if (authResult) {
                 return res.redirect('/purchase/mvtk/confirm');
             } else {
                 // 認証エラー有効券無し
@@ -92,7 +93,9 @@ export function select(req: express.Request, res: express.Response, next: expres
         }).catch((err) => {
             return next(new Error(err.message));
         });
-    }
+    }).catch(() => {
+        return next(new Error(req.__('common.error.property')));
+    });
 }
 
 /**

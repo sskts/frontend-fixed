@@ -98,22 +98,21 @@ function submit(req, res, next) {
         return next(new Error(req.__('common.error.access')));
     //バリデーション
     InputForm_1.default(req);
-    const error = req.validationErrors(true);
-    if (error) {
-        if (!purchaseModel.transactionMP)
-            return next(new Error(req.__('common.error.property')));
-        if (!purchaseModel.theater)
-            return next(new Error(req.__('common.error.property')));
-        res.locals.error = error;
-        res.locals.input = req.body;
-        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-        res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-        res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-        res.locals.price = purchaseModel.getReserveAmount();
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        return res.render('purchase/input');
-    }
-    else {
+    req.getValidationResult().then((result) => {
+        if (!result.isEmpty()) {
+            if (!purchaseModel.transactionMP)
+                return next(new Error(req.__('common.error.property')));
+            if (!purchaseModel.theater)
+                return next(new Error(req.__('common.error.property')));
+            res.locals.error = result.mapped();
+            res.locals.input = req.body;
+            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+            res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+            res.locals.price = purchaseModel.getReserveAmount();
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            return res.render('purchase/input');
+        }
         // 入力情報をセッションへ
         purchaseModel.input = {
             last_name_hira: req.body.last_name_hira,
@@ -123,62 +122,70 @@ function submit(req, res, next) {
             tel_num: req.body.tel_num,
             agree: req.body.agree
         };
-        if (req.body.gmo_token_object) {
-            // クレジット決済
-            // 決済情報をセッションへ
-            purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-            // オーソリ追加
-            addAuthorization(req, purchaseModel).then(() => {
-                // セッション更新
-                if (!req.session)
-                    return next(new Error(req.__('common.error.property')));
-                req.session.purchase = purchaseModel.toSession();
-                // 購入者内容確認へ
-                return res.redirect('/purchase/confirm');
-            }).catch((err) => {
-                if (!err.hasOwnProperty('type'))
-                    return next(new Error(err.message));
-                if (!purchaseModel.transactionMP)
-                    return next(new Error(req.__('common.error.property')));
-                if (!purchaseModel.theater)
-                    return next(new Error(req.__('common.error.property')));
-                const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-                // GMOオーソリ追加失敗
-                res.locals.error = {
-                    cardno: {
-                        parm: 'cardno', msg: `${req.__('common.cardno')}${req.__('common.validation.card')}`, value: ''
-                    },
-                    expire: {
-                        parm: 'expire', msg: `${req.__('common.expire')}${req.__('common.validation.card')}`, value: ''
-                    },
-                    securitycode: {
-                        parm: 'securitycode', msg: `${req.__('common.securitycode')}${req.__('common.validation.card')}`, value: ''
-                    },
-                    holdername: {
-                        parm: 'holdername', msg: `${req.__('common.holdername')}${req.__('common.validation.card')}`, value: ''
-                    }
-                };
-                res.locals.input = req.body;
-                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-                res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-                res.locals.gmoShopId = gmoShopId;
-                res.locals.price = purchaseModel.getReserveAmount();
-                res.locals.transactionId = purchaseModel.transactionMP.id;
-                return res.render('purchase/input');
-            });
-        }
-        else {
+        if (!req.body.gmo_token_object) {
             // クレジット決済なし
-            // セッション更新
             if (!req.session)
                 return next(new Error(req.__('common.error.property')));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
         }
-    }
+        // クレジット決済
+        purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
+        // オーソリ追加
+        addAuthorization(req, purchaseModel).then(() => {
+            // セッション更新
+            if (!req.session)
+                return next(new Error(req.__('common.error.property')));
+            req.session.purchase = purchaseModel.toSession();
+            // 購入者内容確認へ
+            return res.redirect('/purchase/confirm');
+        }).catch((err) => {
+            if (!err.hasOwnProperty('type'))
+                return next(new Error(err.message));
+            if (!purchaseModel.transactionMP)
+                return next(new Error(req.__('common.error.property')));
+            if (!purchaseModel.theater)
+                return next(new Error(req.__('common.error.property')));
+            const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+            // GMOオーソリ追加失敗
+            res.locals.error = getGMOError(req);
+            res.locals.input = req.body;
+            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+            res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+            res.locals.gmoShopId = gmoShopId;
+            res.locals.price = purchaseModel.getReserveAmount();
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            return res.render('purchase/input');
+        });
+    }).catch(() => {
+        return next(new Error(req.__('common.error.access')));
+    });
 }
 exports.submit = submit;
+/**
+ * GMOオーソリ追加エラー取得
+ * @memberOf Purchase.InputModule
+ * @function getGMOError
+ * @param {express.Request} req
+ * @returns {any}
+ */
+function getGMOError(req) {
+    return {
+        cardno: {
+            parm: 'cardno', msg: `${req.__('common.cardno')}${req.__('common.validation.card')}`, value: ''
+        },
+        expire: {
+            parm: 'expire', msg: `${req.__('common.expire')}${req.__('common.validation.card')}`, value: ''
+        },
+        securitycode: {
+            parm: 'securitycode', msg: `${req.__('common.securitycode')}${req.__('common.validation.card')}`, value: ''
+        },
+        holdername: {
+            parm: 'holdername', msg: `${req.__('common.holdername')}${req.__('common.validation.card')}`, value: ''
+        }
+    };
+}
 /**
  * オーソリ追加
  * @memberOf Purchase.InputModule

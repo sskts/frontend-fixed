@@ -68,14 +68,14 @@ export function select(req: express.Request, res: express.Response, next: expres
 
     //バリデーション
     TicketForm(req);
-    const error = req.validationErrors(true);
-    if (error) {
-        return next(new Error(req.__('common.error.access')));
-    } else {
+    req.getValidationResult().then((result) => {
+        if (!result.isEmpty()) {
+            return next(new Error(req.__('common.error.access')));
+        }
         const reserveTickets: PurchaseSession.ReserveTicket[] = JSON.parse(req.body.reserve_tickets);
-        ticketValidation(req, purchaseModel, reserveTickets).then((result) => {
+        ticketValidation(req, purchaseModel, reserveTickets).then((ticketValidationResult) => {
             if (!req.session) return next(new Error(req.__('common.error.property')));
-            purchaseModel.reserveTickets = result;
+            purchaseModel.reserveTickets = ticketValidationResult;
             upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session) return next(new Error(req.__('common.error.property')));
                 //セッション更新
@@ -88,7 +88,9 @@ export function select(req: express.Request, res: express.Response, next: expres
         }).catch((err) => {
             return next(new Error(err.message));
         });
-    }
+    }).catch(() => {
+        return next(new Error(req.__('common.error.property')));
+    });
 }
 
 /**
