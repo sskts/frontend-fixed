@@ -3,6 +3,8 @@ const MVTK = require("@motionpicture/mvtk-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
+// tslint:disable-next-line:no-require-imports
+const expressValidator = require("express-validator");
 const helmet = require("helmet");
 const benchmarks_1 = require("./middlewares/benchmarks");
 const locales_1 = require("./middlewares/locales");
@@ -37,6 +39,8 @@ app.use((req, res, next) => {
         locales_1.default.setLocale(req, 'ja');
     }
 });
+// バリデーション
+app.use(expressValidator());
 // ムビチケサービス初期化
 MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
 // ルーティング

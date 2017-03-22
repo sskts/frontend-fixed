@@ -45,22 +45,47 @@ export function login(req: express.Request, res: express.Response): void {
  */
 export function auth(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(new Error(req.__('common.error.property')));
-    const inquiryModel = new InquirySession.InquiryModel((<any>req.session).inquiry);
-    const form = LoginForm(req);
-    form(req, res, () => {
-        if (!(<any>req).form) return next(new Error(req.__('common.error.property')));
-        if ((<any>req).form.isValid) {
+    const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
+    LoginForm(req);
+    const error = req.validationErrors(true);
+    if (error) {
+        res.locals.theater_code = req.body.theater_code;
+        res.locals.reserve_num = req.body.reserve_num;
+        res.locals.tel_num = req.body.tel_num;
+        res.locals.error = error;
+        return res.render('inquiry/login');
+    } else {
+        MP.makeInquiry({
+            inquiry_theater: req.body.theater_code, // 施設コード
+            inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
+            inquiry_pass: req.body.tel_num // 電話番号
+        }).then((result) => {
+            inquiryModel.transactionId = result;
+            debugLog('MP取引Id取得', inquiryModel.transactionId);
             getStateReserve(req, inquiryModel).then(() => {
                 //購入者内容確認へ
                 return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
             }).catch((err) => {
                 return next(new Error(err.message));
             });
-        } else {
-            res.locals.error = (<any>req).form.getErrors();
+        }).catch(() => {
+            res.locals.theater_code = req.body.theater_code;
+            res.locals.reserve_num = req.body.reserve_num;
+            res.locals.tel_num = req.body.tel_num;
+            res.locals.error = {
+                theater_code: {
+                    parm: 'theater_code', msg: `${req.__('common.theater_code')}${req.__('common.validation.inquiry')}`, value: ''
+                },
+                reserve_num: {
+                    parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+                },
+                tel_num: {
+                    parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+                }
+            };
             return res.render('inquiry/login');
-        }
-    });
+        });
+    }
 }
 
 /**
@@ -72,37 +97,12 @@ export function auth(req: express.Request, res: express.Response, next: express.
  * @returns {Promise<void>}
  */
 async function getStateReserve(req: express.Request, inquiryModel: InquirySession.InquiryModel): Promise<void> {
-    inquiryModel.transactionId = await MP.makeInquiry({
-        /**
-         * 施設コード
-         */
-        inquiry_theater: req.body.theater_code,
-        /**
-         * 座席チケット購入番号
-         */
-        inquiry_id: Number(req.body.reserve_num),
-        /**
-         * 電話番号
-         */
-        inquiry_pass: req.body.tel_num
-    });
-    debugLog('MP取引Id取得', inquiryModel.transactionId);
-
     inquiryModel.login = req.body;
 
     inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
-        /**
-         * 施設コード
-         */
-        theater_code: req.body.theater_code,
-        /**
-         * 座席チケット購入番号
-         */
-        reserve_num: req.body.reserve_num,
-        /**
-         * 電話番号
-         */
-        tel_num: req.body.tel_num
+        theater_code: req.body.theater_code, // 施設コード
+        reserve_num: req.body.reserve_num, // 座席チケット購入番号
+        tel_num: req.body.tel_num // 電話番号
     });
     debugLog('COA照会情報取得');
 

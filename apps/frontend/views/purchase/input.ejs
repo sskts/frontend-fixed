@@ -21,7 +21,7 @@
                     <dd>
                         <input type="text" name="last_name_hira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.last_name_hira %>">
                         <% if (error && error.last_name_hira) { %>
-                        <div class="validation-text"><%= error.last_name_hira[0] %></div>
+                        <div class="validation-text"><%= error.last_name_hira.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -30,7 +30,7 @@
                     <dd>
                         <input type="text" name="first_name_hira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.first_name_hira %>">
                         <% if (error && error.first_name_hira) { %>
-                        <div class="validation-text"><%= error.first_name_hira[0] %></div>
+                        <div class="validation-text"><%= error.first_name_hira.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -42,7 +42,7 @@
                 <dd>
                     <input type="email" name="mail_addr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
                     <% if (error && error.mail_addr) { %>
-                    <div class="validation-text"><%= error.mail_addr[0] %></div>
+                    <div class="validation-text"><%= error.mail_addr.msg %></div>
                     <% } %>
                 </dd>
             </dl>
@@ -51,7 +51,7 @@
                 <dd>
                     <input type="email" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mail_confirm %>">
                     <% if (error && error.mail_confirm) { %>
-                    <div class="validation-text"><%= error.mail_confirm[0] %></div>
+                    <div class="validation-text"><%= error.mail_confirm.msg %></div>
                     <% } %>
                     <p class="small-text"><%- __('common.note.mail') %></p>
                 </dd>
@@ -64,7 +64,7 @@
                 <dd>
                     <input type="tel" name="tel_num" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
                     <% if (error && error.tel_num) { %>
-                    <div class="validation-text"><%= error.tel_num[0] %></div>
+                    <div class="validation-text"><%= error.tel_num.msg %></div>
                     <% } %>
                     <p class="small-text"><%- __('common.note.tel') %></p>
                 </dd>
@@ -90,7 +90,7 @@
                     <dd>
                         <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" maxlength="16" placeholder="<%- __('common.placeholder.cardno') %>">
                         <% if (error && error.cardno) { %>
-                        <div class="validation-text"><%= error.cardno[0] %></div>
+                        <div class="validation-text"><%= error.cardno.msg %></div>
                         <% } %>
                         <p class="small-text"><%- __('common.note.cardno') %></p>
                     </dd>
@@ -125,7 +125,7 @@
                         </select> <%- __('common.year') %>
                         <input type="hidden" name="expire" value="">
                         <% if (error && error.expire) { %>
-                        <div class="validation-text expire"><%= error.expire[0] %></div>
+                        <div class="validation-text expire"><%= error.expire.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -136,7 +136,7 @@
                     <dd>
                         <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
                         <% if (error && error.securitycode) { %>
-                        <div class="validation-text"><%= error.securitycode[0] %></div>
+                        <div class="validation-text"><%= error.securitycode.msg %></div>
                         <% } %>
                         <p><a href="#" data-modal="securitycode"><%- __('common.note.securitycode') %></a></p>
                     </dd>
@@ -148,7 +148,7 @@
                     <dd>
                         <input type="text" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
                         <% if (error && error.holdername) { %>
-                        <div class="validation-text"><%= error.holdername[0] %></div>
+                        <div class="validation-text"><%= error.holdername.msg %></div>
                         <% } %>
                     </dd>
                 </dl>

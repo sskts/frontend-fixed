@@ -81,8 +81,12 @@ function select(req, res, next) {
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
     //バリデーション
-    const form = TicketForm_1.default(req);
-    form(req, res, () => {
+    TicketForm_1.default(req);
+    const error = req.validationErrors(true);
+    if (error) {
+        return next(new Error(req.__('common.error.access')));
+    }
+    else {
         const reserveTickets = JSON.parse(req.body.reserve_tickets);
         ticketValidation(req, purchaseModel, reserveTickets).then((result) => {
             if (!req.session)
@@ -101,7 +105,7 @@ function select(req, res, next) {
         }).catch((err) => {
             return next(new Error(err.message));
         });
-    });
+    }
 }
 exports.select = select;
 /**

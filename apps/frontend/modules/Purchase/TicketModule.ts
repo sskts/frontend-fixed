@@ -67,8 +67,11 @@ export function select(req: express.Request, res: express.Response, next: expres
     if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
 
     //バリデーション
-    const form = TicketForm(req);
-    form(req, res, () => {
+    TicketForm(req);
+    const error = req.validationErrors(true);
+    if (error) {
+        return next(new Error(req.__('common.error.access')));
+    } else {
         const reserveTickets: PurchaseSession.ReserveTicket[] = JSON.parse(req.body.reserve_tickets);
         ticketValidation(req, purchaseModel, reserveTickets).then((result) => {
             if (!req.session) return next(new Error(req.__('common.error.property')));
@@ -76,7 +79,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             upDateAuthorization(req, purchaseModel).then(() => {
                 if (!req.session) return next(new Error(req.__('common.error.property')));
                 //セッション更新
-                (<any>req.session).purchase = purchaseModel.toSession();
+                req.session.purchase = purchaseModel.toSession();
                 //購入者情報入力へ
                 return res.redirect('/purchase/input');
             }).catch((err) => {
@@ -85,7 +88,7 @@ export function select(req: express.Request, res: express.Response, next: expres
         }).catch((err) => {
             return next(new Error(err.message));
         });
-    });
+    }
 }
 
 /**

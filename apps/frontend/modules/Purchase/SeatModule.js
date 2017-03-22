@@ -108,36 +108,33 @@ function select(req, res, next) {
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
     //バリデーション
-    const form = SeatForm_1.default(req);
-    form(req, res, () => {
-        if (!req.form)
-            return next(new Error(req.__('common.error.property')));
-        if (req.form.isValid) {
-            reserve(req, purchaseModel).then(() => {
-                //セッション更新
-                if (!req.session)
-                    return next(new Error(req.__('common.error.property')));
-                req.session.purchase = purchaseModel.toSession();
-                //券種選択へ
-                return res.redirect('/purchase/ticket');
-            }).catch((err) => {
-                return next(new Error(err.message));
-            });
-        }
-        else {
-            if (!req.params || !req.params.id)
-                return next(new Error(req.__('common.error.access')));
-            res.locals.transactionId = purchaseModel.transactionMP;
-            res.locals.performance = purchaseModel.performance;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-            res.locals.reserveSeats = req.body.seats;
-            res.locals.error = req.form.getErrors();
-            res.locals.prevLink = (purchaseModel.performance)
-                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-                : UtilModule.getPortalUrl();
-            return res.render('purchase/seat');
-        }
-    });
+    SeatForm_1.default(req);
+    const error = req.validationErrors(true);
+    if (error) {
+        if (!req.params || !req.params.id)
+            return next(new Error(req.__('common.error.access')));
+        res.locals.transactionId = purchaseModel.transactionMP;
+        res.locals.performance = purchaseModel.performance;
+        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+        res.locals.reserveSeats = req.body.seats;
+        res.locals.error = error;
+        res.locals.prevLink = (purchaseModel.performance)
+            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+            : UtilModule.getPortalUrl();
+        return res.render('purchase/seat');
+    }
+    else {
+        reserve(req, purchaseModel).then(() => {
+            //セッション更新
+            if (!req.session)
+                return next(new Error(req.__('common.error.property')));
+            req.session.purchase = purchaseModel.toSession();
+            //券種選択へ
+            return res.redirect('/purchase/ticket');
+        }).catch((err) => {
+            return next(new Error(err.message));
+        });
+    }
 }
 exports.select = select;
 /**

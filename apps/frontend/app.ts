@@ -2,6 +2,8 @@ import * as MVTK from '@motionpicture/mvtk-service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
+// tslint:disable-next-line:no-require-imports
+import expressValidator = require('express-validator');
 import * as helmet from 'helmet';
 import benchmarks from './middlewares/benchmarks';
 import locales from './middlewares/locales';
@@ -42,6 +44,9 @@ app.use((req, res, next) => {
         locales.setLocale(req, 'ja');
     }
 });
+
+// バリデーション
+app.use(expressValidator());
 
 // ムビチケサービス初期化
 MVTK.initialize(
