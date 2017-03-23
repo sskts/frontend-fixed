@@ -45,8 +45,7 @@ export function index(req: express.Request, res: express.Response, next: express
 
         //セッション更新
         if (!req.session) return next(new Error(req.__('common.error.property')));
-        (<any>req.session).purchase = purchaseModel.toSession();
-
+        req.session.purchase = purchaseModel.toSession();
         return res.render('purchase/seat');
     }).catch((err) => {
         return next(new Error(err.message));

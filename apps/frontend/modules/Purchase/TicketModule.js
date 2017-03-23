@@ -18,6 +18,7 @@ const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const debugLog = debug('SSKTS ');
 /**
  * 券種選択
@@ -80,35 +81,67 @@ function select(req, res, next) {
     //取引id確認
     if (req.body.transaction_id !== purchaseModel.transactionMP.id)
         return next(new Error(req.__('common.error.access')));
-    //バリデーション
-    TicketForm_1.default(req);
-    req.getValidationResult().then((result) => {
-        if (!result.isEmpty()) {
+    selectTicket(req, purchaseModel).then(() => {
+        if (!req.session)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        //セッション更新
+        req.session.purchase = purchaseModel.toSession();
+        //購入者情報入力へ
+        return res.redirect('/purchase/input');
+    }).catch((err) => {
+        if (err === ErrorUtilModule.ERROR_PROPERTY) {
+            return next(new Error(req.__('common.error.property')));
+        }
+        else if (err === ErrorUtilModule.ERROR_ACCESS) {
             return next(new Error(req.__('common.error.access')));
         }
-        const reserveTickets = JSON.parse(req.body.reserve_tickets);
-        ticketValidation(req, purchaseModel, reserveTickets).then((ticketValidationResult) => {
-            if (!req.session)
-                return next(new Error(req.__('common.error.property')));
-            purchaseModel.reserveTickets = ticketValidationResult;
-            upDateAuthorization(req, purchaseModel).then(() => {
-                if (!req.session)
+        else if (err === ErrorUtilModule.ERROR_VALIDATION) {
+            //券種取得
+            getSalesTickets(req, purchaseModel).then((salesTickets) => {
+                if (!purchaseModel.transactionMP)
                     return next(new Error(req.__('common.error.property')));
-                //セッション更新
-                req.session.purchase = purchaseModel.toSession();
-                //購入者情報入力へ
-                return res.redirect('/purchase/input');
-            }).catch((err) => {
-                return next(new Error(err.message));
+                const performance = purchaseModel.performance;
+                res.locals.tickets = salesTickets;
+                res.locals.performance = performance;
+                res.locals.reserveSeats = purchaseModel.reserveSeats;
+                res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
+                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                res.locals.transactionId = purchaseModel.transactionMP.id;
+                //券種選択表示
+                return res.render('purchase/ticket');
+            }).catch((err2) => {
+                return next(new Error(err2.message));
             });
-        }).catch((err) => {
+        }
+        else {
             return next(new Error(err.message));
-        });
-    }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        }
     });
 }
 exports.select = select;
+/**
+ * 券種選択処理
+ * @memberOf Purchase.TicketModule
+ * @function selectTicket
+ * @param {express.Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {void}
+ */
+function selectTicket(req, purchaseModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //バリデーション
+        TicketForm_1.default(req);
+        const validationResult = yield req.getValidationResult();
+        if (!validationResult.isEmpty()) {
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        }
+        const reserveTickets = JSON.parse(req.body.reserve_tickets);
+        // 券種検証
+        purchaseModel.reserveTickets = yield ticketValidation(req, purchaseModel, reserveTickets);
+        // オーソリ追加
+        yield upDateAuthorization(req, purchaseModel);
+    });
+}
 /**
  * 券種リスト取得
  * @memberOf Purchase.TicketModule
@@ -200,9 +233,9 @@ function getSalesTickets(req, purchaseModel) {
 function ticketValidation(req, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         const result = [];
         //コアAPI券種取得
         const performance = purchaseModel.performance;
@@ -218,12 +251,12 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
             if (ticket.mvtk_num) {
                 // ムビチケ
                 if (!purchaseModel.mvtk)
-                    throw new Error(req.__('common.error.property'));
+                    throw ErrorUtilModule.ERROR_PROPERTY;
                 const mvtkTicket = purchaseModel.mvtk.find((value) => {
                     return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
                 });
                 if (!mvtkTicket)
-                    throw new Error(req.__('common.error.access'));
+                    throw ErrorUtilModule.ERROR_ACCESS;
                 result.push({
                     section: ticket.section,
                     seat_code: ticket.seat_code,
@@ -250,7 +283,23 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                     return (value.ticket_code === ticket.ticket_code);
                 });
                 if (!salesTicket)
-                    throw new Error(req.__('common.error.access'));
+                    throw ErrorUtilModule.ERROR_ACCESS;
+                // 制限単位、人数制限判定
+                const sameTickets = reserveTickets.filter((value) => {
+                    return (value.ticket_code === salesTicket.ticket_code);
+                });
+                if (!sameTickets)
+                    throw ErrorUtilModule.ERROR_ACCESS;
+                if (salesTicket.limit_unit === '001') {
+                    if (sameTickets.length % salesTicket.limit_count !== 0) {
+                        throw ErrorUtilModule.ERROR_VALIDATION;
+                    }
+                }
+                else if (salesTicket.limit_unit === '002') {
+                    if (sameTickets.length < salesTicket.limit_count) {
+                        throw ErrorUtilModule.ERROR_VALIDATION;
+                    }
+                }
                 result.push({
                     section: ticket.section,
                     seat_code: ticket.seat_code,
