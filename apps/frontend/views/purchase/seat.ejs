@@ -8,7 +8,7 @@
 
     <div>
         <div class="screen-cover mb-medium" 
-        data-limit="4" 
+        data-limit="<%= performance.attributes.coa_available_num %>" 
         data-theater="<%= performance.attributes.theater.id %>" 
         data-day="<%= performance.attributes.day %>" 
         data-coa-title-code="<%= performanceCOA.titleCode %>"
