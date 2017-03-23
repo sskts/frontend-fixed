@@ -49,12 +49,6 @@ export function auth(req: express.Request, res: express.Response, next: express.
     LoginForm(req);
     req.getValidationResult().then((result) => {
         if (result.isEmpty()) {
-            res.locals.theater_code = req.body.theater_code;
-            res.locals.reserve_num = req.body.reserve_num;
-            res.locals.tel_num = req.body.tel_num;
-            res.locals.error = result.mapped();
-            return res.render('inquiry/login');
-        } else {
             MP.makeInquiry({
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
@@ -75,6 +69,12 @@ export function auth(req: express.Request, res: express.Response, next: express.
                 res.locals.error = getInquiryError(req);
                 return res.render('inquiry/login');
             });
+        } else {
+            res.locals.theater_code = req.body.theater_code;
+            res.locals.reserve_num = req.body.reserve_num;
+            res.locals.tel_num = req.body.tel_num;
+            res.locals.error = result.mapped();
+            return res.render('inquiry/login');
         }
     }).catch(() => {
         return next(new Error(req.__('common.error.property')));

@@ -57,13 +57,6 @@ function auth(req, res, next) {
     LoginForm_1.default(req);
     req.getValidationResult().then((result) => {
         if (result.isEmpty()) {
-            res.locals.theater_code = req.body.theater_code;
-            res.locals.reserve_num = req.body.reserve_num;
-            res.locals.tel_num = req.body.tel_num;
-            res.locals.error = result.mapped();
-            return res.render('inquiry/login');
-        }
-        else {
             MP.makeInquiry({
                 inquiry_theater: req.body.theater_code,
                 inquiry_id: Number(req.body.reserve_num),
@@ -84,6 +77,13 @@ function auth(req, res, next) {
                 res.locals.error = getInquiryError(req);
                 return res.render('inquiry/login');
             });
+        }
+        else {
+            res.locals.theater_code = req.body.theater_code;
+            res.locals.reserve_num = req.body.reserve_num;
+            res.locals.tel_num = req.body.tel_num;
+            res.locals.error = result.mapped();
+            return res.render('inquiry/login');
         }
     }).catch(() => {
         return next(new Error(req.__('common.error.property')));
