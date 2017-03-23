@@ -107,6 +107,7 @@ function select(req, res, next) {
                 return res.render('purchase/mvtk/input');
             }
         }).catch((err) => {
+            debugLog(err);
             return next(new Error(err.message));
         });
     }).catch(() => {
@@ -163,7 +164,7 @@ function auth(req, purchaseModel) {
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
-        debugLog('ムビチケ認証');
+        debugLog('ムビチケ認証', result);
         let isSuccess = true;
         const mvtkList = [];
         for (const purchaseNumberAuthResult of result) {

@@ -4,6 +4,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const SupertestRequest = require("../middlewares/supertestRequest");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const PerformancesModule = require("../modules/Performances/PerformancesModule");
 const UtilModule = require("../modules/Util/UtilModule");
@@ -12,6 +13,9 @@ const method_1 = require("./method");
 const purchase_1 = require("./purchase");
 const router = express.Router();
 exports.default = (app) => {
+    if (process.env.NODE_ENV === 'develop') {
+        app.use(SupertestRequest.supertestSession);
+    }
     app.use(UtilModule.setLocals);
     // tslint:disable-next-line:variable-name
     router.get('/', (_req, res, _next) => {

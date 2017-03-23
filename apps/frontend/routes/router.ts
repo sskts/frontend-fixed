@@ -3,6 +3,7 @@
  */
 
 import * as express from 'express';
+import * as SupertestRequest from '../middlewares/supertestRequest';
 import * as ErrorModule from '../modules/Error/ErrorModule';
 import * as PerformancesModule from '../modules/Performances/PerformancesModule';
 import * as UtilModule from '../modules/Util/UtilModule';
@@ -13,6 +14,10 @@ import purchase from './purchase';
 const router = express.Router();
 
 export default (app: express.Application) => {
+
+    if (process.env.NODE_ENV === 'develop') {
+        app.use(SupertestRequest.supertestSession);
+    }
 
     app.use(UtilModule.setLocals);
 

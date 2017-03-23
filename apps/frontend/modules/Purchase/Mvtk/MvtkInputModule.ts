@@ -91,6 +91,7 @@ export function select(req: express.Request, res: express.Response, next: expres
                 return res.render('purchase/mvtk/input');
             }
         }).catch((err) => {
+            debugLog(err);
             return next(new Error(err.message));
         });
     }).catch(() => {
@@ -150,7 +151,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
         jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
     });
 
-    debugLog('ムビチケ認証');
+    debugLog('ムビチケ認証', result);
     let isSuccess = true;
     const mvtkList: PurchaseSession.Mvtk[] = [];
     for (const purchaseNumberAuthResult of result) {
