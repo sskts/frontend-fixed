@@ -9,6 +9,7 @@ import * as debug from 'debug';
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 const debugLog = debug('SSKTS ');
 
 /**
@@ -21,10 +22,10 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
+    if (!req.params || !req.params.id) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
     //パフォーマンス取得
     MP.getPerformance(req.params.id).then((result) => {
         res.locals.performances = {
@@ -47,10 +48,10 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    removeReserve(req, purchaseModel).then(() => {
-        if (!req.session) return next(new Error(req.__('common.error.property')));
+    removeReserve(purchaseModel).then(() => {
+        if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         //購入スタートへ
         delete (<any>req.session).purchase;
         return res.redirect(`/purchase?id=${req.body.performance_id}`);
@@ -70,7 +71,7 @@ export function newReserve(req: express.Request, res: express.Response, next: ex
  * @returns {void}
  */
 export function prevReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //座席選択へ
     return res.redirect('/purchase/seat/' + (<string>req.body.performance_id) + '/');
 }
@@ -79,16 +80,15 @@ export function prevReserve(req: express.Request, res: express.Response, next: e
  * 仮予約取り消し
  * @memberOf Purchase.OverlapModule
  * @function removeReserve
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-async function removeReserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
+async function removeReserve(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.transactionMP) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.reserveSeats) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.authorizationCOA) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
 
     const performance = purchaseModel.performance;
     const reserveSeats = purchaseModel.reserveSeats;
@@ -116,7 +116,7 @@ async function removeReserve(req: express.Request, purchaseModel: PurchaseSessio
     if (purchaseModel.transactionGMO
         && purchaseModel.authorizationGMO
         && purchaseModel.orderId) {
-        if (!purchaseModel.theater) throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.theater) throw ErrorUtilModule.ERROR_PROPERTY;
         const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
         const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
         //GMOオーソリ取消

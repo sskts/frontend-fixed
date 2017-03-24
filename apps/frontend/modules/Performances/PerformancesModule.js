@@ -5,6 +5,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const MP = require("../../../../libs/MP");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * パフォーマンス一覧表示
  * @memberOf PerformancesModule
@@ -16,7 +17,7 @@ const MP = require("../../../../libs/MP");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     return res.render('performance');
 }
 exports.index = index;

@@ -15,9 +15,15 @@ import * as express from 'express';
  */
 // tslint:disable-next-line:variable-name
 export function supertestSession(req: express.Request, _res: express.Response, next: express.NextFunction) {
-    if (!req.body.session) return next();
-    const session = req.body.session;
+    if (!req.body.session && !req.query.session) return next();
+    const session = (req.method === 'post') ? req.body.session : req.query.session;
     Object.keys(session).forEach((key: string) => {
-        req.body.session[key] = session[key];
+        if (!req.session) return;
+        if (req.method === 'post') {
+            req.session[key] = session[key];
+        } else {
+            req.session[key] = session[key];
+        }
     });
+    return next();
 }

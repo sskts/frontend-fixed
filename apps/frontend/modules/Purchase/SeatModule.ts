@@ -11,6 +11,7 @@ import * as fs from 'fs-extra-promise';
 import * as MP from '../../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const debugLog = debug('SSKTS ');
 
@@ -24,12 +25,14 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) return next(new Error(req.__('common.error.access')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
 
     preparation(req, purchaseModel).then(() => {
-        if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+        if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         res.locals.performance = purchaseModel.performance;
         res.locals.performanceCOA = purchaseModel.performanceCOA;
         res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
@@ -44,7 +47,7 @@ export function index(req: express.Request, res: express.Response, next: express
             : UtilModule.getPortalUrl();
 
         //セッション更新
-        if (!req.session) return next(new Error(req.__('common.error.property')));
+        if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         req.session.purchase = purchaseModel.toSession();
         return res.render('purchase/seat');
     }).catch((err) => {
@@ -80,6 +83,15 @@ export async function preparation(req: express.Request, purchaseModel: PurchaseS
 }
 
 /**
+ * 選択座席
+ * @interface ReserveSeats
+ */
+interface SelectSeats {
+    seat_num: string;
+    seat_section: string;
+}
+
+/**
  * 座席決定
  * @memberOf Purchase.SeatModule
  * @function select
@@ -89,19 +101,21 @@ export async function preparation(req: express.Request, purchaseModel: PurchaseS
  * @returns {void}
  */
 export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
 
     //バリデーション
     SeatForm(req);
     req.getValidationResult().then((result) => {
         if (!result.isEmpty()) {
-            if (!req.params || !req.params.id) return next(new Error(req.__('common.error.access')));
+            if (!req.params || !req.params.id) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
             res.locals.transactionId = purchaseModel.transactionMP;
             res.locals.performance = purchaseModel.performance;
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
@@ -113,9 +127,10 @@ export function select(req: express.Request, res: express.Response, next: expres
 
             return res.render('purchase/seat');
         }
-        reserve(req, purchaseModel).then(() => {
+        const selectSeats: SelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;
+        reserve(selectSeats, purchaseModel).then(() => {
             //セッション更新
-            if (!req.session) return next(new Error(req.__('common.error.property')));
+            if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             //券種選択へ
             return res.redirect('/purchase/ticket');
@@ -123,7 +138,7 @@ export function select(req: express.Request, res: express.Response, next: expres
             return next(new Error(err.message));
         });
     }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 
@@ -131,19 +146,19 @@ export function select(req: express.Request, res: express.Response, next: expres
  * 座席仮予約
  * @memberOf Purchase.SeatModule
  * @function reserve
- * @param {express.Request} req
+ * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-async function reserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.transactionMP) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
+async function reserve(selectSeats: SelectSeats[], purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.transactionMP) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
     const performance = purchaseModel.performance;
 
     //予約中
     if (purchaseModel.reserveSeats) {
-        if (!purchaseModel.authorizationCOA) throw new Error(req.__('common.error.property'));
+        if (!purchaseModel.authorizationCOA) throw ErrorUtilModule.ERROR_PROPERTY;
         const reserveSeats = purchaseModel.reserveSeats;
 
         //COA仮予約削除
@@ -164,7 +179,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         debugLog('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO
             && purchaseModel.authorizationGMO) {
-            if (!purchaseModel.theater) throw new Error(req.__('common.error.property'));
+            if (!purchaseModel.theater) throw ErrorUtilModule.ERROR_PROPERTY;
 
             const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
@@ -186,7 +201,6 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         }
     }
     //COA仮予約
-    const seats = JSON.parse(req.body.seats);
     purchaseModel.reserveSeats = await COA.ReserveService.updTmpReserveSeat({
         theater_code: performance.attributes.theater.id,
         date_jouei: performance.attributes.day,
@@ -195,7 +209,7 @@ async function reserve(req: express.Request, purchaseModel: PurchaseSession.Purc
         time_begin: performance.attributes.time_start,
         // cnt_reserve_seat: number,
         screen_code: purchaseModel.performanceCOA.screenCode,
-        list_seat: seats.list_tmp_reserve
+        list_seat: selectSeats
     });
     debugLog('COA仮予約', purchaseModel.reserveSeats);
 
@@ -280,5 +294,5 @@ async function getScreenData(req: express.Request): Promise<ScreenData> {
 interface ScreenData {
     screen: any;
     setting: any;
-    state: COA.ReserveService.StateReserveSeatResult;
+    state: COA.ReserveService.IStateReserveSeatResult;
 }

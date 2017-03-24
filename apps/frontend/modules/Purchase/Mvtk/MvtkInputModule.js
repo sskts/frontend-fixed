@@ -19,6 +19,7 @@ const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
+const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const UtilModule = require("../../Util/UtilModule");
 const debugLog = debug('SSKTS ');
 /**
@@ -32,14 +33,14 @@ const debugLog = debug('SSKTS ');
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!purchaseModel.reserveSeats)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     // ムビチケセッション削除
     delete req.session.mvtk;
     // 購入者情報入力表示
@@ -64,22 +65,23 @@ exports.index = index;
  */
 function select(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-        return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     MvtkInputForm_1.default(req);
     req.getValidationResult().then((result) => {
         if (!result.isEmpty()) {
             if (!purchaseModel.reserveSeats)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             if (!purchaseModel.transactionMP)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             //購入者情報入力表示
             res.locals.error = result.mapped();
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
@@ -95,9 +97,9 @@ function select(req, res, next) {
             else {
                 // 認証エラー有効券無し
                 if (!purchaseModel.transactionMP)
-                    return next(new Error(req.__('common.error.property')));
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 if (!purchaseModel.reserveSeats)
-                    return next(new Error(req.__('common.error.property')));
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 //購入者情報入力表示
                 res.locals.error = null;
                 res.locals.mvtkInfo = mvtkValidation(req);
@@ -111,7 +113,7 @@ function select(req, res, next) {
             return next(new Error(err.message));
         });
     }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 exports.select = select;
@@ -146,9 +148,9 @@ function mvtkValidation(req) {
 function auth(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo = JSON.parse(req.body.mvtk);
         const result = yield mvtkService.purchaseNumberAuth({

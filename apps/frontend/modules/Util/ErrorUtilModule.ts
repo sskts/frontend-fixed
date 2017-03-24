@@ -3,6 +3,35 @@
  * @namespace Util.ErrorUtilModule
  */
 
+import * as express from 'express';
+
+/**
+ * エラーメッセージ
+ * @memberof Util.ErrorUtilModule
+ * @function erorMessage
+ */
+export function getError(req: express.Request, err: any): Error {
+    let msg = '';
+    switch (err) {
+        case ERROR_PROPERTY:
+            msg = req.__('common.error.property');
+            break;
+        case ERROR_ACCESS:
+            msg = req.__('common.error.access');
+            break;
+        case ERROR_VALIDATION:
+            msg = req.__('common.error.property');
+            break;
+        case ERROR_EXPIRE:
+            msg = req.__('common.error.expire');
+            break;
+        default:
+            msg = err.message;
+            break;
+    }
+    return new Error(msg);
+}
+
 /**
  * エラー番号（propertyなし）
  * @memberof Util.ErrorUtilModule
@@ -15,18 +44,25 @@ export const ERROR_PROPERTY = 0;
  * @memberof Util.ErrorUtilModule
  * @const ERROR_ACCESS
  */
-export const ERROR_ACCESS = 1;
+export const ERROR_ACCESS = '001';
 
 /**
  * エラー番号（時間切れ）
  * @memberof Util.ErrorUtilModule
  * @const ERROR_TIMEOUT
  */
-export const ERROR_TIMEOUT = 2;
+export const ERROR_TIMEOUT = '002';
 
 /**
  * エラー番号（バリデーション）
  * @memberof Util.ErrorUtilModule
  * @const ERROR_VALIDATION
  */
-export const ERROR_VALIDATION = 3;
+export const ERROR_VALIDATION = '003';
+
+/**
+ * エラー番号（期限切れ）
+ * @memberof Util.ErrorUtilModule
+ * @const ERROR_EXPIRE
+ */
+export const ERROR_EXPIRE = '004';

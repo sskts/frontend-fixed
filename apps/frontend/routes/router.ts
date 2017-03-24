@@ -15,7 +15,7 @@ const router = express.Router();
 
 export default (app: express.Application) => {
 
-    if (process.env.NODE_ENV === 'develop') {
+    if (process.env.NODE_ENV === 'development') {
         app.use(SupertestRequest.supertestSession);
     }
 

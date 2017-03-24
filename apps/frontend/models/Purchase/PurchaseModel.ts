@@ -128,7 +128,7 @@ export interface Mvtk {
     /**
      * チケット情報
      */
-    ticket: COA.MasterService.MvtkTicketcodeResult;
+    ticket: COA.MasterService.IMvtkTicketcodeResult;
 }
 
 /**
@@ -180,7 +180,7 @@ export class PurchaseModel {
     /**
      * COA仮予約
      */
-    public reserveSeats: COA.ReserveService.UpdTmpReserveSeatResult | null;
+    public reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null;
     /**
      * 予約チケット
      */
@@ -196,7 +196,7 @@ export class PurchaseModel {
     /**
      * COA本予約
      */
-    public updateReserve: COA.ReserveService.UpdReserveResult | null;
+    public updateReserve: COA.ReserveService.IUpdReserveResult | null;
     /**
      * 取引MP
      */
@@ -265,11 +265,11 @@ export class PurchaseModel {
     public toSession(): {
         performance: MP.Performance | null,
         theater: MP.Theater | null;
-        reserveSeats: COA.ReserveService.UpdTmpReserveSeatResult | null,
+        reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null,
         reserveTickets: ReserveTicket[] | null,
         input: Input | null,
         gmo: GMO | null,
-        updateReserve: COA.ReserveService.UpdReserveResult | null,
+        updateReserve: COA.ReserveService.IUpdReserveResult | null,
         transactionMP: MP.TransactionStartResult | null,
         transactionGMO: GMO.CreditService.EntryTranResult | null,
         authorizationCOA: MP.AddCOAAuthorizationResult | null,

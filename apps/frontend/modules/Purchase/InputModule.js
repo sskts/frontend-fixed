@@ -31,16 +31,17 @@ const debugLog = debug('SSKTS ');
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE))
-        return next(new Error(req.__('common.error.access')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!purchaseModel.theater)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //購入者情報入力表示
     res.locals.error = null;
     res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -72,7 +73,7 @@ function index(req, res, next) {
     }
     //セッション更新
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     req.session.purchase = purchaseModel.toSession();
     return res.render('purchase/input');
 }
@@ -88,23 +89,24 @@ exports.index = index;
  */
 function submit(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-        return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     //バリデーション
     InputForm_1.default(req);
     req.getValidationResult().then((result) => {
         if (!result.isEmpty()) {
             if (!purchaseModel.transactionMP)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             if (!purchaseModel.theater)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             res.locals.error = result.mapped();
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -126,7 +128,7 @@ function submit(req, res, next) {
         if (!req.body.gmo_token_object) {
             // クレジット決済なし
             if (!req.session)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
@@ -134,22 +136,22 @@ function submit(req, res, next) {
         // クレジット決済
         purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
         // オーソリ追加
-        addAuthorization(req, purchaseModel).then(() => {
+        addAuthorization(purchaseModel).then(() => {
             // セッション更新
             if (!req.session)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
         }).catch((err) => {
             if (err === ErrorUtilModule.ERROR_PROPERTY) {
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             }
             else if (err === ErrorUtilModule.ERROR_VALIDATION) {
                 if (!purchaseModel.transactionMP)
-                    return next(new Error(req.__('common.error.property')));
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 if (!purchaseModel.theater)
-                    return next(new Error(req.__('common.error.property')));
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
                 // GMOオーソリ追加失敗
                 res.locals.error = getGMOError(req);
@@ -166,7 +168,7 @@ function submit(req, res, next) {
             }
         });
     }).catch(() => {
-        return next(new Error(req.__('common.error.access')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     });
 }
 exports.submit = submit;
@@ -197,11 +199,10 @@ function getGMOError(req) {
  * オーソリ追加
  * @memberOf Purchase.InputModule
  * @function addAuthorization
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
  */
-function addAuthorization(req, purchaseModel) {
+function addAuthorization(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.transactionMP)
             throw ErrorUtilModule.ERROR_PROPERTY;

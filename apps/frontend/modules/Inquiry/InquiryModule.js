@@ -17,6 +17,7 @@ const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const debugLog = debug('SSKTS ');
 /**
@@ -52,7 +53,7 @@ exports.login = login;
  */
 function auth(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     LoginForm_1.default(req);
     req.getValidationResult().then((result) => {
@@ -68,7 +69,7 @@ function auth(req, res, next) {
                     //購入者内容確認へ
                     return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 }).catch((err) => {
-                    return next(new Error(err.message));
+                    return next(ErrorUtilModule.getError(req, err));
                 });
             }).catch(() => {
                 res.locals.theater_code = req.body.theater_code;
@@ -86,7 +87,7 @@ function auth(req, res, next) {
             return res.render('inquiry/login');
         }
     }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 exports.auth = auth;
@@ -139,7 +140,7 @@ function getStateReserve(req, inquiryModel) {
         inquiryModel.performance = yield MP.getPerformance(performanceId);
         debugLog('MPパフォーマンス取得');
         if (!req.session)
-            throw req.__('common.error.property');
+            throw ErrorUtilModule.ERROR_PROPERTY;
         req.session.inquiry = inquiryModel.toSession();
     });
 }
@@ -154,7 +155,7 @@ function getStateReserve(req, inquiryModel) {
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     if (inquiryModel.stateReserve
         && inquiryModel.performance

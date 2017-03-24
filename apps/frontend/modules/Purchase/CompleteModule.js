@@ -5,6 +5,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * 購入完了表示
  * @memberOf Purchase.CompleteModule
@@ -16,9 +17,9 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.complete)
-        return next(new Error(req.__('common.error.access')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     //購入者内容確認表示
     const complete = req.session.complete;
     const purchaseModel = new PurchaseSession.PurchaseModel({

@@ -5,6 +5,7 @@
 
 import * as express from 'express';
 import * as MP from '../../../../libs/MP';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
 /**
  * パフォーマンス一覧表示
@@ -16,7 +17,7 @@ import * as MP from '../../../../libs/MP';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     return res.render('performance');
 }
 

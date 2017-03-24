@@ -6,6 +6,7 @@ import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import * as express from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 const debugLog = debug('SSKTS ');
 
 /**
@@ -18,10 +19,10 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     if (!req.session.mvtk) return res.redirect('/purchase/mvtk');
 
@@ -63,13 +64,15 @@ function creatPurchaseNoList(mvtk: PurchaseSession.Mvtk[]) {
  * @returns {void}
  */
 export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     // ムビチケ情報を購入セッションへ保存
     debugLog('ムビチケ情報を購入セッションへ保存');
     purchaseModel.mvtk = (<any>req.session).mvtk;

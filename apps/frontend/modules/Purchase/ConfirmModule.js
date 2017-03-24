@@ -18,6 +18,7 @@ const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const debugLog = debug('SSKTS ');
@@ -32,14 +33,15 @@ const debugLog = debug('SSKTS ');
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE))
-        return next(new Error(req.__('common.error.access')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //購入者内容確認表示
     res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
     res.locals.input = purchaseModel.input;
@@ -58,7 +60,7 @@ function index(req, res, next) {
         : UtilModule.getPortalUrl();
     //セッション更新
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     req.session.purchase = purchaseModel.toSession();
     return res.render('purchase/confirm');
 }
@@ -67,24 +69,23 @@ exports.index = index;
  * ムビチケ決済
  * @memberOf Purchase.ConfirmModule
  * @function reserveMvtk
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-function reserveMvtk(req, purchaseModel) {
+function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.reserveTickets)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.reserveSeats)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.updateReserve)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.mvtk)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         debugLog('ムビチケ決済開始');
         // 購入管理番号情報
         const mvtkTickets = [];
@@ -159,7 +160,7 @@ function reserveMvtk(req, purchaseModel) {
             skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum) // 作品コード
         });
         if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
     });
 }
 /**
@@ -174,11 +175,11 @@ function updateReserve(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         debugLog('座席本予約開始');
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.reserveSeats)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.input)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.reserveTickets)
             throw Error(req.__('common.error.property'));
         if (!purchaseModel.transactionMP)
@@ -232,7 +233,7 @@ function updateReserve(req, purchaseModel) {
         debugLog('COA本予約', purchaseModel.updateReserve);
         // ムビチケ使用
         if (purchaseModel.mvtk) {
-            yield reserveMvtk(req, purchaseModel);
+            yield reserveMvtk(purchaseModel);
             debugLog('ムビチケ決済');
         }
         // MP購入者情報登録
@@ -277,13 +278,13 @@ function updateReserve(req, purchaseModel) {
  */
 function getMailContent(req, purchaseModel) {
     if (!purchaseModel.performance)
-        throw new Error(req.__('common.error.property'));
+        throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.reserveSeats)
-        throw new Error(req.__('common.error.property'));
+        throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.input)
-        throw new Error(req.__('common.error.property'));
+        throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.updateReserve)
-        throw new Error(req.__('common.error.property'));
+        throw ErrorUtilModule.ERROR_PROPERTY;
     return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様\n
 \n
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
@@ -360,7 +361,7 @@ function purchase(req, res, _next) {
     updateReserve(req, purchaseModel).then(() => {
         //購入情報をセッションへ
         if (!req.session)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         req.session.complete = {
             updateReserve: purchaseModel.updateReserve,
             performance: purchaseModel.performance,

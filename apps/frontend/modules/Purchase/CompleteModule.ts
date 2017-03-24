@@ -5,6 +5,7 @@
 
 import * as express from 'express';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
 /**
  * 購入完了表示
@@ -16,8 +17,8 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!(<any>req.session).complete) return next(new Error(req.__('common.error.access')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!(<any>req.session).complete) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     //購入者内容確認表示
     const complete = (<any>req.session).complete;
     const purchaseModel = new PurchaseSession.PurchaseModel({

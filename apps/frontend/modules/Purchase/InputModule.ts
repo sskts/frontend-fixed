@@ -23,12 +23,14 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) return next(new Error(req.__('common.error.access')));
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-    if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!purchaseModel.theater) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     //購入者情報入力表示
     res.locals.error = null;
@@ -62,7 +64,7 @@ export function index(req: express.Request, res: express.Response, next: express
     }
 
     //セッション更新
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     (<any>req.session).purchase = purchaseModel.toSession();
 
     return res.render('purchase/input');
@@ -78,20 +80,22 @@ export function index(req: express.Request, res: express.Response, next: express
  * @returns {void}
  */
 export function submit(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
 
     //バリデーション
     InputForm(req);
     req.getValidationResult().then((result) => {
         if (!result.isEmpty()) {
-            if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-            if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
+            if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+            if (!purchaseModel.theater) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             res.locals.error = result.mapped();
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -113,7 +117,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
         };
         if (!req.body.gmo_token_object) {
             // クレジット決済なし
-            if (!req.session) return next(new Error(req.__('common.error.property')));
+            if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
@@ -121,18 +125,18 @@ export function submit(req: express.Request, res: express.Response, next: expres
         // クレジット決済
         purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
         // オーソリ追加
-        addAuthorization(req, purchaseModel).then(() => {
+        addAuthorization(purchaseModel).then(() => {
             // セッション更新
-            if (!req.session) return next(new Error(req.__('common.error.property')));
+            if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
         }).catch((err) => {
             if (err === ErrorUtilModule.ERROR_PROPERTY) {
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             } else if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
-                if (!purchaseModel.theater) return next(new Error(req.__('common.error.property')));
+                if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+                if (!purchaseModel.theater) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
                 // GMOオーソリ追加失敗
                 res.locals.error = getGMOError(req);
@@ -148,7 +152,7 @@ export function submit(req: express.Request, res: express.Response, next: expres
             }
         });
     }).catch(() => {
-        return next(new Error(req.__('common.error.access')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     });
 }
 
@@ -180,11 +184,10 @@ function getGMOError(req: Express.Request) {
  * オーソリ追加
  * @memberOf Purchase.InputModule
  * @function addAuthorization
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
  */
-async function addAuthorization(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
     if (!purchaseModel.transactionMP) throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.gmo) throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;

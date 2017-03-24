@@ -17,6 +17,7 @@ const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const debugLog = debug('SSKTS ');
 /**
  * 仮予約重複
@@ -29,12 +30,12 @@ const debugLog = debug('SSKTS ');
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!req.params || !req.params.id)
-        return next(new Error(req.__('common.error.access')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     if (!purchaseModel.performance)
-        throw new Error(req.__('common.error.property'));
+        throw ErrorUtilModule.ERROR_PROPERTY;
     //パフォーマンス取得
     MP.getPerformance(req.params.id).then((result) => {
         res.locals.performances = {
@@ -58,11 +59,11 @@ exports.index = index;
  */
 function newReserve(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    removeReserve(req, purchaseModel).then(() => {
+    removeReserve(purchaseModel).then(() => {
         if (!req.session)
-            return next(new Error(req.__('common.error.property')));
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         //購入スタートへ
         delete req.session.purchase;
         return res.redirect(`/purchase?id=${req.body.performance_id}`);
@@ -82,7 +83,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //座席選択へ
     return res.redirect('/purchase/seat/' + req.body.performance_id + '/');
 }
@@ -91,22 +92,21 @@ exports.prevReserve = prevReserve;
  * 仮予約取り消し
  * @memberOf Purchase.OverlapModule
  * @function removeReserve
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-function removeReserve(req, purchaseModel) {
+function removeReserve(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.transactionMP)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.reserveSeats)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.authorizationCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
         //COA仮予約削除
@@ -129,7 +129,7 @@ function removeReserve(req, purchaseModel) {
             && purchaseModel.authorizationGMO
             && purchaseModel.orderId) {
             if (!purchaseModel.theater)
-                throw new Error(req.__('common.error.property'));
+                throw ErrorUtilModule.ERROR_PROPERTY;
             const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
             //GMOオーソリ取消

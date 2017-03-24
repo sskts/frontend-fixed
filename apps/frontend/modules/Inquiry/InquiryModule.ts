@@ -9,6 +9,7 @@ import * as express from 'express';
 import * as MP from '../../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const debugLog = debug('SSKTS ');
 
@@ -44,7 +45,7 @@ export function login(req: express.Request, res: express.Response): void {
  * @returns {void}
  */
 export function auth(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     LoginForm(req);
     req.getValidationResult().then((result) => {
@@ -60,7 +61,7 @@ export function auth(req: express.Request, res: express.Response, next: express.
                     //購入者内容確認へ
                     return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 }).catch((err) => {
-                    return next(new Error(err.message));
+                    return next(ErrorUtilModule.getError(req, err));
                 });
             }).catch(() => {
                 res.locals.theater_code = req.body.theater_code;
@@ -77,7 +78,7 @@ export function auth(req: express.Request, res: express.Response, next: express.
             return res.render('inquiry/login');
         }
     }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 
@@ -132,7 +133,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
     inquiryModel.performance = await MP.getPerformance(performanceId);
     debugLog('MPパフォーマンス取得');
 
-    if (!req.session) throw req.__('common.error.property');
+    if (!req.session) throw ErrorUtilModule.ERROR_PROPERTY;
     (<any>req.session).inquiry = inquiryModel.toSession();
 }
 
@@ -146,7 +147,7 @@ async function getStateReserve(req: express.Request, inquiryModel: InquirySessio
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const inquiryModel = new InquirySession.InquiryModel((<any>req.session).inquiry);
     if (inquiryModel.stateReserve
         && inquiryModel.performance

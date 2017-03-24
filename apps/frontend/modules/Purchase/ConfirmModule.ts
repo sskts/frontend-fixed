@@ -10,6 +10,7 @@ import * as express from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
 const debugLog = debug('SSKTS ');
@@ -24,11 +25,13 @@ const debugLog = debug('SSKTS ');
  * @returns {void}
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(new Error(req.__('common.error.property')));
-    if (!req.session.purchase) return next(new Error(req.__('common.error.expire')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) return next(new Error(req.__('common.error.access')));
-    if (!purchaseModel.transactionMP) return next(new Error(req.__('common.error.property')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
+    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
 
     //購入者内容確認表示
     res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
@@ -48,7 +51,7 @@ export function index(req: express.Request, res: express.Response, next: express
         : UtilModule.getPortalUrl();
 
     //セッション更新
-    if (!req.session) return next(new Error(req.__('common.error.property')));
+    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     (<any>req.session).purchase = purchaseModel.toSession();
 
     return res.render('purchase/confirm');
@@ -59,17 +62,16 @@ export function index(req: express.Request, res: express.Response, next: express
  * ムビチケ決済
  * @memberOf Purchase.ConfirmModule
  * @function reserveMvtk
- * @param {express.Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    if (!purchaseModel.reserveTickets) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.updateReserve) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.mvtk) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.performanceCOA) throw new Error(req.__('common.error.property'));
+async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (!purchaseModel.reserveTickets) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.reserveSeats) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.updateReserve) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.mvtk) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
     debugLog('ムビチケ決済開始');
     // 購入管理番号情報
     const mvtkTickets = [];
@@ -149,7 +151,7 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
             purchaseModel.performanceCOA.titleBranchNum) // 作品コード
     });
 
-    if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw new Error(req.__('common.error.property'));
+    if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ERROR_PROPERTY;
 }
 
 /**
@@ -162,9 +164,9 @@ async function reserveMvtk(req: express.Request, purchaseModel: PurchaseSession.
  */
 async function updateReserve(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
     debugLog('座席本予約開始');
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.input) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.reserveSeats) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.input) throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.reserveTickets) throw Error(req.__('common.error.property'));
     if (!purchaseModel.transactionMP) throw Error(req.__('common.error.property'));
     if (!purchaseModel.expired) throw Error(req.__('common.error.property'));
@@ -216,7 +218,7 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
 
     // ムビチケ使用
     if (purchaseModel.mvtk) {
-        await reserveMvtk(req, purchaseModel);
+        await reserveMvtk(purchaseModel);
         debugLog('ムビチケ決済');
     }
 
@@ -264,10 +266,10 @@ async function updateReserve(req: express.Request, purchaseModel: PurchaseSessio
  * @returns {string}
  */
 function getMailContent(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): string {
-    if (!purchaseModel.performance) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.reserveSeats) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.input) throw new Error(req.__('common.error.property'));
-    if (!purchaseModel.updateReserve) throw new Error(req.__('common.error.property'));
+    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.reserveSeats) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.input) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (!purchaseModel.updateReserve) throw ErrorUtilModule.ERROR_PROPERTY;
     return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様\n
 \n
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
@@ -342,7 +344,7 @@ export function purchase(req: express.Request, res: express.Response, _next: exp
 
     updateReserve(req, purchaseModel).then(() => {
         //購入情報をセッションへ
-        if (!req.session) throw new Error(req.__('common.error.property'));
+        if (!req.session) throw ErrorUtilModule.ERROR_PROPERTY;
         (<any>req.session).complete = {
             updateReserve: purchaseModel.updateReserve,
             performance: purchaseModel.performance,

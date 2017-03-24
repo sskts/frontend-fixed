@@ -24,7 +24,7 @@ function getTransaction(id) {
         }
     }).done(function (res) {
         if (!res.err && res.redirect) {
-            location.href = res.redirect;
+            location.replace(res.redirect);
         } else {
             console.log(res.err);
             retry();

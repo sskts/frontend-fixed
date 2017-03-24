@@ -13,7 +13,7 @@ const method_1 = require("./method");
 const purchase_1 = require("./purchase");
 const router = express.Router();
 exports.default = (app) => {
-    if (process.env.NODE_ENV === 'develop') {
+    if (process.env.NODE_ENV === 'development') {
         app.use(SupertestRequest.supertestSession);
     }
     app.use(UtilModule.setLocals);

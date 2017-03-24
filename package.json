@@ -19,7 +19,7 @@
     "nsp": "nsp check --output summary"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^1.5.0",
+    "@motionpicture/coa-service": "^2.0.2",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "git+https://hata:1q2w3e4r5t@m-p.backlog.jp/git/MWSR/src_service.git#SSKTS-102",
     "@types/body-parser": "0.0.33",

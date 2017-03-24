@@ -370,7 +370,7 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
  */
 export interface AddCOAAuthorizationArgs {
     transaction: TransactionStartResult;
-    reserveSeatsTemporarilyResult: COA.ReserveService.UpdTmpReserveSeatResult;
+    reserveSeatsTemporarilyResult: COA.ReserveService.IUpdTmpReserveSeatResult;
     salesTicketResults: SalesTicketResult[];
     performance: Performance;
     performanceCOA: PerformanceCOA;

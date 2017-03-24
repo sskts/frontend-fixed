@@ -36,7 +36,7 @@ export class InquiryModel {
     /**
      * COA照会情報
      */
-    public stateReserve: COA.ReserveService.StateReserveResult | null;
+    public stateReserve: COA.ReserveService.IStateReserveResult | null;
     /**
      * 予約チケット
      */
@@ -65,7 +65,7 @@ export class InquiryModel {
     public toSession(): {
         transactionId: string | null,
         performance: MP.Performance | null,
-        stateReserve: COA.ReserveService.StateReserveResult | null,
+        stateReserve: COA.ReserveService.IStateReserveResult | null,
         login: Login | null
     } {
         return {

@@ -19,6 +19,7 @@ const fs = require("fs-extra-promise");
 const MP = require("../../../../libs/MP");
 const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const debugLog = debug('SSKTS ');
 /**
@@ -32,13 +33,14 @@ const debugLog = debug('SSKTS ');
  */
 function index(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE))
-        return next(new Error(req.__('common.error.access')));
+    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     preparation(req, purchaseModel).then(() => {
         if (!purchaseModel.transactionMP)
-            return next(new Error(req.__('common.error.property')));
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         res.locals.performance = purchaseModel.performance;
         res.locals.performanceCOA = purchaseModel.performanceCOA;
         res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
@@ -52,7 +54,7 @@ function index(req, res, next) {
             : UtilModule.getPortalUrl();
         //セッション更新
         if (!req.session)
-            return next(new Error(req.__('common.error.property')));
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         req.session.purchase = purchaseModel.toSession();
         return res.render('purchase/seat');
     }).catch((err) => {
@@ -98,21 +100,22 @@ exports.preparation = preparation;
  */
 function select(req, res, next) {
     if (!req.session)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase)
-        return next(new Error(req.__('common.error.expire')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
     if (!purchaseModel.transactionMP)
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-        return next(new Error(req.__('common.error.access')));
+    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    }
     //バリデーション
     SeatForm_1.default(req);
     req.getValidationResult().then((result) => {
         if (!result.isEmpty()) {
             if (!req.params || !req.params.id)
-                return next(new Error(req.__('common.error.access')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
             res.locals.transactionId = purchaseModel.transactionMP;
             res.locals.performance = purchaseModel.performance;
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
@@ -123,10 +126,11 @@ function select(req, res, next) {
                 : UtilModule.getPortalUrl();
             return res.render('purchase/seat');
         }
-        reserve(req, purchaseModel).then(() => {
+        const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
+        reserve(selectSeats, purchaseModel).then(() => {
             //セッション更新
             if (!req.session)
-                return next(new Error(req.__('common.error.property')));
+                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             //券種選択へ
             return res.redirect('/purchase/ticket');
@@ -134,7 +138,7 @@ function select(req, res, next) {
             return next(new Error(err.message));
         });
     }).catch(() => {
-        return next(new Error(req.__('common.error.property')));
+        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 exports.select = select;
@@ -142,23 +146,23 @@ exports.select = select;
  * 座席仮予約
  * @memberOf Purchase.SeatModule
  * @function reserve
- * @param {express.Request} req
+ * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-function reserve(req, purchaseModel) {
+function reserve(selectSeats, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!purchaseModel.performance)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.transactionMP)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)
-            throw new Error(req.__('common.error.property'));
+            throw ErrorUtilModule.ERROR_PROPERTY;
         const performance = purchaseModel.performance;
         //予約中
         if (purchaseModel.reserveSeats) {
             if (!purchaseModel.authorizationCOA)
-                throw new Error(req.__('common.error.property'));
+                throw ErrorUtilModule.ERROR_PROPERTY;
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
             yield COA.ReserveService.delTmpReserve({
@@ -179,7 +183,7 @@ function reserve(req, purchaseModel) {
             if (purchaseModel.transactionGMO
                 && purchaseModel.authorizationGMO) {
                 if (!purchaseModel.theater)
-                    throw new Error(req.__('common.error.property'));
+                    throw ErrorUtilModule.ERROR_PROPERTY;
                 const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
                 const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
                 //GMOオーソリ取消
@@ -200,7 +204,6 @@ function reserve(req, purchaseModel) {
             }
         }
         //COA仮予約
-        const seats = JSON.parse(req.body.seats);
         purchaseModel.reserveSeats = yield COA.ReserveService.updTmpReserveSeat({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
@@ -209,7 +212,7 @@ function reserve(req, purchaseModel) {
             time_begin: performance.attributes.time_start,
             // cnt_reserve_seat: number,
             screen_code: purchaseModel.performanceCOA.screenCode,
-            list_seat: seats.list_tmp_reserve
+            list_seat: selectSeats
         });
         debugLog('COA仮予約', purchaseModel.reserveSeats);
         //予約チケット作成
