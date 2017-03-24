@@ -24,13 +24,13 @@ const debugLog = debug('SSKTS ');
 // tslint:disable-next-line:variable-name
 export function login(req: express.Request, res: express.Response): void {
     res.locals.theater_code = (req.query && req.query.theater) ? req.query.theater : '';
-    res.locals.reserve_num = '';
+    res.locals.reserve_num = (req.query && req.query.reserve) ? req.query.reserve : '';
     res.locals.tel_num = '';
-    if (process.env.NODE_ENV === 'development') {
-        res.locals.theater_code = '118';
-        res.locals.reserve_num = '59';
-        res.locals.tel_num = '09040007648';
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //     res.locals.theater_code = '118';
+    //     res.locals.reserve_num = '59';
+    //     res.locals.tel_num = '09040007648';
+    // }
     res.locals.error = null;
     return res.render('inquiry/login');
 }
