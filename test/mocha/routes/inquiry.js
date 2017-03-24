@@ -14,42 +14,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // tslint:disable:no-backbone-get-set-outside-model
-const assert = require("assert");
-const httpStatus = require("http-status");
+// import * as assert from 'assert';
+// import * as httpStatus from 'http-status';
 const supertest = require("supertest");
 const app = require("../../../apps/frontend/app");
 describe('GET /inquiry/login', () => {
     it('login', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
-            .get('/inquiry/login')
-            .expect(httpStatus.OK)
-            .then((response) => {
-            assert(response);
+            .get('/create/session')
+            .query({
+            session: {
+                inquiry: {
+                    theater_code: '118',
+                    reserve_num: '59',
+                    tel_num: '09040007648',
+                    tel_num2222: '09040007648'
+                }
+            }
         });
     }));
 });
-describe('POST /inquiry/login', () => {
-    it('auth', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/inquiry/login')
-            .send({
-            theater_code: '118',
-            reserve_num: '531',
-            tel_num: '09040007648'
-        })
-            .expect(httpStatus.FOUND)
-            .then((response) => {
-            assert(response.body);
-        });
-    }));
-});
-describe('GET /:transactionId/', () => {
-    it('index', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/inquiry/58d1194a512cf514f44acdff/')
-            .expect(httpStatus.OK)
-            .then((response) => {
-            assert(response);
-        });
-    }));
-});
+// describe('POST /inquiry/login', () => {
+//     it('auth', async () => {
+//         await supertest(app)
+//             .post('/inquiry/login')
+//             .send({
+//                 theater_code: '118',
+//                 reserve_num: '531',
+//                 tel_num: '09040007648'
+//             })
+//             .expect(httpStatus.FOUND)
+//             .then((response) => {
+//                 assert(response.body);
+//             });
+//     });
+// });
+// describe('GET /:transactionId/', () => {
+//     it('index', async () => {
+//         await supertest(app)
+//             .get('/inquiry/58d1194a512cf514f44acdff/')
+//             .expect(httpStatus.OK)
+//             .then((response) => {
+//                 assert(response);
+//             });
+//     });
+// });
