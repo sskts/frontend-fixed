@@ -42,44 +42,68 @@ export function login(req: express.Request, res: express.Response): void {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function auth(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export async function auth(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
     if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     LoginForm(req);
-    req.getValidationResult().then((result) => {
-        if (result.isEmpty()) {
-            MP.makeInquiry({
-                inquiry_theater: req.body.theater_code, // 施設コード
-                inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
-                inquiry_pass: req.body.tel_num // 電話番号
-            }).then((transactionId) => {
-                inquiryModel.transactionId = transactionId;
-                debugLog('MP取引Id取得', inquiryModel.transactionId);
-                getStateReserve(req, inquiryModel).then(() => {
-                    //購入者内容確認へ
-                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-                }).catch((err) => {
-                    return next(ErrorUtilModule.getError(req, err));
+    try {
+        const validationResult = await req.getValidationResult();
+        if (validationResult.isEmpty()) {
+            try {
+                inquiryModel.transactionId = await MP.makeInquiry({
+                    inquiry_theater: req.body.theater_code, // 施設コード
+                    inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
+                    inquiry_pass: req.body.tel_num // 電話番号
                 });
-            }).catch(() => {
-                res.locals.theater_code = req.body.theater_code;
-                res.locals.reserve_num = req.body.reserve_num;
-                res.locals.tel_num = req.body.tel_num;
-                res.locals.error = getInquiryError(req);
-                return res.render('inquiry/login');
+            } catch (err) {
+                throw ErrorUtilModule.ERROR_VALIDATION;
+            }
+            debugLog('MP取引Id取得', inquiryModel.transactionId);
+
+            inquiryModel.login = req.body;
+            inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
+                theater_code: req.body.theater_code, // 施設コード
+                reserve_num: req.body.reserve_num, // 座席チケット購入番号
+                tel_num: req.body.tel_num // 電話番号
             });
+            debugLog('COA照会情報取得');
+
+            const performanceId = UtilModule.getPerformanceId({
+                theaterCode: req.body.theater_code,
+                day: inquiryModel.stateReserve.date_jouei,
+                titleCode: inquiryModel.stateReserve.title_code,
+                titleBranchNum: inquiryModel.stateReserve.title_branch_num,
+                screenCode: inquiryModel.stateReserve.screen_code,
+                timeBegin: inquiryModel.stateReserve.time_begin
+            });
+            debugLog('パフォーマンスID取得', performanceId);
+
+            inquiryModel.performance = await MP.getPerformance(performanceId);
+            debugLog('MPパフォーマンス取得');
+
+            req.session.inquiry = inquiryModel.toSession();
+
+            //購入者内容確認へ
+            return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
         } else {
             res.locals.theater_code = req.body.theater_code;
             res.locals.reserve_num = req.body.reserve_num;
             res.locals.tel_num = req.body.tel_num;
-            res.locals.error = result.mapped();
+            res.locals.error = validationResult.mapped();
             return res.render('inquiry/login');
         }
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    });
+    } catch (err) {
+        if (err === ErrorUtilModule.ERROR_VALIDATION) {
+            res.locals.theater_code = req.body.theater_code;
+            res.locals.reserve_num = req.body.reserve_num;
+            res.locals.tel_num = req.body.tel_num;
+            res.locals.error = getInquiryError(req);
+            return res.render('inquiry/login');
+        }
+        return next(ErrorUtilModule.getError(req, err));
+    }
 }
 
 /**
@@ -101,40 +125,6 @@ function getInquiryError(req: Express.Request) {
             parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
-}
-
-/**
- * 照会情報取得
- * @memberOf InquiryModule
- * @function getStateReserve
- * @param {express.Request} req
- * @param {InquirySession.InquiryModel} inquiryModel
- * @returns {Promise<void>}
- */
-async function getStateReserve(req: express.Request, inquiryModel: InquirySession.InquiryModel): Promise<void> {
-    inquiryModel.login = req.body;
-
-    inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
-        theater_code: req.body.theater_code, // 施設コード
-        reserve_num: req.body.reserve_num, // 座席チケット購入番号
-        tel_num: req.body.tel_num // 電話番号
-    });
-    debugLog('COA照会情報取得');
-
-    const performanceId = UtilModule.getPerformanceId({
-        theaterCode: req.body.theater_code,
-        day: inquiryModel.stateReserve.date_jouei,
-        titleCode: inquiryModel.stateReserve.title_code,
-        titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-        screenCode: inquiryModel.stateReserve.screen_code,
-        timeBegin: inquiryModel.stateReserve.time_begin
-    });
-    debugLog('パフォーマンスID取得', performanceId);
-    inquiryModel.performance = await MP.getPerformance(performanceId);
-    debugLog('MPパフォーマンス取得');
-
-    if (!req.session) throw ErrorUtilModule.ERROR_PROPERTY;
-    (<any>req.session).inquiry = inquiryModel.toSession();
 }
 
 /**

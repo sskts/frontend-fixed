@@ -14,48 +14,44 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // tslint:disable:no-backbone-get-set-outside-model
-// import * as assert from 'assert';
-// import * as httpStatus from 'http-status';
+const httpStatus = require("http-status");
 const supertest = require("supertest");
 const app = require("../../../apps/frontend/app");
 describe('GET /inquiry/login', () => {
-    it('login', () => __awaiter(this, void 0, void 0, function* () {
+    it('login 表示', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
-            .get('/create/session')
+            .get('/inquiry/login')
             .query({
             session: {
                 inquiry: {
                     theater_code: '118',
-                    reserve_num: '59',
-                    tel_num: '09040007648',
-                    tel_num2222: '09040007648'
+                    reserve_num: '',
+                    tel_num: ''
                 }
             }
-        });
+        })
+            .expect(httpStatus.OK);
     }));
 });
-// describe('POST /inquiry/login', () => {
-//     it('auth', async () => {
-//         await supertest(app)
-//             .post('/inquiry/login')
-//             .send({
-//                 theater_code: '118',
-//                 reserve_num: '531',
-//                 tel_num: '09040007648'
-//             })
-//             .expect(httpStatus.FOUND)
-//             .then((response) => {
-//                 assert(response.body);
-//             });
-//     });
-// });
-// describe('GET /:transactionId/', () => {
-//     it('index', async () => {
-//         await supertest(app)
-//             .get('/inquiry/58d1194a512cf514f44acdff/')
-//             .expect(httpStatus.OK)
-//             .then((response) => {
-//                 assert(response);
-//             });
-//     });
-// });
+describe('POST /inquiry/login', () => {
+    it('auth 予約番号なし', () => __awaiter(this, void 0, void 0, function* () {
+        yield supertest(app)
+            .post('/inquiry/login')
+            .send({
+            theater_code: '118',
+            reserve_num: '',
+            tel_num: '09040007648'
+        })
+            .expect(httpStatus.OK);
+    }));
+    it('auth 電話番号なし', () => __awaiter(this, void 0, void 0, function* () {
+        yield supertest(app)
+            .post('/inquiry/login')
+            .send({
+            theater_code: '118',
+            reserve_num: '531',
+            tel_num: ''
+        })
+            .expect(httpStatus.OK);
+    }));
+});

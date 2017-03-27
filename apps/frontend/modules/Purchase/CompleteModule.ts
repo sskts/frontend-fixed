@@ -18,7 +18,7 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
  */
 export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
     if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!(<any>req.session).complete) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+    if (!req.session.complete) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
     //購入者内容確認表示
     const complete = (<any>req.session).complete;
     const purchaseModel = new PurchaseSession.PurchaseModel({
@@ -36,5 +36,4 @@ export function index(req: express.Request, res: express.Response, next: express
     res.locals.updateReserve = complete.updateReserve;
 
     return res.render('purchase/complete');
-
 }

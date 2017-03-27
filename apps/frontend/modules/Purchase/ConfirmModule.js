@@ -29,40 +29,40 @@ const debugLog = debug('SSKTS ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function index(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    if (!purchaseModel.transactionMP)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    //購入者内容確認表示
-    res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
-    res.locals.input = purchaseModel.input;
-    res.locals.performance = purchaseModel.performance;
-    res.locals.reserveSeats = purchaseModel.reserveSeats;
-    res.locals.reserveTickets = purchaseModel.reserveTickets;
-    res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
-    res.locals.price = purchaseModel.getReserveAmount();
-    res.locals.updateReserve = null;
-    res.locals.error = null;
-    res.locals.seatStr = purchaseModel.seatToString();
-    res.locals.ticketStr = purchaseModel.ticketToString();
-    res.locals.transactionId = purchaseModel.transactionMP.id;
-    res.locals.prevLink = (purchaseModel.performance)
-        ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-        : UtilModule.getPortalUrl();
-    //セッション更新
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    req.session.purchase = purchaseModel.toSession();
-    return res.render('purchase/confirm');
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!req.session.purchase)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+        }
+        if (!purchaseModel.transactionMP)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        //購入者内容確認表示
+        res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
+        res.locals.input = purchaseModel.input;
+        res.locals.performance = purchaseModel.performance;
+        res.locals.reserveSeats = purchaseModel.reserveSeats;
+        res.locals.reserveTickets = purchaseModel.reserveTickets;
+        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+        res.locals.price = purchaseModel.getReserveAmount();
+        res.locals.updateReserve = null;
+        res.locals.error = null;
+        res.locals.seatStr = purchaseModel.seatToString();
+        res.locals.ticketStr = purchaseModel.ticketToString();
+        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.prevLink = (purchaseModel.performance)
+            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+            : UtilModule.getPortalUrl();
+        //セッション更新
+        req.session.purchase = purchaseModel.toSession();
+        return res.render('purchase/confirm');
+    });
 }
 exports.index = index;
 /**
@@ -333,52 +333,54 @@ TEL：XX-XXXX-XXXX`;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
 function purchase(req, res, _next) {
-    if (!req.session)
-        return res.json({ err: req.__('common.error.property'), result: null });
-    if (!req.session.purchase)
-        return res.json({ err: req.__('common.error.expire'), result: null });
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return res.json({ err: req.__('common.error.property'), result: null });
-    if (!purchaseModel.expired)
-        return res.json({ err: req.__('common.error.property'), result: null });
-    //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-        return res.json({ err: req.__('common.error.access'), result: null });
-    //購入期限切れ
-    const minutes = 5;
-    if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-        debugLog('購入期限切れ');
-        //購入セッション削除
-        delete req.session.purchase;
-        return res.json({ err: req.__('common.error.expired'), result: null });
-    }
-    updateReserve(req, purchaseModel).then(() => {
-        //購入情報をセッションへ
+    return __awaiter(this, void 0, void 0, function* () {
         if (!req.session)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        req.session.complete = {
-            updateReserve: purchaseModel.updateReserve,
-            performance: purchaseModel.performance,
-            input: purchaseModel.input,
-            reserveSeats: purchaseModel.reserveSeats,
-            reserveTickets: purchaseModel.reserveTickets,
-            price: purchaseModel.getReserveAmount()
-        };
-        //購入セッション削除
-        delete req.session.purchase;
-        //購入完了情報を返す
-        return res.json({ err: null, result: req.session.complete.updateReserve });
-    }).catch((err) => {
-        debugLog('ERROR', err);
-        //購入セッション削除
-        delete req.session.purchase;
-        return res.json({ err: err.message, result: null });
+            return res.json({ err: req.__('common.error.property'), result: null });
+        if (!req.session.purchase)
+            return res.json({ err: req.__('common.error.expire'), result: null });
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.transactionMP)
+            return res.json({ err: req.__('common.error.property'), result: null });
+        if (!purchaseModel.expired)
+            return res.json({ err: req.__('common.error.property'), result: null });
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+            return res.json({ err: req.__('common.error.access'), result: null });
+        //購入期限切れ
+        const minutes = 5;
+        if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
+            debugLog('購入期限切れ');
+            //購入セッション削除
+            delete req.session.purchase;
+            return res.json({ err: req.__('common.error.expired'), result: null });
+        }
+        try {
+            yield updateReserve(req, purchaseModel);
+            //購入情報をセッションへ
+            req.session.complete = {
+                updateReserve: purchaseModel.updateReserve,
+                performance: purchaseModel.performance,
+                input: purchaseModel.input,
+                reserveSeats: purchaseModel.reserveSeats,
+                reserveTickets: purchaseModel.reserveTickets,
+                price: purchaseModel.getReserveAmount()
+            };
+            //購入セッション削除
+            delete req.session.purchase;
+            //購入完了情報を返す
+            return res.json({ err: null, result: req.session.complete.updateReserve });
+        }
+        catch (err) {
+            debugLog('ERROR', err);
+            //購入セッション削除
+            delete req.session.purchase;
+            return res.json({ err: err.message, result: null });
+        }
     });
 }
 exports.purchase = purchase;

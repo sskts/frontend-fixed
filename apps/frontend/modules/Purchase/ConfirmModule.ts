@@ -22,9 +22,9 @@ const debugLog = debug('SSKTS ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function index(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export async function index(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
     if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
@@ -51,8 +51,7 @@ export function index(req: express.Request, res: express.Response, next: express
         : UtilModule.getPortalUrl();
 
     //セッション更新
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    (<any>req.session).purchase = purchaseModel.toSession();
+    req.session.purchase = purchaseModel.toSession();
 
     return res.render('purchase/confirm');
 
@@ -319,11 +318,11 @@ TEL：XX-XXXX-XXXX`;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
-export function purchase(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
+export async function purchase(req: express.Request, res: express.Response, _next: express.NextFunction): Promise<any> {
     if (!req.session) return res.json({ err: req.__('common.error.property'), result: null });
     if (!req.session.purchase) return res.json({ err: req.__('common.error.expire'), result: null });
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
@@ -338,14 +337,13 @@ export function purchase(req: express.Request, res: express.Response, _next: exp
     if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
         debugLog('購入期限切れ');
         //購入セッション削除
-        delete (<any>req.session).purchase;
+        delete req.session.purchase;
         return res.json({ err: req.__('common.error.expired'), result: null });
     }
-
-    updateReserve(req, purchaseModel).then(() => {
+    try {
+        await updateReserve(req, purchaseModel);
         //購入情報をセッションへ
-        if (!req.session) throw ErrorUtilModule.ERROR_PROPERTY;
-        (<any>req.session).complete = {
+        req.session.complete = {
             updateReserve: purchaseModel.updateReserve,
             performance: purchaseModel.performance,
             input: purchaseModel.input,
@@ -353,18 +351,16 @@ export function purchase(req: express.Request, res: express.Response, _next: exp
             reserveTickets: purchaseModel.reserveTickets,
             price: purchaseModel.getReserveAmount()
         };
-
         //購入セッション削除
-        delete (<any>req.session).purchase;
-
+        delete req.session.purchase;
         //購入完了情報を返す
-        return res.json({ err: null, result: (<any>req.session).complete.updateReserve });
-    }).catch((err) => {
+        return res.json({ err: null, result: req.session.complete.updateReserve });
+    } catch (err) {
         debugLog('ERROR', err);
         //購入セッション削除
-        delete (<any>req.session).purchase;
+        delete req.session.purchase;
         return res.json({ err: err.message, result: null });
-    });
+    }
 }
 
 /**

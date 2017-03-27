@@ -61,36 +61,38 @@ exports.index = index;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function select(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    MvtkInputForm_1.default(req);
-    req.getValidationResult().then((result) => {
-        if (!result.isEmpty()) {
-            if (!purchaseModel.reserveSeats)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-            if (!purchaseModel.transactionMP)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-            //購入者情報入力表示
-            res.locals.error = result.mapped();
-            res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-            return res.render('purchase/mvtk/input');
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!req.session.purchase)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.transactionMP)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
         }
-        auth(req, purchaseModel).then((authResult) => {
+        MvtkInputForm_1.default(req);
+        try {
+            const validationResult = yield req.getValidationResult();
+            if (!validationResult.isEmpty()) {
+                if (!purchaseModel.reserveSeats)
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+                if (!purchaseModel.transactionMP)
+                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+                //購入者情報入力表示
+                res.locals.error = validationResult.mapped();
+                res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
+                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                res.locals.transactionId = purchaseModel.transactionMP.id;
+                res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+                return res.render('purchase/mvtk/input');
+            }
+            const authResult = yield auth(req, purchaseModel);
             if (authResult) {
                 return res.redirect('/purchase/mvtk/confirm');
             }
@@ -108,12 +110,10 @@ function select(req, res, next) {
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
                 return res.render('purchase/mvtk/input');
             }
-        }).catch((err) => {
-            debugLog(err);
-            return next(new Error(err.message));
-        });
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        }
+        catch (err) {
+            return next(ErrorUtilModule.getError(req, err));
+        }
     });
 }
 exports.select = select;
@@ -147,6 +147,8 @@ function mvtkValidation(req) {
  */
 function auth(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performance)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (!purchaseModel.performanceCOA)

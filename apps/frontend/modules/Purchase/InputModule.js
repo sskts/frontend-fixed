@@ -85,73 +85,66 @@ exports.index = index;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function submit(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    //バリデーション
-    InputForm_1.default(req);
-    req.getValidationResult().then((result) => {
-        if (!result.isEmpty()) {
-            if (!purchaseModel.transactionMP)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-            if (!purchaseModel.theater)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-            res.locals.error = result.mapped();
-            res.locals.input = req.body;
-            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-            res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-            res.locals.price = purchaseModel.getReserveAmount();
-            res.locals.transactionId = purchaseModel.transactionMP.id;
-            return res.render('purchase/input');
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!req.session.purchase)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.transactionMP)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!purchaseModel.theater)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
         }
-        // 入力情報をセッションへ
-        purchaseModel.input = {
-            last_name_hira: req.body.last_name_hira,
-            first_name_hira: req.body.first_name_hira,
-            mail_addr: req.body.mail_addr,
-            mail_confirm: req.body.mail_confirm,
-            tel_num: req.body.tel_num,
-            agree: req.body.agree
-        };
-        if (!req.body.gmo_token_object) {
-            // クレジット決済なし
-            if (!req.session)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-            req.session.purchase = purchaseModel.toSession();
-            // 購入者内容確認へ
-            return res.redirect('/purchase/confirm');
-        }
-        // クレジット決済
-        purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-        // オーソリ追加
-        addAuthorization(purchaseModel).then(() => {
+        //バリデーション
+        InputForm_1.default(req);
+        try {
+            const validationResult = yield req.getValidationResult();
+            if (!validationResult.isEmpty()) {
+                res.locals.error = validationResult.mapped();
+                res.locals.input = req.body;
+                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+                res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+                res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+                res.locals.price = purchaseModel.getReserveAmount();
+                res.locals.transactionId = purchaseModel.transactionMP.id;
+                return res.render('purchase/input');
+            }
+            // 入力情報をセッションへ
+            purchaseModel.input = {
+                last_name_hira: req.body.last_name_hira,
+                first_name_hira: req.body.first_name_hira,
+                mail_addr: req.body.mail_addr,
+                mail_confirm: req.body.mail_confirm,
+                tel_num: req.body.tel_num,
+                agree: req.body.agree
+            };
+            if (!req.body.gmo_token_object) {
+                // クレジット決済なし
+                req.session.purchase = purchaseModel.toSession();
+                // 購入者内容確認へ
+                return res.redirect('/purchase/confirm');
+            }
+            // クレジット決済
+            purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
+            // オーソリ追加
+            yield addAuthorization(purchaseModel);
             // セッション更新
-            if (!req.session)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ
             return res.redirect('/purchase/confirm');
-        }).catch((err) => {
+        }
+        catch (err) {
             if (err === ErrorUtilModule.ERROR_PROPERTY) {
                 return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             }
             else if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                if (!purchaseModel.transactionMP)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-                if (!purchaseModel.theater)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
                 // GMOオーソリ追加失敗
                 res.locals.error = getGMOError(req);
@@ -163,12 +156,8 @@ function submit(req, res, next) {
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 return res.render('purchase/input');
             }
-            else {
-                return next(new Error(err.message));
-            }
-        });
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+            return next(ErrorUtilModule.getError(req, err));
+        }
     });
 }
 exports.submit = submit;

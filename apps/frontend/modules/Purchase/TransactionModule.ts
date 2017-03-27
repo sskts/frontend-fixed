@@ -17,20 +17,24 @@ const debugLog = debug('SSKTS ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void | express.Response}
+ * @returns {Promise<any>}
  */
 // tslint:disable-next-line:variable-name
-export function start(req: express.Request, res: express.Response, _next: express.NextFunction): void | express.Response {
+export async function start(req: express.Request, res: express.Response, _next: express.NextFunction): Promise<any> {
     if (!req.session || !req.body.id) return res.json({ redirect: null, err: req.__('common.error.property') });
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-
-    if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
-        //重複確認へ
-        return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
-    }
-
-    transactionStart(purchaseModel).then(() => {
-        if (!req.session) return res.json({ redirect: null, err: req.__('common.error.property') });
+    try {
+        if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
+            //重複確認へ
+            return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+        }
+        // 取引開始
+        const minutes = 30;
+        purchaseModel.expired = moment().add('minutes', minutes).unix();
+        purchaseModel.transactionMP = await MP.transactionStart({
+            expires_at: purchaseModel.expired
+        });
+        debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
         delete req.session.purchase;
         delete req.session.mvtk;
         delete req.session.complete;
@@ -38,24 +42,7 @@ export function start(req: express.Request, res: express.Response, _next: expres
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
         return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
-    }).catch((err) => {
+    } catch (err) {
         return res.json({ redirect: null, err: err.message });
-    });
-}
-
-/**
- * 取引開始
- * @memberOf Purchase.TransactionModule
- * @function transactionStart
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
- */
-async function transactionStart(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    // 取引開始
-    const minutes = 30;
-    purchaseModel.expired = moment().add('minutes', minutes).unix();
-    purchaseModel.transactionMP = await MP.transactionStart({
-        expires_at: purchaseModel.expired
-    });
-    debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+    }
 }

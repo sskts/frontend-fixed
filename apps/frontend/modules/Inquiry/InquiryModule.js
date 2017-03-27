@@ -49,45 +49,68 @@ exports.login = login;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function auth(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
-    LoginForm_1.default(req);
-    req.getValidationResult().then((result) => {
-        if (result.isEmpty()) {
-            MP.makeInquiry({
-                inquiry_theater: req.body.theater_code,
-                inquiry_id: Number(req.body.reserve_num),
-                inquiry_pass: req.body.tel_num // 電話番号
-            }).then((transactionId) => {
-                inquiryModel.transactionId = transactionId;
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
+        LoginForm_1.default(req);
+        try {
+            const validationResult = yield req.getValidationResult();
+            if (validationResult.isEmpty()) {
+                try {
+                    inquiryModel.transactionId = yield MP.makeInquiry({
+                        inquiry_theater: req.body.theater_code,
+                        inquiry_id: Number(req.body.reserve_num),
+                        inquiry_pass: req.body.tel_num // 電話番号
+                    });
+                }
+                catch (err) {
+                    throw ErrorUtilModule.ERROR_VALIDATION;
+                }
                 debugLog('MP取引Id取得', inquiryModel.transactionId);
-                getStateReserve(req, inquiryModel).then(() => {
-                    //購入者内容確認へ
-                    return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-                }).catch((err) => {
-                    return next(ErrorUtilModule.getError(req, err));
+                inquiryModel.login = req.body;
+                inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
+                    theater_code: req.body.theater_code,
+                    reserve_num: req.body.reserve_num,
+                    tel_num: req.body.tel_num // 電話番号
                 });
-            }).catch(() => {
+                debugLog('COA照会情報取得');
+                const performanceId = UtilModule.getPerformanceId({
+                    theaterCode: req.body.theater_code,
+                    day: inquiryModel.stateReserve.date_jouei,
+                    titleCode: inquiryModel.stateReserve.title_code,
+                    titleBranchNum: inquiryModel.stateReserve.title_branch_num,
+                    screenCode: inquiryModel.stateReserve.screen_code,
+                    timeBegin: inquiryModel.stateReserve.time_begin
+                });
+                debugLog('パフォーマンスID取得', performanceId);
+                inquiryModel.performance = yield MP.getPerformance(performanceId);
+                debugLog('MPパフォーマンス取得');
+                req.session.inquiry = inquiryModel.toSession();
+                //購入者内容確認へ
+                return res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+            }
+            else {
+                res.locals.theater_code = req.body.theater_code;
+                res.locals.reserve_num = req.body.reserve_num;
+                res.locals.tel_num = req.body.tel_num;
+                res.locals.error = validationResult.mapped();
+                return res.render('inquiry/login');
+            }
+        }
+        catch (err) {
+            if (err === ErrorUtilModule.ERROR_VALIDATION) {
                 res.locals.theater_code = req.body.theater_code;
                 res.locals.reserve_num = req.body.reserve_num;
                 res.locals.tel_num = req.body.tel_num;
                 res.locals.error = getInquiryError(req);
                 return res.render('inquiry/login');
-            });
+            }
+            return next(ErrorUtilModule.getError(req, err));
         }
-        else {
-            res.locals.theater_code = req.body.theater_code;
-            res.locals.reserve_num = req.body.reserve_num;
-            res.locals.tel_num = req.body.tel_num;
-            res.locals.error = result.mapped();
-            return res.render('inquiry/login');
-        }
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     });
 }
 exports.auth = auth;
@@ -110,39 +133,6 @@ function getInquiryError(req) {
             parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
-}
-/**
- * 照会情報取得
- * @memberOf InquiryModule
- * @function getStateReserve
- * @param {express.Request} req
- * @param {InquirySession.InquiryModel} inquiryModel
- * @returns {Promise<void>}
- */
-function getStateReserve(req, inquiryModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        inquiryModel.login = req.body;
-        inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
-            theater_code: req.body.theater_code,
-            reserve_num: req.body.reserve_num,
-            tel_num: req.body.tel_num // 電話番号
-        });
-        debugLog('COA照会情報取得');
-        const performanceId = UtilModule.getPerformanceId({
-            theaterCode: req.body.theater_code,
-            day: inquiryModel.stateReserve.date_jouei,
-            titleCode: inquiryModel.stateReserve.title_code,
-            titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-            screenCode: inquiryModel.stateReserve.screen_code,
-            timeBegin: inquiryModel.stateReserve.time_begin
-        });
-        debugLog('パフォーマンスID取得', performanceId);
-        inquiryModel.performance = yield MP.getPerformance(performanceId);
-        debugLog('MPパフォーマンス取得');
-        if (!req.session)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        req.session.inquiry = inquiryModel.toSession();
-    });
 }
 /**
  * 照会確認ページ表示

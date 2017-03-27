@@ -52,9 +52,9 @@ export function index(req: express.Request, res: express.Response, next: express
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function select(req: express.Request, res: express.Response, next: express.NextFunction): void {
+export async function select(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
     if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
     if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
     const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
@@ -66,40 +66,37 @@ export function select(req: express.Request, res: express.Response, next: expres
     }
 
     MvtkInputForm(req);
-    req.getValidationResult().then((result) => {
-        if (!result.isEmpty()) {
+    try {
+        const validationResult = await req.getValidationResult();
+        if (!validationResult.isEmpty()) {
             if (!purchaseModel.reserveSeats) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             //購入者情報入力表示
-            res.locals.error = result.mapped();
+            res.locals.error = validationResult.mapped();
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
             return res.render('purchase/mvtk/input');
         }
-        auth(req, purchaseModel).then((authResult) => {
-            if (authResult) {
-                return res.redirect('/purchase/mvtk/confirm');
-            } else {
-                // 認証エラー有効券無し
-                if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-                if (!purchaseModel.reserveSeats) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-                //購入者情報入力表示
-                res.locals.error = null;
-                res.locals.mvtkInfo = mvtkValidation(req);
-                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-                res.locals.transactionId = purchaseModel.transactionMP.id;
-                res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-                return res.render('purchase/mvtk/input');
-            }
-        }).catch((err) => {
-            debugLog(err);
-            return next(new Error(err.message));
-        });
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    });
+        const authResult = await auth(req, purchaseModel);
+        if (authResult) {
+            return res.redirect('/purchase/mvtk/confirm');
+        } else {
+            // 認証エラー有効券無し
+            if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+            if (!purchaseModel.reserveSeats) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+            //購入者情報入力表示
+            res.locals.error = null;
+            res.locals.mvtkInfo = mvtkValidation(req);
+            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+            return res.render('purchase/mvtk/input');
+        }
+    } catch (err) {
+        return next(ErrorUtilModule.getError(req, err));
+    }
 }
 
 /**
@@ -132,6 +129,7 @@ function mvtkValidation(req: express.Request): InputInfo[] {
  * @returns {Promise<boolean>}
  */
 export async function auth(req: express.Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<boolean> {
+    if (!req.session) throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
     if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
 
@@ -187,7 +185,7 @@ export async function auth(req: express.Request, purchaseModel: PurchaseSession.
         }
     }
 
-    (<any>req.session).mvtk = mvtkList;
+    req.session.mvtk = mvtkList;
     return isSuccess;
 }
 

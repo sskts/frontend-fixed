@@ -29,66 +29,48 @@ const debugLog = debug('SSKTS ');
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function index(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    preparation(req, purchaseModel).then(() => {
-        if (!purchaseModel.transactionMP)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        res.locals.performance = purchaseModel.performance;
-        res.locals.performanceCOA = purchaseModel.performanceCOA;
-        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-        res.locals.reserveSeats = (purchaseModel.reserveSeats)
-            ? JSON.stringify(purchaseModel.reserveSeats)
-            : null;
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.error = null;
-        res.locals.prevLink = (purchaseModel.performance)
-            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-            : UtilModule.getPortalUrl();
-        //セッション更新
+    return __awaiter(this, void 0, void 0, function* () {
         if (!req.session)
             return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        req.session.purchase = purchaseModel.toSession();
-        return res.render('purchase/seat');
-    }).catch((err) => {
-        return next(new Error(err.message));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+        }
+        if (!req.params || !req.params.id)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+        if (!purchaseModel.transactionMP)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        try {
+            purchaseModel.performance = yield MP.getPerformance(req.params.id);
+            debugLog('パフォーマンス取得');
+            purchaseModel.theater = yield MP.getTheater(purchaseModel.performance.attributes.theater.id);
+            debugLog('劇場詳細取得');
+            purchaseModel.performanceCOA = yield MP.getPerformanceCOA(purchaseModel.performance.attributes.theater.id, purchaseModel.performance.attributes.screen.id, purchaseModel.performance.attributes.film.id);
+            debugLog('COAパフォーマンス取得');
+            res.locals.performance = purchaseModel.performance;
+            res.locals.performanceCOA = purchaseModel.performanceCOA;
+            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+            res.locals.reserveSeats = (purchaseModel.reserveSeats)
+                ? JSON.stringify(purchaseModel.reserveSeats) //仮予約中
+                : null;
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.error = null;
+            res.locals.prevLink = (purchaseModel.performance)
+                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+                : UtilModule.getPortalUrl();
+            //セッション更新
+            req.session.purchase = purchaseModel.toSession();
+            return res.render('purchase/seat');
+        }
+        catch (err) {
+            return next(ErrorUtilModule.getError(req, err));
+        }
     });
 }
 exports.index = index;
-/**
- * 購入フロー準備
- * @memberOf Purchase.SeatModule
- * @function preparation
- * @param {express.Request} req
- * @param {PurchaseSession.ReserveTicket} purchaseModel
- * @returns {void}
- */
-function preparation(req, purchaseModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!req.params || !req.params.id)
-            throw new Error(req.__('common.error.access'));
-        // パフォーマンス取得
-        const performance = yield MP.getPerformance(req.params.id);
-        debugLog('パフォーマンス取得');
-        // 劇場詳細取得
-        const theater = yield MP.getTheater(performance.attributes.theater.id);
-        debugLog('劇場詳細取得');
-        // COAパフォーマンス取得
-        const performanceCOA = yield MP.getPerformanceCOA(performance.attributes.theater.id, performance.attributes.screen.id, performance.attributes.film.id);
-        debugLog('COAパフォーマンス取得');
-        purchaseModel.performance = performance;
-        purchaseModel.theater = theater;
-        purchaseModel.performanceCOA = performanceCOA;
-    });
-}
-exports.preparation = preparation;
 /**
  * 座席決定
  * @memberOf Purchase.SeatModule
@@ -96,49 +78,48 @@ exports.preparation = preparation;
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function select(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    //バリデーション
-    SeatForm_1.default(req);
-    req.getValidationResult().then((result) => {
-        if (!result.isEmpty()) {
-            if (!req.params || !req.params.id)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-            res.locals.transactionId = purchaseModel.transactionMP;
-            res.locals.performance = purchaseModel.performance;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-            res.locals.reserveSeats = req.body.seats;
-            res.locals.error = result.mapped();
-            res.locals.prevLink = (purchaseModel.performance)
-                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-                : UtilModule.getPortalUrl();
-            return res.render('purchase/seat');
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!req.session)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!req.session.purchase)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.transactionMP)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        if (!req.params || !req.params.id)
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
         }
-        const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
-        reserve(selectSeats, purchaseModel).then(() => {
+        //バリデーション
+        SeatForm_1.default(req);
+        try {
+            const validationResult = yield req.getValidationResult();
+            if (!validationResult.isEmpty()) {
+                res.locals.transactionId = purchaseModel.transactionMP;
+                res.locals.performance = purchaseModel.performance;
+                res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+                res.locals.reserveSeats = req.body.seats;
+                res.locals.error = validationResult.mapped();
+                res.locals.prevLink = (purchaseModel.performance)
+                    ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+                    : UtilModule.getPortalUrl();
+                return res.render('purchase/seat');
+            }
+            const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
+            yield reserve(selectSeats, purchaseModel);
             //セッション更新
-            if (!req.session)
-                return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
             req.session.purchase = purchaseModel.toSession();
             //券種選択へ
             return res.redirect('/purchase/ticket');
-        }).catch((err) => {
-            return next(new Error(err.message));
-        });
-    }).catch(() => {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        }
+        catch (err) {
+            return next(ErrorUtilModule.getError(req, err));
+        }
     });
 }
 exports.select = select;
@@ -253,40 +234,31 @@ function reserve(selectSeats, purchaseModel) {
  * @param {express.Request} req
  * @param {express.Response} res
  * @param {express.NextFunction} next
- * @returns {void}
+ * @returns {Promise<any>}
  */
 // tslint:disable-next-line:variable-name
 function getScreenStateReserve(req, res, _next) {
-    getScreenData(req).then((result) => {
-        return res.json({ err: null, result: result });
-    }).catch((err) => {
-        debugLog(err);
-        return res.json({ err: err, result: null });
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const num = 10;
+            const screenCode = (Number(req.body.screen_code) < num)
+                ? `0${req.body.screen_code}`
+                : req.body.screen_code;
+            const screen = yield fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
+            const setting = yield fs.readJSONAsync('./apps/frontend/theaters/setting.json');
+            const state = yield COA.ReserveService.stateReserveSeat(req.body);
+            return res.json({
+                err: null,
+                result: {
+                    screen: screen,
+                    setting: setting,
+                    state: state
+                }
+            });
+        }
+        catch (err) {
+            return res.json({ err: err, result: null });
+        }
     });
 }
 exports.getScreenStateReserve = getScreenStateReserve;
-/**
- * スクリーン情報取得
- * @memberOf Purchase.SeatModule
- * @function getScreenStateReserve
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
- * @returns {Promise<ScreenData>}
- */
-function getScreenData(req) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const num = 10;
-        const screenCode = (Number(req.body.screen_code) < num)
-            ? `0${req.body.screen_code}`
-            : req.body.screen_code;
-        const screen = yield fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
-        const setting = yield fs.readJSONAsync('./apps/frontend/theaters/setting.json');
-        const state = yield COA.ReserveService.stateReserveSeat(req.body);
-        return {
-            screen: screen,
-            setting: setting,
-            state: state
-        };
-    });
-}

@@ -32,7 +32,6 @@ function getPerformance() {
             console.log(res.error);
         } else {
             console.log(res)
-            console.log(JSON.stringify(res));
             var performances = res.result;
             var dom = '';
             for (var i = 0, len = performances.length; i < len; i++) {

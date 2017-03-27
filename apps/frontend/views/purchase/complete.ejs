@@ -95,7 +95,7 @@
                         <p class="mb-small heighfix"><%- __('purchase.complete.entry_02_read') %></p>
                         <div class="image mb-x-small"><img src="/images/common/test.svg" alt=""></div>
                         <div class="button blue-button inquiry-button">
-                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= (updateReserve) ? updateReserve.reserve_num : '' %>" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
+                            <a class="icon-new-tab-white" data-theater="<%= performance.attributes.theater.id %>" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= (updateReserve) ? updateReserve.reserve_num : '' %>" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
                         </div>
                     </dd>
                 </dl>
