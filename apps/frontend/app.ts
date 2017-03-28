@@ -38,7 +38,7 @@ app.use(express.static(`${__dirname}/../../public`));
 // 言語
 app.use((req, res, next) => {
     locales.init(req, res, next);
-    if (req.hasOwnProperty('session') && (<object>req.session).hasOwnProperty('locale')) {
+    if (req.session !== undefined && Boolean(req.session.locale)) {
         locales.setLocale(req, (<any>req.session).locale);
     } else {
         locales.setLocale(req, 'ja');

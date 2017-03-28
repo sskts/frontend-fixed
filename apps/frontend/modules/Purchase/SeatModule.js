@@ -40,7 +40,7 @@ function index(req, res, next) {
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
-            if (!req.params.hasOwnProperty('id'))
+            if (!Boolean(req.params.id))
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -87,12 +87,12 @@ function select(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!req.session.hasOwnProperty('purchase'))
+            if (!Boolean(req.session.purchase))
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!req.params.hasOwnProperty('id'))
+            if (!Boolean(req.params.id))
                 throw ErrorUtilModule.ERROR_ACCESS;
             //取引id確認
             if (req.body.transaction_id !== purchaseModel.transactionMP.id)

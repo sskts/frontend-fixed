@@ -29,7 +29,7 @@ const debugLog = debug('SSKTS ');
 // tslint:disable-next-line:variable-name
 function start(req, res, _next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.session === undefined || !req.body.id) {
+        if (req.session === undefined || !Boolean(req.body.id)) {
             return res.json({ redirect: null, err: req.__('common.error.property') });
         }
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);

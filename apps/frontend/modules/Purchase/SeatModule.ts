@@ -31,7 +31,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
-        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (!Boolean(req.params.id)) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         purchaseModel.performance = await MP.getPerformance(req.params.id);
@@ -90,10 +90,10 @@ interface ISelectSeats {
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (!Boolean(req.session.purchase)) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (!Boolean(req.params.id)) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) throw ErrorUtilModule.ERROR_ACCESS;
 
