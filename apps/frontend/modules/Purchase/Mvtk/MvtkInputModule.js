@@ -26,93 +26,97 @@ const debugLog = debug('SSKTS ');
  * ムビチケ券入力ページ表示
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 function index(req, res, next) {
-    if (!req.session)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!purchaseModel.reserveSeats)
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    // ムビチケセッション削除
-    delete req.session.mvtk;
-    // 購入者情報入力表示
-    res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')
-        ? [{ code: '3400999842', password: '7648' }]
-        : [{ code: '', password: '' }];
-    res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-    res.locals.transactionId = purchaseModel.transactionMP.id;
-    res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-    res.locals.error = null;
-    return res.render('purchase/mvtk/input');
+    try {
+        if (req.session === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (!req.session.hasOwnProperty('purchase'))
+            throw ErrorUtilModule.ERROR_EXPIRE;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.transactionMP === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.reserveSeats === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        // ムビチケセッション削除
+        delete req.session.mvtk;
+        // 購入者情報入力表示
+        res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')
+            ? [{ code: '3400999842', password: '7648' }]
+            : [{ code: '', password: '' }];
+        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+        res.locals.error = null;
+        res.render('purchase/mvtk/input');
+        return;
+    }
+    catch (err) {
+        next(ErrorUtilModule.getError(req, err));
+        return;
+    }
 }
 exports.index = index;
 /**
  * 券種選択
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function select
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        if (!req.session.purchase)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (!purchaseModel.transactionMP)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-        }
-        MvtkInputForm_1.default(req);
         try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (!req.session.hasOwnProperty('purchase'))
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.reserveSeats === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            //取引id確認
+            if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+                throw ErrorUtilModule.ERROR_ACCESS;
+            }
+            MvtkInputForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty()) {
-                if (!purchaseModel.reserveSeats)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-                if (!purchaseModel.transactionMP)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 //購入者情報入力表示
                 res.locals.error = validationResult.mapped();
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-                return res.render('purchase/mvtk/input');
+                res.render('purchase/mvtk/input');
+                return;
             }
             const authResult = yield auth(req, purchaseModel);
             if (authResult) {
-                return res.redirect('/purchase/mvtk/confirm');
+                res.redirect('/purchase/mvtk/confirm');
+                return;
             }
             else {
-                // 認証エラー有効券無し
-                if (!purchaseModel.transactionMP)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-                if (!purchaseModel.reserveSeats)
-                    return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
                 //購入者情報入力表示
                 res.locals.error = null;
                 res.locals.mvtkInfo = mvtkValidation(req);
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-                return res.render('purchase/mvtk/input');
+                res.render('purchase/mvtk/input');
+                return;
             }
         }
         catch (err) {
-            return next(ErrorUtilModule.getError(req, err));
+            next(ErrorUtilModule.getError(req, err));
+            return;
         }
     });
 }
@@ -121,19 +125,20 @@ exports.select = select;
  * ムビチケ検証
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function mvtkValidation
- * @param {express.Request} req
- * @returns {}
+ * @param {Request} req
+ * @returns {InputInfo[]}
  */
 function mvtkValidation(req) {
     const inputInfo = JSON.parse(req.body.mvtk);
     return inputInfo.map((input) => {
-        const ticket = req.session.mvtk.find((value) => {
+        const mvtk = req.session.mvtk;
+        const ticket = mvtk.find((value) => {
             return (input.code === value.code);
         });
         return {
             code: input.code,
-            password: (ticket) ? input.password : '',
-            error: (ticket) ? null : req.__('common.validation.mvtk')
+            password: (ticket !== undefined) ? input.password : '',
+            error: (ticket !== undefined) ? null : req.__('common.validation.mvtk')
         };
     });
 }
@@ -141,17 +146,17 @@ function mvtkValidation(req) {
  * 認証
  * @memberOf Purchase.Mvtk.MvtkInputModule
  * @function auth
- * @param {express.Request} req
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<boolean>}
  */
 function auth(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
+        if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA)
+        if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo = JSON.parse(req.body.mvtk);
@@ -178,7 +183,7 @@ function auth(req, purchaseModel) {
                 const input = inputInfo.find((value) => {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
-                if (!input)
+                if (input === undefined)
                     continue;
                 // ムビチケチケットコード取得
                 const ticket = yield COA.MasterService.mvtkTicketcode({

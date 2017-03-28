@@ -24,26 +24,25 @@ const debugLog = debug('SSKTS ');
  * 券種選択
  * @memberOf Purchase.TicketModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 function index(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        if (!req.session.purchase)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) {
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-        }
-        if (!purchaseModel.performance)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        if (!purchaseModel.transactionMP)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (!req.session.hasOwnProperty('purchase'))
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
+                throw ErrorUtilModule.ERROR_ACCESS;
+            if (purchaseModel.performance === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             //券種取得
             const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
             const performance = purchaseModel.performance;
@@ -56,10 +55,12 @@ function index(req, res, next) {
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             //券種選択表示
-            return res.render('purchase/ticket');
+            res.render('purchase/ticket');
+            return;
         }
         catch (err) {
-            return next(ErrorUtilModule.getError(req, err));
+            next(ErrorUtilModule.getError(req, err));
+            return;
         }
     });
 }
@@ -68,58 +69,65 @@ exports.index = index;
  * 券種決定
  * @memberOf Purchase.TicketModule
  * @function select
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        if (!req.session.purchase)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (!purchaseModel.transactionMP)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-        }
-        //バリデーション
-        TicketForm_1.default(req);
         try {
-            const validationResult = yield req.getValidationResult();
-            if (validationResult.isEmpty()) {
-                const reserveTickets = JSON.parse(req.body.reserve_tickets);
-                purchaseModel.reserveTickets = yield ticketValidation(req, purchaseModel, reserveTickets);
-                debugLog('券種検証');
-                yield upDateAuthorization(purchaseModel);
-                debugLog('オーソリ追加');
-                req.session.purchase = purchaseModel.toSession();
-                debugLog('セッション更新');
-                return res.redirect('/purchase/input');
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (!req.session.hasOwnProperty('purchase'))
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            //取引id確認
+            if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+                throw ErrorUtilModule.ERROR_ACCESS;
+            try {
+                //バリデーション
+                TicketForm_1.default(req);
+                const validationResult = yield req.getValidationResult();
+                if (validationResult.isEmpty()) {
+                    const reserveTickets = JSON.parse(req.body.reserve_tickets);
+                    purchaseModel.reserveTickets = yield ticketValidation(req, purchaseModel, reserveTickets);
+                    debugLog('券種検証');
+                    yield upDateAuthorization(purchaseModel);
+                    debugLog('オーソリ追加');
+                    req.session.purchase = purchaseModel.toSession();
+                    debugLog('セッション更新');
+                    res.redirect('/purchase/input');
+                    return;
+                }
+            }
+            catch (err) {
+                if (err === ErrorUtilModule.ERROR_VALIDATION) {
+                    try {
+                        const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
+                        debugLog('券種取得');
+                        const performance = purchaseModel.performance;
+                        res.locals.tickets = salesTicketsResult;
+                        res.locals.performance = performance;
+                        res.locals.reserveSeats = purchaseModel.reserveSeats;
+                        res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
+                        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+                        res.locals.transactionId = purchaseModel.transactionMP.id;
+                        res.render('purchase/ticket');
+                        return;
+                    }
+                    catch (err) {
+                        throw err;
+                    }
+                }
+                throw err;
             }
         }
         catch (err) {
-            if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                try {
-                    const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
-                    debugLog('券種取得');
-                    const performance = purchaseModel.performance;
-                    res.locals.tickets = salesTicketsResult;
-                    res.locals.performance = performance;
-                    res.locals.reserveSeats = purchaseModel.reserveSeats;
-                    res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
-                    res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-                    res.locals.transactionId = purchaseModel.transactionMP.id;
-                    return res.render('purchase/ticket');
-                }
-                catch (err) {
-                    throw err;
-                }
-            }
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+            next(ErrorUtilModule.getError(req, err));
+            return;
         }
     });
 }
@@ -128,15 +136,15 @@ exports.select = select;
  * 券種リスト取得
  * @memberOf Purchase.TicketModule
  * @function getSalesTickets
- * @param {express.Request} req
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<SalesTicket[]>}
  */
 function getSalesTickets(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA)
+        if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         const result = [];
         //コアAPI券種取得
@@ -164,7 +172,7 @@ function getSalesTickets(req, purchaseModel) {
                 glasses: false // メガネ有無
             });
         }
-        if (!purchaseModel.mvtk)
+        if (purchaseModel.mvtk === null)
             return result;
         // ムビチケ情報からチケット情報へ変換
         const mvtkTickets = [];
@@ -207,16 +215,16 @@ function getSalesTickets(req, purchaseModel) {
  * 券種検証
  * @memberOf Purchase.TicketModule
  * @function ticketValidation
- * @param {express.Request} req
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @param {PurchaseSession.ReserveTicket[]} reserveTickets
  * @returns {Promise<void>}
  */
 function ticketValidation(req, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA)
+        if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         const result = [];
         //コアAPI券種取得
@@ -230,14 +238,14 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
             // screen_code: performance.screen.id,
         });
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num) {
+            if (ticket.mvtk_num !== null) {
                 // ムビチケ
-                if (!purchaseModel.mvtk)
+                if (purchaseModel.mvtk === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 const mvtkTicket = purchaseModel.mvtk.find((value) => {
                     return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
                 });
-                if (!mvtkTicket)
+                if (mvtkTicket === undefined)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 result.push({
                     section: ticket.section,
@@ -264,13 +272,13 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                 const salesTicket = salesTickets.find((value) => {
                     return (value.ticket_code === ticket.ticket_code);
                 });
-                if (!salesTicket)
+                if (salesTicket === undefined)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 // 制限単位、人数制限判定
                 const sameTickets = reserveTickets.filter((value) => {
                     return (value.ticket_code === salesTicket.ticket_code);
                 });
-                if (!sameTickets)
+                if (sameTickets.length === 0)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 if (salesTicket.limit_unit === '001') {
                     if (sameTickets.length % salesTicket.limit_count !== 0) {
@@ -311,17 +319,17 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
  */
 function upDateAuthorization(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!purchaseModel.transactionMP)
+        if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveSeats)
+        if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveTickets)
+        if (purchaseModel.reserveTickets === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.authorizationCOA)
+        if (purchaseModel.authorizationCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA)
+        if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // COAオーソリ削除
         yield MP.removeCOAAuthorization({
@@ -329,18 +337,11 @@ function upDateAuthorization(purchaseModel) {
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
         debugLog('MPCOAオーソリ削除');
-        if (purchaseModel.transactionGMO
-            && purchaseModel.authorizationGMO
-            && purchaseModel.orderId) {
+        if (purchaseModel.transactionGMO !== null
+            && purchaseModel.authorizationGMO !== null
+            && purchaseModel.orderId !== null
+            && purchaseModel.theater !== null) {
             //GMOオーソリあり
-            if (!purchaseModel.transactionGMO)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!purchaseModel.authorizationGMO)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!purchaseModel.orderId)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!purchaseModel.theater)
-                throw ErrorUtilModule.ERROR_PROPERTY;
             const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
             //GMOオーソリ取消

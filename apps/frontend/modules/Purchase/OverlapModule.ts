@@ -6,7 +6,7 @@
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
-import * as express from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
@@ -16,26 +16,29 @@ const debugLog = debug('SSKTS ');
  * 仮予約重複
  * @memberOf Purchase.OverlapModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (!req.params || !req.params.id) throw ErrorUtilModule.ERROR_ACCESS;
-        if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+
+        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //パフォーマンス取得
         const result = await MP.getPerformance(req.params.id);
         res.locals.performances = {
             after: result,
             before: purchaseModel.performance
         };
-        return res.render('purchase/overlap');
+        res.render('purchase/overlap');
+        return;
     } catch (err) {
-        return next(ErrorUtilModule.getError(req, err));
+        next(ErrorUtilModule.getError(req, err));
+        return;
     }
 }
 
@@ -43,20 +46,21 @@ export async function index(req: express.Request, res: express.Response, next: e
  * 新規予約へ
  * @memberOf Purchase.OverlapModule
  * @function newReserve
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function newReserve(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+export async function newReserve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.transactionMP) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveSeats) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.authorizationCOA) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+
+        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
 
@@ -78,10 +82,10 @@ export async function newReserve(req: express.Request, res: express.Response, ne
         });
         debugLog('COAオーソリ削除');
 
-        if (purchaseModel.transactionGMO
-            && purchaseModel.authorizationGMO
-            && purchaseModel.orderId) {
-            if (!purchaseModel.theater) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transactionGMO !== null
+            && purchaseModel.authorizationGMO !== null
+            && purchaseModel.orderId !== null) {
+            if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
             //GMOオーソリ取消
@@ -103,9 +107,11 @@ export async function newReserve(req: express.Request, res: express.Response, ne
         }
         //購入スタートへ
         delete req.session.purchase;
-        return res.redirect(`/purchase?id=${req.body.performance_id}`);
+        res.redirect(`/purchase?id=${req.body.performance_id}`);
+        return;
     } catch (err) {
-        return next(ErrorUtilModule.getError(req, err));
+        next(ErrorUtilModule.getError(req, err));
+        return;
     }
 }
 
@@ -113,13 +119,17 @@ export async function newReserve(req: express.Request, res: express.Response, ne
  * 前回の予約へ
  * @memberOf Purchase.OverlapModule
  * @function prevReserve
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
-export function prevReserve(req: express.Request, res: express.Response, next: express.NextFunction): void {
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+export function prevReserve(req: Request, res: Response, next: NextFunction): void {
+    if (req.session === undefined) {
+        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        return;
+    }
     //座席選択へ
-    return res.redirect('/purchase/seat/' + (<string>req.body.performance_id) + '/');
+    res.redirect('/purchase/seat/' + (<string>req.body.performance_id) + '/');
+    return;
 }

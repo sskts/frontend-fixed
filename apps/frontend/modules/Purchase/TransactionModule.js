@@ -21,19 +21,20 @@ const debugLog = debug('SSKTS ');
  * 取引開始
  * @memberOf Purchase.TransactionModule
  * @function start
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
- * @returns {Promise<any>}
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<Response>}
  */
 // tslint:disable-next-line:variable-name
 function start(req, res, _next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session || !req.body.id)
+        if (req.session === undefined || !req.body.id) {
             return res.json({ redirect: null, err: req.__('common.error.property') });
+        }
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         try {
-            if (purchaseModel.transactionMP && purchaseModel.reserveSeats) {
+            if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
                 //重複確認へ
                 return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
             }

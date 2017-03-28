@@ -14,12 +14,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 // tslint:disable-next-line:variable-name
 function supertestSession(req, _res, next) {
-    if (!req.body.session && !req.query.session)
-        return next();
+    if (req.body.session === undefined && req.query.session === undefined) {
+        next();
+        return;
+    }
     const session = (req.method === 'post') ? req.body.session : req.query.session;
     Object.keys(session).forEach((key) => {
-        if (!req.session)
-            return;
         if (req.method === 'post') {
             req.session[key] = session[key];
         }
@@ -27,6 +27,7 @@ function supertestSession(req, _res, next) {
             req.session[key] = session[key];
         }
     });
-    return next();
+    next();
+    return;
 }
 exports.supertestSession = supertestSession;

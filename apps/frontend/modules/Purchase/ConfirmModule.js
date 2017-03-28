@@ -26,42 +26,49 @@ const debugLog = debug('SSKTS ');
  * 購入者内容確認
  * @memberOf Purchase.ConfirmModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 function index(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        if (!req.session.purchase)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
+        try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (!req.session.hasOwnProperty('purchase'))
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            }
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            //購入者内容確認表示
+            res.locals.gmoTokenObject = (purchaseModel.gmo !== null) ? purchaseModel.gmo : null;
+            res.locals.input = purchaseModel.input;
+            res.locals.performance = purchaseModel.performance;
+            res.locals.reserveSeats = purchaseModel.reserveSeats;
+            res.locals.reserveTickets = purchaseModel.reserveTickets;
+            res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+            res.locals.price = purchaseModel.getReserveAmount();
+            res.locals.updateReserve = null;
+            res.locals.error = null;
+            res.locals.seatStr = purchaseModel.seatToString();
+            res.locals.ticketStr = purchaseModel.ticketToString();
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.prevLink = (purchaseModel.performance !== null)
+                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
+                : UtilModule.getPortalUrl();
+            //セッション更新
+            req.session.purchase = purchaseModel.toSession();
+            res.render('purchase/confirm');
+            return;
         }
-        if (!purchaseModel.transactionMP)
-            return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-        //購入者内容確認表示
-        res.locals.gmoTokenObject = (purchaseModel.gmo) ? purchaseModel.gmo : null;
-        res.locals.input = purchaseModel.input;
-        res.locals.performance = purchaseModel.performance;
-        res.locals.reserveSeats = purchaseModel.reserveSeats;
-        res.locals.reserveTickets = purchaseModel.reserveTickets;
-        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
-        res.locals.price = purchaseModel.getReserveAmount();
-        res.locals.updateReserve = null;
-        res.locals.error = null;
-        res.locals.seatStr = purchaseModel.seatToString();
-        res.locals.ticketStr = purchaseModel.ticketToString();
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.prevLink = (purchaseModel.performance)
-            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-            : UtilModule.getPortalUrl();
-        //セッション更新
-        req.session.purchase = purchaseModel.toSession();
-        return res.render('purchase/confirm');
+        catch (err) {
+            next(ErrorUtilModule.getError(req, err));
+            return;
+        }
     });
 }
 exports.index = index;
@@ -74,17 +81,17 @@ exports.index = index;
  */
 function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!purchaseModel.reserveTickets)
+        if (purchaseModel.reserveTickets === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveSeats)
+        if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.updateReserve)
+        if (purchaseModel.updateReserve === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.mvtk)
+        if (purchaseModel.mvtk === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.performanceCOA)
+        if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         debugLog('ムビチケ決済開始');
         // 購入管理番号情報
@@ -95,17 +102,17 @@ function reserveMvtk(purchaseModel) {
             const mvtk = purchaseModel.mvtk.find((value) => {
                 return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
             });
-            if (!mvtk)
+            if (mvtk === undefined)
                 continue;
             const mvtkTicket = mvtkTickets.find((value) => {
                 return (value.KNYKNR_NO === mvtk.code);
             });
-            if (mvtkTicket) {
+            if (mvtkTicket !== undefined) {
                 // 券種追加
                 const tcket = mvtkTicket.KNSH_INFO.find((value) => {
                     return (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp);
                 });
-                if (tcket) {
+                if (tcket !== undefined) {
                     // 枚数追加
                     tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
                 }
@@ -167,29 +174,27 @@ function reserveMvtk(purchaseModel) {
  * 座席本予約
  * @memberOf Purchase.ConfirmModule
  * @function updateReserve
- * @param {express.Request} req
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
 function updateReserve(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         debugLog('座席本予約開始');
-        if (!purchaseModel.performance)
+        if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveSeats)
+        if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.input)
+        if (purchaseModel.input === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!purchaseModel.reserveTickets)
-            throw Error(req.__('common.error.property'));
-        if (!purchaseModel.transactionMP)
-            throw Error(req.__('common.error.property'));
-        if (!purchaseModel.expired)
-            throw Error(req.__('common.error.property'));
-        if (!purchaseModel.performanceCOA)
-            throw Error(req.__('common.error.property'));
-        if (!req.session)
-            throw Error(req.__('common.error.property'));
+        if (purchaseModel.reserveTickets === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transactionMP === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.expired === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.performanceCOA === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
         const input = purchaseModel.input;
@@ -209,11 +214,11 @@ function updateReserve(req, purchaseModel) {
             list_ticket: purchaseModel.reserveTickets.map((ticket) => {
                 let mvtkAppPrice = 0;
                 // ムビチケ計上単価取得
-                if (purchaseModel.mvtk) {
+                if (purchaseModel.mvtk !== null) {
                     const mvtkTicket = purchaseModel.mvtk.find((value) => {
                         return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
                     });
-                    if (mvtkTicket) {
+                    if (mvtkTicket !== undefined) {
                         mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
                     }
                 }
@@ -232,7 +237,7 @@ function updateReserve(req, purchaseModel) {
         });
         debugLog('COA本予約', purchaseModel.updateReserve);
         // ムビチケ使用
-        if (purchaseModel.mvtk) {
+        if (purchaseModel.mvtk !== null) {
             yield reserveMvtk(purchaseModel);
             debugLog('ムビチケ決済');
         }
@@ -272,18 +277,18 @@ function updateReserve(req, purchaseModel) {
 /**
  * メール内容取得
  * @function getMailContent
- * @param {express.Request} req
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {string}
  */
 function getMailContent(req, purchaseModel) {
-    if (!purchaseModel.performance)
+    if (purchaseModel.performance === null)
         throw ErrorUtilModule.ERROR_PROPERTY;
-    if (!purchaseModel.reserveSeats)
+    if (purchaseModel.reserveSeats === null)
         throw ErrorUtilModule.ERROR_PROPERTY;
-    if (!purchaseModel.input)
+    if (purchaseModel.input === null)
         throw ErrorUtilModule.ERROR_PROPERTY;
-    if (!purchaseModel.updateReserve)
+    if (purchaseModel.updateReserve === null)
         throw ErrorUtilModule.ERROR_PROPERTY;
     return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様\n
 \n
@@ -330,36 +335,36 @@ TEL：XX-XXXX-XXXX`;
  * 購入確定
  * @memberOf Purchase.ConfirmModule
  * @function purchase
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
- * @returns {Promise<void>}
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<Response>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
 function purchase(req, res, _next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!req.session)
-            return res.json({ err: req.__('common.error.property'), result: null });
-        if (!req.session.purchase)
-            return res.json({ err: req.__('common.error.expire'), result: null });
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (!purchaseModel.transactionMP)
-            return res.json({ err: req.__('common.error.property'), result: null });
-        if (!purchaseModel.expired)
-            return res.json({ err: req.__('common.error.property'), result: null });
-        //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-            return res.json({ err: req.__('common.error.access'), result: null });
-        //購入期限切れ
-        const minutes = 5;
-        if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-            debugLog('購入期限切れ');
-            //購入セッション削除
-            delete req.session.purchase;
-            return res.json({ err: req.__('common.error.expired'), result: null });
-        }
         try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (!req.session.hasOwnProperty('purchase'))
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.expired === null)
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            //取引id確認
+            if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+                throw ErrorUtilModule.ERROR_ACCESS;
+            //購入期限切れ
+            const minutes = 5;
+            if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
+                debugLog('購入期限切れ');
+                //購入セッション削除
+                delete req.session.purchase;
+                throw ErrorUtilModule.ERROR_ACCESS;
+            }
             yield updateReserve(req, purchaseModel);
             //購入情報をセッションへ
             req.session.complete = {
@@ -379,7 +384,8 @@ function purchase(req, res, _next) {
             debugLog('ERROR', err);
             //購入セッション削除
             delete req.session.purchase;
-            return res.json({ err: err.message, result: null });
+            const msg = ErrorUtilModule.getError(req, err).message;
+            return res.json({ err: msg, result: null });
         }
     });
 }
@@ -387,14 +393,20 @@ exports.purchase = purchase;
 /**
  * 完了情報取得
  * @function getCompleteData
- * @returns {express.Response}
+ * @returns {Response}
  */
 // tslint:disable-next-line:variable-name
 function getCompleteData(req, res, _next) {
-    if (!req.session)
-        return res.json({ err: req.__('common.error.property'), result: null });
-    if (!req.session.complete)
-        return res.json({ err: req.__('common.error.access'), result: null });
-    return res.json({ err: null, result: req.session.complete });
+    try {
+        if (req.session === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (!req.session.hasOwnProperty('complete'))
+            throw ErrorUtilModule.ERROR_EXPIRE;
+        return res.json({ err: null, result: req.session.complete });
+    }
+    catch (err) {
+        const msg = ErrorUtilModule.getError(req, err).message;
+        return res.json({ err: msg, result: null });
+    }
 }
 exports.getCompleteData = getCompleteData;

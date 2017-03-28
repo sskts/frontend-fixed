@@ -3,9 +3,9 @@ import * as MP from '../../../../libs/MP';
 
 /**
  * ログイン情報
- * @interface Login
+ * @interface ILogin
  */
-export interface Login {
+export interface ILogin {
     /**
      * 劇場コード
      */
@@ -40,20 +40,20 @@ export class InquiryModel {
     /**
      * 予約チケット
      */
-    public login: Login | null;
+    public login: ILogin | null;
 
     /**
      * @constructor
      * @param {any} session
      */
-    constructor(session: any) {
-        if (!session) {
+    constructor(session: object | undefined) {
+        if (session === undefined) {
             session = {};
         }
-        this.transactionId = (session.transactionId) ? session.transactionId : null;
-        this.performance = (session.performance) ? session.performance : null;
-        this.stateReserve = (session.stateReserve) ? session.stateReserve : null;
-        this.login = (session.login) ? session.login : null;
+        this.transactionId = (session.hasOwnProperty('transactionId')) ? (<any>session).transactionId : null;
+        this.performance = (session.hasOwnProperty('performance')) ? (<any>session).performance : null;
+        this.stateReserve = (session.hasOwnProperty('stateReserve')) ? (<any>session).stateReserve : null;
+        this.login = (session.hasOwnProperty('login')) ? (<any>session).login : null;
     }
 
     /**
@@ -66,13 +66,13 @@ export class InquiryModel {
         transactionId: string | null,
         performance: MP.Performance | null,
         stateReserve: COA.ReserveService.IStateReserveResult | null,
-        login: Login | null
+        login: ILogin | null
     } {
         return {
-            transactionId: (this.transactionId) ? this.transactionId : null,
-            performance: (this.performance) ? this.performance : null,
-            stateReserve: (this.stateReserve) ? this.stateReserve : null,
-            login: (this.login) ? this.login : null
+            transactionId: (this.transactionId !== null) ? this.transactionId : null,
+            performance: (this.performance !== null) ? this.performance : null,
+            stateReserve: (this.stateReserve !== null) ? this.stateReserve : null,
+            login: (this.login !== null) ? this.login : null
         };
     }
 }

@@ -3,46 +3,49 @@
  * @namespace MethodModule
  */
 
-import * as express from 'express';
+import {NextFunction, Request, Response} from 'express';
 
 /**
  * 発券方法ページ表示
  * @memberOf MethodModule
  * @function ticketing
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function ticketing(_req: express.Request, res: express.Response, _next: express.NextFunction): void {
-    return res.render('method/ticketing');
+export function ticketing(_req: Request, res: Response, _next: NextFunction): void {
+    res.render('method/ticketing');
+    return;
 }
 
 /**
  * 入場方法説明ページ表示
  * @memberOf MethodModule
  * @function entry
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function entry(_req: express.Request, res: express.Response, _next: express.NextFunction): void {
-    return res.render('method/entry');
+export function entry(_req: Request, res: Response, _next: NextFunction): void {
+    res.render('method/entry');
+    return;
 }
 
 /**
  * ブックマーク方法説明ページ表示
  * @memberOf MethodModule
  * @function bookmark
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function bookmark(_req: express.Request, res: express.Response, _next: express.NextFunction): void {
-    return res.render('method/bookmark');
+export function bookmark(_req: Request, res: Response, _next: NextFunction): void {
+    res.render('method/bookmark');
+    return;
 }

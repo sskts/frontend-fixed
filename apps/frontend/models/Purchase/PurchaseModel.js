@@ -7,27 +7,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class PurchaseModel {
     /**
      * @constructor
-     * @param {any} session
+     * @param {object | undefined} session
      */
     constructor(session) {
-        if (!session) {
+        if (session === undefined) {
             session = {};
         }
-        this.performance = (session.performance) ? session.performance : null;
-        this.theater = (session.theater) ? session.theater : null;
-        this.reserveSeats = (session.reserveSeats) ? session.reserveSeats : null;
-        this.reserveTickets = (session.reserveTickets) ? session.reserveTickets : null;
-        this.input = (session.input) ? session.input : null;
-        this.gmo = (session.gmo) ? session.gmo : null;
-        this.updateReserve = (session.updateReserve) ? session.updateReserve : null;
-        this.transactionMP = (session.transactionMP) ? session.transactionMP : null;
-        this.transactionGMO = (session.transactionGMO) ? session.transactionGMO : null;
-        this.authorizationCOA = (session.authorizationCOA) ? session.authorizationCOA : null;
-        this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
-        this.orderId = (session.orderId) ? session.orderId : null;
-        this.expired = (session.expired) ? session.expired : null;
-        this.mvtk = (session.mvtk) ? session.mvtk : null;
-        this.performanceCOA = (session.performanceCOA) ? session.performanceCOA : null;
+        this.performance = (session.hasOwnProperty('performance') !== null !== null) ? session.performance : null;
+        this.theater = (session.hasOwnProperty('theater') !== null !== null) ? session.theater : null;
+        this.reserveSeats = (session.hasOwnProperty('reserveSeats') !== null !== null) ? session.reserveSeats : null;
+        this.reserveTickets = (session.hasOwnProperty('reserveTickets') !== null !== null) ? session.reserveTickets : null;
+        this.input = (session.hasOwnProperty('input') !== null !== null) ? session.input : null;
+        this.gmo = (session.hasOwnProperty('gmo') !== null !== null) ? session.gmo : null;
+        this.updateReserve = (session.hasOwnProperty('updateReserve') !== null !== null) ? session.updateReserve : null;
+        this.transactionMP = (session.hasOwnProperty('transactionMP') !== null !== null) ? session.transactionMP : null;
+        this.transactionGMO = (session.hasOwnProperty('transactionGMO') !== null !== null) ? session.transactionGMO : null;
+        this.authorizationCOA = (session.hasOwnProperty('authorizationCOA') !== null !== null) ? session.authorizationCOA : null;
+        this.authorizationGMO = (session.hasOwnProperty('authorizationGMO') !== null !== null) ? session.authorizationGMO : null;
+        this.orderId = (session.hasOwnProperty('orderId') !== null !== null) ? session.orderId : null;
+        this.expired = (session.hasOwnProperty('expired') !== null !== null) ? session.expired : null;
+        this.mvtk = (session.hasOwnProperty('mvtk') !== null !== null) ? session.mvtk : null;
+        this.performanceCOA = (session.hasOwnProperty('performanceCOA') !== null !== null) ? session.performanceCOA : null;
     }
     /**
      * セッションObjectへ変換
@@ -37,21 +37,21 @@ class PurchaseModel {
      */
     toSession() {
         return {
-            performance: (this.performance) ? this.performance : null,
-            theater: (this.theater) ? this.theater : null,
-            reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
-            reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
-            input: (this.input) ? this.input : null,
-            gmo: (this.gmo) ? this.gmo : null,
-            updateReserve: (this.updateReserve) ? this.updateReserve : null,
-            transactionMP: (this.transactionMP) ? this.transactionMP : null,
-            transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
-            authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
-            authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
-            orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null,
-            mvtk: (this.mvtk) ? this.mvtk : null,
-            performanceCOA: (this.performanceCOA) ? this.performanceCOA : null
+            performance: (this.performance !== null) ? this.performance : null,
+            theater: (this.theater !== null) ? this.theater : null,
+            reserveSeats: (this.reserveSeats !== null) ? this.reserveSeats : null,
+            reserveTickets: (this.reserveTickets !== null) ? this.reserveTickets : null,
+            input: (this.input !== null) ? this.input : null,
+            gmo: (this.gmo !== null) ? this.gmo : null,
+            updateReserve: (this.updateReserve !== null) ? this.updateReserve : null,
+            transactionMP: (this.transactionMP !== null) ? this.transactionMP : null,
+            transactionGMO: (this.transactionGMO !== null) ? this.transactionGMO : null,
+            authorizationCOA: (this.authorizationCOA !== null) ? this.authorizationCOA : null,
+            authorizationGMO: (this.authorizationGMO !== null) ? this.authorizationGMO : null,
+            orderId: (this.orderId !== null) ? this.orderId : null,
+            expired: (this.expired !== null) ? this.expired : null,
+            mvtk: (this.mvtk !== null) ? this.mvtk : null,
+            performanceCOA: (this.performanceCOA !== null) ? this.performanceCOA : null
         };
     }
     /**
@@ -62,25 +62,34 @@ class PurchaseModel {
      * @returns {boolean}
      */
     accessAuth(value) {
-        let result = false;
-        if (value === PurchaseModel.SEAT_STATE) {
-            if (this.transactionMP)
-                result = true;
-        }
-        else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats)
-                result = true;
-        }
-        else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets)
-                result = true;
-        }
-        else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input)
-                result = true;
-        }
-        else if (value === PurchaseModel.COMPLETE_STATE) {
-            result = true;
+        let result = true;
+        if (this.transactionMP === null)
+            result = false;
+        switch (value) {
+            case PurchaseModel.SEAT_STATE:
+                break;
+            case PurchaseModel.TICKET_STATE:
+                if (this.reserveSeats === null)
+                    result = false;
+                break;
+            case PurchaseModel.INPUT_STATE:
+                if (this.reserveSeats === null)
+                    result = false;
+                if (this.reserveTickets === null)
+                    result = false;
+                break;
+            case PurchaseModel.CONFIRM_STATE:
+                if (this.reserveSeats === null)
+                    result = false;
+                if (this.reserveTickets === null)
+                    result = false;
+                if (this.input === null)
+                    result = false;
+                break;
+            case PurchaseModel.COMPLETE_STATE:
+                break;
+            default:
+                break;
         }
         return result;
     }
@@ -93,7 +102,7 @@ class PurchaseModel {
     getReserveAmount() {
         const reserveTickets = this.reserveTickets;
         let amount = 0;
-        if (!reserveTickets)
+        if (reserveTickets === null)
             return amount;
         for (const ticket of reserveTickets) {
             amount += ticket.sale_price;
@@ -107,7 +116,7 @@ class PurchaseModel {
      * @returns {string}
      */
     seatToString() {
-        if (!this.reserveSeats)
+        if (this.reserveSeats === null)
             return '';
         const seats = [];
         for (const seat of this.reserveSeats.list_tmp_reserve) {
@@ -122,14 +131,14 @@ class PurchaseModel {
      * @returns {string}
      */
     ticketToString() {
-        if (!this.reserveSeats)
+        if (this.reserveSeats === null)
             return '';
-        if (!this.reserveTickets)
+        if (this.reserveTickets === null)
             return '';
         const ticketObj = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            if (ticketObj[ticket.ticket_code]) {
+            if (ticketObj.hasOwnProperty(ticket.ticket_code)) {
                 ticketObj[ticket.ticket_code].length = (ticketObj[ticket.ticket_code].length) + 1;
             }
             else {

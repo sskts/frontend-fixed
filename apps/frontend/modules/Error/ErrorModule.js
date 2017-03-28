@@ -10,9 +10,9 @@ const UtilModule = require("../Util/UtilModule");
  * Not Found
  * @memberOf ErrorModule
  * @function notFound
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
@@ -22,18 +22,18 @@ function notFound(req, res, _next) {
         res.status(status).send({ error: 'Not Found.' });
     }
     else {
-        res.status(status);
-        return res.render('error/notFound');
+        res.status(status).render('error/notFound');
     }
+    return;
 }
 exports.notFound = notFound;
 /**
  * エラーページ
  * @memberOf ErrorModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
@@ -41,16 +41,16 @@ function index(err, req, res, _next) {
     if (process.env.NODE_ENV === 'development')
         console.error('show Error');
     console.error(err.stack);
-    if (req.session && req.session.purchase) {
+    if (req.session !== undefined && req.session.hasOwnProperty('purchase')) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        res.locals.prevLink = (purchaseModel.performance)
+        res.locals.prevLink = (purchaseModel.performance !== null)
             ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
             : UtilModule.getPortalUrl();
     }
     else {
         res.locals.prevLink = UtilModule.getPortalUrl();
     }
-    if (req.session) {
+    if (req.session !== undefined) {
         delete req.session.purchase;
         delete req.session.mvtk;
     }
@@ -61,10 +61,10 @@ function index(err, req, res, _next) {
     }
     else {
         console.error(err.message);
-        res.status(status);
         res.locals.message = err.message;
         res.locals.error = err;
-        return res.render('error/error');
+        res.status(status).render('error/error');
     }
+    return;
 }
 exports.index = index;

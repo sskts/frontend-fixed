@@ -14,16 +14,19 @@ import * as express from 'express';
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function supertestSession(req: express.Request, _res: express.Response, next: express.NextFunction) {
-    if (!req.body.session && !req.query.session) return next();
+export function supertestSession(req: express.Request, _res: express.Response, next: express.NextFunction): void {
+    if (req.body.session === undefined && req.query.session === undefined) {
+        next();
+        return;
+    }
     const session = (req.method === 'post') ? req.body.session : req.query.session;
     Object.keys(session).forEach((key: string) => {
-        if (!req.session) return;
         if (req.method === 'post') {
-            req.session[key] = session[key];
+            (<any>req.session)[key] = session[key];
         } else {
-            req.session[key] = session[key];
+            (<any>req.session)[key] = session[key];
         }
     });
-    return next();
+    next();
+    return;
 }

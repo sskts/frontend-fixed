@@ -17,7 +17,8 @@ function setLocals(_req, res, next) {
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = getPortalUrl();
-    return next();
+    next();
+    return;
 }
 exports.setLocals = setLocals;
 /**

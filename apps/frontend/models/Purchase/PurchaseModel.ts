@@ -8,9 +8,9 @@ import * as MP from '../../../../libs/MP';
 
 /**
  * ReserveTicket
- * @interface ReserveTicket
+ * @interface IReserveTicket
  */
-export interface ReserveTicket {
+export interface IReserveTicket {
     /**
      * 座席セクション
      */
@@ -67,9 +67,9 @@ export interface ReserveTicket {
 
 /**
  * 購入者情報
- * @interface Input
+ * @interface IInput
  */
-export interface Input {
+export interface IInput {
     /**
      * せい
      */
@@ -99,9 +99,9 @@ export interface Input {
 
 /**
  * GMO
- * @interface GMO
+ * @interface IGMO
  */
-export interface GMO {
+export interface IGMO {
     /**
      * トークン
      */
@@ -110,9 +110,9 @@ export interface GMO {
 
 /**
  * ムビチケ情報
- * @interface Mvtk
+ * @interface IMvtk
  */
-export interface Mvtk {
+export interface IMvtk {
     /**
      * 購入管理番号
      */
@@ -124,7 +124,7 @@ export interface Mvtk {
     /**
      * 有効券情報
      */
-    ykknInfo: ValidTickettResult;
+    ykknInfo: IValidTickettResult;
     /**
      * チケット情報
      */
@@ -133,9 +133,9 @@ export interface Mvtk {
 
 /**
  * 有効券情報
- * @interface ValidTickettResult
+ * @interface IValidTickettResult
  */
-export interface ValidTickettResult {
+export interface IValidTickettResult {
     /**
      * 有効券種区分
      */
@@ -163,11 +163,11 @@ export interface ValidTickettResult {
  * @class PurchaseModel
  */
 export class PurchaseModel {
-    public static SEAT_STATE = 0;
-    public static TICKET_STATE = 1;
-    public static INPUT_STATE = 2;
-    public static CONFIRM_STATE = 3;
-    public static COMPLETE_STATE = 4;
+    public static SEAT_STATE: number = 0;
+    public static TICKET_STATE: number = 1;
+    public static INPUT_STATE: number = 2;
+    public static CONFIRM_STATE: number = 3;
+    public static COMPLETE_STATE: number = 4;
 
     /**
      * パフォーマンス
@@ -184,15 +184,15 @@ export class PurchaseModel {
     /**
      * 予約チケット
      */
-    public reserveTickets: ReserveTicket[] | null;
+    public reserveTickets: IReserveTicket[] | null;
     /**
      * 入力情報
      */
-    public input: Input | null;
+    public input: IInput | null;
     /**
      * GMO TOKEN情報
      */
-    public gmo: GMO | null;
+    public gmo: IGMO | null;
     /**
      * COA本予約
      */
@@ -224,7 +224,7 @@ export class PurchaseModel {
     /**
      * ムビチケ
      */
-    public mvtk: Mvtk[] | null;
+    public mvtk: IMvtk[] | null;
     /**
      * CAO情報
      */
@@ -232,28 +232,28 @@ export class PurchaseModel {
 
     /**
      * @constructor
-     * @param {any} session
+     * @param {object | undefined} session
      */
-    constructor(session: any) {
-        if (!session) {
+    constructor(session: object | undefined) {
+        if (session === undefined) {
             session = {};
         }
 
-        this.performance = (session.performance) ? session.performance : null;
-        this.theater = (session.theater) ? session.theater : null;
-        this.reserveSeats = (session.reserveSeats) ? session.reserveSeats : null;
-        this.reserveTickets = (session.reserveTickets) ? session.reserveTickets : null;
-        this.input = (session.input) ? session.input : null;
-        this.gmo = (session.gmo) ? session.gmo : null;
-        this.updateReserve = (session.updateReserve) ? session.updateReserve : null;
-        this.transactionMP = (session.transactionMP) ? session.transactionMP : null;
-        this.transactionGMO = (session.transactionGMO) ? session.transactionGMO : null;
-        this.authorizationCOA = (session.authorizationCOA) ? session.authorizationCOA : null;
-        this.authorizationGMO = (session.authorizationGMO) ? session.authorizationGMO : null;
-        this.orderId = (session.orderId) ? session.orderId : null;
-        this.expired = (session.expired) ? session.expired : null;
-        this.mvtk = (session.mvtk) ? session.mvtk : null;
-        this.performanceCOA = (session.performanceCOA) ? session.performanceCOA : null;
+        this.performance = (session.hasOwnProperty('performance') !== null !== null) ? (<any>session).performance : null;
+        this.theater = (session.hasOwnProperty('theater') !== null !== null) ? (<any>session).theater : null;
+        this.reserveSeats = (session.hasOwnProperty('reserveSeats') !== null !== null) ? (<any>session).reserveSeats : null;
+        this.reserveTickets = (session.hasOwnProperty('reserveTickets') !== null !== null) ? (<any>session).reserveTickets : null;
+        this.input = (session.hasOwnProperty('input') !== null !== null) ? (<any>session).input : null;
+        this.gmo = (session.hasOwnProperty('gmo') !== null !== null) ? (<any>session).gmo : null;
+        this.updateReserve = (session.hasOwnProperty('updateReserve') !== null !== null) ? (<any>session).updateReserve : null;
+        this.transactionMP = (session.hasOwnProperty('transactionMP') !== null !== null) ? (<any>session).transactionMP : null;
+        this.transactionGMO = (session.hasOwnProperty('transactionGMO') !== null !== null) ? (<any>session).transactionGMO : null;
+        this.authorizationCOA = (session.hasOwnProperty('authorizationCOA') !== null !== null) ? (<any>session).authorizationCOA : null;
+        this.authorizationGMO = (session.hasOwnProperty('authorizationGMO') !== null !== null) ? (<any>session).authorizationGMO : null;
+        this.orderId = (session.hasOwnProperty('orderId') !== null !== null) ? (<any>session).orderId : null;
+        this.expired = (session.hasOwnProperty('expired') !== null !== null) ? (<any>session).expired : null;
+        this.mvtk = (session.hasOwnProperty('mvtk') !== null !== null) ? (<any>session).mvtk : null;
+        this.performanceCOA = (session.hasOwnProperty('performanceCOA') !== null !== null) ? (<any>session).performanceCOA : null;
     }
 
     /**
@@ -266,9 +266,9 @@ export class PurchaseModel {
         performance: MP.Performance | null,
         theater: MP.Theater | null;
         reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null,
-        reserveTickets: ReserveTicket[] | null,
-        input: Input | null,
-        gmo: GMO | null,
+        reserveTickets: IReserveTicket[] | null,
+        input: IInput | null,
+        gmo: IGMO | null,
         updateReserve: COA.ReserveService.IUpdReserveResult | null,
         transactionMP: MP.TransactionStartResult | null,
         transactionGMO: GMO.CreditService.EntryTranResult | null,
@@ -276,25 +276,25 @@ export class PurchaseModel {
         authorizationGMO: MP.AddGMOAuthorizationResult | null,
         orderId: string | null,
         expired: number | null,
-        mvtk: Mvtk[] | null,
+        mvtk: IMvtk[] | null,
         performanceCOA: MP.PerformanceCOA | null
     } {
         return {
-            performance: (this.performance) ? this.performance : null,
-            theater: (this.theater) ? this.theater : null,
-            reserveSeats: (this.reserveSeats) ? this.reserveSeats : null,
-            reserveTickets: (this.reserveTickets) ? this.reserveTickets : null,
-            input: (this.input) ? this.input : null,
-            gmo: (this.gmo) ? this.gmo : null,
-            updateReserve: (this.updateReserve) ? this.updateReserve : null,
-            transactionMP: (this.transactionMP) ? this.transactionMP : null,
-            transactionGMO: (this.transactionGMO) ? this.transactionGMO : null,
-            authorizationCOA: (this.authorizationCOA) ? this.authorizationCOA : null,
-            authorizationGMO: (this.authorizationGMO) ? this.authorizationGMO : null,
-            orderId: (this.orderId) ? this.orderId : null,
-            expired: (this.expired) ? this.expired : null,
-            mvtk: (this.mvtk) ? this.mvtk : null,
-            performanceCOA: (this.performanceCOA) ? this.performanceCOA : null
+            performance: (this.performance !== null) ? this.performance : null,
+            theater: (this.theater !== null) ? this.theater : null,
+            reserveSeats: (this.reserveSeats !== null) ? this.reserveSeats : null,
+            reserveTickets: (this.reserveTickets !== null) ? this.reserveTickets : null,
+            input: (this.input !== null) ? this.input : null,
+            gmo: (this.gmo !== null) ? this.gmo : null,
+            updateReserve: (this.updateReserve !== null) ? this.updateReserve : null,
+            transactionMP: (this.transactionMP !== null) ? this.transactionMP : null,
+            transactionGMO: (this.transactionGMO !== null) ? this.transactionGMO : null,
+            authorizationCOA: (this.authorizationCOA !== null) ? this.authorizationCOA : null,
+            authorizationGMO: (this.authorizationGMO !== null) ? this.authorizationGMO : null,
+            orderId: (this.orderId !== null) ? this.orderId : null,
+            expired: (this.expired !== null) ? this.expired : null,
+            mvtk: (this.mvtk !== null) ? this.mvtk : null,
+            performanceCOA: (this.performanceCOA !== null) ? this.performanceCOA : null
         };
     }
 
@@ -306,17 +306,27 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public accessAuth(value: number): boolean {
-        let result: boolean = false;
-        if (value === PurchaseModel.SEAT_STATE) {
-            if (this.transactionMP) result = true;
-        } else if (value === PurchaseModel.TICKET_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats) result = true;
-        } else if (value === PurchaseModel.INPUT_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets) result = true;
-        } else if (value === PurchaseModel.CONFIRM_STATE) {
-            if (this.transactionMP && this.performance && this.reserveSeats && this.reserveTickets && this.input) result = true;
-        } else if (value === PurchaseModel.COMPLETE_STATE) {
-            result = true;
+        let result = true;
+        if (this.transactionMP === null) result = false;
+        switch (value) {
+            case PurchaseModel.SEAT_STATE:
+                break;
+            case PurchaseModel.TICKET_STATE:
+                if (this.reserveSeats === null) result = false;
+                break;
+            case PurchaseModel.INPUT_STATE:
+                if (this.reserveSeats === null) result = false;
+                if (this.reserveTickets === null) result = false;
+                break;
+            case PurchaseModel.CONFIRM_STATE:
+                if (this.reserveSeats === null) result = false;
+                if (this.reserveTickets === null) result = false;
+                if (this.input === null) result = false;
+                break;
+            case PurchaseModel.COMPLETE_STATE:
+                break;
+            default:
+                break;
         }
         return result;
     }
@@ -330,7 +340,7 @@ export class PurchaseModel {
     public getReserveAmount(): number {
         const reserveTickets = this.reserveTickets;
         let amount = 0;
-        if (!reserveTickets) return amount;
+        if (reserveTickets === null) return amount;
         for (const ticket of reserveTickets) {
             amount += ticket.sale_price;
         }
@@ -344,7 +354,7 @@ export class PurchaseModel {
      * @returns {string}
      */
     public seatToString(): string {
-        if (!this.reserveSeats) return '';
+        if (this.reserveSeats === null) return '';
         const seats = [];
         for (const seat of this.reserveSeats.list_tmp_reserve) {
             seats.push(seat.seat_num);
@@ -359,14 +369,14 @@ export class PurchaseModel {
      * @returns {string}
      */
     public ticketToString(): string {
-        if (!this.reserveSeats) return '';
-        if (!this.reserveTickets) return '';
+        if (this.reserveSeats === null) return '';
+        if (this.reserveTickets === null) return '';
         const ticketObj: any = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            if (ticketObj[ticket.ticket_code]) {
+            if ((<object>ticketObj).hasOwnProperty(ticket.ticket_code)) {
                 ticketObj[ticket.ticket_code].length = <number>(ticketObj[ticket.ticket_code].length) + 1;
-            } 　else {
+            } else {
                 ticketObj[ticket.ticket_code] = {
                     name: ticket.ticket_name,
                     length: 1

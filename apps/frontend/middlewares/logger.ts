@@ -5,7 +5,7 @@
 import * as fs from 'fs-extra';
 import * as log4js from 'log4js';
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV;
 
 // ディレクトリなければ作成(初回アクセス時だけ)
 const logDir = `${__dirname}/../../../logs/${env}/frontend`;

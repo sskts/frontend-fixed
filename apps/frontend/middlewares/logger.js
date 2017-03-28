@@ -5,7 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const log4js = require("log4js");
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV;
 // ディレクトリなければ作成(初回アクセス時だけ)
 const logDir = `${__dirname}/../../../logs/${env}/frontend`;
 fs.mkdirsSync(logDir);

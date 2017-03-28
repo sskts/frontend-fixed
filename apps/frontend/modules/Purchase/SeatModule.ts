@@ -6,7 +6,7 @@
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
-import * as express from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra-promise';
 import * as MP from '../../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
@@ -19,21 +19,21 @@ const debugLog = debug('SSKTS ');
  * 座席選択
  * @memberOf Purchase.SeatModule
  * @function index
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-    if (!req.params || !req.params.id) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-
+export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
+            throw ErrorUtilModule.ERROR_ACCESS;
+        }
+        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+
         purchaseModel.performance = await MP.getPerformance(req.params.id);
         debugLog('パフォーマンス取得');
 
@@ -50,20 +50,22 @@ export async function index(req: express.Request, res: express.Response, next: e
         res.locals.performance = purchaseModel.performance;
         res.locals.performanceCOA = purchaseModel.performanceCOA;
         res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-        res.locals.reserveSeats = (purchaseModel.reserveSeats)
+        res.locals.reserveSeats = (purchaseModel.reserveSeats !== null)
             ? JSON.stringify(purchaseModel.reserveSeats) //仮予約中
             : null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.error = null;
-        res.locals.prevLink = (purchaseModel.performance)
+        res.locals.prevLink = (purchaseModel.performance !== null)
             ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
             : UtilModule.getPortalUrl();
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
-        return res.render('purchase/seat');
+        res.render('purchase/seat');
+        return;
     } catch (err) {
-        return next(ErrorUtilModule.getError(req, err));
+        next(ErrorUtilModule.getError(req, err));
+        return;
     }
 }
 
@@ -71,7 +73,7 @@ export async function index(req: express.Request, res: express.Response, next: e
  * 選択座席
  * @interface ReserveSeats
  */
-interface SelectSeats {
+interface ISelectSeats {
     seat_num: string;
     seat_section: string;
 }
@@ -80,25 +82,23 @@ interface SelectSeats {
  * 座席決定
  * @memberOf Purchase.SeatModule
  * @function select
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function select(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-    if (!req.session) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.session.purchase) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_EXPIRE));
-    const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-    if (!purchaseModel.transactionMP) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
-    if (!req.params || !req.params.id) return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    //取引id確認
-    if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-        return next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-    }
-
-    //バリデーション
-    SeatForm(req);
+export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        //取引id確認
+        if (req.body.transaction_id !== purchaseModel.transactionMP.id) throw ErrorUtilModule.ERROR_ACCESS;
+
+        //バリデーション
+        SeatForm(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) {
             res.locals.transactionId = purchaseModel.transactionMP;
@@ -106,19 +106,22 @@ export async function select(req: express.Request, res: express.Response, next: 
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
-            res.locals.prevLink = (purchaseModel.performance)
+            res.locals.prevLink = (purchaseModel.performance !== null)
                 ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
                 : UtilModule.getPortalUrl();
-            return res.render('purchase/seat');
+            res.render('purchase/seat');
+            return;
         }
-        const selectSeats: SelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;
+        const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;
         await reserve(selectSeats, purchaseModel);
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //券種選択へ
-        return res.redirect('/purchase/ticket');
+        res.redirect('/purchase/ticket');
+        return;
     } catch (err) {
-        return next(ErrorUtilModule.getError(req, err));
+        next(ErrorUtilModule.getError(req, err));
+        return;
     }
 }
 
@@ -130,15 +133,15 @@ export async function select(req: express.Request, res: express.Response, next: 
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-async function reserve(selectSeats: SelectSeats[], purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    if (!purchaseModel.performance) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (!purchaseModel.transactionMP) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (!purchaseModel.performanceCOA) throw ErrorUtilModule.ERROR_PROPERTY;
+async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     const performance = purchaseModel.performance;
 
     //予約中
-    if (purchaseModel.reserveSeats) {
-        if (!purchaseModel.authorizationCOA) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.reserveSeats !== null) {
+        if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         const reserveSeats = purchaseModel.reserveSeats;
 
         //COA仮予約削除
@@ -157,9 +160,9 @@ async function reserve(selectSeats: SelectSeats[], purchaseModel: PurchaseSessio
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
         debugLog('MPCOAオーソリ削除');
-        if (purchaseModel.transactionGMO
-            && purchaseModel.authorizationGMO) {
-            if (!purchaseModel.theater) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transactionGMO !== null
+            && purchaseModel.authorizationGMO !== null) {
+            if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
             const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
             const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
@@ -229,13 +232,17 @@ async function reserve(selectSeats: SelectSeats[], purchaseModel: PurchaseSessio
  * スクリーン状態取得
  * @memberOf Purchase.SeatModule
  * @function getScreenStateReserve
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunction} next
- * @returns {Promise<any>}
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<Response>}
  */
-// tslint:disable-next-line:variable-name
-export async function getScreenStateReserve(req: express.Request, res: express.Response, _next: express.NextFunction): Promise<any> {
+export async function getScreenStateReserve(
+    req: Request,
+    res: Response,
+    // tslint:disable-next-line:variable-name
+    _next: NextFunction
+): Promise<Response> {
     try {
         const num = 10;
         const screenCode: string = (Number(req.body.screen_code) < num)
