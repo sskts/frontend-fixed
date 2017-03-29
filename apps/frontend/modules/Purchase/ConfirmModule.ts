@@ -27,7 +27,7 @@ const debugLog = debug('SSKTS ');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
@@ -326,7 +326,7 @@ TEL：XX-XXXX-XXXX`;
 export async function purchase(req: Request, res: Response, _next: NextFunction): Promise<Response> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.expired === null) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -375,7 +375,7 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
 export function getCompleteData(req: Request, res: Response, _next: NextFunction): Response {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('complete')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         return res.json({ err: null, result: (<any>req.session).complete });
     } catch (err) {
         const msg = ErrorUtilModule.getError(req, err).message;

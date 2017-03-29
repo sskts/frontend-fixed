@@ -19,7 +19,6 @@ exports.default = (app) => {
     app.use(UtilModule.setLocals);
     // tslint:disable-next-line:variable-name
     router.get('/', (_req, res, _next) => {
-        console.log('=============performances');
         res.redirect('/performances');
     });
     //パフォーマンス一覧
@@ -71,9 +70,9 @@ function createSession(req, _res, next) {
         next();
         return;
     }
-    req.session.purchase = (req.body.hasOwnProperty('purchase')) ? req.body.purchase : null;
-    req.session.inquiry = (req.body.hasOwnProperty('inquiry')) ? req.body.inquiry : null;
-    req.session.complete = (req.body.hasOwnProperty('complete')) ? req.body.complete : null;
+    req.session.purchase = (req.body.purchase !== undefined) ? req.body.purchase : null;
+    req.session.inquiry = (req.body.inquiry !== undefined) ? req.body.inquiry : null;
+    req.session.complete = (req.body.complete !== undefined) ? req.body.complete : null;
     next();
     return;
 }

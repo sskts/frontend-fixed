@@ -25,7 +25,7 @@ const debugLog = debug('SSKTS ');
 export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
@@ -83,7 +83,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 export async function submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -115,7 +115,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 tel_num: req.body.tel_num,
                 agree: req.body.agree
             };
-            if (!(<object>req.body).hasOwnProperty('gmo_token_object')) {
+            if (req.body.gmo_token_object === undefined) {
                 // クレジット決済なし
                 req.session.purchase = purchaseModel.toSession();
                 // 購入者内容確認へ

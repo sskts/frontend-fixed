@@ -33,7 +33,7 @@ function index(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!req.session.hasOwnProperty('purchase'))
+        if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
@@ -97,7 +97,7 @@ function submit(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!req.session.hasOwnProperty('purchase'))
+            if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.theater === null)
@@ -132,7 +132,7 @@ function submit(req, res, next) {
                     tel_num: req.body.tel_num,
                     agree: req.body.agree
                 };
-                if (!req.body.hasOwnProperty('gmo_token_object')) {
+                if (req.body.gmo_token_object === undefined) {
                     // クレジット決済なし
                     req.session.purchase = purchaseModel.toSession();
                     // 購入者内容確認へ

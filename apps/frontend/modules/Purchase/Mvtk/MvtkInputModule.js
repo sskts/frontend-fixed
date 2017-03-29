@@ -35,7 +35,7 @@ function index(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!req.session.hasOwnProperty('purchase'))
+        if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null)
@@ -75,7 +75,7 @@ function select(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (!req.session.hasOwnProperty('purchase'))
+            if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP === null)

@@ -7,27 +7,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class PurchaseModel {
     /**
      * @constructor
-     * @param {object | undefined} session
+     * @param {any} session
      */
     constructor(session) {
         if (session === undefined) {
             session = {};
         }
-        this.performance = (session.hasOwnProperty('performance') !== null !== null) ? session.performance : null;
-        this.theater = (session.hasOwnProperty('theater') !== null !== null) ? session.theater : null;
-        this.reserveSeats = (session.hasOwnProperty('reserveSeats') !== null !== null) ? session.reserveSeats : null;
-        this.reserveTickets = (session.hasOwnProperty('reserveTickets') !== null !== null) ? session.reserveTickets : null;
-        this.input = (session.hasOwnProperty('input') !== null !== null) ? session.input : null;
-        this.gmo = (session.hasOwnProperty('gmo') !== null !== null) ? session.gmo : null;
-        this.updateReserve = (session.hasOwnProperty('updateReserve') !== null !== null) ? session.updateReserve : null;
-        this.transactionMP = (session.hasOwnProperty('transactionMP') !== null !== null) ? session.transactionMP : null;
-        this.transactionGMO = (session.hasOwnProperty('transactionGMO') !== null !== null) ? session.transactionGMO : null;
-        this.authorizationCOA = (session.hasOwnProperty('authorizationCOA') !== null !== null) ? session.authorizationCOA : null;
-        this.authorizationGMO = (session.hasOwnProperty('authorizationGMO') !== null !== null) ? session.authorizationGMO : null;
-        this.orderId = (session.hasOwnProperty('orderId') !== null !== null) ? session.orderId : null;
-        this.expired = (session.hasOwnProperty('expired') !== null !== null) ? session.expired : null;
-        this.mvtk = (session.hasOwnProperty('mvtk') !== null !== null) ? session.mvtk : null;
-        this.performanceCOA = (session.hasOwnProperty('performanceCOA') !== null !== null) ? session.performanceCOA : null;
+        this.performance = (session.performance !== undefined) ? session.performance : null;
+        this.theater = (session.theater !== undefined) ? session.theater : null;
+        this.reserveSeats = (session.reserveSeats !== undefined) ? session.reserveSeats : null;
+        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : null;
+        this.input = (session.input !== undefined) ? session.input : null;
+        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
+        this.updateReserve = (session.updateReserve !== undefined) ? session.updateReserve : null;
+        this.transactionMP = (session.transactionMP !== undefined) ? session.transactionMP : null;
+        this.transactionGMO = (session.transactionGMO !== undefined) ? session.transactionGMO : null;
+        this.authorizationCOA = (session.authorizationCOA !== undefined) ? session.authorizationCOA : null;
+        this.authorizationGMO = (session.authorizationGMO !== undefined) ? session.authorizationGMO : null;
+        this.orderId = (session.orderId !== undefined) ? session.orderId : null;
+        this.expired = (session.expired !== undefined) ? session.expired : null;
+        this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
+        this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
     }
     /**
      * セッションObjectへ変換
@@ -138,11 +138,12 @@ class PurchaseModel {
         const ticketObj = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            if (ticketObj.hasOwnProperty(ticket.ticket_code)) {
-                ticketObj[ticket.ticket_code].length = (ticketObj[ticket.ticket_code].length) + 1;
+            let target = ticketObj[ticket.ticket_code];
+            if (target !== undefined) {
+                target.length = (target.length) + 1;
             }
             else {
-                ticketObj[ticket.ticket_code] = {
+                target = {
                     name: ticket.ticket_name,
                     length: 1
                 };

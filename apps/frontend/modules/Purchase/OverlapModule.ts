@@ -26,7 +26,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
 
-        if (!(<object>req.params).hasOwnProperty('id')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //パフォーマンス取得
         const result = await MP.getPerformance(req.params.id);

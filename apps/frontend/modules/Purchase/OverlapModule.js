@@ -34,7 +34,7 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (!req.params.hasOwnProperty('id'))
+            if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.performance === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;

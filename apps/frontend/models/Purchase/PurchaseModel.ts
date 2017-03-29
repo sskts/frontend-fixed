@@ -172,11 +172,11 @@ export class PurchaseModel {
     /**
      * パフォーマンス
      */
-    public performance: MP.Performance | null;
+    public performance: MP.IPerformance | null;
     /**
      * 劇場
      */
-    public theater: MP.Theater | null;
+    public theater: MP.ITheater | null;
     /**
      * COA仮予約
      */
@@ -200,7 +200,7 @@ export class PurchaseModel {
     /**
      * 取引MP
      */
-    public transactionMP: MP.TransactionStartResult | null;
+    public transactionMP: MP.ITransactionStartResult | null;
     /**
      * 取引GMO
      */
@@ -208,11 +208,11 @@ export class PurchaseModel {
     /**
      * COAオーソリ
      */
-    public authorizationCOA: MP.AddCOAAuthorizationResult | null;
+    public authorizationCOA: MP.IAddCOAAuthorizationResult | null;
     /**
      * GMOオーソリ
      */
-    public authorizationGMO: MP.AddGMOAuthorizationResult | null;
+    public authorizationGMO: MP.IAddGMOAuthorizationResult | null;
     /**
      * オーダーID
      */
@@ -228,32 +228,32 @@ export class PurchaseModel {
     /**
      * CAO情報
      */
-    public performanceCOA: MP.PerformanceCOA | null;
+    public performanceCOA: MP.IPerformanceCOA | null;
 
     /**
      * @constructor
-     * @param {object | undefined} session
+     * @param {any} session
      */
-    constructor(session: object | undefined) {
+    constructor(session: any) {
         if (session === undefined) {
             session = {};
         }
 
-        this.performance = (session.hasOwnProperty('performance') !== null !== null) ? (<any>session).performance : null;
-        this.theater = (session.hasOwnProperty('theater') !== null !== null) ? (<any>session).theater : null;
-        this.reserveSeats = (session.hasOwnProperty('reserveSeats') !== null !== null) ? (<any>session).reserveSeats : null;
-        this.reserveTickets = (session.hasOwnProperty('reserveTickets') !== null !== null) ? (<any>session).reserveTickets : null;
-        this.input = (session.hasOwnProperty('input') !== null !== null) ? (<any>session).input : null;
-        this.gmo = (session.hasOwnProperty('gmo') !== null !== null) ? (<any>session).gmo : null;
-        this.updateReserve = (session.hasOwnProperty('updateReserve') !== null !== null) ? (<any>session).updateReserve : null;
-        this.transactionMP = (session.hasOwnProperty('transactionMP') !== null !== null) ? (<any>session).transactionMP : null;
-        this.transactionGMO = (session.hasOwnProperty('transactionGMO') !== null !== null) ? (<any>session).transactionGMO : null;
-        this.authorizationCOA = (session.hasOwnProperty('authorizationCOA') !== null !== null) ? (<any>session).authorizationCOA : null;
-        this.authorizationGMO = (session.hasOwnProperty('authorizationGMO') !== null !== null) ? (<any>session).authorizationGMO : null;
-        this.orderId = (session.hasOwnProperty('orderId') !== null !== null) ? (<any>session).orderId : null;
-        this.expired = (session.hasOwnProperty('expired') !== null !== null) ? (<any>session).expired : null;
-        this.mvtk = (session.hasOwnProperty('mvtk') !== null !== null) ? (<any>session).mvtk : null;
-        this.performanceCOA = (session.hasOwnProperty('performanceCOA') !== null !== null) ? (<any>session).performanceCOA : null;
+        this.performance = (session.performance !== undefined) ? (<any>session).performance : null;
+        this.theater = (session.theater !== undefined) ? (<any>session).theater : null;
+        this.reserveSeats = (session.reserveSeats !== undefined) ? (<any>session).reserveSeats : null;
+        this.reserveTickets = (session.reserveTickets !== undefined) ? (<any>session).reserveTickets : null;
+        this.input = (session.input !== undefined) ? (<any>session).input : null;
+        this.gmo = (session.gmo !== undefined) ? (<any>session).gmo : null;
+        this.updateReserve = (session.updateReserve !== undefined) ? (<any>session).updateReserve : null;
+        this.transactionMP = (session.transactionMP !== undefined) ? (<any>session).transactionMP : null;
+        this.transactionGMO = (session.transactionGMO !== undefined) ? (<any>session).transactionGMO : null;
+        this.authorizationCOA = (session.authorizationCOA !== undefined) ? (<any>session).authorizationCOA : null;
+        this.authorizationGMO = (session.authorizationGMO !== undefined) ? (<any>session).authorizationGMO : null;
+        this.orderId = (session.orderId !== undefined) ? (<any>session).orderId : null;
+        this.expired = (session.expired !== undefined) ? (<any>session).expired : null;
+        this.mvtk = (session.mvtk !== undefined) ? (<any>session).mvtk : null;
+        this.performanceCOA = (session.performanceCOA !== undefined) ? (<any>session).performanceCOA : null;
     }
 
     /**
@@ -263,21 +263,21 @@ export class PurchaseModel {
      * @returns {Object} result
      */
     public toSession(): {
-        performance: MP.Performance | null,
-        theater: MP.Theater | null;
+        performance: MP.IPerformance | null,
+        theater: MP.ITheater | null;
         reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null,
         reserveTickets: IReserveTicket[] | null,
         input: IInput | null,
         gmo: IGMO | null,
         updateReserve: COA.ReserveService.IUpdReserveResult | null,
-        transactionMP: MP.TransactionStartResult | null,
+        transactionMP: MP.ITransactionStartResult | null,
         transactionGMO: GMO.CreditService.EntryTranResult | null,
-        authorizationCOA: MP.AddCOAAuthorizationResult | null,
-        authorizationGMO: MP.AddGMOAuthorizationResult | null,
+        authorizationCOA: MP.IAddCOAAuthorizationResult | null,
+        authorizationGMO: MP.IAddGMOAuthorizationResult | null,
         orderId: string | null,
         expired: number | null,
         mvtk: IMvtk[] | null,
-        performanceCOA: MP.PerformanceCOA | null
+        performanceCOA: MP.IPerformanceCOA | null
     } {
         return {
             performance: (this.performance !== null) ? this.performance : null,
@@ -371,20 +371,21 @@ export class PurchaseModel {
     public ticketToString(): string {
         if (this.reserveSeats === null) return '';
         if (this.reserveTickets === null) return '';
-        const ticketObj: any = {};
+        const ticketObj = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            if ((<object>ticketObj).hasOwnProperty(ticket.ticket_code)) {
-                ticketObj[ticket.ticket_code].length = <number>(ticketObj[ticket.ticket_code].length) + 1;
+            let target = (<any>ticketObj)[ticket.ticket_code];
+            if (target !== undefined) {
+                target.length = <number>(target.length) + 1;
             } else {
-                ticketObj[ticket.ticket_code] = {
+                target = {
                     name: ticket.ticket_name,
                     length: 1
                 };
             }
         }
         for (const key of Object.keys(ticketObj)) {
-            const ticket = ticketObj[key];
+            const ticket = (<any>ticketObj)[key];
             tickets.push(`${ticket.name} × ${ticket.length}`);
         }
 

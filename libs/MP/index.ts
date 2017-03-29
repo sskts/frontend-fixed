@@ -14,28 +14,28 @@ const endPoint = process.env.MP_ENDPOINT;
 
 /**
  * 時間切れ
- * @const TIMEOUT
+ * @const timeout
  */
-const TIMEOUT = 10000;
+const timeout = 10000;
 
 /**
  * 言語
- * @interface Language
+ * @interface ILanguage
  */
-export interface Language {
+export interface ILanguage {
     en: string;
     ja: string;
 }
 
 /**
  * 劇場詳細
- * @interface Theater
+ * @interface ITheater
  */
-export interface Theater {
+export interface ITheater {
     id: string;
     attributes: {
-        address: Language;
-        name: Language;
+        address: ILanguage;
+        name: ILanguage;
         name_kana: string;
         gmo_site_id: string;
         gmo_shop_id: string;
@@ -45,42 +45,42 @@ export interface Theater {
 
 /**
  * スクリーン詳細
- * @interface Screen
+ * @interface IScreen
  */
-export interface Screen {
+export interface IScreen {
     id: string;
     attributes: {
         coa_screen_code: string;
-        name: Language;
+        name: ILanguage;
         seats_numbers_by_seat_grade: any[];
-        sections: Section[];
+        sections: ISection[];
         theater: string;
     };
 }
 
 /**
  * セクション
- * @interface Section
+ * @interface ISection
  */
-export interface Section {
+export interface ISection {
     code: string;
-    name: Language;
-    seats: Seat[];
+    name: ILanguage;
+    seats: ISeat[];
 }
 
 /**
  * 座席
- * @interface Seat
+ * @interface ISeat
  */
-export interface Seat {
+export interface ISeat {
     code: string;
 }
 
 /**
  * 作品詳細
- * @interface Film
+ * @interface IFilm
  */
-export interface Film {
+export interface IFilm {
     id: string;
     attributes: {
         coa_title_branch_num: string;
@@ -95,7 +95,7 @@ export interface Film {
         kbn_jimakufukikae: string;
         kbn_joueihousiki: string;
         minutes: number;
-        name: Language;
+        name: ILanguage;
         name_kana: string;
         name_original: string;
         name_short: string;
@@ -105,16 +105,16 @@ export interface Film {
 
 /**
  * パフォーマンス詳細
- * @interface Performance
+ * @interface IPerformance
  */
-export interface Performance {
+export interface IPerformance {
     id: string;
     attributes: {
         canceled: boolean,
         day: string,
         film: {
             id: string;
-            name: Language;
+            name: ILanguage;
             name_kana: string;
             name_short: string;
             name_original: string;
@@ -122,11 +122,11 @@ export interface Performance {
         },
         screen: {
             id: string;
-            name: Language;
+            name: ILanguage;
         },
         theater: {
             id: string;
-            name: Language;
+            name: ILanguage;
         },
         time_end: string,
         time_start: string
@@ -145,9 +145,9 @@ function errorHandler(response: any): void {
         throw new Error('NOT_FOUND');
     }
     let message: string = '';
-    if (response.body.errors && Array.isArray(response.body.errors)) {
+    if (response.body.errors !== undefined && Array.isArray(response.body.errors)) {
         for (const error of response.body.errors) {
-            if (error.description) {
+            if (error.description !== undefined) {
                 message = error.description;
                 break;
             }
@@ -173,7 +173,7 @@ export async function oauthToken(): Promise<string> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
 
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
@@ -186,9 +186,9 @@ export async function oauthToken(): Promise<string> {
  * @memberOf MP
  * @function getTheater
  * @param {GetTheaterArgs} args
- * @requires {Promise<Theater>}
+ * @requires {Promise<ITheater>}
  */
-export async function getTheater(id: string): Promise<Theater> {
+export async function getTheater(id: string): Promise<ITheater> {
     debugLog('getTheater args:', id);
     const response = await request.get({
         url: `${endPoint}/theaters/${id}`,
@@ -197,7 +197,7 @@ export async function getTheater(id: string): Promise<Theater> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getTheater:', response.body.data);
@@ -211,7 +211,7 @@ export async function getTheater(id: string): Promise<Theater> {
  * @param {GetScreenArgs} args
  * @requires {Promise<Screen>}
  */
-export async function getScreen(id: string): Promise<Screen> {
+export async function getScreen(id: string): Promise<IScreen> {
     debugLog('getScreen args:', id);
     const response = await request.get({
         url: `${endPoint}/screens/${id}`,
@@ -220,7 +220,7 @@ export async function getScreen(id: string): Promise<Screen> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getScreen:', response.body.data);
@@ -232,9 +232,9 @@ export async function getScreen(id: string): Promise<Screen> {
  * @memberOf MP
  * @function getFilm
  * @param {GetFilmArgs} args
- * @requires {Promise<Film>}
+ * @requires {Promise<IFilm>}
  */
-export async function getFilm(id: string): Promise<Film> {
+export async function getFilm(id: string): Promise<IFilm> {
     debugLog('getFilm args:', id);
     const response = await request.get({
         url: `${endPoint}/films/${id}`,
@@ -243,7 +243,7 @@ export async function getFilm(id: string): Promise<Film> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('getFilm:', response.body.data);
@@ -256,9 +256,9 @@ export async function getFilm(id: string): Promise<Film> {
  * @function getPerformances
  * @param {string} theater 劇場コード
  * @param {string} day 日付
- * @requires {Promise<Performance[]>}
+ * @requires {Promise<IPerformance[]>}
  */
-export async function getPerformances(theater: string, day: string): Promise<Performance[]> {
+export async function getPerformances(theater: string, day: string): Promise<IPerformance[]> {
     debugLog('getPerformances args:', theater, day);
     const response = await request.get({
         url: `${endPoint}/performances`,
@@ -270,7 +270,7 @@ export async function getPerformances(theater: string, day: string): Promise<Per
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     // debugLog('performances:', response.body.data);
@@ -282,9 +282,9 @@ export async function getPerformances(theater: string, day: string): Promise<Per
  * @memberOf MP
  * @function getPerformance
  * @param {GetPerformanceArgs} args
- * @requires {Promise<Performance>}
+ * @requires {Promise<IPerformance>}
  */
-export async function getPerformance(id: string): Promise<Performance> {
+export async function getPerformance(id: string): Promise<IPerformance> {
     debugLog('getPerformance args:', id);
     const response = await request.get({
         url: `${endPoint}/performances/${id}`,
@@ -293,7 +293,7 @@ export async function getPerformance(id: string): Promise<Performance> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     debugLog('performance:', response.body.data);
@@ -303,17 +303,17 @@ export async function getPerformance(id: string): Promise<Performance> {
 /**
  * 取引開始in
  * @memberOf MP
- * @interface TransactionStartArgs
+ * @interface ITransactionStartArgs
  */
-export interface TransactionStartArgs {
+export interface ITransactionStartArgs {
     expires_at: number;
 }
 /**
  * 取引開始out
  * @memberOf MP
- * @interface TransactionStartResult
+ * @interface ITransactionStartResult
  */
-export interface TransactionStartResult {
+export interface ITransactionStartResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
     id: string;
@@ -321,7 +321,7 @@ export interface TransactionStartResult {
         id: string,
         status: string,
         events: any[],
-        owners: Owner[],
+        owners: IOwner[],
         queues: any[],
         expired_at: string,
         inquiry_id: string,
@@ -330,7 +330,7 @@ export interface TransactionStartResult {
     };
 }
 
-interface Owner {
+interface IOwner {
     id: string;
     group: string;
 }
@@ -340,9 +340,9 @@ interface Owner {
  * @memberOf MP
  * @function transactionStart
  * @param {TransactionStartArgs} args
- * @returns {Promise<TransactionStartResult>}
+ * @returns {Promise<ITransactionStartResult>}
  */
-export async function transactionStart(args: TransactionStartArgs): Promise<TransactionStartResult> {
+export async function transactionStart(args: ITransactionStartArgs): Promise<ITransactionStartResult> {
     debugLog('transactionStart args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/startIfPossible`,
@@ -353,7 +353,7 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     debugLog('--------------------transaction:', response.body);
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
@@ -366,22 +366,22 @@ export async function transactionStart(args: TransactionStartArgs): Promise<Tran
 /**
  * COAオーソリ追加in
  * @memberOf MP
- * @interface AddCOAAuthorizationArgs
+ * @interface IAddCOAAuthorizationArgs
  */
-export interface AddCOAAuthorizationArgs {
-    transaction: TransactionStartResult;
+export interface IAddCOAAuthorizationArgs {
+    transaction: ITransactionStartResult;
     reserveSeatsTemporarilyResult: COA.ReserveService.IUpdTmpReserveSeatResult;
-    salesTicketResults: SalesTicketResult[];
-    performance: Performance;
-    performanceCOA: PerformanceCOA;
+    salesTicketResults: ISalesTicketResult[];
+    performance: IPerformance;
+    performanceCOA: IPerformanceCOA;
     price: number;
 
 }
 /**
  * SalesTicketResult
- * @interface SalesTicketResult
+ * @interface ISalesTicketResult
  */
-interface SalesTicketResult {
+interface ISalesTicketResult {
     section: string;
     seat_code: string;
     ticket_code: string;
@@ -396,9 +396,9 @@ interface SalesTicketResult {
 /**
  * COAオーソリ追加out
  * @memberOf MP
- * @interface AddCOAAuthorizationResult
+ * @interface IAddCOAAuthorizationResult
  */
-export interface AddCOAAuthorizationResult {
+export interface IAddCOAAuthorizationResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
     id: string;
@@ -407,19 +407,19 @@ export interface AddCOAAuthorizationResult {
  * COAオーソリ追加
  * @memberOf MP
  * @function addCOAAuthorization
- * @param {AddCOAAuthorizationArgs} args
- * @returns {Promise<AddCOAAuthorizationResult>}
+ * @param {IAddCOAAuthorizationArgs} args
+ * @returns {Promise<IAddCOAAuthorizationResult>}
  */
-export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promise<AddCOAAuthorizationResult> {
+export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promise<IAddCOAAuthorizationResult> {
     debugLog('addCOAAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
-    const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
+    const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'ANONYMOUS');
     });
-    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+    const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
 
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
@@ -454,7 +454,7 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
@@ -465,9 +465,9 @@ export async function addCOAAuthorization(args: AddCOAAuthorizationArgs): Promis
 /**
  * COAオーソリ削除in
  * @memberOf MP
- * @interface RemoveCOAAuthorizationArgs
+ * @interface IRemoveCOAAuthorizationArgs
  */
-export interface RemoveCOAAuthorizationArgs {
+export interface IRemoveCOAAuthorizationArgs {
     transactionId: string;
     coaAuthorizationId: string;
 }
@@ -475,10 +475,10 @@ export interface RemoveCOAAuthorizationArgs {
  * COAオーソリ削除
  * @memberOf MP
  * @function removeCOAAuthorization
- * @param {RemoveCOAAuthorizationArgs} args
+ * @param {IRemoveCOAAuthorizationArgs} args
  * @requires {Promise<void>}
  */
-export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): Promise<void> {
+export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs): Promise<void> {
     debugLog('removeCOAAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
@@ -488,7 +488,7 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
@@ -500,8 +500,8 @@ export async function removeCOAAuthorization(args: RemoveCOAAuthorizationArgs): 
  * @memberOf MP
  * @interface AddGMOAuthorizationArgs
  */
-export interface AddGMOAuthorizationArgs {
-    transaction: TransactionStartResult;
+export interface IAddGMOAuthorizationArgs {
+    transaction: ITransactionStartResult;
     orderId: string;
     amount: number;
     entryTranResult: GMO.CreditService.EntryTranResult;
@@ -511,9 +511,9 @@ export interface AddGMOAuthorizationArgs {
 /**
  * GMOオーソリ追加out
  * @memberOf MP
- * @interface AddGMOAuthorizationResult
+ * @interface IAddGMOAuthorizationResult
  */
-export interface AddGMOAuthorizationResult {
+export interface IAddGMOAuthorizationResult {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
     id: string;
@@ -522,19 +522,19 @@ export interface AddGMOAuthorizationResult {
  * GMOオーソリ追加
  * @memberOf MP
  * @function addGMOAuthorization
- * @param {AddGMOAuthorizationArgs} args
- * @requires {Promise<AddGMOAuthorizationResult>}
+ * @param {IAddGMOAuthorizationArgs} args
+ * @requires {Promise<IAddGMOAuthorizationResult>}
  */
-export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promise<AddGMOAuthorizationResult> {
+export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promise<IAddGMOAuthorizationResult> {
     debugLog('addGMOAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
-    const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
+    const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'ANONYMOUS');
     });
-    const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+    const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
 
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
@@ -554,7 +554,7 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
@@ -565,9 +565,9 @@ export async function addGMOAuthorization(args: AddGMOAuthorizationArgs): Promis
 /**
  * GMOオーソリ削除in
  * @memberOf MP
- * @interface RemoveGMOAuthorizationArgs
+ * @interface IRemoveGMOAuthorizationArgs
  */
-export interface RemoveGMOAuthorizationArgs {
+export interface IRemoveGMOAuthorizationArgs {
     transactionId: string;
     gmoAuthorizationId: string;
 }
@@ -575,10 +575,10 @@ export interface RemoveGMOAuthorizationArgs {
  * GMOオーソリ削除
  * @memberOf MP
  * @function removeGMOAuthorization
- * @param {RemoveGMOAuthorizationArgs} args
+ * @param {IRemoveGMOAuthorizationArgs} args
  * @returns {Promise<void>}
  */
-export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): Promise<void> {
+export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs): Promise<void> {
     debugLog('removeGMOAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
@@ -587,7 +587,7 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
@@ -599,7 +599,7 @@ export async function removeGMOAuthorization(args: RemoveGMOAuthorizationArgs): 
  * @memberOf MP
  * @interface OwnersAnonymousArgs
  */
-export interface OwnersAnonymousArgs {
+export interface IOwnersAnonymousArgs {
     transactionId: string;
     name_first: string;
     name_last: string;
@@ -610,10 +610,10 @@ export interface OwnersAnonymousArgs {
  * 購入者情報登録
  * @memberOf MP
  * @function ownersAnonymous
- * @param {OwnersAnonymousArgs} args
+ * @param {IOwnersAnonymousArgs} args
  * @returns {Promise<void>}
  */
-export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> {
+export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void> {
     debugLog('ownersAnonymous args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
@@ -627,7 +627,7 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
@@ -637,9 +637,9 @@ export async function ownersAnonymous(args: OwnersAnonymousArgs): Promise<void> 
 /**
  * 照会情報登録in
  * @memberOf MP
- * @interface TransactionsEnableInquiryArgs
+ * @interface ITransactionsEnableInquiryArgs
  */
-export interface TransactionsEnableInquiryArgs {
+export interface ITransactionsEnableInquiryArgs {
     transactionId: string;
     inquiry_theater: string;
     inquiry_id: number;
@@ -649,10 +649,10 @@ export interface TransactionsEnableInquiryArgs {
  * 照会情報登録(購入番号と電話番号で照会する場合)
  * @memberOf MP
  * @function transactionsEnableInquiry
- * @param {TransactionsEnableInquiryArgs} args
+ * @param {ITransactionsEnableInquiryArgs} args
  * @returns {Promise<void>}
  */
-export async function transactionsEnableInquiry(args: TransactionsEnableInquiryArgs): Promise<void> {
+export async function transactionsEnableInquiry(args: ITransactionsEnableInquiryArgs): Promise<void> {
     debugLog('transactionsEnableInquiry args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
@@ -665,7 +665,7 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
@@ -675,19 +675,19 @@ export async function transactionsEnableInquiry(args: TransactionsEnableInquiryA
 /**
  * 取引成立in
  * @memberOf MP
- * @interface TransactionCloseArgs
+ * @interface ITransactionCloseArgs
  */
-export interface TransactionCloseArgs {
+export interface ITransactionCloseArgs {
     transactionId: string;
 }
 /**
  * 取引成立
  * @memberOf MP
  * @function transactionClose
- * @param {TransactionCloseArgs} args
+ * @param {ITransactionCloseArgs} args
  * @returns {Promise<void>}
  */
-export async function transactionClose(args: TransactionCloseArgs): Promise<void> {
+export async function transactionClose(args: ITransactionCloseArgs): Promise<void> {
     debugLog('transactionClose args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/close`,
@@ -698,7 +698,7 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
     debugLog('close result:');
@@ -707,9 +707,9 @@ export async function transactionClose(args: TransactionCloseArgs): Promise<void
 /**
  * メール追加in
  * @memberOf MP
- * @interface AddEmailArgs
+ * @interface IAddEmailArgs
  */
-export interface AddEmailArgs {
+export interface IAddEmailArgs {
     transactionId: string;
     // tslint:disable-next-line:no-reserved-keywords
     from: string;
@@ -720,19 +720,19 @@ export interface AddEmailArgs {
 /**
  * メール追加out
  * @memberOf MP
- * @interface AddEmailResult
+ * @interface IAddEmailResult
  */
-export interface AddEmailResult {
+export interface IAddEmailResult {
     id: string;
 }
 /**
  * メール追加
  * @memberOf MP
  * @function addEmail
- * @param {AddEmailArgs} args
- * @returns {Promise<AddEmailResult>}
+ * @param {IAddEmailArgs} args
+ * @returns {Promise<IAddEmailResult>}
  */
-export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
+export async function addEmail(args: IAddEmailArgs): Promise<IAddEmailResult> {
     debugLog('addEmail args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
@@ -746,19 +746,19 @@ export async function addEmail(args: AddEmailArgs): Promise<AddEmailResult> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('addEmail result:' + response.body.data);
+    debugLog('addEmail result:' + (<string>response.body.data));
     return response.body.data;
 }
 
 /**
  * メール削除in
  * @memberOf MP
- * @interface RemoveEmailArgs
+ * @interface IRemoveEmailArgs
  */
-export interface RemoveEmailArgs {
+export interface IRemoveEmailArgs {
     transactionId: string;
     emailId: string;
 }
@@ -766,10 +766,10 @@ export interface RemoveEmailArgs {
  * メール削除
  * @memberOf MP
  * @function removeEmail
- * @param {RemoveEmailArgs} args
+ * @param {IRemoveEmailArgs} args
  * @returns {Promise<void>}
  */
-export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
+export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
     debugLog('removeEmail args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
@@ -778,7 +778,7 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
     debugLog('removeEmail result:');
@@ -789,7 +789,7 @@ export async function removeEmail(args: RemoveEmailArgs): Promise<void> {
  * @memberOf MP
  * @interface makeInquiry
  */
-export interface MakeInquiryArgs {
+export interface IMakeInquiryArgs {
     inquiry_theater: string;
     inquiry_id: number;
     inquiry_pass: string;
@@ -798,10 +798,10 @@ export interface MakeInquiryArgs {
  * 照会取引情報取得
  * @memberOf MP
  * @function makeInquiry
- * @param {MakeInquiryArgs} args
+ * @param {IMakeInquiryArgs} args
  * @returns {Promise<string>}
  */
-export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
+export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
     debugLog('makeInquiry args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/makeInquiry`,
@@ -814,19 +814,19 @@ export async function makeInquiry(args: MakeInquiryArgs): Promise<string> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: TIMEOUT
+        timeout: timeout
     });
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('makeInquiry result:' + response.body.data);
+    debugLog('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;
 }
 
 /**
  * CAO情報
  * @memberOf MP
- * @interface PerformanceCOA
+ * @interface IPerformanceCOA
  */
-export interface PerformanceCOA {
+export interface IPerformanceCOA {
     theaterCode: string;
     screenCode: string;
     titleCode: string;
@@ -840,9 +840,9 @@ export interface PerformanceCOA {
  * @param {string} theater 劇場id
  * @param {string} screenId スクリーンid
  * @param {string} filmId 作品id
- * @returns {Promise<COAPerformance>}
+ * @returns {Promise<ICOAPerformance>}
  */
-export async function getPerformanceCOA(theaterId: string, screenId: string, filmId: string): Promise<PerformanceCOA> {
+export async function getPerformanceCOA(theaterId: string, screenId: string, filmId: string): Promise<IPerformanceCOA> {
     debugLog('getPerformanceCOA args:', theaterId, screenId, filmId);
     const theater = await getTheater(theaterId);
     debugLog('劇場取得');

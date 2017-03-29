@@ -32,7 +32,7 @@ export class InquiryModel {
     /**
      * パフォーマンス
      */
-    public performance: MP.Performance | null;
+    public performance: MP.IPerformance | null;
     /**
      * COA照会情報
      */
@@ -46,14 +46,14 @@ export class InquiryModel {
      * @constructor
      * @param {any} session
      */
-    constructor(session: object | undefined) {
+    constructor(session: any) {
         if (session === undefined) {
             session = {};
         }
-        this.transactionId = (session.hasOwnProperty('transactionId')) ? (<any>session).transactionId : null;
-        this.performance = (session.hasOwnProperty('performance')) ? (<any>session).performance : null;
-        this.stateReserve = (session.hasOwnProperty('stateReserve')) ? (<any>session).stateReserve : null;
-        this.login = (session.hasOwnProperty('login')) ? (<any>session).login : null;
+        this.transactionId = (session.transactionId !== undefined) ? (<any>session).transactionId : null;
+        this.performance = (session.performance !== undefined) ? (<any>session).performance : null;
+        this.stateReserve = (session.stateReserve !== undefined) ? (<any>session).stateReserve : null;
+        this.login = (session.login !== undefined) ? (<any>session).login : null;
     }
 
     /**
@@ -64,7 +64,7 @@ export class InquiryModel {
      */
     public toSession(): {
         transactionId: string | null,
-        performance: MP.Performance | null,
+        performance: MP.IPerformance | null,
         stateReserve: COA.ReserveService.IStateReserveResult | null,
         login: ILogin | null
     } {

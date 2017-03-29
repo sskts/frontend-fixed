@@ -19,7 +19,7 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('complete')) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //購入者内容確認表示
         const complete = req.session.complete;
         const purchaseModel = new PurchaseSession.PurchaseModel({

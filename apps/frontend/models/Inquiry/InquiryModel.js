@@ -13,10 +13,10 @@ class InquiryModel {
         if (session === undefined) {
             session = {};
         }
-        this.transactionId = (session.hasOwnProperty('transactionId')) ? session.transactionId : null;
-        this.performance = (session.hasOwnProperty('performance')) ? session.performance : null;
-        this.stateReserve = (session.hasOwnProperty('stateReserve')) ? session.stateReserve : null;
-        this.login = (session.hasOwnProperty('login')) ? session.login : null;
+        this.transactionId = (session.transactionId !== undefined) ? session.transactionId : null;
+        this.performance = (session.performance !== undefined) ? session.performance : null;
+        this.stateReserve = (session.stateReserve !== undefined) ? session.stateReserve : null;
+        this.login = (session.login !== undefined) ? session.login : null;
     }
     /**
      * セッションObjectへ変換

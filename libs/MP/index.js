@@ -20,9 +20,9 @@ const debugLog = debug('SSKTS ');
 const endPoint = process.env.MP_ENDPOINT;
 /**
  * 時間切れ
- * @const TIMEOUT
+ * @const timeout
  */
-const TIMEOUT = 10000;
+const timeout = 10000;
 /**
  * エラー
  * @function errorHandler
@@ -35,9 +35,9 @@ function errorHandler(response) {
         throw new Error('NOT_FOUND');
     }
     let message = '';
-    if (response.body.errors && Array.isArray(response.body.errors)) {
+    if (response.body.errors !== undefined && Array.isArray(response.body.errors)) {
         for (const error of response.body.errors) {
-            if (error.description) {
+            if (error.description !== undefined) {
                 message = error.description;
                 break;
             }
@@ -63,7 +63,7 @@ function oauthToken() {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -77,7 +77,7 @@ exports.oauthToken = oauthToken;
  * @memberOf MP
  * @function getTheater
  * @param {GetTheaterArgs} args
- * @requires {Promise<Theater>}
+ * @requires {Promise<ITheater>}
  */
 function getTheater(id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -89,7 +89,7 @@ function getTheater(id) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -115,7 +115,7 @@ function getScreen(id) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -129,7 +129,7 @@ exports.getScreen = getScreen;
  * @memberOf MP
  * @function getFilm
  * @param {GetFilmArgs} args
- * @requires {Promise<Film>}
+ * @requires {Promise<IFilm>}
  */
 function getFilm(id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -141,7 +141,7 @@ function getFilm(id) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -156,7 +156,7 @@ exports.getFilm = getFilm;
  * @function getPerformances
  * @param {string} theater 劇場コード
  * @param {string} day 日付
- * @requires {Promise<Performance[]>}
+ * @requires {Promise<IPerformance[]>}
  */
 function getPerformances(theater, day) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -171,7 +171,7 @@ function getPerformances(theater, day) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -185,7 +185,7 @@ exports.getPerformances = getPerformances;
  * @memberOf MP
  * @function getPerformance
  * @param {GetPerformanceArgs} args
- * @requires {Promise<Performance>}
+ * @requires {Promise<IPerformance>}
  */
 function getPerformance(id) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -197,7 +197,7 @@ function getPerformance(id) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -211,7 +211,7 @@ exports.getPerformance = getPerformance;
  * @memberOf MP
  * @function transactionStart
  * @param {TransactionStartArgs} args
- * @returns {Promise<TransactionStartResult>}
+ * @returns {Promise<ITransactionStartResult>}
  */
 function transactionStart(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -225,7 +225,7 @@ function transactionStart(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         debugLog('--------------------transaction:', response.body);
         if (response.statusCode !== HTTPStatus.OK)
@@ -240,8 +240,8 @@ exports.transactionStart = transactionStart;
  * COAオーソリ追加
  * @memberOf MP
  * @function addCOAAuthorization
- * @param {AddCOAAuthorizationArgs} args
- * @returns {Promise<AddCOAAuthorizationResult>}
+ * @param {IAddCOAAuthorizationArgs} args
+ * @returns {Promise<IAddCOAAuthorizationResult>}
  */
 function addCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -249,11 +249,11 @@ function addCOAAuthorization(args) {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
-        const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
+        const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'ANONYMOUS');
         });
-        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+        const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             auth: { bearer: yield oauthToken() },
@@ -287,7 +287,7 @@ function addCOAAuthorization(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -300,7 +300,7 @@ exports.addCOAAuthorization = addCOAAuthorization;
  * COAオーソリ削除
  * @memberOf MP
  * @function removeCOAAuthorization
- * @param {RemoveCOAAuthorizationArgs} args
+ * @param {IRemoveCOAAuthorizationArgs} args
  * @requires {Promise<void>}
  */
 function removeCOAAuthorization(args) {
@@ -313,7 +313,7 @@ function removeCOAAuthorization(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -325,8 +325,8 @@ exports.removeCOAAuthorization = removeCOAAuthorization;
  * GMOオーソリ追加
  * @memberOf MP
  * @function addGMOAuthorization
- * @param {AddGMOAuthorizationArgs} args
- * @requires {Promise<AddGMOAuthorizationResult>}
+ * @param {IAddGMOAuthorizationArgs} args
+ * @requires {Promise<IAddGMOAuthorizationResult>}
  */
 function addGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -334,11 +334,11 @@ function addGMOAuthorization(args) {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
-        const promoterOwnerId = (promoterOwner) ? promoterOwner.id : null;
+        const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'ANONYMOUS');
         });
-        const anonymousOwnerId = (anonymousOwner) ? anonymousOwner.id : null;
+        const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },
@@ -357,7 +357,7 @@ function addGMOAuthorization(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -370,7 +370,7 @@ exports.addGMOAuthorization = addGMOAuthorization;
  * GMOオーソリ削除
  * @memberOf MP
  * @function removeGMOAuthorization
- * @param {RemoveGMOAuthorizationArgs} args
+ * @param {IRemoveGMOAuthorizationArgs} args
  * @returns {Promise<void>}
  */
 function removeGMOAuthorization(args) {
@@ -383,7 +383,7 @@ function removeGMOAuthorization(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -395,7 +395,7 @@ exports.removeGMOAuthorization = removeGMOAuthorization;
  * 購入者情報登録
  * @memberOf MP
  * @function ownersAnonymous
- * @param {OwnersAnonymousArgs} args
+ * @param {IOwnersAnonymousArgs} args
  * @returns {Promise<void>}
  */
 function ownersAnonymous(args) {
@@ -413,7 +413,7 @@ function ownersAnonymous(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -425,7 +425,7 @@ exports.ownersAnonymous = ownersAnonymous;
  * 照会情報登録(購入番号と電話番号で照会する場合)
  * @memberOf MP
  * @function transactionsEnableInquiry
- * @param {TransactionsEnableInquiryArgs} args
+ * @param {ITransactionsEnableInquiryArgs} args
  * @returns {Promise<void>}
  */
 function transactionsEnableInquiry(args) {
@@ -442,7 +442,7 @@ function transactionsEnableInquiry(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -454,7 +454,7 @@ exports.transactionsEnableInquiry = transactionsEnableInquiry;
  * 取引成立
  * @memberOf MP
  * @function transactionClose
- * @param {TransactionCloseArgs} args
+ * @param {ITransactionCloseArgs} args
  * @returns {Promise<void>}
  */
 function transactionClose(args) {
@@ -467,7 +467,7 @@ function transactionClose(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -479,8 +479,8 @@ exports.transactionClose = transactionClose;
  * メール追加
  * @memberOf MP
  * @function addEmail
- * @param {AddEmailArgs} args
- * @returns {Promise<AddEmailResult>}
+ * @param {IAddEmailArgs} args
+ * @returns {Promise<IAddEmailResult>}
  */
 function addEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -497,7 +497,7 @@ function addEmail(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -510,7 +510,7 @@ exports.addEmail = addEmail;
  * メール削除
  * @memberOf MP
  * @function removeEmail
- * @param {RemoveEmailArgs} args
+ * @param {IRemoveEmailArgs} args
  * @returns {Promise<void>}
  */
 function removeEmail(args) {
@@ -523,7 +523,7 @@ function removeEmail(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler(response);
@@ -535,7 +535,7 @@ exports.removeEmail = removeEmail;
  * 照会取引情報取得
  * @memberOf MP
  * @function makeInquiry
- * @param {MakeInquiryArgs} args
+ * @param {IMakeInquiryArgs} args
  * @returns {Promise<string>}
  */
 function makeInquiry(args) {
@@ -552,7 +552,7 @@ function makeInquiry(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: TIMEOUT
+            timeout: timeout
         });
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
@@ -568,7 +568,7 @@ exports.makeInquiry = makeInquiry;
  * @param {string} theater 劇場id
  * @param {string} screenId スクリーンid
  * @param {string} filmId 作品id
- * @returns {Promise<COAPerformance>}
+ * @returns {Promise<ICOAPerformance>}
  */
 function getPerformanceCOA(theaterId, screenId, filmId) {
     return __awaiter(this, void 0, void 0, function* () {

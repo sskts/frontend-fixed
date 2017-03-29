@@ -23,8 +23,8 @@ const debugLog = debug('SSKTS ');
  */
 // tslint:disable-next-line:variable-name
 export function login(req: Request, res: Response): void {
-    res.locals.theater_code = ((<object>req.query).hasOwnProperty('theater')) ? req.query.theater : '';
-    res.locals.reserve_num = ((<object>req.query).hasOwnProperty('reserve')) ? req.query.reserve : '';
+    res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
+    res.locals.reserve_num = (req.query.reserve !== undefined) ? req.query.reserve : '';
     res.locals.tel_num = '';
     res.locals.error = null;
     res.render('inquiry/login');

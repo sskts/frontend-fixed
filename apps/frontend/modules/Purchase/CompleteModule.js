@@ -19,7 +19,7 @@ function index(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!req.session.hasOwnProperty('complete'))
+        if (req.session.complete === undefined)
             throw ErrorUtilModule.ERROR_ACCESS;
         //購入者内容確認表示
         const complete = req.session.complete;

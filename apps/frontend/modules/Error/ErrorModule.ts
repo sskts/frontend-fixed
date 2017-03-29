@@ -40,7 +40,7 @@ export function index(err: Error, req: Request, res: Response, _next: NextFuncti
     if (process.env.NODE_ENV === 'development') console.error('show Error');
     console.error(err.stack);
 
-    if (req.session !== undefined && req.session.hasOwnProperty('purchase')) {
+    if (req.session !== undefined && req.session.purchase !== undefined) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         res.locals.prevLink = (purchaseModel.performance !== null)
             ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)

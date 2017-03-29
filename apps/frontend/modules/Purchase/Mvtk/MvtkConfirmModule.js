@@ -22,7 +22,7 @@ function index(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!req.session.hasOwnProperty('purchase'))
+        if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null)
@@ -60,7 +60,7 @@ function creatPurchaseNoList(mvtk) {
         const purchaseNo = result.find((value) => {
             return (value === target.code);
         });
-        if (purchaseNo !== undefined)
+        if (purchaseNo === undefined)
             result.push(target.code);
     }
     return result;
@@ -78,7 +78,7 @@ function submit(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!req.session.hasOwnProperty('purchase'))
+        if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null)

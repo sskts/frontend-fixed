@@ -21,7 +21,7 @@ const debugLog = debug('SSKTS ');
 export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
@@ -37,6 +37,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
+
         res.render('purchase/mvtk/confirm');
         return;
     } catch (err) {
@@ -59,7 +60,7 @@ function creatPurchaseNoList(mvtk: PurchaseSession.IMvtk[]) {
         const purchaseNo = result.find((value) => {
             return (value === target.code);
         });
-        if (purchaseNo !== undefined) result.push(target.code);
+        if (purchaseNo === undefined) result.push(target.code);
     }
     return result;
 }
@@ -76,7 +77,7 @@ function creatPurchaseNoList(mvtk: PurchaseSession.IMvtk[]) {
 export function submit(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!(<object>req.session).hasOwnProperty('purchase')) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
 

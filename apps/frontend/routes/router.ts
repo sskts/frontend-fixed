@@ -23,7 +23,6 @@ export default (app: express.Application) => {
 
     // tslint:disable-next-line:variable-name
     router.get('/', (_req, res, _next) => {
-        console.log('=============performances')
         res.redirect('/performances');
     });
 
@@ -87,9 +86,9 @@ function createSession(req: express.Request, _res: express.Response, next: expre
         next();
         return;
     }
-    req.session.purchase = ((<object>req.body).hasOwnProperty('purchase')) ? req.body.purchase : null;
-    req.session.inquiry = ((<object>req.body).hasOwnProperty('inquiry')) ? req.body.inquiry : null;
-    req.session.complete = ((<object>req.body).hasOwnProperty('complete')) ? req.body.complete : null;
+    req.session.purchase = (req.body.purchase !== undefined) ? req.body.purchase : null;
+    req.session.inquiry = (req.body.inquiry !== undefined) ? req.body.inquiry : null;
+    req.session.complete = (req.body.complete !== undefined) ? req.body.complete : null;
     next();
     return;
 }
