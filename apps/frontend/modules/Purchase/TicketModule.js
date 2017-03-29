@@ -19,7 +19,7 @@ const MP = require("../../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 /**
  * 券種選択
  * @memberOf Purchase.TicketModule
@@ -94,11 +94,11 @@ function select(req, res, next) {
                 if (validationResult.isEmpty()) {
                     const reserveTickets = JSON.parse(req.body.reserve_tickets);
                     purchaseModel.reserveTickets = yield ticketValidation(req, purchaseModel, reserveTickets);
-                    debugLog('券種検証');
+                    log('券種検証');
                     yield upDateAuthorization(purchaseModel);
-                    debugLog('オーソリ追加');
+                    log('オーソリ追加');
                     req.session.purchase = purchaseModel.toSession();
-                    debugLog('セッション更新');
+                    log('セッション更新');
                     res.redirect('/purchase/input');
                     return;
                 }
@@ -107,7 +107,7 @@ function select(req, res, next) {
                 if (err === ErrorUtilModule.ERROR_VALIDATION) {
                     try {
                         const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
-                        debugLog('券種取得');
+                        log('券種取得');
                         const performance = purchaseModel.performance;
                         res.locals.tickets = salesTicketsResult;
                         res.locals.performance = performance;
@@ -336,7 +336,7 @@ function upDateAuthorization(purchaseModel) {
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
-        debugLog('MPCOAオーソリ削除');
+        log('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO !== null
             && purchaseModel.authorizationGMO !== null
             && purchaseModel.orderId !== null
@@ -352,13 +352,13 @@ function upDateAuthorization(purchaseModel) {
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            debugLog('GMOオーソリ取消');
+            log('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            debugLog('GMOオーソリ削除');
+            log('GMOオーソリ削除');
         }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.addCOAAuthorization({
@@ -369,7 +369,7 @@ function upDateAuthorization(purchaseModel) {
             performanceCOA: purchaseModel.performanceCOA,
             price: purchaseModel.getReserveAmount()
         });
-        debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
+        log('MPCOAオーソリ追加', coaAuthorizationResult);
         purchaseModel.authorizationCOA = coaAuthorizationResult;
     });
 }

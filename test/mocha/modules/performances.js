@@ -1,5 +1,0 @@
-/**
- * performancesModuleテスト
- *
- * @ignore
- */

@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 仮予約重複
@@ -73,14 +73,14 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
             time_begin: performance.attributes.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num
         });
-        debugLog('COA仮予約削除');
+        log('COA仮予約削除');
 
         // COAオーソリ削除
         await MP.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
-        debugLog('COAオーソリ削除');
+        log('COAオーソリ削除');
 
         if (purchaseModel.transactionGMO !== null
             && purchaseModel.authorizationGMO !== null
@@ -96,14 +96,14 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            debugLog('GMOオーソリ取消');
+            log('GMOオーソリ取消');
 
             // GMOオーソリ削除
             await MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            debugLog('GMOオーソリ削除');
+            log('GMOオーソリ削除');
         }
         //購入スタートへ
         delete req.session.purchase;

@@ -13,7 +13,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 購入者内容確認
@@ -75,7 +75,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    debugLog('ムビチケ決済開始');
+    log('ムビチケ決済開始');
     // 購入管理番号情報
     const mvtkTickets = [];
     // 座席情報
@@ -123,7 +123,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         });
     }
 
-    debugLog('購入管理番号情報', mvtkTickets);
+    log('購入管理番号情報', mvtkTickets);
     if (mvtkTickets.length === 0 || reserveSeats.length === 0) return;
 
     // 興行会社システム座席予約番号(劇場コード + 予約番号)
@@ -164,7 +164,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
  * @returns {Promise<void>}
  */
 async function updateReserve(req: Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
-    debugLog('座席本予約開始');
+    log('座席本予約開始');
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -214,12 +214,12 @@ async function updateReserve(req: Request, purchaseModel: PurchaseSession.Purcha
             };
         })
     });
-    debugLog('COA本予約', purchaseModel.updateReserve);
+    log('COA本予約', purchaseModel.updateReserve);
 
     // ムビチケ使用
     if (purchaseModel.mvtk !== null) {
         await reserveMvtk(purchaseModel);
-        debugLog('ムビチケ決済');
+        log('ムビチケ決済');
     }
 
     // MP購入者情報登録
@@ -230,7 +230,7 @@ async function updateReserve(req: Request, purchaseModel: PurchaseSession.Purcha
         tel: input.tel_num,
         email: input.mail_addr
     });
-    debugLog('MP購入者情報登録');
+    log('MP購入者情報登録');
 
     // MP照会情報登録
     await MP.transactionsEnableInquiry({
@@ -239,7 +239,7 @@ async function updateReserve(req: Request, purchaseModel: PurchaseSession.Purcha
         inquiry_id: purchaseModel.updateReserve.reserve_num,
         inquiry_pass: purchaseModel.input.tel_num
     });
-    debugLog('MP照会情報登録');
+    log('MP照会情報登録');
 
     // MPメール登録
     await MP.addEmail({
@@ -249,13 +249,13 @@ async function updateReserve(req: Request, purchaseModel: PurchaseSession.Purcha
         subject: '購入完了',
         content: getMailContent(req, purchaseModel)
     });
-    debugLog('MPメール登録');
+    log('MPメール登録');
 
     // MP取引成立
     await MP.transactionClose({
         transactionId: purchaseModel.transactionMP.id
     });
-    debugLog('MP取引成立');
+    log('MP取引成立');
 }
 
 /**
@@ -337,7 +337,7 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         //購入期限切れ
         const minutes = 5;
         if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-            debugLog('購入期限切れ');
+            log('購入期限切れ');
             //購入セッション削除
             delete req.session.purchase;
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -358,7 +358,7 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         //購入完了情報を返す
         return res.json({ err: null, result: req.session.complete.updateReserve });
     } catch (err) {
-        debugLog('ERROR', err);
+        log('ERROR', err);
         //購入セッション削除
         delete (<any>req.session).purchase;
         const msg = ErrorUtilModule.getError(req, err).message;

@@ -34,7 +34,7 @@ export function setLocals(_req: express.Request, res: express.Response, next: ex
  */
 export function timeFormat(str: string): string {
     if (typeof str !== 'string') {
-        return str;
+        return '';
     }
     const start = 2;
     const end = 4;

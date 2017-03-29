@@ -5,7 +5,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * エラーメッセージ
+ * エラー取得
  * @memberof Util.ErrorUtilModule
  * @function erorMessage
  */
@@ -36,7 +36,7 @@ exports.getError = getError;
  * @memberof Util.ErrorUtilModule
  * @const ERROR_PROPERTY
  */
-exports.ERROR_PROPERTY = 0;
+exports.ERROR_PROPERTY = '000';
 /**
  * エラー番号（アクセス）
  * @memberof Util.ErrorUtilModule

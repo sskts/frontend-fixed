@@ -11,7 +11,7 @@ import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 照会認証ページ表示
@@ -57,7 +57,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 } catch (err) {
                     throw ErrorUtilModule.ERROR_VALIDATION;
                 }
-                debugLog('MP取引Id取得', inquiryModel.transactionId);
+                log('MP取引Id取得', inquiryModel.transactionId);
 
                 inquiryModel.login = req.body;
                 inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
@@ -65,7 +65,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                     reserve_num: req.body.reserve_num, // 座席チケット購入番号
                     tel_num: req.body.tel_num // 電話番号
                 });
-                debugLog('COA照会情報取得');
+                log('COA照会情報取得');
 
                 const performanceId = UtilModule.getPerformanceId({
                     theaterCode: req.body.theater_code,
@@ -75,10 +75,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                     screenCode: inquiryModel.stateReserve.screen_code,
                     timeBegin: inquiryModel.stateReserve.time_begin
                 });
-                debugLog('パフォーマンスID取得', performanceId);
+                log('パフォーマンスID取得', performanceId);
 
                 inquiryModel.performance = await MP.getPerformance(performanceId);
-                debugLog('MPパフォーマンス取得');
+                log('MPパフォーマンス取得');
 
                 req.session.inquiry = inquiryModel.toSession();
 

@@ -11,7 +11,7 @@ import * as MP from '../../../../libs/MP';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 券種選択
@@ -77,11 +77,11 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             if (validationResult.isEmpty()) {
                 const reserveTickets: PurchaseSession.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
                 purchaseModel.reserveTickets = await ticketValidation(req, purchaseModel, reserveTickets);
-                debugLog('券種検証');
+                log('券種検証');
                 await upDateAuthorization(purchaseModel);
-                debugLog('オーソリ追加');
+                log('オーソリ追加');
                 req.session.purchase = purchaseModel.toSession();
-                debugLog('セッション更新');
+                log('セッション更新');
                 res.redirect('/purchase/input');
                 return;
             }
@@ -89,7 +89,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
                 try {
                     const salesTicketsResult = await getSalesTickets(req, purchaseModel);
-                    debugLog('券種取得');
+                    log('券種取得');
                     const performance = purchaseModel.performance;
                     res.locals.tickets = salesTicketsResult;
                     res.locals.performance = performance;
@@ -362,7 +362,7 @@ async function upDateAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
         coaAuthorizationId: purchaseModel.authorizationCOA.id
     });
 
-    debugLog('MPCOAオーソリ削除');
+    log('MPCOAオーソリ削除');
 
     if (purchaseModel.transactionGMO !== null
         && purchaseModel.authorizationGMO !== null
@@ -379,14 +379,14 @@ async function upDateAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
         });
-        debugLog('GMOオーソリ取消');
+        log('GMOオーソリ取消');
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
-        debugLog('GMOオーソリ削除');
+        log('GMOオーソリ削除');
     }
 
     //COAオーソリ追加
@@ -398,6 +398,6 @@ async function upDateAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
         performanceCOA: purchaseModel.performanceCOA,
         price: purchaseModel.getReserveAmount()
     });
-    debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
+    log('MPCOAオーソリ追加', coaAuthorizationResult);
     purchaseModel.authorizationCOA = coaAuthorizationResult;
 }

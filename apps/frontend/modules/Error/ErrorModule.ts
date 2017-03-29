@@ -3,9 +3,10 @@
  * @namespace ErrorModule
  */
 
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../Util/UtilModule';
+
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -37,7 +38,6 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
  */
 // tslint:disable-next-line:variable-name
 export function index(err: Error, req: Request, res: Response, _next: NextFunction): void {
-    if (process.env.NODE_ENV === 'development') console.error('show Error');
     console.error(err.stack);
 
     if (req.session !== undefined && req.session.purchase !== undefined) {
@@ -63,6 +63,7 @@ export function index(err: Error, req: Request, res: Response, _next: NextFuncti
         console.error(err.message);
         res.locals.message = err.message;
         res.locals.error = err;
+        res.locals.portalSite = UtilModule.getPortalUrl();
         res.status(status).render('error/error');
     }
     return;

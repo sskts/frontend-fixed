@@ -9,7 +9,7 @@ import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
 
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 const endPoint = process.env.MP_ENDPOINT;
 
 /**
@@ -174,10 +174,10 @@ export async function oauthToken(): Promise<string> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
 
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('oauthToken:', response.body.access_token);
+    log('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
 
@@ -189,7 +189,7 @@ export async function oauthToken(): Promise<string> {
  * @requires {Promise<ITheater>}
  */
 export async function getTheater(id: string): Promise<ITheater> {
-    debugLog('getTheater args:', id);
+    log('getTheater args:', id);
     const response = await request.get({
         url: `${endPoint}/theaters/${id}`,
         auth: { bearer: await oauthToken() },
@@ -198,9 +198,9 @@ export async function getTheater(id: string): Promise<ITheater> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('getTheater:', response.body.data);
+    log('getTheater:', response.body.data);
     return response.body.data;
 }
 
@@ -212,7 +212,7 @@ export async function getTheater(id: string): Promise<ITheater> {
  * @requires {Promise<Screen>}
  */
 export async function getScreen(id: string): Promise<IScreen> {
-    debugLog('getScreen args:', id);
+    log('getScreen args:', id);
     const response = await request.get({
         url: `${endPoint}/screens/${id}`,
         auth: { bearer: await oauthToken() },
@@ -221,9 +221,9 @@ export async function getScreen(id: string): Promise<IScreen> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('getScreen:', response.body.data);
+    log('getScreen:', response.body.data);
     return response.body.data;
 }
 
@@ -235,7 +235,7 @@ export async function getScreen(id: string): Promise<IScreen> {
  * @requires {Promise<IFilm>}
  */
 export async function getFilm(id: string): Promise<IFilm> {
-    debugLog('getFilm args:', id);
+    log('getFilm args:', id);
     const response = await request.get({
         url: `${endPoint}/films/${id}`,
         auth: { bearer: await oauthToken() },
@@ -244,9 +244,9 @@ export async function getFilm(id: string): Promise<IFilm> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('getFilm:', response.body.data);
+    log('getFilm:', response.body.data);
     return response.body.data;
 }
 
@@ -259,7 +259,7 @@ export async function getFilm(id: string): Promise<IFilm> {
  * @requires {Promise<IPerformance[]>}
  */
 export async function getPerformances(theater: string, day: string): Promise<IPerformance[]> {
-    debugLog('getPerformances args:', theater, day);
+    log('getPerformances args:', theater, day);
     const response = await request.get({
         url: `${endPoint}/performances`,
         auth: { bearer: await oauthToken() },
@@ -271,9 +271,9 @@ export async function getPerformances(theater: string, day: string): Promise<IPe
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    // debugLog('performances:', response.body.data);
+    // log('performances:', response.body.data);
     return response.body.data;
 }
 
@@ -285,7 +285,7 @@ export async function getPerformances(theater: string, day: string): Promise<IPe
  * @requires {Promise<IPerformance>}
  */
 export async function getPerformance(id: string): Promise<IPerformance> {
-    debugLog('getPerformance args:', id);
+    log('getPerformance args:', id);
     const response = await request.get({
         url: `${endPoint}/performances/${id}`,
         auth: { bearer: await oauthToken() },
@@ -294,9 +294,9 @@ export async function getPerformance(id: string): Promise<IPerformance> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('performance:', response.body.data);
+    log('performance:', response.body.data);
     return response.body.data;
 }
 
@@ -343,7 +343,7 @@ interface IOwner {
  * @returns {Promise<ITransactionStartResult>}
  */
 export async function transactionStart(args: ITransactionStartArgs): Promise<ITransactionStartResult> {
-    debugLog('transactionStart args:', args);
+    log('transactionStart args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/startIfPossible`,
         auth: { bearer: await oauthToken() },
@@ -354,11 +354,11 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
-    debugLog('--------------------transaction:', response.body);
+    }).promise();
+    log('--------------------transaction:', response.body);
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     const transaction = response.body.data;
-    debugLog('transaction:', transaction);
+    log('transaction:', transaction);
 
     return transaction;
 }
@@ -411,7 +411,7 @@ export interface IAddCOAAuthorizationResult {
  * @returns {Promise<IAddCOAAuthorizationResult>}
  */
 export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promise<IAddCOAAuthorizationResult> {
-    debugLog('addCOAAuthorization args:', args);
+    log('addCOAAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -455,10 +455,10 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
-    debugLog('addCOAAuthorization result');
+    log('addCOAAuthorization result');
     return response.body.data;
 }
 
@@ -479,7 +479,7 @@ export interface IRemoveCOAAuthorizationArgs {
  * @requires {Promise<void>}
  */
 export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs): Promise<void> {
-    debugLog('removeCOAAuthorization args:', args);
+    log('removeCOAAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
         auth: { bearer: await oauthToken() },
@@ -489,10 +489,10 @@ export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs):
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
-    debugLog('addCOAAuthorization result');
+    log('addCOAAuthorization result');
 }
 
 /**
@@ -526,7 +526,7 @@ export interface IAddGMOAuthorizationResult {
  * @requires {Promise<IAddGMOAuthorizationResult>}
  */
 export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promise<IAddGMOAuthorizationResult> {
-    debugLog('addGMOAuthorization args:', args);
+    log('addGMOAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -555,10 +555,10 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
 
-    debugLog('addGMOAuthorization result:');
+    log('addGMOAuthorization result:');
     return response.body.data;
 }
 
@@ -579,7 +579,7 @@ export interface IRemoveGMOAuthorizationArgs {
  * @returns {Promise<void>}
  */
 export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs): Promise<void> {
-    debugLog('removeGMOAuthorization args:', args);
+    log('removeGMOAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
         auth: { bearer: await oauthToken() },
@@ -588,10 +588,10 @@ export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs):
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
-    debugLog('removeGMOAuthorization result:');
+    log('removeGMOAuthorization result:');
 }
 
 /**
@@ -614,7 +614,7 @@ export interface IOwnersAnonymousArgs {
  * @returns {Promise<void>}
  */
 export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void> {
-    debugLog('ownersAnonymous args:', args);
+    log('ownersAnonymous args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
         auth: { bearer: await oauthToken() },
@@ -628,10 +628,10 @@ export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void>
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
-    debugLog('ownersAnonymous result:');
+    log('ownersAnonymous result:');
 }
 
 /**
@@ -653,7 +653,7 @@ export interface ITransactionsEnableInquiryArgs {
  * @returns {Promise<void>}
  */
 export async function transactionsEnableInquiry(args: ITransactionsEnableInquiryArgs): Promise<void> {
-    debugLog('transactionsEnableInquiry args:', args);
+    log('transactionsEnableInquiry args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
         auth: { bearer: await oauthToken() },
@@ -666,10 +666,10 @@ export async function transactionsEnableInquiry(args: ITransactionsEnableInquiry
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
 
-    debugLog('transactionsEnableInquiry result:');
+    log('transactionsEnableInquiry result:');
 }
 
 /**
@@ -688,7 +688,7 @@ export interface ITransactionCloseArgs {
  * @returns {Promise<void>}
  */
 export async function transactionClose(args: ITransactionCloseArgs): Promise<void> {
-    debugLog('transactionClose args:', args);
+    log('transactionClose args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/close`,
         auth: { bearer: await oauthToken() },
@@ -699,9 +699,9 @@ export async function transactionClose(args: ITransactionCloseArgs): Promise<voi
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
-    debugLog('close result:');
+    log('close result:');
 }
 
 /**
@@ -733,7 +733,7 @@ export interface IAddEmailResult {
  * @returns {Promise<IAddEmailResult>}
  */
 export async function addEmail(args: IAddEmailArgs): Promise<IAddEmailResult> {
-    debugLog('addEmail args:', args);
+    log('addEmail args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
         auth: { bearer: await oauthToken() },
@@ -747,9 +747,9 @@ export async function addEmail(args: IAddEmailArgs): Promise<IAddEmailResult> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('addEmail result:' + (<string>response.body.data));
+    log('addEmail result:' + (<string>response.body.data));
     return response.body.data;
 }
 
@@ -770,7 +770,7 @@ export interface IRemoveEmailArgs {
  * @returns {Promise<void>}
  */
 export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
-    debugLog('removeEmail args:', args);
+    log('removeEmail args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
         auth: { bearer: await oauthToken() },
@@ -779,9 +779,9 @@ export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
-    debugLog('removeEmail result:');
+    log('removeEmail result:');
 }
 
 /**
@@ -802,7 +802,7 @@ export interface IMakeInquiryArgs {
  * @returns {Promise<string>}
  */
 export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
-    debugLog('makeInquiry args:', args);
+    log('makeInquiry args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/makeInquiry`,
         auth: { bearer: await oauthToken() },
@@ -815,9 +815,9 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
-    });
+    }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
-    debugLog('makeInquiry result:' + (<string>response.body.data));
+    log('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;
 }
 
@@ -843,13 +843,13 @@ export interface IPerformanceCOA {
  * @returns {Promise<ICOAPerformance>}
  */
 export async function getPerformanceCOA(theaterId: string, screenId: string, filmId: string): Promise<IPerformanceCOA> {
-    debugLog('getPerformanceCOA args:', theaterId, screenId, filmId);
+    log('getPerformanceCOA args:', theaterId, screenId, filmId);
     const theater = await getTheater(theaterId);
-    debugLog('劇場取得');
+    log('劇場取得');
     const screen = await getScreen(screenId);
-    debugLog('スクリーン取得');
+    log('スクリーン取得');
     const film = await getFilm(filmId);
-    debugLog('作品取得');
+    log('作品取得');
     return {
         theaterCode: theater.id,
         screenCode: screen.attributes.coa_screen_code,

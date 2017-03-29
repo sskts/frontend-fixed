@@ -13,7 +13,7 @@ import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * ムビチケ券入力ページ表示
@@ -159,7 +159,7 @@ export async function auth(req: Request, purchaseModel: PurchaseSession.Purchase
         jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
     });
 
-    debugLog('ムビチケ認証', result);
+    log('ムビチケ認証', result);
     let isSuccess = true;
     const mvtkList: PurchaseSession.IMvtk[] = [];
     for (const purchaseNumberAuthResult of result) {

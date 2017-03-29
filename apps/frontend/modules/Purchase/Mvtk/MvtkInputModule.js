@@ -21,7 +21,7 @@ const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const UtilModule = require("../../Util/UtilModule");
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 /**
  * ムビチケ券入力ページ表示
  * @memberOf Purchase.Mvtk.MvtkInputModule
@@ -173,7 +173,7 @@ function auth(req, purchaseModel) {
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         });
-        debugLog('ムビチケ認証', result);
+        log('ムビチケ認証', result);
         let isSuccess = true;
         const mvtkList = [];
         for (const purchaseNumberAuthResult of result) {

@@ -30,7 +30,7 @@ exports.setLocals = setLocals;
  */
 function timeFormat(str) {
     if (typeof str !== 'string') {
-        return str;
+        return '';
     }
     const start = 2;
     const end = 4;

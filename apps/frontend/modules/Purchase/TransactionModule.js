@@ -16,7 +16,8 @@ const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const debugLog = debug('SSKTS ');
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const log = debug('SSKTS ');
 /**
  * 取引開始
  * @memberOf Purchase.TransactionModule
@@ -29,11 +30,12 @@ const debugLog = debug('SSKTS ');
 // tslint:disable-next-line:variable-name
 function start(req, res, _next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.session === undefined || !Boolean(req.body.id)) {
-            return res.json({ redirect: null, err: req.__('common.error.property') });
-        }
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         try {
+            log(req.body);
+            if (req.session === undefined || req.body.id === undefined) {
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            }
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
                 //重複確認へ
                 return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
@@ -44,7 +46,7 @@ function start(req, res, _next) {
             purchaseModel.transactionMP = yield MP.transactionStart({
                 expires_at: purchaseModel.expired
             });
-            debugLog('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+            log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
             delete req.session.purchase;
             delete req.session.mvtk;
             delete req.session.complete;
@@ -54,7 +56,8 @@ function start(req, res, _next) {
             return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
         }
         catch (err) {
-            return res.json({ redirect: null, err: err.message });
+            const msg = ErrorUtilModule.getError(req, err).message;
+            return res.json({ redirect: null, err: msg });
         }
     });
 }

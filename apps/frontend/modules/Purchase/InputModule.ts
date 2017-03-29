@@ -11,7 +11,7 @@ import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 購入者情報入力
@@ -32,6 +32,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         }
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+
         //購入者情報入力表示
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -87,10 +88,12 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
+
         //バリデーション
         InputForm(req);
         try {
@@ -206,14 +209,14 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
             accessPass: purchaseModel.transactionGMO.accessPass,
             jobCd: GMO.Util.JOB_CD_VOID
         });
-        debugLog('GMOオーソリ取消');
+        log('GMOオーソリ取消');
 
         // GMOオーソリ削除
         await MP.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });
-        debugLog('GMOオーソリ削除');
+        log('GMOオーソリ削除');
     }
     const amount: number = purchaseModel.getReserveAmount();
     try {
@@ -222,7 +225,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
         // オーダーID （予約時間 + 劇場ID + 予約番号）
         purchaseModel.orderId = `${moment().format('YYYYMMDDHHmmss')}${theaterId}${reservenum}`;
-        debugLog('GMOオーソリ取得In', {
+        log('GMOオーソリ取得In', {
             shopId: gmoShopId,
             shopPass: gmoShopPassword,
             orderId: purchaseModel.orderId,
@@ -236,7 +239,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
             jobCd: GMO.Util.JOB_CD_AUTH,
             amount: amount
         });
-        debugLog('GMOオーソリ取得', purchaseModel.orderId);
+        log('GMOオーソリ取得', purchaseModel.orderId);
 
         await GMO.CreditService.execTran({
             accessId: purchaseModel.transactionGMO.accessId,
@@ -245,7 +248,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
             method: '1',
             token: purchaseModel.gmo.token
         });
-        debugLog('GMO決済');
+        log('GMO決済');
     } catch (err) {
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
@@ -258,5 +261,5 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
         gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass
     });
-    debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+    log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
 }

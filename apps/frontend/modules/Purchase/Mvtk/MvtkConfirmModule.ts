@@ -7,7 +7,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * ムビチケ券適用確認ページ表示
@@ -87,7 +87,7 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
             return;
         }
         // ムビチケ情報を購入セッションへ保存
-        debugLog('ムビチケ情報を購入セッションへ保存');
+        log('ムビチケ情報を購入セッションへ保存');
         purchaseModel.mvtk = (<any>req.session).mvtk;
         req.session.purchase = purchaseModel.toSession();
         // ムビチケセッション削除

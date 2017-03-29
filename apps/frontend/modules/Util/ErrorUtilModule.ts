@@ -6,7 +6,7 @@
 import * as express from 'express';
 
 /**
- * エラーメッセージ
+ * エラー取得
  * @memberof Util.ErrorUtilModule
  * @function erorMessage
  */
@@ -37,7 +37,7 @@ export function getError(req: express.Request, err: any): Error {
  * @memberof Util.ErrorUtilModule
  * @const ERROR_PROPERTY
  */
-export const ERROR_PROPERTY = 0;
+export const ERROR_PROPERTY = '000';
 
 /**
  * エラー番号（アクセス）

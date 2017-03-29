@@ -9,7 +9,7 @@ import * as supertest from 'supertest';
 import * as app from '../../../apps/frontend/app';
 
 describe('GET /inquiry/login', () => {
-    it('login 表示', async () => {
+    it('login 正常', async () => {
         await supertest(app)
             .get('/inquiry/login')
             .query({
@@ -26,6 +26,7 @@ describe('GET /inquiry/login', () => {
 });
 
 describe('POST /inquiry/login', () => {
+
     it('auth 予約番号なし', async () => {
         await supertest(app)
             .post('/inquiry/login')

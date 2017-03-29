@@ -19,7 +19,7 @@ const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 /**
  * 照会認証ページ表示
  * @memberOf InquiryModule
@@ -67,14 +67,14 @@ function auth(req, res, next) {
                     catch (err) {
                         throw ErrorUtilModule.ERROR_VALIDATION;
                     }
-                    debugLog('MP取引Id取得', inquiryModel.transactionId);
+                    log('MP取引Id取得', inquiryModel.transactionId);
                     inquiryModel.login = req.body;
                     inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
                         theater_code: req.body.theater_code,
                         reserve_num: req.body.reserve_num,
                         tel_num: req.body.tel_num // 電話番号
                     });
-                    debugLog('COA照会情報取得');
+                    log('COA照会情報取得');
                     const performanceId = UtilModule.getPerformanceId({
                         theaterCode: req.body.theater_code,
                         day: inquiryModel.stateReserve.date_jouei,
@@ -83,9 +83,9 @@ function auth(req, res, next) {
                         screenCode: inquiryModel.stateReserve.screen_code,
                         timeBegin: inquiryModel.stateReserve.time_begin
                     });
-                    debugLog('パフォーマンスID取得', performanceId);
+                    log('パフォーマンスID取得', performanceId);
                     inquiryModel.performance = yield MP.getPerformance(performanceId);
-                    debugLog('MPパフォーマンス取得');
+                    log('MPパフォーマンス取得');
                     req.session.inquiry = inquiryModel.toSession();
                     //購入者内容確認へ
                     res.redirect(`/inquiry/${inquiryModel.transactionId}/`);

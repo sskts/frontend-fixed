@@ -8,7 +8,7 @@ const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 /**
  * ムビチケ券適用確認ページ表示
  * @memberOf Purchase.Mvtk.MvtkConfirmModule
@@ -89,7 +89,7 @@ function submit(req, res, next) {
             return;
         }
         // ムビチケ情報を購入セッションへ保存
-        debugLog('ムビチケ情報を購入セッションへ保存');
+        log('ムビチケ情報を購入セッションへ保存');
         purchaseModel.mvtk = req.session.mvtk;
         req.session.purchase = purchaseModel.toSession();
         // ムビチケセッション削除

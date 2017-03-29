@@ -38,8 +38,6 @@ exports.notFound = notFound;
  */
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
-    if (process.env.NODE_ENV === 'development')
-        console.error('show Error');
     console.error(err.stack);
     if (req.session !== undefined && req.session.purchase !== undefined) {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
@@ -63,6 +61,7 @@ function index(err, req, res, _next) {
         console.error(err.message);
         res.locals.message = err.message;
         res.locals.error = err;
+        res.locals.portalSite = UtilModule.getPortalUrl();
         res.status(status).render('error/error');
     }
     return;

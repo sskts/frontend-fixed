@@ -19,7 +19,7 @@ const MP = require("../../../../libs/MP");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 /**
  * 購入者情報入力
  * @memberOf Purchase.InputModule
@@ -228,13 +228,13 @@ function addAuthorization(purchaseModel) {
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            debugLog('GMOオーソリ取消');
+            log('GMOオーソリ取消');
             // GMOオーソリ削除
             yield MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            debugLog('GMOオーソリ削除');
+            log('GMOオーソリ削除');
         }
         const amount = purchaseModel.getReserveAmount();
         try {
@@ -243,7 +243,7 @@ function addAuthorization(purchaseModel) {
             const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
             // オーダーID （予約時間 + 劇場ID + 予約番号）
             purchaseModel.orderId = `${moment().format('YYYYMMDDHHmmss')}${theaterId}${reservenum}`;
-            debugLog('GMOオーソリ取得In', {
+            log('GMOオーソリ取得In', {
                 shopId: gmoShopId,
                 shopPass: gmoShopPassword,
                 orderId: purchaseModel.orderId,
@@ -257,7 +257,7 @@ function addAuthorization(purchaseModel) {
                 jobCd: GMO.Util.JOB_CD_AUTH,
                 amount: amount
             });
-            debugLog('GMOオーソリ取得', purchaseModel.orderId);
+            log('GMOオーソリ取得', purchaseModel.orderId);
             yield GMO.CreditService.execTran({
                 accessId: purchaseModel.transactionGMO.accessId,
                 accessPass: purchaseModel.transactionGMO.accessPass,
@@ -265,7 +265,7 @@ function addAuthorization(purchaseModel) {
                 method: '1',
                 token: purchaseModel.gmo.token
             });
-            debugLog('GMO決済');
+            log('GMO決済');
         }
         catch (err) {
             throw ErrorUtilModule.ERROR_VALIDATION;
@@ -279,6 +279,6 @@ function addAuthorization(purchaseModel) {
             gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
             gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass
         });
-        debugLog('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+        log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
     });
 }

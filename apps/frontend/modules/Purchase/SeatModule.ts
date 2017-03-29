@@ -13,7 +13,7 @@ import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const debugLog = debug('SSKTS ');
+const log = debug('SSKTS ');
 
 /**
  * 座席選択
@@ -31,21 +31,21 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
-        if (!Boolean(req.params.id)) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         purchaseModel.performance = await MP.getPerformance(req.params.id);
-        debugLog('パフォーマンス取得');
+        log('パフォーマンス取得');
 
         purchaseModel.theater = await MP.getTheater(purchaseModel.performance.attributes.theater.id);
-        debugLog('劇場詳細取得');
+        log('劇場詳細取得');
 
         purchaseModel.performanceCOA = await MP.getPerformanceCOA(
             purchaseModel.performance.attributes.theater.id,
             purchaseModel.performance.attributes.screen.id,
             purchaseModel.performance.attributes.film.id
         );
-        debugLog('COAパフォーマンス取得');
+        log('COAパフォーマンス取得');
 
         res.locals.performance = purchaseModel.performance;
         res.locals.performanceCOA = purchaseModel.performanceCOA;
@@ -90,10 +90,10 @@ interface ISelectSeats {
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!Boolean(req.session.purchase)) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (!Boolean(req.params.id)) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) throw ErrorUtilModule.ERROR_ACCESS;
 
@@ -153,13 +153,13 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             time_begin: performance.attributes.time_start,
             tmp_reserve_num: reserveSeats.tmp_reserve_num
         });
-        debugLog('COA仮予約削除');
+        log('COA仮予約削除');
         // COAオーソリ削除
         await MP.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
-        debugLog('MPCOAオーソリ削除');
+        log('MPCOAオーソリ削除');
         if (purchaseModel.transactionGMO !== null
             && purchaseModel.authorizationGMO !== null) {
             if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -174,13 +174,13 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
                 accessPass: purchaseModel.transactionGMO.accessPass,
                 jobCd: GMO.Util.JOB_CD_VOID
             });
-            debugLog('GMOオーソリ取消');
+            log('GMOオーソリ取消');
             // GMOオーソリ削除
             await MP.removeGMOAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             });
-            debugLog('GMOオーソリ削除');
+            log('GMOオーソリ削除');
         }
     }
     //COA仮予約
@@ -194,7 +194,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         screen_code: purchaseModel.performanceCOA.screenCode,
         list_seat: selectSeats
     });
-    debugLog('COA仮予約', purchaseModel.reserveSeats);
+    log('COA仮予約', purchaseModel.reserveSeats);
 
     //予約チケット作成
     purchaseModel.reserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
@@ -224,7 +224,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         performanceCOA: purchaseModel.performanceCOA,
         price: purchaseModel.getReserveAmount()
     });
-    debugLog('MPCOAオーソリ追加', coaAuthorizationResult);
+    log('MPCOAオーソリ追加', coaAuthorizationResult);
     purchaseModel.authorizationCOA = coaAuthorizationResult;
 }
 
@@ -248,8 +248,8 @@ export async function getScreenStateReserve(
         const screenCode: string = (Number(req.body.screen_code) < num)
             ? `0${req.body.screen_code}`
             : req.body.screen_code;
-        const screen = await fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
-        const setting = await fs.readJSONAsync('./apps/frontend/theaters/setting.json');
+        const screen = await (<any>fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`));
+        const setting = await (<any>fs.readJSONAsync('./apps/frontend/theaters/setting.json'));
         const state = await COA.ReserveService.stateReserveSeat(req.body);
         return res.json({
             err: null,
