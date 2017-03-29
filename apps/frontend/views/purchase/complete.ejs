@@ -38,15 +38,9 @@
             <dl>
                 <dt><%- __('common.seat') %></dt>
                 <dd>
-                    <div><%= seatStr %></div> 
-                </dd>
-            </dl>
-        </li>
-        <li>
-            <dl>
-                <dt><%- __('common.ticket') %></dt>
-                <dd>
-                    <div><%= ticketStr %></div>
+                    <% for (ticket of reserveTickets) { %>
+                    <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                    <% } %>
                 </dd>
             </dl>
         </li>

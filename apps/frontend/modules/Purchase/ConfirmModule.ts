@@ -44,8 +44,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.updateReserve = null;
         res.locals.error = null;
-        res.locals.seatStr = purchaseModel.seatToString();
-        res.locals.ticketStr = purchaseModel.ticketToString();
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.prevLink = (purchaseModel.performance !== null)
             ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)

@@ -374,11 +374,10 @@ export class PurchaseModel {
         const ticketObj = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            let target = (<any>ticketObj)[ticket.ticket_code];
-            if (target !== undefined) {
-                target.length = <number>(target.length) + 1;
+            if ((<any>ticketObj)[ticket.ticket_code] !== undefined) {
+                (<any>ticketObj)[ticket.ticket_code].length += 1;
             } else {
-                target = {
+                (<any>ticketObj)[ticket.ticket_code] = {
                     name: ticket.ticket_name,
                     length: 1
                 };
@@ -388,7 +387,6 @@ export class PurchaseModel {
             const ticket = (<any>ticketObj)[key];
             tickets.push(`${ticket.name} × ${ticket.length}`);
         }
-
         return tickets.join('、');
     }
 }

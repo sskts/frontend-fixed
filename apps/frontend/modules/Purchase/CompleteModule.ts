@@ -32,8 +32,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.reserveTickets = complete.reserveTickets;
         res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
         res.locals.price = complete.price;
-        res.locals.seatStr = purchaseModel.seatToString();
-        res.locals.ticketStr = purchaseModel.ticketToString();
         res.locals.updateReserve = complete.updateReserve;
 
         res.render('purchase/complete');

@@ -138,12 +138,11 @@ class PurchaseModel {
         const ticketObj = {};
         const tickets = [];
         for (const ticket of this.reserveTickets) {
-            let target = ticketObj[ticket.ticket_code];
-            if (target !== undefined) {
-                target.length = (target.length) + 1;
+            if (ticketObj[ticket.ticket_code] !== undefined) {
+                ticketObj[ticket.ticket_code].length += 1;
             }
             else {
-                target = {
+                ticketObj[ticket.ticket_code] = {
                     name: ticket.ticket_name,
                     length: 1
                 };

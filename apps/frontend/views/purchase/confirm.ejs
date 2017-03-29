@@ -44,26 +44,15 @@
                 <dl>
                     <dt><%- __('common.seat') %></dt>
                     <dd>
-                        <div><%= seatStr %></div>
+                        <% for (ticket of reserveTickets) { %>
+                        <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                        <% } %>
                         <div style="display: none" class="right">
                             <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
                             --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%- performance.id %>/"><%- __('common.change') %></a></div>
                         </div>
                     </dd>
                     
-                </dl>
-            </li>
-            <li>
-                <dl>
-                    <dt><%- __('common.ticket') %></dt>
-                    <dd>
-                        <div><%= ticketStr %></div>
-                        <div style="display: none" class="right">
-                            <div class="button light-gray-button change-button">
-                                <a href="/purchase/ticket"><%- __('common.change') %></a>
-                            </div>
-                        </div>
-                    </dd>
                 </dl>
             </li>
         </ul>       
@@ -103,12 +92,6 @@
                 </dl>
             </li>
             <% } %>
-            <li>
-                <dl>
-                    <dt><%- __('common.amount_spent') %></dt>
-                    <dd>￥<%= formatPrice(price) %></dd>
-                </dl>
-            </li>
         </ul>
         
         <% if (gmoTokenObject) { %>
