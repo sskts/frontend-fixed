@@ -13,7 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
-const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const MP = require("../../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
@@ -97,29 +96,6 @@ function newReserve(req, res, next) {
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
             log('COAオーソリ削除');
-            if (purchaseModel.transactionGMO !== null
-                && purchaseModel.authorizationGMO !== null
-                && purchaseModel.orderId !== null) {
-                if (purchaseModel.theater === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-                const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
-                //GMOオーソリ取消
-                yield GMO.CreditService.alterTran({
-                    shopId: gmoShopId,
-                    shopPass: gmoShopPassword,
-                    accessId: purchaseModel.transactionGMO.accessId,
-                    accessPass: purchaseModel.transactionGMO.accessPass,
-                    jobCd: GMO.Util.JOB_CD_VOID
-                });
-                log('GMOオーソリ取消');
-                // GMOオーソリ削除
-                yield MP.removeGMOAuthorization({
-                    transactionId: purchaseModel.transactionMP.id,
-                    gmoAuthorizationId: purchaseModel.authorizationGMO.id
-                });
-                log('GMOオーソリ削除');
-            }
             //購入スタートへ
             delete req.session.purchase;
             res.redirect(`/purchase?id=${req.body.performance_id}`);

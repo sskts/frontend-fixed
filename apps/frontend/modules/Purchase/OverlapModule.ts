@@ -4,7 +4,6 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
-import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../../libs/MP';
@@ -82,29 +81,6 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         });
         log('COAオーソリ削除');
 
-        if (purchaseModel.transactionGMO !== null
-            && purchaseModel.authorizationGMO !== null
-            && purchaseModel.orderId !== null) {
-            if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-            const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
-            //GMOオーソリ取消
-            await GMO.CreditService.alterTran({
-                shopId: gmoShopId,
-                shopPass: gmoShopPassword,
-                accessId: purchaseModel.transactionGMO.accessId,
-                accessPass: purchaseModel.transactionGMO.accessPass,
-                jobCd: GMO.Util.JOB_CD_VOID
-            });
-            log('GMOオーソリ取消');
-
-            // GMOオーソリ削除
-            await MP.removeGMOAuthorization({
-                transactionId: purchaseModel.transactionMP.id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO.id
-            });
-            log('GMOオーソリ削除');
-        }
         //購入スタートへ
         delete req.session.purchase;
         res.redirect(`/purchase?id=${req.body.performance_id}`);

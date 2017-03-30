@@ -13,7 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
-const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const fs = require("fs-extra-promise");
 const MP = require("../../../../libs/MP");
@@ -165,28 +164,6 @@ function reserve(selectSeats, purchaseModel) {
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
-            if (purchaseModel.transactionGMO !== null
-                && purchaseModel.authorizationGMO !== null) {
-                if (purchaseModel.theater === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-                const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
-                //GMOオーソリ取消
-                yield GMO.CreditService.alterTran({
-                    shopId: gmoShopId,
-                    shopPass: gmoShopPassword,
-                    accessId: purchaseModel.transactionGMO.accessId,
-                    accessPass: purchaseModel.transactionGMO.accessPass,
-                    jobCd: GMO.Util.JOB_CD_VOID
-                });
-                log('GMOオーソリ取消');
-                // GMOオーソリ削除
-                yield MP.removeGMOAuthorization({
-                    transactionId: purchaseModel.transactionMP.id,
-                    gmoAuthorizationId: purchaseModel.authorizationGMO.id
-                });
-                log('GMOオーソリ削除');
-            }
         }
         //COA仮予約
         purchaseModel.reserveSeats = yield COA.ReserveService.updTmpReserveSeat({
@@ -200,32 +177,48 @@ function reserve(selectSeats, purchaseModel) {
             list_seat: selectSeats
         });
         log('COA仮予約', purchaseModel.reserveSeats);
+        //コアAPI券種取得
+        purchaseModel.salesTicketsCOA = yield COA.ReserveService.salesTicket({
+            theater_code: purchaseModel.performance.attributes.theater.id,
+            date_jouei: purchaseModel.performance.attributes.day,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
+            time_begin: purchaseModel.performance.attributes.time_start
+            // screen_code: performance.screen.id
+        });
+        //コアAPI券種取得
+        const salesTickets = purchaseModel.salesTicketsCOA;
+        purchaseModel.reserveTickets = [];
         //予約チケット作成
-        purchaseModel.reserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
+        const tmpReserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
             return {
                 section: tmpReserve.seat_section,
                 seat_code: tmpReserve.seat_num,
-                ticket_code: '',
-                ticket_name: '',
-                ticket_name_eng: '',
-                ticket_name_kana: '',
-                std_price: 0,
-                add_price: 0,
+                ticket_code: salesTickets[0].ticket_code,
+                ticket_name: salesTickets[0].ticket_name,
+                ticket_name_eng: salesTickets[0].ticket_name_eng,
+                ticket_name_kana: salesTickets[0].ticket_name_kana,
+                std_price: salesTickets[0].std_price,
+                add_price: salesTickets[0].add_price,
                 dis_price: 0,
-                sale_price: 0,
+                sale_price: salesTickets[0].sale_price,
                 add_price_glasses: 0,
                 glasses: false,
                 mvtk_num: null
             };
         });
+        let price = 0;
+        for (const tmpReserveTicket of tmpReserveTickets) {
+            price += tmpReserveTicket.sale_price;
+        }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.addCOAAuthorization({
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
-            salesTicketResults: purchaseModel.reserveTickets,
+            salesTicketResults: tmpReserveTickets,
             performance: performance,
             performanceCOA: purchaseModel.performanceCOA,
-            price: purchaseModel.getReserveAmount()
+            price: price
         });
         log('MPCOAオーソリ追加', coaAuthorizationResult);
         purchaseModel.authorizationCOA = coaAuthorizationResult;

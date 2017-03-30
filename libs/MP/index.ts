@@ -857,3 +857,105 @@ export async function getPerformanceCOA(theaterId: string, screenId: string, fil
         titleBranchNum: film.attributes.coa_title_branch_num
     };
 }
+
+/**
+ * ムビチケ購入管理番号情報
+ */
+export interface IMvtkPurchaseNoInfo {
+    KNYKNR_NO: string;
+    PIN_CD: string;
+    KNSH_INFO: IMvtkTicket[];
+}
+
+/**
+ * ムビチケ券種情報
+ */
+export interface IMvtkTicket {
+    KNSH_TYP: string;
+    MI_NUM: string;
+}
+
+/**
+ * ムビチケ座席情報
+ */
+export interface IMvtkSeat {
+    ZSK_CD: string;
+}
+
+/**
+ * 照会取引情報取得in
+ * @interface IAuthorizationsMvtkArgs
+ */
+export interface IAuthorizationsMvtkArgs {
+    transaction: ITransactionStartResult; // 取引情報
+    amount: number; // 合計金額
+    kgygishCd: string; // 興行会社コード
+    yykDvcTyp: string; // 予約デバイス区分
+    trkshFlg: string; // 取消フラグ
+    kgygishSstmZskyykNo: string; // 興行会社システム座席予約番号
+    kgygishUsrZskyykNo: string; // 興行会社ユーザー座席予約番号
+    jeiDt: string; // 上映日時
+    kijYmd: string; // 計上年月日
+    stCd: string; // サイトコード
+    screnCd: string; // スクリーンコード
+    knyknrNoInfo: IMvtkPurchaseNoInfo[]; // 購入管理番号情報
+    zskInfo: IMvtkSeat[]; // 座席情報（itemArray）
+    skhnCd: string; // 作品コード
+
+}
+/**
+ * 照会取引情報取得
+ * @memberOf MP
+ * @function makeInquiry
+ * @param {IMakeInquiryArgs} args
+ * @returns {Promise<void>}
+ */
+export async function authorizationsMvtk(args: IAuthorizationsMvtkArgs): Promise<void> {
+    log('authorizationsMvtk args:', args);
+    const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+        return (owner.group === 'PROMOTER');
+    });
+    const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
+    const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+        return (owner.group === 'ANONYMOUS');
+    });
+    const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+    const response = await request.post({
+        url: `${endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
+        auth: { bearer: await oauthToken() },
+        body: {
+            owner_from: anonymousOwnerId,
+            owner_to: promoterOwnerId,
+            price: args.amount,
+            kgygish_cd: args.kgygishCd,
+            yyk_dvc_typ: args.yykDvcTyp,
+            trksh_flg: args.trkshFlg,
+            kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
+            kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
+            jei_dt: args.jeiDt,
+            kij_ymd: args.kijYmd,
+            st_cd: args.stCd,
+            scren_cd: args.screnCd,
+            knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
+                return {
+                    knyknr_no: purchaseNoInfo.KNYKNR_NO,
+                    pin_cd: purchaseNoInfo.PIN_CD,
+                    knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
+                        return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
+                    })
+                };
+            }),
+            zsk_info: args.zskInfo.map((seat) => {
+                return { zsk_cd: seat.ZSK_CD };
+            }),
+            skhn_cd: args.screnCd
+        },
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: timeout
+    }).promise();
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    log('authorizationsMvtk result:');
+    return;
+}

@@ -144,7 +144,7 @@ function totalPrice() {
     $('.seats li').each(function (index, elem) {
         if ($(elem).find('dt').attr('data-ticket')) {
             var data = JSON.parse($(elem).find('dt').attr('data-ticket'));
-            price += data.sale_price;
+            if (data.sale_price) price += data.sale_price;
         }
     });
     $('.total .price strong span').text(formatPrice(price));

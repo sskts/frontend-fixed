@@ -588,3 +588,63 @@ function getPerformanceCOA(theaterId, screenId, filmId) {
     });
 }
 exports.getPerformanceCOA = getPerformanceCOA;
+/**
+ * 照会取引情報取得
+ * @memberOf MP
+ * @function makeInquiry
+ * @param {IMakeInquiryArgs} args
+ * @returns {Promise<void>}
+ */
+function authorizationsMvtk(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        log('authorizationsMvtk args:', args);
+        const promoterOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'PROMOTER');
+        });
+        const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
+        const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
+            return (owner.group === 'ANONYMOUS');
+        });
+        const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+        const response = yield request.post({
+            url: `${endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
+            auth: { bearer: yield oauthToken() },
+            body: {
+                owner_from: anonymousOwnerId,
+                owner_to: promoterOwnerId,
+                price: args.amount,
+                kgygish_cd: args.kgygishCd,
+                yyk_dvc_typ: args.yykDvcTyp,
+                trksh_flg: args.trkshFlg,
+                kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
+                kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
+                jei_dt: args.jeiDt,
+                kij_ymd: args.kijYmd,
+                st_cd: args.stCd,
+                scren_cd: args.screnCd,
+                knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
+                    return {
+                        knyknr_no: purchaseNoInfo.KNYKNR_NO,
+                        pin_cd: purchaseNoInfo.PIN_CD,
+                        knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
+                            return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
+                        })
+                    };
+                }),
+                zsk_info: args.zskInfo.map((seat) => {
+                    return { zsk_cd: seat.ZSK_CD };
+                }),
+                skhn_cd: args.screnCd
+            },
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: timeout
+        }).promise();
+        if (response.statusCode !== HTTPStatus.OK)
+            errorHandler(response);
+        log('authorizationsMvtk result:');
+        return;
+    });
+}
+exports.authorizationsMvtk = authorizationsMvtk;

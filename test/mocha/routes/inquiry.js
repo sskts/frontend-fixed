@@ -18,7 +18,7 @@ const httpStatus = require("http-status");
 const supertest = require("supertest");
 const app = require("../../../apps/frontend/app");
 describe('GET /inquiry/login', () => {
-    it('login 正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('login NOT FOUND', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/inquiry/login')
             .query({
@@ -30,7 +30,7 @@ describe('GET /inquiry/login', () => {
                 }
             }
         })
-            .expect(httpStatus.OK);
+            .expect(httpStatus.FOUND);
     }));
 });
 describe('POST /inquiry/login', () => {

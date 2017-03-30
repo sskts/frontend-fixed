@@ -29,7 +29,11 @@ const log = debug('SSKTS ');
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-function login(req, res) {
+function login(req, res, next) {
+    if (req.query.theater === undefined) {
+        next();
+        return;
+    }
     res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
     res.locals.reserve_num = (req.query.reserve !== undefined) ? req.query.reserve : '';
     res.locals.tel_num = '';

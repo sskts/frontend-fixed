@@ -28,6 +28,7 @@ class PurchaseModel {
         this.expired = (session.expired !== undefined) ? session.expired : null;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
         this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
+        this.salesTicketsCOA = (session.salesTicketsCOA !== undefined) ? session.salesTicketsCOA : null;
     }
     /**
      * セッションObjectへ変換
@@ -51,7 +52,8 @@ class PurchaseModel {
             orderId: (this.orderId !== null) ? this.orderId : null,
             expired: (this.expired !== null) ? this.expired : null,
             mvtk: (this.mvtk !== null) ? this.mvtk : null,
-            performanceCOA: (this.performanceCOA !== null) ? this.performanceCOA : null
+            performanceCOA: (this.performanceCOA !== null) ? this.performanceCOA : null,
+            salesTicketsCOA: (this.salesTicketsCOA !== null) ? this.salesTicketsCOA : null
         };
     }
     /**
@@ -108,6 +110,65 @@ class PurchaseModel {
             amount += ticket.sale_price;
         }
         return amount;
+    }
+    /**
+     * チケット価値取得（チケット価値）
+     * @memberOf PurchaseModel
+     * @method getPrice
+     * @returns {number}
+     */
+    getPrice() {
+        const reserveTickets = this.reserveTickets;
+        let price = 0;
+        if (reserveTickets === null)
+            return price;
+        for (const ticket of reserveTickets) {
+            if (ticket.mvtk_num !== null) {
+                let mvtkAppPrice = 0;
+                // ムビチケ計上単価取得
+                if (this.mvtk !== null) {
+                    const mvtkTicket = this.mvtk.find((value) => {
+                        return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+                    });
+                    if (mvtkTicket !== undefined) {
+                        mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
+                    }
+                }
+                price += ticket.sale_price + mvtkAppPrice;
+            }
+            else {
+                price += ticket.sale_price;
+            }
+        }
+        return price;
+    }
+    /**
+     * チケット価値取得（チケット価値）
+     * @memberOf PurchaseModel
+     * @method getPrice
+     * @returns {number}
+     */
+    getMvtkPrice() {
+        const reserveTickets = this.reserveTickets;
+        let price = 0;
+        if (reserveTickets === null)
+            return price;
+        for (const ticket of reserveTickets) {
+            if (ticket.mvtk_num !== null) {
+                let mvtkAppPrice = 0;
+                // ムビチケ計上単価取得
+                if (this.mvtk !== null) {
+                    const mvtkTicket = this.mvtk.find((value) => {
+                        return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+                    });
+                    if (mvtkTicket !== undefined) {
+                        mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
+                    }
+                }
+                price += ticket.sale_price + mvtkAppPrice;
+            }
+        }
+        return price;
     }
     /**
      * 座席文言返却

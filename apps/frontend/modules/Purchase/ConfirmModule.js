@@ -91,11 +91,11 @@ function reserveMvtk(purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        log('ムビチケ決済開始');
+        if (purchaseModel.transactionMP === null)
+            throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
+        const mvtkSeats = [];
         const mvtkTickets = [];
-        // 座席情報
-        const reserveSeats = [];
         for (const reserveTicket of purchaseModel.reserveTickets) {
             const mvtk = purchaseModel.mvtk.find((value) => {
                 return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
@@ -135,13 +135,12 @@ function reserveMvtk(purchaseModel) {
                     ]
                 });
             }
-            reserveSeats.push({
-                ZSK_CD: reserveTicket.seat_code //座席コード
-            });
+            mvtkSeats.push({ ZSK_CD: reserveTicket.seat_code });
         }
         log('購入管理番号情報', mvtkTickets);
-        if (mvtkTickets.length === 0 || reserveSeats.length === 0)
+        if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
             return;
+        const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum);
         // 興行会社システム座席予約番号(劇場コード + 予約番号)
         const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
         // 興行会社ユーザー座席予約番号(予約番号)
@@ -161,11 +160,33 @@ function reserveMvtk(purchaseModel) {
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
             screnCd: purchaseModel.performanceCOA.screenCode,
             knyknrNoInfo: mvtkTickets,
-            zskInfo: reserveSeats,
-            skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum) // 作品コード
+            zskInfo: mvtkSeats,
+            skhnCd: mvtkFilmCode // 作品コード
         });
         if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
             throw ErrorUtilModule.ERROR_PROPERTY;
+        log('MVTKムビチケ着券');
+        log('GMO', purchaseModel.getReserveAmount());
+        log('MVTK', purchaseModel.getMvtkPrice());
+        log('FULL', purchaseModel.getPrice());
+        yield MP.authorizationsMvtk({
+            transaction: purchaseModel.transactionMP,
+            amount: purchaseModel.getMvtkPrice(),
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
+            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
+            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
+            kgygishSstmZskyykNo: reserveNo,
+            kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
+            jeiDt: `${startDate.day} ${startDate.time}`,
+            kijYmd: startDate.day,
+            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
+            screnCd: purchaseModel.performanceCOA.screenCode,
+            knyknrNoInfo: mvtkTickets,
+            zskInfo: mvtkSeats,
+            skhnCd: mvtkFilmCode // 作品コード
+        });
+        // todo
+        log('MPムビチケオーソリ追加');
     });
 }
 /**
@@ -234,20 +255,6 @@ function updateReserve(req, purchaseModel) {
             })
         });
         log('COA本予約', purchaseModel.updateReserve);
-        // ムビチケ使用
-        if (purchaseModel.mvtk !== null) {
-            yield reserveMvtk(purchaseModel);
-            log('ムビチケ決済');
-        }
-        // MP購入者情報登録
-        yield MP.ownersAnonymous({
-            transactionId: purchaseModel.transactionMP.id,
-            name_first: input.first_name_hira,
-            name_last: input.last_name_hira,
-            tel: input.tel_num,
-            email: input.mail_addr
-        });
-        log('MP購入者情報登録');
         // MP照会情報登録
         yield MP.transactionsEnableInquiry({
             transactionId: purchaseModel.transactionMP.id,
@@ -259,12 +266,17 @@ function updateReserve(req, purchaseModel) {
         // MPメール登録
         yield MP.addEmail({
             transactionId: purchaseModel.transactionMP.id,
-            from: 'noreply@localhost',
+            from: 'noreply@ticket-cinemasunshine.com',
             to: purchaseModel.input.mail_addr,
             subject: '購入完了',
             content: getMailContent(req, purchaseModel)
         });
         log('MPメール登録');
+        // ムビチケ使用
+        if (purchaseModel.mvtk !== null) {
+            yield reserveMvtk(purchaseModel);
+            log('ムビチケ決済');
+        }
         // MP取引成立
         yield MP.transactionClose({
             transactionId: purchaseModel.transactionMP.id

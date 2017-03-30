@@ -22,10 +22,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //購入者内容確認表示
         const complete = req.session.complete;
-        const purchaseModel = new PurchaseSession.PurchaseModel({
-            reserveSeats: complete.reserveSeats,
-            reserveTickets: complete.reserveTickets
-        });
         res.locals.input = complete.input;
         res.locals.performance = complete.performance;
         res.locals.reserveSeats = complete.reserveSeats;

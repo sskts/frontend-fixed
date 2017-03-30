@@ -9,7 +9,7 @@ import * as supertest from 'supertest';
 import * as app from '../../../apps/frontend/app';
 
 describe('GET /inquiry/login', () => {
-    it('login 正常', async () => {
+    it('login NOT FOUND', async () => {
         await supertest(app)
             .get('/inquiry/login')
             .query({
@@ -21,7 +21,7 @@ describe('GET /inquiry/login', () => {
                     }
                 }
             })
-            .expect(httpStatus.OK);
+            .expect(httpStatus.FOUND);
     });
 });
 
