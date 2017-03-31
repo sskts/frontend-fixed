@@ -134,7 +134,7 @@ export function base64Decode(str: string): string {
 export function getTheaterUrl(_name: string): string {
     let result: string;
     if (process.env.NODE_ENV !== 'development') {
-        result = `${getPortalUrl()}/theater/aira}`;
+        result = `${getPortalUrl()}/theater/aira`;
         // const theaterName = name.toLowerCase();
         // result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
     } else {
