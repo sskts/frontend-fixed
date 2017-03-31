@@ -271,5 +271,5 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     });
     log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
     purchaseModel.authorizationCountGMO += 1;
-    log('GMOオーソリカウント加算');
+    log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
 }

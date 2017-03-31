@@ -17,7 +17,7 @@
 		"step05": "購入完了",
 		"seat": {
 			"page_ttl": "座席選択",
-			"read": "ご希望の座席を選択して次へボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。</span>",
+			"read": "ご希望の座席を選択して次へボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。</span><br><span class=\"small-text\">※車椅子席をご希望の方は、お手数ですが通常のお席をご購入の上、対象の劇場にご連絡下さい。</span>",
 			"next": "次へ",
 			"prev": "戻る",
 			"seats": {
@@ -54,7 +54,7 @@
 			"next": "次へ",
 			"prev": "戻る",
 			"mvtk": {
-				"read": "ムビチケ券を利用される方は、<br>「ムビチケを利用する」ボタンを押してお進みください。<br><span class=\"small-x-text\">ムビチケ券をご利用の場合は、次の画面に進みムビチケ券の認証を行ってください。<br>またムビチケ券を使用の際に差額が生じた場合はクレジットカードでのお支払いになります。</span>",
+				"read": "ムビチケ券を利用される方は、<br>「ムビチケを利用する」ボタンを押してお進みください。<br><span class=\"small-text\">ムビチケ券をご利用の場合は、次の画面に進みムビチケ券の認証を行ってください。<br>またムビチケ券を使用の際に差額が生じた場合はクレジットカードでのお支払いになります。</span>",
 				"button": "を利用する"
 			},
 			"ticket_select": "券種を選択してください",
@@ -266,18 +266,19 @@
 		"agreement_read": "利用規約に同意した上で次へお進みください。",
 		"strong": "重要",
 		"notes": "注意事項",
+		"notes_validation_text": "上記内容",
 		"notes_read": "下記項目をご確認いただきチェックを入れて「購入完了」ボタンを押してください。",
 		"agree": "利用規約に同意する",
-		"notes_agree": "注意事項に同意する",
+		"notes_agree": "上記内容に同意する",
 		"site_seal": "この画面は、高いセキュリティでプライバシーを保護する為に、SSL暗号化通信を採用しています。",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
 			"last_name_hira": "(例)しねま",
 			"first_name_hira": "(例)たろう",
-			"mail": "(例)info@cinemasunshine.co.jp",
-			"mail_confirm": "(例)info@cinemasunshine.co.jp",
-			"tel": "(例)08012345678",
+			"mail": "(例)cinema@cinemasunshine.co.jp",
+			"mail_confirm": "(例)cinema@cinemasunshine.co.jp",
+			"tel": "(例)08000000000",
 			"purchase_number": "(例)12345678",
 			"theater_code": "(例)1234",
 			"cardno": "(例)1234567890",
@@ -335,5 +336,6 @@
 	"week[Thu]": "木",
 	"week[Fri]": "金",
 	"week[Sat]": "土",
-	"week[Sun]": "日"
+	"week[Sun]": "日",
+	"week[(Fri)]": "week[(Fri)]"
 }

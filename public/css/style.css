@@ -80,12 +80,15 @@ body {
   -webkit-text-size-adjust: 100%;
   width: 100%;
   font-family: "Lucida Grande", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "游ゴシック", "メイリオ", Meiryo, Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #333;
   background-color: #E2E1E0; }
   @media screen and (max-width: 1024px) {
     body {
       font-weight: normal; } }
+  @media screen and (max-width: 767px) {
+    body {
+      font-size: 14px; } }
 
 input[type=text],
 input[type=number],
@@ -106,7 +109,7 @@ label {
   background: none;
   padding: 0;
   margin: 0;
-  font-size: 14px; }
+  font-size: 16px; }
   @media screen and (max-width: 1024px) {
     input[type=text],
     input[type=number],
@@ -121,6 +124,20 @@ label {
     button,
     label {
       font-weight: normal; } }
+  @media screen and (max-width: 767px) {
+    input[type=text],
+    input[type=number],
+    input[type=password],
+    input[type=tel],
+    input[type=email],
+    input[type=number],
+    input[type=submit],
+    textarea,
+    select,
+    option,
+    button,
+    label {
+      font-size: 14px; } }
 
 input[type=submit],
 button {
@@ -185,13 +202,9 @@ select {
 /*　IE11,IE10　*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   select:not(:target) {
-    padding-right: 0;
-    background-image: none; }
-  /*
-    select::-ms-expand {
-        display: none;
-    }
-    */ }
+    background-image: url(/images/common/select_box.png); }
+  select::-ms-expand {
+    display: none; } }
 
 input[type=checkbox] {
   opacity: 0;
@@ -924,7 +937,7 @@ p a {
   top: 50%;
   right: 20px;
   background-image: url(/images/common/icon/icon_new_tab_white.svg);
-  background-size: 15px;
+  background-size: contain;
   width: 15px;
   height: 15px;
   margin-top: -7.5px; }
@@ -1102,7 +1115,7 @@ p a {
   display: none; }
   @media screen and (max-width: 767px) {
     .purchase-seat .sp-text {
-      display: block; } }
+      display: inline; } }
 
 .purchase-seat .screen-cover {
   padding: 0 80px; }
@@ -1172,7 +1185,7 @@ p a {
   .purchase-ticket .seats .validation .ghost-button a {
     border-color: #C30D23;
     color: #C30D23;
-    background-color: #FFF; }
+    background-color: #ffe8eb; }
 
 .purchase-ticket .mvtk-button label, .purchase-ticket .mvtk-button a {
   border: 1px solid #d82918; }
@@ -1467,8 +1480,8 @@ p a {
       .screen .seat a span {
         display: none; }
   .screen .seat-hc a {
-    background-image: url(/images/theater/seat/hc.svg);
-    background-size: 120px 50px; }
+    background-image: url(/images/theater/seat/hc_disabled.svg) !important;
+    background-size: 40px 50px; }
     .screen .seat-hc a span {
       display: none !important; }
   .screen .object {

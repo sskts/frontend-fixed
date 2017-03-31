@@ -2,7 +2,7 @@
     .sp-text {
         display: none;
         @media screen and (max-width: $mobile){
-            display: block;
+            display: inline;
         }
     }
     .screen-cover {
