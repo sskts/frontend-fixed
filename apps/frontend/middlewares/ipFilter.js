@@ -12,7 +12,7 @@ exports.default = (req, res, next) => {
     debug('clientIp is', clientIp);
     // IP制限拒否の場合
     if (clientIp !== '124.155.113.9') {
-        res.status(http_status_1.FORBIDDEN).type('text').send('Forbidden');
+        res.status(http_status_1.FORBIDDEN).type('text').send('Forbidden ' + clientIp);
         return;
     }
     next();

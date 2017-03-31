@@ -14,7 +14,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
     // IP制限拒否の場合
     if (clientIp !== '124.155.113.9') {
-        res.status(FORBIDDEN).type('text').send('Forbidden');
+        res.status(FORBIDDEN).type('text').send('Forbidden ' + clientIp);
         return;
     }
 
