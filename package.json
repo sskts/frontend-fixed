@@ -9,7 +9,7 @@
     "ui-test": "node ./test/uiTest.js",
     "postcss": "postcss -c ./.postcssrc.json",
     "scss": "node-sass public/scss/import.scss public/scss/style.css",
-    "scss-w": "node-sass public/scss/import.scss public/css/style.css",
+    "scss-w": "node-sass public/scss/import.scss public/css/style.css -w",
     "tslint": "tslint -c tslint.json apps/**/**.ts libs/MP/**.ts --type-check --project tsconfig.json",
     "tslint-fix": "tslint -c tslint.json apps/**/**.ts --project tsconfig.json --fix",
     "tsc": "tsc -p ./ -w",

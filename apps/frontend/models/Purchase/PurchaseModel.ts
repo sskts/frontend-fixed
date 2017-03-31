@@ -361,32 +361,7 @@ export class PurchaseModel {
      * @returns {number}
      */
     public getPrice(): number {
-        const reserveTickets = this.reserveTickets;
-        let price = 0;
-        if (reserveTickets === null) return price;
-        for (const ticket of reserveTickets) {
-            price += ticket.sale_price;
-            // ムビチケ
-            if (ticket.mvtk_num !== '') {
-                let mvtkAppPrice = 0;
-                if (this.mvtk !== null) {
-                    const mvtkTicket = this.mvtk.find((value) => {
-                        return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
-                    });
-                    if (mvtkTicket !== undefined) {
-                        mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
-                    }
-                }
-                price += mvtkAppPrice;
-            }
-            // メガネ
-            let glassesPrice = 0;
-            if (ticket.glasses) {
-                glassesPrice = ticket.add_price_glasses;
-            }
-            price += glassesPrice;
-        }
-        return price;
+        return (this.getReserveAmount() + this.getMvtkPrice());
     }
 
     /**

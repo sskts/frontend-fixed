@@ -7,16 +7,16 @@
         <ul class="box radius bg-light-gray mb-medium seats">
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
-            <li>
+            <li data-section="<%= ticket.section %>"
+            data-seat-code="<%= ticket.seat_code %>"
+            data-ticket-code="<%= ticket.ticket_code %>"
+            data-ticket-name="<%= ticket.ticket_name %>"
+            data-sale-price="<%= ticket.sale_price %>"
+            data-mvtk-num="<%= ticket.mvtk_num %>"
+            data-add-price-glasses="<%= ticket.add_price_glasses %>"
+            data-glasses="<%= ticket.glasses %>">
                 <dl class="d-table">
-                    <dt class="d-td seat-code" 
-                    data-section="<%= ticket.section %>"
-                    data-seat-code="<%= ticket.seat_code %>"
-                    data-ticket-code="<%= ticket.ticket_code %>"
-                    data-ticket-name="<%= ticket.ticket_name %>"
-                    data-sale-price="<%= ticket.sale_price %>"
-                    data-mvtk-num="<%= ticket.mvtk_num %>"
-                    data-glasses="<%= ticket.glasses %>"><%= ticket.seat_code %></dt>
+                    <dt class="d-td seat-code"><%= ticket.seat_code %></dt>
                     <dd class="d-td width-medium">                                
                         <div class="ghost-button blue-button">
                             <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
@@ -27,16 +27,16 @@
             <% } %>
             <% } else { %>
             <% for (let seat of reserveSeats.list_tmp_reserve) { %>
-            <li>
+            <li data-section="<%= seat.seat_section %>"
+            data-seat-code="<%= seat.seat_num %>"
+            data-ticket-code=""
+            data-ticket-name=""
+            data-sale-price=""
+            data-mvtk-num=""
+            data-add-price-glasses=""
+            data-glasses="">
                 <dl class="d-table">
-                    <dt class="d-td seat-code" 
-                    data-section="<%= seat.seat_section %>"
-                    data-seat-code="<%= seat.seat_num %>"
-                    data-ticket-code=""
-                    data-ticket-name=""
-                    data-sale-price=""
-                    data-mvtk-num=""
-                    data-glasses=""><%= seat.seat_num %></dt>
+                    <dt class="d-td seat-code"><%= seat.seat_num %></dt>
                     <dd class="d-td width-medium" data-ticket="">
                         <div class="button blue-button">
                             <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
@@ -74,6 +74,7 @@
 <%- partial('../layouts/siteSeal') %>
 </div>
 
-
+<input type="hidden" class="ticket-validation" value="<%= error %>">
+<% block('modals', partial('modals/ticketValidation')) -%>
 <% block('modals', partial('modals/ticketType')) -%>
 <% block('modals', partial('modals/ticketNotSelect')) -%>

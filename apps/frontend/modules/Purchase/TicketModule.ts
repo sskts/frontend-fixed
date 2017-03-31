@@ -32,6 +32,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         //券種取得
         const salesTicketsResult = await getSalesTickets(req, purchaseModel);
         const performance = purchaseModel.performance;
+        res.locals.error = '';
         res.locals.tickets = salesTicketsResult;
         res.locals.performance = performance;
         res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -78,7 +79,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const reserveTickets: PurchaseSession.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
-            purchaseModel.reserveTickets = await ticketValidation(req, purchaseModel, reserveTickets);
+            purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, reserveTickets);
             log('券種検証');
             // COAオーソリ削除
             await MP.removeCOAAuthorization({
@@ -113,6 +114,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             const salesTicketsResult = await getSalesTickets(req, purchaseModel);
             log('券種取得');
             const performance = purchaseModel.performance;
+            res.locals.tickets = salesTicketsResult;
             res.locals.tickets = salesTicketsResult;
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -262,6 +264,7 @@ async function getSalesTickets(
  */
 async function ticketValidation(
     req: Request,
+    res: Response,
     purchaseModel: PurchaseSession.PurchaseModel,
     reserveTickets: PurchaseSession.IReserveTicket[]
 ): Promise<PurchaseSession.IReserveTicket[]> {
@@ -307,18 +310,28 @@ async function ticketValidation(
             });
             if (salesTicket === undefined) throw ErrorUtilModule.ERROR_ACCESS;
             // 制限単位、人数制限判定
+            const mismatchTickets: string[] = [];
             const sameTickets = reserveTickets.filter((value) => {
                 return (value.ticket_code === salesTicket.ticket_code);
             });
             if (sameTickets.length === 0) throw ErrorUtilModule.ERROR_ACCESS;
             if (salesTicket.limit_unit === '001') {
                 if (sameTickets.length % salesTicket.limit_count !== 0) {
-                    throw ErrorUtilModule.ERROR_VALIDATION;
+                    if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
+                        mismatchTickets.push(ticket.ticket_code);
+                    }
                 }
             } else if (salesTicket.limit_unit === '002') {
                 if (sameTickets.length < salesTicket.limit_count) {
-                    throw ErrorUtilModule.ERROR_VALIDATION;
+                    if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
+                        mismatchTickets.push(ticket.ticket_code);
+                    }
                 }
+            }
+
+            if (mismatchTickets.length > 0) {
+                res.locals.error = JSON.stringify(mismatchTickets);
+                throw ErrorUtilModule.ERROR_VALIDATION;
             }
 
             result.push({

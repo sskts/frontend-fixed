@@ -44,6 +44,7 @@ function index(req, res, next) {
             //券種取得
             const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
             const performance = purchaseModel.performance;
+            res.locals.error = '';
             res.locals.tickets = salesTicketsResult;
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -100,7 +101,7 @@ function select(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const reserveTickets = JSON.parse(req.body.reserve_tickets);
-                purchaseModel.reserveTickets = yield ticketValidation(req, purchaseModel, reserveTickets);
+                purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, reserveTickets);
                 log('券種検証');
                 // COAオーソリ削除
                 yield MP.removeCOAAuthorization({
@@ -139,6 +140,7 @@ function select(req, res, next) {
                 const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
                 log('券種取得');
                 const performance = purchaseModel.performance;
+                res.locals.tickets = salesTicketsResult;
                 res.locals.tickets = salesTicketsResult;
                 res.locals.performance = performance;
                 res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -234,7 +236,7 @@ function getSalesTickets(req, purchaseModel) {
  * @param {PurchaseSession.ReserveTicket[]} reserveTickets
  * @returns {Promise<void>}
  */
-function ticketValidation(req, purchaseModel, reserveTickets) {
+function ticketValidation(req, res, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -283,6 +285,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                 if (salesTicket === undefined)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 // 制限単位、人数制限判定
+                const mismatchTickets = [];
                 const sameTickets = reserveTickets.filter((value) => {
                     return (value.ticket_code === salesTicket.ticket_code);
                 });
@@ -290,13 +293,21 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
                     throw ErrorUtilModule.ERROR_ACCESS;
                 if (salesTicket.limit_unit === '001') {
                     if (sameTickets.length % salesTicket.limit_count !== 0) {
-                        throw ErrorUtilModule.ERROR_VALIDATION;
+                        if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
+                            mismatchTickets.push(ticket.ticket_code);
+                        }
                     }
                 }
                 else if (salesTicket.limit_unit === '002') {
                     if (sameTickets.length < salesTicket.limit_count) {
-                        throw ErrorUtilModule.ERROR_VALIDATION;
+                        if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
+                            mismatchTickets.push(ticket.ticket_code);
+                        }
                     }
+                }
+                if (mismatchTickets.length > 0) {
+                    res.locals.error = JSON.stringify(mismatchTickets);
+                    throw ErrorUtilModule.ERROR_VALIDATION;
                 }
                 result.push({
                     section: ticket.section,
