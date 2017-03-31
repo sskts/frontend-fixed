@@ -272,45 +272,51 @@ function getMailContent(req: Request, purchaseModel: PurchaseSession.PurchaseMod
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.updateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様\n
-\n
-この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。\n
-\n
-・[予約番号] ${purchaseModel.updateReserve.reserve_num}\n
+    return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様
+
+この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
+
+・[予約番号] ${purchaseModel.updateReserve.reserve_num}
+
 ・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')} 
 ${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')} 
-${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}\n
-・[作品名] ${purchaseModel.performance.attributes.film.name.ja}\n
-・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}\n
-・[券種] ${purchaseModel.ticketToString()}\n
-・[合計] ￥${purchaseModel.getReserveAmount()}\n
-・[座席番号] ${purchaseModel.seatToString()}\n
-\n
-【チケット発券について】\n
-チケットの発券/入場方法は2通りからお選び頂けます。\n
-\n
-<発券/入場方法1 劇場発券機で発券>\n
-劇場に設置されている発券機にて発券頂きます。予約番号をお控えの上ご来場ください。\n
-チケットが発券できなかった場合にはチケット売場にお越しください。\n
-\n
-<発券/入場方法2 入場用QRコードで入場>\n
-以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。\n
-https://${(<any>req.headers).host}/inquiry/login\n
-\n
-【ご注意事項】\n
-・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。\n
-・チケットの発券にお時間がかかる場合もございますので、お時間の余裕を持ってご来場ください。\n
-・メンバーズカード会員のお客様は、ポイントは付与いたしますので、発券したチケットまたは、表示されたQRコードとメンバーズカードをチケット売場までお持ち下さいませ。\n
-・年齢や学生など各種証明が必要なチケットを購入された方は、入場時にご提示ください。\n
-ご提示頂けない場合は、一般料金との差額を頂きます。\n
-\n
+${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}
+
+・[作品名] ${purchaseModel.performance.attributes.film.name.ja}
+
+・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}
+
+・[券種] ${purchaseModel.ticketToString()}
+
+・[合計] ￥${purchaseModel.getReserveAmount()}
+
+・[座席番号] ${purchaseModel.seatToString()}
+
+【チケット発券について】
+チケットの発券/入場方法は2通りからお選び頂けます。
+
+<発券/入場方法1 劇場発券機で発券>
+劇場に設置されている発券機にて発券頂きます。予約番号をお控えの上ご来場ください。
+チケットが発券できなかった場合にはチケット売場にお越しください。
+
+<発券/入場方法2 入場用QRコードで入場>
+以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。
+https://${(<any>req.headers).host}/inquiry/login
+
+【ご注意事項】
+・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。
+・チケットの発券にお時間がかかる場合もございますので、お時間の余裕を持ってご来場ください。
+・メンバーズカード会員のお客様は、ポイントは付与いたしますので、発券したチケットまたは、表示されたQRコードとメンバーズカードをチケット売場までお持ち下さいませ。
+・年齢や学生など各種証明が必要なチケットを購入された方は、入場時にご提示ください。
+ご提示頂けない場合は、一般料金との差額を頂きます。
+
 なお、このメールは、${purchaseModel.performance.attributes.theater.name.ja}の予約システムでチケットをご購入頂いた方にお送りしておりますが、
-チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。\n
-※なお、このメールアドレスは送信専用となっておりますでので、ご返信頂けません。\n
-ご不明な点がございましたら、下記番号までお問合わせ下さい。\n
-\n
-お問い合わせはこちら\n
-${purchaseModel.performance.attributes.theater.name.ja}\n
+チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。
+※なお、このメールアドレスは送信専用となっておりますでので、ご返信頂けません。
+ご不明な点がございましたら、下記番号までお問合わせ下さい。
+
+お問い合わせはこちら
+${purchaseModel.performance.attributes.theater.name.ja}
 TEL：XX-XXXX-XXXX`;
 }
 
