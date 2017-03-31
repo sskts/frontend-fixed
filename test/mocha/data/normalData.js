@@ -99,7 +99,7 @@ exports.reserveTickets = [{
         sale_price: 1800,
         add_price_glasses: 0,
         glasses: false,
-        mvtk_num: null
+        mvtk_num: ''
     },
     {
         section: '   ',
@@ -114,7 +114,7 @@ exports.reserveTickets = [{
         sale_price: 1500,
         add_price_glasses: 0,
         glasses: false,
-        mvtk_num: null
+        mvtk_num: ''
     }];
 /**
  * 入力情報

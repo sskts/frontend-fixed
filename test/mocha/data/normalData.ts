@@ -106,7 +106,7 @@ export const reserveTickets = [{
     sale_price: 1800,
     add_price_glasses: 0,
     glasses: false,
-    mvtk_num: null
+    mvtk_num: ''
 },
 {
     section: '   ',
@@ -121,7 +121,7 @@ export const reserveTickets = [{
     sale_price: 1500,
     add_price_glasses: 0,
     glasses: false,
-    mvtk_num: null
+    mvtk_num: ''
 }];
 
 /**

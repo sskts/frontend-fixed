@@ -5,10 +5,10 @@ $(function () {
     // 券種クリックイベント
     $(document).on('click', '.modal[data-modal=ticket_type] a', function (event) {
         event.preventDefault();
-        var data = $(this).attr('data-ticket');
-        if (!data) return;
+        var ticket = getSalseTicketData($(this));
+        if (!ticket) return;
         var target = modal.getTrigger().parents('.seats li dl');
-        var ticket = JSON.parse(data);
+        
         ticketSelect(target, ticket);
         modal.close();
         totalPrice();
@@ -20,7 +20,7 @@ $(function () {
         var result = [];
         var flag = true;
         $('.seats li').each(function (index, elem) {
-            var ticket = ($(elem).find('dt').attr('data-ticket')) ? JSON.parse($(elem).find('dt').attr('data-ticket')) : null;
+            var ticket = getTicketData($(this).find('dt'));
             result.push(ticket);
             if (!ticket.ticket_code) {
                 flag = false;
@@ -39,7 +39,41 @@ $(function () {
             });
         }
     });
-})
+});
+
+/**
+ * 券種情報取得
+ * @function getTicketData
+ * @param {JQuery} target 取得元
+ * @returns {any}
+ */
+function getTicketData(target) {
+    return {
+        section: target.attr('data-section'), // 座席セクション
+        seat_code: target.attr('data-seat-code'), // 座席番号
+        ticket_code: target.attr('data-ticket-code'), // チケットコード
+        ticket_name: target.attr('data-ticket-name'), // チケット名
+        sale_price: Number(target.attr('data-sale-price')), // 販売単価
+        glasses: (target.attr('data-glasses') === 'true') ? true : false, // メガネ有り無し
+        mvtk_num: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
+    };
+}
+
+/**
+ * 販売券種情報取得
+ * @function getSalseTicketData
+ * @param {JQuery} target 取得元
+ * @returns {any}
+ */
+function getSalseTicketData(target) {
+    return {
+        ticket_code: target.attr('data-ticket-code'), // チケットコード
+        ticket_name: target.attr('data-ticket-name'), // チケット名
+        sale_price: Number(target.attr('data-sale-price')), // 販売単価
+        glasses: (target.attr('data-glasses') === 'true') ? true : false, // メガネ有り無し
+        mvtk_num: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
+    };
+}
 
 /**
  * 初期化
@@ -49,7 +83,7 @@ $(function () {
 function pageInit() {
     $('.seats li').each(function (index, elem) {
         var target = $(elem);
-        var afterData = JSON.parse(target.find('dt').attr('data-ticket'));
+        var afterData = getTicketData(target.find('dt'));
         mvtkToggle(null, afterData);
     });
     totalPrice();
@@ -68,25 +102,27 @@ function ticketSelect(target, ticket) {
     target.find('.button')
         .removeClass('button')
         .addClass('ghost-button');
-    var beforeData = JSON.parse(target.find('dt').attr('data-ticket'));
+    var beforeData = getTicketData(target.find('dt'));
     var afterData = {
         section: beforeData.section, // 座席セクション
         seat_code: beforeData.seat_code, // 座席番号
         ticket_code: ticket.ticket_code, // チケットコード
         ticket_name: ticket.ticket_name, // チケット名
-        ticket_name_eng: ticket.ticket_name_eng, // チケット名（英）
-        ticket_name_kana: ticket.ticket_name_kana, // チケット名（カナ）
-        std_price: ticket.std_price, // 標準単価
-        add_price: ticket.add_price, // 加算単価
-        dis_price: 0, // 割引額
         sale_price: ticket.sale_price, // 販売単価
-        add_price_glasses: ticket.add_price_glasses, // メガネ単価
         glasses: ticket.glasses, // メガネ有り無し
         mvtk_num: ticket.mvtk_num // ムビチケ購入番号
     };
 
     target.find('dd a').text(afterData.ticket_name + ' ￥' + afterData.sale_price);
-    target.find('dt').attr('data-ticket', JSON.stringify(afterData));
+    target.find('dt').attr({
+        'data-section': afterData.section, // 座席セクション
+        'data-seat-code': afterData.seat_code, // 座席番号
+        'data-ticket-code': afterData.ticket_code, // チケットコード
+        'data-ticket-name': afterData.ticket_name, // チケット名
+        'data-sale-price': afterData.sale_price, // 販売単価
+        'data-glasses': afterData.glasses, // メガネ有り無し
+        'data-mvtk-num': afterData.mvtk_num, // ムビチケ購入番号
+    });
 
     mvtkToggle(beforeData, afterData);
 }
@@ -105,7 +141,7 @@ function mvtkToggle(beforeData, afterData) {
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
-            var data = JSON.parse(target.find('.button a').attr('data-ticket'));
+            var data = getSalseTicketData($(this));
             if (data.mvtk_num === beforeData.mvtk_num
                 && data.ticket_code === beforeData.ticket_code
                 && target.is(':hidden')) {
@@ -121,7 +157,7 @@ function mvtkToggle(beforeData, afterData) {
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
-            var data = JSON.parse(target.find('.button a').attr('data-ticket'));
+            var data = getSalseTicketData($(this));
             if (data.mvtk_num === afterData.mvtk_num
                 && data.ticket_code === afterData.ticket_code
                 && target.is(':visible')) {
@@ -142,9 +178,9 @@ function mvtkToggle(beforeData, afterData) {
 function totalPrice() {
     var price = 0;
     $('.seats li').each(function (index, elem) {
-        if ($(elem).find('dt').attr('data-ticket')) {
-            var data = JSON.parse($(elem).find('dt').attr('data-ticket'));
-            if (data.sale_price) price += data.sale_price;
+        if ($(elem).find('dt').attr('data-sale-price')) {
+            var salePrice = Number($(elem).find('dt').attr('data-sale-price'));
+            if (salePrice) price += salePrice;
         }
     });
     $('.total .price strong span').text(formatPrice(price));

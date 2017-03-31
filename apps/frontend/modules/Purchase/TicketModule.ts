@@ -170,7 +170,7 @@ export interface ISalesTicket {
     /**
      * ムビチケ購入番号
      */
-    mvtk_num: string | null;
+    mvtk_num: string;
     /**
      * メガネ有り無し
      */
@@ -206,7 +206,7 @@ async function getSalesTickets(
             sale_price: ticket.sale_price, // 販売単価
             ticket_note: ticket.ticket_note, // チケット備考
             add_price_glasses: 0, // メガネ単価
-            mvtk_num: null, // ムビチケ購入番号
+            mvtk_num: '', // ムビチケ購入番号
             glasses: false // メガネ有無
         });
     }
@@ -274,7 +274,7 @@ async function ticketValidation(
     const salesTickets = purchaseModel.salesTicketsCOA;
 
     for (const ticket of reserveTickets) {
-        if (ticket.mvtk_num !== null) {
+        if (ticket.mvtk_num !== '') {
             // ムビチケ
             if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const mvtkTicket = purchaseModel.mvtk.find((value) => {

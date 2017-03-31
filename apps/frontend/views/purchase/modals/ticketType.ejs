@@ -10,7 +10,14 @@
                             <p class="small-text"><%= ticket.ticket_note %></p>
                         </dt>
                         <dd class="d-td width-small">
-                            <div class="button blue-button ticket-type-select"><a href="#" data-ticket="<%= JSON.stringify(ticket) %>">選択</a></div>
+                            <div class="button blue-button ticket-type-select">
+                                <a href="#" 
+                                data-ticket-code="<%= ticket.ticket_code %>"
+                                data-ticket-name="<%= ticket.ticket_name %>"
+                                data-sale-price="<%= ticket.sale_price %>"
+                                data-glasses="<%= ticket.glasses %>"
+                                data-mvtk-num="<%= ticket.mvtk_num %>">選択</a>
+                            </div>
                         </dd>
                     </dl>
                 </li>

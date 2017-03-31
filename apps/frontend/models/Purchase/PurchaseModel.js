@@ -123,9 +123,10 @@ class PurchaseModel {
         if (reserveTickets === null)
             return price;
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num !== null) {
+            price += ticket.sale_price;
+            // ムビチケ
+            if (ticket.mvtk_num !== '') {
                 let mvtkAppPrice = 0;
-                // ムビチケ計上単価取得
                 if (this.mvtk !== null) {
                     const mvtkTicket = this.mvtk.find((value) => {
                         return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
@@ -134,11 +135,14 @@ class PurchaseModel {
                         mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
                     }
                 }
-                price += ticket.sale_price + mvtkAppPrice;
+                price += mvtkAppPrice;
             }
-            else {
-                price += ticket.sale_price;
+            // メガネ
+            let glassesPrice = 0;
+            if (ticket.glasses) {
+                glassesPrice = ticket.add_price_glasses;
             }
+            price += glassesPrice;
         }
         return price;
     }
@@ -154,7 +158,7 @@ class PurchaseModel {
         if (reserveTickets === null)
             return price;
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num !== null) {
+            if (ticket.mvtk_num !== '') {
                 let mvtkAppPrice = 0;
                 // ムビチケ計上単価取得
                 if (this.mvtk !== null) {

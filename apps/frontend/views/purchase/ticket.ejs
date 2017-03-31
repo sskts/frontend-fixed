@@ -9,7 +9,14 @@
             <% for (let ticket of reserveTickets) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td seat-code" data-ticket="<%= JSON.stringify(ticket) %>"><%= ticket.seat_code %></dt>
+                    <dt class="d-td seat-code" 
+                    data-section="<%= ticket.section %>"
+                    data-seat-code="<%= ticket.seat_code %>"
+                    data-ticket-code="<%= ticket.ticket_code %>"
+                    data-ticket-name="<%= ticket.ticket_name %>"
+                    data-sale-price="<%= ticket.sale_price %>"
+                    data-mvtk-num="<%= ticket.mvtk_num %>"
+                    data-glasses="<%= ticket.glasses %>"><%= ticket.seat_code %></dt>
                     <dd class="d-td width-medium">                                
                         <div class="ghost-button blue-button">
                             <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
@@ -22,7 +29,14 @@
             <% for (let seat of reserveSeats.list_tmp_reserve) { %>
             <li>
                 <dl class="d-table">
-                    <dt class="d-td seat-code" data-ticket="<%= JSON.stringify({section: seat.seat_section, seat_code: seat.seat_num}) %>"><%= seat.seat_num %></dt>
+                    <dt class="d-td seat-code" 
+                    data-section="<%= seat.seat_section %>"
+                    data-seat-code="<%= seat.seat_num %>"
+                    data-ticket-code=""
+                    data-ticket-name=""
+                    data-sale-price=""
+                    data-mvtk-num=""
+                    data-glasses=""><%= seat.seat_num %></dt>
                     <dd class="d-td width-medium" data-ticket="">
                         <div class="button blue-button">
                             <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>

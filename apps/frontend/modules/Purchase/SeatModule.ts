@@ -201,7 +201,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             sale_price: salesTickets[0].sale_price,
             add_price_glasses: 0,
             glasses: false,
-            mvtk_num: null
+            mvtk_num: ''
         };
     });
     let price = 0;

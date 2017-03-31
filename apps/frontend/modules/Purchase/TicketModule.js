@@ -182,7 +182,7 @@ function getSalesTickets(req, purchaseModel) {
                 sale_price: ticket.sale_price,
                 ticket_note: ticket.ticket_note,
                 add_price_glasses: 0,
-                mvtk_num: null,
+                mvtk_num: '',
                 glasses: false // メガネ有無
             });
         }
@@ -246,7 +246,7 @@ function ticketValidation(req, purchaseModel, reserveTickets) {
         //コアAPI券種取得
         const salesTickets = purchaseModel.salesTicketsCOA;
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num !== null) {
+            if (ticket.mvtk_num !== '') {
                 // ムビチケ
                 if (purchaseModel.mvtk === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
