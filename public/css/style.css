@@ -1167,10 +1167,12 @@ p a {
     .purchase-seat .agree {
       height: 100px; } }
 
-.purchase-ticket .seats .validation .ghost-button a {
-  border-color: #C30D23;
-  color: #C30D23;
-  background-color: #FFF; }
+.purchase-ticket .seats .validation {
+  background-color: transparent !important; }
+  .purchase-ticket .seats .validation .ghost-button a {
+    border-color: #C30D23;
+    color: #C30D23;
+    background-color: #FFF; }
 
 .purchase-ticket .mvtk-button label, .purchase-ticket .mvtk-button a {
   border: 1px solid #d82918; }
