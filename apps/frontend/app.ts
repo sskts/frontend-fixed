@@ -6,6 +6,7 @@ import * as express from 'express';
 import expressValidator = require('express-validator');
 import * as helmet from 'helmet';
 import benchmarks from './middlewares/benchmarks';
+import ipFilter from './middlewares/ipFilter';
 import locales from './middlewares/locales';
 import logger from './middlewares/logger';
 import session from './middlewares/session';
@@ -19,6 +20,7 @@ const engine = require('ejs-mate');
 
 const app: express.Application = express();
 
+app.use(ipFilter); // IP制限
 app.use(helmet()); //セキュリティー対策
 app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
