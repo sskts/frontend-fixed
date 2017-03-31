@@ -30,7 +30,7 @@ describe('GET /inquiry/login', () => {
                 }
             }
         })
-            .expect(httpStatus.FOUND);
+            .expect(httpStatus.NOT_FOUND);
     }));
 });
 describe('POST /inquiry/login', () => {

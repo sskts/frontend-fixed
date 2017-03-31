@@ -279,7 +279,7 @@ function getMailContent(req: Request, purchaseModel: PurchaseSession.PurchaseMod
 ・[予約番号] ${purchaseModel.updateReserve.reserve_num}
 
 ・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')} 
-${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')} 
+${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('(ddd)') + ']')} 
 ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}
 
 ・[作品名] ${purchaseModel.performance.attributes.film.name.ja}
@@ -301,7 +301,7 @@ ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}
 
 <発券/入場方法2 入場用QRコードで入場>
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。
-https://${(<any>req.headers).host}/inquiry/login
+https://${req.headers.host}/inquiry/login?theater=${purchaseModel.performance.attributes.theater.id}
 
 【ご注意事項】
 ・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。
@@ -312,7 +312,7 @@ https://${(<any>req.headers).host}/inquiry/login
 
 なお、このメールは、${purchaseModel.performance.attributes.theater.name.ja}の予約システムでチケットをご購入頂いた方にお送りしておりますが、
 チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。
-※なお、このメールアドレスは送信専用となっておりますでので、ご返信頂けません。
+※なお、このメールアドレスは送信専用となっておりますので、ご返信頂けません。
 ご不明な点がございましたら、下記番号までお問合わせ下さい。
 
 お問い合わせはこちら

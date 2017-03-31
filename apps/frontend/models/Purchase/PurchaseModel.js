@@ -24,6 +24,7 @@ class PurchaseModel {
         this.transactionGMO = (session.transactionGMO !== undefined) ? session.transactionGMO : null;
         this.authorizationCOA = (session.authorizationCOA !== undefined) ? session.authorizationCOA : null;
         this.authorizationGMO = (session.authorizationGMO !== undefined) ? session.authorizationGMO : null;
+        this.authorizationCountGMO = (session.authorizationCountGMO !== undefined) ? session.authorizationCountGMO : 0;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
         this.expired = (session.expired !== undefined) ? session.expired : null;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
@@ -38,22 +39,23 @@ class PurchaseModel {
      */
     toSession() {
         return {
-            performance: (this.performance !== null) ? this.performance : null,
-            theater: (this.theater !== null) ? this.theater : null,
-            reserveSeats: (this.reserveSeats !== null) ? this.reserveSeats : null,
-            reserveTickets: (this.reserveTickets !== null) ? this.reserveTickets : null,
-            input: (this.input !== null) ? this.input : null,
-            gmo: (this.gmo !== null) ? this.gmo : null,
-            updateReserve: (this.updateReserve !== null) ? this.updateReserve : null,
-            transactionMP: (this.transactionMP !== null) ? this.transactionMP : null,
-            transactionGMO: (this.transactionGMO !== null) ? this.transactionGMO : null,
-            authorizationCOA: (this.authorizationCOA !== null) ? this.authorizationCOA : null,
-            authorizationGMO: (this.authorizationGMO !== null) ? this.authorizationGMO : null,
-            orderId: (this.orderId !== null) ? this.orderId : null,
-            expired: (this.expired !== null) ? this.expired : null,
-            mvtk: (this.mvtk !== null) ? this.mvtk : null,
-            performanceCOA: (this.performanceCOA !== null) ? this.performanceCOA : null,
-            salesTicketsCOA: (this.salesTicketsCOA !== null) ? this.salesTicketsCOA : null
+            performance: this.performance,
+            theater: this.theater,
+            reserveSeats: this.reserveSeats,
+            reserveTickets: this.reserveTickets,
+            input: this.input,
+            gmo: this.gmo,
+            updateReserve: this.updateReserve,
+            transactionMP: this.transactionMP,
+            transactionGMO: this.transactionGMO,
+            authorizationCOA: this.authorizationCOA,
+            authorizationGMO: this.authorizationGMO,
+            authorizationCountGMO: this.authorizationCountGMO,
+            orderId: this.orderId,
+            expired: this.expired,
+            mvtk: this.mvtk,
+            performanceCOA: this.performanceCOA,
+            salesTicketsCOA: this.salesTicketsCOA
         };
     }
     /**
@@ -192,6 +194,17 @@ class PurchaseModel {
             tickets.push(`${ticket.name} × ${ticket.length}`);
         }
         return tickets.join('、');
+    }
+    /**
+     * GMOオーソリ回数取得
+     * @memberOf PurchaseModel
+     * @method authorizationCountGMOToString
+     * @returns {string}
+     */
+    authorizationCountGMOToString() {
+        const str = `00${this.authorizationCountGMO}`;
+        const num = -2;
+        return str.slice(num);
     }
 }
 PurchaseModel.SEAT_STATE = 0;

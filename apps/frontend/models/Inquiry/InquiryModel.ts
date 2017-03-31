@@ -50,10 +50,10 @@ export class InquiryModel {
         if (session === undefined) {
             session = {};
         }
-        this.transactionId = (session.transactionId !== undefined) ? (<any>session).transactionId : null;
-        this.performance = (session.performance !== undefined) ? (<any>session).performance : null;
-        this.stateReserve = (session.stateReserve !== undefined) ? (<any>session).stateReserve : null;
-        this.login = (session.login !== undefined) ? (<any>session).login : null;
+        this.transactionId = (session.transactionId !== undefined) ? session.transactionId : null;
+        this.performance = (session.performance !== undefined) ? session.performance : null;
+        this.stateReserve = (session.stateReserve !== undefined) ? session.stateReserve : null;
+        this.login = (session.login !== undefined) ? session.login : null;
     }
 
     /**
@@ -69,10 +69,10 @@ export class InquiryModel {
         login: ILogin | null
     } {
         return {
-            transactionId: (this.transactionId !== null) ? this.transactionId : null,
-            performance: (this.performance !== null) ? this.performance : null,
-            stateReserve: (this.stateReserve !== null) ? this.stateReserve : null,
-            login: (this.login !== null) ? this.login : null
+            transactionId: this.transactionId,
+            performance: this.performance,
+            stateReserve: this.stateReserve,
+            login: this.login
         };
     }
 }

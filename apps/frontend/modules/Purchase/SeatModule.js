@@ -222,6 +222,8 @@ function reserve(selectSeats, purchaseModel) {
         });
         log('MPCOAオーソリ追加', coaAuthorizationResult);
         purchaseModel.authorizationCOA = coaAuthorizationResult;
+        purchaseModel.authorizationCountGMO = 0;
+        log('GMOオーソリカウント初期化');
     });
 }
 /**

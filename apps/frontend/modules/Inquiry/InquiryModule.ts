@@ -22,9 +22,10 @@ const log = debug('SSKTS');
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function login(req: Request, res: Response, next: NextFunction): void {
+export function login(req: Request, res: Response, _next: NextFunction): void {
     if (req.query.theater === undefined) {
-        next();
+        const status = 404;
+        res.status(status).render('error/notFound');
         return;
     }
     res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
@@ -149,7 +150,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
         return;
     }
-    const inquiryModel = new InquirySession.InquiryModel((<any>req.session).inquiry);
+    const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     if (inquiryModel.stateReserve !== null
         && inquiryModel.performance !== null
         && inquiryModel.login !== null

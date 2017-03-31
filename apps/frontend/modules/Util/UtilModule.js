@@ -151,7 +151,7 @@ function getPortalUrl() {
     }
     else {
         // tslint:disable-next-line:no-http-string
-        result = 'http://devssktsportal.azurewebsites.net';
+        result = '/';
     }
     return result;
 }

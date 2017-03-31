@@ -17,15 +17,15 @@ exports.default = (app) => {
         app.use(SupertestRequest.supertestSession);
     }
     app.use(UtilModule.setLocals);
-    // tslint:disable-next-line:variable-name
-    router.get('/', (_req, res, _next) => {
-        res.redirect('/performances');
-    });
-    //パフォーマンス一覧
-    router.get('/performances', PerformancesModule.index);
-    //パフォーマンス一覧
-    router.post('/performances', PerformancesModule.getPerformances);
     if (process.env.NODE_ENV === 'development') {
+        // tslint:disable-next-line:variable-name
+        router.get('/', (_req, res, _next) => {
+            res.redirect('/performances');
+        });
+        //パフォーマンス一覧
+        router.get('/performances', PerformancesModule.index);
+        //パフォーマンス一覧
+        router.post('/performances', PerformancesModule.getPerformances);
         //再起動
         // tslint:disable-next-line:variable-name
         router.get('/500', (_req, _res, _next) => {

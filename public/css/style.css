@@ -1455,14 +1455,14 @@ p a {
       color: #9a9a9b;
       padding-top: 20px;
       background-image: url(/images/theater/seat/normal.svg);
-      background-size: 120px 50px;
+      background-size: 40px 50px;
       background-repeat: no-repeat; }
       .screen .seat a.active {
         color: #FFF;
-        background-position: -40px 0; }
+        background-image: url(/images/theater/seat/normal_active.svg); }
       .screen .seat a.disabled {
         color: #FFF;
-        background-position: -80px 0;
+        background-image: url(/images/theater/seat/normal_disabled.svg);
         cursor: default; }
       .screen .seat a span {
         display: none; }
@@ -1495,27 +1495,27 @@ p a {
     content: '';
     display: block;
     background-image: url(/images/theater/seat/normal.svg);
-    background-size: 48px 20px;
+    background-size: 16px 20px;
     position: absolute;
     top: 50%;
     left: 0;
     margin-top: -10px; }
 
 .seat-info .active:before {
-  background-position: -16px 0; }
+  background-image: url(/images/theater/seat/normal_active.svg); }
 
 .seat-info .disabled:before {
-  background-position: -32px 0; }
+  background-image: url(/images/theater/seat/normal_disabled.svg); }
 
 .screen-4dx .seat a {
   background-image: url(/images/theater/seat/4dx.svg);
-  background-size: 150px 50px; }
+  background-size: 50px 50px; }
   .screen-4dx .seat a.active {
     color: #FFF;
-    background-position: -50px 0; }
+    background-image: url(/images/theater/seat/4dx_active.svg); }
   .screen-4dx .seat a.disabled {
     color: #FFF;
-    background-position: -100px 0;
+    background-image: url(/images/theater/seat/4dx_disabled.svg);
     cursor: default; }
   .screen-4dx .seat a span {
     display: none; }
@@ -1526,17 +1526,17 @@ p a {
   content: '';
   display: block;
   background-image: url(/images/theater/seat/4dx.svg);
-  background-size: 60px 20px;
+  background-size: 20px 20px;
   position: absolute;
   top: 50%;
   left: 0;
   margin-top: -10px; }
 
 .screen-4dx .seat-info .active:before {
-  background-position: -20px 0; }
+  background-image: url(/images/theater/seat/4dx_active.svg); }
 
 .screen-4dx .seat-info .disabled:before {
-  background-position: -40px 0; }
+  background-image: url(/images/theater/seat/4dx_disabled.svg); }
 
 .screen-cover .device-type-sp {
   display: none; }

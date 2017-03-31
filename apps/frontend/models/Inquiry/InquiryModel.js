@@ -26,10 +26,10 @@ class InquiryModel {
      */
     toSession() {
         return {
-            transactionId: (this.transactionId !== null) ? this.transactionId : null,
-            performance: (this.performance !== null) ? this.performance : null,
-            stateReserve: (this.stateReserve !== null) ? this.stateReserve : null,
-            login: (this.login !== null) ? this.login : null
+            transactionId: this.transactionId,
+            performance: this.performance,
+            stateReserve: this.stateReserve,
+            login: this.login
         };
     }
 }

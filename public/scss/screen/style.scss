@@ -19,15 +19,15 @@
             color: #9a9a9b;
             padding-top: 20px;
             background-image: url(/images/theater/seat/normal.svg);
-            background-size: 120px 50px;
+            background-size: 40px 50px;
             background-repeat: no-repeat;
             &.active {
                 color: #FFF;
-                background-position: -40px 0;
+                background-image: url(/images/theater/seat/normal_active.svg);
             }
             &.disabled {
                 color: #FFF;
-                background-position: -80px 0;
+                background-image: url(/images/theater/seat/normal_disabled.svg);
                 cursor: default;
             }
             span {
@@ -71,7 +71,7 @@
             content: '';
             display: block;
             background-image: url(/images/theater/seat/normal.svg);
-            background-size: 48px 20px;
+            background-size: 16px 20px;
             position: absolute;
             top: 50%;
             left: 0;
@@ -80,12 +80,12 @@
     }
     .active {
         &:before {
-            background-position: -16px 0;
+            background-image: url(/images/theater/seat/normal_active.svg);
         }
     }
     .disabled {
         &:before {
-            background-position: -32px 0;
+            background-image: url(/images/theater/seat/normal_disabled.svg);
         }
     } 
 } 
@@ -93,14 +93,14 @@
     .seat {
         a {
             background-image: url(/images/theater/seat/4dx.svg);
-            background-size: 150px 50px;
+            background-size: 50px 50px;
             &.active {
                 color: #FFF;
-                background-position: -50px 0;
+                background-image: url(/images/theater/seat/4dx_active.svg);
             }
             &.disabled {
                 color: #FFF;
-                background-position: -100px 0;
+                background-image: url(/images/theater/seat/4dx_disabled.svg);
                 cursor: default;
             }
             span {
@@ -116,7 +116,7 @@
                 content: '';
                 display: block;
                 background-image: url(/images/theater/seat/4dx.svg);
-                background-size: 60px 20px;
+                background-size: 20px 20px;
                 position: absolute;
                 top: 50%;
                 left: 0;
@@ -125,12 +125,12 @@
         }
         .active {
             &:before {
-                background-position: -20px 0;
+                background-image: url(/images/theater/seat/4dx_active.svg);
             }
         }
         .disabled {
             &:before {
-                background-position: -40px 0;
+                background-image: url(/images/theater/seat/4dx_disabled.svg);
             }
         } 
     } 

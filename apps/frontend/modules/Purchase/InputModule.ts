@@ -231,8 +231,8 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         // GMOオーソリ取得
         const theaterId = purchaseModel.performance.attributes.theater.id;
         const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
-        // オーダーID （予約時間 + 劇場ID + 予約番号）
-        purchaseModel.orderId = `${moment().format('YYYYMMDDHHmmss')}${theaterId}${reservenum}`;
+        // オーダーID （予約日 + 劇場ID + 予約番号 + オーソリカウント）
+        purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
         log('GMOオーソリ取得In', {
             shopId: gmoShopId,
             shopPass: gmoShopPassword,
@@ -270,4 +270,6 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass
     });
     log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+    purchaseModel.authorizationCountGMO += 1;
+    log('GMOオーソリカウント加算');
 }

@@ -119,6 +119,8 @@ function select(req, res, next) {
                     price: purchaseModel.getPrice()
                 });
                 log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
+                purchaseModel.authorizationCountGMO = 0;
+                log('GMOオーソリカウント初期化');
                 req.session.purchase = purchaseModel.toSession();
                 log('セッション更新');
                 res.redirect('/purchase/input');

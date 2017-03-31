@@ -4,7 +4,7 @@ $(function () {
     // 初期化
     pageInit();
     // 券種クリックイベント
-    $(document).on('click', '.modal[data-modal=ticket_type] a', function (event) {
+    $(document).on('click', '.modal[data-modal=ticket_type] .button a', function (event) {
         event.preventDefault();
         
         var ticket = getSalseTicketData($(this));

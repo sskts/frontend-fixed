@@ -29,9 +29,10 @@ const log = debug('SSKTS');
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-function login(req, res, next) {
+function login(req, res, _next) {
     if (req.query.theater === undefined) {
-        next();
+        const status = 404;
+        res.status(status).render('error/notFound');
         return;
     }
     res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
