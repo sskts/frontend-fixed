@@ -2,14 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
-const requestIp = require("request-ip");
 const debug = createDebug('sskts-frontend:middlewares:ipFilter');
 /**
  * IP制限ミドルウェア
  */
 exports.default = (req, res, next) => {
-    const clientIp = requestIp.getClientIp(req);
-    debug('clientIp is', clientIp);
+    debug('x-forwarded-for:', req.headers['x-forwarded-for']);
     // IP制限拒否の場合
     if (process.env.SSKTS_ALLOWED_IPS !== undefined) {
         const allowedIps = process.env.SSKTS_ALLOWED_IPS.split(',');
@@ -19,7 +17,7 @@ exports.default = (req, res, next) => {
         });
         // 許可IPリストのどれにも適合しなければ拒否
         if (forbidden) {
-            res.status(http_status_1.FORBIDDEN).type('text').send('Forbidden ' + clientIp + ' x-forwarded-for:' + req.headers['x-forwarded-for']);
+            res.status(http_status_1.FORBIDDEN).type('text').send('Forbidden');
             return;
         }
     }

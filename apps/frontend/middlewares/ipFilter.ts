@@ -1,7 +1,6 @@
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { FORBIDDEN } from 'http-status';
-import * as requestIp from 'request-ip';
 
 const debug = createDebug('sskts-frontend:middlewares:ipFilter');
 
@@ -9,8 +8,7 @@ const debug = createDebug('sskts-frontend:middlewares:ipFilter');
  * IP制限ミドルウェア
  */
 export default (req: Request, res: Response, next: NextFunction) => {
-    const clientIp = requestIp.getClientIp(req);
-    debug('clientIp is', clientIp);
+    debug('x-forwarded-for:', req.headers['x-forwarded-for']);
 
     // IP制限拒否の場合
     if (process.env.SSKTS_ALLOWED_IPS !== undefined) {
@@ -22,7 +20,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
         // 許可IPリストのどれにも適合しなければ拒否
         if (forbidden) {
-            res.status(FORBIDDEN).type('text').send('Forbidden ' + clientIp + ' x-forwarded-for:' + req.headers['x-forwarded-for']);
+            res.status(FORBIDDEN).type('text').send('Forbidden');
             return;
         }
     }
