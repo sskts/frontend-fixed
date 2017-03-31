@@ -20,7 +20,7 @@ const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 /**
  * 座席選択
  * @memberOf Purchase.SeatModule

@@ -11,7 +11,7 @@ import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 
 /**
  * 照会認証ページ表示

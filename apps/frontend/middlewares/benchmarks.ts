@@ -4,7 +4,7 @@
 
 import * as debug from 'debug';
 import * as express from 'express';
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 
 // tslint:disable-next-line:variable-name
 export default (req: express.Request, _res: express.Response, next: express.NextFunction) => {

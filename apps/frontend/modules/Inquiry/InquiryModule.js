@@ -19,7 +19,7 @@ const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 /**
  * 照会認証ページ表示
  * @memberOf InquiryModule

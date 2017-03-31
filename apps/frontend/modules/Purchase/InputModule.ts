@@ -11,7 +11,7 @@ import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 
 /**
  * 購入者情報入力

@@ -12,7 +12,7 @@ import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 
 /**
  * 座席選択

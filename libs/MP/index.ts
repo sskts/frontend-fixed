@@ -9,7 +9,7 @@ import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
 
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 const endPoint = process.env.MP_ENDPOINT;
 
 /**

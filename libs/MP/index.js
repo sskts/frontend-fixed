@@ -16,7 +16,7 @@ const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 const endPoint = process.env.MP_ENDPOINT;
 /**
  * 時間切れ

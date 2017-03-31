@@ -7,7 +7,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 
 /**
  * ムビチケ券適用確認ページ表示

@@ -21,7 +21,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 /**
  * 購入者内容確認
  * @memberOf Purchase.ConfirmModule

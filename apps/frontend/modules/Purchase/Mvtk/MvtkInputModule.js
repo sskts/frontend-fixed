@@ -21,7 +21,7 @@ const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const UtilModule = require("../../Util/UtilModule");
-const log = debug('SSKTS ');
+const log = debug('SSKTS');
 /**
  * ムビチケ券入力ページ表示
  * @memberOf Purchase.Mvtk.MvtkInputModule
