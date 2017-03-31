@@ -119,11 +119,13 @@ exports.base64Decode = base64Decode;
  * @param {string} name
  * @returns {string}
  */
-function getTheaterUrl(name) {
+// tslint:disable-next-line:variable-name
+function getTheaterUrl(_name) {
     let result;
     if (process.env.NODE_ENV !== 'development') {
-        const theaterName = name.toLowerCase();
-        result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
+        result = `${getPortalUrl()}/theater/aira}`;
+        // const theaterName = name.toLowerCase();
+        // result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
     }
     else {
         result = getPortalUrl();
