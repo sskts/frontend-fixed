@@ -1,14 +1,7 @@
-# COA Client Library for Node.js
-
-node.jsでCOAサービスを使うためのパッケージです。
-
-
 # Features
 
 
 # Usage
-
-When using the COA Service SDK, you must provide connection information. This can be provided using:
 
 * set environment variables - For example,
 ```shell
@@ -34,13 +27,26 @@ only on Aure WebApps
 set WEBSITE_NODE_DEFAULT_VERSION=**********node.jsバージョン=**********
 set WEBSITE_TIME_ZONE=Tokyo Standard Time
 ```
+# Build
+
+ビルドは以下で実行できます。
+
+```shell
+npm run build
+```
 
 # Tests
+
+単体テストは以下で実行できます。
+
+```shell
+npm test
+```
 
 UIテストは以下で実行できます。
 
 ```shell
-npm test
+npm ui-test
 ```
 
 # JsDoc

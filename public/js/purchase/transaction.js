@@ -15,7 +15,7 @@ function getTransaction(id) {
         dataType: 'json',
         url: '/purchase/transaction',
         type: 'POST',
-        timeout: 100000,
+        timeout: 10000,
         data: {
             id: id
         },

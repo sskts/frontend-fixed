@@ -53,7 +53,7 @@ function purchase() {
         dataType: 'json',
         url: '/purchase/confirm',
         type: 'POST',
-        timeout: 100000,
+        timeout: 10000,
         data: {
             toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
             isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
@@ -86,9 +86,9 @@ function purchase() {
 function getComplete() {
     $.ajax({
         dataType: 'json',
-        url: '/purchase//getComplete',
+        url: '/purchase/getComplete',
         type: 'POST',
-        timeout: 100000,
+        timeout: 10000,
         data: {},
         beforeSend: function () {}
     }).done(function (res) {

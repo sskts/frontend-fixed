@@ -200,7 +200,7 @@ export class PurchaseModel {
     /**
      * 取引MP
      */
-    public transactionMP: MP.ITransactionStartResult;
+    public transactionMP: MP.ITransactionStartResult | null;
     /**
      * 取引GMO
      */
@@ -280,7 +280,7 @@ export class PurchaseModel {
         input: IInput | null;
         gmo: IGMO | null;
         updateReserve: COA.ReserveService.IUpdReserveResult | null;
-        transactionMP: MP.ITransactionStartResult;
+        transactionMP: MP.ITransactionStartResult | null;
         transactionGMO: GMO.CreditService.EntryTranResult | null;
         authorizationCOA: MP.IAddCOAAuthorizationResult | null;
         authorizationGMO: MP.IAddGMOAuthorizationResult | null;
