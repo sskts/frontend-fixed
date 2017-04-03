@@ -31,7 +31,7 @@ describe('UtilModule.formatPrice', () => {
     it('正常', () => __awaiter(this, void 0, void 0, function* () {
         const num = 10000;
         const price = UtilModule.formatPrice(num);
-        assert.equal(price, '100,000');
+        assert.equal(price, '10,000');
     }));
 });
 describe('UtilModule.getPerformanceId', () => {
