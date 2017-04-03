@@ -831,19 +831,21 @@ p a {
   top: 50%;
   left: 50%;
   z-index: 10;
-  width: 84px;
+  width: 67px;
   height: 50px;
   margin-top: -25px;
-  margin-left: -42px; }
+  margin-left: -33px; }
 
 .loading div {
   height: 30px;
   width: 3px;
   background-color: #FFF;
   display: inline-block;
-  margin-right: 10px;
+  margin-right: 13px;
   -webkit-animation: loading 1s infinite;
           animation: loading 1s infinite; }
+  .loading div:last-child {
+    margin-right: 0; }
 
 .loading .bar1 {
   -webkit-animation-delay: 0.5s;
