@@ -5,7 +5,7 @@
 ・[鑑賞日時] <%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>
 ・[作品名] <%= performance.attributes.film.name.ja %>
 ・[スクリーン名] <%= performance.attributes.screen.name.ja %>
-・[座席] <%= reserveSeatsToString.join('') %>
+・[座席] <%= reserveSeatsString.join('\n') %>
 ・[合計] ￥<%= amount %>
 【チケット発券について】
 チケットの発券/入場方法は2通りからお選び頂けます。
