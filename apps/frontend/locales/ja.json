@@ -17,7 +17,7 @@
 		"step05": "購入完了",
 		"seat": {
 			"page_ttl": "座席選択",
-			"read": "ご希望の座席を選択して次へボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。</span><br><span class=\"small-text\">※車椅子席をご希望の方は、お手数ですが通常のお席をご購入の上、対象の劇場にご連絡下さい。</span>",
+			"read": "ご希望の座席を選択して次へボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。><br></span<span class=\"small-text\">※車椅子席をご希望の方は、お手数ですが通常のお席をご購入の上、対象の劇場にご連絡下さい。</span>",
 			"next": "次へ",
 			"prev": "戻る",
 			"seats": {
