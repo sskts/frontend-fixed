@@ -82,6 +82,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -91,6 +92,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -186,33 +188,35 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
  * @function getMailContent
  * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {string}
+ * @returns {Promise<string>}
  */
 function getMailContent(req: Request, purchaseModel: PurchaseSession.PurchaseModel): string {
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
+        return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
+    });
     return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様
 
-この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
+この度は、${purchaseModel.performance.attributes.theater.name.ja}のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
 
 ・[予約番号] ${purchaseModel.reserveSeats.tmp_reserve_num}
 
 ・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')} 
-${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('(ddd)') + ']')} 
+(${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('ddd') + ']')}) 
 ${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}
 
 ・[作品名] ${purchaseModel.performance.attributes.film.name.ja}
 
 ・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}
 
-・[券種] ${purchaseModel.ticketToString()}
+・[座席] ${reserveSeatsString.join('\n')}
 
-・[合計] ￥${purchaseModel.getReserveAmount()}
+・[合計] ￥${UtilModule.formatPrice(purchaseModel.getReserveAmount())}
 
-・[座席番号] ${purchaseModel.seatToString()}
-
-【チケット発券について】\n
+【チケット発券について】
 チケットの発券/入場方法は2通りからお選び頂けます。
 
 <発券/入場方法1 劇場発券機で発券>
@@ -307,7 +311,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         // GMOオーソリ取得
         const theaterId = purchaseModel.performance.attributes.theater.id;
         const reservenum = purchaseModel.reserveSeats.tmp_reserve_num;
-        // オーダーID （予約日 + 劇場ID + 予約番号 + オーソリカウント）
+        // オーダーID 予約日 + 劇場ID + 予約番号(8桁) + オーソリカウント(2桁)
         purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
         log('GMOオーソリ取得In', {
             shopId: gmoShopId,

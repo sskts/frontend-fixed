@@ -453,7 +453,7 @@ p {
         }
         dt {
             margin-bottom: 0;
-            width: 150px;
+            width: 180px;
             font-weight: bold;
             @media screen and (max-width: $mobile) {
                 line-height: 1;
@@ -462,7 +462,7 @@ p {
             }
         }
         dd {
-            width: calc(100% - 150px);
+            width: calc(100% - 180px);
             @media screen and (max-width: $mobile){
                 width: auto;      
             }

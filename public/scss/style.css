@@ -448,7 +448,7 @@ p a {
         margin-bottom: 0; } }
   .form-layout dl dt {
     margin-bottom: 0;
-    width: 150px;
+    width: 180px;
     font-weight: bold; }
     @media screen and (max-width: 767px) {
       .form-layout dl dt {
@@ -456,7 +456,7 @@ p a {
         width: auto;
         margin-bottom: 10px; } }
   .form-layout dl dd {
-    width: calc(100% - 150px); }
+    width: calc(100% - 180px); }
     @media screen and (max-width: 767px) {
       .form-layout dl dd {
         width: auto; } }

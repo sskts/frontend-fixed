@@ -99,7 +99,7 @@ function validation(parent) {
             target.after('<div class="validation-text">' + validation.label + locales.validation.maxlength.replace('30', validation.maxLength) + '</div>');
         } else if (validation.minLength
             && value
-            && value.length < validation.minLength - 1) {
+            && value.length < validation.minLength) {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.minlength.replace('30', validation.minLength) + '</div>');
         } else if (validation.regex
