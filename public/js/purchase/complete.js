@@ -1,4 +1,6 @@
 $(function () {
+    var link = $('.inquiry-button a').attr('href');
+    $('.inquiry-login-link').attr('href', link);
     heightFix();
 
     /**

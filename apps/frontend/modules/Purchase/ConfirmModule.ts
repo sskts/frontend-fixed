@@ -254,7 +254,6 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         log('MP取引成立');
         //購入情報をセッションへ
         req.session.complete = {
-            updateReserve: purchaseModel.updateReserve,
             performance: purchaseModel.performance,
             input: purchaseModel.input,
             reserveSeats: purchaseModel.reserveSeats,
@@ -264,7 +263,7 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         //購入セッション削除
         delete req.session.purchase;
         //購入完了情報を返す
-        return res.json({ err: null, result: req.session.complete.updateReserve });
+        return res.json({ err: null, result: req.session.complete });
     } catch (err) {
         log('ERROR', err);
         //購入セッション削除

@@ -133,10 +133,6 @@ function showError(message) {
  */
 function showComplete(result) {
     console.log(result);
-    //購入番号
-    $('.purchase-complete .purchase-number dd strong').text(result.reserve_num);
-    var link = '/inquiry/login?theater='+ $('.inquiry-button a').attr('data-theater') +'&reserve=' + result.reserve_num;
-    $('.inquiry-button a').attr('href', link);
     //step変更
     $('.steps li').removeClass('active');
     $('.steps li:last-child').addClass('active');

@@ -281,7 +281,6 @@ function purchase(req, res, _next) {
             log('MP取引成立');
             //購入情報をセッションへ
             req.session.complete = {
-                updateReserve: purchaseModel.updateReserve,
                 performance: purchaseModel.performance,
                 input: purchaseModel.input,
                 reserveSeats: purchaseModel.reserveSeats,
@@ -291,7 +290,7 @@ function purchase(req, res, _next) {
             //購入セッション削除
             delete req.session.purchase;
             //購入完了情報を返す
-            return res.json({ err: null, result: req.session.complete.updateReserve });
+            return res.json({ err: null, result: req.session.complete });
         }
         catch (err) {
             log('ERROR', err);
