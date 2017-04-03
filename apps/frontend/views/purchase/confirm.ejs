@@ -36,7 +36,7 @@
                         <div class="mb-xx-small">
                             <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
                         </div>
-                        <p class="small-text red-text"><%- __('purchase.confirm.date_note') %></p>
+                        <p class="small-x-text red-text"><%- __('purchase.confirm.date_note') %></p>
                     </dd>
                 </dl>
             </li>
@@ -102,7 +102,7 @@
 
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
-        <div class="box radius bg-ultra-light-gray small-text notes mb-medium">
+        <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
             <%- partial('notes/ja/' + performance.attributes.theater.id) %>
         </div>
 

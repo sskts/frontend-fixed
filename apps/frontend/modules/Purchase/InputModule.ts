@@ -11,6 +11,7 @@ import * as MP from '../../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS');
 
 /**
@@ -88,6 +89,8 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -124,9 +127,8 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         }
         // クレジット決済
         purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-        // オーソリ追加
         await addAuthorization(purchaseModel);
-        // MP購入者情報登録
+        log('オーソリ追加');
         await MP.ownersAnonymous({
             transactionId: purchaseModel.transactionMP.id,
             name_first: purchaseModel.input.first_name_hira,
@@ -135,6 +137,21 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             email: purchaseModel.input.mail_addr
         });
         log('MP購入者情報登録');
+        await MP.transactionsEnableInquiry({
+            transactionId: purchaseModel.transactionMP.id,
+            inquiry_theater: purchaseModel.performance.attributes.theater.id,
+            inquiry_id: purchaseModel.reserveSeats.tmp_reserve_num,
+            inquiry_pass: purchaseModel.input.tel_num
+        });
+        log('MP照会情報登録');
+        await MP.addEmail({
+            transactionId: purchaseModel.transactionMP.id,
+            from: 'noreply@ticket-cinemasunshine.com',
+            to: purchaseModel.input.mail_addr,
+            subject: '購入完了',
+            content: getMailContent(req, purchaseModel)
+        });
+        log('MPメール登録');
         // セッション更新
         req.session.purchase = purchaseModel.toSession();
         // 購入者内容確認へ
@@ -162,6 +179,65 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         next(ErrorUtilModule.getError(req, err));
         return;
     }
+}
+
+/**
+ * メール内容取得
+ * @function getMailContent
+ * @param {Request} req
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {string}
+ */
+function getMailContent(req: Request, purchaseModel: PurchaseSession.PurchaseModel): string {
+    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    return `${purchaseModel.input.last_name_hira} ${purchaseModel.input.first_name_hira} 様
+
+この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
+
+・[予約番号] ${purchaseModel.reserveSeats.tmp_reserve_num}
+
+・[鑑賞日時] ${moment(purchaseModel.performance.attributes.day).format('YYYY年MM月DD日')} 
+${req.__('week[' + moment(purchaseModel.performance.attributes.day).format('(ddd)') + ']')} 
+${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}
+
+・[作品名] ${purchaseModel.performance.attributes.film.name.ja}
+
+・[スクリーン名] ${purchaseModel.performance.attributes.screen.name.ja}
+
+・[券種] ${purchaseModel.ticketToString()}
+
+・[合計] ￥${purchaseModel.getReserveAmount()}
+
+・[座席番号] ${purchaseModel.seatToString()}
+
+【チケット発券について】\n
+チケットの発券/入場方法は2通りからお選び頂けます。
+
+<発券/入場方法1 劇場発券機で発券>
+劇場に設置されている発券機にて発券頂きます。予約番号をお控えの上ご来場ください。
+チケットが発券できなかった場合にはチケット売場にお越しください。
+
+<発券/入場方法2 入場用QRコードで入場>
+以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。
+https://${req.headers.host}/inquiry/login?theater=${purchaseModel.performance.attributes.theater.id}
+
+【ご注意事項】
+・ご購入されたチケットの変更、キャンセル、払い戻しはいかなる場合でも致しかねます。
+・チケットの発券にお時間がかかる場合もございますので、お時間の余裕を持ってご来場ください。
+・メンバーズカード会員のお客様は、ポイントは付与いたしますので、発券したチケットまたは、表示されたQRコードとメンバーズカードをチケット売場までお持ち下さいませ。
+・年齢や学生など各種証明が必要なチケットを購入された方は、入場時にご提示ください。
+ご提示頂けない場合は、一般料金との差額を頂きます。
+
+なお、このメールは、${purchaseModel.performance.attributes.theater.name.ja}の予約システムでチケットをご購入頂いた方にお送りしておりますが、
+チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。
+※なお、このメールアドレスは送信専用となっておりますので、ご返信頂けません。
+ご不明な点がございましたら、下記番号までお問合わせ下さい。
+
+お問い合わせはこちら
+${purchaseModel.performance.attributes.theater.name.ja}
+TEL：XX-XXXX-XXXX`;
 }
 
 /**

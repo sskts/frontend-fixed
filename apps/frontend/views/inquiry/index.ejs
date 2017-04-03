@@ -10,15 +10,15 @@
 
     <div class="box radius bg-ultra-light-gray mb-large">
         <div class="section-ttl text-center"><%- __('inquiry.confirm.section_ttl') %></div>
-        <p class="small-text mb-small read"><%- __('inquiry.confirm.section_text') %></p>
-        <div class="small-text bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
+        <p class="small-x-text mb-small read"><%- __('inquiry.confirm.section_text') %></p>
+        <div class="small-x-text bookmark"><img src="/images/inquiry/bookmark.svg" alt=""></div>
     </div>
 
     <div class="box radius bg-light-gray mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
             <dd><strong class="red-text large-x-text"><%= login.reserve_num %></strong></dd>
-            <dd class="small-text red-text"><%- __('inquiry.confirm.note') %></dd>
+            <dd class="small-x-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
 
@@ -29,6 +29,7 @@
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
+                    <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
                     <div>
                         <strong class="large-text"><%= ticket.seat_num %></strong>
                         <span>[<%= ticket.ticket_name %>]</span>
@@ -46,9 +47,13 @@
                 </div>
                 <% } %>
                 <div class="box">
-                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>-</div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>
+                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>-<%= timeFormat(performance.attributes.time_end) %></div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.theater') %></strong></div>
                     <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.screen') %></strong></div>
                     <div class="mb-x-small"><%= performance.attributes.screen.name[__('lang')] %></div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.film_title') %></strong></div>
                     <div><%= performance.attributes.film.name[__('lang')] %></div>
                 </div>
             </div>
