@@ -226,6 +226,7 @@ function getSalesTickets(req, purchaseModel) {
                 }
             }
         }
+        log('券種', mvtkTickets.concat(result));
         return mvtkTickets.concat(result);
     });
 }

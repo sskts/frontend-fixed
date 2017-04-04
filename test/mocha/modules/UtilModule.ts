@@ -4,7 +4,10 @@
  * @ignore
  */
 import * as assert from 'assert';
+import * as moment from 'moment';
+import locales from '../../../apps/frontend/middlewares/locales';
 import * as UtilModule from '../../../apps/frontend/modules/Util/UtilModule';
+import * as normalDAta from '../data/normalData';
 
 describe('UtilModule.timeFormat', () => {
     it('正常', async () => {
@@ -53,5 +56,23 @@ describe('UtilModule.base64Decode', () => {
     it('正常', async () => {
         const str = UtilModule.base64Decode('44OG44K544OI');
         assert.equal(str, 'テスト');
+    });
+});
+
+describe('UtilModule.getEmailTemplate', () => {
+    it('正常', async () => {
+        const locals = {
+            performance: normalDAta.performance,
+            reserveSeats: normalDAta.reserveSeats,
+            input: normalDAta.input,
+            reserveSeatsString: [],
+            amount: 0,
+            domain: '',
+            moment: moment,
+            timeFormat: UtilModule.timeFormat,
+            __: locales.__
+        };
+        const template = await UtilModule.getEmailTemplate('./apps/frontend/views/email/complete/ja', locals);
+        assert(template.text);
     });
 });

@@ -251,7 +251,7 @@ async function getSalesTickets(
             }
         }
     }
-
+    log('券種', mvtkTickets.concat(result));
     return mvtkTickets.concat(result);
 }
 
