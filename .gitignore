@@ -7,7 +7,8 @@ docs/
 .env*
 app.yml*
 *.log
-
+.vscode/
+npm-debug*
 
 # Elastic Beanstalk Files
 
