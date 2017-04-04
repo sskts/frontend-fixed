@@ -120,8 +120,6 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     const mvtkFilmCode = MvtkUtilModule.getfilmCode(
         purchaseModel.performanceCOA.titleCode,
         purchaseModel.performanceCOA.titleBranchNum);
-    // 興行会社システム座席予約番号(劇場コード + 予約番号)
-    const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
@@ -132,7 +130,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-        kgygishSstmZskyykNo: reserveNo, // 興行会社システム座席予約番号
+        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`, // 興行会社システム座席予約番号
         kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
@@ -153,7 +151,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-        kgygishSstmZskyykNo: reserveNo, // 興行会社システム座席予約番号
+        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`, // 興行会社システム座席予約番号
         kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日

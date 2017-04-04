@@ -141,8 +141,6 @@ function reserveMvtk(purchaseModel) {
         if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
             return;
         const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum);
-        // 興行会社システム座席予約番号(劇場コード + 予約番号)
-        const reserveNo = `${purchaseModel.performance.attributes.theater.id}${purchaseModel.reserveSeats.tmp_reserve_num}`;
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
@@ -153,7 +151,7 @@ function reserveMvtk(purchaseModel) {
             kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            kgygishSstmZskyykNo: reserveNo,
+            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`,
             kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
@@ -175,7 +173,7 @@ function reserveMvtk(purchaseModel) {
             kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            kgygishSstmZskyykNo: reserveNo,
+            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`,
             kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,

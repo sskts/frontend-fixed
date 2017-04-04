@@ -182,7 +182,7 @@ export async function auth(req: Request, purchaseModel: PurchaseSession.Purchase
                 title_code: purchaseModel.performanceCOA.titleCode,
                 title_branch_num: purchaseModel.performanceCOA.titleBranchNum
             });
-
+            log('ムビチケチケットコード取得', ticket);
             mvtkList.push({
                 code: purchaseNumberAuthResult.knyknrNo,
                 password: UtilModule.bace64Encode(input.password),
