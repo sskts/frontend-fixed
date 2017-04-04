@@ -27,11 +27,9 @@ const log = debug('SSKTS');
  * @param {NextFunction} next
  * @returns {Promise<Response>}
  */
-// tslint:disable-next-line:variable-name
-function start(req, res, _next) {
+function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            log(req.body);
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
@@ -39,6 +37,11 @@ function start(req, res, _next) {
             if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
                 //重複確認へ
                 return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+            }
+            // 予約可能日判定
+            const performance = yield MP.getPerformance(req.body.id);
+            if (moment().format('YYYYMMDDHHmm') > `${performance.attributes.day}${performance.attributes.time_end}`) {
+                throw ErrorUtilModule.ERROR_ACCESS;
             }
             // 取引開始
             const minutes = 30;
@@ -56,6 +59,9 @@ function start(req, res, _next) {
             return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
         }
         catch (err) {
+            if (err === ErrorUtilModule.ERROR_ACCESS) {
+                return res.json({ redirect: '/error', err: null });
+            }
             const msg = ErrorUtilModule.getError(req, err).message;
             return res.json({ redirect: null, err: msg });
         }

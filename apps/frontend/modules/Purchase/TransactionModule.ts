@@ -4,7 +4,7 @@
  */
 
 import * as debug from 'debug';
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
@@ -20,10 +20,8 @@ const log = debug('SSKTS');
  * @param {NextFunction} next
  * @returns {Promise<Response>}
  */
-// tslint:disable-next-line:variable-name
-export async function start(req: Request, res: Response, _next: NextFunction): Promise<Response> {
+export async function start(req: Request, res: Response): Promise<Response> {
     try {
-        log(req.body);
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
@@ -31,6 +29,11 @@ export async function start(req: Request, res: Response, _next: NextFunction): P
         if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
             //重複確認へ
             return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+        }
+        // 予約可能日判定
+        const performance = await MP.getPerformance(req.body.id);
+        if (moment().format('YYYYMMDDHHmm') > `${performance.attributes.day}${performance.attributes.time_end}`) {
+            throw ErrorUtilModule.ERROR_ACCESS;
         }
         // 取引開始
         const minutes = 30;
@@ -47,6 +50,9 @@ export async function start(req: Request, res: Response, _next: NextFunction): P
         //座席選択へ
         return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
     } catch (err) {
+        if (err === ErrorUtilModule.ERROR_ACCESS) {
+            return res.json({ redirect: '/error', err: null });
+        }
         const msg = ErrorUtilModule.getError(req, err).message;
         return res.json({ redirect: null, err: msg });
     }
