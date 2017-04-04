@@ -1,71 +1,10 @@
+/**
+ * 購入セッション
+ */
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as MP from '../../../../libs/MP';
 import * as UtilModule from '../../modules/Util/UtilModule';
-
-/**
- * 購入セッション
- */
-
-/**
- * ReserveTicket
- * @interface IReserveTicket
- */
-export interface IReserveTicket {
-    /**
-     * 座席セクション
-     */
-    section: string;
-    /**
-     * 座席番号
-     */
-    seat_code: string;
-    /**
-     * チケットコード
-     */
-    ticket_code: string;
-    /**
-     * チケット名
-     */
-    ticket_name: string;
-    /**
-     * チケット名（英）
-     */
-    ticket_name_eng: string;
-    /**
-     * チケット名（カナ）
-     */
-    ticket_name_kana: string;
-    /**
-     * 標準単価
-     */
-    std_price: number;
-    /**
-     * 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
-     */
-    add_price: number;
-    /**
-     * 割引額
-     */
-    dis_price: number;
-    /**
-     * 販売単価(標準単価＋加算単価)
-     */
-    sale_price: number;
-    /**
-     * メガネ単価
-     */
-    add_price_glasses: number;
-    /**
-     * メガネ有り無し(現状ムビチケ)
-     */
-    glasses: boolean;
-    /**
-     * ムビチケ購入番号
-     */
-    mvtk_num: string | null;
-}
-
 /**
  * 購入者情報
  * @interface IInput
@@ -185,7 +124,7 @@ export class PurchaseModel {
     /**
      * 予約チケット
      */
-    public reserveTickets: IReserveTicket[] | null;
+    public reserveTickets: MP.IReserveTicket[] | null;
     /**
      * 入力情報
      */
@@ -277,7 +216,7 @@ export class PurchaseModel {
         performance: MP.IPerformance | null;
         theater: MP.ITheater | null;
         reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null;
-        reserveTickets: IReserveTicket[] | null;
+        reserveTickets: MP.IReserveTicket[] | null;
         input: IInput | null;
         gmo: IGMO | null;
         updateReserve: COA.ReserveService.IUpdReserveResult | null;
@@ -373,9 +312,9 @@ export class PurchaseModel {
     }
 
     /**
-     * チケット価値取得（チケット価値）
+     * ムビチケ計上単価合計取得
      * @memberOf PurchaseModel
-     * @method getPrice
+     * @method getMvtkPrice
      * @returns {number}
      */
     public getMvtkPrice(): number {
@@ -383,19 +322,7 @@ export class PurchaseModel {
         let price = 0;
         if (reserveTickets === null) return price;
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num !== '') {
-                let mvtkAppPrice = 0;
-                // ムビチケ計上単価取得
-                if (this.mvtk !== null) {
-                    const mvtkTicket = this.mvtk.find((value) => {
-                        return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
-                    });
-                    if (mvtkTicket !== undefined) {
-                        mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
-                    }
-                }
-                price += ticket.sale_price + mvtkAppPrice;
-            }
+            price += ticket.mvtk_app_price;
         }
         return price;
     }

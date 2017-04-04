@@ -14,7 +14,7 @@
     <div class="mb-medium date">
         <select>
             <% for (let i = 0; i < 10; i++) { %>
-            <% if (moment().add((i - 5), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
+            <% if (moment().add((i - 6), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
             <option selected value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>
             <% } else { %>
             <option value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>

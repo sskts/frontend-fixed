@@ -200,7 +200,9 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             sale_price: salesTickets[0].sale_price,
             add_price_glasses: 0,
             glasses: false,
-            mvtk_num: ''
+            mvtk_num: '',
+            mvtk_app_price: 0,
+            add_glasses: 0
         };
     });
     let price = 0;
@@ -231,12 +233,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
  * @param {NextFunction} next
  * @returns {Promise<Response>}
  */
-export async function getScreenStateReserve(
-    req: Request,
-    res: Response,
-    // tslint:disable-next-line:variable-name
-    _next: NextFunction
-): Promise<Response> {
+export async function getScreenStateReserve( req: Request, res: Response): Promise<Response> {
     try {
         const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
         const screen = await UtilModule.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);

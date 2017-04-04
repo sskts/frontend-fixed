@@ -20,7 +20,7 @@
     "nsp": "nsp check --output summary"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^2.0.5",
+    "@motionpicture/coa-service": "^2.0.6",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
     "body-parser": "^1.15.2",

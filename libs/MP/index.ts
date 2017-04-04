@@ -371,28 +371,76 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
 export interface IAddCOAAuthorizationArgs {
     transaction: ITransactionStartResult;
     reserveSeatsTemporarilyResult: COA.ReserveService.IUpdTmpReserveSeatResult;
-    salesTicketResults: ISalesTicketResult[];
+    salesTicketResults: IReserveTicket[];
     performance: IPerformance;
     performanceCOA: IPerformanceCOA;
     price: number;
 
 }
+
 /**
- * SalesTicketResult
- * @interface ISalesTicketResult
+ * 予約チケット情報
+ * @interface IReserveTicket
  */
-interface ISalesTicketResult {
+export interface IReserveTicket {
+    /**
+     * 座席セクション
+     */
     section: string;
+    /**
+     * 座席番号
+     */
     seat_code: string;
+    /**
+     * チケットコード
+     */
     ticket_code: string;
+    /**
+     * チケット名
+     */
     ticket_name: string;
+    /**
+     * チケット名（英）
+     */
     ticket_name_eng: string;
+    /**
+     * チケット名（カナ）
+     */
     ticket_name_kana: string;
+    /**
+     * 標準単価
+     */
     std_price: number;
+    /**
+     * 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
+     */
     add_price: number;
+    /**
+     * 割引額
+     */
     dis_price: number;
+    /**
+     * 販売単価(標準単価＋加算単価)
+     */
     sale_price: number;
+    /**
+     * メガネ単価
+     */
+    add_price_glasses: number;
+    /**
+     * メガネ有り無し(現状ムビチケ)
+     */
+    glasses: boolean;
+    /**
+     * ムビチケ購入番号
+     */
+    mvtk_num: string | null;
+    /**
+     * ムビチケ計上単価
+     */
+    mvtk_app_price: number;
 }
+
 /**
  * COAオーソリ追加out
  * @memberOf MP
@@ -446,7 +494,9 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
                     std_price: tmpReserve.std_price,
                     add_price: tmpReserve.add_price,
                     dis_price: tmpReserve.dis_price,
-                    sale_price: tmpReserve.sale_price
+                    sale_price: tmpReserve.sale_price,
+                    mvtk_app_price: tmpReserve.mvtk_app_price,
+                    add_glasses: tmpReserve.add_price_glasses
                 };
             }),
             price: args.price

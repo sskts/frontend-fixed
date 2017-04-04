@@ -78,7 +78,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         TicketForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            const reserveTickets: PurchaseSession.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
+            const reserveTickets: MP.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
             purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, reserveTickets);
             log('券種検証');
             // COAオーソリ削除
@@ -268,13 +268,13 @@ async function ticketValidation(
     req: Request,
     res: Response,
     purchaseModel: PurchaseSession.PurchaseModel,
-    reserveTickets: PurchaseSession.IReserveTicket[]
-): Promise<PurchaseSession.IReserveTicket[]> {
+    reserveTickets: MP.IReserveTicket[]
+): Promise<MP.IReserveTicket[]> {
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.salesTicketsCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-    const result: PurchaseSession.IReserveTicket[] = [];
+    const result: MP.IReserveTicket[] = [];
     //コアAPI券種取得
     const salesTickets = purchaseModel.salesTicketsCOA;
 
@@ -301,9 +301,12 @@ async function ticketValidation(
                 sale_price: (ticket.glasses)
                     ? (<number>mvtkTicket.ticket.add_price) + (<number>mvtkTicket.ticket.add_price_glasses)
                     : mvtkTicket.ticket.add_price, // 販売単価
-                add_price_glasses: mvtkTicket.ticket.add_price_glasses, // メガネ単価
+                add_price_glasses: (ticket.glasses)
+                    ? mvtkTicket.ticket.add_price_glasses
+                    : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
-                mvtk_num: mvtkTicket.code // ムビチケ購入番号
+                mvtk_num: mvtkTicket.code, // ムビチケ購入番号
+                mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip) // ムビチケ計上単価
             });
         } else {
             // 通常券種
@@ -349,7 +352,8 @@ async function ticketValidation(
                 sale_price: salesTicket.sale_price, // 販売単価
                 add_price_glasses: ticket.add_price_glasses, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
-                mvtk_num: ticket.mvtk_num // ムビチケ購入番号
+                mvtk_num: ticket.mvtk_num, // ムビチケ購入番号
+                mvtk_app_price: 0 // ムビチケ計上単価
             });
         }
     }

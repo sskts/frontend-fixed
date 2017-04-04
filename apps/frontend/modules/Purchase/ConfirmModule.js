@@ -12,7 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
@@ -83,8 +82,6 @@ function reserveMvtk(purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.updateReserve === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.mvtk === null)
@@ -151,8 +148,8 @@ function reserveMvtk(purchaseModel) {
             kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`,
-            kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
+            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`,
+            kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
@@ -173,8 +170,8 @@ function reserveMvtk(purchaseModel) {
             kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.updateReserve.reserve_num}`,
-            kgygishUsrZskyykNo: String(purchaseModel.updateReserve.reserve_num),
+            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`,
+            kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
@@ -230,43 +227,40 @@ function purchase(req, res, _next) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             // COA本予約
-            purchaseModel.updateReserve = yield COA.ReserveService.updReserve({
-                theater_code: purchaseModel.performance.attributes.theater.id,
-                date_jouei: purchaseModel.performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: purchaseModel.performance.attributes.time_start,
-                tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
-                reserve_name: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
-                reserve_name_jkana: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
-                tel_num: purchaseModel.input.tel_num,
-                mail_addr: purchaseModel.input.mail_addr,
-                reserve_amount: purchaseModel.getReserveAmount(),
-                list_ticket: purchaseModel.reserveTickets.map((ticket) => {
-                    let mvtkAppPrice = 0;
-                    // ムビチケ計上単価取得
-                    if (purchaseModel.mvtk !== null) {
-                        const mvtkTicket = purchaseModel.mvtk.find((value) => {
-                            return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
-                        });
-                        if (mvtkTicket !== undefined) {
-                            mvtkAppPrice = Number(mvtkTicket.ykknInfo.kijUnip);
-                        }
-                    }
-                    return {
-                        ticket_code: ticket.ticket_code,
-                        std_price: ticket.std_price,
-                        add_price: ticket.add_price,
-                        dis_price: 0,
-                        sale_price: (ticket.std_price + ticket.add_price),
-                        ticket_count: 1,
-                        mvtk_app_price: mvtkAppPrice,
-                        seat_num: ticket.seat_code,
-                        add_glasses: (ticket.glasses) ? ticket.add_price_glasses : 0
-                    };
-                })
-            });
-            log('COA本予約', purchaseModel.updateReserve);
+            // purchaseModel.updateReserve = await COA.ReserveService.updReserve({
+            //     theater_code: purchaseModel.performance.attributes.theater.id,
+            //     date_jouei: purchaseModel.performance.attributes.day,
+            //     title_code: purchaseModel.performanceCOA.titleCode,
+            //     title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
+            //     time_begin: purchaseModel.performance.attributes.time_start,
+            //     tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
+            //     reserve_name: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
+            //     reserve_name_jkana: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
+            //     tel_num: purchaseModel.input.tel_num,
+            //     mail_addr: purchaseModel.input.mail_addr,
+            //     reserve_amount: purchaseModel.getReserveAmount(),
+            //     list_ticket: purchaseModel.reserveTickets.map((ticket) => {
+            //         let mvtkTicket: PurchaseSession.IMvtk | undefined;
+            //         if (purchaseModel.mvtk !== null) {
+            //             mvtkTicket = purchaseModel.mvtk.find((value) => {
+            //                 return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+            //             });
+            //         }
+            //         return {
+            //             ticket_code: ticket.ticket_code,
+            //             std_price: ticket.std_price,
+            //             add_price: ticket.add_price,
+            //             dis_price: 0,
+            //             sale_price: (ticket.std_price + ticket.add_price),
+            //             ticket_count: 1,
+            //             mvtk_app_price: ticket.mvtk_app_price,
+            //             seat_num: ticket.seat_code,
+            //             add_glasses: (ticket.glasses) ? ticket.add_price_glasses : 0,
+            //             kbn_eisyahousiki: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.eishhshkTyp : '00'
+            //         };
+            //     })
+            // });
+            // log('COA本予約', purchaseModel.updateReserve);
             // ムビチケ使用
             if (purchaseModel.mvtk !== null) {
                 yield reserveMvtk(purchaseModel);

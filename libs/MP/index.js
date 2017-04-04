@@ -279,7 +279,9 @@ function addCOAAuthorization(args) {
                         std_price: tmpReserve.std_price,
                         add_price: tmpReserve.add_price,
                         dis_price: tmpReserve.dis_price,
-                        sale_price: tmpReserve.sale_price
+                        sale_price: tmpReserve.sale_price,
+                        mvtk_app_price: tmpReserve.mvtk_app_price,
+                        add_glasses: tmpReserve.add_price_glasses
                     };
                 }),
                 price: args.price

@@ -275,9 +275,12 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                     sale_price: (ticket.glasses)
                         ? mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses
                         : mvtkTicket.ticket.add_price,
-                    add_price_glasses: mvtkTicket.ticket.add_price_glasses,
+                    add_price_glasses: (ticket.glasses)
+                        ? mvtkTicket.ticket.add_price_glasses
+                        : 0,
                     glasses: ticket.glasses,
-                    mvtk_num: mvtkTicket.code // ムビチケ購入番号
+                    mvtk_num: mvtkTicket.code,
+                    mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip) // ムビチケ計上単価
                 });
             }
             else {
@@ -325,7 +328,8 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                     sale_price: salesTicket.sale_price,
                     add_price_glasses: ticket.add_price_glasses,
                     glasses: ticket.glasses,
-                    mvtk_num: ticket.mvtk_num // ムビチケ購入番号
+                    mvtk_num: ticket.mvtk_num,
+                    mvtk_app_price: 0 // ムビチケ計上単価
                 });
             }
         }

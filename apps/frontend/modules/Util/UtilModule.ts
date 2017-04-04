@@ -214,7 +214,7 @@ export async function readJSONAsync(file: string): Promise<{}> {
             }
             resolve(jsonObject);
             return;
-        })
+        });
     });
 }
 

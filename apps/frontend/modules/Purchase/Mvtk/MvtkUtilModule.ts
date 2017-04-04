@@ -2,7 +2,7 @@
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-import * as UtilModule from '../../Util/UtilModule'
+import * as UtilModule from '../../Util/UtilModule';
 /**
  * 興行会社コード
  * @memberOf Purchase.Mvtk.MvtkUtilModule

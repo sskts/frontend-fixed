@@ -203,7 +203,9 @@ function reserve(selectSeats, purchaseModel) {
                 sale_price: salesTickets[0].sale_price,
                 add_price_glasses: 0,
                 glasses: false,
-                mvtk_num: ''
+                mvtk_num: '',
+                mvtk_app_price: 0,
+                add_glasses: 0
             };
         });
         let price = 0;
@@ -234,9 +236,7 @@ function reserve(selectSeats, purchaseModel) {
  * @param {NextFunction} next
  * @returns {Promise<Response>}
  */
-function getScreenStateReserve(req, res, 
-    // tslint:disable-next-line:variable-name
-    _next) {
+function getScreenStateReserve(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
