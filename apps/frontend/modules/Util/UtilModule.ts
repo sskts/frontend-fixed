@@ -199,7 +199,7 @@ export interface IEmailTemplateResults {
 }
 
 /**
- * メール内容取得
+ * json取得
  * @memberOf Util.UtilModule
  * @function readJSONAsync
  * @param {string} file
@@ -227,9 +227,17 @@ export async function readJSONAsync(file: string): Promise<{}> {
 export const DIGITS_02 = -2;
 
 /**
+ * 3桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_03
+ * @type number
+ */
+export const DIGITS_03 = -3;
+
+/**
  * 8桁
  * @memberOf Util.UtilModule
- * @const DIGITS_02
+ * @const DIGITS_08
  * @type number
  */
 export const DIGITS_08 = -8;

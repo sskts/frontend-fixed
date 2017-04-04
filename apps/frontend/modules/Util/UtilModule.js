@@ -195,7 +195,7 @@ function getEmailTemplate(dir, locals) {
 }
 exports.getEmailTemplate = getEmailTemplate;
 /**
- * メール内容取得
+ * json取得
  * @memberOf Util.UtilModule
  * @function readJSONAsync
  * @param {string} file
@@ -224,9 +224,16 @@ exports.readJSONAsync = readJSONAsync;
  */
 exports.DIGITS_02 = -2;
 /**
+ * 3桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_03
+ * @type number
+ */
+exports.DIGITS_03 = -3;
+/**
  * 8桁
  * @memberOf Util.UtilModule
- * @const DIGITS_02
+ * @const DIGITS_08
  * @type number
  */
 exports.DIGITS_08 = -8;

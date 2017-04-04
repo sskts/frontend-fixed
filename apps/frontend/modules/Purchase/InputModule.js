@@ -289,9 +289,9 @@ function addAuthorization(purchaseModel) {
         const amount = purchaseModel.getReserveAmount();
         try {
             // GMOオーソリ取得
-            const theaterId = purchaseModel.performance.attributes.theater.id;
+            const theaterId = `000${purchaseModel.performance.attributes.theater.id}`.slice(UtilModule.DIGITS_03);
             const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(UtilModule.DIGITS_08);
-            // オーダーID 予約日 + 劇場ID + 予約番号(8桁) + オーソリカウント(2桁)
+            // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
             purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
             log('GMOオーソリ取得In', {
                 shopId: gmoShopId,
