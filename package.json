@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "scripts": {
     "development": "bin\\env\\development.bat && bin\\env\\debug.bat && node ./index.js",
@@ -23,6 +23,7 @@
     "@motionpicture/coa-service": "^2.0.6",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
+    "basic-auth": "^1.1.0",
     "body-parser": "^1.15.2",
     "connect-redis": "^3.1.0",
     "cookie-parser": "^1.4.3",
@@ -43,6 +44,7 @@
   },
   "main": "index.js",
   "devDependencies": {
+    "@types/basic-auth": "0.0.31",
     "@types/body-parser": "0.0.33",
     "@types/config": "0.0.30",
     "@types/connect-redis": "0.0.5",
