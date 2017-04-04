@@ -1,9 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+const UtilModule = require("../../Util/UtilModule");
 /**
  * 興行会社コード
  * @memberOf Purchase.Mvtk.MvtkUtilModule
@@ -19,10 +20,8 @@ exports.COMPANY_CODE = 'SSK000';
  * @returns {string}
  */
 function getfilmCode(titleCode, titleBranchNum) {
-    const num = 10;
-    return (Number(titleBranchNum) < num)
-        ? `${titleCode}0${titleBranchNum}`
-        : `${titleCode}${titleBranchNum}`;
+    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS_02);
+    return `${titleCode}${branch}`;
 }
 exports.getfilmCode = getfilmCode;
 /**

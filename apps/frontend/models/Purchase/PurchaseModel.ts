@@ -1,6 +1,7 @@
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as MP from '../../../../libs/MP';
+import * as UtilModule from '../../modules/Util/UtilModule';
 
 /**
  * 購入セッション
@@ -449,8 +450,6 @@ export class PurchaseModel {
      * @returns {string}
      */
     public authorizationCountGMOToString(): string {
-        const str = `00${this.authorizationCountGMO}`;
-        const num = -2;
-        return str.slice(num);
+        return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
     }
 }

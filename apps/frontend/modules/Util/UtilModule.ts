@@ -2,9 +2,10 @@
  * 共通
  * @namespace Util.UtilModule
  */
+import * as EmailTemplate from 'email-templates';
 import * as express from 'express';
+import * as fs from 'fs-extra';
 import * as moment from 'moment';
-
 /**
  * テンプレート変数へ渡す
  * @memberOf Util.UtilModule
@@ -54,12 +55,12 @@ export function escapeHtml(str: string): string {
     }
     const change = (match: string): string => {
         const changeList: any = {
-        '&': '&amp;',
-        '\'': '&#x27;',
-        '`': '&#x60;',
-        '"': '&quot;',
-        '<': '&lt;',
-        '>': '&gt;'
+            '&': '&amp;',
+            '\'': '&#x27;',
+            '`': '&#x60;',
+            '"': '&quot;',
+            '<': '&lt;',
+            '>': '&gt;'
         };
         return changeList[match];
     };
@@ -74,7 +75,7 @@ export function escapeHtml(str: string): string {
  * @returns {string}
  */
 export function formatPrice(price: number): string {
-    return String(price).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+    return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
 }
 
 /**
@@ -97,7 +98,7 @@ export function getPerformanceId(args: {
     titleBranchNum: string,
     screenCode: string,
     timeBegin: string
-}): string  {
+}): string {
     return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
 }
 
@@ -109,7 +110,7 @@ export function getPerformanceId(args: {
  * @returns {string}
  */
 export function bace64Encode(str: string): string {
-   return new Buffer(str).toString('base64');
+    return new Buffer(str).toString('base64');
 }
 
 /**
@@ -163,3 +164,72 @@ export function getPortalUrl(): string {
     }
     return result;
 }
+
+/**
+ * メール内容取得
+ * @memberOf Util.UtilModule
+ * @function getMailTemplate
+ * @param {string} dir
+ * @param {{}} locals
+ * @returns {Promise<{}>}
+ */
+export async function getEmailTemplate(dir: string, locals: {}): Promise<IEmailTemplateResults> {
+    const emailTemplate = new EmailTemplate.EmailTemplate(dir);
+    return new Promise<IEmailTemplateResults>((resolve, reject) => {
+        emailTemplate.render(locals, (err, results) => {
+            if (err !== null) {
+                reject(err);
+                return;
+            }
+            resolve(results);
+            return;
+        });
+    });
+}
+
+/**
+ * メール内容取得out
+ * @memberOf Util.UtilModule
+ * @interface IEmailTemplateResults
+ */
+export interface IEmailTemplateResults {
+    html: string;
+    text: string;
+    subject: string;
+}
+
+/**
+ * メール内容取得
+ * @memberOf Util.UtilModule
+ * @function readJSONAsync
+ * @param {string} file
+ * @returns {Promise<{}>}
+ */
+export async function readJSONAsync(file: string): Promise<{}> {
+    return new Promise((resolve, reject) => {
+        fs.readJSON(file, (err, jsonObject) => {
+            if (err !== null) {
+                reject(err);
+                return;
+            }
+            resolve(jsonObject);
+            return;
+        })
+    });
+}
+
+/**
+ * 2桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_02
+ * @type number
+ */
+export const DIGITS_02 = -2;
+
+/**
+ * 8桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_02
+ * @type number
+ */
+export const DIGITS_08 = -8;

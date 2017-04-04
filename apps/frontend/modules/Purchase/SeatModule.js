@@ -14,7 +14,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
-const fs = require("fs-extra-promise");
 const MP = require("../../../../libs/MP");
 const SeatForm_1 = require("../../forms/Purchase/SeatForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
@@ -240,12 +239,9 @@ function getScreenStateReserve(req, res,
     _next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const num = 10;
-            const screenCode = (Number(req.body.screen_code) < num)
-                ? `0${req.body.screen_code}`
-                : req.body.screen_code;
-            const screen = yield fs.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
-            const setting = yield fs.readJSONAsync('./apps/frontend/theaters/setting.json');
+            const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
+            const screen = yield UtilModule.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);
+            const setting = yield UtilModule.readJSONAsync('./apps/frontend/theaters/setting.json');
             const state = yield COA.ReserveService.stateReserveSeat(req.body);
             return res.json({
                 err: null,

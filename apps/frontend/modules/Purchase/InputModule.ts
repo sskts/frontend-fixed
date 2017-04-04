@@ -5,7 +5,6 @@
 
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
-import * as EmailTemplate from 'email-templates';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../../libs/MP';
@@ -147,14 +146,27 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             inquiry_pass: purchaseModel.input.tel_num
         });
         log('MP照会情報登録');
-        const mailContent = await getMailContent(req, purchaseModel);
-        log('メール', mailContent);
+        const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
+            return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
+        });
+        const locals = {
+            performance: purchaseModel.performance,
+            reserveSeats: purchaseModel.reserveSeats,
+            input: purchaseModel.input,
+            reserveSeatsString: reserveSeatsString,
+            amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
+            domain: req.headers.host,
+            moment: moment,
+            timeFormat: UtilModule.timeFormat,
+            __: req.__
+        };
+        const emailTemplate = await UtilModule.getEmailTemplate(`./apps/frontend/views/email/complete/${req.__('lang')}`, locals);
         await MP.addEmail({
             transactionId: purchaseModel.transactionMP.id,
             from: 'noreply@ticket-cinemasunshine.com',
             to: purchaseModel.input.mail_addr,
             subject: '購入完了',
-            content: mailContent
+            content: emailTemplate.text
         });
         log('MPメール登録');
         // セッション更新
@@ -184,45 +196,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         next(ErrorUtilModule.getError(req, err));
         return;
     }
-}
-
-/**
- * メール内容取得
- * @function getMailContent
- * @param {Request} req
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<string>}
- */
-async function getMailContent(req: Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<string> {
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
-        return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
-    });
-    const emailTemplate = new EmailTemplate.EmailTemplate(`./apps/frontend/views/email/complete/${req.__('lang')}`);
-    const locals = {
-        performance: purchaseModel.performance,
-        reserveSeats: purchaseModel.reserveSeats,
-        input: purchaseModel.input,
-        reserveSeatsString: reserveSeatsString,
-        amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
-        domain: req.headers.host,
-        moment: moment,
-        timeFormat: UtilModule.timeFormat,
-        __: req.__
-    };
-    return new Promise<string>((resolve, reject) => {
-        emailTemplate.render(locals, (err, results) => {
-            if (err !== null) {
-                reject(err);
-                return;
-            }
-            resolve(results.text);
-            return;
-        });
-    });
 }
 
 /**
@@ -291,8 +264,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     try {
         // GMOオーソリ取得
         const theaterId = purchaseModel.performance.attributes.theater.id;
-        const reservenumLimit = -8;
-        const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(reservenumLimit);
+        const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(UtilModule.DIGITS_08);
         // オーダーID 予約日 + 劇場ID + 予約番号(8桁) + オーソリカウント(2桁)
         purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
         log('GMOオーソリ取得In', {

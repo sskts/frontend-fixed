@@ -1,5 +1,19 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 共通
+ * @namespace Util.UtilModule
+ */
+const EmailTemplate = require("email-templates");
+const fs = require("fs-extra");
 const moment = require("moment");
 /**
  * テンプレート変数へ渡す
@@ -156,3 +170,63 @@ function getPortalUrl() {
     return result;
 }
 exports.getPortalUrl = getPortalUrl;
+/**
+ * メール内容取得
+ * @memberOf Util.UtilModule
+ * @function getMailTemplate
+ * @param {string} dir
+ * @param {{}} locals
+ * @returns {Promise<{}>}
+ */
+function getEmailTemplate(dir, locals) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const emailTemplate = new EmailTemplate.EmailTemplate(dir);
+        return new Promise((resolve, reject) => {
+            emailTemplate.render(locals, (err, results) => {
+                if (err !== null) {
+                    reject(err);
+                    return;
+                }
+                resolve(results);
+                return;
+            });
+        });
+    });
+}
+exports.getEmailTemplate = getEmailTemplate;
+/**
+ * メール内容取得
+ * @memberOf Util.UtilModule
+ * @function readJSONAsync
+ * @param {string} file
+ * @returns {Promise<{}>}
+ */
+function readJSONAsync(file) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            fs.readJSON(file, (err, jsonObject) => {
+                if (err !== null) {
+                    reject(err);
+                    return;
+                }
+                resolve(jsonObject);
+                return;
+            });
+        });
+    });
+}
+exports.readJSONAsync = readJSONAsync;
+/**
+ * 2桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_02
+ * @type number
+ */
+exports.DIGITS_02 = -2;
+/**
+ * 8桁
+ * @memberOf Util.UtilModule
+ * @const DIGITS_02
+ * @type number
+ */
+exports.DIGITS_08 = -8;

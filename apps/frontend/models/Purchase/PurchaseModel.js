@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const UtilModule = require("../../modules/Util/UtilModule");
 /**
  * 購入セッション
  * @class PurchaseModel
@@ -202,9 +203,7 @@ class PurchaseModel {
      * @returns {string}
      */
     authorizationCountGMOToString() {
-        const str = `00${this.authorizationCountGMO}`;
-        const num = -2;
-        return str.slice(num);
+        return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
     }
 }
 PurchaseModel.SEAT_STATE = 0;

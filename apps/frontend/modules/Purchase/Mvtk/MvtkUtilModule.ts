@@ -2,7 +2,7 @@
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-
+import * as UtilModule from '../../Util/UtilModule'
 /**
  * 興行会社コード
  * @memberOf Purchase.Mvtk.MvtkUtilModule
@@ -19,10 +19,8 @@ export const COMPANY_CODE = 'SSK000';
  * @returns {string}
  */
 export function getfilmCode(titleCode: string, titleBranchNum: string): string {
-    const num = 10;
-    return (Number(titleBranchNum) < num)
-        ? `${titleCode}0${titleBranchNum}`
-        : `${titleCode}${titleBranchNum}`;
+    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS_02);
+    return `${titleCode}${branch}`;
 }
 
 /**
