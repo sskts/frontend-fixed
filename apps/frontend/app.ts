@@ -5,6 +5,7 @@ import * as express from 'express';
 // tslint:disable-next-line:no-require-imports
 import expressValidator = require('express-validator');
 import * as helmet from 'helmet';
+import basicAuth from './middlewares/basicAuth';
 import benchmarks from './middlewares/benchmarks';
 import ipFilter from './middlewares/ipFilter';
 import locales from './middlewares/locales';
@@ -21,6 +22,7 @@ const engine = require('ejs-mate');
 const app: express.Application = express();
 
 app.use(ipFilter); // IP制限
+app.use(basicAuth); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
 app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
