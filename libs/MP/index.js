@@ -585,7 +585,9 @@ function getPerformanceCOA(theaterId, screenId, filmId) {
             theaterCode: theater.id,
             screenCode: screen.attributes.coa_screen_code,
             titleCode: film.attributes.coa_title_code,
-            titleBranchNum: film.attributes.coa_title_branch_num
+            titleBranchNum: film.attributes.coa_title_branch_num,
+            flgMvtkUse: film.attributes.flg_mvtk_use,
+            dateMvtkBegin: film.attributes.date_mvtk_begin
         };
     });
 }

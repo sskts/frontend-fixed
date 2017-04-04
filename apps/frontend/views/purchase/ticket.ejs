@@ -8,13 +8,13 @@
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
-            data-seat-code="<%= ticket.seat_code %>"
-            data-ticket-code="<%= ticket.ticket_code %>"
-            data-ticket-name="<%= ticket.ticket_name %>"
-            data-sale-price="<%= ticket.sale_price %>"
-            data-mvtk-num="<%= ticket.mvtk_num %>"
-            data-add-price-glasses="<%= ticket.add_price_glasses %>"
-            data-glasses="<%= ticket.glasses %>">
+                data-seat-code="<%= ticket.seat_code %>"
+                data-ticket-code="<%= ticket.ticket_code %>"
+                data-ticket-name="<%= ticket.ticket_name %>"
+                data-sale-price="<%= ticket.sale_price %>"
+                data-mvtk-num="<%= ticket.mvtk_num %>"
+                data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                data-glasses="<%= ticket.glasses %>">
                 <dl class="d-table">
                     <dt class="d-td seat-code"><%= ticket.seat_code %></dt>
                     <dd class="d-td width-medium">                                
@@ -28,13 +28,13 @@
             <% } else { %>
             <% for (let seat of reserveSeats.list_tmp_reserve) { %>
             <li data-section="<%= seat.seat_section %>"
-            data-seat-code="<%= seat.seat_num %>"
-            data-ticket-code=""
-            data-ticket-name=""
-            data-sale-price=""
-            data-mvtk-num=""
-            data-add-price-glasses=""
-            data-glasses="">
+                data-seat-code="<%= seat.seat_num %>"
+                data-ticket-code=""
+                data-ticket-name=""
+                data-sale-price=""
+                data-mvtk-num=""
+                data-add-price-glasses=""
+                data-glasses="">
                 <dl class="d-table">
                     <dt class="d-td seat-code"><%= seat.seat_num %></dt>
                     <dd class="d-td width-medium" data-ticket="">
@@ -56,12 +56,12 @@
             <div class="border-bottom-dot mb-small"></div>
             <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
         </div>
-
+        <% if (mvtkFlg) { %>
         <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>
         <div class="mvtk-button mb-medium ghost-button  yellow-button center-button">
             <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
         </div>
-
+        <% } %>
         
     
     

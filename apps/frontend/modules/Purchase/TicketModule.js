@@ -13,6 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
+const moment = require("moment");
 const MP = require("../../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
@@ -41,10 +42,15 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.performanceCOA === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             //券種取得
             const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
             const performance = purchaseModel.performance;
+            const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
+            const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
             res.locals.error = '';
+            res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
             res.locals.tickets = salesTicketsResult;
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
@@ -139,9 +145,13 @@ function select(req, res, next) {
                 const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
                 if (purchaseModel.transactionMP === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
+                if (purchaseModel.performanceCOA === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
                 const salesTicketsResult = yield getSalesTickets(req, purchaseModel);
-                log('券種取得');
                 const performance = purchaseModel.performance;
+                const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
+                const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
+                res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
                 res.locals.tickets = salesTicketsResult;
                 res.locals.tickets = salesTicketsResult;
                 res.locals.performance = performance;

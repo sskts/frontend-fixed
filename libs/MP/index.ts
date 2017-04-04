@@ -100,6 +100,8 @@ export interface IFilm {
         name_original: string;
         name_short: string;
         theater: string;
+        flg_mvtk_use: string;
+        date_mvtk_begin: string;
     };
 }
 
@@ -881,6 +883,8 @@ export interface IPerformanceCOA {
     screenCode: string;
     titleCode: string;
     titleBranchNum: string;
+    flgMvtkUse: string;
+    dateMvtkBegin: string;
 }
 
 /**
@@ -904,7 +908,9 @@ export async function getPerformanceCOA(theaterId: string, screenId: string, fil
         theaterCode: theater.id,
         screenCode: screen.attributes.coa_screen_code,
         titleCode: film.attributes.coa_title_code,
-        titleBranchNum: film.attributes.coa_title_branch_num
+        titleBranchNum: film.attributes.coa_title_branch_num,
+        flgMvtkUse: film.attributes.flg_mvtk_use,
+        dateMvtkBegin: film.attributes.date_mvtk_begin
     };
 }
 
