@@ -130,8 +130,16 @@ export interface IPerformance {
             id: string;
             name: ILanguage;
         },
-        time_end: string,
-        time_start: string
+        time_end: string;
+        time_start: string;
+        coa_trailer_time: number;
+        coa_kbn_service: string;
+        coa_kbn_acoustic: string;
+        coa_name_service_day: string;
+        coa_available_num: string;
+        coa_rsv_start_date: string;
+        coa_rsv_end_date: string;
+        coa_flg_early_booking: string;
     };
 }
 

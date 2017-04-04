@@ -33,15 +33,20 @@ function start(req, res) {
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
+            const performance = yield MP.getPerformance(req.body.id);
+            // 開始可能日判定
+            if (moment().format('YYYYMMDD') < `${performance.attributes.coa_rsv_start_date}`) {
+                throw ErrorUtilModule.ERROR_ACCESS;
+            }
+            const timeLimit = 1;
+            // 終了可能日判定
+            if (moment().add(timeLimit, 'hours').format('YYYYMMDDHHmm') > `${performance.attributes.day}${performance.attributes.time_start}`) {
+                throw ErrorUtilModule.ERROR_ACCESS;
+            }
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
                 //重複確認へ
                 return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
-            }
-            // 予約可能日判定
-            const performance = yield MP.getPerformance(req.body.id);
-            if (moment().format('YYYYMMDDHHmm') > `${performance.attributes.day}${performance.attributes.time_end}`) {
-                throw ErrorUtilModule.ERROR_ACCESS;
             }
             // 取引開始
             const minutes = 30;
