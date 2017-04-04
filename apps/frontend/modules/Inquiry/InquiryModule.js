@@ -35,9 +35,9 @@ function login(req, res, _next) {
         res.status(status).render('error/notFound');
         return;
     }
-    res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
-    res.locals.reserve_num = (req.query.reserve !== undefined) ? req.query.reserve : '';
-    res.locals.tel_num = '';
+    res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
+    res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
+    res.locals.telNum = '';
     res.locals.error = null;
     res.render('inquiry/login');
     return;
@@ -80,6 +80,8 @@ function auth(req, res, next) {
                         tel_num: req.body.tel_num // 電話番号
                     });
                     log('COA照会情報取得');
+                    if (inquiryModel.stateReserve === null)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
                     const performanceId = UtilModule.getPerformanceId({
                         theaterCode: req.body.theater_code,
                         day: inquiryModel.stateReserve.date_jouei,
@@ -97,9 +99,9 @@ function auth(req, res, next) {
                     return;
                 }
                 else {
-                    res.locals.theater_code = req.body.theater_code;
-                    res.locals.reserve_num = req.body.reserve_num;
-                    res.locals.tel_num = req.body.tel_num;
+                    res.locals.theaterCode = req.body.theater_code;
+                    res.locals.reserveNum = req.body.reserve_num;
+                    res.locals.telNum = req.body.tel_num;
                     res.locals.error = validationResult.mapped();
                     res.render('inquiry/login');
                     return;
@@ -111,9 +113,9 @@ function auth(req, res, next) {
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                res.locals.theater_code = req.body.theater_code;
-                res.locals.reserve_num = req.body.reserve_num;
-                res.locals.tel_num = req.body.tel_num;
+                res.locals.theaterCode = req.body.theater_code;
+                res.locals.reserveNum = req.body.reserve_num;
+                res.locals.telNum = req.body.tel_num;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
                 return;
@@ -163,6 +165,7 @@ function index(req, res, next) {
         && inquiryModel.performance !== null
         && inquiryModel.login !== null
         && inquiryModel.transactionId !== null) {
+        res.locals.theaterCode = inquiryModel.performance.attributes.theater.id;
         res.locals.stateReserve = inquiryModel.stateReserve;
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;

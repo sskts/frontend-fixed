@@ -28,9 +28,9 @@ export function login(req: Request, res: Response, _next: NextFunction): void {
         res.status(status).render('error/notFound');
         return;
     }
-    res.locals.theater_code = (req.query.theater !== undefined) ? req.query.theater : '';
-    res.locals.reserve_num = (req.query.reserve !== undefined) ? req.query.reserve : '';
-    res.locals.tel_num = '';
+    res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
+    res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
+    res.locals.telNum = '';
     res.locals.error = null;
     res.render('inquiry/login');
     return;
@@ -71,7 +71,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                     tel_num: req.body.tel_num // 電話番号
                 });
                 log('COA照会情報取得');
-
+                if (inquiryModel.stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
                 const performanceId = UtilModule.getPerformanceId({
                     theaterCode: req.body.theater_code,
                     day: inquiryModel.stateReserve.date_jouei,
@@ -91,9 +91,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
                 return;
             } else {
-                res.locals.theater_code = req.body.theater_code;
-                res.locals.reserve_num = req.body.reserve_num;
-                res.locals.tel_num = req.body.tel_num;
+                res.locals.theaterCode = req.body.theater_code;
+                res.locals.reserveNum = req.body.reserve_num;
+                res.locals.telNum = req.body.tel_num;
                 res.locals.error = validationResult.mapped();
                 res.render('inquiry/login');
                 return;
@@ -103,9 +103,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         }
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            res.locals.theater_code = req.body.theater_code;
-            res.locals.reserve_num = req.body.reserve_num;
-            res.locals.tel_num = req.body.tel_num;
+            res.locals.theaterCode = req.body.theater_code;
+            res.locals.reserveNum = req.body.reserve_num;
+            res.locals.telNum = req.body.tel_num;
             res.locals.error = getInquiryError(req);
             res.render('inquiry/login');
             return;
@@ -155,6 +155,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         && inquiryModel.performance !== null
         && inquiryModel.login !== null
         && inquiryModel.transactionId !== null) {
+        res.locals.theaterCode = inquiryModel.performance.attributes.theater.id;
         res.locals.stateReserve = inquiryModel.stateReserve;
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
