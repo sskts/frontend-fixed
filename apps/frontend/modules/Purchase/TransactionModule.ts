@@ -28,12 +28,12 @@ export async function start(req: Request, res: Response): Promise<Response> {
 
         const performance = await MP.getPerformance(req.body.id);
         // 開始可能日判定
-        if (moment().format('YYYYMMDD') < `${performance.attributes.coa_rsv_start_date}`) {
+        if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         const timeLimit = 1;
         // 終了可能日判定
-        if (moment().add(timeLimit, 'hours').format('YYYYMMDDHHmm') > `${performance.attributes.day}${performance.attributes.time_start}`) {
+        if (moment().add(timeLimit, 'hours').unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
 
