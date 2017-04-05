@@ -38,6 +38,7 @@ function getTransaction(id) {
 
 /**
  * リトライ
+ * @function retry
  * @returns {void}
  */
 function retry() {

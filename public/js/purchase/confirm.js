@@ -72,7 +72,7 @@ function purchase() {
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
-        getComplete();
+        getComplete(0);
     }).always(function () {
 
     });
@@ -81,16 +81,17 @@ function purchase() {
 /**
  * 購入情報取得
  * @function getComplete
+ * @param {number} count
  * @returns {void}
  */
-function getComplete() {
+function getComplete(count) {
     $.ajax({
         dataType: 'json',
         url: '/purchase/getComplete',
         type: 'POST',
         timeout: 10000,
         data: {},
-        beforeSend: function () {}
+        beforeSend: function () { }
     }).done(function (res) {
         if (res.err || !res.result) {
             //エラー表示
@@ -101,9 +102,12 @@ function getComplete() {
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
+        count++;
+        var limit = 10;
+        if (count > limit) return showError();
         var timer = 3000;
-        setTimeout(function() {
-            getComplete();
+        setTimeout(function () {
+            getComplete(count);
         }, timer);
     }).always(function () {
 
@@ -113,11 +117,13 @@ function getComplete() {
 /**
  * エラー画面表示
  * @function showError
- * @param {string} message
+ * @param {string | undefined} message
  * @returns {void}
  */
 function showError(message) {
-    $('.error .read').html(message);
+    if (message !== undefined) {
+        $('.error .read').html(message);
+    }
     $('.purchase-confirm').remove();
     $('.header .steps').remove();
     $('.error').show();
@@ -167,7 +173,6 @@ function validation() {
     var validationList = [
         { name: 'notes_agree', label: locales.label.notes, agree: true },
     ];
-
 
     validationList.forEach(function (validation, index) {
 

@@ -108,16 +108,17 @@ function zoomButtonScroll() {
 /**
  * スクリーン状態取得
  * @function getScreenStateReserve
+ * @param {number} count
  * @param {function} cb
  * @returns {void}
  */
-function getScreenStateReserve(cb) {
+function getScreenStateReserve(count, cb) {
     var target = $('.screen-cover');
     $.ajax({
         dataType: 'json',
         url: '/purchase/getScreenStateReserve',
         type: 'POST',
-        timeout: 10000,
+        timeout: 1000,
         data: {
             theater_code: target.attr('data-theater'), // 施設コード
             date_jouei: target.attr('data-day'), // 上映日
@@ -129,15 +130,31 @@ function getScreenStateReserve(cb) {
         beforeSend: function () { }
     }).done(function (res) {
         console.log(res);
-        if (!res.result) {
-            location.href = '/error';
-        }
+        if (!res.result) return retry(count, cb);
         cb(res.result);
-    }).fail(function (jqxhr, textStatus, error) {
-        location.href = '/error';
-    }).always(function () {
         loadingEnd();
+    }).fail(function (jqxhr, textStatus, error) {
+        retry(count, cb)
+    }).always(function () {
+        
     });
+}
+
+/**
+ * リトライ
+ * @function retry
+ * @param {number} count
+ * @param {function} cb
+ * @returns {void}
+ */
+function retry(count, cb) {
+    count++;
+    var limit = 10;
+    if (count > limit) return location.replace = '/error';
+    var timer = 3000;
+    setTimeout(function () {
+        getScreenStateReserve(count, cb);
+    }, timer);
 }
 
 /**
@@ -323,7 +340,7 @@ function createScreen(setting, screen) {
  * @returns {void}
  */
 function screenStateUpdate(cb) {
-    getScreenStateReserve(function (result) {
+    getScreenStateReserve(0, function (result) {
         createScreen(result.setting, result.screen);
         screenStateChange(result.state);
         var screen = $('.screen');
