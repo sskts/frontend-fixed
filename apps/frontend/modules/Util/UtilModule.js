@@ -127,27 +127,6 @@ function base64Decode(str) {
 }
 exports.base64Decode = base64Decode;
 /**
- * 劇場ポータルURL取得
- * @memberOf Util.UtilModule
- * @function getTheaterUrl
- * @param {string} name
- * @returns {string}
- */
-// tslint:disable-next-line:variable-name
-function getTheaterUrl(_name) {
-    let result;
-    if (process.env.NODE_ENV !== 'development') {
-        result = `${getPortalUrl()}/theater/aira`;
-        // const theaterName = name.toLowerCase();
-        // result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
-    }
-    else {
-        result = getPortalUrl();
-    }
-    return result;
-}
-exports.getTheaterUrl = getTheaterUrl;
-/**
  * ポータルURL取得
  * @memberOf Util.UtilModule
  * @function getPortalUrl

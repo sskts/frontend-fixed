@@ -58,9 +58,20 @@ export const theater = {
         _id: '118',
         updated_at: '2017-03-29T07:01:02.106Z',
         name_kana: 'シネマサンシャイン１１８',
-        gmo_site_id: 'tsite00022126',
-        gmo_shop_id: 'tshop00026096',
-        gmo_shop_pass: 'xbxmkaa6',
+        gmo: {
+            site_id: 'tsite00022126',
+            shop_id: 'tshop00026096',
+            shop_pass: 'xbxmkaa6'
+        },
+        websites: {
+            group: 'PORTAL',
+            name: {
+                en: 'portal site',
+                ja: 'ポータルサイト'
+            },
+            // tslint:disable-next-line:no-http-string
+            url: 'http://www.cinemasunshine.co.jp/theater/aira/'
+        },
         __v: 0,
         created_at: '2017-03-10T08:49:55.603Z',
         address: { en: '', ja: '' },
@@ -133,4 +144,4 @@ export const input = {
     mail_addr: 'hataguchi@motionpicture.jp',
     mail_confirm: 'hataguchi@motionpicture.jp',
     tel_num: '09040007648'
-}
+};

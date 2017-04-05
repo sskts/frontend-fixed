@@ -46,6 +46,11 @@ function index(req, res, next) {
             log('パフォーマンス取得');
             purchaseModel.theater = yield MP.getTheater(purchaseModel.performance.attributes.theater.id);
             log('劇場詳細取得');
+            if (purchaseModel.theater === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            const website = purchaseModel.theater.attributes.websites.find((value) => {
+                return (value.group === 'PORTAL');
+            });
             purchaseModel.performanceCOA = yield MP.getPerformanceCOA(purchaseModel.performance.attributes.theater.id, purchaseModel.performance.attributes.screen.id, purchaseModel.performance.attributes.film.id);
             log('COAパフォーマンス取得');
             res.locals.performance = purchaseModel.performance;
@@ -56,9 +61,7 @@ function index(req, res, next) {
                 : null;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.error = null;
-            res.locals.prevLink = (purchaseModel.performance !== null)
-                ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-                : UtilModule.getPortalUrl();
+            res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             res.render('purchase/seat');
@@ -95,6 +98,11 @@ function select(req, res, next) {
             //取引id確認
             if (req.body.transaction_id !== purchaseModel.transactionMP.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
+            if (purchaseModel.theater === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            const website = purchaseModel.theater.attributes.websites.find((value) => {
+                return (value.group === 'PORTAL');
+            });
             //バリデーション
             SeatForm_1.default(req);
             const validationResult = yield req.getValidationResult();
@@ -104,9 +112,7 @@ function select(req, res, next) {
                 res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
                 res.locals.reserveSeats = req.body.seats;
                 res.locals.error = validationResult.mapped();
-                res.locals.prevLink = (purchaseModel.performance !== null)
-                    ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-                    : UtilModule.getPortalUrl();
+                res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
                 res.render('purchase/seat');
                 return;
             }

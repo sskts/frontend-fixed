@@ -32,6 +32,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        const website = purchaseModel.theater.attributes.websites.find((value) => {
+            return (value.group === 'PORTAL');
+        });
 
         //購入者内容確認表示
         res.locals.gmoTokenObject = (purchaseModel.gmo !== null) ? purchaseModel.gmo : null;
@@ -44,9 +48,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.updateReserve = null;
         res.locals.error = null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.prevLink = (purchaseModel.performance !== null)
-            ? UtilModule.getTheaterUrl(purchaseModel.performance.attributes.theater.name.en)
-            : UtilModule.getPortalUrl();
+        res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();

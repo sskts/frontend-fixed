@@ -125,26 +125,6 @@ export function base64Decode(str: string): string {
 }
 
 /**
- * 劇場ポータルURL取得
- * @memberOf Util.UtilModule
- * @function getTheaterUrl
- * @param {string} name
- * @returns {string}
- */
-// tslint:disable-next-line:variable-name
-export function getTheaterUrl(_name: string): string {
-    let result: string;
-    if (process.env.NODE_ENV !== 'development') {
-        result = `${getPortalUrl()}/theater/aira`;
-        // const theaterName = name.toLowerCase();
-        // result = `${getPortalUrl()}/theater/${theaterName.replace('cinemasunshine', '')}`;
-    } else {
-        result = getPortalUrl();
-    }
-    return result;
-}
-
-/**
  * ポータルURL取得
  * @memberOf Util.UtilModule
  * @function getPortalUrl

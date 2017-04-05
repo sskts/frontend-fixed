@@ -38,7 +38,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-        res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+        res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP.id;
         if (purchaseModel.input !== null) {
@@ -105,7 +105,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.render('purchase/input');
@@ -181,7 +181,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
+            const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
             // GMOオーソリ追加失敗
             res.locals.error = getGMOError(req);
             res.locals.input = req.body;
@@ -236,8 +236,8 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-    const gmoShopId = purchaseModel.theater.attributes.gmo_shop_id;
-    const gmoShopPassword = purchaseModel.theater.attributes.gmo_shop_pass;
+    const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+    const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
 
     if (purchaseModel.transactionGMO !== null
         && purchaseModel.authorizationGMO !== null
@@ -300,8 +300,8 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         orderId: purchaseModel.orderId,
         amount: amount,
         entryTranResult: purchaseModel.transactionGMO,
-        gmoShopId: purchaseModel.theater.attributes.gmo_shop_id,
-        gmoShopPassword: purchaseModel.theater.attributes.gmo_shop_pass
+        gmoShopId: purchaseModel.theater.attributes.gmo.shop_id,
+        gmoShopPassword: purchaseModel.theater.attributes.gmo.shop_pass
     });
     log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
     purchaseModel.authorizationCountGMO += 1;

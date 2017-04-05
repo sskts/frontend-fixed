@@ -37,10 +37,29 @@ export interface ITheater {
         address: ILanguage;
         name: ILanguage;
         name_kana: string;
-        gmo_site_id: string;
-        gmo_shop_id: string;
-        gmo_shop_pass: string;
+        gmo: IGMOInfo;
+        websites: IWebsites[];
     };
+}
+
+/**
+ * GMO情報
+ * @interface IGMOInfo
+ */
+export interface IGMOInfo {
+    site_id: string;
+    shop_id: string;
+    shop_pass: string;
+}
+
+/**
+ * サイト情報
+ * @interface IWebsites
+ */
+export interface IWebsites {
+    group: string;
+    name: ILanguage;
+    url: string;
 }
 
 /**
