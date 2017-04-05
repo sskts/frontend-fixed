@@ -60,7 +60,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
-        res.render('purchase/seat');
+        res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));
@@ -109,7 +109,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
-            res.render('purchase/seat');
+            res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
             return;
         }
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;

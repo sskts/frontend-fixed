@@ -1,5 +1,7 @@
-<% layout('./layouts/purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/ticket.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/purchase/ticket.js"></script>
+
+<%- contentFor('body') %>
 <div class="purchase-ticket">
     <form method="post">
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
@@ -71,10 +73,12 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- partial('../layouts/siteSeal') %>
+<%- include('../layouts/siteSeal') %>
 </div>
 
 <input type="hidden" class="ticket-validation" value="<%= error %>">
-<% block('modals', partial('modals/ticketValidation')) -%>
-<% block('modals', partial('modals/ticketType')) -%>
-<% block('modals', partial('modals/ticketNotSelect')) -%>
+
+<%- contentFor('modals') %>
+<%- include('modals/ticketValidation') -%>
+<%- include('modals/ticketType') -%>
+<%- include('modals/ticketNotSelect') -%>

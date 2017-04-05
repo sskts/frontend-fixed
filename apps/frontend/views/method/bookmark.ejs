@@ -1,5 +1,7 @@
-<% layout('./layouts/layout') -%>
-<% block('script', '<script src="/js/method/bookmark.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/method/bookmark.js"></script>
+
+<%- contentFor('body') %>
 <div class="method-bookmark">
     <h1 class="page-ttl"><%- __('method.bookmark.page_ttl') %></h1>
     <p class="read"><%- __('method.bookmark.read') %></p>

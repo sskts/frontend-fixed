@@ -75,7 +75,7 @@ function index(req, res, next) {
         }
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
-        res.render('purchase/input');
+        res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         return;
     }
     catch (err) {
@@ -127,7 +127,7 @@ function submit(req, res, next) {
                 res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
                 res.locals.price = purchaseModel.getReserveAmount();
                 res.locals.transactionId = purchaseModel.transactionMP.id;
-                res.render('purchase/input');
+                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
             // 入力情報をセッションへ
@@ -214,7 +214,7 @@ function submit(req, res, next) {
                 res.locals.gmoShopId = gmoShopId;
                 res.locals.price = purchaseModel.getReserveAmount();
                 res.locals.transactionId = purchaseModel.transactionMP.id;
-                res.render('purchase/input');
+                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
             next(ErrorUtilModule.getError(req, err));

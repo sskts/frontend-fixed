@@ -1,7 +1,8 @@
-<% layout('./layouts/purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/seat.js"></script>') -%>
-<% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/purchase/seat.js"></script>
+<script src="/js/ScreenSeatStatusesMap.js"></script>
 
+<%- contentFor('body') %>
 <div class="purchase-seat">
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
@@ -49,7 +50,7 @@
     <h2 class="section-ttl"><%- __('common.agreement') %></h2>
     <p class="mb-small"><%- __('common.agreement_read') %></p>
     <div class="box radius bg-ultra-light-gray mb-medium agree small-x-text">
-        <%- partial('agreement/ja/' + performance.attributes.theater.id) %>
+        <%- include('agreement/ja/' + performance.attributes.theater.id, {}) %>
     </div>
     <form method="post">
         <div class="mb-x-large text-center">
@@ -71,7 +72,8 @@
     <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
 </div>
 
+<%- include('../locales/validation') %>
 
-<% block('modals', partial('modals/seatNotSelect')) -%>
-<% block('modals', partial('modals/seatUpperLimit')) -%>
-<%- partial('../locales/validation') %>
+<%- contentFor('modals') %>
+<%- include('modals/seatNotSelect') %>
+<%- include('modals/seatUpperLimit') %>

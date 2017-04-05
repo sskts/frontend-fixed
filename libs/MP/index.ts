@@ -895,6 +895,7 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
+    log(response.body)
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     log('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;

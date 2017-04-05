@@ -1,5 +1,7 @@
-<% layout('./layouts/purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/mvtk/input.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/purchase/mvtk/input.js"></script>
+
+<%- contentFor('body') %>
 <div class="purchase-mvtk-input">
     <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
@@ -76,7 +78,10 @@
         <input type="hidden" name="mvtk" value="">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- partial('../../layouts/siteSeal') %>
+<%- include('../../layouts/siteSeal') %>
 </div>
-<% block('modals', partial('../modals/mvtkNotInput')) -%>
-<%- partial('../../locales/validation') %>
+
+<%- include('../../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('../modals/mvtkNotInput') %>

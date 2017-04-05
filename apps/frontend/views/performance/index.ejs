@@ -1,7 +1,8 @@
-<% layout('./layouts/layout') -%>
-<% block('script', '<script src="/js/moment.js"></script>') -%>
-<% block('script', '<script src="/js/performance.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/moment.js"></script>
+<script src="/js/performance.js"></script>
 
+<%- contentFor('body') %>
 <div class="performance">
     <h1 class="page-ttl">performance</h1>
     <p class="read">選択してください</p>

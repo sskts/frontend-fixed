@@ -1,8 +1,9 @@
-<% layout('./layouts/purchase/layout') -%>
-<% block('script', '<script src="/js/ScreenSeatStatusesMap.js"></script>') -%>
-<% block('script', '<script src="/js/purchase/confirm.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/ScreenSeatStatusesMap.js"></script>
+<script src="/js/purchase/confirm.js"></script>
+<script src="/js/purchase/complete.js"></script>
 
-
+<%- contentFor('body') %>
 <div class="purchase-confirm">
     <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
     <p class="read"><%- __('purchase.confirm.read') %></p>
@@ -103,7 +104,7 @@
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
         <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
-            <%- partial('notes/ja/' + performance.attributes.theater.id) %>
+            <%- include('notes/ja/' + performance.attributes.theater.id) %>
         </div>
 
         <div class="mb-x-large text-center">
@@ -122,14 +123,12 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- partial('../layouts/siteSeal') %>
+<%- include('../layouts/siteSeal') %>
 </div>
 
+<%- include('completeContents') %>
+<%- include('../error/static') %>
+<%- include('../locales/validation') %>
 
-
-
-<% block('modals', partial('modals/updateReserveError')) -%>
-
-<%- partial('complete') %>
-<%- partial('../error/static') %>
-<%- partial('../locales/validation') %>
+<%- contentFor('modals') %>
+<%- include('modals/updateReserveError') %>

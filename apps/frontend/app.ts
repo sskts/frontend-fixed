@@ -13,13 +13,13 @@ import logger from './middlewares/logger';
 import session from './middlewares/session';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
-const engine = require('ejs-mate');
+const expressLayouts = require('express-ejs-layouts');
 
 /**
  * express設定
  */
 
-const app: express.Application = express();
+const app = express();
 
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
@@ -28,10 +28,13 @@ app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-app.engine('ejs', engine);
 // tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('views', __dirname + '/views');
+// tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
+// tslint:disable-next-line:no-backbone-get-set-outside-model
+app.set('layout', 'layouts/layout');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

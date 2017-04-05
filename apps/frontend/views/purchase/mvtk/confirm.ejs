@@ -1,5 +1,7 @@
-<% layout('./layouts/purchase/layout') -%>
-<% block('script', '<script src="/js/purchase/mvtk/confirm.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/purchase/mvtk/confirm.js"></script>
+
+<%- contentFor('body') %>
 <div class="purchase-mvtk-confirm">
     <h1 class="page-ttl"><%- __('purchase.mvtk.confirm.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.confirm.read') %></p>
@@ -30,5 +32,5 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- partial('../../layouts/siteSeal') %>
+<%- include('../../layouts/siteSeal') %>
 </div>

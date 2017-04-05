@@ -52,7 +52,7 @@ function index(req, res, next) {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
-        res.render('purchase/mvtk/input');
+        res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
         return;
     }
     catch (err) {
@@ -95,7 +95,7 @@ function select(req, res, next) {
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-                res.render('purchase/mvtk/input');
+                res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
             const authResult = yield auth(req, purchaseModel);
@@ -110,7 +110,7 @@ function select(req, res, next) {
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-                res.render('purchase/mvtk/input');
+                res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
         }

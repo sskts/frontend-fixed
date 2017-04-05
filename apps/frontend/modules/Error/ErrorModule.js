@@ -4,7 +4,6 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const UtilModule = require("../Util/UtilModule");
 /**
  * Not Found
@@ -39,16 +38,6 @@ exports.notFound = notFound;
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
     console.error(err.stack);
-    res.locals.portalTheaterSite = UtilModule.getPortalUrl();
-    if (req.session !== undefined && req.session.purchase !== undefined) {
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.theater !== null) {
-            const website = purchaseModel.theater.attributes.websites.find((value) => {
-                return (value.group === 'PORTAL');
-            });
-            res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
-        }
-    }
     if (req.session !== undefined) {
         delete req.session.purchase;
         delete req.session.mvtk;

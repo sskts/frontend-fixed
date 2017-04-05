@@ -52,7 +52,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
-        res.render('purchase/confirm');
+        res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));

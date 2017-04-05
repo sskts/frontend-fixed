@@ -30,7 +30,7 @@ function index(req, res, next) {
         res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
         res.locals.price = complete.price;
         res.locals.updateReserve = complete.updateReserve;
-        res.render('purchase/complete');
+        res.render('purchase/complete', { layout: 'layouts/purchase/layout' });
         return;
     }
     catch (err) {

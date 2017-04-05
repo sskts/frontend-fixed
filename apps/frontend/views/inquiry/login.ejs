@@ -1,5 +1,7 @@
-<% layout('./layouts/layout') -%>
-<% block('script', '<script src="/js/inquiry/login.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/inquiry/login.js"></script>
+
+<%- contentFor('body') %>
 <div class="inquiry-confirm">
     <h1 class="page-ttl"><%- __('inquiry.login.page_ttl') %></h1>
     <p class="read"><%- __('inquiry.login.read') %></p>
@@ -41,6 +43,6 @@
             <div class="close-link"><a class="icon-prev-black window-close" href="/"><%- __('inquiry.login.prev') %></a></div>
         </div>
     </form>
-<%- partial('../layouts/siteSeal') %>
+<%- include('../layouts/siteSeal') %>
 </div>
 <div id="copy" style="display: none"></div>

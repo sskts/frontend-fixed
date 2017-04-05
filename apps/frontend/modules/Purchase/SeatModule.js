@@ -64,7 +64,7 @@ function index(req, res, next) {
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
-            res.render('purchase/seat');
+            res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
             return;
         }
         catch (err) {
@@ -113,7 +113,7 @@ function select(req, res, next) {
                 res.locals.reserveSeats = req.body.seats;
                 res.locals.error = validationResult.mapped();
                 res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
-                res.render('purchase/seat');
+                res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
                 return;
             }
             const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;

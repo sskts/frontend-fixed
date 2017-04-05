@@ -48,7 +48,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //券種選択表示
-        res.render('purchase/ticket');
+        res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));
@@ -131,7 +131,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.render('purchase/ticket');
+            res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
             return;
         }
         next(ErrorUtilModule.getError(req, err));

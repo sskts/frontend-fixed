@@ -38,7 +38,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
 
-        res.render('purchase/mvtk/confirm');
+        res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));

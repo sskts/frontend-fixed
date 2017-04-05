@@ -43,7 +43,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
-        res.render('purchase/mvtk/input');
+        res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));
@@ -82,7 +82,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-            res.render('purchase/mvtk/input');
+            res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
             return;
         }
         const authResult = await auth(req, purchaseModel);
@@ -96,7 +96,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-            res.render('purchase/mvtk/input');
+            res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
             return;
         }
     } catch (err) {

@@ -1,5 +1,7 @@
-<% layout('./layouts/layout') -%>
-<% block('script', '<script src="/js/method/entry.js"></script>') -%>
+<%- contentFor('script') %>
+<script src="/js/method/entry.js"></script>
+
+<%- contentFor('body') %>
 <div class="method-entry">
     <h1 class="page-ttl"><%- __('method.entry.page_ttl') %></h1>
     <p class="read"><%- __('method.entry.read') %></p>

@@ -14,7 +14,7 @@ const logger_1 = require("./middlewares/logger");
 const session_1 = require("./middlewares/session");
 const router_1 = require("./routes/router");
 // tslint:disable-next-line:no-var-requires no-require-imports
-const engine = require('ejs-mate');
+const expressLayouts = require('express-ejs-layouts');
 /**
  * express設定
  */
@@ -25,10 +25,13 @@ app.use(helmet()); //セキュリティー対策
 app.use(logger_1.default); // ロガー
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
-app.engine('ejs', engine);
 // tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('views', __dirname + '/views');
+// tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
+// tslint:disable-next-line:no-backbone-get-set-outside-model
+app.set('layout', 'layouts/layout');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

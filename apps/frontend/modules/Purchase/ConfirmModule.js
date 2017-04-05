@@ -62,7 +62,7 @@ function index(req, res, next) {
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
-            res.render('purchase/confirm');
+            res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
             return;
         }
         catch (err) {

@@ -30,7 +30,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.price = complete.price;
         res.locals.updateReserve = complete.updateReserve;
 
-        res.render('purchase/complete');
+        res.render('purchase/complete', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
         next(ErrorUtilModule.getError(req, err));

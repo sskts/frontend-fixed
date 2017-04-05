@@ -39,16 +39,6 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
 // tslint:disable-next-line:variable-name
 export function index(err: Error, req: Request, res: Response, _next: NextFunction): void {
     console.error(err.stack);
-    res.locals.portalTheaterSite = UtilModule.getPortalUrl();
-    if (req.session !== undefined && req.session.purchase !== undefined) {
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.theater !== null) {
-            const website = purchaseModel.theater.attributes.websites.find((value) => {
-                return (value.group === 'PORTAL');
-            });
-            res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
-        }
-    }
 
     if (req.session !== undefined) {
         delete req.session.purchase;
