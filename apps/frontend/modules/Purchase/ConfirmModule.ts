@@ -55,7 +55,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -264,7 +267,16 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         log('ERROR', err);
         //購入セッション削除
         delete (<any>req.session).purchase;
-        const msg = ErrorUtilModule.getError(req, err).message;
+        let msg: string;
+        if (err === ErrorUtilModule.ERROR_PROPERTY) {
+            msg = req.__('common.error.property');
+        } else if (err === ErrorUtilModule.ERROR_ACCESS) {
+            msg = req.__('common.error.access');
+        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
+            msg = req.__('common.error.expire');
+        } else {
+            msg = err.message;
+        }
         return res.json({ err: msg, result: null });
     }
 }
@@ -281,7 +293,16 @@ export function getCompleteData(req: Request, res: Response, _next: NextFunction
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         return res.json({ err: null, result: (<any>req.session).complete });
     } catch (err) {
-        const msg = ErrorUtilModule.getError(req, err).message;
+        let msg: string;
+        if (err === ErrorUtilModule.ERROR_PROPERTY) {
+            msg = req.__('common.error.property');
+        } else if (err === ErrorUtilModule.ERROR_ACCESS) {
+            msg = req.__('common.error.access');
+        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
+            msg = req.__('common.error.expire');
+        } else {
+            msg = err.message;
+        }
         return res.json({ err: msg, result: null });
     }
 }

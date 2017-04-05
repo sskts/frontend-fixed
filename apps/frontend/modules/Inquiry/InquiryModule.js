@@ -115,7 +115,10 @@ function auth(req, res, next) {
                 res.render('inquiry/login');
                 return;
             }
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });
@@ -152,7 +155,7 @@ function getInquiryError(req) {
  */
 function index(req, res, next) {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);

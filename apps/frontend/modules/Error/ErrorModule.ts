@@ -2,9 +2,9 @@
  * エラー
  * @namespace ErrorModule
  */
-
 import { NextFunction, Request, Response } from 'express';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as HTTPStatus from 'http-status';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 
 /**
@@ -18,7 +18,7 @@ import * as UtilModule from '../Util/UtilModule';
  */
 // tslint:disable-next-line:variable-name
 export function notFound(req: Request, res: Response, _next: NextFunction): void {
-    const status = 404;
+    const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
     } else {
@@ -37,22 +37,46 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function index(err: Error, req: Request, res: Response, _next: NextFunction): void {
+export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _next: NextFunction): void {
     console.error(err.stack);
+    let status = HTTPStatus.INTERNAL_SERVER_ERROR;
+    let msg = err.message;
+    if (err instanceof ErrorUtilModule.CustomError) {
+        switch (err.code) {
+            case ErrorUtilModule.ERROR_PROPERTY:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.property');
+                break;
+            case ErrorUtilModule.ERROR_ACCESS:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.access');
+                break;
+            case ErrorUtilModule.ERROR_VALIDATION:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.property');
+                break;
+            case ErrorUtilModule.ERROR_EXPIRE:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.expire');
+                break;
+            default:
+                status = HTTPStatus.INTERNAL_SERVER_ERROR;
+                msg = err.message;
+                break;
+        }
+    }
 
     if (req.session !== undefined) {
         delete req.session.purchase;
         delete req.session.mvtk;
     }
 
-    const status = 500;
-
     if (req.xhr) {
         console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     } else {
         console.error(err.message);
-        res.locals.message = err.message;
+        res.locals.message = msg;
         res.locals.error = err;
         res.locals.portalSite = UtilModule.getPortalUrl();
         res.status(status).render('error/error');

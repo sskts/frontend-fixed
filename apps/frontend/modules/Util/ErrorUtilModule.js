@@ -5,33 +5,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * エラー取得
- * @memberof Util.ErrorUtilModule
- * @function erorMessage
- */
-function getError(req, err) {
-    let msg = '';
-    switch (err) {
-        case exports.ERROR_PROPERTY:
-            msg = req.__('common.error.property');
-            break;
-        case exports.ERROR_ACCESS:
-            msg = req.__('common.error.access');
-            break;
-        case exports.ERROR_VALIDATION:
-            msg = req.__('common.error.property');
-            break;
-        case exports.ERROR_EXPIRE:
-            msg = req.__('common.error.expire');
-            break;
-        default:
-            msg = err.message;
-            break;
-    }
-    return new Error(msg);
-}
-exports.getError = getError;
-/**
  * エラー番号（propertyなし）
  * @memberof Util.ErrorUtilModule
  * @const ERROR_PROPERTY
@@ -61,3 +34,22 @@ exports.ERROR_VALIDATION = '003';
  * @const ERROR_EXPIRE
  */
 exports.ERROR_EXPIRE = '004';
+/**
+ * エラー（外部モジュール）
+ * @memberof Util.ErrorUtilModule
+ * @const ERROR_EXTERNAL_MODULE
+ */
+exports.ERROR_EXTERNAL_MODULE = '999';
+/**
+ * カスタムエラー
+ * @memberof Util.ErrorUtilModule
+ * @extends Error
+ * @class CustomError
+ */
+class CustomError extends Error {
+    constructor(code, message) {
+        super(message);
+        this.code = code;
+    }
+}
+exports.CustomError = CustomError;

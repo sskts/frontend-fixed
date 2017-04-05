@@ -63,7 +63,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -120,7 +123,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         res.redirect('/purchase/ticket');
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -235,7 +241,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
  * @param {NextFunction} next
  * @returns {Promise<Response>}
  */
-export async function getScreenStateReserve( req: Request, res: Response): Promise<Response> {
+export async function getScreenStateReserve(req: Request, res: Response): Promise<Response> {
     try {
         const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
         const screen = await UtilModule.readJSONAsync(`./apps/frontend/theaters/${req.body.theater_code}/${screenCode}.json`);

@@ -21,7 +21,7 @@ describe('GET /inquiry/login', () => {
                     }
                 }
             })
-            .expect(httpStatus.NOT_FOUND);
+            .expect(httpStatus.INTERNAL_SERVER_ERROR);
     });
 });
 

@@ -45,7 +45,7 @@ describe('POST /overlap/new', () => {
                 performanceCOA: null
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('POST /overlap/prev', () => {
@@ -59,14 +59,14 @@ describe('GET /seat/:id/', () => {
     it('index 取引Id なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/seat/00000000000000000000000')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('POST /seat/:id/', () => {
     it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .post('/purchase/seat/00000000000000000000000')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select 取引Id なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -76,7 +76,7 @@ describe('POST /seat/:id/', () => {
                 purchase: {}
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -91,14 +91,14 @@ describe('POST /seat/:id/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('GET /ticket', () => {
     it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/ticket')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -111,7 +111,7 @@ describe('GET /ticket', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -124,7 +124,7 @@ describe('GET /ticket', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -137,14 +137,14 @@ describe('GET /ticket', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('POST /ticket/', () => {
     it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .post('/purchase/ticket')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -161,7 +161,7 @@ describe('POST /ticket/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -175,7 +175,7 @@ describe('POST /ticket/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -191,7 +191,7 @@ describe('POST /ticket/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -207,14 +207,14 @@ describe('POST /ticket/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('GET /input', () => {
     it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/input')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -228,7 +228,7 @@ describe('GET /input', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -242,7 +242,7 @@ describe('GET /input', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -256,7 +256,7 @@ describe('GET /input', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.reserveTickets', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -270,14 +270,14 @@ describe('GET /input', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('POST /input/', () => {
     it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .post('/purchase/input')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -296,7 +296,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -312,7 +312,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -330,7 +330,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.theater なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -348,7 +348,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -366,7 +366,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select session.purchase.reserveTickets なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -384,7 +384,7 @@ describe('POST /input/', () => {
             },
             transaction_id: '02345678'
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('select 未入力', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -463,7 +463,7 @@ describe('GET /confirm', () => {
     it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/confirm')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -478,7 +478,7 @@ describe('GET /confirm', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -493,7 +493,7 @@ describe('GET /confirm', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -508,7 +508,7 @@ describe('GET /confirm', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.reserveTickets なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -523,7 +523,7 @@ describe('GET /confirm', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.purchase.input なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -538,7 +538,7 @@ describe('GET /confirm', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });
 describe('POST /confirm/', () => {
@@ -637,11 +637,11 @@ describe('GET /complete/', () => {
     it('index session.complete なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/complete')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
     it('index session.complete なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .get('/purchase/complete')
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.BAD_REQUEST);
     }));
 });

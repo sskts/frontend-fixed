@@ -25,7 +25,7 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
  */
 function index(req, res, next) {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     res.render('performance');

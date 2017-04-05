@@ -51,7 +51,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -134,7 +137,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
             return;
         }
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }

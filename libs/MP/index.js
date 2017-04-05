@@ -556,7 +556,6 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
-        log(response.body);
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
         log('makeInquiry result:' + response.body.data);

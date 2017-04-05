@@ -42,7 +42,10 @@ function index(req, res, next) {
         return;
     }
     catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -85,8 +88,7 @@ function submit(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-            next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_ACCESS));
-            return;
+            throw ErrorUtilModule.ERROR_ACCESS;
         }
         // ムビチケ情報を購入セッションへ保存
         log('ムビチケ情報を購入セッションへ保存');
@@ -98,7 +100,10 @@ function submit(req, res, next) {
         return;
     }
     catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }

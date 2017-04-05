@@ -106,7 +106,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             res.render('inquiry/login');
             return;
         }
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -143,7 +146,7 @@ function getInquiryError(req: Request) {
  */
 export function index(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);

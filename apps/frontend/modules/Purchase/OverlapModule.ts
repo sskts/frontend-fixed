@@ -36,7 +36,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.render('purchase/overlap');
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -86,7 +89,10 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         res.redirect(`/purchase?id=${req.body.performance_id}`);
         return;
     } catch (err) {
-        next(ErrorUtilModule.getError(req, err));
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
         return;
     }
 }
@@ -102,7 +108,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
  */
 export function prevReserve(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     //座席選択へ

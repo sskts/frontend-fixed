@@ -47,7 +47,10 @@ function index(req, res, next) {
             return;
         }
         catch (err) {
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });
@@ -102,7 +105,10 @@ function newReserve(req, res, next) {
             return;
         }
         catch (err) {
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });
@@ -119,7 +125,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     //座席選択へ

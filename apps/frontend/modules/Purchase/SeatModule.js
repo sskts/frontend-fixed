@@ -68,7 +68,10 @@ function index(req, res, next) {
             return;
         }
         catch (err) {
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });
@@ -125,7 +128,10 @@ function select(req, res, next) {
             return;
         }
         catch (err) {
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });

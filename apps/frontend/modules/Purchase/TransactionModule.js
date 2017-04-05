@@ -67,7 +67,16 @@ function start(req, res) {
             if (err === ErrorUtilModule.ERROR_ACCESS) {
                 return res.json({ redirect: '/error', err: null });
             }
-            const msg = ErrorUtilModule.getError(req, err).message;
+            let msg;
+            if (err === ErrorUtilModule.ERROR_PROPERTY) {
+                msg = req.__('common.error.property');
+            }
+            else if (err === ErrorUtilModule.ERROR_EXPIRE) {
+                msg = req.__('common.error.expire');
+            }
+            else {
+                msg = err.message;
+            }
             return res.json({ redirect: null, err: msg });
         }
     });

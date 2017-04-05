@@ -66,7 +66,10 @@ function index(req, res, next) {
             return;
         }
         catch (err) {
-            next(ErrorUtilModule.getError(req, err));
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
             return;
         }
     });
@@ -291,7 +294,19 @@ function purchase(req, res, _next) {
             log('ERROR', err);
             //購入セッション削除
             delete req.session.purchase;
-            const msg = ErrorUtilModule.getError(req, err).message;
+            let msg;
+            if (err === ErrorUtilModule.ERROR_PROPERTY) {
+                msg = req.__('common.error.property');
+            }
+            else if (err === ErrorUtilModule.ERROR_ACCESS) {
+                msg = req.__('common.error.access');
+            }
+            else if (err === ErrorUtilModule.ERROR_EXPIRE) {
+                msg = req.__('common.error.expire');
+            }
+            else {
+                msg = err.message;
+            }
             return res.json({ err: msg, result: null });
         }
     });
@@ -312,7 +327,19 @@ function getCompleteData(req, res, _next) {
         return res.json({ err: null, result: req.session.complete });
     }
     catch (err) {
-        const msg = ErrorUtilModule.getError(req, err).message;
+        let msg;
+        if (err === ErrorUtilModule.ERROR_PROPERTY) {
+            msg = req.__('common.error.property');
+        }
+        else if (err === ErrorUtilModule.ERROR_ACCESS) {
+            msg = req.__('common.error.access');
+        }
+        else if (err === ErrorUtilModule.ERROR_EXPIRE) {
+            msg = req.__('common.error.expire');
+        }
+        else {
+            msg = err.message;
+        }
         return res.json({ err: msg, result: null });
     }
 }

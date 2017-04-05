@@ -3,35 +3,6 @@
  * @namespace Util.ErrorUtilModule
  */
 
-import * as express from 'express';
-
-/**
- * エラー取得
- * @memberof Util.ErrorUtilModule
- * @function erorMessage
- */
-export function getError(req: express.Request, err: any): Error {
-    let msg = '';
-    switch (err) {
-        case ERROR_PROPERTY:
-            msg = req.__('common.error.property');
-            break;
-        case ERROR_ACCESS:
-            msg = req.__('common.error.access');
-            break;
-        case ERROR_VALIDATION:
-            msg = req.__('common.error.property');
-            break;
-        case ERROR_EXPIRE:
-            msg = req.__('common.error.expire');
-            break;
-        default:
-            msg = err.message;
-            break;
-    }
-    return new Error(msg);
-}
-
 /**
  * エラー番号（propertyなし）
  * @memberof Util.ErrorUtilModule
@@ -66,3 +37,24 @@ export const ERROR_VALIDATION = '003';
  * @const ERROR_EXPIRE
  */
 export const ERROR_EXPIRE = '004';
+
+/**
+ * エラー（外部モジュール）
+ * @memberof Util.ErrorUtilModule
+ * @const ERROR_EXTERNAL_MODULE
+ */
+export const ERROR_EXTERNAL_MODULE = '999';
+
+/**
+ * カスタムエラー
+ * @memberof Util.ErrorUtilModule
+ * @extends Error
+ * @class CustomError
+ */
+export class CustomError extends Error {
+    public code: string;
+    constructor(code: string, message: string | undefined) {
+        super(message);
+        this.code = code;
+    }
+}

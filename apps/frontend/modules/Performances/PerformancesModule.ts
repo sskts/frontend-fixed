@@ -18,7 +18,7 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
  */
 export function index(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(ErrorUtilModule.getError(req, ErrorUtilModule.ERROR_PROPERTY));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
     res.render('performance');
