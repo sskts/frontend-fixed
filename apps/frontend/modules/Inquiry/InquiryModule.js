@@ -59,56 +59,51 @@ function auth(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
             LoginForm_1.default(req);
-            try {
-                const validationResult = yield req.getValidationResult();
-                if (validationResult.isEmpty()) {
-                    try {
-                        inquiryModel.transactionId = yield MP.makeInquiry({
-                            inquiry_theater: req.body.theater_code,
-                            inquiry_id: Number(req.body.reserve_num),
-                            inquiry_pass: req.body.tel_num // 電話番号
-                        });
-                    }
-                    catch (err) {
-                        throw ErrorUtilModule.ERROR_VALIDATION;
-                    }
-                    log('MP取引Id取得', inquiryModel.transactionId);
-                    inquiryModel.login = req.body;
-                    inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
-                        theater_code: req.body.theater_code,
-                        reserve_num: req.body.reserve_num,
-                        tel_num: req.body.tel_num // 電話番号
+            const validationResult = yield req.getValidationResult();
+            if (validationResult.isEmpty()) {
+                try {
+                    inquiryModel.transactionId = yield MP.makeInquiry({
+                        inquiry_theater: req.body.theater_code,
+                        inquiry_id: Number(req.body.reserve_num),
+                        inquiry_pass: req.body.tel_num // 電話番号
                     });
-                    log('COA照会情報取得');
-                    if (inquiryModel.stateReserve === null)
-                        throw ErrorUtilModule.ERROR_PROPERTY;
-                    const performanceId = UtilModule.getPerformanceId({
-                        theaterCode: req.body.theater_code,
-                        day: inquiryModel.stateReserve.date_jouei,
-                        titleCode: inquiryModel.stateReserve.title_code,
-                        titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-                        screenCode: inquiryModel.stateReserve.screen_code,
-                        timeBegin: inquiryModel.stateReserve.time_begin
-                    });
-                    log('パフォーマンスID取得', performanceId);
-                    inquiryModel.performance = yield MP.getPerformance(performanceId);
-                    log('MPパフォーマンス取得');
-                    req.session.inquiry = inquiryModel.toSession();
-                    //購入者内容確認へ
-                    res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
-                    return;
                 }
-                else {
-                    res.locals.theaterCode = req.body.theater_code;
-                    res.locals.reserveNum = req.body.reserve_num;
-                    res.locals.telNum = req.body.tel_num;
-                    res.locals.error = validationResult.mapped();
-                    res.render('inquiry/login');
-                    return;
+                catch (err) {
+                    throw ErrorUtilModule.ERROR_VALIDATION;
                 }
+                log('MP取引Id取得', inquiryModel.transactionId);
+                inquiryModel.login = req.body;
+                inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
+                    theater_code: req.body.theater_code,
+                    reserve_num: req.body.reserve_num,
+                    tel_num: req.body.tel_num // 電話番号
+                });
+                log('COA照会情報取得');
+                if (inquiryModel.stateReserve === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
+                const performanceId = UtilModule.getPerformanceId({
+                    theaterCode: req.body.theater_code,
+                    day: inquiryModel.stateReserve.date_jouei,
+                    titleCode: inquiryModel.stateReserve.title_code,
+                    titleBranchNum: inquiryModel.stateReserve.title_branch_num,
+                    screenCode: inquiryModel.stateReserve.screen_code,
+                    timeBegin: inquiryModel.stateReserve.time_begin
+                });
+                log('パフォーマンスID取得', performanceId);
+                inquiryModel.performance = yield MP.getPerformance(performanceId);
+                log('MPパフォーマンス取得');
+                req.session.inquiry = inquiryModel.toSession();
+                //購入者内容確認へ
+                res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+                return;
             }
-            catch (err) {
-                throw err;
+            else {
+                res.locals.theaterCode = req.body.theater_code;
+                res.locals.reserveNum = req.body.reserve_num;
+                res.locals.telNum = req.body.tel_num;
+                res.locals.error = validationResult.mapped();
+                res.render('inquiry/login');
+                return;
             }
         }
         catch (err) {
