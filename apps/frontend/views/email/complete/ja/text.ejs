@@ -1,12 +1,24 @@
 <%= input.last_name_hira %> <%= input.first_name_hira %> 様
 この度は、シネマサンシャイン姶良のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
 
-・[予約番号] <%= reserveSeats.tmp_reserve_num %>
-・[鑑賞日時] <%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>
-・[作品名] <%= performance.attributes.film.name.ja %>
-・[スクリーン名] <%= performance.attributes.screen.name.ja %>
-・[座席] <%= reserveSeatsString.join('\n') %>
-・[合計] ￥<%= amount %>
+[予約番号]
+<%= reserveSeats.tmp_reserve_num %>
+
+[鑑賞日時]
+<%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>
+
+[作品名]
+<%= performance.attributes.film.name.ja %>
+
+[スクリーン名]
+<%= performance.attributes.screen.name.ja %>
+
+[座席]
+<%= reserveSeatsString.join('\n') %>
+
+[合計]
+￥<%= amount %>
+
 【チケット発券について】
 チケットの発券/入場方法は2通りからお選び頂けます。
 
