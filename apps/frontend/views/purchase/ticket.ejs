@@ -59,10 +59,12 @@
             <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
         </div>
         <% if (mvtkFlg) { %>
+        <% if (mvtkLength === 0) { %>
         <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>
         <div class="mvtk-button mb-medium ghost-button  yellow-button center-button">
             <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
         </div>
+        <% } %>
         <% } %>
         
     

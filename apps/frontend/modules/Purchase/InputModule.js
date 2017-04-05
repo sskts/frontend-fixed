@@ -187,7 +187,7 @@ function submit(req, res, next) {
                 transactionId: purchaseModel.transactionMP.id,
                 from: 'noreply@ticket-cinemasunshine.com',
                 to: purchaseModel.input.mail_addr,
-                subject: '購入完了',
+                subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
                 content: emailTemplate.text
             });
             log('MPメール登録');

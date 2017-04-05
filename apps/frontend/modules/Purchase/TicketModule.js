@@ -52,6 +52,7 @@ function index(req, res, next) {
             res.locals.error = '';
             res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
             res.locals.tickets = salesTicketsResult;
+            res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = purchaseModel.reserveTickets;
