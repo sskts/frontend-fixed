@@ -7,55 +7,58 @@
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
         
     <div class="ticket-list mb-medium">
-        <% for (const mvtk of mvtkInfo) { %>
-        <ul class="box radius bg-light-gray mb-small form-layout">
-            <li>
-                <dl>
-                    <dt><%- __('common.mvtk_code') %></dt>
-                    <dd>
-                        <input type="text" name="mvtk_code" value="<%= mvtk.code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
-                        <% if (error && error.mvtk.msg) { %>
-                        <div class="validation-text"><%= error.mvtk.msg %></div> 
-                        <% } %>
-                    </dd>
-                </dl>
-            </li>
-            <li>
-                <dl>
-                    <dt><%- __('common.mvtk_password') %></dt>
-                    <dd>
-                        <input type="password" name="mvtk_password" value="<%= mvtk.password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
-                        <% if (error && error.mvtk.msg) { %>
-                        <div class="validation-text"><%= error.mvtk.msg %></div>
-                        <% } %>
-                    </dd>
-                </dl>
-            </li>
-        </ul>
+        <% for (let i = 0; i < reserveSeatLength; i++) { %>
+        <% if (mvtkInfo[i] !== undefined) { %>
+        <div class="mvtk-box active">
+            <div class="button light-gray-button remove-button">
+                <a href="#"><%- __('common.remove') %></a>
+            </div>
+            <ul class="box radius bg-light-gray mb-small form-layout">
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_code') %></dt>
+                        <dd>
+                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_password') %></dt>
+                        <dd>
+                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <% } else { %>
+        <div class="mvtk-box zoom">
+            <div class="button light-gray-button remove-button">
+                <a href="#"><%- __('common.remove') %></a>
+            </div>
+            <ul class="box radius bg-light-gray mb-small form-layout">
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_code') %></dt>
+                        <dd>
+                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_password') %></dt>
+                        <dd>
+                            <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
         <% } %>
-    </div>
-
-
-    <ul class="box radius bg-light-gray mb-small form-layout zoom clone">
-        <li>
-            <dl>
-                <dt><%- __('common.mvtk_code') %></dt>
-                <dd>
-                    <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
-                </dd>
-            </dl>
-        </li>
-        <li>
-            <dl>
-                <dt><%- __('common.mvtk_password') %></dt>
-                <dd>
-                    <input type="password" name="mvtk_password" autocomplete="off" value="" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
-                </dd>
-            </dl>
-        </li>
-    </ul>
-
-    
+        <% } %>
+    </div>   
 
     <div class="button dark-blue-button add-button mb-medium center-button">
         <a class="icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
@@ -81,7 +84,9 @@
 <%- include('../../layouts/siteSeal') %>
 </div>
 
+<input type="hidden" class="mvtk-validation" value="<%= error %>">
+
 <%- include('../../locales/validation') %>
 
 <%- contentFor('modals') %>
-<%- include('../modals/mvtkNotInput') %>
+<%- include('../modals/mvtkValidation') %>

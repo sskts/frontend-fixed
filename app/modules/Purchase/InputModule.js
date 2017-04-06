@@ -211,10 +211,10 @@ function submit(req, res, next) {
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
                 const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-                if (purchaseModel.theater === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                if (purchaseModel.transactionMP === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                if (purchaseModel.theater === null || purchaseModel.transactionMP === null) {
+                    next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+                    return;
+                }
                 const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
                 log('GMOオーソリ追加失敗');
                 res.locals.error = getGMOError(req);

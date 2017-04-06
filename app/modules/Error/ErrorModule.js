@@ -35,7 +35,6 @@ exports.notFound = notFound;
  */
 // tslint:disable-next-line:variable-name
 function index(err, req, res, _next) {
-    console.error(err.stack);
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {
@@ -66,12 +65,11 @@ function index(err, req, res, _next) {
         delete req.session.purchase;
         delete req.session.mvtk;
     }
+    console.error(err);
     if (req.xhr) {
-        console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     }
     else {
-        console.error(err.message);
         res.locals.message = msg;
         res.locals.error = err;
         res.locals.portalSite = UtilModule.getPortalUrl();

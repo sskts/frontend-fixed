@@ -129,6 +129,7 @@ function showError(message) {
     $('.error').show();
     $(window).scrollTop(0);
     history.pushState(null, null, '/error');
+    loadingEnd();
 }
 
 /**

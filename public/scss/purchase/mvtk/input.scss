@@ -16,9 +16,29 @@
         display: none;
     }
     .ticket-list {
+        .mvtk-box {
+            position: relative;
+            display: none;
+            padding: 32px 0 0;
+            .remove-button {
+                position: absolute;
+                top: 0;
+                right: 0;
+                a {
+                    width: 70px;
+                    padding: 5px 0;
+                    font-size: 12px;
+                    box-shadow: 0 0 0 transparent;
+                    font-weight: 500;
+                }
+            }
+            &.active {
+                display: block
+            }
+        }
         .zoom {
-            -webkit-animation: zoom 0.2s both;
-            animation: zoom 0.2s both;
+            -webkit-animation: zoom 0.2s;
+            animation: zoom 0.2s;
         }
     }
     dl {

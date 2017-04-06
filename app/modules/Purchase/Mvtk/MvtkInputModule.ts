@@ -64,23 +64,90 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @returns {Promise<void>}
  */
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+    if (req.session === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
+        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
-
         MvtkInputForm(req);
         const validationResult = await req.getValidationResult();
-        if (!validationResult.isEmpty()) {
-            //購入者情報入力表示
-            res.locals.error = validationResult.mapped();
+        if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_ACCESS;
+        const mvtkService = MVTK.createPurchaseNumberAuthService();
+        const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
+        const purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth({
+            kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
+            jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
+            knyknrNoInfoIn: inputInfo.map((value) => {
+                return {
+                    KNYKNR_NO: value.code, //購入管理番号
+                    PIN_CD: value.password // PINコード
+                };
+            }),
+            skhnCd: MvtkUtilModule.getfilmCode(
+                purchaseModel.performanceCOA.titleCode,
+                purchaseModel.performanceCOA.titleBranchNum), // 作品コード
+            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
+            jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
+        });
+        log('ムビチケ認証', purchaseNumberAuthResults);
+        const validationList: string[] = [];
+        // ムビチケセッション作成
+        const mvtkList: PurchaseSession.IMvtk[] = [];
+        for (const purchaseNumberAuthResult of purchaseNumberAuthResults) {
+            for (const info of purchaseNumberAuthResult.ykknInfo) {
+                const input = inputInfo.find((value) => {
+                    return (value.code === purchaseNumberAuthResult.knyknrNo);
+                });
+                if (input === undefined) continue;
+                // ムビチケチケットコード取得
+                const ticket = await COA.MasterService.mvtkTicketcode({
+                    theater_code: purchaseModel.performance.attributes.theater.id,
+                    kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
+                    kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
+                    kbn_kensyu: info.ykknshTyp,
+                    sales_price: Number(info.knshknhmbiUnip),
+                    app_price: Number(info.kijUnip),
+                    kbn_eisyahousiki: info.eishhshkTyp,
+                    title_code: purchaseModel.performanceCOA.titleCode,
+                    title_branch_num: purchaseModel.performanceCOA.titleBranchNum
+                });
+                log('ムビチケチケットコード取得', ticket);
+                mvtkList.push({
+                    code: purchaseNumberAuthResult.knyknrNo,
+                    password: UtilModule.bace64Encode(input.password),
+                    ykknInfo: info,
+                    ticket: ticket
+                });
+            }
+            if (purchaseNumberAuthResult.knyknrNoMkujyuCd !== undefined) {
+                validationList.push(purchaseNumberAuthResult.knyknrNo);
+            }
+        }
+        // 認証エラーバリデーション
+        if (validationList.length > 0) {
+            res.locals.error = JSON.stringify(validationList);
+            log('認証エラー');
+            throw ErrorUtilModule.ERROR_VALIDATION;
+        }
+        req.session.mvtk = mvtkList;
+        res.redirect('/purchase/mvtk/confirm');
+    } catch (err) {
+        if (err === ErrorUtilModule.ERROR_VALIDATION) {
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.reserveSeats === null || purchaseModel.transactionMP === null) {
+                next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+                return;
+            }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
@@ -88,118 +155,12 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
             return;
         }
-        const authResult = await auth(req, purchaseModel);
-        if (authResult) {
-            res.redirect('/purchase/mvtk/confirm');
-            return;
-        } else {
-            //購入者情報入力表示
-            res.locals.error = null;
-            res.locals.mvtkInfo = mvtkValidation(req);
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-            res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
-            return;
-        }
-    } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
         return;
     }
-}
-
-/**
- * ムビチケ検証
- * @memberOf Purchase.Mvtk.MvtkInputModule
- * @function mvtkValidation
- * @param {Request} req
- * @returns {InputInfo[]}
- */
-function mvtkValidation(req: Request): InputInfo[] {
-    const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
-    return inputInfo.map((input) => {
-        const mvtk: PurchaseSession.IMvtk[] = (<any>req.session).mvtk;
-        const ticket = mvtk.find((value) => {
-            return (input.code === value.code);
-        });
-        return {
-            code: input.code,
-            password: (ticket !== undefined) ? input.password : '',
-            error: (ticket !== undefined) ? null : req.__('common.validation.mvtk')
-        };
-    });
-}
-
-/**
- * 認証
- * @memberOf Purchase.Mvtk.MvtkInputModule
- * @function auth
- * @param {Request} req
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<boolean>}
- */
-export async function auth(req: Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<boolean> {
-    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
-    const mvtkService = MVTK.createPurchaseNumberAuthService();
-    const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
-
-    const result = await mvtkService.purchaseNumberAuth({
-        kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
-        jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
-        knyknrNoInfoIn: inputInfo.map((value) => {
-            return {
-                KNYKNR_NO: value.code, //購入管理番号
-                PIN_CD: value.password // PINコード
-            };
-        }),
-        skhnCd: MvtkUtilModule.getfilmCode(
-            purchaseModel.performanceCOA.titleCode,
-            purchaseModel.performanceCOA.titleBranchNum), // 作品コード
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-        jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
-    });
-
-    log('ムビチケ認証', result);
-    let isSuccess = true;
-    const mvtkList: PurchaseSession.IMvtk[] = [];
-    for (const purchaseNumberAuthResult of result) {
-        if (purchaseNumberAuthResult.ykknInfo.length === 0) isSuccess = false;
-        for (const info of purchaseNumberAuthResult.ykknInfo) {
-            const input = inputInfo.find((value) => {
-                return (value.code === purchaseNumberAuthResult.knyknrNo);
-            });
-            if (input === undefined) continue;
-
-            // ムビチケチケットコード取得
-            const ticket = await COA.MasterService.mvtkTicketcode({
-                theater_code: purchaseModel.performance.attributes.theater.id,
-                kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
-                kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
-                kbn_kensyu: info.ykknshTyp,
-                sales_price: Number(info.knshknhmbiUnip),
-                app_price: Number(info.kijUnip),
-                kbn_eisyahousiki: info.eishhshkTyp,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum
-            });
-            log('ムビチケチケットコード取得', ticket);
-            mvtkList.push({
-                code: purchaseNumberAuthResult.knyknrNo,
-                password: UtilModule.bace64Encode(input.password),
-                ykknInfo: info,
-                ticket: ticket
-            });
-        }
-    }
-
-    req.session.mvtk = mvtkList;
-    return isSuccess;
 }
 
 /**

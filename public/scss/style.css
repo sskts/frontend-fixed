@@ -1356,9 +1356,26 @@ p a {
 .purchase-mvtk-input .clone {
   display: none; }
 
+.purchase-mvtk-input .ticket-list .mvtk-box {
+  position: relative;
+  display: none;
+  padding: 32px 0 0; }
+  .purchase-mvtk-input .ticket-list .mvtk-box .remove-button {
+    position: absolute;
+    top: 0;
+    right: 0; }
+    .purchase-mvtk-input .ticket-list .mvtk-box .remove-button a {
+      width: 70px;
+      padding: 5px 0;
+      font-size: 12px;
+      box-shadow: 0 0 0 transparent;
+      font-weight: 500; }
+  .purchase-mvtk-input .ticket-list .mvtk-box.active {
+    display: block; }
+
 .purchase-mvtk-input .ticket-list .zoom {
-  -webkit-animation: zoom 0.2s both;
-  animation: zoom 0.2s both; }
+  -webkit-animation: zoom 0.2s;
+  animation: zoom 0.2s; }
 
 .purchase-mvtk-input dl dt {
   line-height: 44px;

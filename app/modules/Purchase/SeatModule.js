@@ -123,6 +123,8 @@ function select(req, res, next) {
             yield reserve(selectSeats, purchaseModel);
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
+            // ムビチケセッション削除
+            delete req.session.mvtk;
             //券種選択へ
             res.redirect('/purchase/ticket');
             return;

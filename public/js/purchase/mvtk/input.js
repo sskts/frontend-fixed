@@ -1,23 +1,40 @@
+var modal;
 $(function () {
-    var modal = new SASAKI.Modal();
+    modal = new SASAKI.Modal();
+    // 初期化
+    pageInit();
     // 追加クリックイベント
     $(document).on('click', '.add-button a', function (event) {
         event.preventDefault();
-        addTicket();
+        if ($('.mvtk-box:hidden').length > 0) {
+            $('.mvtk-box:hidden').eq(0).addClass('active');
+        }
+        if ($('.mvtk-box:hidden').length === 0) {
+            $('.add-button').hide();
+        }
+    });
+    $(document).on('click', '.remove-button a', function (event) {
+        event.preventDefault();
+        var target = $(this).parents('.mvtk-box');
+        target.find('input').val('');
+        target.removeClass('active');
+        $('.ticket-list').append(target);
+        if ($('.mvtk-box:hidden').length > 0) {
+            $('.add-button').show();
+        }
     });
     // 次へクリックイベント
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         var mvtkList = [];
-        $('.ticket-list ul').each(function(index, elem){
+        $('.ticket-list .mvtk-box.active').each(function (index, elem) {
             var target = $(elem);
             var code = target.find('input[name=mvtk_code]').val();
             var password = target.find('input[name=mvtk_password]').val();
             if (code && password) {
                 mvtkList.push({
                     code: code,
-                    password: password,
-                    error: null
+                    password: password
                 });
             }
             validation(target);
@@ -25,11 +42,6 @@ $(function () {
 
         if ($('.validation-text').length > 0) {
             validationScroll();
-            return;
-        }
-
-        if (mvtkList.length === 0) {
-            modal.open('mvtkNotInput');
             return;
         }
 
@@ -43,17 +55,20 @@ $(function () {
 });
 
 /**
- * チケット追加
- * @function addTicket
+ * 初期化
+ * @function pageInit
  * @returns {void}
  */
-function addTicket() {
-    var dom = $('.clone').clone();
-    dom.removeClass('clone');
-    $('.ticket-list').append(dom);
-    if ($('.ticket-list ul').length > 2) {
-        $('.add-button').remove();
-    };
+function pageInit() {
+    if ($('.mvtk-validation').val()) {
+        modal.open('mvtk_validation');
+        var errorData = JSON.parse($('.mvtk-validation').val());
+        errorData.forEach(function(value){
+            var target = $('.ticket-list .mvtk-box input[value='+ value +']').parents('.mvtk-box');
+            target.find('input[name=mvtk_password]').val('');
+            target.find('input').addClass('validation');
+        });
+    }
 }
 
 /**
@@ -78,8 +93,8 @@ function validation(parent) {
     parent.find('.validation-text').remove();
 
     var validationList = [
-        { name: 'mvtk_code', label: locales.label.mvtk_code, required: false, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number]  },
-        { name: 'mvtk_password', label: locales.label.mvtk_password, required: false, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number]  }
+        { name: 'mvtk_code', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
+        { name: 'mvtk_password', label: locales.label.mvtk_password, required: true, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number] }
     ];
 
     validationList.forEach(function (validation, index) {

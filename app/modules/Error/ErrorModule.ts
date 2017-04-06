@@ -38,7 +38,6 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
  */
 // tslint:disable-next-line:variable-name
 export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _next: NextFunction): void {
-    console.error(err.stack);
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {
@@ -70,12 +69,10 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
         delete req.session.purchase;
         delete req.session.mvtk;
     }
-
+    console.error(err);
     if (req.xhr) {
-        console.error('Something failed.');
         res.status(status).send({ error: 'Something failed.' });
     } else {
-        console.error(err.message);
         res.locals.message = msg;
         res.locals.error = err;
         res.locals.portalSite = UtilModule.getPortalUrl();
