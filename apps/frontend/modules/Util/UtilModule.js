@@ -1,3 +1,7 @@
+/**
+ * 共通
+ * @namespace Util.UtilModule
+ */
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,20 +12,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * 共通
- * @namespace Util.UtilModule
- */
-const EmailTemplate = require("email-templates");
 const fs = require("fs-extra");
 const moment = require("moment");
 /**
  * テンプレート変数へ渡す
  * @memberOf Util.UtilModule
  * @function setLocals
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunctiont} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunctiont} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
@@ -153,20 +152,20 @@ exports.getPortalUrl = getPortalUrl;
  * メール内容取得
  * @memberOf Util.UtilModule
  * @function getMailTemplate
- * @param {string} dir
+ * @param {Response} res
+ * @param {string} file
  * @param {{}} locals
- * @returns {Promise<{}>}
+ * @returns {Promise<string>}
  */
-function getEmailTemplate(dir, locals) {
+function getEmailTemplate(res, file, locals) {
     return __awaiter(this, void 0, void 0, function* () {
-        const emailTemplate = new EmailTemplate.EmailTemplate(dir);
         return new Promise((resolve, reject) => {
-            emailTemplate.render(locals, (err, results) => {
+            res.render(file, locals, (err, html) => {
                 if (err !== null) {
                     reject(err);
                     return;
                 }
-                resolve(results);
+                resolve(html);
                 return;
             });
         });

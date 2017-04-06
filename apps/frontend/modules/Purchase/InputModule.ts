@@ -161,15 +161,16 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             domain: req.headers.host,
             moment: moment,
             timeFormat: UtilModule.timeFormat,
-            __: req.__
+            __: req.__,
+            layout: false
         };
-        const emailTemplate = await UtilModule.getEmailTemplate(`./apps/frontend/views/email/complete/${req.__('lang')}`, locals);
+        const emailTemplate = await UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
         await MP.addEmail({
             transactionId: purchaseModel.transactionMP.id,
             from: 'noreply@ticket-cinemasunshine.com',
             to: purchaseModel.input.mail_addr,
             subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
-            content: emailTemplate.text
+            content: emailTemplate
         });
         log('MPメール登録');
         // セッション更新

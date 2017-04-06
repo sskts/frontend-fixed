@@ -180,15 +180,16 @@ function submit(req, res, next) {
                 domain: req.headers.host,
                 moment: moment,
                 timeFormat: UtilModule.timeFormat,
-                __: req.__
+                __: req.__,
+                layout: false
             };
-            const emailTemplate = yield UtilModule.getEmailTemplate(`./apps/frontend/views/email/complete/${req.__('lang')}`, locals);
+            const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
             yield MP.addEmail({
                 transactionId: purchaseModel.transactionMP.id,
                 from: 'noreply@ticket-cinemasunshine.com',
                 to: purchaseModel.input.mail_addr,
                 subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
-                content: emailTemplate.text
+                content: emailTemplate
             });
             log('MPメール登録');
             // セッション更新

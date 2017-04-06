@@ -14,10 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const assert = require("assert");
-const moment = require("moment");
-const locales_1 = require("../../../apps/frontend/middlewares/locales");
 const UtilModule = require("../../../apps/frontend/modules/Util/UtilModule");
-const normalDAta = require("../data/normalData");
 describe('UtilModule.timeFormat', () => {
     it('正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.timeFormat('0101');
@@ -62,20 +59,20 @@ describe('UtilModule.base64Decode', () => {
         assert.equal(str, 'テスト');
     }));
 });
-describe('UtilModule.getEmailTemplate', () => {
-    it('正常', () => __awaiter(this, void 0, void 0, function* () {
-        const locals = {
-            performance: normalDAta.performance,
-            reserveSeats: normalDAta.reserveSeats,
-            input: normalDAta.input,
-            reserveSeatsString: [],
-            amount: 0,
-            domain: '',
-            moment: moment,
-            timeFormat: UtilModule.timeFormat,
-            __: locales_1.default.__
-        };
-        const template = yield UtilModule.getEmailTemplate('./apps/frontend/views/email/complete/ja', locals);
-        assert(template.text);
-    }));
-});
+// describe('UtilModule.getEmailTemplate', () => {
+//     it('正常', async () => {
+//         const locals = {
+//             performance: normalDAta.performance,
+//             reserveSeats: normalDAta.reserveSeats,
+//             input: normalDAta.input,
+//             reserveSeatsString: [],
+//             amount: 0,
+//             domain: '',
+//             moment: moment,
+//             timeFormat: UtilModule.timeFormat,
+//             __: locales.__
+//         };
+//         const template = await UtilModule.getEmailTemplate('email/complete/ja', locals);
+//         assert(template);
+//     });
+// });

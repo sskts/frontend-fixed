@@ -2,21 +2,21 @@
  * 共通
  * @namespace Util.UtilModule
  */
-import * as EmailTemplate from 'email-templates';
-import * as express from 'express';
+
+import {NextFunction, Request, Response} from 'express';
 import * as fs from 'fs-extra';
 import * as moment from 'moment';
 /**
  * テンプレート変数へ渡す
  * @memberOf Util.UtilModule
  * @function setLocals
- * @param {express.Request} req
- * @param {express.Response} res
- * @param {express.NextFunctiont} next
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunctiont} next
  * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function setLocals(_req: express.Request, res: express.Response, next: express.NextFunction): void {
+export function setLocals(_req: Request, res: Response, next: NextFunction): void {
     res.locals.escapeHtml = escapeHtml;
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
@@ -149,33 +149,22 @@ export function getPortalUrl(): string {
  * メール内容取得
  * @memberOf Util.UtilModule
  * @function getMailTemplate
- * @param {string} dir
+ * @param {Response} res
+ * @param {string} file
  * @param {{}} locals
- * @returns {Promise<{}>}
+ * @returns {Promise<string>}
  */
-export async function getEmailTemplate(dir: string, locals: {}): Promise<IEmailTemplateResults> {
-    const emailTemplate = new EmailTemplate.EmailTemplate(dir);
-    return new Promise<IEmailTemplateResults>((resolve, reject) => {
-        emailTemplate.render(locals, (err, results) => {
+export async function getEmailTemplate(res: Response, file: string, locals: {}): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        res.render(file, locals, (err, html) => {
             if (err !== null) {
                 reject(err);
                 return;
             }
-            resolve(results);
+            resolve(html);
             return;
         });
     });
-}
-
-/**
- * メール内容取得out
- * @memberOf Util.UtilModule
- * @interface IEmailTemplateResults
- */
-export interface IEmailTemplateResults {
-    html: string;
-    text: string;
-    subject: string;
 }
 
 /**
