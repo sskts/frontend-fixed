@@ -53,7 +53,7 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
                 break;
             case ErrorUtilModule.ERROR_VALIDATION:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.property');
+                msg = req.__('common.error.validation');
                 break;
             case ErrorUtilModule.ERROR_EXPIRE:
                 status = HTTPStatus.BAD_REQUEST;
