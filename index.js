@@ -4,7 +4,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");
-const app = require("./apps/frontend/app");
+const app = require("./app/app");
 /**
  * Get port from environment and store in Express.
  */

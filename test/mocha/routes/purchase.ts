@@ -7,7 +7,7 @@
 import * as assert from 'assert';
 import * as httpStatus from 'http-status';
 import * as supertest from 'supertest';
-import * as app from '../../../apps/frontend/app';
+import * as app from '../../../app/app';
 import * as normalDAta from '../data/normalData';
 
 describe('POST /transaction', () => {

@@ -6,7 +6,7 @@
 // tslint:disable:no-backbone-get-set-outside-model
 import * as httpStatus from 'http-status';
 import * as supertest from 'supertest';
-import * as app from '../../../apps/frontend/app';
+import * as app from '../../../app/app';
 
 describe('GET /inquiry/login', () => {
     it('login NOT FOUND', async () => {
@@ -21,7 +21,7 @@ describe('GET /inquiry/login', () => {
                     }
                 }
             })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.NOT_FOUND);
     });
 });
 

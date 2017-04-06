@@ -17,7 +17,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const assert = require("assert");
 const httpStatus = require("http-status");
 const supertest = require("supertest");
-const app = require("../../../apps/frontend/app");
+const app = require("../../../app/app");
 const normalDAta = require("../data/normalData");
 describe('POST /transaction', () => {
     it('start id なし', () => __awaiter(this, void 0, void 0, function* () {

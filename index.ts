@@ -3,7 +3,7 @@
  */
 
 import * as http from 'http';
-import * as app from './apps/frontend/app';
+import * as app from './app/app';
 
 /**
  * Get port from environment and store in Express.

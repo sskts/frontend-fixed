@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // tslint:disable:no-backbone-get-set-outside-model
 const httpStatus = require("http-status");
 const supertest = require("supertest");
-const app = require("../../../apps/frontend/app");
+const app = require("../../../app/app");
 describe('GET /inquiry/login', () => {
     it('login NOT FOUND', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
@@ -30,7 +30,7 @@ describe('GET /inquiry/login', () => {
                 }
             }
         })
-            .expect(httpStatus.INTERNAL_SERVER_ERROR);
+            .expect(httpStatus.NOT_FOUND);
     }));
 });
 describe('POST /inquiry/login', () => {

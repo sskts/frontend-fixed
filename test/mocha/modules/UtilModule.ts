@@ -4,7 +4,7 @@
  * @ignore
  */
 import * as assert from 'assert';
-import * as UtilModule from '../../../apps/frontend/modules/Util/UtilModule';
+import * as UtilModule from '../../../app/modules/Util/UtilModule';
 
 describe('UtilModule.timeFormat', () => {
     it('正常', async () => {

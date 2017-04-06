@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 const assert = require("assert");
-const UtilModule = require("../../../apps/frontend/modules/Util/UtilModule");
+const UtilModule = require("../../../app/modules/Util/UtilModule");
 describe('UtilModule.timeFormat', () => {
     it('正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.timeFormat('0101');
