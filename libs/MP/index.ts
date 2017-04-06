@@ -796,22 +796,15 @@ export interface IAddEmailArgs {
     subject: string;
     content: string;
 }
-/**
- * メール追加out
- * @memberOf MP
- * @interface IAddEmailResult
- */
-export interface IAddEmailResult {
-    id: string;
-}
+
 /**
  * メール追加
  * @memberOf MP
  * @function addEmail
  * @param {IAddEmailArgs} args
- * @returns {Promise<IAddEmailResult>}
+ * @returns {Promise<string>}
  */
-export async function addEmail(args: IAddEmailArgs): Promise<IAddEmailResult> {
+export async function addEmail(args: IAddEmailArgs): Promise<string> {
     log('addEmail args:', args);
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
@@ -829,7 +822,7 @@ export async function addEmail(args: IAddEmailArgs): Promise<IAddEmailResult> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
     log('addEmail result:' + (<string>response.body.data));
-    return response.body.data;
+    return response.body.data.id;
 }
 
 /**

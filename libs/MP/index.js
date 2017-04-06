@@ -482,7 +482,7 @@ exports.transactionClose = transactionClose;
  * @memberOf MP
  * @function addEmail
  * @param {IAddEmailArgs} args
- * @returns {Promise<IAddEmailResult>}
+ * @returns {Promise<string>}
  */
 function addEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -504,7 +504,7 @@ function addEmail(args) {
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(response);
         log('addEmail result:' + response.body.data);
-        return response.body.data;
+        return response.body.data.id;
     });
 }
 exports.addEmail = addEmail;

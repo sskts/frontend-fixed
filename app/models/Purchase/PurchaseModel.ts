@@ -177,6 +177,10 @@ export class PurchaseModel {
      * COA販売可能チケット情報
      */
     public salesTicketsCOA: COA.ReserveService.ISalesTicketResult[] | null;
+    /**
+     * 完了メールID
+     */
+    public completeMailId: string | null;
 
     /**
      * @constructor
@@ -204,6 +208,7 @@ export class PurchaseModel {
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
         this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
         this.salesTicketsCOA = (session.salesTicketsCOA !== undefined) ? session.salesTicketsCOA : null;
+        this.completeMailId = (session.completeMailId !== undefined) ? session.completeMailId : null;
     }
 
     /**
@@ -230,6 +235,7 @@ export class PurchaseModel {
         mvtk: IMvtk[] | null;
         performanceCOA: MP.IPerformanceCOA | null;
         salesTicketsCOA: COA.ReserveService.ISalesTicketResult[] | null
+        completeMailId: string | null
     } {
         return {
             performance: this.performance,
@@ -248,7 +254,8 @@ export class PurchaseModel {
             expired: this.expired,
             mvtk: this.mvtk,
             performanceCOA: this.performanceCOA,
-            salesTicketsCOA: this.salesTicketsCOA
+            salesTicketsCOA: this.salesTicketsCOA,
+            completeMailId: this.completeMailId
         };
     }
 

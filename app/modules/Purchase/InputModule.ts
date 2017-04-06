@@ -87,8 +87,11 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  */
 // tslint:disable-next-line:max-func-body-length
 export async function submit(req: Request, res: Response, next: NextFunction): Promise<void> {
+    if (req.session === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -123,17 +126,18 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             tel_num: req.body.tel_num,
             agree: req.body.agree
         };
-        if (req.body.gmo_token_object === undefined) {
-            // クレジット決済なし
-            req.session.purchase = purchaseModel.toSession();
-            // 購入者内容確認へ
-            res.redirect('/purchase/confirm');
-            return;
+        if (purchaseModel.transactionGMO !== null
+            && purchaseModel.authorizationGMO !== null
+            && purchaseModel.orderId !== null) {
+            await removeAuthorization(purchaseModel);
+            log('GMOオーソリ削除');
         }
-        // クレジット決済
-        purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-        await addAuthorization(purchaseModel);
-        log('オーソリ追加');
+        if (purchaseModel.getReserveAmount() > 0) {
+            // クレジット決済
+            purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
+            await addAuthorization(purchaseModel);
+            log('オーソリ追加');
+        }
         await MP.ownersAnonymous({
             transactionId: purchaseModel.transactionMP.id,
             name_first: purchaseModel.input.first_name_hira,
@@ -164,8 +168,15 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             __: req.__,
             layout: false
         };
+        if (purchaseModel.completeMailId !== null) {
+            await MP.removeEmail({
+                transactionId: purchaseModel.transactionMP.id,
+                emailId: purchaseModel.completeMailId
+            });
+            log('MPメール削除');
+        }
         const emailTemplate = await UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
-        await MP.addEmail({
+        purchaseModel.completeMailId = await MP.addEmail({
             transactionId: purchaseModel.transactionMP.id,
             from: 'noreply@ticket-cinemasunshine.com',
             to: purchaseModel.input.mail_addr,
@@ -180,13 +191,11 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         return;
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-            if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-            // GMOオーソリ追加失敗
+            log('GMOオーソリ追加失敗');
             res.locals.error = getGMOError(req);
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
@@ -214,18 +223,10 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
  */
 function getGMOError(req: Request) {
     return {
-        cardno: {
-            parm: 'cardno', msg: `${req.__('common.cardno')}${req.__('common.validation.card')}`, value: ''
-        },
-        expire: {
-            parm: 'expire', msg: `${req.__('common.expire')}${req.__('common.validation.card')}`, value: ''
-        },
-        securitycode: {
-            parm: 'securitycode', msg: `${req.__('common.securitycode')}${req.__('common.validation.card')}`, value: ''
-        },
-        holdername: {
-            parm: 'holdername', msg: `${req.__('common.holdername')}${req.__('common.validation.card')}`, value: ''
-        }
+        cardno: { parm: 'cardno', msg: `${req.__('common.cardno')}${req.__('common.validation.card')}`, value: '' },
+        expire: { parm: 'expire', msg: `${req.__('common.expire')}${req.__('common.validation.card')}`, value: '' },
+        securitycode: { parm: 'securitycode', msg: `${req.__('common.securitycode')}${req.__('common.validation.card')}`, value: '' },
+        holdername: { parm: 'holdername', msg: `${req.__('common.holdername')}${req.__('common.validation.card')}`, value: '' }
     };
 }
 
@@ -242,31 +243,8 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
     const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
     const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
-
-    if (purchaseModel.transactionGMO !== null
-        && purchaseModel.authorizationGMO !== null
-        && purchaseModel.orderId !== null) {
-
-        //GMOオーソリ取消
-        await GMO.CreditService.alterTran({
-            shopId: gmoShopId,
-            shopPass: gmoShopPassword,
-            accessId: purchaseModel.transactionGMO.accessId,
-            accessPass: purchaseModel.transactionGMO.accessPass,
-            jobCd: GMO.Util.JOB_CD_VOID
-        });
-        log('GMOオーソリ取消');
-
-        // GMOオーソリ削除
-        await MP.removeGMOAuthorization({
-            transactionId: purchaseModel.transactionMP.id,
-            gmoAuthorizationId: purchaseModel.authorizationGMO.id
-        });
-        log('GMOオーソリ削除');
-    }
     const amount: number = purchaseModel.getReserveAmount();
     try {
         // GMOオーソリ取得
@@ -313,4 +291,34 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
     purchaseModel.authorizationCountGMO += 1;
     log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
+}
+
+/**
+ * オーソリ削除
+ * @memberOf Purchase.InputModule
+ * @function removeAuthorization
+ * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @returns {void}
+ */
+async function removeAuthorization(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.authorizationGMO === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.transactionGMO === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+    const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
+    //GMOオーソリ取消
+    await GMO.CreditService.alterTran({
+        shopId: gmoShopId,
+        shopPass: gmoShopPassword,
+        accessId: purchaseModel.transactionGMO.accessId,
+        accessPass: purchaseModel.transactionGMO.accessPass,
+        jobCd: GMO.Util.JOB_CD_VOID
+    });
+    log('GMOオーソリ取消');
+    // GMOオーソリ削除
+    await MP.removeGMOAuthorization({
+        transactionId: purchaseModel.transactionMP.id,
+        gmoAuthorizationId: purchaseModel.authorizationGMO.id
+    });
 }

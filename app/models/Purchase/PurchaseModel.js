@@ -31,6 +31,7 @@ class PurchaseModel {
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
         this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
         this.salesTicketsCOA = (session.salesTicketsCOA !== undefined) ? session.salesTicketsCOA : null;
+        this.completeMailId = (session.completeMailId !== undefined) ? session.completeMailId : null;
     }
     /**
      * セッションObjectへ変換
@@ -56,7 +57,8 @@ class PurchaseModel {
             expired: this.expired,
             mvtk: this.mvtk,
             performanceCOA: this.performanceCOA,
-            salesTicketsCOA: this.salesTicketsCOA
+            salesTicketsCOA: this.salesTicketsCOA,
+            completeMailId: this.completeMailId
         };
     }
     /**
