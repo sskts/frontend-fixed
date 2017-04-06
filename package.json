@@ -1,8 +1,9 @@
 {
   "name": "sskts-frontend",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
+    "check": "npm run tslint && nsp check && snyk auth && snyk test --ignore-policy",
     "development": "bin\\env\\development.bat && bin\\env\\debug.bat && node ./index.js",
     "start": "node ./index.js",
     "test": "bin\\env\\development.bat && mocha ./test/mocha/**/*.js --no-timeouts --recursive",
@@ -16,7 +17,7 @@
     "tsc": "tsc -p ./ -w",
     "jsdoc": "grunt jsdoc",
     "clean": "rimraf libs/**/*.js apps/**/*.js test/**/*.js docs/**/*",
-    "build": "npm run nsp && npm run clean && npm run tslint && tsc -p ./ && npm run test && npm run css && npm run jsdoc",
+    "build": "npm run check && npm run clean && tsc -p ./ && npm run test && npm run css && npm run jsdoc",
     "nsp": "nsp check --output summary"
   },
   "dependencies": {
@@ -78,6 +79,7 @@
     "postcss-cli": "^2.6.0",
     "rimraf": "^2.6.1",
     "selenium-webdriver": "^3.0.1",
+    "snyk": "^1.27.1",
     "supertest": "^3.0.0",
     "tslint": "^4.5.1",
     "tslint-microsoft-contrib": "^4.0.0",
