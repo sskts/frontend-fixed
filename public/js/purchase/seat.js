@@ -118,7 +118,7 @@ function getScreenStateReserve(count, cb) {
         dataType: 'json',
         url: '/purchase/getScreenStateReserve',
         type: 'POST',
-        timeout: 1000,
+        timeout: 10000,
         data: {
             theater_code: target.attr('data-theater'), // 施設コード
             date_jouei: target.attr('data-day'), // 上映日
