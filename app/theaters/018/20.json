@@ -5,12 +5,12 @@
         {
             "w": 804, "h": 73,
             "x": 293, "y": 90,
-            "image": "/images/theater/118/screen/002.svg"
+            "image": "/images/theater/018/screen/002.svg"
         },
         {
             "w": 126, "h": 500,
             "x": 205, "y": 252,
-            "image": "/images/theater/118/entrance/002.svg"
+            "image": "/images/theater/018/entrance/002.svg"
         }
     ],
     "seatStart": { "x": 228, "y": 253 },
