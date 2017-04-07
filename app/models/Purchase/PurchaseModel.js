@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const moment = require("moment");
 const UtilModule = require("../../modules/Util/UtilModule");
 /**
  * 購入セッション
@@ -194,6 +195,15 @@ class PurchaseModel {
      */
     authorizationCountGMOToString() {
         return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
+    }
+    /**
+     * 有効期限確認
+     * @memberOf PurchaseModel
+     * @method isExpired
+     * @returns {boolean}
+     */
+    isExpired() {
+        return (this.expired < moment().unix());
     }
 }
 PurchaseModel.SEAT_STATE = 0;

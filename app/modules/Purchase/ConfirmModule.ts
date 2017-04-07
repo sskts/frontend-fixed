@@ -28,6 +28,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
@@ -201,7 +202,7 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
             log('購入期限切れ');
             //購入セッション削除
             delete req.session.purchase;
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ERROR_EXPIRE;
         }
 
         // COA本予約

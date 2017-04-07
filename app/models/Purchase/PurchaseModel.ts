@@ -3,6 +3,7 @@
  */
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
+import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
 import * as UtilModule from '../../modules/Util/UtilModule';
 /**
@@ -385,5 +386,15 @@ export class PurchaseModel {
      */
     public authorizationCountGMOToString(): string {
         return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
+    }
+
+    /**
+     * 有効期限確認
+     * @memberOf PurchaseModel
+     * @method isExpired
+     * @returns {boolean}
+     */
+    public isExpired(): boolean {
+        return (this.expired < moment().unix());
     }
 }

@@ -25,7 +25,9 @@ const log = debug('SSKTS');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
@@ -94,6 +96,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認

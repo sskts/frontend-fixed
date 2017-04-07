@@ -19,7 +19,7 @@ const redisClient = redis.createClient(
     }
 );
 
-const maxAge = 1800000; //30 * 60 * 1000
+const maxAge = 900000; //30 * 60 * 1000
 
 export default session({
     secret: 'FrontendSecret',

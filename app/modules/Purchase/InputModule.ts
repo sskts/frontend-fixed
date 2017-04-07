@@ -28,6 +28,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
@@ -86,6 +87,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity
 export async function submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -94,6 +96,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
     try {
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;

@@ -49,7 +49,7 @@ function start(req, res) {
                 return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
             }
             // 取引開始
-            const minutes = 30;
+            const minutes = 15;
             purchaseModel.expired = moment().add('minutes', minutes).unix();
             purchaseModel.transactionMP = yield MP.transactionStart({
                 expires_at: purchaseModel.expired

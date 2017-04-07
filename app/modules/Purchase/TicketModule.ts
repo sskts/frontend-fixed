@@ -26,6 +26,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -70,10 +71,14 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * @returns {Promise<void>}
  */
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+    if (req.session === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -118,7 +123,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         }
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;

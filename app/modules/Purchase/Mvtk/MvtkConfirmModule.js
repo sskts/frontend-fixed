@@ -25,6 +25,8 @@ function index(req, res, next) {
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired())
+            throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.mvtk === null) {
@@ -84,6 +86,8 @@ function submit(req, res, next) {
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired())
+            throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認

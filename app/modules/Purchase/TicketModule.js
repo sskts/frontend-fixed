@@ -36,6 +36,8 @@ function index(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE))
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.performance === null)
@@ -85,12 +87,16 @@ exports.index = index;
  */
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined) {
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            return;
+        }
         try {
-            if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performance === null)
@@ -142,8 +148,6 @@ function select(req, res, next) {
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                if (req.session === undefined)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
                 if (req.session.purchase === undefined)
                     throw ErrorUtilModule.ERROR_EXPIRE;
                 const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);

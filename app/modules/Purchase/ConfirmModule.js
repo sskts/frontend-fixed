@@ -38,6 +38,8 @@ function index(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
                 throw ErrorUtilModule.ERROR_EXPIRE;
             }
@@ -230,7 +232,7 @@ function purchase(req, res, _next) {
                 log('購入期限切れ');
                 //購入セッション削除
                 delete req.session.purchase;
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ERROR_EXPIRE;
             }
             // COA本予約
             // purchaseModel.updateReserve = await COA.ReserveService.updReserve({

@@ -37,6 +37,8 @@ function index(req, res, next) {
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired())
+            throw ErrorUtilModule.ERROR_EXPIRE;
         if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
@@ -97,6 +99,7 @@ exports.index = index;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity
 function submit(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -107,6 +110,8 @@ function submit(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.transactionMP === null)

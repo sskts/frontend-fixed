@@ -39,6 +39,7 @@ describe('POST /overlap/new', () => {
             .post('/purchase/overlap/new')
             .send({
             session: {
+                expired: 9999999999,
                 transactionMP: null,
                 reserveSeats: null,
                 authorizationCOA: null,
@@ -84,6 +85,7 @@ describe('POST /seat/:id/', () => {
             .send({
             session: {
                 purchase: {
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -106,6 +108,7 @@ describe('GET /ticket', () => {
             .query({
             session: {
                 purchase: {
+                    expired: 9999999999,
                     reserveSeats: normalDAta.reserveSeats,
                     transactionMP: normalDAta.transaction
                 }
@@ -119,6 +122,7 @@ describe('GET /ticket', () => {
             .query({
             session: {
                 purchase: {
+                    expired: 9999999999,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance
                 }
@@ -132,6 +136,7 @@ describe('GET /ticket', () => {
             .query({
             session: {
                 purchase: {
+                    expired: 9999999999,
                     performance: normalDAta.performance,
                     transactionMP: normalDAta.transaction
                 }
@@ -153,6 +158,7 @@ describe('POST /ticket/', () => {
             session: {
                 purchase: {
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     performance: normalDAta.performance,
                     transactionMP: {
                         id: '12345678'
@@ -170,6 +176,7 @@ describe('POST /ticket/', () => {
             session: {
                 purchase: {
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     performance: normalDAta.performance
                 }
             },
@@ -184,6 +191,7 @@ describe('POST /ticket/', () => {
             session: {
                 purchase: {
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -200,6 +208,7 @@ describe('POST /ticket/', () => {
             session: {
                 purchase: {
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -224,6 +233,7 @@ describe('GET /input', () => {
                 purchase: {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -238,6 +248,7 @@ describe('GET /input', () => {
                 purchase: {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     performance: normalDAta.performance
                 }
             }
@@ -252,6 +263,7 @@ describe('GET /input', () => {
                 purchase: {
                     reserveTickets: normalDAta.reserveTickets,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -266,6 +278,7 @@ describe('GET /input', () => {
                 purchase: {
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -289,6 +302,7 @@ describe('POST /input/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -307,6 +321,7 @@ describe('POST /input/', () => {
                     theater: normalDAta.theater,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     performance: normalDAta.performance
                 }
             },
@@ -323,6 +338,7 @@ describe('POST /input/', () => {
                     theater: normalDAta.theater,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -341,6 +357,7 @@ describe('POST /input/', () => {
                     performance: normalDAta.performance,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -359,6 +376,7 @@ describe('POST /input/', () => {
                     theater: normalDAta.theater,
                     reserveTickets: normalDAta.reserveTickets,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -377,6 +395,7 @@ describe('POST /input/', () => {
                     theater: normalDAta.theater,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -396,6 +415,7 @@ describe('POST /input/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -420,6 +440,7 @@ describe('POST /input/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -444,6 +465,7 @@ describe('POST /input/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -474,6 +496,7 @@ describe('GET /confirm', () => {
                     input: normalDAta.input,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -489,6 +512,7 @@ describe('GET /confirm', () => {
                     input: normalDAta.input,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
+                    expired: 9999999999,
                     performance: normalDAta.performance
                 }
             }
@@ -504,6 +528,7 @@ describe('GET /confirm', () => {
                     input: normalDAta.input,
                     reserveTickets: normalDAta.reserveTickets,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -519,6 +544,7 @@ describe('GET /confirm', () => {
                     input: normalDAta.input,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -534,6 +560,7 @@ describe('GET /confirm', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: normalDAta.transaction
                 }
             }
@@ -559,6 +586,7 @@ describe('POST /confirm/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -579,7 +607,7 @@ describe('POST /confirm/', () => {
                     theater: normalDAta.theater,
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
-                    expired: 1490782702,
+                    expired: 9999999999,
                     performance: normalDAta.performance
                 }
             },
@@ -599,7 +627,7 @@ describe('POST /confirm/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
-                    expired: 1490782702,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }
@@ -621,7 +649,7 @@ describe('POST /confirm/', () => {
                     reserveTickets: normalDAta.reserveTickets,
                     reserveSeats: normalDAta.reserveSeats,
                     performance: normalDAta.performance,
-                    expired: 1490782702,
+                    expired: 9999999999,
                     transactionMP: {
                         id: '12345678'
                     }

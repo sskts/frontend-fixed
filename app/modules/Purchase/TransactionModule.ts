@@ -43,7 +43,7 @@ export async function start(req: Request, res: Response): Promise<Response> {
             return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
         }
         // 取引開始
-        const minutes = 30;
+        const minutes = 15;
         purchaseModel.expired = moment().add('minutes', minutes).unix();
         purchaseModel.transactionMP = await MP.transactionStart({
             expires_at: purchaseModel.expired

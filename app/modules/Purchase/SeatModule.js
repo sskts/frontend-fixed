@@ -34,7 +34,11 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            if (req.session.purchase === undefined)
+                throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
@@ -94,6 +98,8 @@ function select(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.params.id === undefined)
