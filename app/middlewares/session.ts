@@ -4,9 +4,8 @@
 
 import * as connectRedis from 'connect-redis';
 import * as session from 'express-session';
+import * as redis from 'redis';
 
-// tslint:disable-next-line:no-var-requires no-require-imports
-const redis = require('redis');
 const redisClient = redis.createClient(
     Number(process.env.REDIS_PORT),
     process.env.REDIS_HOST,

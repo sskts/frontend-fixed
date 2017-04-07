@@ -85,6 +85,7 @@ exports.index = index;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:cyclomatic-complexity
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -158,6 +159,7 @@ function select(req, res, next) {
                 const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
                 const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
                 res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
+                res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
                 res.locals.tickets = salesTicketsResult;
                 res.locals.tickets = salesTicketsResult;
                 res.locals.performance = performance;

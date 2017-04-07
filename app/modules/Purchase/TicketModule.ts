@@ -70,6 +70,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:cyclomatic-complexity
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -101,7 +102,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
-
             //COAオーソリ追加
             purchaseModel.authorizationCOA = await MP.addCOAAuthorization({
                 transaction: purchaseModel.transactionMP,
@@ -130,6 +130,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
             const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
             res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
+            res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
             res.locals.tickets = salesTicketsResult;
             res.locals.tickets = salesTicketsResult;
             res.locals.performance = performance;
