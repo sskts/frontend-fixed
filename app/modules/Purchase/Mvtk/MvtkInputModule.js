@@ -17,6 +17,7 @@ const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
+const logger_1 = require("../../../middlewares/logger");
 const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
@@ -75,6 +76,7 @@ exports.index = index;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -105,7 +107,7 @@ function select(req, res, next) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             const mvtkService = MVTK.createPurchaseNumberAuthService();
             const inputInfo = JSON.parse(req.body.mvtk);
-            const purchaseNumberAuthResults = yield mvtkService.purchaseNumberAuth({
+            const purchaseNumberAuthIn = {
                 kgygishCd: MvtkUtilModule.COMPANY_CODE,
                 jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID,
                 knyknrNoInfoIn: inputInfo.map((value) => {
@@ -117,7 +119,8 @@ function select(req, res, next) {
                 skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum),
                 stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
                 jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
-            });
+            };
+            const purchaseNumberAuthResults = yield mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
             log('ムビチケ認証', purchaseNumberAuthResults);
             const validationList = [];
             // ムビチケセッション作成
@@ -157,6 +160,8 @@ function select(req, res, next) {
             if (validationList.length > 0) {
                 res.locals.error = JSON.stringify(validationList);
                 log('認証エラー');
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
                 throw ErrorUtilModule.ERROR_VALIDATION;
             }
             req.session.mvtk = mvtkList;

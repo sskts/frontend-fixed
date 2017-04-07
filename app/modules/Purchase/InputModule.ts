@@ -9,6 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
 import InputForm from '../../forms/Purchase/InputForm';
+import logger from '../../middlewares/logger';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -251,37 +252,41 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
     const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
     const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
     const amount: number = purchaseModel.getReserveAmount();
+    // GMOオーソリ取得
+    const theaterId = `000${purchaseModel.performance.attributes.theater.id}`.slice(UtilModule.DIGITS_03);
+    const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(UtilModule.DIGITS_08);
+    // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
+    purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
+    const entryTranIn = {
+        shopId: gmoShopId,
+        shopPass: gmoShopPassword,
+        orderId: purchaseModel.orderId,
+        jobCd: GMO.Util.JOB_CD_AUTH,
+        amount: amount
+    };
+    log('GMO取引作成In', entryTranIn);
     try {
-        // GMOオーソリ取得
-        const theaterId = `000${purchaseModel.performance.attributes.theater.id}`.slice(UtilModule.DIGITS_03);
-        const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(UtilModule.DIGITS_08);
-        // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
-        purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
-        log('GMOオーソリ取得In', {
-            shopId: gmoShopId,
-            shopPass: gmoShopPassword,
-            orderId: purchaseModel.orderId,
-            jobCd: GMO.Util.JOB_CD_AUTH,
-            amount: amount
-        });
-        purchaseModel.transactionGMO = await GMO.CreditService.entryTran({
-            shopId: gmoShopId,
-            shopPass: gmoShopPassword,
-            orderId: purchaseModel.orderId,
-            jobCd: GMO.Util.JOB_CD_AUTH,
-            amount: amount
-        });
-        log('GMOオーソリ取得', purchaseModel.orderId);
-
-        await GMO.CreditService.execTran({
-            accessId: purchaseModel.transactionGMO.accessId,
-            accessPass: purchaseModel.transactionGMO.accessPass,
-            orderId: purchaseModel.orderId,
-            method: '1',
-            token: purchaseModel.gmo.token
-        });
-        log('GMO決済');
+        purchaseModel.transactionGMO = await GMO.CreditService.entryTran(entryTranIn);
+        log('GMO取引作成Out', purchaseModel.orderId);
     } catch (err) {
+        logger.error('SSKTS-APP:InputModule.addAuthorization entryTranIn', entryTranIn);
+        logger.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
+        throw ErrorUtilModule.ERROR_VALIDATION;
+    }
+    const execTranIn = {
+        accessId: purchaseModel.transactionGMO.accessId,
+        accessPass: purchaseModel.transactionGMO.accessPass,
+        orderId: purchaseModel.orderId,
+        method: '1',
+        token: purchaseModel.gmo.token
+    };
+    log('GMOオーソリ取得In', execTranIn);
+    try {
+        const execTranResult = await GMO.CreditService.execTran(execTranIn);
+        log('GMOオーソリ取得Out', execTranResult);
+    } catch (err) {
+        logger.error('SSKTS-APP:InputModule.addAuthorization execTranIn', execTranIn);
+        logger.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ追加
@@ -313,14 +318,21 @@ async function removeAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
     const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
     const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
     //GMOオーソリ取消
-    await GMO.CreditService.alterTran({
+    const alterTranIn = {
         shopId: gmoShopId,
         shopPass: gmoShopPassword,
         accessId: purchaseModel.transactionGMO.accessId,
         accessPass: purchaseModel.transactionGMO.accessPass,
         jobCd: GMO.Util.JOB_CD_VOID
-    });
-    log('GMOオーソリ取消');
+    };
+    try {
+        const alterTranResult = await GMO.CreditService.alterTran(alterTranIn);
+        log('GMOオーソリ取消', alterTranResult);
+    } catch (err) {
+        logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
+        logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
+        throw err;
+    }
     // GMOオーソリ削除
     await MP.removeGMOAuthorization({
         transactionId: purchaseModel.transactionMP.id,

@@ -8,6 +8,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
+import logger from '../../middlewares/logger';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -78,7 +79,6 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
     // 購入管理番号情報
     const mvtkSeats = [];
     const mvtkTickets = [];
@@ -87,14 +87,10 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
             return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
         });
         if (mvtk === undefined) continue;
-        const mvtkTicket = mvtkTickets.find((value) => {
-            return (value.KNYKNR_NO === mvtk.code);
-        });
+        const mvtkTicket = mvtkTickets.find((value) => (value.KNYKNR_NO === mvtk.code));
         if (mvtkTicket !== undefined) {
             // 券種追加
-            const tcket = mvtkTicket.KNSH_INFO.find((value) => {
-                return (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp);
-            });
+            const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
             if (tcket !== undefined) {
                 // 枚数追加
                 tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
@@ -131,7 +127,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
-    const result = await seatInfoSyncService.seatInfoSync({
+    const seatInfoSyncIn = {
         kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
@@ -144,8 +140,15 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         knyknrNoInfo: mvtkTickets, // 購入管理番号情報
         zskInfo: mvtkSeats, // 座席情報（itemArray）
         skhnCd: mvtkFilmCode// 作品コード
-    });
-    if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ERROR_PROPERTY;
+    };
+    try {
+        const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
+        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
+    } catch (err) {
+        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk In', seatInfoSyncIn);
+        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk Out', err);
+        throw err;
+    }
     log('MVTKムビチケ着券');
     log('GMO', purchaseModel.getReserveAmount());
     log('MVTK', purchaseModel.getMvtkPrice());
@@ -166,7 +169,6 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         zskInfo: mvtkSeats, // 座席情報（itemArray）
         skhnCd: mvtkFilmCode // 作品コード
     });
-    // todo
     log('MPムビチケオーソリ追加');
 }
 

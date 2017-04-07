@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const HTTPStatus = require("http-status");
+const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 /**
@@ -65,7 +66,7 @@ function index(err, req, res, _next) {
         delete req.session.purchase;
         delete req.session.mvtk;
     }
-    console.error(err);
+    logger_1.default.error('SSKTS-APP:ErrorModule.index', err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     }

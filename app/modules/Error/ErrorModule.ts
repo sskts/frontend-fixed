@@ -4,6 +4,7 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
+import logger from '../../middlewares/logger';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 
@@ -69,7 +70,7 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
         delete req.session.purchase;
         delete req.session.mvtk;
     }
-    console.error(err);
+    logger.error('SSKTS-APP:ErrorModule.index', err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     } else {

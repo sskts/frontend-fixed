@@ -24,6 +24,7 @@
     "@motionpicture/coa-service": "^2.0.6",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
+    "@types/winston": "^2.3.0",
     "basic-auth": "^1.1.0",
     "body-parser": "^1.15.2",
     "connect-redis": "^3.1.0",
@@ -41,7 +42,8 @@
     "log4js": "^1.0.1",
     "moment": "^2.17.1",
     "request": "^2.79.0",
-    "request-promise-native": "^1.0.3"
+    "request-promise-native": "^1.0.3",
+    "winston": "^2.3.1"
   },
   "main": "index.js",
   "devDependencies": {

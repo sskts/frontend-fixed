@@ -9,6 +9,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
+import logger from '../../../middlewares/logger';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
@@ -64,6 +65,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -86,7 +88,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_ACCESS;
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
-        const purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth({
+        const purchaseNumberAuthIn = {
             kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
             jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
             knyknrNoInfoIn: inputInfo.map((value) => {
@@ -100,7 +102,8 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 purchaseModel.performanceCOA.titleBranchNum), // 作品コード
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
-        });
+        };
+        const purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
         log('ムビチケ認証', purchaseNumberAuthResults);
         const validationList: string[] = [];
         // ムビチケセッション作成
@@ -139,6 +142,8 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (validationList.length > 0) {
             res.locals.error = JSON.stringify(validationList);
             log('認証エラー');
+            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
+            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         req.session.mvtk = mvtkList;

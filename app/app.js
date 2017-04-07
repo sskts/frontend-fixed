@@ -10,7 +10,6 @@ const basicAuth_1 = require("./middlewares/basicAuth");
 const benchmarks_1 = require("./middlewares/benchmarks");
 const ipFilter_1 = require("./middlewares/ipFilter");
 const locales_1 = require("./middlewares/locales");
-const logger_1 = require("./middlewares/logger");
 const session_1 = require("./middlewares/session");
 const router_1 = require("./routes/router");
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -22,7 +21,6 @@ const app = express();
 app.use(ipFilter_1.default); // IP制限
 app.use(basicAuth_1.default); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
-app.use(logger_1.default); // ロガー
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
 // tslint:disable-next-line:no-backbone-get-set-outside-model

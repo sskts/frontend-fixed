@@ -16,6 +16,7 @@ const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
+const logger_1 = require("../../app/middlewares/logger");
 const log = debug('SSKTS');
 const endPoint = process.env.MP_ENDPOINT;
 /**
@@ -26,12 +27,14 @@ const timeout = 10000;
 /**
  * エラー
  * @function errorHandler
+ * @param {any} args
  * @param {any} response
  * @requires {void}
  */
-function errorHandler(response) {
+function errorHandler(args, response) {
+    logger_1.default.error('MP-API:errorHandler args', args);
+    logger_1.default.error('MP-API:errorHandler response', response);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
-        console.error('NOT_FOUND');
         throw new Error('NOT_FOUND');
     }
     let message = '';
@@ -42,7 +45,7 @@ function errorHandler(response) {
                 break;
             }
         }
-        console.error(response.body.errors);
+        log(response.body.errors);
     }
     throw new Error(message);
 }
@@ -54,19 +57,20 @@ function errorHandler(response) {
  */
 function oauthToken() {
     return __awaiter(this, void 0, void 0, function* () {
+        const body = {
+            assertion: process.env.SSKTS_API_REFRESH_TOKEN,
+            scope: 'admin'
+        };
         const response = yield request.post({
             url: `${endPoint}/oauth/token`,
-            body: {
-                assertion: process.env.SSKTS_API_REFRESH_TOKEN,
-                scope: 'admin'
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler({}, response);
         log('oauthToken:', response.body.access_token);
         return response.body.access_token;
     });
@@ -92,7 +96,7 @@ function getTheater(id) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler({}, response);
         log('getTheater:', response.body.data);
         return response.body.data;
     });
@@ -118,7 +122,7 @@ function getScreen(id) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler({}, response);
         log('getScreen:', response.body.data);
         return response.body.data;
     });
@@ -144,7 +148,7 @@ function getFilm(id) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler({}, response);
         log('getFilm:', response.body.data);
         return response.body.data;
     });
@@ -160,21 +164,21 @@ exports.getFilm = getFilm;
  */
 function getPerformances(theater, day) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('getPerformances args:', theater, day);
+        const qs = {
+            theater: theater,
+            day: day
+        };
         const response = yield request.get({
             url: `${endPoint}/performances`,
             auth: { bearer: yield oauthToken() },
-            qs: {
-                theater: theater,
-                day: day
-            },
+            qs: qs,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(qs, response);
         // log('performances:', response.body.data);
         return response.body.data;
     });
@@ -200,7 +204,7 @@ function getPerformance(id) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler({}, response);
         log('performance:', response.body.data);
         return response.body.data;
     });
@@ -215,13 +219,13 @@ exports.getPerformance = getPerformance;
  */
 function transactionStart(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('transactionStart args:', args);
+        const body = {
+            expires_at: args.expires_at
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/startIfPossible`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                expires_at: args.expires_at
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
@@ -229,7 +233,7 @@ function transactionStart(args) {
         }).promise();
         log('--------------------transaction:', response.body);
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         const transaction = response.body.data;
         log('transaction:', transaction);
         return transaction;
@@ -245,7 +249,6 @@ exports.transactionStart = transactionStart;
  */
 function addCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('addCOAAuthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
@@ -254,45 +257,46 @@ function addCOAAuthorization(args) {
             return (owner.group === 'ANONYMOUS');
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+        const body = {
+            owner_from: promoterOwnerId,
+            owner_to: anonymousOwnerId,
+            coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
+            coa_theater_code: args.performanceCOA.theaterCode,
+            coa_date_jouei: args.performance.attributes.day,
+            coa_title_code: args.performanceCOA.titleCode,
+            coa_title_branch_num: args.performanceCOA.titleBranchNum,
+            coa_time_begin: args.performance.attributes.time_start,
+            coa_screen_code: args.performanceCOA.screenCode,
+            seats: args.salesTicketResults.map((tmpReserve) => {
+                return {
+                    performance: args.performance.id,
+                    section: tmpReserve.section,
+                    seat_code: tmpReserve.seat_code,
+                    ticket_code: tmpReserve.ticket_code,
+                    ticket_name_ja: tmpReserve.ticket_name,
+                    ticket_name_en: tmpReserve.ticket_name_eng,
+                    ticket_name_kana: tmpReserve.ticket_name_kana,
+                    std_price: tmpReserve.std_price,
+                    add_price: tmpReserve.add_price,
+                    dis_price: tmpReserve.dis_price,
+                    sale_price: tmpReserve.sale_price,
+                    mvtk_app_price: tmpReserve.mvtk_app_price,
+                    add_glasses: tmpReserve.add_price_glasses
+                };
+            }),
+            price: args.price
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                owner_from: promoterOwnerId,
-                owner_to: anonymousOwnerId,
-                coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-                coa_theater_code: args.performanceCOA.theaterCode,
-                coa_date_jouei: args.performance.attributes.day,
-                coa_title_code: args.performanceCOA.titleCode,
-                coa_title_branch_num: args.performanceCOA.titleBranchNum,
-                coa_time_begin: args.performance.attributes.time_start,
-                coa_screen_code: args.performanceCOA.screenCode,
-                seats: args.salesTicketResults.map((tmpReserve) => {
-                    return {
-                        performance: args.performance.id,
-                        section: tmpReserve.section,
-                        seat_code: tmpReserve.seat_code,
-                        ticket_code: tmpReserve.ticket_code,
-                        ticket_name_ja: tmpReserve.ticket_name,
-                        ticket_name_en: tmpReserve.ticket_name_eng,
-                        ticket_name_kana: tmpReserve.ticket_name_kana,
-                        std_price: tmpReserve.std_price,
-                        add_price: tmpReserve.add_price,
-                        dis_price: tmpReserve.dis_price,
-                        sale_price: tmpReserve.sale_price,
-                        mvtk_app_price: tmpReserve.mvtk_app_price,
-                        add_glasses: tmpReserve.add_price_glasses
-                    };
-                }),
-                price: args.price
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         log('addCOAAuthorization result');
         return response.body.data;
     });
@@ -307,7 +311,6 @@ exports.addCOAAuthorization = addCOAAuthorization;
  */
 function removeCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('removeCOAAuthorization args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
             auth: { bearer: yield oauthToken() },
@@ -318,7 +321,7 @@ function removeCOAAuthorization(args) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler({}, response);
         log('addCOAAuthorization result');
     });
 }
@@ -332,7 +335,6 @@ exports.removeCOAAuthorization = removeCOAAuthorization;
  */
 function addGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('addGMOAuthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
@@ -341,28 +343,29 @@ function addGMOAuthorization(args) {
             return (owner.group === 'ANONYMOUS');
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+        const body = {
+            owner_from: anonymousOwnerId,
+            owner_to: promoterOwnerId,
+            gmo_shop_id: args.gmoShopId,
+            gmo_shop_pass: args.gmoShopPassword,
+            gmo_order_id: args.orderId,
+            gmo_amount: args.amount,
+            gmo_access_id: args.entryTranResult.accessId,
+            gmo_access_pass: args.entryTranResult.accessPass,
+            gmo_job_cd: GMO.Util.JOB_CD_SALES,
+            gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                owner_from: anonymousOwnerId,
-                owner_to: promoterOwnerId,
-                gmo_shop_id: args.gmoShopId,
-                gmo_shop_pass: args.gmoShopPassword,
-                gmo_order_id: args.orderId,
-                gmo_amount: args.amount,
-                gmo_access_id: args.entryTranResult.accessId,
-                gmo_access_pass: args.entryTranResult.accessPass,
-                gmo_job_cd: GMO.Util.JOB_CD_SALES,
-                gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         log('addGMOAuthorization result:');
         return response.body.data;
     });
@@ -377,7 +380,6 @@ exports.addGMOAuthorization = addGMOAuthorization;
  */
 function removeGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('removeGMOAuthorization args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
             auth: { bearer: yield oauthToken() },
@@ -388,7 +390,7 @@ function removeGMOAuthorization(args) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler({}, response);
         log('removeGMOAuthorization result:');
     });
 }
@@ -402,23 +404,23 @@ exports.removeGMOAuthorization = removeGMOAuthorization;
  */
 function ownersAnonymous(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('ownersAnonymous args:', args);
+        const body = {
+            name_first: args.name_first,
+            name_last: args.name_last,
+            tel: args.tel,
+            email: args.email
+        };
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                name_first: args.name_first,
-                name_last: args.name_last,
-                tel: args.tel,
-                email: args.email
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler(body, response);
         log('ownersAnonymous result:');
     });
 }
@@ -432,22 +434,22 @@ exports.ownersAnonymous = ownersAnonymous;
  */
 function transactionsEnableInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('transactionsEnableInquiry args:', args);
+        const body = {
+            inquiry_theater: args.inquiry_theater,
+            inquiry_id: args.inquiry_id,
+            inquiry_pass: args.inquiry_pass
+        };
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                inquiry_theater: args.inquiry_theater,
-                inquiry_id: args.inquiry_id,
-                inquiry_pass: args.inquiry_pass
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler(body, response);
         log('transactionsEnableInquiry result:');
     });
 }
@@ -461,7 +463,6 @@ exports.transactionsEnableInquiry = transactionsEnableInquiry;
  */
 function transactionClose(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('transactionClose args:', args);
         const response = yield request.patch({
             url: `${endPoint}/transactions/${args.transactionId}/close`,
             auth: { bearer: yield oauthToken() },
@@ -472,7 +473,7 @@ function transactionClose(args) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler({}, response);
         log('close result:');
     });
 }
@@ -486,23 +487,23 @@ exports.transactionClose = transactionClose;
  */
 function addEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('addEmail args:', args);
+        const body = {
+            from: args.from,
+            to: args.to,
+            subject: args.subject,
+            content: args.content
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                from: args.from,
-                to: args.to,
-                subject: args.subject,
-                content: args.content
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         log('addEmail result:' + response.body.data);
         return response.body.data.id;
     });
@@ -517,7 +518,6 @@ exports.addEmail = addEmail;
  */
 function removeEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('removeEmail args:', args);
         const response = yield request.del({
             url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
             auth: { bearer: yield oauthToken() },
@@ -528,7 +528,7 @@ function removeEmail(args) {
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
-            errorHandler(response);
+            errorHandler({}, response);
         log('removeEmail result:');
     });
 }
@@ -542,22 +542,22 @@ exports.removeEmail = removeEmail;
  */
 function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('makeInquiry args:', args);
+        const body = {
+            inquiry_theater: args.inquiry_theater,
+            inquiry_id: args.inquiry_id,
+            inquiry_pass: args.inquiry_pass
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/makeInquiry`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                inquiry_theater: args.inquiry_theater,
-                inquiry_id: args.inquiry_id,
-                inquiry_pass: args.inquiry_pass
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         log('makeInquiry result:' + response.body.data);
         return response.body.data.id;
     });
@@ -610,43 +610,44 @@ function authorizationsMvtk(args) {
             return (owner.group === 'ANONYMOUS');
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+        const body = {
+            owner_from: anonymousOwnerId,
+            owner_to: promoterOwnerId,
+            price: args.amount,
+            kgygish_cd: args.kgygishCd,
+            yyk_dvc_typ: args.yykDvcTyp,
+            trksh_flg: args.trkshFlg,
+            kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
+            kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
+            jei_dt: args.jeiDt,
+            kij_ymd: args.kijYmd,
+            st_cd: args.stCd,
+            scren_cd: args.screnCd,
+            knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
+                return {
+                    knyknr_no: purchaseNoInfo.KNYKNR_NO,
+                    pin_cd: purchaseNoInfo.PIN_CD,
+                    knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
+                        return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
+                    })
+                };
+            }),
+            zsk_info: args.zskInfo.map((seat) => {
+                return { zsk_cd: seat.ZSK_CD };
+            }),
+            skhn_cd: args.screnCd
+        };
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
             auth: { bearer: yield oauthToken() },
-            body: {
-                owner_from: anonymousOwnerId,
-                owner_to: promoterOwnerId,
-                price: args.amount,
-                kgygish_cd: args.kgygishCd,
-                yyk_dvc_typ: args.yykDvcTyp,
-                trksh_flg: args.trkshFlg,
-                kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
-                kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
-                jei_dt: args.jeiDt,
-                kij_ymd: args.kijYmd,
-                st_cd: args.stCd,
-                scren_cd: args.screnCd,
-                knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
-                    return {
-                        knyknr_no: purchaseNoInfo.KNYKNR_NO,
-                        pin_cd: purchaseNoInfo.PIN_CD,
-                        knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
-                            return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
-                        })
-                    };
-                }),
-                zsk_info: args.zskInfo.map((seat) => {
-                    return { zsk_cd: seat.ZSK_CD };
-                }),
-                skhn_cd: args.screnCd
-            },
+            body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            errorHandler(response);
+            errorHandler(body, response);
         log('authorizationsMvtk result:');
         return;
     });

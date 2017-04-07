@@ -16,6 +16,7 @@ const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../libs/MP");
+const logger_1 = require("../../middlewares/logger");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
@@ -107,14 +108,10 @@ function reserveMvtk(purchaseModel) {
             });
             if (mvtk === undefined)
                 continue;
-            const mvtkTicket = mvtkTickets.find((value) => {
-                return (value.KNYKNR_NO === mvtk.code);
-            });
+            const mvtkTicket = mvtkTickets.find((value) => (value.KNYKNR_NO === mvtk.code));
             if (mvtkTicket !== undefined) {
                 // 券種追加
-                const tcket = mvtkTicket.KNSH_INFO.find((value) => {
-                    return (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp);
-                });
+                const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
                 if (tcket !== undefined) {
                     // 枚数追加
                     tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
@@ -152,7 +149,7 @@ function reserveMvtk(purchaseModel) {
             time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
-        const result = yield seatInfoSyncService.seatInfoSync({
+        const seatInfoSyncIn = {
             kgygishCd: MvtkUtilModule.COMPANY_CODE,
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
@@ -165,9 +162,17 @@ function reserveMvtk(purchaseModel) {
             knyknrNoInfo: mvtkTickets,
             zskInfo: mvtkSeats,
             skhnCd: mvtkFilmCode // 作品コード
-        });
-        if (result.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+        };
+        try {
+            const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
+            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
+                throw ErrorUtilModule.ERROR_ACCESS;
+        }
+        catch (err) {
+            logger_1.default.error('SSKTS-APP:ConfirmModule.reserveMvtk In', seatInfoSyncIn);
+            logger_1.default.error('SSKTS-APP:ConfirmModule.reserveMvtk Out', err);
+            throw err;
+        }
         log('MVTKムビチケ着券');
         log('GMO', purchaseModel.getReserveAmount());
         log('MVTK', purchaseModel.getMvtkPrice());
@@ -188,7 +193,6 @@ function reserveMvtk(purchaseModel) {
             zskInfo: mvtkSeats,
             skhnCd: mvtkFilmCode // 作品コード
         });
-        // todo
         log('MPムビチケオーソリ追加');
     });
 }

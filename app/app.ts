@@ -9,7 +9,6 @@ import basicAuth from './middlewares/basicAuth';
 import benchmarks from './middlewares/benchmarks';
 import ipFilter from './middlewares/ipFilter';
 import locales from './middlewares/locales';
-import logger from './middlewares/logger';
 import session from './middlewares/session';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -24,7 +23,6 @@ const app = express();
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
-app.use(logger); // ロガー
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 

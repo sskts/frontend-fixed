@@ -8,6 +8,7 @@ import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
+import logger from '../../app/middlewares/logger';
 
 const log = debug('SSKTS');
 const endPoint = process.env.MP_ENDPOINT;
@@ -165,12 +166,14 @@ export interface IPerformance {
 /**
  * エラー
  * @function errorHandler
+ * @param {any} args
  * @param {any} response
  * @requires {void}
  */
-function errorHandler(response: any): void {
+function errorHandler(args: any, response: any): void {
+    logger.error('MP-API:errorHandler args', args);
+    logger.error('MP-API:errorHandler response', response);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
-        console.error('NOT_FOUND');
         throw new Error('NOT_FOUND');
     }
     let message: string = '';
@@ -181,7 +184,7 @@ function errorHandler(response: any): void {
                 break;
             }
         }
-        console.error(response.body.errors);
+        log(response.body.errors);
     }
     throw new Error(message);
 }
@@ -193,19 +196,20 @@ function errorHandler(response: any): void {
  * @requires {Promise<Performance[]>}
  */
 export async function oauthToken(): Promise<string> {
+    const body = {
+        assertion: process.env.SSKTS_API_REFRESH_TOKEN,
+        scope: 'admin'
+    };
     const response = await request.post({
         url: `${endPoint}/oauth/token`,
-        body: {
-            assertion: process.env.SSKTS_API_REFRESH_TOKEN,
-            scope: 'admin'
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
 
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('oauthToken:', response.body.access_token);
     return response.body.access_token;
 }
@@ -228,7 +232,7 @@ export async function getTheater(id: string): Promise<ITheater> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getTheater:', response.body.data);
     return response.body.data;
 }
@@ -251,7 +255,7 @@ export async function getScreen(id: string): Promise<IScreen> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getScreen:', response.body.data);
     return response.body.data;
 }
@@ -274,7 +278,7 @@ export async function getFilm(id: string): Promise<IFilm> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getFilm:', response.body.data);
     return response.body.data;
 }
@@ -288,20 +292,20 @@ export async function getFilm(id: string): Promise<IFilm> {
  * @requires {Promise<IPerformance[]>}
  */
 export async function getPerformances(theater: string, day: string): Promise<IPerformance[]> {
-    log('getPerformances args:', theater, day);
+    const qs = {
+        theater: theater,
+        day: day
+    };
     const response = await request.get({
         url: `${endPoint}/performances`,
         auth: { bearer: await oauthToken() },
-        qs: {
-            theater: theater,
-            day: day
-        },
+        qs: qs,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(qs, response);
     // log('performances:', response.body.data);
     return response.body.data;
 }
@@ -324,7 +328,7 @@ export async function getPerformance(id: string): Promise<IPerformance> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('performance:', response.body.data);
     return response.body.data;
 }
@@ -372,20 +376,20 @@ interface IOwner {
  * @returns {Promise<ITransactionStartResult>}
  */
 export async function transactionStart(args: ITransactionStartArgs): Promise<ITransactionStartResult> {
-    log('transactionStart args:', args);
+    const body = {
+        expires_at: args.expires_at
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/startIfPossible`,
         auth: { bearer: await oauthToken() },
-        body: {
-            expires_at: args.expires_at
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
     log('--------------------transaction:', response.body);
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     const transaction = response.body.data;
     log('transaction:', transaction);
 
@@ -488,7 +492,6 @@ export interface IAddCOAAuthorizationResult {
  * @returns {Promise<IAddCOAAuthorizationResult>}
  */
 export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promise<IAddCOAAuthorizationResult> {
-    log('addCOAAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -497,45 +500,45 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
         return (owner.group === 'ANONYMOUS');
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
-
+    const body = {
+        owner_from: promoterOwnerId,
+        owner_to: anonymousOwnerId,
+        coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
+        coa_theater_code: args.performanceCOA.theaterCode,
+        coa_date_jouei: args.performance.attributes.day,
+        coa_title_code: args.performanceCOA.titleCode,
+        coa_title_branch_num: args.performanceCOA.titleBranchNum,
+        coa_time_begin: args.performance.attributes.time_start,
+        coa_screen_code: args.performanceCOA.screenCode,
+        seats: args.salesTicketResults.map((tmpReserve) => {
+            return {
+                performance: args.performance.id,
+                section: tmpReserve.section,
+                seat_code: tmpReserve.seat_code,
+                ticket_code: tmpReserve.ticket_code,
+                ticket_name_ja: tmpReserve.ticket_name,
+                ticket_name_en: tmpReserve.ticket_name_eng,
+                ticket_name_kana: tmpReserve.ticket_name_kana,
+                std_price: tmpReserve.std_price,
+                add_price: tmpReserve.add_price,
+                dis_price: tmpReserve.dis_price,
+                sale_price: tmpReserve.sale_price,
+                mvtk_app_price: tmpReserve.mvtk_app_price,
+                add_glasses: tmpReserve.add_price_glasses
+            };
+        }),
+        price: args.price
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
         auth: { bearer: await oauthToken() },
-        body: {
-            owner_from: promoterOwnerId,
-            owner_to: anonymousOwnerId,
-            coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
-            coa_theater_code: args.performanceCOA.theaterCode,
-            coa_date_jouei: args.performance.attributes.day,
-            coa_title_code: args.performanceCOA.titleCode,
-            coa_title_branch_num: args.performanceCOA.titleBranchNum,
-            coa_time_begin: args.performance.attributes.time_start,
-            coa_screen_code: args.performanceCOA.screenCode,
-            seats: args.salesTicketResults.map((tmpReserve) => {
-                return {
-                    performance: args.performance.id,
-                    section: tmpReserve.section,
-                    seat_code: tmpReserve.seat_code,
-                    ticket_code: tmpReserve.ticket_code,
-                    ticket_name_ja: tmpReserve.ticket_name,
-                    ticket_name_en: tmpReserve.ticket_name_eng,
-                    ticket_name_kana: tmpReserve.ticket_name_kana,
-                    std_price: tmpReserve.std_price,
-                    add_price: tmpReserve.add_price,
-                    dis_price: tmpReserve.dis_price,
-                    sale_price: tmpReserve.sale_price,
-                    mvtk_app_price: tmpReserve.mvtk_app_price,
-                    add_glasses: tmpReserve.add_price_glasses
-                };
-            }),
-            price: args.price
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
 
     log('addCOAAuthorization result');
     return response.body.data;
@@ -558,18 +561,16 @@ export interface IRemoveCOAAuthorizationArgs {
  * @requires {Promise<void>}
  */
 export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs): Promise<void> {
-    log('removeCOAAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
         auth: { bearer: await oauthToken() },
-        body: {
-        },
+        body: {},
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
 
     log('addCOAAuthorization result');
 }
@@ -605,7 +606,6 @@ export interface IAddGMOAuthorizationResult {
  * @requires {Promise<IAddGMOAuthorizationResult>}
  */
 export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promise<IAddGMOAuthorizationResult> {
-    log('addGMOAuthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -614,28 +614,28 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
         return (owner.group === 'ANONYMOUS');
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
-
+    const body = {
+        owner_from: anonymousOwnerId,
+        owner_to: promoterOwnerId,
+        gmo_shop_id: args.gmoShopId,
+        gmo_shop_pass: args.gmoShopPassword,
+        gmo_order_id: args.orderId,
+        gmo_amount: args.amount,
+        gmo_access_id: args.entryTranResult.accessId,
+        gmo_access_pass: args.entryTranResult.accessPass,
+        gmo_job_cd: GMO.Util.JOB_CD_SALES,
+        gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
         auth: { bearer: await oauthToken() },
-        body: {
-            owner_from: anonymousOwnerId,
-            owner_to: promoterOwnerId,
-            gmo_shop_id: args.gmoShopId,
-            gmo_shop_pass: args.gmoShopPassword,
-            gmo_order_id: args.orderId,
-            gmo_amount: args.amount,
-            gmo_access_id: args.entryTranResult.accessId,
-            gmo_access_pass: args.entryTranResult.accessPass,
-            gmo_job_cd: GMO.Util.JOB_CD_SALES,
-            gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
 
     log('addGMOAuthorization result:');
     return response.body.data;
@@ -658,7 +658,6 @@ export interface IRemoveGMOAuthorizationArgs {
  * @returns {Promise<void>}
  */
 export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs): Promise<void> {
-    log('removeGMOAuthorization args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
         auth: { bearer: await oauthToken() },
@@ -668,7 +667,7 @@ export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs):
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
 
     log('removeGMOAuthorization result:');
 }
@@ -693,22 +692,22 @@ export interface IOwnersAnonymousArgs {
  * @returns {Promise<void>}
  */
 export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void> {
-    log('ownersAnonymous args:', args);
+    const body = {
+        name_first: args.name_first,
+        name_last: args.name_last,
+        tel: args.tel,
+        email: args.email
+    };
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/anonymousOwner`,
         auth: { bearer: await oauthToken() },
-        body: {
-            name_first: args.name_first,
-            name_last: args.name_last,
-            tel: args.tel,
-            email: args.email
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(body, response);
 
     log('ownersAnonymous result:');
 }
@@ -732,21 +731,21 @@ export interface ITransactionsEnableInquiryArgs {
  * @returns {Promise<void>}
  */
 export async function transactionsEnableInquiry(args: ITransactionsEnableInquiryArgs): Promise<void> {
-    log('transactionsEnableInquiry args:', args);
+    const body = {
+        inquiry_theater: args.inquiry_theater,
+        inquiry_id: args.inquiry_id,
+        inquiry_pass: args.inquiry_pass
+    };
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/enableInquiry`,
         auth: { bearer: await oauthToken() },
-        body: {
-            inquiry_theater: args.inquiry_theater,
-            inquiry_id: args.inquiry_id,
-            inquiry_pass: args.inquiry_pass
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(body, response);
 
     log('transactionsEnableInquiry result:');
 }
@@ -767,19 +766,16 @@ export interface ITransactionCloseArgs {
  * @returns {Promise<void>}
  */
 export async function transactionClose(args: ITransactionCloseArgs): Promise<void> {
-    log('transactionClose args:', args);
     const response = await request.patch({
         url: `${endPoint}/transactions/${args.transactionId}/close`,
         auth: { bearer: await oauthToken() },
-        body: {
-
-        },
+        body: {},
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
     log('close result:');
 }
 
@@ -805,22 +801,22 @@ export interface IAddEmailArgs {
  * @returns {Promise<string>}
  */
 export async function addEmail(args: IAddEmailArgs): Promise<string> {
-    log('addEmail args:', args);
+    const body = {
+        from: args.from,
+        to: args.to,
+        subject: args.subject,
+        content: args.content
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/email`,
         auth: { bearer: await oauthToken() },
-        body: {
-            from: args.from,
-            to: args.to,
-            subject: args.subject,
-            content: args.content
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('addEmail result:' + (<string>response.body.data));
     return response.body.data.id;
 }
@@ -842,7 +838,6 @@ export interface IRemoveEmailArgs {
  * @returns {Promise<void>}
  */
 export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
-    log('removeEmail args:', args);
     const response = await request.del({
         url: `${endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
         auth: { bearer: await oauthToken() },
@@ -852,7 +847,7 @@ export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
     log('removeEmail result:');
 }
 
@@ -874,21 +869,21 @@ export interface IMakeInquiryArgs {
  * @returns {Promise<string>}
  */
 export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
-    log('makeInquiry args:', args);
+    const body = {
+        inquiry_theater: args.inquiry_theater,
+        inquiry_id: args.inquiry_id,
+        inquiry_pass: args.inquiry_pass
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/makeInquiry`,
         auth: { bearer: await oauthToken() },
-        body: {
-            inquiry_theater: args.inquiry_theater,
-            inquiry_id: args.inquiry_id,
-            inquiry_pass: args.inquiry_pass
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;
 }
@@ -996,42 +991,43 @@ export async function authorizationsMvtk(args: IAuthorizationsMvtkArgs): Promise
         return (owner.group === 'ANONYMOUS');
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
+    const body = {
+        owner_from: anonymousOwnerId,
+        owner_to: promoterOwnerId,
+        price: args.amount,
+        kgygish_cd: args.kgygishCd,
+        yyk_dvc_typ: args.yykDvcTyp,
+        trksh_flg: args.trkshFlg,
+        kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
+        kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
+        jei_dt: args.jeiDt,
+        kij_ymd: args.kijYmd,
+        st_cd: args.stCd,
+        scren_cd: args.screnCd,
+        knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
+            return {
+                knyknr_no: purchaseNoInfo.KNYKNR_NO,
+                pin_cd: purchaseNoInfo.PIN_CD,
+                knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
+                    return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
+                })
+            };
+        }),
+        zsk_info: args.zskInfo.map((seat) => {
+            return { zsk_cd: seat.ZSK_CD };
+        }),
+        skhn_cd: args.screnCd
+    };
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
         auth: { bearer: await oauthToken() },
-        body: {
-            owner_from: anonymousOwnerId,
-            owner_to: promoterOwnerId,
-            price: args.amount,
-            kgygish_cd: args.kgygishCd,
-            yyk_dvc_typ: args.yykDvcTyp,
-            trksh_flg: args.trkshFlg,
-            kgygish_sstm_zskyyk_no: args.kgygishSstmZskyykNo,
-            kgygish_usr_zskyyk_no: args.kgygishUsrZskyykNo,
-            jei_dt: args.jeiDt,
-            kij_ymd: args.kijYmd,
-            st_cd: args.stCd,
-            scren_cd: args.screnCd,
-            knyknr_no_info: args.knyknrNoInfo.map((purchaseNoInfo) => {
-                return {
-                    knyknr_no: purchaseNoInfo.KNYKNR_NO,
-                    pin_cd: purchaseNoInfo.PIN_CD,
-                    knsh_info: purchaseNoInfo.KNSH_INFO.map((ticketInfo) => {
-                        return { knsh_typ: ticketInfo.KNSH_TYP, mi_num: ticketInfo.MI_NUM };
-                    })
-                };
-            }),
-            zsk_info: args.zskInfo.map((seat) => {
-                return { zsk_cd: seat.ZSK_CD };
-            }),
-            skhn_cd: args.screnCd
-        },
+        body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) errorHandler(response);
+    if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('authorizationsMvtk result:');
     return;
 }
