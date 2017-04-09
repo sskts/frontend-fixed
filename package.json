@@ -17,7 +17,10 @@
     "tsc": "tsc -p ./ -w",
     "jsdoc": "grunt jsdoc",
     "clean": "rimraf libs/**/*.js app/**/*.js test/**/*.js docs/**/*",
-    "build": "npm run check && npm run clean && tsc -p ./ && npm run test && npm run css && npm run jsdoc"
+    "build": "npm run check && npm run clean && tsc -p ./ && npm run test && npm run css && npm run jsdoc",
+    "preversion": "npm run build",
+    "version": "git add -A",
+    "postversion": "git push origin"
   },
   "dependencies": {
     "@motionpicture/coa-service": "^2.0.6",

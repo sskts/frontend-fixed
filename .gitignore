@@ -2,7 +2,6 @@ logs/*
 node_modules/*
 typings/*
 iisnode/*
-iisnode.yml
 docs/
 .env*
 app.yml*
