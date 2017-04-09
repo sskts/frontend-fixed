@@ -50,7 +50,7 @@ function start(req, res) {
             }
             // 取引開始
             const minutes = 15;
-            purchaseModel.expired = moment().add('minutes', minutes).unix();
+            purchaseModel.expired = moment().add(minutes, 'minutes').unix();
             purchaseModel.transactionMP = yield MP.transactionStart({
                 expires_at: purchaseModel.expired
             });

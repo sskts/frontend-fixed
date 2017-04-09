@@ -62,6 +62,7 @@
     "@types/jquery": "^2.0.34",
     "@types/mocha": "^2.2.40",
     "@types/moment": "^2.13.0",
+    "@types/redis": "^0.12.36",
     "@types/request": "0.0.36",
     "@types/request-promise-native": "^1.0.2",
     "@types/selenium-webdriver": "^2.53.39",
