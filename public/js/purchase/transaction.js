@@ -26,7 +26,6 @@ function getTransaction(id) {
         if (!res.err && res.redirect) {
             location.replace(res.redirect);
         } else {
-            console.log(res.err);
             retry();
         }
     }).fail(function (jqxhr, textStatus, error) {

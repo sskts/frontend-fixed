@@ -33,6 +33,8 @@ router.post('/input', InputModule.submit);
 router.get('/confirm', ConfirmModule.index);
 router.post('/confirm', ConfirmModule.purchase);
 router.get('/getComplete', ConfirmModule.getCompleteData);
+//ムビチケ着券取り消し
+router.post('/mvtk/cancel', ConfirmModule.cancelMvtk);
 //購入完了
 router.get('/complete', CompleteModule.index);
 //ムビチケ券入力

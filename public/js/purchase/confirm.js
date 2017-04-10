@@ -130,6 +130,18 @@ function showError(message) {
     $(window).scrollTop(0);
     history.pushState(null, null, '/error');
     loadingEnd();
+    //ムビチケ着券取り消し
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/mvtk/cancel',
+        type: 'POST',
+        timeout: 10000,
+        data: {},
+    }).done(function (res) {
+        console.log(res)
+    }).fail(function (jqxhr, textStatus, error) {
+    }).always(function () {
+    });
 }
 
 /**
@@ -139,7 +151,6 @@ function showError(message) {
  * @returns {void}
  */
 function showComplete(result) {
-    console.log(result);
     //step変更
     $('.steps li').removeClass('active');
     $('.steps li:last-child').addClass('active');
