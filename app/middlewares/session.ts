@@ -30,6 +30,7 @@ export default session({
     }),
     cookie: {
         httpOnly: true,
-        maxAge: maxAge
+        maxAge: maxAge,
+        secure: (process.env.NoDE_ENV !== 'development') ? true : false
     }
 });
