@@ -22,7 +22,7 @@ exports.default = session({
         client: redisClient
     }),
     cookie: {
-        // secure: (process.env.NoDE_ENV !== 'development') ? true : false,
+        secure: true,
         httpOnly: true,
         maxAge: 900000 //30 * 60 * 1000
     }
