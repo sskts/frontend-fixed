@@ -172,7 +172,8 @@ export interface IPerformance {
  */
 function errorHandler(args: any, response: any): void {
     logger.error('MP-API:errorHandler args', args);
-    logger.error('MP-API:errorHandler response', response);
+    logger.error('MP-API:errorHandler response', response.body);
+    logger.error('MP-API:errorHandler statusCode', response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }

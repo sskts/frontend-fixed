@@ -33,7 +33,8 @@ const timeout = 10000;
  */
 function errorHandler(args, response) {
     logger_1.default.error('MP-API:errorHandler args', args);
-    logger_1.default.error('MP-API:errorHandler response', response);
+    logger_1.default.error('MP-API:errorHandler response', response.body);
+    logger_1.default.error('MP-API:errorHandler statusCode', response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }
