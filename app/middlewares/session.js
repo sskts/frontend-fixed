@@ -17,6 +17,7 @@ exports.default = session({
     secret: 'FrontendSecret',
     resave: false,
     rolling: true,
+    proxy: true,
     saveUninitialized: false,
     store: new (connectRedis(session))({
         client: redisClient
