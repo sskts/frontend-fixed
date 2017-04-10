@@ -12,7 +12,11 @@ $(function () {
         if ($('.mvtk-box:hidden').length === 0) {
             $('.add-button').hide();
         }
+        if ($('.mvtk-box:visible').length > 1) {
+            $('.remove-button').show();
+        };
     });
+    // 削除クリックイベント
     $(document).on('click', '.remove-button a', function (event) {
         event.preventDefault();
         var target = $(this).parents('.mvtk-box');
@@ -22,6 +26,9 @@ $(function () {
         if ($('.mvtk-box:hidden').length > 0) {
             $('.add-button').show();
         }
+        if ($('.mvtk-box:visible').length === 1) {
+            $('.remove-button').hide();
+        };
     });
     // 次へクリックイベント
     $(document).on('click', '.next-button button', function (event) {
@@ -63,12 +70,15 @@ function pageInit() {
     if ($('.mvtk-validation').val()) {
         modal.open('mvtk_validation');
         var errorData = JSON.parse($('.mvtk-validation').val());
-        errorData.forEach(function(value){
-            var target = $('.ticket-list .mvtk-box input[value='+ value +']').parents('.mvtk-box');
+        errorData.forEach(function (value) {
+            var target = $('.ticket-list .mvtk-box input[value=' + value + ']').parents('.mvtk-box');
             target.find('input[name=mvtk_password]').val('');
             target.find('input').addClass('validation');
         });
     }
+    if ($('.mvtk-box:visible').length === 1) {
+        $('.remove-button').hide();
+    };
 }
 
 /**

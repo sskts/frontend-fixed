@@ -6,6 +6,23 @@
     <form method="post">
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
         <p class="read"><%- __('purchase.ticket.read') %></p>
+
+        <% if (mvtkFlg) { %>
+        <% if (mvtkLength === 0) { %>
+        <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
+        <div class="box radius bg-ultra-light-gray mb-medium mvtk">
+            <dl class="d-table">
+                <dt class="d-td"><%- __('purchase.ticket.mvtk.read') %></dt>
+                <dd class="d-td width-medium">                                
+                    <div class="ghost-button mvtk-button">
+                        <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <% } %>
+        <% } %>
+
         <ul class="box radius bg-light-gray mb-medium seats">
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
@@ -57,16 +74,7 @@
             </div>
             <div class="border-bottom-dot mb-small"></div>
             <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
-        </div>
-        <% if (mvtkFlg) { %>
-        <% if (mvtkLength === 0) { %>
-        <p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>
-        <div class="mvtk-button mb-medium ghost-button  yellow-button center-button">
-            <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
-        </div>
-        <% } %>
-        <% } %>
-        
+        </div>    
     
     
         <div class="button-area clearfix">

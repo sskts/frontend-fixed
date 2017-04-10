@@ -1189,14 +1189,25 @@ p a {
     color: #C30D23;
     background-color: #ffe8eb; }
 
-.purchase-ticket .mvtk-button label, .purchase-ticket .mvtk-button a {
-  border: 1px solid #d82918; }
-  .purchase-ticket .mvtk-button label:before, .purchase-ticket .mvtk-button a:before {
+@media screen and (max-width: 767px) {
+  .purchase-ticket .mvtk dt {
+    display: block; } }
+
+@media screen and (max-width: 767px) {
+  .purchase-ticket .mvtk dd {
+    display: block;
+    width: 100%; } }
+
+.purchase-ticket .mvtk .mvtk-button label, .purchase-ticket .mvtk .mvtk-button a {
+  border: 1px solid #d82918;
+  background-color: #FFF;
+  color: #333; }
+  .purchase-ticket .mvtk .mvtk-button label:before, .purchase-ticket .mvtk .mvtk-button a:before {
     left: 15px; }
-  .purchase-ticket .mvtk-button label:after, .purchase-ticket .mvtk-button a:after {
+  .purchase-ticket .mvtk .mvtk-button label:after, .purchase-ticket .mvtk .mvtk-button a:after {
     left: 15px; }
 
-.purchase-ticket .mvtk-button img {
+.purchase-ticket .mvtk .mvtk-button img {
   width: 100px;
   vertical-align: text-bottom; }
 
