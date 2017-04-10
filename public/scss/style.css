@@ -1284,10 +1284,7 @@ p a {
   position: absolute;
   top: 50%;
   margin-top: -11px;
-  right: 20px; }
-  @media screen and (max-width: 767px) {
-    .purchase-confirm .right {
-      right: 10px; } }
+  right: 0; }
 
 .purchase-confirm .change-button, .purchase-confirm .confirm-button {
   display: inline-block;

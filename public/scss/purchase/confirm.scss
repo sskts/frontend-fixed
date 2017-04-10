@@ -21,10 +21,7 @@
         position: absolute;
         top: 50%;
         margin-top: -11px;
-        right: 20px;
-        @media screen and (max-width: $mobile){
-            right: 10px;
-        }
+        right: 0;
     }
     .change-button, .confirm-button {
         display: inline-block;
