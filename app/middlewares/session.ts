@@ -18,8 +18,6 @@ const redisClient = redis.createClient(
     }
 );
 
-const maxAge = 900000; //30 * 60 * 1000
-
 export default session({
     secret: 'FrontendSecret',
     resave: false,
@@ -29,8 +27,8 @@ export default session({
         client: redisClient
     }),
     cookie: {
+        // secure: (process.env.NoDE_ENV !== 'development') ? true : false,
         httpOnly: true,
-        maxAge: maxAge,
-        secure: (process.env.NoDE_ENV !== 'development') ? true : false
+        maxAge: 900000 //30 * 60 * 1000
     }
 });

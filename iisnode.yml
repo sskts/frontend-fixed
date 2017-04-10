@@ -1,5 +1,5 @@
 devErrorsEnabled: false
-enableXFF: true
+enableXFF: false
 loggingEnabled: true
 maxConcurrentRequestsPerProcess: 1024
 nodeProcessCountPerApplication: 0
