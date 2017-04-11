@@ -7,7 +7,7 @@
     <p class="read"><%- __('purchase.mvtk.confirm.read') %></p>
 
     <form method="post">
-
+        <% if (purchaseNoList.length > 0) { %>
         <ul class="box radius bg-light-gray mb-medium mvtk-lists">
             <% for (const purchaseNo of purchaseNoList) { %>
             <li>
@@ -24,6 +24,11 @@
             </li>
             <% } %>
         </ul>
+        <% } else { %>
+        <div class="box radius bg-light-gray mb-medium">
+            <p><%- __('purchase.mvtk.confirm.not_ticket') %></p>
+        </div>
+        <% } %>
         
 
         <div class="button-area clearfix">

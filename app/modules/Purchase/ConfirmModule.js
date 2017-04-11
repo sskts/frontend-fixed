@@ -100,7 +100,7 @@ function reserveMvtk(purchaseModel) {
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = yield createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+        const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
         const mvtkTickets = mvtk.tickets;
         const mvtkSeats = mvtk.seats;
         log('購入管理番号情報', mvtkTickets);
@@ -238,7 +238,7 @@ function cancelMvtk(req, res) {
         if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = yield createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+        const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
         const mvtkTickets = mvtk.tickets;
         const mvtkSeats = mvtk.seats;
         log('購入管理番号情報', mvtkTickets);

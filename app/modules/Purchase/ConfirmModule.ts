@@ -80,7 +80,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
     // 購入管理番号情報
-    const mvtk = await createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+    const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
     const mvtkTickets = mvtk.tickets;
     const mvtkSeats = mvtk.seats;
 
@@ -212,7 +212,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
     // 購入管理番号情報
-    const mvtk = await createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+    const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
     const mvtkTickets = mvtk.tickets;
     const mvtkSeats = mvtk.seats;
 
