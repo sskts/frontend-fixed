@@ -143,51 +143,6 @@ class PurchaseModel {
         return price;
     }
     /**
-     * 座席文言返却
-     * @memberOf PurchaseModel
-     * @method seatToString
-     * @returns {string}
-     */
-    seatToString() {
-        if (this.reserveSeats === null)
-            return '';
-        const seats = [];
-        for (const seat of this.reserveSeats.list_tmp_reserve) {
-            seats.push(seat.seat_num);
-        }
-        return seats.join('、');
-    }
-    /**
-     * 券種文言返却
-     * @memberOf PurchaseModel
-     * @method ticketToString
-     * @returns {string}
-     */
-    ticketToString() {
-        if (this.reserveSeats === null)
-            return '';
-        if (this.reserveTickets === null)
-            return '';
-        const ticketObj = {};
-        const tickets = [];
-        for (const ticket of this.reserveTickets) {
-            if (ticketObj[ticket.ticket_code] !== undefined) {
-                ticketObj[ticket.ticket_code].length += 1;
-            }
-            else {
-                ticketObj[ticket.ticket_code] = {
-                    name: ticket.ticket_name,
-                    length: 1
-                };
-            }
-        }
-        for (const key of Object.keys(ticketObj)) {
-            const ticket = ticketObj[key];
-            tickets.push(`${ticket.name} × ${ticket.length}`);
-        }
-        return tickets.join('、');
-    }
-    /**
      * GMOオーソリ回数取得
      * @memberOf PurchaseModel
      * @method authorizationCountGMOToString

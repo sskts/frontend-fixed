@@ -92,7 +92,7 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
         }
         // ムビチケ情報を購入セッションへ保存
         log('ムビチケ情報を購入セッションへ保存');
-        purchaseModel.mvtk = (<any>req.session).mvtk;
+        purchaseModel.mvtk = req.session.mvtk;
         req.session.purchase = purchaseModel.toSession();
         // ムビチケセッション削除
         delete req.session.mvtk;

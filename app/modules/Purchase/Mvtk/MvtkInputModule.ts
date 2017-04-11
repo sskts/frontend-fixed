@@ -35,7 +35,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         // ムビチケセッション削除
-        delete (<any>req.session).mvtk;
+        delete req.session.mvtk;
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')

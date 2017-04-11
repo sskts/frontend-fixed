@@ -363,7 +363,11 @@ export interface ITransactionStartResult {
         queues_status: string
     };
 }
-
+/**
+ * オーナー情報
+ * @memberOf MP
+ * @interface IOwner
+ */
 interface IOwner {
     id: string;
     group: string;

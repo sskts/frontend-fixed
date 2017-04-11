@@ -378,7 +378,7 @@ export function getCompleteData(req: Request, res: Response, _next: NextFunction
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        return res.json({ err: null, result: (<any>req.session).complete });
+        return res.json({ err: null, result: req.session.complete });
     } catch (err) {
         let msg: string;
         if (err === ErrorUtilModule.ERROR_PROPERTY) {
