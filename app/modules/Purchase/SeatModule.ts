@@ -58,7 +58,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             : null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.error = null;
-        res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
+        res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
@@ -114,7 +114,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
-            res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
+            res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
             return;
         }

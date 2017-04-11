@@ -29,7 +29,7 @@ function setLocals(_req, res, next) {
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
-    res.locals.portalSite = getPortalUrl();
+    res.locals.portalSite = process.env.PORTAL_SITE_URL;
     next();
     return;
 }
@@ -125,29 +125,6 @@ function base64Decode(str) {
     return new Buffer(str, 'base64').toString();
 }
 exports.base64Decode = base64Decode;
-/**
- * ポータルURL取得
- * @memberOf Util.UtilModule
- * @function getPortalUrl
- * @returns {string}
- */
-function getPortalUrl() {
-    let result;
-    if (process.env.NODE_ENV === 'prod') {
-        // tslint:disable-next-line:no-http-string
-        result = 'http://www.cinemasunshine.co.jp';
-    }
-    else if (process.env.NODE_ENV === 'test') {
-        // tslint:disable-next-line:no-http-string
-        result = 'http://devssktsportal.azurewebsites.net';
-    }
-    else {
-        // tslint:disable-next-line:no-http-string
-        result = '/';
-    }
-    return result;
-}
-exports.getPortalUrl = getPortalUrl;
 /**
  * メール内容取得
  * @memberOf Util.UtilModule

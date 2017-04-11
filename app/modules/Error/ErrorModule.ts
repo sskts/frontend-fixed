@@ -6,7 +6,6 @@ import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 
 /**
  * Not Found
@@ -76,7 +75,7 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
     } else {
         res.locals.message = msg;
         res.locals.error = err;
-        res.locals.portalSite = UtilModule.getPortalUrl();
+        res.locals.portalSite = process.env.PORTAL_SITE_URL;
         res.status(status).render('error/error');
     }
     return;

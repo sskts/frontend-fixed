@@ -62,7 +62,7 @@ function index(req, res, next) {
             res.locals.updateReserve = null;
             res.locals.error = null;
             res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
+            res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });

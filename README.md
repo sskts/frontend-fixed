@@ -19,6 +19,7 @@ set SSKTS_API_REFRESH_TOKEN=**********coa apiのリフレッシュトークン**
 set MVTK_ENDPOINT_SERVICE_01=**********ムビチケService apiのエンドポイント**********
 set MVTK_ENDPOINT_SERVICE_02=**********ムビチケService2 apiのエンドポイント**********
 set MVTK_ENDPOINT_RESERVE_SERVICE=**********ムビチケReserveService apiのエンドポイント**********
+set PORTAL_SITE_URL=**********ポータルサイトURL**********
 ```
 
 only on Aure WebApps

@@ -21,7 +21,7 @@ export function setLocals(_req: Request, res: Response, next: NextFunction): voi
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
-    res.locals.portalSite = getPortalUrl();
+    res.locals.portalSite = process.env.PORTAL_SITE_URL;
     next();
     return;
 }
@@ -122,27 +122,6 @@ export function bace64Encode(str: string): string {
  */
 export function base64Decode(str: string): string {
     return new Buffer(str, 'base64').toString();
-}
-
-/**
- * ポータルURL取得
- * @memberOf Util.UtilModule
- * @function getPortalUrl
- * @returns {string}
- */
-export function getPortalUrl(): string {
-    let result: string;
-    if (process.env.NODE_ENV === 'prod') {
-        // tslint:disable-next-line:no-http-string
-        result = 'http://www.cinemasunshine.co.jp';
-    } else if (process.env.NODE_ENV === 'test') {
-        // tslint:disable-next-line:no-http-string
-        result = 'http://devssktsportal.azurewebsites.net';
-    } else {
-        // tslint:disable-next-line:no-http-string
-        result = '/';
-    }
-    return result;
 }
 
 /**

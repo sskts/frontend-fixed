@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 /**
  * Not Found
  * @memberOf ErrorModule
@@ -73,7 +72,7 @@ function index(err, req, res, _next) {
     else {
         res.locals.message = msg;
         res.locals.error = err;
-        res.locals.portalSite = UtilModule.getPortalUrl();
+        res.locals.portalSite = process.env.PORTAL_SITE_URL;
         res.status(status).render('error/error');
     }
     return;

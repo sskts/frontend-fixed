@@ -50,7 +50,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.updateReserve = null;
         res.locals.error = null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.portalTheaterSite = (website !== undefined) ? website.url : UtilModule.getPortalUrl();
+        res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
