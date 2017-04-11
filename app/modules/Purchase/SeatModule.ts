@@ -248,8 +248,9 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
  */
 export async function getScreenStateReserve(req: Request, res: Response): Promise<Response> {
     try {
-        const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
-        const screen = await UtilModule.readJSONAsync(`./app/theaters/${req.body.theater_code}/${screenCode}.json`);
+        const theaterCode = `000${req.body.theater_code}`.slice(UtilModule.DIGITS_03);
+        const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
+        const screen = await UtilModule.readJSONAsync(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await UtilModule.readJSONAsync('./app/theaters/setting.json');
         const state = await COA.ReserveService.stateReserveSeat(req.body);
         return res.json({

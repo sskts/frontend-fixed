@@ -259,8 +259,9 @@ function reserve(selectSeats, purchaseModel) {
 function getScreenStateReserve(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const screenCode = `00${req.body.screen_code}`.slice(UtilModule.DIGITS_02);
-            const screen = yield UtilModule.readJSONAsync(`./app/theaters/${req.body.theater_code}/${screenCode}.json`);
+            const theaterCode = `000${req.body.theater_code}`.slice(UtilModule.DIGITS_03);
+            const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
+            const screen = yield UtilModule.readJSONAsync(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield UtilModule.readJSONAsync('./app/theaters/setting.json');
             const state = yield COA.ReserveService.stateReserveSeat(req.body);
             return res.json({
