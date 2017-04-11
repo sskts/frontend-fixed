@@ -1,7 +1,4 @@
 .purchase-complete {
-    .info {
-        
-    }
     .entry-method {
         display: flex;
         justify-content: space-between;
@@ -21,7 +18,13 @@
             height: 100%;
             margin: 0 10px;
             dt {
-                span {
+                .entry-number {
+                    padding: 5px 0;
+                    margin: -20px -20px 0;
+                    color: #FFF;
+                }
+                .text-icon-dark-blue {
+                    border-radius: 11px;
                     margin-right: 5px;
                 }
             }

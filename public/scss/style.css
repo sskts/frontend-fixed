@@ -363,8 +363,14 @@ p a {
 .bg-light-gray {
   background-color: #eeeef0; }
 
+.bg-gray {
+  background-color: #727272; }
+
 .bg-pink {
   background-color: #ffe8eb; }
+
+.bg-dark-blue {
+  background-color: #036db7; }
 
 .border-bottom-dot {
   position: relative;
@@ -1332,7 +1338,12 @@ p a {
   .purchase-complete .entry-method dl {
     height: 100%;
     margin: 0 10px; }
-    .purchase-complete .entry-method dl dt span {
+    .purchase-complete .entry-method dl dt .entry-number {
+      padding: 5px 0;
+      margin: -20px -20px 0;
+      color: #FFF; }
+    .purchase-complete .entry-method dl dt .text-icon-dark-blue {
+      border-radius: 11px;
       margin-right: 5px; }
 
 .purchase-complete .button-area {
