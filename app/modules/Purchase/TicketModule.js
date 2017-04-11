@@ -161,7 +161,6 @@ function select(req, res, next) {
                 res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
                 res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
                 res.locals.tickets = salesTicketsResult;
-                res.locals.tickets = salesTicketsResult;
                 res.locals.performance = performance;
                 res.locals.reserveSeats = purchaseModel.reserveSeats;
                 res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);

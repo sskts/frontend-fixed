@@ -23,7 +23,10 @@ exports.default = session({
         client: redisClient
     }),
     cookie: {
-        secure: (process.env.LOCAL === undefined) ? true : false,
+        // awsがデフォルトhttps非対応なのでいったん解除
+        // todo 後で設定
+        // secure: (process.env.LOCAL === undefined) ? true : false,
+        secure: false,
         httpOnly: true,
         maxAge: 900000 //30 * 60 * 1000
     }
