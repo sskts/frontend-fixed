@@ -22,6 +22,8 @@ $(function () {
         var target = $(this).parents('.mvtk-box');
         target.find('input').val('');
         target.removeClass('active');
+        target.find('.validation').removeClass('validation');
+        target.find('.validation-text').remove();
         $('.ticket-list').append(target);
         if ($('.mvtk-box:hidden').length > 0) {
             $('.add-button').show();
