@@ -55,15 +55,15 @@ export function index(req: Request, res: Response, next: NextFunction): void {
                 agree: ''
             };
         }
-        if (process.env.NODE_ENV === 'development' && purchaseModel.input === null) {
-            res.locals.input = {
-                last_name_hira: 'はたぐち',
-                first_name_hira: 'あきと',
-                mail_addr: 'hataguchi@motionpicture.jp',
-                mail_confirm: 'hataguchi@motionpicture.jp',
-                tel_num: '09040007648'
-            };
-        }
+        // if (process.env.NODE_ENV === 'development' && purchaseModel.input === null) {
+        //     res.locals.input = {
+        //         last_name_hira: 'はたぐち',
+        //         first_name_hira: 'あきと',
+        //         mail_addr: 'hataguchi@motionpicture.jp',
+        //         mail_confirm: 'hataguchi@motionpicture.jp',
+        //         tel_num: '09040007648'
+        //     };
+        // }
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });

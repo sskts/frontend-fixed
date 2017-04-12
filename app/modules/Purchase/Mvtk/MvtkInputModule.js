@@ -48,9 +48,7 @@ function index(req, res, next) {
         // ムビチケセッション削除
         delete req.session.mvtk;
         // 購入者情報入力表示
-        res.locals.mvtkInfo = (process.env.NODE_ENV === 'development')
-            ? [{ code: '3400999842', password: '7648' }]
-            : [{ code: '', password: '' }];
+        res.locals.mvtkInfo = [{ code: '', password: '' }];
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
