@@ -1411,6 +1411,8 @@ p a {
     .purchase-complete .entry-method dl dt .text-icon-dark-blue {
       border-radius: 11px;
       margin-right: 5px; }
+    .purchase-complete .entry-method dl dt strong {
+      line-height: 22px; }
 
 .purchase-complete .button-area {
   margin-top: 40px; }
