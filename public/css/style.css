@@ -1149,10 +1149,10 @@ p a {
     position: fixed; }
 
 .purchase-seat .seat-info {
-  padding: 20px; }
+  padding: 0 20px 20px; }
   @media screen and (max-width: 767px) {
     .purchase-seat .seat-info {
-      padding: 20px 10px; } }
+      padding: 0 20px 10px; } }
   .purchase-seat .seat-info .box {
     display: -webkit-flex;
     display: -ms-flexbox;
