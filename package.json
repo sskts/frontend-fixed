@@ -24,7 +24,7 @@
     "postversion": "git push origin"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^2.0.6",
+    "@motionpicture/coa-service": "^2.0.8",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
     "basic-auth": "^1.1.0",

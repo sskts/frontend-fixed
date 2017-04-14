@@ -276,21 +276,21 @@ async function getSalesTickets(
             glasses: false // メガネ有無
         });
 
-        // if (ticket.add_price_glasses > 0) {
-        //     result.push({
-        //         ticket_code: ticket.ticket_code, // チケットコード
-        //         ticket_name: ticket.ticket_name, // チケット名
-        //         ticket_name_kana: ticket.ticket_name_kana, // チケット名(カナ)
-        //         ticket_name_eng: ticket.ticket_name_eng, // チケット名(英)
-        //         std_price: ticket.std_price, // 標準単価
-        //         add_price: ticket.add_price, // 加算単価
-        //         sale_price: ticket.sale_price, // 販売単価
-        //         ticket_note: ticket.ticket_note, // チケット備考
-        //         add_price_glasses: ticket.add_price_glasses, // メガネ単価
-        //         mvtk_num: '', // ムビチケ購入番号
-        //         glasses: true // メガネ有無
-        //     });
-        // }
+        if (ticket.add_glasses > 0) {
+            result.push({
+                ticket_code: ticket.ticket_code, // チケットコード
+                ticket_name: `${ticket.ticket_name}${req.__('common.glasses')}`, // チケット名
+                ticket_name_kana: ticket.ticket_name_kana, // チケット名(カナ)
+                ticket_name_eng: ticket.ticket_name_eng, // チケット名(英)
+                std_price: ticket.std_price, // 標準単価
+                add_price: ticket.add_price, // 加算単価
+                sale_price: (<number>ticket.sale_price) + (<number>ticket.add_glasses), // 販売単価
+                ticket_note: ticket.ticket_note, // チケット備考
+                add_price_glasses: ticket.add_glasses, // メガネ単価
+                mvtk_num: '', // ムビチケ購入番号
+                glasses: true // メガネ有無
+            });
+        }
     }
 
     if (purchaseModel.mvtk === null) return result;
@@ -342,6 +342,7 @@ async function getSalesTickets(
  * @param {PurchaseSession.ReserveTicket[]} reserveTickets
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:cyclomatic-complexity
 async function ticketValidation(
     req: Request,
     res: Response,
@@ -421,14 +422,20 @@ async function ticketValidation(
                 section: ticket.section, // 座席セクション
                 seat_code: ticket.seat_code, // 座席番号
                 ticket_code: salesTicket.ticket_code, // チケットコード
-                ticket_name: salesTicket.ticket_name, // チケット名
+                ticket_name: (ticket.glasses)
+                    ? `${salesTicket.ticket_name}${req.__('common.glasses')}`
+                    : salesTicket.ticket_name, // チケット名
                 ticket_name_eng: salesTicket.ticket_name_eng, // チケット名（英）
                 ticket_name_kana: salesTicket.ticket_name_kana, // チケット名（カナ）
                 std_price: salesTicket.std_price, // 標準単価
                 add_price: salesTicket.add_price, // 加算単価
                 dis_price: 0, // 割引額
-                sale_price: salesTicket.sale_price, // 販売単価
-                add_price_glasses: ticket.add_price_glasses, // メガネ単価
+                sale_price: (ticket.glasses)
+                    ? (<number>salesTicket.sale_price) + (<number>salesTicket.add_glasses)
+                    : salesTicket.sale_price, // 販売単価
+                add_price_glasses: (ticket.glasses)
+                    ? salesTicket.add_glasses
+                    : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
                 mvtk_num: ticket.mvtk_num, // ムビチケ購入番号
                 mvtk_app_price: 0 // ムビチケ計上単価

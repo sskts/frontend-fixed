@@ -254,21 +254,21 @@ function getSalesTickets(req, purchaseModel) {
                 mvtk_num: '',
                 glasses: false // メガネ有無
             });
-            // if (ticket.add_price_glasses > 0) {
-            //     result.push({
-            //         ticket_code: ticket.ticket_code, // チケットコード
-            //         ticket_name: ticket.ticket_name, // チケット名
-            //         ticket_name_kana: ticket.ticket_name_kana, // チケット名(カナ)
-            //         ticket_name_eng: ticket.ticket_name_eng, // チケット名(英)
-            //         std_price: ticket.std_price, // 標準単価
-            //         add_price: ticket.add_price, // 加算単価
-            //         sale_price: ticket.sale_price, // 販売単価
-            //         ticket_note: ticket.ticket_note, // チケット備考
-            //         add_price_glasses: ticket.add_price_glasses, // メガネ単価
-            //         mvtk_num: '', // ムビチケ購入番号
-            //         glasses: true // メガネ有無
-            //     });
-            // }
+            if (ticket.add_glasses > 0) {
+                result.push({
+                    ticket_code: ticket.ticket_code,
+                    ticket_name: `${ticket.ticket_name}${req.__('common.glasses')}`,
+                    ticket_name_kana: ticket.ticket_name_kana,
+                    ticket_name_eng: ticket.ticket_name_eng,
+                    std_price: ticket.std_price,
+                    add_price: ticket.add_price,
+                    sale_price: ticket.sale_price + ticket.add_glasses,
+                    ticket_note: ticket.ticket_note,
+                    add_price_glasses: ticket.add_glasses,
+                    mvtk_num: '',
+                    glasses: true // メガネ有無
+                });
+            }
         }
         if (purchaseModel.mvtk === null)
             return result;
@@ -319,6 +319,7 @@ function getSalesTickets(req, purchaseModel) {
  * @param {PurchaseSession.ReserveTicket[]} reserveTickets
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:cyclomatic-complexity
 function ticketValidation(req, res, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
@@ -399,14 +400,20 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                     section: ticket.section,
                     seat_code: ticket.seat_code,
                     ticket_code: salesTicket.ticket_code,
-                    ticket_name: salesTicket.ticket_name,
+                    ticket_name: (ticket.glasses)
+                        ? `${salesTicket.ticket_name}${req.__('common.glasses')}`
+                        : salesTicket.ticket_name,
                     ticket_name_eng: salesTicket.ticket_name_eng,
                     ticket_name_kana: salesTicket.ticket_name_kana,
                     std_price: salesTicket.std_price,
                     add_price: salesTicket.add_price,
                     dis_price: 0,
-                    sale_price: salesTicket.sale_price,
-                    add_price_glasses: ticket.add_price_glasses,
+                    sale_price: (ticket.glasses)
+                        ? salesTicket.sale_price + salesTicket.add_glasses
+                        : salesTicket.sale_price,
+                    add_price_glasses: (ticket.glasses)
+                        ? salesTicket.add_glasses
+                        : 0,
                     glasses: ticket.glasses,
                     mvtk_num: ticket.mvtk_num,
                     mvtk_app_price: 0 // ムビチケ計上単価

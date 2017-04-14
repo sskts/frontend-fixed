@@ -205,6 +205,7 @@ function reserve(selectSeats, purchaseModel) {
             time_begin: purchaseModel.performance.attributes.time_start
             // screen_code: performance.screen.id
         });
+        log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
         //コアAPI券種取得
         const salesTickets = purchaseModel.salesTicketsCOA;
         purchaseModel.reserveTickets = [];

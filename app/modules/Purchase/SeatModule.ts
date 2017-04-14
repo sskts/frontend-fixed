@@ -194,6 +194,8 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         // screen_code: performance.screen.id
     });
 
+    log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
+
     //コアAPI券種取得
     const salesTickets = purchaseModel.salesTicketsCOA;
 
