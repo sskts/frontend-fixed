@@ -42,6 +42,12 @@ set SSKTS_BASIC_AUTH_NAME=**********認証ユーザー名**********
 set SSKTS_BASIC_AUTH_PASS=**********認証パスワード**********
 ```
 
+メンテナンスページを表示させたい場合
+
+```shell
+set SSKTS_MAINTENANCE_TEXT=**********適当な文字列**********
+```
+
 
 # Build
 
