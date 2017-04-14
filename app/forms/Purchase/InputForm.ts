@@ -1,6 +1,7 @@
 import * as express from 'express';
 
 const maxLength = 30;
+const minLength = 9;
 
 /**
  * 購入情報入力フォーム
@@ -69,4 +70,10 @@ export default (req: express.Request): void => {
         'tel_num',
         `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`
     ).matches(/^[0-9]+$/);
+    req.checkBody(
+        'tel_num',
+        `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(minLength))}`
+    ).isLength({
+        min: minLength
+    });
 };

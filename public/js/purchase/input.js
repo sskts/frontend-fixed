@@ -87,7 +87,7 @@ function validation() {
         { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: 30, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
         { name: 'mail_addr', label: locales.label.mail_addr, required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
         { name: 'mail_confirm', label: locales.label.mail_confirm, required: true, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
-        { name: 'tel_num', label: locales.label.tel_num, required: true, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+        { name: 'tel_num', label: locales.label.tel_num, required: true, minLength: 9, regex: [/^[0-9]+$/, locales.validation.is_tel] },
         { name: 'cardno', label: locales.label.cardno, required: true },
         { name: 'securitycode', label: locales.label.securitycode, required: true },
         { name: 'holdername', label: locales.label.holdername, required: true },

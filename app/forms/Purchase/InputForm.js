@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const maxLength = 30;
+const minLength = 9;
 /**
  * 購入情報入力フォーム
  */
@@ -29,4 +30,7 @@ exports.default = (req) => {
     // 電話番号
     req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.required')}`).notEmpty();
     req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`).matches(/^[0-9]+$/);
+    req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(minLength))}`).isLength({
+        min: minLength
+    });
 };
