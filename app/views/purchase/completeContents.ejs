@@ -8,7 +8,7 @@
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
                     <strong class="red-text large-x-text"><%= reserveSeats.tmp_reserve_num %></strong>
-                    <p class="small-x-text">※チケットの発行等に必要な番号となりますので必ず忘れないようにしてください。</p>
+                    <p class="small-x-text"><%- __('purchase.complete.reserve_read') %></p>
                 </dd>
             </dl>
         </li>
@@ -75,7 +75,7 @@
                     </dt>
                     <dd>
                         <p class="mb-small heighfix"><%- __('purchase.complete.entry_01_read') %></p>
-                        <div class="image mb-x-small"><img src="/images/common/test.svg" alt=""></div>
+                        <div class="image mb-x-small"><img src="/images/purchase/complete/qr.svg" alt=""></div>
                         <div class="button blue-button inquiry-button">
                             <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= reserveSeats.tmp_reserve_num %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
                         </div>
@@ -90,7 +90,7 @@
                     </dt>
                     <dd>
                         <p class="mb-small heighfix"><%- __('purchase.complete.entry_02_read') %></p>
-                        <div class="image mb-x-small"><img src="/images/common/test.svg" alt=""></div>
+                        <div class="image mb-x-small"><img src="/images/method/ticketing/ticketing_01.svg" alt=""></div>
                         <div class="button blue-button">
                             <a class="icon-new-tab-white" href="/method/ticketing" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
                         </div>
