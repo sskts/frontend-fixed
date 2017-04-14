@@ -78,7 +78,7 @@ function auth(req, res, next) {
                     reserve_num: req.body.reserve_num,
                     tel_num: req.body.tel_num // 電話番号
                 });
-                log('COA照会情報取得');
+                log('COA照会情報取得', inquiryModel.stateReserve);
                 if (inquiryModel.stateReserve === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 const performanceId = UtilModule.getPerformanceId({

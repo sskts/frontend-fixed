@@ -30,6 +30,6 @@ export default session({
     cookie: {
         secure: (process.env.LOCAL === undefined) ? true : false,
         httpOnly: true,
-        maxAge: 900000 //30 * 60 * 1000
+        maxAge: 1800000 //30 * 60 * 1000
     }
 });

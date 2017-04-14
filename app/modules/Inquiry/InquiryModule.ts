@@ -69,7 +69,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 reserve_num: req.body.reserve_num, // 座席チケット購入番号
                 tel_num: req.body.tel_num // 電話番号
             });
-            log('COA照会情報取得');
+            log('COA照会情報取得', inquiryModel.stateReserve);
             if (inquiryModel.stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const performanceId = UtilModule.getPerformanceId({
                 theaterCode: req.body.theater_code,

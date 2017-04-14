@@ -251,10 +251,7 @@ function purchase(req, res, _next) {
             if (req.body.transaction_id !== purchaseModel.transactionMP.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
             //購入期限切れ
-            const minutes = 5;
-            if (purchaseModel.expired < moment().add(minutes, 'minutes').unix()) {
-                log('購入期限切れ');
-                //購入セッション削除
+            if (purchaseModel.isExpired()) {
                 delete req.session.purchase;
                 throw ErrorUtilModule.ERROR_EXPIRE;
             }
