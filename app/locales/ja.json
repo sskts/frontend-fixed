@@ -222,6 +222,11 @@
 		"page_ttl": "エラーが発生しました",
 		"prev": "戻る"
 	},
+	"maintenance": {
+		"page_ttl": "メンテナンス中",
+		"read": "申し訳ございません。只今メンテナンス中です。",
+		"prev": "戻る"
+	},
 	"common": {
 		"recommend": "おすすめ",
 		"price": "円",
