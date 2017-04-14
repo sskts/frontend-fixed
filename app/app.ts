@@ -8,8 +8,10 @@ import * as helmet from 'helmet';
 import basicAuth from './middlewares/basicAuth';
 import benchmarks from './middlewares/benchmarks';
 import ipFilter from './middlewares/ipFilter';
-import locales from './middlewares/locales';
+import * as locales from './middlewares/locales';
+import maintenance from './middlewares/maintenance';
 import session from './middlewares/session';
+import * as UtilModule from './modules/Util/UtilModule';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
 const expressLayouts = require('express-ejs-layouts');
@@ -34,24 +36,17 @@ app.use(expressLayouts);
 // tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('layout', 'layouts/layout');
 
+app.use(locales.setLocale); // 言語
+app.use(UtilModule.setLocals); // viewSet
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(cookieParser());
-app.use(express.static(`${__dirname}/../public`));
+app.use(express.static(`${__dirname}/../public`)); // staticDir設定
+app.use(maintenance); // メンテナンスページ
 
-// 言語
-app.use((req, res, next) => {
-    locales.init(req, res, next);
-    if (req.session !== undefined && req.session.locale !== undefined) {
-        locales.setLocale(req, req.session.locale);
-    } else {
-        locales.setLocale(req, 'ja');
-    }
-});
-
-// バリデーション
-app.use(expressValidator());
+app.use(expressValidator()); // バリデーション
 
 // ムビチケサービス初期化
 MVTK.initialize(
@@ -60,7 +55,6 @@ MVTK.initialize(
     process.env.MVTK_ENDPOINT_RESERVE_SERVICE
 );
 
-// ルーティング
-router(app);
+router(app); // ルーティング
 
 export = app;

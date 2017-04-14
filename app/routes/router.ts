@@ -6,7 +6,6 @@ import * as express from 'express';
 import * as SupertestRequest from '../middlewares/supertestRequest';
 import * as ErrorModule from '../modules/Error/ErrorModule';
 import * as PerformancesModule from '../modules/Performances/PerformancesModule';
-import * as UtilModule from '../modules/Util/UtilModule';
 import inquiry from './inquiry';
 import method from './method';
 import purchase from './purchase';
@@ -18,8 +17,6 @@ export default (app: express.Application) => {
     if (process.env.NODE_ENV === 'development') {
         app.use(SupertestRequest.supertestSession);
     }
-
-    app.use(UtilModule.setLocals);
 
     if (process.env.NODE_ENV === 'development') {
         // tslint:disable-next-line:variable-name

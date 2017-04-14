@@ -7,7 +7,6 @@ const express = require("express");
 const SupertestRequest = require("../middlewares/supertestRequest");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const PerformancesModule = require("../modules/Performances/PerformancesModule");
-const UtilModule = require("../modules/Util/UtilModule");
 const inquiry_1 = require("./inquiry");
 const method_1 = require("./method");
 const purchase_1 = require("./purchase");
@@ -16,7 +15,6 @@ exports.default = (app) => {
     if (process.env.NODE_ENV === 'development') {
         app.use(SupertestRequest.supertestSession);
     }
-    app.use(UtilModule.setLocals);
     if (process.env.NODE_ENV === 'development') {
         // tslint:disable-next-line:variable-name
         router.get('/', (_req, res, _next) => {

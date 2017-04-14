@@ -77,5 +77,10 @@
 		"privacy_policy": "footer.privacy_policy",
 		"Specified_Commercial_Transaction_Law": "footer.Specified_Commercial_Transaction_Law",
 		"copyright": "footer.copyright"
+	},
+	"maintenance": {
+		"page_ttl": "maintenance.page_ttl",
+		"read": "maintenance.read",
+		"prev": "maintenance.prev"
 	}
 }
