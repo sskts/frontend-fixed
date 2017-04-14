@@ -1,7 +1,3 @@
-/**
- * 購入券種選択
- * @namespace Purchase.TicketModule
- */
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -12,12 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 購入券種選択
+ * @namespace Purchase.TicketModule
+ */
+const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../libs/MP");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const UtilModule = require("../Util/UtilModule");
+const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS');
 /**
  * 券種選択
@@ -86,6 +89,7 @@ exports.index = index;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:cyclomatic-complexity
+// tslint:disable-next-line:max-func-body-length
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -136,6 +140,47 @@ function select(req, res, next) {
                     price: purchaseModel.getPrice()
                 });
                 log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
+                if (purchaseModel.authorizationMvtk !== null) {
+                    // ムビチケオーソリ削除
+                    yield MP.removeMvtkAuthorization({
+                        transactionId: purchaseModel.transactionMP.id,
+                        mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
+                    });
+                    log('MPムビチケオーソリ削除');
+                }
+                if (purchaseModel.mvtk !== null && purchaseModel.isReserveMvtkTicket()) {
+                    // 購入管理番号情報
+                    const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+                    const mvtkTickets = mvtk.tickets;
+                    const mvtkSeats = mvtk.seats;
+                    log('購入管理番号情報', mvtkTickets);
+                    if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
+                        throw ErrorUtilModule.ERROR_ACCESS;
+                    const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.performanceCOA.titleCode, purchaseModel.performanceCOA.titleBranchNum);
+                    // 興行会社ユーザー座席予約番号(予約番号)
+                    const startDate = {
+                        day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
+                        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
+                    };
+                    purchaseModel.authorizationMvtk = yield MP.addMvtkauthorization({
+                        transaction: purchaseModel.transactionMP,
+                        amount: purchaseModel.getMvtkPrice(),
+                        kgygishCd: MvtkUtilModule.COMPANY_CODE,
+                        yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
+                        trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
+                        // tslint:disable-next-line:max-line-length
+                        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`,
+                        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num),
+                        jeiDt: `${startDate.day} ${startDate.time}`,
+                        kijYmd: startDate.day,
+                        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
+                        screnCd: purchaseModel.performanceCOA.screenCode,
+                        knyknrNoInfo: mvtkTickets,
+                        zskInfo: mvtkSeats,
+                        skhnCd: mvtkFilmCode // 作品コード
+                    });
+                    log('MPムビチケオーソリ追加');
+                }
                 req.session.purchase = purchaseModel.toSession();
                 log('セッション更新');
                 res.redirect('/purchase/input');
@@ -209,6 +254,21 @@ function getSalesTickets(req, purchaseModel) {
                 mvtk_num: '',
                 glasses: false // メガネ有無
             });
+            // if (ticket.add_price_glasses > 0) {
+            //     result.push({
+            //         ticket_code: ticket.ticket_code, // チケットコード
+            //         ticket_name: ticket.ticket_name, // チケット名
+            //         ticket_name_kana: ticket.ticket_name_kana, // チケット名(カナ)
+            //         ticket_name_eng: ticket.ticket_name_eng, // チケット名(英)
+            //         std_price: ticket.std_price, // 標準単価
+            //         add_price: ticket.add_price, // 加算単価
+            //         sale_price: ticket.sale_price, // 販売単価
+            //         ticket_note: ticket.ticket_note, // チケット備考
+            //         add_price_glasses: ticket.add_price_glasses, // メガネ単価
+            //         mvtk_num: '', // ムビチケ購入番号
+            //         glasses: true // メガネ有無
+            //     });
+            // }
         }
         if (purchaseModel.mvtk === null)
             return result;

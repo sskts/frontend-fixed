@@ -80,7 +80,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
     // 購入管理番号情報
-    const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+    const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
     const mvtkTickets = mvtk.tickets;
     const mvtkSeats = mvtk.seats;
 
@@ -121,76 +121,6 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     log('GMO', purchaseModel.getReserveAmount());
     log('MVTK', purchaseModel.getMvtkPrice());
     log('FULL', purchaseModel.getPrice());
-    await MP.authorizationsMvtk({
-        transaction: purchaseModel.transactionMP, // 取引情報
-        amount: purchaseModel.getMvtkPrice(), // 合計金額
-        kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
-        yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
-        trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`, // 興行会社システム座席予約番号
-        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num), // 興行会社ユーザー座席予約番号
-        jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
-        kijYmd: startDate.day, // 計上年月日
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-        screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
-        knyknrNoInfo: mvtkTickets, // 購入管理番号情報
-        zskInfo: mvtkSeats, // 座席情報（itemArray）
-        skhnCd: mvtkFilmCode // 作品コード
-    });
-    log('MPムビチケオーソリ追加');
-}
-
-/**
- * ムビチケ情報生成
- * @memberOf Purchase.ConfirmModule
- * @function cancelMvtk
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
- */
-function createMvtkInfo(
-    reserveTickets: MP.IReserveTicket[],
-    mvtkInfo: PurchaseSession.IMvtk[]
-): { tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] } {
-    const seats: MP.IMvtkSeat[] = [];
-    const tickets: MP.IMvtkPurchaseNoInfo[] = [];
-    for (const reserveTicket of reserveTickets) {
-        const mvtk = mvtkInfo.find((value) => {
-            return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
-        });
-        if (mvtk === undefined) continue;
-        const mvtkTicket = tickets.find((value) => (value.KNYKNR_NO === mvtk.code));
-        if (mvtkTicket !== undefined) {
-            // 券種追加
-            const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
-            if (tcket !== undefined) {
-                // 枚数追加
-                tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
-            } else {
-                // 新規券種作成
-                mvtkTicket.KNSH_INFO.push({
-                    KNSH_TYP: mvtk.ykknInfo.ykknshTyp, //券種区分
-                    MI_NUM: '1' //枚数
-                });
-            }
-        } else {
-            // 新規購入番号作成
-            tickets.push({
-                KNYKNR_NO: mvtk.code, //購入管理番号（ムビチケ購入番号）
-                PIN_CD: UtilModule.base64Decode(mvtk.password), //PINコード（ムビチケ暗証番号）
-                KNSH_INFO: [
-                    {
-                        KNSH_TYP: mvtk.ykknInfo.ykknshTyp, //券種区分
-                        MI_NUM: '1' //枚数
-                    }
-                ]
-            });
-        }
-        seats.push({ ZSK_CD: reserveTicket.seat_code });
-    }
-    return {
-        tickets: tickets,
-        seats: seats
-    };
 }
 
 /**
@@ -212,7 +142,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
     // 購入管理番号情報
-    const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+    const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
     const mvtkTickets = mvtk.tickets;
     const mvtkSeats = mvtk.seats;
 

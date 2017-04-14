@@ -577,7 +577,7 @@ export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs):
     }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
 
-    log('addCOAAuthorization result');
+    log('removeCOAAuthorization result');
 }
 
 /**
@@ -979,15 +979,27 @@ export interface IAuthorizationsMvtkArgs {
     skhnCd: string; // 作品コード
 
 }
+
+/**
+ * ムビチケオーソリ追加out
+ * @memberOf MP
+ * @interface IAddMvtkAuthorizationResult
+ */
+export interface IAddMvtkAuthorizationResult {
+    // tslint:disable-next-line:no-reserved-keywords
+    type: string;
+    id: string;
+}
+
 /**
  * 照会取引情報取得
  * @memberOf MP
- * @function makeInquiry
+ * @function addMvtkauthorization
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<void>}
  */
-export async function authorizationsMvtk(args: IAuthorizationsMvtkArgs): Promise<void> {
-    log('authorizationsMvtk args:', args);
+export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promise<IAddMvtkAuthorizationResult> {
+    log('addMvtkauthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
         return (owner.group === 'PROMOTER');
     });
@@ -1033,6 +1045,37 @@ export async function authorizationsMvtk(args: IAuthorizationsMvtkArgs): Promise
         timeout: timeout
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
-    log('authorizationsMvtk result:');
-    return;
+    log('addMvtkauthorization result:');
+    return response.body.data;
+}
+
+/**
+ * ムビチケオーソリ削除in
+ * @memberOf MP
+ * @interface IRemoveCOAAuthorizationArgs
+ */
+export interface IRemoveMvtkAuthorizationArgs {
+    transactionId: string;
+    mvtkAuthorizationId: string;
+}
+/**
+ * ムビチケオーソリ削除
+ * @memberOf MP
+ * @function removeCOAAuthorization
+ * @param {IRemoveMvtkAuthorizationArgs} args
+ * @requires {Promise<void>}
+ */
+export async function removeMvtkAuthorization(args: IRemoveMvtkAuthorizationArgs): Promise<void> {
+    const response = await request.del({
+        url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.mvtkAuthorizationId}`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: timeout
+    }).promise();
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) errorHandler({}, response);
+
+    log('removeMvtkAuthorization result');
 }

@@ -323,7 +323,7 @@ function removeCOAAuthorization(args) {
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             errorHandler({}, response);
-        log('addCOAAuthorization result');
+        log('removeCOAAuthorization result');
     });
 }
 exports.removeCOAAuthorization = removeCOAAuthorization;
@@ -596,13 +596,13 @@ exports.getPerformanceCOA = getPerformanceCOA;
 /**
  * 照会取引情報取得
  * @memberOf MP
- * @function makeInquiry
+ * @function addMvtkauthorization
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<void>}
  */
-function authorizationsMvtk(args) {
+function addMvtkauthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('authorizationsMvtk args:', args);
+        log('addMvtkauthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
             return (owner.group === 'PROMOTER');
         });
@@ -649,8 +649,32 @@ function authorizationsMvtk(args) {
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(body, response);
-        log('authorizationsMvtk result:');
-        return;
+        log('addMvtkauthorization result:');
+        return response.body.data;
     });
 }
-exports.authorizationsMvtk = authorizationsMvtk;
+exports.addMvtkauthorization = addMvtkauthorization;
+/**
+ * ムビチケオーソリ削除
+ * @memberOf MP
+ * @function removeCOAAuthorization
+ * @param {IRemoveMvtkAuthorizationArgs} args
+ * @requires {Promise<void>}
+ */
+function removeMvtkAuthorization(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield request.del({
+            url: `${endPoint}/transactions/${args.transactionId}/authorizations/${args.mvtkAuthorizationId}`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: timeout
+        }).promise();
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            errorHandler({}, response);
+        log('removeMvtkAuthorization result');
+    });
+}
+exports.removeMvtkAuthorization = removeMvtkAuthorization;

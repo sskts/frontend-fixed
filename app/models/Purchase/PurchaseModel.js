@@ -11,6 +11,7 @@ class PurchaseModel {
      * @constructor
      * @param {any} session
      */
+    // tslint:disable-next-line:cyclomatic-complexity
     constructor(session) {
         if (session === undefined) {
             session = {};
@@ -25,6 +26,7 @@ class PurchaseModel {
         this.transactionMP = (session.transactionMP !== undefined) ? session.transactionMP : null;
         this.transactionGMO = (session.transactionGMO !== undefined) ? session.transactionGMO : null;
         this.authorizationCOA = (session.authorizationCOA !== undefined) ? session.authorizationCOA : null;
+        this.authorizationMvtk = (session.authorizationMvtk !== undefined) ? session.authorizationMvtk : null;
         this.authorizationGMO = (session.authorizationGMO !== undefined) ? session.authorizationGMO : null;
         this.authorizationCountGMO = (session.authorizationCountGMO !== undefined) ? session.authorizationCountGMO : 0;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
@@ -52,6 +54,7 @@ class PurchaseModel {
             transactionMP: this.transactionMP,
             transactionGMO: this.transactionGMO,
             authorizationCOA: this.authorizationCOA,
+            authorizationMvtk: this.authorizationMvtk,
             authorizationGMO: this.authorizationGMO,
             authorizationCountGMO: this.authorizationCountGMO,
             orderId: this.orderId,
@@ -98,6 +101,22 @@ class PurchaseModel {
                 break;
             default:
                 break;
+        }
+        return result;
+    }
+    /**
+     * ムビチケ券有無判定
+     * @memberOf PurchaseModel
+     * @method isReserveMvtkTicket
+     * @returns {boolean}
+     */
+    isReserveMvtkTicket() {
+        let result = false;
+        if (this.reserveTickets === null)
+            return result;
+        for (const reserveTicket of this.reserveTickets) {
+            if (reserveTicket.mvtk_num !== null && reserveTicket.mvtk_num.length > 0)
+                result = true;
         }
         return result;
     }

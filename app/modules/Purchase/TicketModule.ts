@@ -2,7 +2,7 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-
+import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
@@ -10,6 +10,8 @@ import * as MP from '../../../libs/MP';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
+import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
 const log = debug('SSKTS');
 
 /**
@@ -71,6 +73,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:cyclomatic-complexity
+// tslint:disable-next-line:max-func-body-length
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -112,6 +115,48 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 price: purchaseModel.getPrice()
             });
             log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
+            if (purchaseModel.authorizationMvtk !== null) {
+                // ムビチケオーソリ削除
+                await MP.removeMvtkAuthorization({
+                    transactionId: purchaseModel.transactionMP.id,
+                    mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
+                });
+                log('MPムビチケオーソリ削除');
+            }
+            if (purchaseModel.mvtk !== null && purchaseModel.isReserveMvtkTicket()) {
+                // 購入管理番号情報
+                const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+                const mvtkTickets = mvtk.tickets;
+                const mvtkSeats = mvtk.seats;
+                log('購入管理番号情報', mvtkTickets);
+                if (mvtkTickets.length === 0 || mvtkSeats.length === 0) throw ErrorUtilModule.ERROR_ACCESS;
+                const mvtkFilmCode = MvtkUtilModule.getfilmCode(
+                    purchaseModel.performanceCOA.titleCode,
+                    purchaseModel.performanceCOA.titleBranchNum);
+                // 興行会社ユーザー座席予約番号(予約番号)
+                const startDate = {
+                    day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
+                    time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
+                };
+                purchaseModel.authorizationMvtk = await MP.addMvtkauthorization({
+                    transaction: purchaseModel.transactionMP, // 取引情報
+                    amount: purchaseModel.getMvtkPrice(), // 合計金額
+                    kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
+                    yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
+                    trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
+                    // tslint:disable-next-line:max-line-length
+                    kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`, // 興行会社システム座席予約番号
+                    kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num), // 興行会社ユーザー座席予約番号
+                    jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
+                    kijYmd: startDate.day, // 計上年月日
+                    stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
+                    screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
+                    knyknrNoInfo: mvtkTickets, // 購入管理番号情報
+                    zskInfo: mvtkSeats, // 座席情報（itemArray）
+                    skhnCd: mvtkFilmCode // 作品コード
+                });
+                log('MPムビチケオーソリ追加');
+            }
             req.session.purchase = purchaseModel.toSession();
             log('セッション更新');
             res.redirect('/purchase/input');

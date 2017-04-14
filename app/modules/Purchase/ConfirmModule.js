@@ -100,7 +100,7 @@ function reserveMvtk(purchaseModel) {
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+        const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
         const mvtkTickets = mvtk.tickets;
         const mvtkSeats = mvtk.seats;
         log('購入管理番号情報', mvtkTickets);
@@ -141,76 +141,7 @@ function reserveMvtk(purchaseModel) {
         log('GMO', purchaseModel.getReserveAmount());
         log('MVTK', purchaseModel.getMvtkPrice());
         log('FULL', purchaseModel.getPrice());
-        yield MP.authorizationsMvtk({
-            transaction: purchaseModel.transactionMP,
-            amount: purchaseModel.getMvtkPrice(),
-            kgygishCd: MvtkUtilModule.COMPANY_CODE,
-            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
-            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`,
-            kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num),
-            jeiDt: `${startDate.day} ${startDate.time}`,
-            kijYmd: startDate.day,
-            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
-            screnCd: purchaseModel.performanceCOA.screenCode,
-            knyknrNoInfo: mvtkTickets,
-            zskInfo: mvtkSeats,
-            skhnCd: mvtkFilmCode // 作品コード
-        });
-        log('MPムビチケオーソリ追加');
     });
-}
-/**
- * ムビチケ情報生成
- * @memberOf Purchase.ConfirmModule
- * @function cancelMvtk
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
- */
-function createMvtkInfo(reserveTickets, mvtkInfo) {
-    const seats = [];
-    const tickets = [];
-    for (const reserveTicket of reserveTickets) {
-        const mvtk = mvtkInfo.find((value) => {
-            return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
-        });
-        if (mvtk === undefined)
-            continue;
-        const mvtkTicket = tickets.find((value) => (value.KNYKNR_NO === mvtk.code));
-        if (mvtkTicket !== undefined) {
-            // 券種追加
-            const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
-            if (tcket !== undefined) {
-                // 枚数追加
-                tcket.MI_NUM = String(Number(tcket.MI_NUM) + 1);
-            }
-            else {
-                // 新規券種作成
-                mvtkTicket.KNSH_INFO.push({
-                    KNSH_TYP: mvtk.ykknInfo.ykknshTyp,
-                    MI_NUM: '1' //枚数
-                });
-            }
-        }
-        else {
-            // 新規購入番号作成
-            tickets.push({
-                KNYKNR_NO: mvtk.code,
-                PIN_CD: UtilModule.base64Decode(mvtk.password),
-                KNSH_INFO: [
-                    {
-                        KNSH_TYP: mvtk.ykknInfo.ykknshTyp,
-                        MI_NUM: '1' //枚数
-                    }
-                ]
-            });
-        }
-        seats.push({ ZSK_CD: reserveTicket.seat_code });
-    }
-    return {
-        tickets: tickets,
-        seats: seats
-    };
 }
 /**
  * ムビチケ決済取り消し
@@ -238,7 +169,7 @@ function cancelMvtk(req, res) {
         if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
+        const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
         const mvtkTickets = mvtk.tickets;
         const mvtkSeats = mvtk.seats;
         log('購入管理番号情報', mvtkTickets);
