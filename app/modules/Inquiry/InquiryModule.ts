@@ -87,7 +87,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             req.session.inquiry = inquiryModel.toSession();
 
             //購入者内容確認へ
-            res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+            res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
             return;
         } else {
             res.locals.theaterCode = req.body.theater_code;
@@ -149,6 +149,10 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
+    if (req.query.theater === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     if (inquiryModel.stateReserve !== null
         && inquiryModel.performance !== null
@@ -164,7 +168,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         return;
     } else {
         //照会認証ページへ
-        res.redirect('/inquiry/login?transaction_id=' + (<string>req.params.transactionId));
+        res.redirect(`/inquiry/login?theater=${req.query.theater}&transactionId=${req.params.transactionId}`);
         return;
     }
 }

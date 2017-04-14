@@ -8,7 +8,7 @@ $(function () {
  * @returns {void}
  */
 function toInquiry() {
-    var transactionId = getParameter()['transaction_id'];
+    var transactionId = getParameter()['transactionId'];
     
     //取引IDなければ終了
     if (!transactionId) return;

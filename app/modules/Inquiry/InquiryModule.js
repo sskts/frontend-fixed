@@ -94,7 +94,7 @@ function auth(req, res, next) {
                 log('MPパフォーマンス取得');
                 req.session.inquiry = inquiryModel.toSession();
                 //購入者内容確認へ
-                res.redirect(`/inquiry/${inquiryModel.transactionId}/`);
+                res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
                 return;
             }
             else {
@@ -158,6 +158,10 @@ function index(req, res, next) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
+    if (req.query.theater === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
     if (inquiryModel.stateReserve !== null
         && inquiryModel.performance !== null
@@ -173,7 +177,7 @@ function index(req, res, next) {
     }
     else {
         //照会認証ページへ
-        res.redirect('/inquiry/login?transaction_id=' + req.params.transactionId);
+        res.redirect(`/inquiry/login?theater=${req.query.theater}&transactionId=${req.params.transactionId}`);
         return;
     }
 }
