@@ -45,7 +45,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../public`)); // staticDir設定
 app.use(maintenance); // メンテナンスページ
-
+app.use(express.static(`${__dirname}/../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
 
 // ムビチケサービス初期化
