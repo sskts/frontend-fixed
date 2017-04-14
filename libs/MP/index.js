@@ -353,7 +353,7 @@ function addGMOAuthorization(args) {
             gmo_amount: args.amount,
             gmo_access_id: args.entryTranResult.accessId,
             gmo_access_pass: args.entryTranResult.accessPass,
-            gmo_job_cd: GMO.Util.JOB_CD_SALES,
+            gmo_job_cd: GMO.Util.JOB_CD_AUTH,
             gmo_pay_type: GMO.Util.PAY_TYPE_CREDIT
         };
         const response = yield request.post({
