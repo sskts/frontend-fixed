@@ -141,6 +141,17 @@ function select(req, res, next) {
                     });
                     if (input === undefined)
                         continue;
+                    log('ムビチケ変換', {
+                        theater_code: purchaseModel.performance.attributes.theater.id,
+                        kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
+                        kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
+                        kbn_kensyu: info.ykknshTyp,
+                        sales_price: Number(info.knshknhmbiUnip),
+                        app_price: Number(info.kijUnip),
+                        kbn_eisyahousiki: info.eishhshkTyp,
+                        title_code: purchaseModel.performanceCOA.titleCode,
+                        title_branch_num: purchaseModel.performanceCOA.titleBranchNum
+                    });
                     // ムビチケチケットコード取得
                     const ticket = yield COA.MasterService.mvtkTicketcode({
                         theater_code: purchaseModel.performance.attributes.theater.id,
