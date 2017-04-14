@@ -297,7 +297,7 @@ function addAuthorization(purchaseModel) {
             log('GMO取引作成Out', purchaseModel.orderId);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranIn', entryTranIn);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
@@ -314,7 +314,7 @@ function addAuthorization(purchaseModel) {
             log('GMOオーソリ取得Out', execTranResult);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization execTranIn', execTranIn);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
             throw ErrorUtilModule.ERROR_VALIDATION;
         }

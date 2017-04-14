@@ -269,7 +269,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran(entryTranIn);
         log('GMO取引作成Out', purchaseModel.orderId);
     } catch (err) {
-        logger.error('SSKTS-APP:InputModule.addAuthorization entryTranIn', entryTranIn);
+        logger.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
         logger.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
@@ -285,7 +285,7 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         const execTranResult = await GMO.CreditService.execTran(execTranIn);
         log('GMOオーソリ取得Out', execTranResult);
     } catch (err) {
-        logger.error('SSKTS-APP:InputModule.addAuthorization execTranIn', execTranIn);
+        logger.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
         logger.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
