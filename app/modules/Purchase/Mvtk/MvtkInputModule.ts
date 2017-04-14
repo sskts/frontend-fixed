@@ -64,6 +64,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -101,8 +102,16 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
             jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
         };
-        const purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
-        log('ムビチケ認証', purchaseNumberAuthResults);
+        let purchaseNumberAuthResults;
+        try {
+            purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
+            log('ムビチケ認証', purchaseNumberAuthResults);
+        } catch (err) {
+            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
+            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberError', err);
+            throw err;
+        }
+        if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const validationList: string[] = [];
         // ムビチケセッション作成
         const mvtkList: PurchaseSession.IMvtk[] = [];

@@ -75,6 +75,7 @@ exports.index = index;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -118,8 +119,18 @@ function select(req, res, next) {
                 stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
                 jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
             };
-            const purchaseNumberAuthResults = yield mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
-            log('ムビチケ認証', purchaseNumberAuthResults);
+            let purchaseNumberAuthResults;
+            try {
+                purchaseNumberAuthResults = yield mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
+                log('ムビチケ認証', purchaseNumberAuthResults);
+            }
+            catch (err) {
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberError', err);
+                throw err;
+            }
+            if (purchaseNumberAuthResults === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             const validationList = [];
             // ムビチケセッション作成
             const mvtkList = [];
