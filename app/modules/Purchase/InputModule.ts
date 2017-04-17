@@ -266,6 +266,9 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         amount: amount
     };
     log('GMO取引作成In', entryTranIn);
+    log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
+    purchaseModel.authorizationCountGMO += 1;
+    log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
     try {
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran(entryTranIn);
         log('GMO取引作成Out', purchaseModel.orderId);
@@ -299,9 +302,6 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         gmoShopId: purchaseModel.theater.attributes.gmo.shop_id,
         gmoShopPassword: purchaseModel.theater.attributes.gmo.shop_pass
     });
-    log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
-    purchaseModel.authorizationCountGMO += 1;
-    log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
 }
 
 /**
