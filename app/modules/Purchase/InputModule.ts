@@ -139,7 +139,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.getReserveAmount() > 0) {
             // クレジット決済
             purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-            await addAuthorization(purchaseModel);
+            await addAuthorization(req, purchaseModel);
             log('オーソリ追加');
         }
         await MP.ownersAnonymous({
@@ -244,7 +244,8 @@ function getGMOError(req: Request) {
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
  */
-async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+async function addAuthorization(req: Request, purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.gmo === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -266,9 +267,11 @@ async function addAuthorization(purchaseModel: PurchaseSession.PurchaseModel): P
         amount: amount
     };
     log('GMO取引作成In', entryTranIn);
-    log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
     purchaseModel.authorizationCountGMO += 1;
     log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
+    log('オーダーID', purchaseModel.orderId);
+    // セッション更新
+    req.session.purchase = purchaseModel.toSession();
     try {
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran(entryTranIn);
         log('GMO取引作成Out', purchaseModel.orderId);

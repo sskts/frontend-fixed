@@ -159,7 +159,7 @@ function submit(req, res, next) {
             if (purchaseModel.getReserveAmount() > 0) {
                 // クレジット決済
                 purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-                yield addAuthorization(purchaseModel);
+                yield addAuthorization(req, purchaseModel);
                 log('オーソリ追加');
             }
             yield MP.ownersAnonymous({
@@ -265,8 +265,10 @@ function getGMOError(req) {
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
  */
-function addAuthorization(purchaseModel) {
+function addAuthorization(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.gmo === null)
@@ -293,9 +295,11 @@ function addAuthorization(purchaseModel) {
             amount: amount
         };
         log('GMO取引作成In', entryTranIn);
-        log('MPGMOオーソリ追加', purchaseModel.authorizationGMO);
         purchaseModel.authorizationCountGMO += 1;
         log('GMOオーソリカウント加算', purchaseModel.authorizationCountGMOToString());
+        log('オーダーID', purchaseModel.orderId);
+        // セッション更新
+        req.session.purchase = purchaseModel.toSession();
         try {
             purchaseModel.transactionGMO = yield GMO.CreditService.entryTran(entryTranIn);
             log('GMO取引作成Out', purchaseModel.orderId);
