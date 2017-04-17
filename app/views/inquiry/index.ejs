@@ -34,13 +34,15 @@
                 <div class="box radius border-bottom-dot bg-white">
                     <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
                     <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
-                    <div>
+                    <div class="mb-xx-small">
                         <strong class="large-text"><%= ticket.seat_num %></strong>
-                        if (ticket.add_glasses > 0) {
-                        <span>[<%= ticket.ticket_name %><%= __('common.glasses') %>]</span>
-                        } else {
-                        <span>[<%= ticket.ticket_name %>]</span>
-                        }
+                    </div>
+                    <div>
+                        <% if (ticket.add_glasses > 0) { %>
+                        [<%= ticket.ticket_name %><%= __('common.glasses') %>]
+                        <% } else { %>
+                        [<%= ticket.ticket_name %>]
+                        <% } %>
                     </div>
                 </div>
                 <% if (moment(`${performance.attributes.day} ${performance.attributes.time_start}`).subtract(24, 'hours').unix() < moment().unix()
