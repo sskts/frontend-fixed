@@ -1,7 +1,7 @@
+"use strict";
 /**
  * 正常データ
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 取引

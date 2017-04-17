@@ -1,8 +1,8 @@
+"use strict";
 /**
  * エラー共通
  * @namespace Util.ErrorUtilModule
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * エラー番号（propertyなし）

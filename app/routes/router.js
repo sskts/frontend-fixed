@@ -1,7 +1,7 @@
+"use strict";
 /**
  * ルーティング
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const SupertestRequest = require("../middlewares/supertestRequest");

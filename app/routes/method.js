@@ -1,7 +1,7 @@
+"use strict";
 /**
  * ルーティング方法
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const MethodModule = require("../modules/Method/MethodModule");

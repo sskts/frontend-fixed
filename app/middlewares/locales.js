@@ -1,7 +1,7 @@
+"use strict";
 /**
  * 多言語
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const i18n = require("i18n");
 i18n.configure({

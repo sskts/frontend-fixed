@@ -1,7 +1,7 @@
+"use strict";
 /**
  * ルーティング購入
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const CompleteModule = require("../modules/Purchase/CompleteModule");
