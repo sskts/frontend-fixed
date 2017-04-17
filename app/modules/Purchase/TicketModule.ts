@@ -385,7 +385,8 @@ async function ticketValidation(
                     : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
                 mvtk_num: mvtkTicket.code, // ムビチケ購入番号
-                mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip) // ムビチケ計上単価
+                mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip), // ムビチケ計上単価
+                kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp // ムビチケ映写方式区分
             });
         } else {
             // 通常券種
@@ -438,7 +439,8 @@ async function ticketValidation(
                     : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
                 mvtk_num: ticket.mvtk_num, // ムビチケ購入番号
-                mvtk_app_price: 0 // ムビチケ計上単価
+                mvtk_app_price: 0, // ムビチケ計上単価
+                kbn_eisyahousiki: '00' // ムビチケ映写方式区分
             });
         }
     }

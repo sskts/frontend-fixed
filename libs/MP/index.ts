@@ -477,6 +477,10 @@ export interface IReserveTicket {
      * ムビチケ計上単価
      */
     mvtk_app_price: number;
+    /**
+     * ムビチケ映写方式区分
+     */
+    kbn_eisyahousiki: string;
 }
 
 /**

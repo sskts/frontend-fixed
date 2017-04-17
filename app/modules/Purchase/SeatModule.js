@@ -226,7 +226,8 @@ function reserve(selectSeats, purchaseModel) {
                 glasses: false,
                 mvtk_num: '',
                 mvtk_app_price: 0,
-                add_glasses: 0
+                add_glasses: 0,
+                kbn_eisyahousiki: '00'
             };
         });
         let price = 0;
