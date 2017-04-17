@@ -163,7 +163,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
         res.locals.transactionId = inquiryModel.transactionId;
-
+        delete req.session.inquiry;
         res.render('inquiry/index');
         return;
     } else {

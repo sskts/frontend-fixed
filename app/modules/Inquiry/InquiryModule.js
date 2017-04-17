@@ -172,6 +172,7 @@ function index(req, res, next) {
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
         res.locals.transactionId = inquiryModel.transactionId;
+        delete req.session.inquiry;
         res.render('inquiry/index');
         return;
     }
