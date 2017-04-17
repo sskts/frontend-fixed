@@ -30,6 +30,7 @@ function setLocals(_req, res, next) {
     res.locals.moment = moment;
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
+    res.locals.env = process.env.NODE_ENV;
     next();
     return;
 }

@@ -72,7 +72,6 @@ function index(err, req, res, _next) {
     else {
         res.locals.message = msg;
         res.locals.error = err;
-        res.locals.portalSite = process.env.PORTAL_SITE_URL;
         res.status(status).render('error/error');
     }
     return;
