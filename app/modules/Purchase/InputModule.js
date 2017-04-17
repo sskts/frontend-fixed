@@ -180,18 +180,6 @@ function submit(req, res, next) {
             const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
                 return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
             });
-            const locals = {
-                performance: purchaseModel.performance,
-                reserveSeats: purchaseModel.reserveSeats,
-                input: purchaseModel.input,
-                reserveSeatsString: reserveSeatsString,
-                amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
-                domain: req.headers.host,
-                moment: moment,
-                timeFormat: UtilModule.timeFormat,
-                __: req.__,
-                layout: false
-            };
             if (purchaseModel.completeMailId !== null) {
                 yield MP.removeEmail({
                     transactionId: purchaseModel.transactionMP.id,
@@ -199,6 +187,19 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
+            const locals = {
+                performance: purchaseModel.performance,
+                reserveSeats: purchaseModel.reserveSeats,
+                input: purchaseModel.input,
+                reserveSeatsString: reserveSeatsString,
+                amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
+                domain: req.headers.host,
+                theaterTelNumber: '0995-55-0333',
+                moment: moment,
+                timeFormat: UtilModule.timeFormat,
+                __: req.__,
+                layout: false
+            };
             const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
             purchaseModel.completeMailId = yield MP.addEmail({
                 transactionId: purchaseModel.transactionMP.id,
