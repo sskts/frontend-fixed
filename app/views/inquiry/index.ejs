@@ -32,7 +32,8 @@
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
-                    <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>] <%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
+                    <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
                     <div>
                         <strong class="large-text"><%= ticket.seat_num %></strong>
                         <span>[<%= ticket.ticket_name %>]</span>

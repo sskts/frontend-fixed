@@ -36,9 +36,19 @@
             border-radius: 5px;
             margin: 0 10px 20px;
         }
-        
         .box {
             overflow: visible;
+        }
+        .ticket-number {
+            padding: 5px 8px;
+            border-radius: 12px;
+            color: #7e7e7e;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            @media screen and (max-width: $mobile){
+                right: 10px;
+            }
         }
         .qr-code {
 

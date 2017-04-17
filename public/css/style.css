@@ -1682,6 +1682,16 @@ p a {
     margin: 0 10px 20px; }
   .inquiry-confirm .ticket .box {
     overflow: visible; }
+  .inquiry-confirm .ticket .ticket-number {
+    padding: 5px 8px;
+    border-radius: 12px;
+    color: #7e7e7e;
+    position: absolute;
+    top: 20px;
+    right: 20px; }
+    @media screen and (max-width: 767px) {
+      .inquiry-confirm .ticket .ticket-number {
+        right: 10px; } }
   .inquiry-confirm .ticket .not-qr-code {
     padding: 40px;
     background-image: url(/images/common/bg_ticket.svg);
