@@ -533,7 +533,8 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
                 dis_price: tmpReserve.dis_price,
                 sale_price: tmpReserve.sale_price,
                 mvtk_app_price: tmpReserve.mvtk_app_price,
-                add_glasses: tmpReserve.add_price_glasses
+                add_glasses: tmpReserve.add_price_glasses,
+                kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki
             };
         }),
         price: args.price
