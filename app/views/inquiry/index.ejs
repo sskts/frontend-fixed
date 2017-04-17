@@ -36,7 +36,11 @@
                     <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
                     <div>
                         <strong class="large-text"><%= ticket.seat_num %></strong>
+                        if (ticket.add_glasses > 0) {
+                        <span>[<%= ticket.ticket_name %><%= common.glasses %>]</span>
+                        } else {
                         <span>[<%= ticket.ticket_name %>]</span>
+                        }
                     </div>
                 </div>
                 <% if (moment(`${performance.attributes.day} ${performance.attributes.time_start}`).subtract(24, 'hours').unix() < moment().unix()
