@@ -17,18 +17,20 @@ $(function () {
                 $('#purchaseform').submit();
             });
         } else {
-            var cardno = $('input[name=cardno]').val();
-            var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
-            var securitycode = $('input[name=securitycode]').val();
-            var holdername = $('input[name=holdername]').val();
-            var sendParam = {
-                cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
-                expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
-                securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
-                holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
-            }
-            
-            Multipayment.getToken(sendParam, someCallbackFunction);
+            loadingStart(function () {
+                var cardno = $('input[name=cardno]').val();
+                var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
+                var securitycode = $('input[name=securitycode]').val();
+                var holdername = $('input[name=holdername]').val();
+                var sendParam = {
+                    cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
+                    expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
+                    securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
+                    holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+                }
+
+                Multipayment.getToken(sendParam, someCallbackFunction);
+            });
         }
     });
 });
@@ -50,15 +52,15 @@ function someCallbackFunction(response) {
     $('input[name=securitycode]').val('');
     $('input[name=holdername]').val('');
     if (response.resultCode != 000) {
-        gmoValidation();
-        validationScroll();
+        loadinEnd(function () {
+            gmoValidation();
+            validationScroll();
+        });
     } else {
         //予め購入フォームに用意した token フィールドに、値を設定
         $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
-        loadingStart(function () {
-            $('#purchaseform').submit();
-        });
+        $('#purchaseform').submit();
     }
 }
 
@@ -145,12 +147,12 @@ function validation() {
 function gmoValidation() {
     $('.validation').removeClass('validation');
     $('.validation-text').remove();
-    
+
     var validationList = [
-        { name: 'cardno', label: locales.label.cardno},
-        { name: 'expire', label: locales.label.expire},
-        { name: 'securitycode', label: locales.label.securitycode},
-        { name: 'holdername', label: locales.label.holdername},
+        { name: 'cardno', label: locales.label.cardno },
+        { name: 'expire', label: locales.label.expire },
+        { name: 'securitycode', label: locales.label.securitycode },
+        { name: 'holdername', label: locales.label.holdername },
     ];
 
     validationList.forEach(function (validation, index) {
