@@ -235,6 +235,7 @@
 		"prev": "戻る"
 	},
 	"common": {
+		"ticket_number": "枚",
 		"recommend": "おすすめ",
 		"price": "円",
 		"close": "閉じる",

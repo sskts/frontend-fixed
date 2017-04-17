@@ -27,11 +27,12 @@
     <h2 class="page-ttl qr-tickets"><%- __('inquiry.confirm.qr_ttl') %></h2>
     <p class="read"><%- __('inquiry.confirm.qr_read') %></p>
     <ul class="tickets mb-large">
-        <% for (let ticket of stateReserve.list_ticket) { %>
+        <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
+        <% const ticket = stateReserve.list_ticket[i] %>
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
-                    <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
+                    <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>] <%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
                     <div>
                         <strong class="large-text"><%= ticket.seat_num %></strong>
                         <span>[<%= ticket.ticket_name %>]</span>
