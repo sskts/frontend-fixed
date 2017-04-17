@@ -1215,7 +1215,8 @@ p a {
 
 .purchase-ticket .mvtk .mvtk-button img {
   width: 100px;
-  vertical-align: text-bottom; }
+  height: 22px;
+  vertical-align: bottom; }
 
 .modal[data-modal="ticket_type"] dl dt {
   padding-right: 10px; }
