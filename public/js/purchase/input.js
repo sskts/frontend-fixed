@@ -52,10 +52,9 @@ function someCallbackFunction(response) {
     $('input[name=securitycode]').val('');
     $('input[name=holdername]').val('');
     if (response.resultCode != 000) {
-        loadinEnd(function () {
-            gmoValidation();
-            validationScroll();
-        });
+        loadingEnd();
+        gmoValidation();
+        validationScroll();
     } else {
         //予め購入フォームに用意した token フィールドに、値を設定
         $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
