@@ -39,8 +39,9 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         const performance = purchaseModel.performance;
         const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
         const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
+        const dateToday = moment().format('YYYYMMDD');
         res.locals.error = '';
-        res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin < moment().format('YYYYMMDD')) ? true : false;
+        res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin !== undefined && Number(dateMvtkBegin) <= Number(dateToday));
         res.locals.tickets = salesTicketsResult;
         res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
         res.locals.performance = performance;
