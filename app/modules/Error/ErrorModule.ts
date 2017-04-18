@@ -45,18 +45,23 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
             case ErrorUtilModule.ERROR_PROPERTY:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.property');
+                err.message = 'ERROR_PROPERTY';
                 break;
             case ErrorUtilModule.ERROR_ACCESS:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.access');
+                err.message = 'ERROR_ACCESS';
                 break;
             case ErrorUtilModule.ERROR_VALIDATION:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.validation');
+                err.message = 'ERROR_VALIDATION';
                 break;
             case ErrorUtilModule.ERROR_EXPIRE:
+                // 期限切れのときもstatusが400になっている。200に変更するべき？
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.expire');
+                err.message = 'ERROR_EXPIRE';
                 break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
@@ -69,7 +74,15 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
         delete req.session.purchase;
         delete req.session.mvtk;
     }
-    logger.error('SSKTS-APP:ErrorModule.index', err);
+    /**
+     * エラーメッセージ
+     * ERROR_PROPERTY: プロパティが無い
+     * ERROR_ACCESS: 不正なアクセス
+     * ERROR_VALIDATION: 不正な値のPOST
+     * ERROR_EXPIRE: 有効期限切れ
+     * etc: 外部モジュールエラー
+     */
+    logger.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     } else {
