@@ -1,7 +1,9 @@
 import * as express from 'express';
 
-const maxLength = 30;
-const minLength = 9;
+const NAME_MAX_LENGTH = 12;
+const MAIL_MAX_LENGTH = 50;
+const TEL_MAX_LENGTH = 11;
+const TEL_MIN_LENGTH = 9;
 
 /**
  * 購入情報入力フォーム
@@ -14,15 +16,16 @@ export default (req: express.Request): void => {
     ).notEmpty();
     req.checkBody(
         'last_name_hira',
-        `${req.__('common.last_name_hira')}${req.__('common.validation.maxlength %s', String(maxLength))}`
+        `${req.__('common.last_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`
     ).isLength({
         min: 0,
-        max: maxLength
+        max: NAME_MAX_LENGTH
     });
     req.checkBody(
         'last_name_hira',
         `${req.__('common.last_name_hira')}${req.__('common.validation.is_hira')}`
     ).matches(/^[ぁ-ゞー]+$/);
+
     // 名前（めい）
     req.checkBody(
         'last_name_hira',
@@ -30,15 +33,16 @@ export default (req: express.Request): void => {
     ).notEmpty();
     req.checkBody(
         'last_name_hira',
-        `${req.__('common.first_name_hira')}${req.__('common.validation.maxlength %s', String(maxLength))}`
+        `${req.__('common.first_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`
     ).isLength({
         min: 0,
-        max: maxLength
+        max: NAME_MAX_LENGTH
     });
     req.checkBody(
         'last_name_hira',
         `${req.__('common.first_name_hira')}${req.__('common.validation.is_hira')}`
     ).matches(/^[ぁ-ゞー]+$/);
+
     // メールアドレス
     req.checkBody(
         'mail_addr',
@@ -46,13 +50,26 @@ export default (req: express.Request): void => {
     ).notEmpty();
     req.checkBody(
         'mail_addr',
+        `${req.__('common.mail_addr')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`
+    ).isLength({
+        max: MAIL_MAX_LENGTH
+    });
+    req.checkBody(
+        'mail_addr',
         `${req.__('common.mail_addr')}${req.__('common.validation.is_email')}`
     ).isEmail();
+
     // メールアドレス確認
     req.checkBody(
         'mail_confirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.required')}`
     ).notEmpty();
+    req.checkBody(
+        'mail_confirm',
+        `${req.__('common.mail_confirm')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`
+    ).isLength({
+        max: MAIL_MAX_LENGTH
+    });
     req.checkBody(
         'mail_confirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`
@@ -61,6 +78,7 @@ export default (req: express.Request): void => {
         'mail_confirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`
     ).equals(req.body.mail_addr);
+
     // 電話番号
     req.checkBody(
         'tel_num',
@@ -72,8 +90,14 @@ export default (req: express.Request): void => {
     ).matches(/^[0-9]+$/);
     req.checkBody(
         'tel_num',
-        `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(minLength))}`
+        `${req.__('common.tel_num')}${req.__('common.validation.maxlength %s', String(TEL_MAX_LENGTH))}`
     ).isLength({
-        min: minLength
+        max: TEL_MAX_LENGTH
+    });
+    req.checkBody(
+        'tel_num',
+        `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(TEL_MIN_LENGTH))}`
+    ).isLength({
+        min: TEL_MIN_LENGTH
     });
 };

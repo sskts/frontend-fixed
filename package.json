@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "check": "npm run tslint && nsp check && snyk auth && snyk test --ignore-policy",
-    "development": "bin\\env\\development.bat && bin\\env\\debug.bat && node ./index.js",
-    "prod": "bin\\env\\prod.bat && bin\\env\\debug.bat && node ./index.js",
     "start": "node ./index.js",
-    "test": "bin\\env\\development.bat && mocha ./test/mocha/**/*.js --no-timeouts --recursive",
+    "test": "mocha ./test/mocha/**/*.js --no-timeouts --recursive",
     "ui-test": "node ./test/uiTest.js",
     "postcss": "postcss -c ./.postcssrc.json",
     "css": "npm run scss && npm run postcss",
