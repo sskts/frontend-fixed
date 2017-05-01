@@ -37,11 +37,12 @@ export async function start(req: Request, res: Response): Promise<Response> {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
 
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        let purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
             //重複確認へ
             return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
         }
+        purchaseModel = new PurchaseSession.PurchaseModel({});
         // 取引開始
         const minutes = 15;
         purchaseModel.expired = moment().add(minutes, 'minutes').unix();
