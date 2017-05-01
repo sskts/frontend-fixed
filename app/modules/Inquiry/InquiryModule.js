@@ -26,23 +26,52 @@ const log = debug('SSKTS');
  * @function login
  * @param {Request} req
  * @param {Response} res
- * @returns {void}
+ * @param {NextFunction} next
+ * @returns {Promise<void>}
  */
 // tslint:disable-next-line:variable-name
-function login(req, res, _next) {
-    if (req.query.theater === undefined) {
-        const status = 404;
-        res.status(status).render('error/notFound');
-        return;
-    }
-    res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
-    res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
-    res.locals.telNum = '';
-    res.locals.error = null;
-    res.render('inquiry/login');
-    return;
+function login(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.query.theater === undefined) {
+            const status = 404;
+            res.status(status).render('error/notFound');
+            return;
+        }
+        try {
+            res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
+            res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
+            res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
+            res.locals.telNum = '';
+            res.locals.error = null;
+            res.render('inquiry/login');
+            return;
+        }
+        catch (err) {
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
+            return;
+        }
+    });
 }
 exports.login = login;
+/**
+ * 劇場URL取得
+ * @memberOf InquiryModule
+ * @function getTeaterUrl
+ * @param {string} id
+ * @returns {Promise<string>}
+ */
+function getTeaterUrl(id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const theater = yield MP.getTheater(id);
+        const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
+        if (website === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        return website.url;
+    });
+}
 /**
  * 照会認証
  * @memberOf InquiryModule
@@ -61,15 +90,19 @@ function auth(req, res, next) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                try {
-                    inquiryModel.transactionId = yield MP.makeInquiry({
-                        inquiry_theater: req.body.theater_code,
-                        inquiry_id: Number(req.body.reserve_num),
-                        inquiry_pass: req.body.tel_num // 電話番号
-                    });
-                }
-                catch (err) {
-                    throw ErrorUtilModule.ERROR_VALIDATION;
+                inquiryModel.transactionId = yield MP.makeInquiry({
+                    inquiry_theater: req.body.theater_code,
+                    inquiry_id: Number(req.body.reserve_num),
+                    inquiry_pass: req.body.tel_num // 電話番号
+                });
+                if (inquiryModel.transactionId === null) {
+                    res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
+                    res.locals.theaterCode = req.body.theater_code;
+                    res.locals.reserveNum = req.body.reserve_num;
+                    res.locals.telNum = req.body.tel_num;
+                    res.locals.error = getInquiryError(req);
+                    res.render('inquiry/login');
+                    return;
                 }
                 log('MP取引Id取得', inquiryModel.transactionId);
                 inquiryModel.login = req.body;
@@ -98,6 +131,7 @@ function auth(req, res, next) {
                 return;
             }
             else {
+                res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
                 res.locals.telNum = req.body.tel_num;
@@ -107,14 +141,6 @@ function auth(req, res, next) {
             }
         }
         catch (err) {
-            if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                res.locals.theaterCode = req.body.theater_code;
-                res.locals.reserveNum = req.body.reserve_num;
-                res.locals.telNum = req.body.tel_num;
-                res.locals.error = getInquiryError(req);
-                res.render('inquiry/login');
-                return;
-            }
             const error = (err instanceof Error)
                 ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);

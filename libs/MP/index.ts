@@ -171,9 +171,7 @@ export interface IPerformance {
  * @requires {void}
  */
 function errorHandler(args: any, response: any): void {
-    logger.error('MP-API:errorHandler args', args);
-    logger.error('MP-API:errorHandler response', response.body);
-    logger.error('MP-API:errorHandler statusCode', response.statusCode);
+    logger.error('MP-API:errorHandler', args, response.body, response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }
@@ -876,9 +874,9 @@ export interface IMakeInquiryArgs {
  * @memberOf MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
- * @returns {Promise<string>}
+ * @returns {Promise<string | null>}
  */
-export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
+export async function makeInquiry(args: IMakeInquiryArgs): Promise<string | null> {
     const body = {
         inquiry_theater: args.inquiry_theater,
         inquiry_id: args.inquiry_id,
@@ -893,6 +891,7 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
+    if (response.statusCode === HTTPStatus.NOT_FOUND) return null;
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;
