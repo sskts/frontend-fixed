@@ -35,6 +35,12 @@ exports.ERROR_VALIDATION = '003';
  */
 exports.ERROR_EXPIRE = '004';
 /**
+ * エラーGMO（GMO）
+ * @memberof Util.ErrorUtilModule
+ * @const ERROR_GMO
+ */
+exports.ERROR_GMO = '005';
+/**
  * エラー（外部モジュール）
  * @memberof Util.ErrorUtilModule
  * @const ERROR_EXTERNAL_MODULE

@@ -307,7 +307,7 @@ function addAuthorization(req, purchaseModel) {
         catch (err) {
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
-            throw ErrorUtilModule.ERROR_VALIDATION;
+            throw ErrorUtilModule.ERROR_GMO;
         }
         const execTranIn = {
             accessId: purchaseModel.transactionGMO.accessId,
@@ -371,7 +371,7 @@ function removeAuthorization(purchaseModel) {
         catch (err) {
             logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
             logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
-            throw err;
+            throw ErrorUtilModule.ERROR_GMO;
         }
         // GMOオーソリ削除
         yield MP.removeGMOAuthorization({

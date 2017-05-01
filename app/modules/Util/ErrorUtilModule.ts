@@ -39,6 +39,13 @@ export const ERROR_VALIDATION = '003';
 export const ERROR_EXPIRE = '004';
 
 /**
+ * エラーGMO（GMO）
+ * @memberof Util.ErrorUtilModule
+ * @const ERROR_GMO
+ */
+export const ERROR_GMO = '005';
+
+/**
  * エラー（外部モジュール）
  * @memberof Util.ErrorUtilModule
  * @const ERROR_EXTERNAL_MODULE
