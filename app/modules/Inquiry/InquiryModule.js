@@ -38,7 +38,7 @@ function login(req, res, next) {
             return;
         }
         try {
-            res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
+            res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
             res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
             res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
             res.locals.telNum = '';
@@ -59,11 +59,11 @@ exports.login = login;
 /**
  * 劇場URL取得
  * @memberOf InquiryModule
- * @function getTeaterUrl
+ * @function getPortalTheaterSite
  * @param {string} id
  * @returns {Promise<string>}
  */
-function getTeaterUrl(id) {
+function getPortalTheaterSite(id) {
     return __awaiter(this, void 0, void 0, function* () {
         const theater = yield MP.getTheater(id);
         const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
@@ -96,7 +96,7 @@ function auth(req, res, next) {
                     inquiry_pass: req.body.tel_num // 電話番号
                 });
                 if (inquiryModel.transactionId === null) {
-                    res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
+                    res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
                     res.locals.theaterCode = req.body.theater_code;
                     res.locals.reserveNum = req.body.reserve_num;
                     res.locals.telNum = req.body.tel_num;
@@ -131,7 +131,7 @@ function auth(req, res, next) {
                 return;
             }
             else {
-                res.locals.theaterUrl = yield getTeaterUrl(req.query.theater);
+                res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
                 res.locals.telNum = req.body.tel_num;

@@ -30,7 +30,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         return;
     }
     try {
-        res.locals.theaterUrl = await getTeaterUrl(req.query.theater);
+        res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
         res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
         res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
         res.locals.telNum = '';
@@ -49,11 +49,11 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
 /**
  * 劇場URL取得
  * @memberOf InquiryModule
- * @function getTeaterUrl
+ * @function getPortalTheaterSite
  * @param {string} id
  * @returns {Promise<string>}
  */
-async function getTeaterUrl(id: string): Promise<string> {
+async function getPortalTheaterSite(id: string): Promise<string> {
     const theater = await MP.getTheater(id);
     const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
     if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -82,7 +82,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 inquiry_pass: req.body.tel_num // 電話番号
             });
             if (inquiryModel.transactionId === null) {
-                res.locals.theaterUrl = await getTeaterUrl(req.query.theater);
+                res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
                 res.locals.telNum = req.body.tel_num;
@@ -115,7 +115,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
             return;
         } else {
-            res.locals.theaterUrl = await getTeaterUrl(req.query.theater);
+            res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
             res.locals.theaterCode = req.body.theater_code;
             res.locals.reserveNum = req.body.reserve_num;
             res.locals.telNum = req.body.tel_num;
