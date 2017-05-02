@@ -23,10 +23,15 @@ function getTransaction(id) {
             loadingStart();
         }
     }).done(function (res) {
-        if (!res.err && res.redirect) {
+        if (res.redirect !== null) {
             location.replace(res.redirect);
-        } else {
+        } else if (res.contents === 'access-congestion') {
+            $('.' + res.contents).show();
+            $('.wrapper-inner').show();
             retry();
+        } else {
+            $('.' + res.contents).show();
+            $('.wrapper-inner').show();
         }
     }).fail(function (jqxhr, textStatus, error) {
         retry();
@@ -42,7 +47,6 @@ function getTransaction(id) {
  */
 function retry() {
     var timer = 30000;
-    $('.wrapper-inner').show();
     setTimeout(function(){
         getTransaction();
     }, timer);

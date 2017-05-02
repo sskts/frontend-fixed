@@ -18,14 +18,17 @@ const log = debug('SSKTS');
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
-export async function start(req: Request, res: Response): Promise<Response> {
+export async function start(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
-
+        // if (platform.name === 'IE') {
+        //     res.json({ redirect: null, contents: 'not-recommended'});
+        //     return;
+        // }
         const performance = await MP.getPerformance(req.body.id);
         // 開始可能日判定
         if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
@@ -40,7 +43,8 @@ export async function start(req: Request, res: Response): Promise<Response> {
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
             //重複確認へ
-            return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+            res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+            return;
         }
         // 取引開始
         const minutes = 15;
@@ -55,19 +59,15 @@ export async function start(req: Request, res: Response): Promise<Response> {
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
-        return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
+        res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
+        return;
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_ACCESS) {
-            return res.json({ redirect: '/error', err: null });
+        if (err === ErrorUtilModule.ERROR_ACCESS
+        || err === ErrorUtilModule.ERROR_PROPERTY) {
+            res.json({ redirect: null, contents: 'access-error'});
+            return;
         }
-        let msg: string;
-        if (err === ErrorUtilModule.ERROR_PROPERTY) {
-            msg = req.__('common.error.property');
-        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-            msg = req.__('common.error.expire');
-        } else {
-            msg = err.message;
-        }
-        return res.json({ redirect: null, err: msg });
+        res.json({ redirect: null, contents: 'access-congestion'});
+        return;
     }
 }
