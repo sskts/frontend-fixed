@@ -153,6 +153,7 @@
             </li>
         </ul>
         <input type="hidden" name="gmo_token_object" value="">
+        <input type="hidden" name="gmo_error" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
         <% } %>
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.input.next') %></button></div>

@@ -60,11 +60,6 @@ function index(err, req, res, _next) {
                 msg = req.__('common.error.expire');
                 err.message = 'ERROR_EXPIRE';
                 break;
-            case ErrorUtilModule.ERROR_GMO:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
-                msg = req.__('common.error.gmo');
-                err.message = 'ERROR_GMO';
-                break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
