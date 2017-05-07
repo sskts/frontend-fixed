@@ -1,8 +1,16 @@
 $(function () {
-    var id = getParameter()['id'];
-    if (id) {
-        getTransaction(id);
+    if (!isSupportBrowser()) {
+        $('.not-recommended').show();
+        $('.wrapper-inner').show();
+        return;
     }
+    var id = getParameter()['id'];
+    if (id === undefined) {
+        $('.access-error').show();
+        $('.wrapper-inner').show();
+        return;
+    }
+    getTransaction(id);
 });
 
 /**
@@ -25,13 +33,12 @@ function getTransaction(id) {
     }).done(function (res) {
         if (res.redirect !== null) {
             location.replace(res.redirect);
-        } else if (res.contents === 'access-congestion') {
-            $('.' + res.contents).show();
-            $('.wrapper-inner').show();
-            retry();
         } else {
             $('.' + res.contents).show();
             $('.wrapper-inner').show();
+            if (res.contents === 'access-congestion') {
+                retry();
+            }
         }
     }).fail(function (jqxhr, textStatus, error) {
         retry();
@@ -47,7 +54,30 @@ function getTransaction(id) {
  */
 function retry() {
     var timer = 30000;
-    setTimeout(function(){
+    setTimeout(function () {
         getTransaction();
     }, timer);
+}
+
+/**
+ * ブラウザ対応判定
+ * @function isSupportBrowser
+ * @returns {boolean}
+ */
+function isSupportBrowser() {
+    var result = true;
+    var userAgent = window.navigator.userAgent.toLowerCase();
+    var version = window.navigator.appVersion.toLowerCase();
+    if (userAgent.indexOf('msie') > -1) {
+        if (version.indexOf('msie 6.') > -1) {
+            result = false;
+        } else if (version.indexOf('msie 7.') > -1) {
+            result = false;
+        } else if (version.indexOf('msie 8.') > -1) {
+            result = false;
+        } else if (version.indexOf('msie 9.') > -1) {
+            result = false;
+        }
+    }
+    return result;
 }

@@ -714,10 +714,10 @@ p a {
   .footer .inner {
     position: relative; }
   .footer ul {
-    display: flex;
-    justify-content: center;
+    text-align: center;
     margin-bottom: 10px; }
     .footer ul li {
+      display: inline-block;
       padding: 0 5px;
       border-right: 1px solid #FFF;
       line-height: 1.5; }

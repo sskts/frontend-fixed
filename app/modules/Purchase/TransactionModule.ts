@@ -25,10 +25,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
-        // if (platform.name === 'IE') {
-        //     res.json({ redirect: null, contents: 'not-recommended'});
-        //     return;
-        // }
+
         const performance = await MP.getPerformance(req.body.id);
         // 開始可能日判定
         if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
@@ -63,11 +60,11 @@ export async function start(req: Request, res: Response): Promise<void> {
         return;
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_ACCESS
-        || err === ErrorUtilModule.ERROR_PROPERTY) {
-            res.json({ redirect: null, contents: 'access-error'});
+            || err === ErrorUtilModule.ERROR_PROPERTY) {
+            res.json({ redirect: null, contents: 'access-error' });
             return;
         }
-        res.json({ redirect: null, contents: 'access-congestion'});
+        res.json({ redirect: null, contents: 'access-congestion' });
         return;
     }
 }
