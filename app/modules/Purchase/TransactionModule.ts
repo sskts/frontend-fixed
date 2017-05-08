@@ -18,9 +18,9 @@ const log = debug('SSKTS');
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
-export async function start(req: Request, res: Response): Promise<Response> {
+export async function start(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -40,7 +40,8 @@ export async function start(req: Request, res: Response): Promise<Response> {
         let purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
             //重複確認へ
-            return res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+            res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+            return;
         }
         purchaseModel = new PurchaseSession.PurchaseModel({});
         // 取引開始
@@ -56,19 +57,15 @@ export async function start(req: Request, res: Response): Promise<Response> {
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
-        return res.json({ redirect: `/purchase/seat/${req.body.id}/`, err: null });
+        res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
+        return;
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_ACCESS) {
-            return res.json({ redirect: '/error', err: null });
+        if (err === ErrorUtilModule.ERROR_ACCESS
+            || err === ErrorUtilModule.ERROR_PROPERTY) {
+            res.json({ redirect: null, contents: 'access-error' });
+            return;
         }
-        let msg: string;
-        if (err === ErrorUtilModule.ERROR_PROPERTY) {
-            msg = req.__('common.error.property');
-        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-            msg = req.__('common.error.expire');
-        } else {
-            msg = err.message;
-        }
-        return res.json({ redirect: null, err: msg });
+        res.json({ redirect: null, contents: 'access-congestion' });
+        return;
     }
 }

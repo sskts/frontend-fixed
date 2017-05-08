@@ -14,11 +14,12 @@
     </div>
     <div class="mb-medium date">
         <select>
-            <% for (let i = 0; i < 10; i++) { %>
+            <% for (let i = 0; i < 15; i++) { %>
+            <% const date = moment().add((i - 5), 'days'); %>
             <% if (moment().add((i - 6), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
-            <option selected value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>
+            <option selected value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
             <% } else { %>
-            <option value="<%= moment().add((i - 5), 'days').format('YYYYMMDD') %>"><%= moment().add((i - 5), 'days').format('YYYY年MM月DD日') %></option>
+            <option value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
             <% } %>
             <% } %>
         </select>
