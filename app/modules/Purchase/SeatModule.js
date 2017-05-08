@@ -93,7 +93,6 @@ exports.index = index;
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            console.time('処理時間');
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
@@ -134,7 +133,6 @@ function select(req, res, next) {
             delete req.session.mvtk;
             //券種選択へ
             res.redirect('/purchase/ticket');
-            console.timeEnd('処理時間');
             return;
         }
         catch (err) {

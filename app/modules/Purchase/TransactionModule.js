@@ -33,10 +33,6 @@ function start(req, res) {
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
-            // if (platform.name === 'IE') {
-            //     res.json({ redirect: null, contents: 'not-recommended'});
-            //     return;
-            // }
             const performance = yield MP.getPerformance(req.body.id);
             // 開始可能日判定
             if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
