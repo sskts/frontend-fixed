@@ -3,7 +3,8 @@
   "version": "1.0.3",
   "private": true,
   "scripts": {
-    "check": "npm run tslint && nsp check && snyk auth && snyk test --ignore-policy",
+    "check": "npm run tslint && nsp check",
+    "snyk": "snyk auth && snyk test --ignore-policy",
     "start": "node ./index.js",
     "test": "mocha ./test/mocha/**/*.js --no-timeouts --recursive",
     "ui-test": "node ./test/uiTest.js",
