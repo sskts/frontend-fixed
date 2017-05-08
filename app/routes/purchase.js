@@ -45,4 +45,6 @@ router.get('/mvtk/confirm', MvtkConfirmModule.index);
 router.post('/mvtk/confirm', MvtkConfirmModule.submit);
 //座席状態取得
 router.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
+//券種情報をセションへ保存
+router.post('/saveSalesTickets', SeatModule.saveSalesTickets);
 exports.default = router;
