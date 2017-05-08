@@ -134,11 +134,19 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     title_branch_num: purchaseModel.performanceCOA.titleBranchNum
                 });
                 log('ムビチケチケットコード取得', ticket);
-
+                const validTicket = {
+                    ykknshTyp: info.ykknshTyp, // 有効券種区分
+                    eishhshkTyp: info.eishhshkTyp, // 映写方式区分
+                    ykknKnshbtsmiNum: info.ykknKnshbtsmiNum, // 有効期限券種別枚数
+                    knshknhmbiUnip: info.knshknhmbiUnip, // 鑑賞券販売単価
+                    kijUnip: info.kijUnip, // 計上単価
+                    dnshKmTyp: purchaseNumberAuthResult.dnshKmTyp, // 電子券区分
+                    znkkkytsknGkjknTyp: purchaseNumberAuthResult.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
+                };
                 mvtkList.push({
                     code: purchaseNumberAuthResult.knyknrNo,
                     password: UtilModule.bace64Encode(input.password),
-                    ykknInfo: info,
+                    ykknInfo: validTicket,
                     ticket: ticket
                 });
             }

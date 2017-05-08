@@ -65,7 +65,7 @@ export interface IMvtk {
     /**
      * 有効券情報
      */
-    ykknInfo: IValidTickettResult;
+    ykknInfo: IValidTicketResult;
     /**
      * チケット情報
      */
@@ -74,9 +74,9 @@ export interface IMvtk {
 
 /**
  * 有効券情報
- * @interface IValidTickettResult
+ * @interface IValidTicketResult
  */
-export interface IValidTickettResult {
+export interface IValidTicketResult {
     /**
      * 有効券種区分
      */
@@ -97,6 +97,14 @@ export interface IValidTickettResult {
      * 計上単価
      */
     kijUnip: string;
+    /**
+     * 電子券区分
+     */
+    dnshKmTyp: string;
+    /**
+     * 全国共通券・劇場券区分
+     */
+    znkkkytsknGkjknTyp: string;
 }
 
 /**
