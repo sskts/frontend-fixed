@@ -19,21 +19,45 @@ const log = debug('SSKTS');
  * @function login
  * @param {Request} req
  * @param {Response} res
- * @returns {void}
+ * @param {NextFunction} next
+ * @returns {Promise<void>}
  */
 // tslint:disable-next-line:variable-name
-export function login(req: Request, res: Response, _next: NextFunction): void {
+export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.query.theater === undefined) {
         const status = 404;
         res.status(status).render('error/notFound');
         return;
     }
-    res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
-    res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
-    res.locals.telNum = '';
-    res.locals.error = null;
-    res.render('inquiry/login');
-    return;
+    try {
+        res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
+        res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
+        res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
+        res.locals.telNum = '';
+        res.locals.error = null;
+        res.render('inquiry/login');
+        return;
+    } catch (err) {
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        next(error);
+        return;
+    }
+}
+
+/**
+ * 劇場URL取得
+ * @memberOf InquiryModule
+ * @function getPortalTheaterSite
+ * @param {string} id
+ * @returns {Promise<string>}
+ */
+async function getPortalTheaterSite(id: string): Promise<string> {
+    const theater = await MP.getTheater(id);
+    const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
+    if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+    return website.url;
 }
 
 /**
@@ -52,17 +76,21 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            try {
-                inquiryModel.transactionId = await MP.makeInquiry({
-                    inquiry_theater: req.body.theater_code, // 施設コード
-                    inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
-                    inquiry_pass: req.body.tel_num // 電話番号
-                });
-            } catch (err) {
-                throw ErrorUtilModule.ERROR_VALIDATION;
+            inquiryModel.transactionId = await MP.makeInquiry({
+                inquiry_theater: req.body.theater_code, // 施設コード
+                inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
+                inquiry_pass: req.body.tel_num // 電話番号
+            });
+            if (inquiryModel.transactionId === null) {
+                res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
+                res.locals.theaterCode = req.body.theater_code;
+                res.locals.reserveNum = req.body.reserve_num;
+                res.locals.telNum = req.body.tel_num;
+                res.locals.error = getInquiryError(req);
+                res.render('inquiry/login');
+                return;
             }
             log('MP取引Id取得', inquiryModel.transactionId);
-
             inquiryModel.login = req.body;
             inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
                 theater_code: req.body.theater_code, // 施設コード
@@ -80,16 +108,14 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 timeBegin: inquiryModel.stateReserve.time_begin
             });
             log('パフォーマンスID取得', performanceId);
-
             inquiryModel.performance = await MP.getPerformance(performanceId);
             log('MPパフォーマンス取得');
-
             req.session.inquiry = inquiryModel.toSession();
-
             //購入者内容確認へ
             res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
             return;
         } else {
+            res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
             res.locals.theaterCode = req.body.theater_code;
             res.locals.reserveNum = req.body.reserve_num;
             res.locals.telNum = req.body.tel_num;
@@ -98,14 +124,6 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             return;
         }
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            res.locals.theaterCode = req.body.theater_code;
-            res.locals.reserveNum = req.body.reserve_num;
-            res.locals.telNum = req.body.tel_num;
-            res.locals.error = getInquiryError(req);
-            res.render('inquiry/login');
-            return;
-        }
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);

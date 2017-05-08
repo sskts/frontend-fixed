@@ -32,9 +32,7 @@ const timeout = 10000;
  * @requires {void}
  */
 function errorHandler(args, response) {
-    logger_1.default.error('MP-API:errorHandler args', args);
-    logger_1.default.error('MP-API:errorHandler response', response.body);
-    logger_1.default.error('MP-API:errorHandler statusCode', response.statusCode);
+    logger_1.default.error('MP-API:errorHandler', args, response.body, response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }
@@ -540,7 +538,7 @@ exports.removeEmail = removeEmail;
  * @memberOf MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
- * @returns {Promise<string>}
+ * @returns {Promise<string | null>}
  */
 function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -558,6 +556,8 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
+        if (response.statusCode === HTTPStatus.NOT_FOUND)
+            return null;
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(body, response);
         log('makeInquiry result:' + response.body.data);
