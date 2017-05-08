@@ -202,8 +202,8 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 return;
             }
             const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-            log('GMOオーソリ追加失敗');
-            res.locals.error = getGMOError(req);
+            log('GMO処理エラー');
+            res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.input = req.body;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
@@ -219,22 +219,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         next(error);
         return;
     }
-}
-
-/**
- * GMOオーソリ追加エラー取得
- * @memberOf Purchase.InputModule
- * @function getGMOError
- * @param {Request} req
- * @returns {any}
- */
-function getGMOError(req: Request) {
-    return {
-        cardno: { parm: 'cardno', msg: `${req.__('common.cardno')}${req.__('common.validation.card')}`, value: '' },
-        expire: { parm: 'expire', msg: `${req.__('common.expire')}${req.__('common.validation.card')}`, value: '' },
-        securitycode: { parm: 'securitycode', msg: `${req.__('common.securitycode')}${req.__('common.validation.card')}`, value: '' },
-        holdername: { parm: 'holdername', msg: `${req.__('common.holdername')}${req.__('common.validation.card')}`, value: '' }
-    };
 }
 
 /**
@@ -335,7 +319,7 @@ async function removeAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
     } catch (err) {
         logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
         logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
-        throw err;
+        throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ削除
     await MP.removeGMOAuthorization({

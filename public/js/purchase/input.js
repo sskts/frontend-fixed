@@ -1,6 +1,7 @@
-
+var modal;
 $(function () {
-    var modal = new SASAKI.Modal();
+    modal = new SASAKI.Modal();
+    pageInit();
     /**
      * 次へクリックイベント
      */
@@ -34,6 +35,39 @@ $(function () {
         }
     });
 });
+
+/**
+ * 初期化
+ * @function pageInit
+ * @returns {void}
+ */
+function pageInit() {
+    if ($('input[name=gmo_error]').val()) {
+        var msg = $('input[name=gmo_error]').val();
+        var target = $('.modal[data-modal=creditcard_alert]');
+        target.find('p').html(msg);
+        modal.open('creditcard_alert');
+        
+        // バリデーション
+        $('.validation').removeClass('validation');
+        $('.validation-text').remove();
+        var validationList = [
+            { name: 'cardno' },
+            { name: 'expire' },
+            { name: 'securitycode' },
+            { name: 'holdername' },
+        ];
+        validationList.forEach(function (validation, index) {
+            var target = $('input[name=' + validation.name + ']');
+            if (validation.name === 'expire') {
+                $('select[name=credit_month], select[name=credit_year]').addClass('validation');
+            } else {
+                target.addClass('validation');
+            }
+        });
+        validationScroll();
+    }
+}
 
 /**
  * トークン取得後イベント
@@ -82,7 +116,7 @@ function validationScroll() {
 function validation() {
     $('.validation').removeClass('validation');
     $('.validation-text').remove();
-    
+
     var NAME_MAX_LENGTH = 12;
     var MAIL_MAX_LENGTH = 50;
     var TEL_MAX_LENGTH = 11;
