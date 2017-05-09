@@ -1,12 +1,14 @@
-<% if (env === 'production') { %>
+<%
+let tagManagerid;
+if (env === 'production') {
+    tagManagerid = 'GTM-PTHQSFV';
+} else if (env === 'test') {
+    tagManagerid = 'GTM-5JNQ6CD';
+} else {
+    tagManagerid = 'GTM-56DL5JR';
+}
+%>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PTHQSFV"
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= tagManagerid %>"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
-<% } else { %>
-<!-- not production -->
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JNQ6CD"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-<% } %>
