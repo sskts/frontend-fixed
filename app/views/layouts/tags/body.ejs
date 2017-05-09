@@ -1,14 +1,21 @@
 <%
-let tagManagerid;
+let tagManagerId;
+let analyticsId;
 if (env === 'production') {
-    tagManagerid = 'GTM-PTHQSFV';
+    tagManagerId = 'GTM-PTHQSFV';
+    analyticsId = 'UA-93245059-4';
 } else if (env === 'test') {
-    tagManagerid = 'GTM-5JNQ6CD';
+    tagManagerId = 'GTM-5JNQ6CD';
+    analyticsId = 'UA-93245059-3';
 } else {
-    tagManagerid = 'GTM-56DL5JR';
+    tagManagerId = 'GTM-56DL5JR';
+    analyticsId = 'UA-93245059-1';
 }
 %>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= tagManagerid %>"
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= tagManagerId %>"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
+<script>
+ga('create', '<%= analyticsId %>', 'auto');
+</script>

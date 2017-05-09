@@ -70,10 +70,11 @@ function purchase() {
             //完了画面表示
             showComplete(res.result);
             try {
-                ga('send', 'event', {
+                ga('send', {
+                    hitType: 'event',
                     eventCategory: 'submit',
-                    eventAction: 'confirm form',
-                    eventLabel: 'purchase complete'
+                    eventAction: 'post',
+                    eventLabel: 'purchase conversion'
                 });
             } catch (err) {
                 console.error(err);
