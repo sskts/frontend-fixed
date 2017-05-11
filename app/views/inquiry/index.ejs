@@ -49,7 +49,7 @@
                 && moment(`${performance.attributes.day} ${performance.attributes.time_end}`).unix() > moment().unix()) { %>
                 <div class="box radius border-bottom-dot qr-code bg-white">
                     <div class="text-center">
-                        <img src="http://chart.apis.google.com/chart?chs=150x150&cht=qr&chl=<%- ticket.seat_qrcode %>" alt="QRコード">
+                        <img src="//chart.apis.google.com/chart?chs=150x150&cht=qr&chl=<%- ticket.seat_qrcode %>" alt="QRコード">
                     </div>
                 </div>
                 <% } else { %>
