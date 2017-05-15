@@ -589,7 +589,8 @@ function getPerformanceCOA(theaterId, screenId, filmId) {
             titleCode: film.attributes.coa_title_code,
             titleBranchNum: film.attributes.coa_title_branch_num,
             flgMvtkUse: film.attributes.flg_mvtk_use,
-            dateMvtkBegin: film.attributes.date_mvtk_begin
+            dateMvtkBegin: film.attributes.date_mvtk_begin,
+            kbnJoueihousiki: film.attributes.kbn_joueihousiki
         };
     });
 }

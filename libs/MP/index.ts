@@ -909,6 +909,7 @@ export interface IPerformanceCOA {
     titleBranchNum: string;
     flgMvtkUse: string;
     dateMvtkBegin: string;
+    kbnJoueihousiki: string;
 }
 
 /**
@@ -934,7 +935,8 @@ export async function getPerformanceCOA(theaterId: string, screenId: string, fil
         titleCode: film.attributes.coa_title_code,
         titleBranchNum: film.attributes.coa_title_branch_num,
         flgMvtkUse: film.attributes.flg_mvtk_use,
-        dateMvtkBegin: film.attributes.date_mvtk_begin
+        dateMvtkBegin: film.attributes.date_mvtk_begin,
+        kbnJoueihousiki: film.attributes.kbn_joueihousiki
     };
 }
 
