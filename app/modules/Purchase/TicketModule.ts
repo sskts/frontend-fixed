@@ -49,7 +49,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.reserveTickets = purchaseModel.reserveTickets;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.screenType = purchaseModel.performanceCOA.screenType;
+        res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
 
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
@@ -184,7 +184,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.screenType = purchaseModel.performanceCOA.screenType;
+            res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
 
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
             return;

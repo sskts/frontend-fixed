@@ -64,7 +64,7 @@ function index(req, res, next) {
             res.locals.reserveTickets = purchaseModel.reserveTickets;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.screenType = purchaseModel.performanceCOA.screenType;
+            res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             //券種選択表示
@@ -213,7 +213,7 @@ function select(req, res, next) {
                 res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
-                res.locals.screenType = purchaseModel.performanceCOA.screenType;
+                res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
                 res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
                 return;
             }
