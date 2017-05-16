@@ -4,7 +4,6 @@
  */
 
 import {NextFunction, Request, Response} from 'express';
-import * as fs from 'fs-extra';
 import * as moment from 'moment';
 /**
  * テンプレート変数へ渡す
@@ -142,26 +141,6 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
                 return;
             }
             resolve(html);
-            return;
-        });
-    });
-}
-
-/**
- * json取得
- * @memberOf Util.UtilModule
- * @function readJSONAsync
- * @param {string} file
- * @returns {Promise<{}>}
- */
-export async function readJSONAsync(file: string): Promise<{}> {
-    return new Promise((resolve, reject) => {
-        fs.readJSON(file, (err, jsonObject) => {
-            if (err !== null) {
-                reject(err);
-                return;
-            }
-            resolve(jsonObject);
             return;
         });
     });

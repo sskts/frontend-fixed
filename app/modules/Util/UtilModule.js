@@ -12,7 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require("fs-extra");
 const moment = require("moment");
 /**
  * テンプレート変数へ渡す
@@ -150,28 +149,6 @@ function getEmailTemplate(res, file, locals) {
     });
 }
 exports.getEmailTemplate = getEmailTemplate;
-/**
- * json取得
- * @memberOf Util.UtilModule
- * @function readJSONAsync
- * @param {string} file
- * @returns {Promise<{}>}
- */
-function readJSONAsync(file) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise((resolve, reject) => {
-            fs.readJSON(file, (err, jsonObject) => {
-                if (err !== null) {
-                    reject(err);
-                    return;
-                }
-                resolve(jsonObject);
-                return;
-            });
-        });
-    });
-}
-exports.readJSONAsync = readJSONAsync;
 /**
  * 2桁
  * @memberOf Util.UtilModule

@@ -6,6 +6,7 @@ import * as express from 'express';
 import * as SupertestRequest from '../middlewares/supertestRequest';
 import * as ErrorModule from '../modules/Error/ErrorModule';
 import * as PerformancesModule from '../modules/Performances/PerformancesModule';
+import * as ScreenModule from '../modules/Screen/ScreenModule';
 import inquiry from './inquiry';
 import method from './method';
 import purchase from './purchase';
@@ -42,9 +43,9 @@ export default (app: express.Application) => {
 
         //スクリーンテスト
         // tslint:disable-next-line:variable-name
-        router.get('/screen', (_req, res, _next) => {
-            res.render('screens/test');
-        });
+        router.get('/screen', ScreenModule.index);
+        router.post('/screen', ScreenModule.getScreenStateReserve);
+
     }
 
     app.use('', router);

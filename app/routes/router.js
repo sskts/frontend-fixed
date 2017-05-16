@@ -7,6 +7,7 @@ const express = require("express");
 const SupertestRequest = require("../middlewares/supertestRequest");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const PerformancesModule = require("../modules/Performances/PerformancesModule");
+const ScreenModule = require("../modules/Screen/ScreenModule");
 const inquiry_1 = require("./inquiry");
 const method_1 = require("./method");
 const purchase_1 = require("./purchase");
@@ -34,9 +35,8 @@ exports.default = (app) => {
         router.get('/create/session', createSession);
         //スクリーンテスト
         // tslint:disable-next-line:variable-name
-        router.get('/screen', (_req, res, _next) => {
-            res.render('screens/test');
-        });
+        router.get('/screen', ScreenModule.index);
+        router.post('/screen', ScreenModule.getScreenStateReserve);
     }
     app.use('', router);
     //購入

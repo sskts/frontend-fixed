@@ -6,6 +6,7 @@
 import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as fs from 'fs-extra';
 import * as MP from '../../../libs/MP';
 import SeatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
@@ -253,8 +254,8 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
     try {
         const theaterCode = `000${req.body.theater_code}`.slice(UtilModule.DIGITS_03);
         const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
-        const screen = await UtilModule.readJSONAsync(`./app/theaters/${theaterCode}/${screenCode}.json`);
-        const setting = await UtilModule.readJSONAsync('./app/theaters/setting.json');
+        const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
+        const setting = await fs.readJSON('./app/theaters/setting.json');
         const state = await COA.ReserveService.stateReserveSeat(req.body);
         return res.json({
             err: null,
