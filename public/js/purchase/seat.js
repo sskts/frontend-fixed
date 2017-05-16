@@ -270,11 +270,18 @@ function createScreen(setting, screen) {
             if (x === 0) {
                 seatLabelHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
+
+            if (screen.map[y][x] === 8) {
+                pos.x += aisle.middle.w;
+            } else if (screen.map[y][x] === 9) {
+                pos.x += aisle.middle.w;
+            }
+
             //座席番号HTML生成
             if (y === 0) {
                 seatNumberHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
-            if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5) {
+            if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5 || screen.map[y][x] === 8) {
                 //座席HTML生成
                 var code = toFullWidth(labels[labelCount]) + '－' + toFullWidth(String(x + 1)); //Ａ－１９
                 var label = labels[labelCount] + String(x + 1);
