@@ -562,7 +562,7 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
         }),
         price: args.price
     };
-    log('addCOAAuthorization body', body);
+
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
         auth: { bearer: await oauthToken() },

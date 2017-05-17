@@ -33,7 +33,7 @@ export function getfilmCode(titleCode: string, titleBranchNum: string): string {
  * @returns {string}
  */
 export function getSiteCode(id: string): string {
-    return String(Number(id));
+    return `00${id}`.slice(UtilModule.DIGITS_02);
 }
 
 /**

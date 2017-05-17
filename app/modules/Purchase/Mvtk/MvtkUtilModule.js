@@ -28,7 +28,7 @@ exports.getfilmCode = getfilmCode;
  * @returns {string}
  */
 function getSiteCode(id) {
-    return String(Number(id));
+    return `00${id}`.slice(UtilModule.DIGITS_02);
 }
 exports.getSiteCode = getSiteCode;
 /**

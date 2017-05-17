@@ -276,7 +276,7 @@ function addCOAAuthorization(args) {
                     ticket_code: tmpReserve.ticket_code,
                     ticket_name: {
                         ja: tmpReserve.ticket_name,
-                        en: tmpReserve.ticket_name_eng
+                        en: tmpReserve.ticket_name_eng // チケット名（英）
                     },
                     ticket_name_kana: tmpReserve.ticket_name_kana,
                     std_price: tmpReserve.std_price,
@@ -295,7 +295,6 @@ function addCOAAuthorization(args) {
             }),
             price: args.price
         };
-        log('addCOAAuthorization body', body);
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             auth: { bearer: yield oauthToken() },
