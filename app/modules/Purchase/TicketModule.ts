@@ -347,6 +347,7 @@ async function getSalesTickets(
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:cyclomatic-complexity
+// tslint:disable-next-line:max-func-body-length
 async function ticketValidation(
     req: Request,
     res: Response,
@@ -388,9 +389,13 @@ async function ticketValidation(
                     ? mvtkTicket.ticket.add_price_glasses
                     : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
-                mvtk_num: mvtkTicket.code, // ムビチケ購入番号
                 mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip), // ムビチケ計上単価
-                kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp // ムビチケ映写方式区分
+                kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp, // ムビチケ映写方式区分
+                mvtk_num: mvtkTicket.code, // ムビチケ購入管理番号
+                mvtk_kbn_denshiken: mvtkTicket.ykknInfo.dnshKmTyp, // ムビチケ電子券区分
+                mvtk_kbn_maeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp, // ムビチケ前売券区分
+                mvtk_kbn_kensyu: mvtkTicket.ykknInfo.ykknshTyp, // ムビチケ券種区分
+                mvtk_sales_price: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
             });
         } else {
             // 通常券種
@@ -442,9 +447,13 @@ async function ticketValidation(
                     ? salesTicket.add_glasses
                     : 0, // メガネ単価
                 glasses: ticket.glasses, // メガネ有り無し
-                mvtk_num: ticket.mvtk_num, // ムビチケ購入番号
                 mvtk_app_price: 0, // ムビチケ計上単価
-                kbn_eisyahousiki: '00' // ムビチケ映写方式区分
+                kbn_eisyahousiki: '00', // ムビチケ映写方式区分
+                mvtk_num: '', // ムビチケ購入管理番号
+                mvtk_kbn_denshiken: '00', // ムビチケ電子券区分
+                mvtk_kbn_maeuriken: '00', // ムビチケ前売券区分
+                mvtk_kbn_kensyu: '00', // ムビチケ券種区分
+                mvtk_sales_price: 0 // ムビチケ販売単価
             });
         }
     }

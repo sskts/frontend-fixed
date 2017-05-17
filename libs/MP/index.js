@@ -272,8 +272,10 @@ function addCOAAuthorization(args) {
                     section: tmpReserve.section,
                     seat_code: tmpReserve.seat_code,
                     ticket_code: tmpReserve.ticket_code,
-                    ticket_name_ja: tmpReserve.ticket_name,
-                    ticket_name_en: tmpReserve.ticket_name_eng,
+                    ticket_name: {
+                        ja: tmpReserve.ticket_name,
+                        en: tmpReserve.ticket_name_eng // チケット名（英）
+                    },
                     ticket_name_kana: tmpReserve.ticket_name_kana,
                     std_price: tmpReserve.std_price,
                     add_price: tmpReserve.add_price,
@@ -281,7 +283,12 @@ function addCOAAuthorization(args) {
                     sale_price: tmpReserve.sale_price,
                     mvtk_app_price: tmpReserve.mvtk_app_price,
                     add_glasses: tmpReserve.add_price_glasses,
-                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki
+                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki,
+                    mvtk_num: tmpReserve.mvtk_num,
+                    mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken,
+                    mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken,
+                    mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu,
+                    mvtk_sales_price: tmpReserve.mvtk_sales_price // ムビチケ販売単価
                 };
             }),
             price: args.price

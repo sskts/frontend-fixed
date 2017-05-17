@@ -216,10 +216,14 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             sale_price: salesTickets[0].sale_price,
             add_price_glasses: 0,
             glasses: false,
-            mvtk_num: '',
             mvtk_app_price: 0,
             add_glasses: 0,
-            kbn_eisyahousiki: '00'
+            kbn_eisyahousiki: '00', // ムビチケ映写方式区分
+            mvtk_num: '', // ムビチケ購入管理番号
+            mvtk_kbn_denshiken: '00', // ムビチケ電子券区分
+            mvtk_kbn_maeuriken: '00', // ムビチケ前売券区分
+            mvtk_kbn_kensyu: '00', // ムビチケ券種区分
+            mvtk_sales_price: 0 // ムビチケ販売単価
         };
     });
     let price = 0;

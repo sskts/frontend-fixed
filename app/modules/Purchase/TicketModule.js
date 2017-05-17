@@ -323,6 +323,7 @@ function getSalesTickets(req, purchaseModel) {
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:cyclomatic-complexity
+// tslint:disable-next-line:max-func-body-length
 function ticketValidation(req, res, purchaseModel, reserveTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
@@ -363,9 +364,13 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                         ? mvtkTicket.ticket.add_price_glasses
                         : 0,
                     glasses: ticket.glasses,
-                    mvtk_num: mvtkTicket.code,
                     mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip),
-                    kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp // ムビチケ映写方式区分
+                    kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp,
+                    mvtk_num: mvtkTicket.code,
+                    mvtk_kbn_denshiken: mvtkTicket.ykknInfo.dnshKmTyp,
+                    mvtk_kbn_maeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp,
+                    mvtk_kbn_kensyu: mvtkTicket.ykknInfo.ykknshTyp,
+                    mvtk_sales_price: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
                 });
             }
             else {
@@ -419,9 +424,13 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                         ? salesTicket.add_glasses
                         : 0,
                     glasses: ticket.glasses,
-                    mvtk_num: ticket.mvtk_num,
                     mvtk_app_price: 0,
-                    kbn_eisyahousiki: '00' // ムビチケ映写方式区分
+                    kbn_eisyahousiki: '00',
+                    mvtk_num: '',
+                    mvtk_kbn_denshiken: '00',
+                    mvtk_kbn_maeuriken: '00',
+                    mvtk_kbn_kensyu: '00',
+                    mvtk_sales_price: 0 // ムビチケ販売単価
                 });
             }
         }

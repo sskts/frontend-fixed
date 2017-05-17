@@ -33,9 +33,7 @@ export function getfilmCode(titleCode: string, titleBranchNum: string): string {
  * @returns {string}
  */
 export function getSiteCode(id: string): string {
-    return (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')
-        ? '18'
-        : String(Number(id));
+    return `00${id}`.slice(UtilModule.DIGITS_02);
 }
 
 /**

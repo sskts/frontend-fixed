@@ -226,10 +226,14 @@ function reserve(selectSeats, purchaseModel) {
                 sale_price: salesTickets[0].sale_price,
                 add_price_glasses: 0,
                 glasses: false,
-                mvtk_num: '',
                 mvtk_app_price: 0,
                 add_glasses: 0,
-                kbn_eisyahousiki: '00'
+                kbn_eisyahousiki: '00',
+                mvtk_num: '',
+                mvtk_kbn_denshiken: '00',
+                mvtk_kbn_maeuriken: '00',
+                mvtk_kbn_kensyu: '00',
+                mvtk_sales_price: 0 // ムビチケ販売単価
             };
         });
         let price = 0;
