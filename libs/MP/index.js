@@ -283,11 +283,17 @@ function addCOAAuthorization(args) {
                     sale_price: tmpReserve.sale_price,
                     mvtk_app_price: tmpReserve.mvtk_app_price,
                     add_glasses: tmpReserve.add_price_glasses,
-                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki
+                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki,
+                    mvtk_num: tmpReserve.mvtk_num,
+                    mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken,
+                    mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken,
+                    mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu,
+                    mvtk_sales_price: tmpReserve.mvtk_sales_price // ムビチケ販売単価
                 };
             }),
             price: args.price
         };
+        log('addCOAAuthorization body', body);
         const response = yield request.post({
             url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
             auth: { bearer: yield oauthToken() },

@@ -115,7 +115,7 @@ class PurchaseModel {
         if (this.reserveTickets === null)
             return result;
         for (const reserveTicket of this.reserveTickets) {
-            if (reserveTicket.mvtk_num !== null && reserveTicket.mvtk_num.length > 0)
+            if (reserveTicket.mvtk_num !== '' && reserveTicket.mvtk_num.length > 0)
                 result = true;
         }
         return result;
