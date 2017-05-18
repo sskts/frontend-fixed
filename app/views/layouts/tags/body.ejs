@@ -3,18 +3,17 @@ let tagManagerId;
 let analyticsId;
 if (env === 'production') {
     tagManagerId = 'GTM-PTHQSFV';
-    analyticsId = 'UA-93245059-4';
+    analyticsId = 'UA-99018492-1';
 } else if (env === 'test') {
-    tagManagerId = 'GTM-5JNQ6CD';
-    analyticsId = 'UA-93245059-3';
+    tagManagerId = 'GTM-56DL5JR';
+    analyticsId = 'UA-99018492-2';
 } else {
     tagManagerId = 'GTM-56DL5JR';
-    analyticsId = 'UA-93245059-1';
+    analyticsId = 'UA-99018492-2';
 }
 %>
 <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= tagManagerId %>"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=<%= tagManagerId %>" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <script>
 try {
