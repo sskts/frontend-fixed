@@ -69,6 +69,16 @@ function purchase() {
         } else {
             //完了画面表示
             showComplete(res.result);
+            try {
+                ga('send', {
+                    hitType: 'event',
+                    eventCategory: 'purchase',
+                    eventAction: 'complete',
+                    eventLabel: 'conversion'
+                });
+            } catch (err) {
+                console.error(err);
+            }
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
