@@ -72,9 +72,9 @@ function purchase() {
             try {
                 ga('send', {
                     hitType: 'event',
-                    eventCategory: 'submit',
-                    eventAction: 'post',
-                    eventLabel: 'purchase conversion'
+                    eventCategory: 'purchase',
+                    eventAction: 'complete',
+                    eventLabel: 'conversion'
                 });
             } catch (err) {
                 console.error(err);
