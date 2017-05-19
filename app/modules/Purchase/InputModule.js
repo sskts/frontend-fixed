@@ -49,6 +49,7 @@ function index(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         //購入者情報入力表示
         res.locals.error = null;
+        res.locals.gmoError = null;
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
         res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
@@ -132,6 +133,7 @@ function submit(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty()) {
                 res.locals.error = validationResult.mapped();
+                res.locals.gmoError = null;
                 res.locals.input = req.body;
                 res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
@@ -157,9 +159,10 @@ function submit(req, res, next) {
                 log('GMOオーソリ削除');
             }
             if (purchaseModel.getReserveAmount() > 0) {
+                res.locals.gmoError = null;
                 // クレジット決済
                 purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-                yield addAuthorization(req, purchaseModel);
+                yield addAuthorization(req, res, purchaseModel);
                 log('オーソリ追加');
             }
             yield MP.ownersAnonymous({
@@ -250,7 +253,7 @@ exports.submit = submit;
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
  */
-function addAuthorization(req, purchaseModel) {
+function addAuthorization(req, res, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -292,6 +295,7 @@ function addAuthorization(req, purchaseModel) {
         catch (err) {
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
+            res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         const execTranIn = {
@@ -309,6 +313,7 @@ function addAuthorization(req, purchaseModel) {
         catch (err) {
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
             logger_1.default.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
+            res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ追加

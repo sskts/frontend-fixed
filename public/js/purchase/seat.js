@@ -1,4 +1,10 @@
 var screenSeatStatusesMap;
+
+//位置情報許可
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(){});
+}
+
 $(function () {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     var modal = new SASAKI.Modal();

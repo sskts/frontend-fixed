@@ -67,8 +67,18 @@ function purchase() {
             //エラー表示
             showError(res.err.message);
         } else {
+            var transactionId = $('input[name=transaction_id]').val();
             //完了画面表示
             showComplete(res.result);
+            // 計測
+            collection({
+                client: 'sskts-frontend',
+                label: 'purchaseCompleteConversion',
+                action: 'complete',
+                category: 'purchase',
+                message: '購入完了',
+                transaction: transactionId
+            });
             try {
                 ga('send', {
                     hitType: 'event',
