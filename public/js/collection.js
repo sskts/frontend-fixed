@@ -54,6 +54,8 @@ function getCurrentPosition(cb) {
                 geolocation = [data.coords.latitude, data.coords.longitude];
             }
             cb(geolocation);
+        }, function(err) {
+            cb(geolocation);
         });
     } else {
         cb(geolocation);
