@@ -269,7 +269,7 @@ function addCOAAuthorization(args) {
             seats: args.salesTicketResults.map((tmpReserve) => {
                 return {
                     performance: args.performance.id,
-                    section: tmpReserve.section,
+                    screen_section: tmpReserve.section,
                     seat_code: tmpReserve.seat_code,
                     ticket_code: tmpReserve.ticket_code,
                     ticket_name: {
