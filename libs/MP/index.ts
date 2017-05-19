@@ -536,7 +536,7 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
         seats: args.salesTicketResults.map((tmpReserve) => {
             return {
                 performance: args.performance.id, // パフォーマンスID
-                section: tmpReserve.section, // 座席セクション
+                screen_section: tmpReserve.section, // 座席セクション
                 seat_code: tmpReserve.seat_code, // 座席番号
                 ticket_code: tmpReserve.ticket_code, // チケットコード
                 ticket_name: {
