@@ -1,12 +1,11 @@
 {
   "name": "sskts-frontend",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "check": "npm run tslint && nsp check",
     "snyk": "snyk auth && snyk test --ignore-policy",
     "start": "node ./index.js",
-    "test": "mocha ./test/mocha/**/*.js --no-timeouts --recursive",
     "ui-test": "node ./test/uiTest.js",
     "postcss": "postcss -c ./.postcssrc.json",
     "css": "npm run scss && npm run postcss",
@@ -16,11 +15,12 @@
     "tslint-fix": "tslint -c tslint.json app/**/**.ts --project tsconfig.json --fix",
     "tsc": "tsc -p ./",
     "jsdoc": "grunt jsdoc",
-    "clean": "rimraf libs/**/*.js app/**/*.js test/**/*.js docs/**/*",
-    "build": "npm run check && npm run clean && tsc -p ./ && npm run test && npm run css && npm run jsdoc",
-    "preversion": "npm run build",
+    "clean": "rimraf libs/**/*.js app/**/*.js test/**/*.js docs/* npm-debug.log*",
+    "build": "npm run tsc && npm run css",
+    "test": "npm run check && mocha --no-timeouts --recursive",
+    "preversion": "npm run clean && npm run build && npm test",
     "version": "git add -A",
-    "postversion": "git push origin"
+    "postversion": "git push origin --tags"
   },
   "dependencies": {
     "@motionpicture/coa-service": "^2.0.10",
