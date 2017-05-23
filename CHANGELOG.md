@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+## 1.3.3 - 2017-05-23
+### Fixed
+- クライアント情報収集タグ位置情報取得場所修正
+
 ## 1.3.2 - 2017-05-23
 ### Fixed
 - CHANGELOG.md更新
