@@ -8,9 +8,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+## 1.3.2 - 2017-05-23
+### Fixed
+- CHANGELOG.md更新
+
+## 1.3.1 - 2017-05-23
+### Fixed
+- package.json修正（scripts: css）
+
 ## 1.3.0 - 2017-05-22
 ### Added
 - CHANGELOG.md追加
+
+## 1.2.2 - 2017-05-19
+### Fixed
+- README.md更新
 
 ## 1.2.1 - 2017-05-19
 ### Fixed
