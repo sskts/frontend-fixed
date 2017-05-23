@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## 1.2.0 - 2017-05-19
 ### Added
-- クライアント情報収集タグ追加
+- クライアント情報収集タグ追加（GMOエラー、購入情報入力バリデーション、購入完了、チケット情報照会バリデーション）
 
 ## 1.1.0 - 2017-05-19
 
@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 4DX作品とその他選択時の券種表示切り替え追加
 - 購入内容確認ページ文言追加
 - 推奨環境以外のIEでのアクセス制限追加
-- コンバージョン計測タグ追加
+- Google Analyticsイベントトラッキング タグ追加（購入完了、チケット情報確認QRコード表示/非表示）
 
 ### Changed
 - GMOエラー文言表示方法変更
