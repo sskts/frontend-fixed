@@ -10,6 +10,8 @@ const router = express.Router();
 
 // TOP
 router.get('/', InplaceModule.index);
+// 選択TOP
+router.get('/select', InplaceModule.select);
 // 設定
 router.get('/setting', InplaceModule.setting);
 // 利用停止
