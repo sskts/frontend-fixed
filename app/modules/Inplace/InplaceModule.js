@@ -15,6 +15,7 @@ const log = debug('SSKTS:Inplace.InplaceModule');
  */
 function index(_, res) {
     res.render('index/index');
+    log('券売機TOPページ表示');
 }
 exports.index = index;
 /**
