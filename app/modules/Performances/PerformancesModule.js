@@ -28,7 +28,7 @@ function index(req, res, next) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
-    res.render('performance');
+    res.render('performances');
     return;
 }
 exports.index = index;

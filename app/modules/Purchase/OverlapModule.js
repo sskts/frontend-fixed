@@ -17,7 +17,7 @@ const debug = require("debug");
 const MP = require("../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
  * @memberOf Purchase.OverlapModule

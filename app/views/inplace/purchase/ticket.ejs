@@ -1,0 +1,98 @@
+<%- contentFor('script') %>
+<script src="/js/purchase/ticket.js"></script>
+
+<%- contentFor('body') %>
+<div class="purchase-ticket">
+    <form method="post">
+        <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
+        <p class="read"><%- __('purchase.ticket.read') %></p>
+
+        <% if (mvtkFlg) { %>
+        <% if (mvtkLength === 0) { %>
+        <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
+        <div class="box radius bg-ultra-light-gray mb-medium mvtk">
+            <dl class="d-table">
+                <dt class="d-td"><%- __('purchase.ticket.mvtk.read') %></dt>
+                <dd class="d-td width-medium">                                
+                    <div class="ghost-button mvtk-button">
+                        <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <% } %>
+        <% } %>
+
+        <ul class="box radius bg-light-gray mb-medium seats">
+            <% if (reserveTickets.length > 0) { %>
+            <% for (let ticket of reserveTickets) { %>
+            <li data-section="<%= ticket.section %>"
+                data-seat-code="<%= ticket.seat_code %>"
+                data-ticket-code="<%= ticket.ticket_code %>"
+                data-ticket-name="<%= ticket.ticket_name %>"
+                data-sale-price="<%= ticket.sale_price %>"
+                data-mvtk-num="<%= ticket.mvtk_num %>"
+                data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                data-glasses="<%= ticket.glasses %>">
+                <dl class="d-table">
+                    <dt class="d-td seat-code"><%= ticket.seat_code %></dt>
+                    <dd class="d-td width-medium">                                
+                        <div class="ghost-button blue-button">
+                            <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+            <% } %>
+            <% } else { %>
+            <% for (let seat of reserveSeats.list_tmp_reserve) { %>
+            <li data-section="<%= seat.seat_section %>"
+                data-seat-code="<%= seat.seat_num %>"
+                data-ticket-code=""
+                data-ticket-name=""
+                data-sale-price=""
+                data-mvtk-num=""
+                data-add-price-glasses=""
+                data-glasses="">
+                <dl class="d-table">
+                    <dt class="d-td seat-code"><%= seat.seat_num %></dt>
+                    <dd class="d-td width-medium" data-ticket="">
+                        <div class="button blue-button">
+                            <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+            <% } %>
+            <% } %>
+        </ul>
+
+        <div class="box radius bg-light-gray mb-large total">
+            <div class="text-right mb-small">
+                <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
+                <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span><%- __('common.price') %></strong></div>
+            </div>
+            <div class="border-bottom-dot mb-small"></div>
+            <% if (kbnJoueihousiki === '002') { %>
+            <!-- 4DX -->
+            <p class="small-x-text mb-xx-small"><%- __('purchase.ticket.note_4dx') %></p>
+            <% } %>
+            <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
+        </div>    
+    
+    
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.ticket.next') %></button></div>
+            <div class="prev-link"><a class="icon-prev-black"href="/purchase/seat/<%- performance.id %>/"><%- __('purchase.ticket.prev') %></a></div>
+        </div>
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+<%- include('../layouts/siteSeal') %>
+</div>
+
+<input type="hidden" class="ticket-validation" value="<%= error %>">
+
+<%- contentFor('modals') %>
+<%- include('modals/ticketValidation') -%>
+<%- include('modals/ticketType') -%>
+<%- include('modals/ticketNotSelect') -%>

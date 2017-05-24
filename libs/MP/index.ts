@@ -10,7 +10,7 @@ import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
 import logger from '../../app/middlewares/logger';
 
-const log = debug('SSKTS');
+const log = debug('SSKTS:MP');
 const endPoint = process.env.MP_ENDPOINT;
 
 /**

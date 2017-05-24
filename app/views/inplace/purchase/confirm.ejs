@@ -1,0 +1,133 @@
+<%- contentFor('script') %>
+<script src="/js/ScreenSeatStatusesMap.js"></script>
+<script src="/js/purchase/confirm.js"></script>
+<script src="/js/purchase/complete.js"></script>
+
+<%- contentFor('body') %>
+<div class="purchase-confirm">
+    <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.confirm.read') %></p>
+
+    <form class="form-layout" method="post">
+        <h2 class="section-ttl">
+            <%- __('common.film_info') %>
+            <div class="right">
+                <div class="button light-gray-button change-button">
+                    <a href="<%= portalTheaterSite %>"><%- __('common.change') %></a>
+                </div>
+            </div>
+        </h2>
+        <ul class="box radius bg-light-gray mb-large">
+            <li>
+                <dl>
+                    <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
+                    <dd><%= performance.attributes.theater.name[__('lang')] %> / <%= performance.attributes.screen.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.film_title') %></dt>
+                    <dd><%= performance.attributes.film.name[__('lang')] %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.appreciation_date') %></dt>
+                    <dd>
+                        <div class="mb-xx-small">
+                            <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
+                        </div>
+                        <p class="small-x-text red-text"><%- __('purchase.confirm.date_note') %></p>
+                    </dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.seat') %></dt>
+                    <dd>
+                        <% for (ticket of reserveTickets) { %>
+                        <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                        <% } %>
+                        <div style="display: none" class="right">
+                            <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
+                            --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%- performance.id %>/"><%- __('common.change') %></a></div>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+        </ul>       
+        
+        <h2 class="section-ttl">
+            <%- __('common.purchase_info') %>
+            <div class="right">
+                <div class="button light-gray-button change-button">
+                    <a href="/purchase/input"><%- __('common.change') %></a>
+                </div>
+            </div>
+        </h2>
+        <ul class="box radius bg-light-gray mb-large">
+            <li>
+                <dl>
+                    <dt><%- __('common.name_hira') %></dt>
+                    <dd><%= input.last_name_hira %> <%= input.first_name_hira %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.mail_addr') %></dt>
+                    <dd><%= input.mail_addr %></dd>
+                </dl>
+            </li>
+            <li>
+                <dl>
+                    <dt><%- __('common.tel_num') %></dt>
+                    <dd><%= input.tel_num %></dd>
+                </dl>
+            </li>
+            <% if (gmoTokenObject) { %>
+            <li>
+                <dl>
+                    <dt><%- __('common.cardno') %></dt>
+                    <dd><%= gmoTokenObject.maskedCardNo %></dd>
+                </dl>
+            </li>
+            <% } %>
+        </ul>
+        
+        <% if (gmoTokenObject) { %>
+        <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
+        <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
+        <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
+        <% } %>
+
+        <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
+        <p class="mb-small"><%- __('common.notes_read') %></p>
+        <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
+            <%- include('notes/ja/' + performance.attributes.theater.id) %>
+        </div>
+
+        <div class="mb-x-large text-center">
+            <input type="checkbox" name="notes_agree" value="true" id="notes_agree">
+            <label for="notes_agree" class="notes_agree-label"><strong><%- __('common.notes_agree') %></strong></label>
+            <% if (error && error.notes_agree) { %>
+                <div class="validation-text"><%= error.notes_agree[0] %></div>
+            <% } %>
+        </div>  
+        
+        
+
+        <div class="button-area clearfix">
+            <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.confirm.next') %></button></div>
+            <div class="prev-link"><a class="icon-prev-black"href="/purchase/input"><%- __('purchase.confirm.prev') %></a></div>
+        </div>
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+<%- include('../layouts/siteSeal') %>
+</div>
+
+<%- include('completeContents') %>
+<%- include('../error/static') %>
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/updateReserveError') %>

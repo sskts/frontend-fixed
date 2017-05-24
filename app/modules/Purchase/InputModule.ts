@@ -13,7 +13,7 @@ import logger from '../../middlewares/logger';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.InputModule');
 
 /**
  * 購入者情報入力

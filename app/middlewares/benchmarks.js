@@ -4,7 +4,7 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
-const log = debug('SSKTS');
+const log = debug('SSKTS:benchmark');
 // tslint:disable-next-line:variable-name
 exports.default = (req, _res, next) => {
     if (process.env.NODE_ENV === 'development') {

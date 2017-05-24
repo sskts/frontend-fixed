@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const debug = require("debug");
 const webdriver = require("selenium-webdriver");
-const log = debug('SSKTS');
+const log = debug('SSKTS:UITest');
 const width = 1920;
 const height = 1080;
 const capabilities = {

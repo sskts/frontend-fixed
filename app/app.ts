@@ -11,6 +11,7 @@ import ipFilter from './middlewares/ipFilter';
 import * as locales from './middlewares/locales';
 import maintenance from './middlewares/maintenance';
 import session from './middlewares/session';
+import * as SupertestRequest from './middlewares/supertestRequest';
 import * as UtilModule from './modules/Util/UtilModule';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -28,12 +29,13 @@ app.use(helmet()); //セキュリティー対策
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-// tslint:disable-next-line:no-backbone-get-set-outside-model
-app.set('views', __dirname + '/views');
-// tslint:disable-next-line:no-backbone-get-set-outside-model
+if (process.env.VIEW_TYPE === 'inplace') {
+    app.set('views', __dirname + '/views/inplace');
+} else {
+    app.set('views', __dirname + '/views/default');
+}
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
-// tslint:disable-next-line:no-backbone-get-set-outside-model
 app.set('layout', 'layouts/layout');
 
 app.use(locales.setLocale); // 言語
@@ -54,6 +56,10 @@ MVTK.initialize(
     process.env.MVTK_ENDPOINT_SERVICE_02,
     process.env.MVTK_ENDPOINT_RESERVE_SERVICE
 );
+
+if (process.env.NODE_ENV === 'development') {
+    app.use(SupertestRequest.supertestSession); // テスト用
+}
 
 router(app); // ルーティング
 

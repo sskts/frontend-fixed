@@ -17,7 +17,7 @@ const moment = require("moment");
 const MP = require("../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 取引開始
  * @memberOf Purchase.TransactionModule

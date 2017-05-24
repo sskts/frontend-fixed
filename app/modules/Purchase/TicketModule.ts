@@ -12,7 +12,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.TicketModule');
 
 /**
  * 券種選択

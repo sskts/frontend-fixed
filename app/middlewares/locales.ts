@@ -5,14 +5,18 @@
 import { NextFunction, Request, Response } from 'express';
 import * as i18n from 'i18n';
 
+let directory = `${__dirname}/../locales/default`;
+
+if (process.env.VIEW_TYPE === 'inplace') {
+    directory = `${__dirname}/../locales/inplace`;
+}
+
 i18n.configure({
-    // 利用するlocalesを設定。これが辞書ファイルとひも付きます
     locales: ['ja'],
     defaultLocale: 'ja',
-    // 辞書ファイルのありかを指定
-    directory: `${__dirname}/../locales`,
-    // オブジェクトを利用したい場合はtrue
-    objectNotation: true
+    directory: directory, // 辞書ファイルのありかを指定
+    objectNotation: true, // オブジェクトを利用したい場合はtrue
+    updateFiles: false // ページのビューで自動的に言語ファイルを更新しない
 });
 
 /**

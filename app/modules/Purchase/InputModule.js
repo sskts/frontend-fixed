@@ -21,7 +21,7 @@ const logger_1 = require("../../middlewares/logger");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
  * @memberOf Purchase.InputModule

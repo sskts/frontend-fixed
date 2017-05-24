@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="<%- __('lang') %>">
+<%- include ../head %>
+
+<body class="purchase inplace">
+券売機
+<%- include ../tags/body %>
+<%- include ../noscript %>
+<div class="wrapper">
+<%- include header %>
+
+<div class="contents">
+    <%- body %>
+</div>
+
+<%- include ../footer %>
+</div>
+<div class="modal-cover" onclick=""></div>
+
+<%- defineContent('modals') %>
+
+<%- include ../loading %>
+<%- include ../tags/env %>
+</body>
+</html>
