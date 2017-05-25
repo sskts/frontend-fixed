@@ -8,7 +8,7 @@
     "start": "node ./index.js",
     "ui-test": "node ./test/uiTest.js",
     "css": "npm run scss && postcss -c ./.postcssrc.json",
-    "scss": "node-sass public/scss/import.scss public/css/style.css",
+    "scss": "node-sass public/scss --output public/css",
     "tslint": "tslint -c tslint.json app/**/**.ts libs/MP/**.ts --type-check --project tsconfig.json",
     "tslint-fix": "tslint -c tslint.json app/**/**.ts --project tsconfig.json --fix",
     "jsdoc": "grunt jsdoc",

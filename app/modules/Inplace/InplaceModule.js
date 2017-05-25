@@ -14,22 +14,10 @@ const log = debug('SSKTS:Inplace.InplaceModule');
  * @returns {void}
  */
 function index(_, res) {
-    res.render('index', { layout: false });
-    log('券売機TOPページ表示');
-}
-exports.index = index;
-/**
- * 券売機選択ページ表示
- * @memberOf InplaceModule
- * @function index
- * @param {Response} res
- * @returns {void}
- */
-function select(_, res) {
     res.render('index/index');
     log('券売機TOPページ表示');
 }
-exports.select = select;
+exports.index = index;
 /**
  * 券売機設定ページ表示
  * @memberOf InplaceModule

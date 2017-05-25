@@ -13,13 +13,19 @@
 		"Specified_Commercial_Transaction_Law": "特定商取引法に基づく表記",
 		"copyright": "Copyright (C) 2001-2017 Cinema Sunshine Co., Ltd. All Rights Reserved."
 	},
+	"navigation": {
+		"restart": "最初の画面",
+		"prev": "一つ前に戻る"
+	},
 	"noscript": "javascrptの設定を有効にしてご覧ください",
 	"index": {
 		"page_ttl": "券売機",
 		"read": "ご利用内容をタップしてください",
-		"purchase": "<span class=\"small-text\">チケットをお買い求めの方</span><br>チケット購入",
-		"inquiry": "<span class=\"small-text\">既にチケット購入済みの方</span><br>チケット発券"
-
+		"purchase-read": "チケットをお買い求めの方",
+		"purchase": "チケット購入",
+		"inquiry-read": "既にチケット購入済みの方",
+		"inquiry": "チケット発券",
+		"qr_read": "ご購入済みの方は右のQRコードからチケット照会画面にアクセスして<br>入場用QRコードを取得頂けます。"
 	},
 	"setting": {
 		"page_ttl": "設定",

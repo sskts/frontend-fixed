@@ -15,18 +15,6 @@ const log = debug('SSKTS:Inplace.InplaceModule');
  * @returns {void}
  */
 export function index(_: Request, res: Response): void {
-    res.render('index', {layout: false});
-    log('券売機TOPページ表示');
-}
-
-/**
- * 券売機選択ページ表示
- * @memberOf InplaceModule
- * @function index
- * @param {Response} res
- * @returns {void}
- */
-export function select(_: Request, res: Response): void {
     res.render('index/index');
     log('券売機TOPページ表示');
 }

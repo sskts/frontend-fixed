@@ -3,18 +3,17 @@
 <%- include head %>
 
 <body class="inplace">
-券売機
 <%- include tags/body %>
 <%- include noscript %>
 <div class="wrapper">
 
-<%- include header %>
+<%- include navigation %>
 
 <div class="contents">
-    <%- body %>
+    <div class="contents-inner">
+        <%- body %>
+    </div>
 </div>
-
-<%- include footer %>
 </div>
 <div class="modal-cover" onclick=""></div>
 <%- defineContent('modals') %>
