@@ -29,7 +29,7 @@ describe('POST /inquiry/login', () => {
 
     it('auth 予約番号なし', async () => {
         await supertest(app)
-            .post('/inquiry/login')
+            .post('/inquiry/login?theater=118')
             .send({
                 theater_code: '118',
                 reserve_num: '',
@@ -40,7 +40,7 @@ describe('POST /inquiry/login', () => {
 
     it('auth 電話番号なし', async () => {
         await supertest(app)
-            .post('/inquiry/login')
+            .post('/inquiry/login?theater=118')
             .send({
                 theater_code: '118',
                 reserve_num: '531',

@@ -32,9 +32,7 @@ const timeout = 10000;
  * @requires {void}
  */
 function errorHandler(args, response) {
-    logger_1.default.error('MP-API:errorHandler args', args);
-    logger_1.default.error('MP-API:errorHandler response', response.body);
-    logger_1.default.error('MP-API:errorHandler statusCode', response.statusCode);
+    logger_1.default.error('MP-API:errorHandler', args, response.body, response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }
@@ -271,11 +269,13 @@ function addCOAAuthorization(args) {
             seats: args.salesTicketResults.map((tmpReserve) => {
                 return {
                     performance: args.performance.id,
-                    section: tmpReserve.section,
+                    screen_section: tmpReserve.section,
                     seat_code: tmpReserve.seat_code,
                     ticket_code: tmpReserve.ticket_code,
-                    ticket_name_ja: tmpReserve.ticket_name,
-                    ticket_name_en: tmpReserve.ticket_name_eng,
+                    ticket_name: {
+                        ja: tmpReserve.ticket_name,
+                        en: tmpReserve.ticket_name_eng // チケット名（英）
+                    },
                     ticket_name_kana: tmpReserve.ticket_name_kana,
                     std_price: tmpReserve.std_price,
                     add_price: tmpReserve.add_price,
@@ -283,7 +283,12 @@ function addCOAAuthorization(args) {
                     sale_price: tmpReserve.sale_price,
                     mvtk_app_price: tmpReserve.mvtk_app_price,
                     add_glasses: tmpReserve.add_price_glasses,
-                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki
+                    kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki,
+                    mvtk_num: tmpReserve.mvtk_num,
+                    mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken,
+                    mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken,
+                    mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu,
+                    mvtk_sales_price: tmpReserve.mvtk_sales_price // ムビチケ販売単価
                 };
             }),
             price: args.price
@@ -540,7 +545,7 @@ exports.removeEmail = removeEmail;
  * @memberOf MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
- * @returns {Promise<string>}
+ * @returns {Promise<string | null>}
  */
 function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -558,6 +563,8 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: timeout
         }).promise();
+        if (response.statusCode === HTTPStatus.NOT_FOUND)
+            return null;
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(body, response);
         log('makeInquiry result:' + response.body.data);
@@ -589,7 +596,8 @@ function getPerformanceCOA(theaterId, screenId, filmId) {
             titleCode: film.attributes.coa_title_code,
             titleBranchNum: film.attributes.coa_title_branch_num,
             flgMvtkUse: film.attributes.flg_mvtk_use,
-            dateMvtkBegin: film.attributes.date_mvtk_begin
+            dateMvtkBegin: film.attributes.date_mvtk_begin,
+            kbnJoueihousiki: film.attributes.kbn_joueihousiki
         };
     });
 }

@@ -16,7 +16,7 @@ exports.default = (app) => {
     if (process.env.NODE_ENV === 'development') {
         app.use(SupertestRequest.supertestSession);
     }
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         // tslint:disable-next-line:variable-name
         router.get('/', (_req, res, _next) => {
             res.redirect('/performances');

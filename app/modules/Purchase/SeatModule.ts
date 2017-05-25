@@ -8,7 +8,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
 import * as MP from '../../../libs/MP';
-import SeatForm from '../../forms/Purchase/SeatForm';
+import * as seatForm from '../../forms/Purchase/SeatForm';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -107,7 +107,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             return (value.group === 'PORTAL');
         });
         //バリデーション
-        SeatForm(req);
+        seatForm.seatSelect(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) {
             res.locals.transactionId = purchaseModel.transactionMP;
@@ -185,17 +185,18 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
     });
     log('COA仮予約', purchaseModel.reserveSeats);
 
-    //コアAPI券種取得
-    purchaseModel.salesTicketsCOA = await COA.ReserveService.salesTicket({
-        theater_code: purchaseModel.performance.attributes.theater.id,
-        date_jouei: purchaseModel.performance.attributes.day,
-        title_code: purchaseModel.performanceCOA.titleCode,
-        title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-        time_begin: purchaseModel.performance.attributes.time_start
-        // screen_code: performance.screen.id
-    });
-
-    log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
+    if (purchaseModel.salesTicketsCOA === null) {
+        //コアAPI券種取得
+        purchaseModel.salesTicketsCOA = await COA.ReserveService.salesTicket({
+            theater_code: purchaseModel.performance.attributes.theater.id,
+            date_jouei: purchaseModel.performance.attributes.day,
+            title_code: purchaseModel.performanceCOA.titleCode,
+            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
+            time_begin: purchaseModel.performance.attributes.time_start
+            // screen_code: performance.screen.id
+        });
+        log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
+    }
 
     //コアAPI券種取得
     const salesTickets = purchaseModel.salesTicketsCOA;
@@ -216,10 +217,14 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             sale_price: salesTickets[0].sale_price,
             add_price_glasses: 0,
             glasses: false,
-            mvtk_num: '',
             mvtk_app_price: 0,
             add_glasses: 0,
-            kbn_eisyahousiki: '00'
+            kbn_eisyahousiki: '00', // ムビチケ映写方式区分
+            mvtk_num: '', // ムビチケ購入管理番号
+            mvtk_kbn_denshiken: '00', // ムビチケ電子券区分
+            mvtk_kbn_maeuriken: '00', // ムビチケ前売券区分
+            mvtk_kbn_kensyu: '00', // ムビチケ券種区分
+            mvtk_sales_price: 0 // ムビチケ販売単価
         };
     });
     let price = 0;
@@ -248,16 +253,27 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
-export async function getScreenStateReserve(req: Request, res: Response): Promise<Response> {
+export async function getScreenStateReserve(req: Request, res: Response): Promise<void> {
     try {
+        //バリデーション
+        seatForm.screenStateReserve(req);
+        const validationResult = await req.getValidationResult();
+        if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_VALIDATION;
         const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS_02);
         const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
-        const state = await COA.ReserveService.stateReserveSeat(req.body);
-        return res.json({
+        const state = await COA.ReserveService.stateReserveSeat({
+            theater_code: req.body.theater_code, // 施設コード
+            date_jouei: req.body.date_jouei, // 上映日
+            title_code: req.body.title_code, // 作品コード
+            title_branch_num: req.body.title_branch_num, // 作品枝番
+            time_begin: req.body.time_begin, // 上映時刻
+            screen_code: req.body.screen_code // スクリーンコード
+        });
+        res.json({
             err: null,
             result: {
                 screen: screen,
@@ -265,7 +281,51 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
                 state: state
             }
         });
+        return;
     } catch (err) {
-        return res.json({ err: err, result: null });
+        res.json({ err: err, result: null });
+        return;
+    }
+}
+
+/**
+ * 券種情報をセションへ保存
+ * @memberOf Purchase.SeatModule
+ * @function getSalesTickets
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<void>}
+ */
+export async function saveSalesTickets(req: Request, res: Response): Promise<void> {
+    try {
+        //バリデーション
+        seatForm.salesTickets(req);
+        const validationResult = await req.getValidationResult();
+        if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_VALIDATION;
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.salesTicketsCOA === null) {
+            //コアAPI券種取得
+            purchaseModel.salesTicketsCOA = await COA.ReserveService.salesTicket({
+                theater_code: req.body.theater_code,
+                date_jouei: req.body.date_jouei,
+                title_code: req.body.title_code,
+                title_branch_num: req.body.title_branch_num,
+                time_begin: req.body.time_begin
+                // screen_code: req.body.screen_code
+            });
+            log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
+            req.session.purchase = purchaseModel.toSession();
+            res.json({ err: null });
+            return;
+        } else {
+            res.json({ err: null });
+            return;
+        }
+    } catch (err) {
+        res.json({ err: err });
+        return;
     }
 }

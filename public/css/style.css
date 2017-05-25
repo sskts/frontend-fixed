@@ -716,14 +716,10 @@ p a {
   .footer .inner {
     position: relative; }
   .footer ul {
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    text-align: center;
     margin-bottom: 10px; }
     .footer ul li {
+      display: inline-block;
       padding: 0 5px;
       border-right: 1px solid #FFF;
       line-height: 1.5; }
@@ -1141,8 +1137,8 @@ p a {
     display: block;
     width: 50px;
     height: 50px;
-    color: #333;
-    border: 1px solid #c6c6c6;
+    color: #FFF;
+    background-color: #3e3a39;
     border-radius: 3px;
     padding-top: 30px; }
   .purchase-seat .zoom-btn.scroll {

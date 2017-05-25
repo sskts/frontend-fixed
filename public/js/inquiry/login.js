@@ -1,6 +1,36 @@
 $(function () {
+    validation();
     toInquiry();
 });
+
+/**
+ * バリデーション
+ * @function validation
+ * @returns {void}
+ */
+function validation() {
+    var validations = [];
+    var names = [];
+
+    $('.validation').each(function (index, elem) {
+        var target = $(elem);
+        validations.push(target.parent().prev().text() + ': ' + target.next().text());
+        names.push(target.attr('name'));
+    });
+
+    if (validations.length > 0) {
+        // 計測
+        collection({
+            client: 'sskts-frontend',
+            label: 'inquiryValidationMessage',
+            action: 'validation',
+            category: 'form',
+            message: validations.join(', '),
+            notes: names.join(', '),
+            transaction: $('input[name=transaction_id]').val()
+        });
+    }
+}
 
 /**
  * 照会情報取得して照会
@@ -9,7 +39,7 @@ $(function () {
  */
 function toInquiry() {
     var transactionId = getParameter()['transactionId'];
-    
+
     //取引IDなければ終了
     if (!transactionId) return;
     var data = localStorage.getItem('inquiryInfo');

@@ -171,9 +171,7 @@ export interface IPerformance {
  * @requires {void}
  */
 function errorHandler(args: any, response: any): void {
-    logger.error('MP-API:errorHandler args', args);
-    logger.error('MP-API:errorHandler response', response.body);
-    logger.error('MP-API:errorHandler statusCode', response.statusCode);
+    logger.error('MP-API:errorHandler', args, response.body, response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) {
         throw new Error('NOT_FOUND');
     }
@@ -472,7 +470,7 @@ export interface IReserveTicket {
     /**
      * ムビチケ購入番号
      */
-    mvtk_num: string | null;
+    mvtk_num: string;
     /**
      * ムビチケ計上単価
      */
@@ -481,6 +479,22 @@ export interface IReserveTicket {
      * ムビチケ映写方式区分
      */
     kbn_eisyahousiki: string;
+    /**
+     * ムビチケ電子券区分
+     */
+    mvtk_kbn_denshiken: string;
+    /**
+     * ムビチケ前売券区分
+     */
+    mvtk_kbn_maeuriken: string;
+    /**
+     * ムビチケ券種区分
+     */
+    mvtk_kbn_kensyu: string;
+    /**
+     * ムビチケ販売単価
+     */
+    mvtk_sales_price: number;
 }
 
 /**
@@ -521,24 +535,32 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
         coa_screen_code: args.performanceCOA.screenCode,
         seats: args.salesTicketResults.map((tmpReserve) => {
             return {
-                performance: args.performance.id,
-                section: tmpReserve.section,
-                seat_code: tmpReserve.seat_code,
-                ticket_code: tmpReserve.ticket_code,
-                ticket_name_ja: tmpReserve.ticket_name,
-                ticket_name_en: tmpReserve.ticket_name_eng,
-                ticket_name_kana: tmpReserve.ticket_name_kana,
-                std_price: tmpReserve.std_price,
-                add_price: tmpReserve.add_price,
-                dis_price: tmpReserve.dis_price,
-                sale_price: tmpReserve.sale_price,
-                mvtk_app_price: tmpReserve.mvtk_app_price,
-                add_glasses: tmpReserve.add_price_glasses,
-                kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki
+                performance: args.performance.id, // パフォーマンスID
+                screen_section: tmpReserve.section, // 座席セクション
+                seat_code: tmpReserve.seat_code, // 座席番号
+                ticket_code: tmpReserve.ticket_code, // チケットコード
+                ticket_name: {
+                    ja: tmpReserve.ticket_name, // チケット名
+                    en: tmpReserve.ticket_name_eng // チケット名（英）
+                },
+                ticket_name_kana: tmpReserve.ticket_name_kana, // チケット名（カナ）
+                std_price: tmpReserve.std_price, // 標準単価
+                add_price: tmpReserve.add_price, // 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
+                dis_price: tmpReserve.dis_price, // 割引額
+                sale_price: tmpReserve.sale_price, // 販売単価(標準単価＋加算単価)
+                mvtk_app_price: tmpReserve.mvtk_app_price, // ムビチケ計上単価
+                add_glasses: tmpReserve.add_price_glasses, // メガネ単価
+                kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki, // ムビチケ映写方式区分
+                mvtk_num: tmpReserve.mvtk_num, // ムビチケ購入管理番号
+                mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken, // ムビチケ電子券区分
+                mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken, // ムビチケ前売券区分
+                mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu, // ムビチケ券種区分
+                mvtk_sales_price: tmpReserve.mvtk_sales_price // ムビチケ販売単価
             };
         }),
         price: args.price
     };
+
     const response = await request.post({
         url: `${endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
         auth: { bearer: await oauthToken() },
@@ -876,9 +898,9 @@ export interface IMakeInquiryArgs {
  * @memberOf MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
- * @returns {Promise<string>}
+ * @returns {Promise<string | null>}
  */
-export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
+export async function makeInquiry(args: IMakeInquiryArgs): Promise<string | null> {
     const body = {
         inquiry_theater: args.inquiry_theater,
         inquiry_id: args.inquiry_id,
@@ -893,6 +915,7 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string> {
         resolveWithFullResponse: true,
         timeout: timeout
     }).promise();
+    if (response.statusCode === HTTPStatus.NOT_FOUND) return null;
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('makeInquiry result:' + (<string>response.body.data));
     return response.body.data.id;
@@ -910,6 +933,7 @@ export interface IPerformanceCOA {
     titleBranchNum: string;
     flgMvtkUse: string;
     dateMvtkBegin: string;
+    kbnJoueihousiki: string;
 }
 
 /**
@@ -935,7 +959,8 @@ export async function getPerformanceCOA(theaterId: string, screenId: string, fil
         titleCode: film.attributes.coa_title_code,
         titleBranchNum: film.attributes.coa_title_branch_num,
         flgMvtkUse: film.attributes.flg_mvtk_use,
-        dateMvtkBegin: film.attributes.date_mvtk_begin
+        dateMvtkBegin: film.attributes.date_mvtk_begin,
+        kbnJoueihousiki: film.attributes.kbn_joueihousiki
     };
 }
 

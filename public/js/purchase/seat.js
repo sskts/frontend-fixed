@@ -1,7 +1,9 @@
 var screenSeatStatusesMap;
+
 $(function () {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     var modal = new SASAKI.Modal();
+    saveSalesTickets();
     loadingStart(function () {
         screenStateUpdate(function () {
             loadingEnd();
@@ -104,7 +106,6 @@ function zoomButtonScroll() {
     }
 }
 
-
 /**
  * スクリーン状態取得
  * @function getScreenStateReserve
@@ -136,6 +137,32 @@ function getScreenStateReserve(count, cb) {
         retry(count, cb)
     }).always(function () {
         
+    });
+}
+
+/**
+ * 券種情報をセションへ保存
+ * @function saveSalesTickets
+ * @returns {void}
+ */
+function saveSalesTickets() {
+    var target = $('.screen-cover');
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/saveSalesTickets',
+        type: 'POST',
+        timeout: 10000,
+        data: {
+            theater_code: target.attr('data-theater'), // 施設コード
+            date_jouei: target.attr('data-day'), // 上映日
+            title_code: target.attr('data-coa-title-code'), // 作品コード
+            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
+            time_begin: target.attr('data-time-start'), // 上映時刻
+            screen_code: target.attr('data-screen-code'), // スクリーンコード
+        }
+    }).done(function (res) {
+    }).fail(function (jqxhr, textStatus, error) {
+    }).always(function () {
     });
 }
 

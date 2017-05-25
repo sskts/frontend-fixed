@@ -2,7 +2,7 @@
   "use": [
     "autoprefixer"
   ],
-  "input": "public/scss/style.css",
+  "input": "public/css/style.css",
   "output": "public/css/style.css",
   "autoprefixer": {
     "browsers": "last 5 versions"

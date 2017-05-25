@@ -154,10 +154,19 @@ function select(req, res, next) {
                         title_branch_num: purchaseModel.performanceCOA.titleBranchNum
                     });
                     log('ムビチケチケットコード取得', ticket);
+                    const validTicket = {
+                        ykknshTyp: info.ykknshTyp,
+                        eishhshkTyp: info.eishhshkTyp,
+                        ykknKnshbtsmiNum: info.ykknKnshbtsmiNum,
+                        knshknhmbiUnip: info.knshknhmbiUnip,
+                        kijUnip: info.kijUnip,
+                        dnshKmTyp: purchaseNumberAuthResult.dnshKmTyp,
+                        znkkkytsknGkjknTyp: purchaseNumberAuthResult.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
+                    };
                     mvtkList.push({
                         code: purchaseNumberAuthResult.knyknrNo,
                         password: UtilModule.bace64Encode(input.password),
-                        ykknInfo: info,
+                        ykknInfo: validTicket,
                         ticket: ticket
                     });
                 }

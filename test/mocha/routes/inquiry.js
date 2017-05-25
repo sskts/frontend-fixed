@@ -36,7 +36,7 @@ describe('GET /inquiry/login', () => {
 describe('POST /inquiry/login', () => {
     it('auth 予約番号なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
-            .post('/inquiry/login')
+            .post('/inquiry/login?theater=118')
             .send({
             theater_code: '118',
             reserve_num: '',
@@ -46,7 +46,7 @@ describe('POST /inquiry/login', () => {
     }));
     it('auth 電話番号なし', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
-            .post('/inquiry/login')
+            .post('/inquiry/login?theater=118')
             .send({
             theater_code: '118',
             reserve_num: '531',

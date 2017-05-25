@@ -1,6 +1,7 @@
-
+var modal;
 $(function () {
-    var modal = new SASAKI.Modal();
+    modal = new SASAKI.Modal();
+    pageInit();
     /**
      * 次へクリックイベント
      */
@@ -34,6 +35,48 @@ $(function () {
         }
     });
 });
+
+/**
+ * 初期化
+ * @function pageInit
+ * @returns {void}
+ */
+function pageInit() {
+    if ($('input[name=gmo_error]').val()) {
+        // 計測 ※GMOエラーはコードのみ。詳細は送らない。
+        collection({
+            client: 'sskts-frontend',
+            label: 'GMOErrorMessage',
+            action: 'error',
+            category: 'GMO',
+            message: $('input[name=gmo_error_message]').val(),
+            transaction: $('input[name=transaction_id]').val()
+        });
+        var msg = $('input[name=gmo_error]').val();
+        var target = $('.modal[data-modal=creditcard_alert]');
+        target.find('p').html(msg);
+        modal.open('creditcard_alert');
+        
+        // バリデーション
+        $('.validation').removeClass('validation');
+        $('.validation-text').remove();
+        var validationList = [
+            { name: 'cardno' },
+            { name: 'expire' },
+            { name: 'securitycode' },
+            { name: 'holdername' },
+        ];
+        validationList.forEach(function (validation, index) {
+            var target = $('input[name=' + validation.name + ']');
+            if (validation.name === 'expire') {
+                $('select[name=credit_month], select[name=credit_year]').addClass('validation');
+            } else {
+                target.addClass('validation');
+            }
+        });
+        validationScroll();
+    }
+}
 
 /**
  * トークン取得後イベント
@@ -82,7 +125,7 @@ function validationScroll() {
 function validation() {
     $('.validation').removeClass('validation');
     $('.validation-text').remove();
-    
+
     var NAME_MAX_LENGTH = 12;
     var MAIL_MAX_LENGTH = 50;
     var TEL_MAX_LENGTH = 11;
@@ -98,6 +141,9 @@ function validation() {
         { name: 'securitycode', label: locales.label.securitycode, required: true },
         { name: 'holdername', label: locales.label.holdername, required: true },
     ];
+
+    var validations = [];
+    var names = [];
 
     validationList.forEach(function (validation, index) {
 
@@ -139,7 +185,24 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
+
+        if (target.hasClass('validation')) {
+            validations.push(validation.label + ': ' + target.next().text());
+            names.push(validation.name)
+        }
     });
+    if (validations.length > 0) {
+        // 計測
+        collection({
+            client: 'sskts-frontend',
+            label: 'purchaseValidationMessage',
+            action: 'validation',
+            category: 'form',
+            message: validations.join(', '),
+            notes: names.join(', '),
+            transaction: $('input[name=transaction_id]').val()
+        });
+    }
 }
 
 /**

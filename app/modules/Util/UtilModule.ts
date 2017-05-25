@@ -22,6 +22,7 @@ export function setLocals(_req: Request, res: Response, next: NextFunction): voi
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
+    res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
     next();
     return;
 }
