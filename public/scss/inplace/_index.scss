@@ -7,10 +7,6 @@
     .purchase-button, .inquiry-button {
         a {
             padding: 140px 0 0;
-            display: block;
-            width: 505px;
-            height: 500px;
-            background-color: rgba(255, 255, 255, 0.15);
         }
     }
     .qr-code {
@@ -18,5 +14,10 @@
         top: 50%;
         right: 30px;
         margin-top: -50px;
+    }
+    .box {
+        p {
+            margin: 0 130px 0 0;
+        }
     }
 }

@@ -1,0 +1,77 @@
+.purchase-seat {
+    .sp-text {
+        display: none;
+        @media screen and (max-width: $mobile){
+            display: inline;
+        }
+    }
+    .screen-cover {
+        padding: 0 80px;
+        @media screen and (max-width: $tablet){
+            padding: 0;
+        }
+    }
+    .screen {
+    }
+    .zoom-btn {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        a {
+            display: block;
+            width: 50px;
+            height: 50px;
+            color: #FFF;
+            background-color: #3e3a39;
+            border-radius: 3px;
+            padding-top: 30px;
+        }
+        &.scroll {
+            position: fixed;
+        }
+    }
+    .seat-info {
+        padding: 0 20px 20px;
+        @media screen and (max-width: $mobile) {
+            padding: 0 20px 10px;
+        }
+        .box {
+            display: flex;
+            justify-content: center;
+        }
+    }
+    .film-info {
+        background-color: #3e3a39;
+        color: #FFF;
+        padding: 20px;
+        @media screen and (max-width: $mobile) {
+            padding: 15px;
+        }
+        dl {
+            dt {
+                color: #f0e205;
+                margin-bottom: 10px;
+            }
+            dd {
+                color: #FFF;
+                padding: 0 0 10px;
+                margin-bottom: 10px;
+                &:last-child {
+                    padding: 0;
+                    margin: 0;
+                    border: none;
+                }
+            }
+        }
+    }
+    .agree {
+        overflow-y: auto;
+        resize: vertical;
+        height: 150px;
+        @media screen and (max-width: $mobile) {
+            height: 100px;
+        }
+    }
+}

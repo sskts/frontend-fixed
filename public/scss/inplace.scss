@@ -1,6 +1,12 @@
 @charset "UTF-8";
 
-@import "reset";
-@import "config";
-@import "common_inplace";
-@import "index/inplace";
+@import "common/reset";
+@import "common/config";
+@import "inplace/animations";
+
+@import "inplace/common";
+@import "inplace/index";
+@import "inplace/purchase/seat";
+@import "inplace/purchase/ticket";
+
+@import "default/screen/style";

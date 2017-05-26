@@ -23,7 +23,7 @@
         <% } %>
         <% } %>
 
-        <ul class="box radius bg-light-gray mb-medium seats">
+        <ul class="mb-middle seats">
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
@@ -34,10 +34,10 @@
                 data-mvtk-num="<%= ticket.mvtk_num %>"
                 data-add-price-glasses="<%= ticket.add_price_glasses %>"
                 data-glasses="<%= ticket.glasses %>">
-                <dl class="d-table">
-                    <dt class="d-td seat-code"><%= ticket.seat_code %></dt>
-                    <dd class="d-td width-medium">                                
-                        <div class="ghost-button blue-button">
+                <dl>
+                    <dt class="large-text text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
+                    <dd>                                
+                        <div class="button button-small">
                             <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
                         </div>
                     </dd>
@@ -54,10 +54,10 @@
                 data-mvtk-num=""
                 data-add-price-glasses=""
                 data-glasses="">
-                <dl class="d-table">
-                    <dt class="d-td seat-code"><%= seat.seat_num %></dt>
-                    <dd class="d-td width-medium" data-ticket="">
-                        <div class="button blue-button">
+                <dl>
+                    <dt class="large-text text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
+                    <dd data-ticket="">
+                        <div class="button small-button">
                             <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
                         </div>
                     </dd>
@@ -67,27 +67,20 @@
             <% } %>
         </ul>
 
-        <div class="box radius bg-light-gray mb-large total">
-            <div class="text-right mb-small">
-                <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
-                <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span><%- __('common.price') %></strong></div>
-            </div>
+        <div class="box mb-large">
             <div class="border-bottom-dot mb-small"></div>
             <% if (kbnJoueihousiki === '002') { %>
             <!-- 4DX -->
-            <p class="small-x-text mb-xx-small"><%- __('purchase.ticket.note_4dx') %></p>
+            <p class="small-text mb-small"><%- __('purchase.ticket.note_4dx') %></p>
             <% } %>
-            <p class="small-x-text"><%- __('purchase.ticket.note') %></p>
+            <p class="small-text"><%- __('purchase.ticket.note') %></p>
         </div>    
     
     
-        <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.ticket.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev-black"href="/purchase/seat/<%- performance.id %>/"><%- __('purchase.ticket.prev') %></a></div>
-        </div>
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.ticket.next') %></button></div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- include('../layouts/siteSeal') %>
+
 </div>
 
 <input type="hidden" class="ticket-validation" value="<%= error %>">

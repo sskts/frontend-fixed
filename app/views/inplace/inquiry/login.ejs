@@ -5,31 +5,28 @@
 <div class="inquiry-confirm">
     <h1 class="page-ttl"><%- __('inquiry.login.page_ttl') %></h1>
     <p class="read"><%- __('inquiry.login.read') %></p>
+    <% if (error) { %>
+    <div class="box mb-middle">
+        <% if (error.reserve_num) { %>
+        <div class="validation-text"><%= error.reserve_num.msg %></div>
+        <% } %>
+        <% if (error.tel_num) { %>
+        <div class="validation-text"><%= error.tel_num.msg %></div>
+        <% } %>
+    </div>
+    <% } %>
     <form method="post">
-        <div class="box radius bg-light-gray">
-            <dl>
-                <% if (!theaterCode) { %>
-                <dt><%- __('common.theater_code') %></dt>
-                <dd>
-                    <input type="text" pattern="\d*" name="theater_code" autocomplete="off" placeholder="<%- __('common.placeholder.theater_code') %>" value="<%= theaterCode %>">
-                    <% if (error && error.theater_code) { %>
-                    <div class="validation-text"><%= error.theater_code.msg %></div>
-                    <% } %>
-                </dd>
-                <% } %>
+        <div class="form-layout center">
+            <dl class="mb-small">
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
                     <input type="text" pattern="\d*" name="reserve_num" maxlength="8" autocomplete="off" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= reserveNum %>">
-                    <% if (error && error.reserve_num) { %>
-                    <div class="validation-text"><%= error.reserve_num.msg %></div>
-                    <% } %>
                 </dd>
+            </dl>
+            <dl class="mb-large">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
                     <input type="text" pattern="\d*" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= telNum %>">
-                    <% if (error && error.tel_num) { %>
-                    <div class="validation-text"><%= error.tel_num.msg %></div>
-                    <% } %>
                 </dd>
             </dl>
         </div>
@@ -38,11 +35,6 @@
             <input type="hidden" name="theater_code" value="<%= theaterCode %>">
         <% } %>
         
-        <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('inquiry.login.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev-black" href="<%= portalTheaterSite %>"><%- __('inquiry.login.prev') %></a></div>
-        </div>
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('inquiry.login.next') %></button></div>
     </form>
-<%- include('../layouts/siteSeal') %>
 </div>
-<div id="copy" style="display: none"></div>
