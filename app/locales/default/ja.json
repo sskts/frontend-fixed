@@ -354,7 +354,5 @@
 	"week[Thu]": "木",
 	"week[Fri]": "金",
 	"week[Sat]": "土",
-	"week[Sun]": "日",
-	"week[(Fri)]": "week[(Fri)]",
-	"week[(Mon)]": "week[(Mon)]"
+	"week[Sun]": "日"
 }

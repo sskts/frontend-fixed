@@ -2,14 +2,15 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/seat.js"></script>
 <script src="/js/ScreenSeatStatusesMap.js"></script>
-
+<%- contentFor('prev') %>
+/performances
 <%- contentFor('body') %>
 <div class="purchase-seat">
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
 
     <div>
-        <div class="screen-cover mb-medium" 
+        <div class="box screen-cover mb-middle" 
         data-limit="<%= performance.attributes.coa_available_num %>" 
         data-theater="<%= performance.attributes.theater.id %>" 
         data-day="<%= performance.attributes.day %>" 
@@ -35,7 +36,7 @@
             </div>
         </div>
 
-        <div class="film-info radius mb-large">
+        <div class="film-info box mb-large">
             <p class="mb-small"><%- __('purchase.seat.film_info.read') %></p>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>

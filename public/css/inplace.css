@@ -170,20 +170,17 @@ select {
   -webkit-appearance: none;
   appearance: none;
   overflow: hidden;
-  border: 1px solid #989898;
-  padding: 0 54px 0 10px;
-  height: 44px;
-  border-radius: 3px;
+  width: 100%;
+  padding: 0 10px;
+  line-height: 90px;
+  height: 90px;
   position: relative;
   background-color: #FFF;
   background-image: url(/images/common/select_box.svg);
   background-repeat: no-repeat;
-  background-size: 44px;
-  background-position: right center;
+  background-size: 16px;
+  background-position: 160px center;
   outline: none; }
-  select:focus {
-    padding: 0 53px 0 9px;
-    border: 2px solid #707070; }
 
 input[type=checkbox] {
   opacity: 0;
@@ -411,9 +408,10 @@ a {
         font-size: 16px; }
 
 .contents {
-  height: 100%; }
+  height: 100%;
+  position: relative; }
   .contents .contents-inner {
-    padding: 80px 0 0;
+    padding: 80px 0;
     width: 1100px;
     margin: 0 auto; }
 
@@ -547,6 +545,53 @@ a {
 .index .box p {
   margin: 0 130px 0 0; }
 
+.purchase .steps {
+  position: absolute;
+  left: 40px;
+  top: 40px; }
+  .purchase .steps .step {
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    margin-top: -9px;
+    margin-left: -9px;
+    border: 1px solid #00A0E9;
+    position: absolute;
+    top: 50%;
+    left: 0; }
+    .purchase .steps .step .text {
+      display: none;
+      text-align: center;
+      font-size: 10px;
+      width: 100px;
+      position: absolute;
+      top: -20px;
+      left: -43px; }
+    .purchase .steps .step:after {
+      content: '';
+      display: block;
+      background-color: #00A0E9;
+      position: absolute;
+      top: 50%;
+      left: 18px;
+      width: 18px;
+      height: 1px;
+      margin-top: -0.5px; }
+  .purchase .steps .step-01 {
+    left: 0; }
+  .purchase .steps .step-02 {
+    left: 36px; }
+  .purchase .steps .step-03 {
+    left: 72px; }
+  .purchase .steps .step-04 {
+    left: 108px; }
+  .purchase .steps .step-05 {
+    left: 144px; }
+    .purchase .steps .step-05:after {
+      display: none; }
+  .purchase .steps .active {
+    background-color: #00A0E9; }
+
 .purchase-seat .sp-text {
   display: none; }
   @media screen and (max-width: 767px) {
@@ -613,9 +658,30 @@ a {
       height: 100px; } }
 
 .purchase-ticket .seats {
-  display: flex; }
+  display: flex;
+  flex-wrap: wrap; }
   .purchase-ticket .seats li {
-    margin: 0 20px 0 0; }
+    margin: 0 20px 20px 0; }
+    .purchase-ticket .seats li dl {
+      display: table;
+      border-radius: 10px;
+      overflow: hidden; }
+      .purchase-ticket .seats li dl dt {
+        width: 130px;
+        height: 110px;
+        display: table-cell;
+        font-weight: bold;
+        background-color: #333;
+        text-align: center;
+        vertical-align: middle; }
+      .purchase-ticket .seats li dl dd a {
+        width: 400px;
+        height: 110px;
+        display: table-cell;
+        background-color: #FFF;
+        color: #333;
+        text-align: center;
+        vertical-align: middle; }
 
 .purchase-ticket .mvtk .mvtk-button label, .purchase-ticket .mvtk .mvtk-button a {
   border: 1px solid #d82918;
@@ -633,6 +699,41 @@ a {
 
 .modal[data-modal="ticket_type"] dl dt {
   padding-right: 10px; }
+
+.purchase-input .form-layout {
+  width: 800px; }
+  .purchase-input .form-layout dl dt {
+    width: 200px;
+    padding: 0 0 0 0;
+    text-align: center; }
+  .purchase-input .form-layout dl dd {
+    width: 600px; }
+  .purchase-input .form-layout .expire {
+    display: flex;
+    justify-content: space-between; }
+    .purchase-input .form-layout .expire dl {
+      width: 390px; }
+      .purchase-input .form-layout .expire dl dd {
+        width: 190px; }
+  .purchase-input .form-layout .securitycode dt {
+    width: 390px; }
+  .purchase-input .form-layout .securitycode dd {
+    width: 410px; }
+
+.purchase-input .credit-image {
+  display: inline-block;
+  padding: 2px 10px;
+  background-color: #FFF;
+  margin: 0 0 0 20px;
+  border-radius: 5px; }
+  .purchase-input .credit-image img {
+    width: 200px; }
+
+.modal[data-modal=securitycode] dl dd img {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 300px; }
 
 .screen {
   visibility: hidden;

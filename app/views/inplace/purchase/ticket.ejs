@@ -1,6 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/ticket.js"></script>
-
+<%- contentFor('prev') %>
+/purchase/seat
 <%- contentFor('body') %>
 <div class="purchase-ticket">
     <form method="post">
@@ -23,7 +24,7 @@
         <% } %>
         <% } %>
 
-        <ul class="mb-middle seats">
+        <ul class="mb-small seats">
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
@@ -37,9 +38,7 @@
                 <dl>
                     <dt class="large-text text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
                     <dd>                                
-                        <div class="button button-small">
-                            <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
-                        </div>
+                        <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
                     </dd>
                 </dl>
             </li>
@@ -57,9 +56,7 @@
                 <dl>
                     <dt class="large-text text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
                     <dd data-ticket="">
-                        <div class="button small-button">
-                            <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
-                        </div>
+                        <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
                     </dd>
                 </dl>
             </li>
@@ -67,7 +64,7 @@
             <% } %>
         </ul>
 
-        <div class="box mb-large">
+        <div class="mb-large">
             <div class="border-bottom-dot mb-small"></div>
             <% if (kbnJoueihousiki === '002') { %>
             <!-- 4DX -->

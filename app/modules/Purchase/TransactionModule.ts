@@ -45,7 +45,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
         purchaseModel = new PurchaseSession.PurchaseModel({});
         // 取引開始
-        const minutes = 15;
+        const minutes = 150;
         purchaseModel.expired = moment().add(minutes, 'minutes').unix();
         purchaseModel.transactionMP = await MP.transactionStart({
             expires_at: moment.unix(purchaseModel.expired).add(1, 'minutes').unix()

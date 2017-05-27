@@ -100,21 +100,17 @@ select {
     -webkit-appearance: none;
     appearance: none;
     overflow: hidden;
-    border: 1px solid #989898;
-    padding: 0 54px 0 10px;
-    height: 44px;
-    border-radius: 3px;
+    width: 100%;
+    padding: 0 10px;
+    line-height: 90px;
+    height: 90px;
     position: relative;
     background-color: #FFF;
     background-image: url(/images/common/select_box.svg);
     background-repeat: no-repeat;
-    background-size: 44px;
-    background-position: right center;
+    background-size: 16px;
+    background-position: 160px center;
     outline: none;
-    &:focus {
-        padding: 0 53px 0 9px;
-        border: 2px solid #707070;
-    }
 }
 
 input[type=checkbox] {
@@ -374,14 +370,6 @@ a {
     padding: 0 0 0 120px;
 }
 
-.header {
-    
-}
-
-.footer {
-    
-}
-
 .navigation {
     position: fixed;
     top: 0;
@@ -415,8 +403,9 @@ a {
 
 .contents {
     height: 100%;
+    position: relative;
     .contents-inner {
-        padding: 80px 0 0;
+        padding: 80px 0;
         width: 1100px;
         margin: 0 auto;
     }
