@@ -51,7 +51,7 @@ function start(req, res) {
             }
             purchaseModel = new PurchaseSession.PurchaseModel({});
             // 取引開始
-            const minutes = 150;
+            const minutes = 15;
             purchaseModel.expired = moment().add(minutes, 'minutes').unix();
             purchaseModel.transactionMP = yield MP.transactionStart({
                 expires_at: moment.unix(purchaseModel.expired).add(1, 'minutes').unix()
