@@ -10,5 +10,10 @@
 @import "inplace/purchase/seat";
 @import "inplace/purchase/ticket";
 @import "inplace/purchase/input";
+@import "inplace/purchase/confirm";
+@import "inplace/purchase/complete";
 
-@import "default/screen/style";
+@import "inplace/purchase/mvtk/input";
+@import "inplace/purchase/mvtk/confirm";
+
+@import "inplace/screen/style";
