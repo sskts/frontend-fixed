@@ -17,7 +17,7 @@ const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
 const logger_1 = require("../../app/middlewares/logger");
-const log = debug('SSKTS');
+const log = debug('SSKTS:MP');
 const endPoint = process.env.MP_ENDPOINT;
 /**
  * 時間切れ

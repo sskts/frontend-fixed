@@ -8,7 +8,7 @@
     "start": "node ./index.js",
     "ui-test": "node ./test/uiTest.js",
     "css": "npm run scss && postcss -c ./.postcssrc.json",
-    "scss": "node-sass public/scss/import.scss public/css/style.css",
+    "scss": "node-sass public/scss --output public/css",
     "tslint": "tslint -c tslint.json app/**/**.ts libs/MP/**.ts --type-check --project tsconfig.json",
     "tslint-fix": "tslint -c tslint.json app/**/**.ts --project tsconfig.json --fix",
     "jsdoc": "grunt jsdoc",
@@ -83,7 +83,7 @@
     "supertest": "^3.0.0",
     "tslint": "^4.5.1",
     "tslint-microsoft-contrib": "^4.0.1",
-    "typescript": "^2.3.0"
+    "typescript": "^2.3.3"
   },
   "repository": {},
   "author": {

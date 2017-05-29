@@ -21,6 +21,7 @@
       true
     ],
     "no-any": false,
+    "no-backbone-get-set-outside-model": false,
     "no-default-export": false,
     "no-internal-module": true,
     "no-magic-numbers": true,

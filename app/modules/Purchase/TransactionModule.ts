@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.TransactionModule');
 
 /**
  * 取引開始

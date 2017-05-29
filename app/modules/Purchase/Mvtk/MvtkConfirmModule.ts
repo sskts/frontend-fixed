@@ -1,13 +1,13 @@
 /**
  * ムビチケ確認
- * @namespace Purchase.Mvtks.MvtkConfirmModule
+ * @namespace Purchase.Mvtk.MvtkConfirmModule
  */
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
 /**
  * ムビチケ券適用確認ページ表示

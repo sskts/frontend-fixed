@@ -14,7 +14,7 @@ import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 
 /**
  * ムビチケ券入力ページ表示

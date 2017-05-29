@@ -21,7 +21,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
-    res.render('performance');
+    res.render('performances');
     return;
 }
 

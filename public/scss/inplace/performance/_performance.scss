@@ -1,0 +1,15 @@
+.performance {
+    li {
+        .button {
+            width: 150px;
+            margin-right: 10px;
+            @media screen and (max-width: $mobile){
+                width: auto;
+                margin-right: 0;
+            }
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}

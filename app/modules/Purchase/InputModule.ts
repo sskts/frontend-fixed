@@ -13,7 +13,7 @@ import logger from '../../middlewares/logger';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.InputModule');
 
 /**
  * 購入者情報入力
@@ -170,6 +170,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             });
             log('MPメール削除');
         }
+        if (process.env.VIEW_TYPE !== 'inplace') {
         const locals = {
             performance: purchaseModel.performance,
             reserveSeats: purchaseModel.reserveSeats,
@@ -192,6 +193,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             content: emailTemplate
         });
         log('MPメール登録');
+        }
         // セッション更新
         req.session.purchase = purchaseModel.toSession();
         // 購入者内容確認へ

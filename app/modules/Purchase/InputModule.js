@@ -21,7 +21,7 @@ const logger_1 = require("../../middlewares/logger");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
  * @memberOf Purchase.InputModule
@@ -190,28 +190,30 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
-            const locals = {
-                performance: purchaseModel.performance,
-                reserveSeats: purchaseModel.reserveSeats,
-                input: purchaseModel.input,
-                reserveSeatsString: reserveSeatsString,
-                amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
-                domain: req.headers.host,
-                theaterTelNumber: '0995-55-0333',
-                moment: moment,
-                timeFormat: UtilModule.timeFormat,
-                __: req.__,
-                layout: false
-            };
-            const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
-            purchaseModel.completeMailId = yield MP.addEmail({
-                transactionId: purchaseModel.transactionMP.id,
-                from: 'noreply@ticket-cinemasunshine.com',
-                to: purchaseModel.input.mail_addr,
-                subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
-                content: emailTemplate
-            });
-            log('MPメール登録');
+            if (process.env.VIEW_TYPE !== 'inplace') {
+                const locals = {
+                    performance: purchaseModel.performance,
+                    reserveSeats: purchaseModel.reserveSeats,
+                    input: purchaseModel.input,
+                    reserveSeatsString: reserveSeatsString,
+                    amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
+                    domain: req.headers.host,
+                    theaterTelNumber: '0995-55-0333',
+                    moment: moment,
+                    timeFormat: UtilModule.timeFormat,
+                    __: req.__,
+                    layout: false
+                };
+                const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
+                purchaseModel.completeMailId = yield MP.addEmail({
+                    transactionId: purchaseModel.transactionMP.id,
+                    from: 'noreply@ticket-cinemasunshine.com',
+                    to: purchaseModel.input.mail_addr,
+                    subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
+                    content: emailTemplate
+                });
+                log('MPメール登録');
+            }
             // セッション更新
             req.session.purchase = purchaseModel.toSession();
             // 購入者内容確認へ

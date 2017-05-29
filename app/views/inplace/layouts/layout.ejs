@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="<%- __('lang') %>">
+<%- include head %>
+
+<body class="inplace">
+<%- include tags/body %>
+<%- include noscript %>
+<div class="wrapper">
+
+<%- include navigation %>
+
+<div class="contents">
+    <div class="contents-inner">
+        <%- body %>
+    </div>
+</div>
+</div>
+<div class="modal-cover" onclick=""></div>
+<%- defineContent('modals') %>
+<%- include loading %>
+<%- include tags/env %>
+</body>
+</html>

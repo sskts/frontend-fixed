@@ -1,0 +1,51 @@
+<%- contentFor('script') %>
+<script src="/js/ScreenSeatStatusesMap.js"></script>
+<script src="/js/purchase/confirm.js"></script>
+<script src="/js/purchase/complete.js"></script>
+<%- contentFor('prev') %>
+/purchase/input
+<%- contentFor('body') %>
+<div class="purchase-confirm">
+    <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.confirm.read') %></p>
+
+    <form method="post">
+        <div class="table-layout center mb-large">
+            <dl>
+                <dt><%- __('common.film_title') %></dt>
+                <dd><%= performance.attributes.film.name[__('lang')] %></dd>
+            </dl>
+            <dl>
+                <dt><%- __('common.appreciation_date') %></dt>
+                <dd>
+                    <div class="mb-xx-small">
+                        <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
+                    </div>
+                </dd>
+            </dl>
+            <dl>
+                <dt><%- __('common.seat') %></dt>
+                <dd>
+                    <% for (ticket of reserveTickets) { %>
+                    <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                    <% } %>
+                    <div style="display: none" class="right">
+                        <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
+                        --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%- performance.id %>/"><%- __('common.change') %></a></div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <input type="hidden" name="notes_agree" value="true">
+       
+        <div class="button next-button middle-button"><button class="center" type="submit"><%- __('purchase.confirm.next') %></button></div>
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+</div>
+
+<%- include('completeContents') %>
+<%- include('../error/static') %>
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/updateReserveError') %>

@@ -56,7 +56,7 @@ function pageInit() {
         var target = $('.modal[data-modal=creditcard_alert]');
         target.find('p').html(msg);
         modal.open('creditcard_alert');
-        
+
         // バリデーション
         $('.validation').removeClass('validation');
         $('.validation-text').remove();
@@ -148,7 +148,7 @@ function validation() {
     validationList.forEach(function (validation, index) {
 
         var target = $('input[name=' + validation.name + ']');
-
+        var msg = '';
         if (target.length === 0) {
             return;
         }
@@ -158,32 +158,30 @@ function validation() {
         if (validation.required
             && !value
             && value == '') {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
+            msg = validation.label + locales.validation.required;
         } else if (validation.maxLength
             && value
             && value.length > validation.maxLength) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.maxlength.replace('30', validation.maxLength) + '</div>');
+            msg = validation.label + locales.validation.maxlength.replace('30', validation.maxLength);
         } else if (validation.minLength
             && value
             && value.length < validation.minLength) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.minlength.replace('30', validation.minLength) + '</div>');
+            msg = validation.label + locales.validation.minlength.replace('30', validation.minLength);
         } else if (validation.regex
             && value
             && !value.match(validation.regex[0])) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
+            msg = validation.label + validation.regex[1];
         } else if (validation.equals
             && value !== $('input[name=' + validation.equals + ']').val()) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.equals + '</div>');
+            msg = validation.label + locales.validation.equals;
         } else if (validation.agree
             && !target.is(':checked')) {
             target = $('label[for=' + validation.name + ']');
+            msg = validation.label + locales.validation.agree;
+        }
+        if (msg !== '') {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
+            target.after('<div class="validation-text">' + msg + '</div>');
         }
 
         if (target.hasClass('validation')) {

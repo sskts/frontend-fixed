@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="<%- __('lang') %>">
+<%- include ../head %>
+
+<body class="purchase inplace">
+<%- include ../tags/body %>
+<div class="wrapper">
+
+<%- include ../navigation %>
+
+<div class="contents">
+    <div class="contents-inner">
+        <%- include steps %>
+        <%- body %>
+    </div>
+</div>
+
+</div>
+<div class="modal-cover" onclick=""></div>
+
+<%- defineContent('modals') %>
+
+<%- include ../loading %>
+<%- include ../tags/env %>
+</body>
+</html>

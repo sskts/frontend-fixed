@@ -1,0 +1,59 @@
+.purchase {
+    .steps {
+        position: absolute;
+        left: 40px;
+        top: 40px;
+        .step {
+            width: 18px;
+            height: 18px;
+            border-radius: 9px; 
+            margin-top: -9px;
+            margin-left: -9px;
+            border: 1px solid #00A0E9;
+            position: absolute;
+            top: 50%;
+            left: 0;
+            .text {
+                display: none;
+                text-align: center;
+                font-size: 10px;
+                width: 100px;
+                position: absolute;
+                top: -20px;
+                left: -43px;
+            }
+            &:after {
+                content: '';
+                display: block;
+                background-color: #00A0E9;
+                position: absolute;
+                top: 50%;
+                left: 18px;
+                width: 18px;
+                height: 1px;
+                margin-top: -0.5px;
+            }
+        }
+        .step-01 {
+            left: 0;
+        }
+        .step-02 {
+            left: 36px;
+        }
+        .step-03 {
+            left: 72px;
+        }
+        .step-04 {
+            left: 108px;
+        }
+        .step-05 {
+            left: 144px;
+            &:after {
+                display: none;
+            }
+        }
+        .active {
+            background-color: #00A0E9;
+        }
+    }
+}

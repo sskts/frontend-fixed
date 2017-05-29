@@ -9,7 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const log = debug('SSKTS');
+const log = debug('SSKTS:Purchase.OverlapModule');
 
 /**
  * 仮予約重複

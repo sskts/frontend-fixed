@@ -1,0 +1,23 @@
+.index {
+    .buttons {
+        margin: 0 0 40px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .purchase-button, .inquiry-button {
+        a {
+            padding: 140px 0 0;
+        }
+    }
+    .qr-code {
+        position: absolute;
+        top: 50%;
+        right: 30px;
+        margin-top: -50px;
+    }
+    .box {
+        p {
+            margin: 0 130px 0 0;
+        }
+    }
+}

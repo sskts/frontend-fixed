@@ -1,0 +1,20 @@
+<%
+let analyticsId;
+if (env === 'production') {
+    analyticsId = 'UA-8383230-1';
+} else if (env === 'test') {
+    analyticsId = 'UA-99018492-2';
+} else {
+    analyticsId = 'UA-99018492-2';
+}
+%>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K3ZKSHZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>
+try {
+    ga('create', '<%= analyticsId %>', 'auto');
+} catch (err) {
+    console.error(err);
+}
+</script>
