@@ -1,5 +1,5 @@
 <%- contentFor('script') %>
-<script src="/js/purchase/input_inplace.js"></script>
+<script src="/js/purchase/input.js"></script>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>');</script>
 <%- contentFor('prev') %>
@@ -8,34 +8,6 @@
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.input.read') %></p>
-    <% if (error) { %>
-    <div class="box mb-middle">
-        <% if (error.last_name_hira) { %>
-        <div class="validation-text"><%= error.last_name_hira.msg %></div>
-        <% } %>
-        <% if (error.first_name_hira) { %>
-        <div class="validation-text"><%= error.first_name_hira.msg %></div>
-        <% } %>
-        <% if (error.mail_addr) { %>
-        <div class="validation-text"><%= error.mail_addr.msg %></div>
-        <% } %>
-        <% if (error.mail_confirm) { %>
-        <div class="validation-text"><%= error.mail_confirm.msg %></div>
-        <% } %>
-        <% if (error.cardno) { %>
-        <div class="validation-text"><%= error.cardno.msg %></div>
-        <% } %>
-        <% if (error.expire) { %>
-        <div class="validation-text"><%= error.expire.msg %></div>
-        <% } %>
-        <% if (error.securitycode) { %>
-        <div class="validation-text"><%= error.securitycode.msg %></div>
-        <% } %>
-        <% if (error.holdername) { %>
-        <div class="validation-text"><%= error.holdername.msg %></div>
-        <% } %>
-    </div>
-    <% } %>
     <form id="purchaseform" method="post">
         <div class="form-layout center">
             <dl class="mb-middle">
@@ -109,10 +81,12 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">
+    <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
 </div>
 
 <%- include('../locales/validation') %>
 
 <%- contentFor('modals') %>
+<%- include('modals/validation') %>
 <%- include('modals/securitycode') %>
 <%- include('modals/creditcardAlert') %>

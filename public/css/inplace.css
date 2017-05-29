@@ -305,7 +305,7 @@ a {
       width: 190px;
       font-weight: bold;
       background-color: #333;
-      padding: 0 0 0 50px; }
+      text-align: center; }
     .form-layout dl dd {
       display: table-cell;
       width: 410px;
@@ -323,7 +323,7 @@ a {
       width: 230px;
       font-weight: bold;
       background-color: #333;
-      padding: 0 0 0 50px; }
+      text-align: center; }
     .table-layout dl dd {
       display: table-cell;
       width: 670px;
@@ -432,8 +432,8 @@ a {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 600px;
-  margin-left: -300px;
+  width: 800px;
+  margin-left: -400px;
   z-index: 10; }
   .modal .inner {
     overflow: hidden;
@@ -703,9 +703,7 @@ a {
 .purchase-input .form-layout {
   width: 800px; }
   .purchase-input .form-layout dl dt {
-    width: 200px;
-    padding: 0 0 0 0;
-    text-align: center; }
+    width: 200px; }
   .purchase-input .form-layout dl dd {
     width: 600px; }
   .purchase-input .form-layout .expire {

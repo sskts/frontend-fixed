@@ -5,16 +5,7 @@
 <div class="inquiry-confirm">
     <h1 class="page-ttl"><%- __('inquiry.login.page_ttl') %></h1>
     <p class="read"><%- __('inquiry.login.read') %></p>
-    <% if (error) { %>
-    <div class="box mb-middle">
-        <% if (error.reserve_num) { %>
-        <div class="validation-text"><%= error.reserve_num.msg %></div>
-        <% } %>
-        <% if (error.tel_num) { %>
-        <div class="validation-text"><%= error.tel_num.msg %></div>
-        <% } %>
-    </div>
-    <% } %>
+    
     <form method="post">
         <div class="form-layout center">
             <dl class="mb-small">
@@ -37,4 +28,7 @@
         
         <div class="button middle-button next-button"><button class="center" type="submit"><%- __('inquiry.login.next') %></button></div>
     </form>
+    <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
 </div>
+<%- contentFor('modals') %>
+<%- include('modals/validation') %>

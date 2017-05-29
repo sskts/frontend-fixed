@@ -267,7 +267,7 @@ a {
             width: 190px;
             font-weight: bold;
             background-color: #333;
-            padding: 0 0 0 50px;
+            text-align: center;
         }
         dd {
             display: table-cell;
@@ -289,7 +289,7 @@ a {
             width: 230px;
             font-weight: bold;
             background-color: #333;
-            padding: 0 0 0 50px;
+            text-align: center;
         }
         dd {
             display: table-cell;
@@ -429,8 +429,8 @@ a {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 600px;
-    margin-left: -300px;
+    width: 800px;
+    margin-left: -400px;
     z-index: 10;
     .inner {
         overflow: hidden;

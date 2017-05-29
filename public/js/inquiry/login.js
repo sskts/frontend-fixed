@@ -1,6 +1,8 @@
 $(function () {
     validation();
-    toInquiry();
+    if (!isInplace()) {
+        toInquiry();
+    }
 });
 
 /**
@@ -12,11 +14,29 @@ function validation() {
     var validations = [];
     var names = [];
 
-    $('.validation').each(function (index, elem) {
-        var target = $(elem);
-        validations.push(target.parent().prev().text() + ': ' + target.next().text());
-        names.push(target.attr('name'));
-    });
+    if (isInplace()) {
+        // 券売機
+        var str = $('input[name=validation]').val();
+        var errors = JSON.parse(str);
+        if (errors === null) return;
+        var modalBody = $('.modal[data-modal=validation] .modal-body');
+        modalBody.html('');
+        Object.keys(errors).forEach(function(value) {
+            var error = errors[value];
+            var target = $('input[name=' + error.param + ']');
+            validations.push(target.parent().prev().text() + ': ' + error.msg);
+            names.push(error.parm);
+            target.addClass('validation');
+            modalBody.append('<div class="mb-small">' + error.msg + '</div>');
+        });
+        modal.open('validation');
+    } else {
+        $('.validation').each(function (index, elem) {
+            var target = $(elem);
+            validations.push(target.parent().prev().text() + ': ' + target.next().text());
+            names.push(target.attr('name'));
+        });
+    }
 
     if (validations.length > 0) {
         // 計測

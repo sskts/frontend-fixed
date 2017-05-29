@@ -1,7 +1,9 @@
 var SASAKI = {};
 
 $(function () {
-    settingValidation();
+    if (!isInplace()) {
+        settingValidation();
+    }
     /**
      * 戻るクリックイベント
      */
@@ -16,6 +18,15 @@ $(function () {
         window.close();
     });
 });
+
+/**
+ * 券売機判定
+ * @function isInplace
+ * @returns {boolean} 
+ */
+function isInplace() {
+    return $('body').hasClass('inplace');
+}
 
 /**
  * サーバーバリデーション時設定
