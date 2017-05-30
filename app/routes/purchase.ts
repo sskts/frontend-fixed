@@ -9,11 +9,18 @@ import * as InputModule from '../modules/Purchase/InputModule';
 import * as MvtkConfirmModule from '../modules/Purchase/Mvtk/MvtkConfirmModule';
 import * as MvtkInputModule from '../modules/Purchase/Mvtk/MvtkInputModule';
 import * as OverlapModule from '../modules/Purchase/OverlapModule';
+import * as PerformancesModule from '../modules/Purchase/PerformancesModule';
 import * as SeatModule from '../modules/Purchase/SeatModule';
 import * as TicketModule from '../modules/Purchase/TicketModule';
 import * as TransactionModule from '../modules/Purchase/TransactionModule';
 
 const router = express.Router();
+if (process.env.VIEW_TYPE === 'inplace'
+|| (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+// パフォーマンス一覧
+router.get('/performances', PerformancesModule.index);
+router.post('/performances', PerformancesModule.getPerformances);
+}
 
 //購入(取引開始)
 router.post('/transaction', TransactionModule.start);

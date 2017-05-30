@@ -47,7 +47,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.performance = performance;
         res.locals.reserveSeats = purchaseModel.reserveSeats;
         res.locals.reserveTickets = purchaseModel.reserveTickets;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
 
@@ -182,7 +181,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
 

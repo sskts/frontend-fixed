@@ -81,7 +81,7 @@ input[type=email],
 input[type=number] {
     width: 100%;
     padding: 0 10px;
-    background-color: #FFF;
+    background-color: rgba(255, 255, 255, 0.85);
     line-height: 90px;
     height: 90px;
     outline: none;
@@ -91,7 +91,7 @@ textarea {
     width: 100%;
     border: 1px solid #989898;
     padding: 8px 10px;
-    background-color: #FFF;
+    background-color: rgba(255, 255, 255, 0.85);
     border-radius: 3px;
 }
 
@@ -105,11 +105,11 @@ select {
     line-height: 90px;
     height: 90px;
     position: relative;
-    background-color: #FFF;
+    background-color: rgba(255, 255, 255, 0.85);
     background-image: url(/images/common/select_box.svg);
     background-repeat: no-repeat;
     background-size: 16px;
-    background-position: 160px center;
+    background-position: right 20px center;
     outline: none;
 }
 
@@ -255,7 +255,7 @@ a {
 
 .box {
     overflow: hidden;
-    padding: 40px 30px;
+    padding: 20px;
     border: 1px solid #00A0E9;
     position: relative;
 }
@@ -276,7 +276,7 @@ a {
         dd {
             display: table-cell;
             width: 410px;
-            background-color: #FFF;
+            background-color: rgba(255, 255, 255, 0.85);
         }
     }
 }
@@ -298,7 +298,7 @@ a {
         dd {
             display: table-cell;
             width: 670px;
-            background-color: #FFF;
+            background-color: rgba(255, 255, 255, 0.85);
             color: #333;
             padding: 30px 20px;
         }
@@ -335,8 +335,15 @@ a {
 
 .small-button {
     a, button, label {
-        width: 260px;
-        padding: 30px 0;
+        width: 160px;
+        padding: 22px 0;
+    }
+}
+
+.gray-button {
+    a, button, label {
+        background-color: #333;
+        border: none;
     }
 }
 
@@ -358,15 +365,6 @@ a {
 .validation {
     border-color: #C30D23 !important;
     background-color: #ffe8eb !important;
-}
-
-.validation-text {
-    margin: 0 0 5px;
-    color: #C30D23;
-    font-weight: bold;
-    &:last-child {
-        margin-bottom: 0;
-    }
 }
 
 .wrapper {
@@ -439,8 +437,9 @@ a {
     .inner {
         overflow: hidden;
         border-radius: 5px;
-        background-color: #FFF;
+        background-color: rgba(255, 255, 255, 0.85);
         color: #333;
+        padding: 40px;
     }
     .close-button {
         position: absolute;

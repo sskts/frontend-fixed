@@ -152,3 +152,18 @@ function getParameter() {
     }
     return result;
 }
+
+/**
+ * 時間フォーマット
+ * @function timeFormat
+ * @param {string} str
+ * @returns {string}
+ */
+function timeFormat(str) {
+    if (typeof str !== 'string') {
+        return '';
+    }
+    const start = 2;
+    const end = 4;
+    return str.slice(0, start) + ':' + str.slice(start, end);
+}

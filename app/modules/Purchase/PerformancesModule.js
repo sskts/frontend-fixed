@@ -1,7 +1,7 @@
 "use strict";
 /**
  * パフォーマンス一覧
- * @namespace PerformancesModule
+ * @namespace Purchase.PerformancesModule
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16,7 +16,7 @@ const MP = require("../../../libs/MP");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * パフォーマンス一覧表示
- * @memberOf PerformancesModule
+ * @memberOf Purchase.PerformancesModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -28,26 +28,28 @@ function index(req, res, next) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
-    res.render('performances');
+    res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
     return;
 }
 exports.index = index;
 /**
  * パフォーマンスリスト取得
- * @memberOf PerformancesModule
+ * @memberOf Purchase.PerformancesModule
  * @function getPerformances
  * @param {Request} req
  * @param {Response} res
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const result = yield MP.getPerformances(req.body.theater, req.body.day);
-            return res.json({ error: null, result: result });
+            res.json({ error: null, result: result });
+            return;
         }
         catch (err) {
-            return res.json({ error: err, result: null });
+            res.json({ error: err, result: null });
+            return;
         }
     });
 }

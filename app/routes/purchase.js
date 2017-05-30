@@ -10,10 +10,17 @@ const InputModule = require("../modules/Purchase/InputModule");
 const MvtkConfirmModule = require("../modules/Purchase/Mvtk/MvtkConfirmModule");
 const MvtkInputModule = require("../modules/Purchase/Mvtk/MvtkInputModule");
 const OverlapModule = require("../modules/Purchase/OverlapModule");
+const PerformancesModule = require("../modules/Purchase/PerformancesModule");
 const SeatModule = require("../modules/Purchase/SeatModule");
 const TicketModule = require("../modules/Purchase/TicketModule");
 const TransactionModule = require("../modules/Purchase/TransactionModule");
 const router = express.Router();
+if (process.env.VIEW_TYPE === 'inplace'
+    || (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+    // パフォーマンス一覧
+    router.get('/performances', PerformancesModule.index);
+    router.post('/performances', PerformancesModule.getPerformances);
+}
 //購入(取引開始)
 router.post('/transaction', TransactionModule.start);
 //仮予約重複

@@ -21,7 +21,7 @@
                     width: 400px;
                     height: 110px;
                     display: table-cell;
-                    background-color: #FFF;
+                    background-color: rgba(255, 255, 255, 0.85);
                     color: #333;
                     text-align: center;
                     vertical-align: middle
@@ -30,28 +30,29 @@
         }
     }
     .mvtk {
+        width: 800px;
+        padding: 60px 290px 60px 20px;
         .mvtk-button {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            margin-top: -52.5px;
             label, a {
-                border: 1px solid #d82918;
-                background-color: #FFF;
-                color: #333;
-                &:before {
-                    left: 15px;
-                }
-                &:after {
-                    left: 15px;
-                }
-            }
-            img {
-                width: 100px;
-                height: 22px;
-                vertical-align: bottom;
+                width: 250px;
+                height: 105px;
+                background-image: url(/images/common/mvtk_logo.svg);
+                background-repeat: no-repeat;
+                background-size: 150px 33px;
+                background-position: center;
             }
         }
     }
 }
 
 .modal[data-modal="ticket_type"] {
+    .inner {
+        padding: 0;
+    }
     li {
         padding: 30px 20px;
         border-bottom: 1px solid #DFDFDF;
@@ -67,11 +68,6 @@
             }
             dd {
                 width: 160px;
-                a {
-                    padding: 22px 0;
-                    background-color: #333;
-                    border: none;
-                }
             }
         }
     }

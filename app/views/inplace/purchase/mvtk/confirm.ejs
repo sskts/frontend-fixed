@@ -1,6 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/mvtk/confirm.js"></script>
-
+<%- contentFor('step') %>
+2
 <%- contentFor('body') %>
 <div class="purchase-mvtk-confirm">
     <h1 class="page-ttl"><%- __('purchase.mvtk.confirm.page_ttl') %></h1>
@@ -37,5 +38,4 @@
         </div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
-<%- include('../../layouts/siteSeal') %>
 </div>

@@ -32,6 +32,7 @@
             }
             span {
                 display: none;
+                font-size: 14px;
             }
         }
     }
@@ -58,24 +59,20 @@
 }
 .seat-info {
     .seat {
-        margin: 0 10px;
         position: relative;
-        padding-left: 24px;
-        @media screen and (max-width: $mobile) {
-            margin: 0 7px;
-            font-size: 12px;
-        }
+        padding-left: 30px;
+        margin: 0 15px;
         &:before {
-            width: 16px;
-            height: 20px;
+            width: 20px;
+            height: 25px;
             content: '';
             display: block;
             background-image: url(/images/theater/seat/normal.svg);
-            background-size: 16px 20px;
+            background-size: 20px 25px;
             position: absolute;
             top: 50%;
             left: 0;
-            margin-top: -10px;
+            margin-top: -12.5px;
         } 
     }
     .active {
@@ -111,16 +108,16 @@
     .seat-info {
         .seat {
             &:before {
-                width: 20px;
-                height: 20px;
+                width: 25px;
+                height: 25px;
                 content: '';
                 display: block;
                 background-image: url(/images/theater/seat/4dx.svg);
-                background-size: 20px 20px;
+                background-size: 25px 25px;
                 position: absolute;
                 top: 50%;
                 left: 0;
-                margin-top: -10px;
+                margin-top: -12.5px;
             } 
         }
         .active {
@@ -136,16 +133,11 @@
     } 
 }
 .screen-cover {
-    .device-type-sp {
+    .device-type-pc {
         display: none;
     }
-    @media screen and (max-width: 768px) {
-        .device-type-sp {
-            display: block;
-        }
-        .device-type-pc {
-            display: none;
-        }
+    .device-type-sp {
+        display: block;
     }
 }
 .zoom {

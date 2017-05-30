@@ -57,7 +57,6 @@ function index(req, res, next) {
             res.locals.performance = purchaseModel.performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = purchaseModel.reserveTickets;
-            res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.updateReserve = null;
             res.locals.error = null;

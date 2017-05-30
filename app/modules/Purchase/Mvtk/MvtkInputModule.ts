@@ -39,7 +39,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
@@ -172,7 +171,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 return;
             }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });

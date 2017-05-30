@@ -1,16 +1,25 @@
 <%- contentFor('script') %>
-<script src="/js/performance.js"></script>
+<script src="/js/purchase/performances.js"></script>
+<%- contentFor('step') %>
+0
 <%- contentFor('body') %>
 <div class="performance">
     <h1 class="page-ttl">performance</h1>
     <p class="read">選択してください</p>
-    <div class="mb-middle button blue-button center-button"><a href="/inquiry/login?theater=118" target="_blank">照会ページ</a></div>
-    <div class="mb-middle theater">
+    <div class="mb-medium inquiry-theater">
         <select>
+            <option selected value="112">北島</option>
             <option selected value="118">姶良</option>
         </select>
     </div>
-    <div class="mb-middle date">
+    <div class="mb-medium button blue-button center-button inquiry-button"><a href="/inquiry/login" target="_blank">照会ページ</a></div>
+    <div class="mb-medium theater">
+        <select>
+            <option selected value="112">北島</option>
+            <option selected value="118">姶良</option>
+        </select>
+    </div>
+    <div class="mb-medium date">
         <select>
             <% for (let i = 0; i < 15; i++) { %>
             <% const date = moment().add((i - 5), 'days'); %>
@@ -22,7 +31,7 @@
             <% } %>
         </select>
     </div>
-    <div class="mb-middle search button blue-button center-button"><a href="#">検索</a></div>
+    <div class="mb-medium search button blue-button center-button"><a href="#">検索</a></div>
     <div>
         <ul class="box radius bg-light-gray performances"></ul>
     </div>

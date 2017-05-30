@@ -33,7 +33,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         // ムビチケ券適用確認ページ表示
         res.locals.error = null;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);

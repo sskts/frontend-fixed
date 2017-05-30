@@ -1356,6 +1356,16 @@ p a {
   .purchase-complete .print-button {
     display: none; } }
 
+.performance li .button {
+  width: 150px;
+  margin-right: 10px; }
+  @media screen and (max-width: 767px) {
+    .performance li .button {
+      width: auto;
+      margin-right: 0; } }
+  .performance li .button:last-child {
+    margin-bottom: 0; }
+
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],
 .purchase-mvtk-input input[type=password],
@@ -1547,16 +1557,6 @@ p a {
     opacity: 0; }
   100% {
     opacity: 1; } }
-
-.performance li .button {
-  width: 150px;
-  margin-right: 10px; }
-  @media screen and (max-width: 767px) {
-    .performance li .button {
-      width: auto;
-      margin-right: 0; } }
-  .performance li .button:last-child {
-    margin-bottom: 0; }
 
 .inquiry-confirm input[type=text],
 .inquiry-confirm input[type=number],

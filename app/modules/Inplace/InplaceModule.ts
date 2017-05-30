@@ -4,17 +4,27 @@
  */
 
 import * as debug from 'debug';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Inplace.InplaceModule');
 
 /**
  * 券売機TOPページ表示
  * @memberOf InplaceModule
  * @function index
+ * @param {Request} req
  * @param {Response} res
+ * @param {NextFunction} next
  * @returns {void}
  */
-export function index(_: Request, res: Response): void {
+export function index(req: Request, res: Response, next: NextFunction): void {
+    if (req.session === undefined) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        return;
+    }
+    delete req.session.purchase;
+    delete req.session.mvtk;
+    delete req.session.complete;
     res.render('index/index');
     log('券売機TOPページ表示');
 }

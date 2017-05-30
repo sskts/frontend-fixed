@@ -5,14 +5,6 @@
 		"description": "シネマサンシャインオンラインチケット。簡単操作でチケット購入をしていただけます。",
 		"keywords": "シネマサンシャイン,映画,シネマ,チケット購入"
 	},
-	"header": {
-		"logo": "シネマサンシャイン"
-	},
-	"footer": {
-		"privacy_policy": "プライバシーポリシー",
-		"Specified_Commercial_Transaction_Law": "特定商取引法に基づく表記",
-		"copyright": "Copyright (C) 2001-2017 Cinema Sunshine Co., Ltd. All Rights Reserved."
-	},
 	"navigation": {
 		"restart": "最初の画面",
 		"prev": "一つ前に戻る"
@@ -36,16 +28,21 @@
 		"read": "利用停止"
 	},
 	"purchase": {
+		"step00": "スケジュール選択",
 		"step01": "座席選択",
 		"step02": "券種選択",
 		"step03": "情報入力",
 		"step04": "確認",
 		"step05": "購入完了",
+		"performances": {
+			"page_ttl": "スケジュール選択",
+			"read": "ご希望の鑑賞作品、鑑賞日時を選択してください。",
+			"date": "鑑賞日"
+		},
 		"seat": {
 			"page_ttl": "座席選択",
-			"read": "ご希望の座席を選択して「次へ」ボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。<br></span><span class=\"small-x-text\">※車椅子席をご希望の方は、お手数ですが通常のお席をご購入の上、対象の劇場にご連絡ください。</span>",
-			"next": "次へ",
-			"prev": "戻る",
+			"read": "ご希望の座席を選択して「次へ進む」ボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br>画面をタッチすると画面がズームしますので座席を選択してください。<br><span class=\"small-text\">※車椅子席をご希望の方は、XXXXXXXXXXXXXXXXXXXXXXX。</span>",
+			"next": "次へ進む",
 			"seats": {
 				"default": "空席",
 				"active": "選択済",
@@ -79,7 +76,7 @@
 			"read": "ご希望の券種を選択して「次へ進む」ボタンを押してください。",
 			"next": "次へ進む",
 			"mvtk": {
-				"read": "ムビチケ券を利用される方",
+				"read": "ムビチケをご利用の方はこちら",
 				"button": "を利用する"
 			},
 			"ticket_select": "券種を選択",

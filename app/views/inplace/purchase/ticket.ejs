@@ -1,5 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/ticket.js"></script>
+<%- contentFor('step') %>
+2
 <%- contentFor('prev') %>
 /purchase/seat/<%= performance.id %>/
 <%- contentFor('body') %>
@@ -11,15 +13,9 @@
         <% if (mvtkFlg) { %>
         <% if (mvtkLength === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
-        <div class="box radius bg-ultra-light-gray mb-middle mvtk">
-            <dl class="d-table">
-                <dt class="d-td"><%- __('purchase.ticket.mvtk.read') %></dt>
-                <dd class="d-td width-medium">                                
-                    <div class="ghost-button mvtk-button">
-                        <a href="/purchase/mvtk"><img src="/images/common/mvtk_logo.svg" alt="ムビチケ"><%- __('purchase.ticket.mvtk.button') %></a>
-                    </div>
-                </dd>
-            </dl>
+        <div class="box mb-middle mvtk center">
+            <div class="mvtk-text"><%- __('purchase.ticket.mvtk.read') %></div>
+            <div class="button mvtk-button"><a href="/purchase/mvtk"></a></div>
         </div>
         <% } %>
         <% } %>
@@ -36,7 +32,7 @@
                 data-add-price-glasses="<%= ticket.add_price_glasses %>"
                 data-glasses="<%= ticket.glasses %>">
                 <dl>
-                    <dt class="large-text text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
+                    <dt class="text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
                     <dd>                                
                         <a href="#" data-modal="ticket_type">
                             <div class="small-text mb-x-small"><%= ticket.ticket_name %></div>
@@ -57,7 +53,7 @@
                 data-add-price-glasses=""
                 data-glasses="">
                 <dl>
-                    <dt class="large-text text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
+                    <dt class="text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
                     <dd data-ticket="">
                         <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
                     </dd>

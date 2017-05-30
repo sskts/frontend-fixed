@@ -26,7 +26,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.performance = complete.performance;
         res.locals.reserveSeats = complete.reserveSeats;
         res.locals.reserveTickets = complete.reserveTickets;
-        res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
         res.locals.price = complete.price;
         res.locals.updateReserve = complete.updateReserve;
 

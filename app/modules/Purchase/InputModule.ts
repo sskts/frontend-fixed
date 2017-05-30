@@ -39,7 +39,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         //購入者情報入力表示
         res.locals.error = null;
         res.locals.gmoError = null;
-        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
         res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
         res.locals.price = purchaseModel.getReserveAmount();
@@ -115,7 +114,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = null;
             res.locals.input = req.body;
-            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
             res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
             res.locals.price = purchaseModel.getReserveAmount();
@@ -210,7 +208,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             log('GMO処理エラー');
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.input = req.body;
-            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
             res.locals.gmoShopId = gmoShopId;
             res.locals.price = purchaseModel.getReserveAmount();

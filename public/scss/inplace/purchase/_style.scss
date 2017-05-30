@@ -34,20 +34,24 @@
                 margin-top: -0.5px;
             }
         }
-        .step-01 {
+        
+        .step-00 {
             left: 0;
         }
-        .step-02 {
+        .step-01 {
             left: 36px;
         }
-        .step-03 {
+        .step-02 {
             left: 72px;
         }
-        .step-04 {
+        .step-03 {
             left: 108px;
         }
-        .step-05 {
+        .step-04 {
             left: 144px;
+        }
+        .step-05 {
+            left: 180px;
             &:after {
                 display: none;
             }
