@@ -1,7 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/ticket.js"></script>
 <%- contentFor('prev') %>
-/purchase/seat
+/purchase/seat/<%= performance.id %>/
 <%- contentFor('body') %>
 <div class="purchase-ticket">
     <form method="post">
@@ -11,7 +11,7 @@
         <% if (mvtkFlg) { %>
         <% if (mvtkLength === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
-        <div class="box radius bg-ultra-light-gray mb-medium mvtk">
+        <div class="box radius bg-ultra-light-gray mb-middle mvtk">
             <dl class="d-table">
                 <dt class="d-td"><%- __('purchase.ticket.mvtk.read') %></dt>
                 <dd class="d-td width-medium">                                
@@ -38,7 +38,10 @@
                 <dl>
                     <dt class="large-text text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
                     <dd>                                
-                        <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
+                        <a href="#" data-modal="ticket_type">
+                            <div class="small-text mb-x-small"><%= ticket.ticket_name %></div>
+                            <div><strong>￥<%= ticket.sale_price %></strong></div>
+                        </a>
                     </dd>
                 </dl>
             </li>

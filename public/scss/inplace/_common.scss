@@ -235,6 +235,10 @@ a {
     margin-bottom: 20px !important;
 }
 
+.mb-x-small {
+    margin-bottom: 10px !important;
+}
+
 .radius {
     border-radius: 4px;
 }
@@ -435,19 +439,17 @@ a {
     .inner {
         overflow: hidden;
         border-radius: 5px;
-        >.box {
-            border-radius: 0;
-        }
+        background-color: #FFF;
+        color: #333;
     }
-    
     .close-button {
         position: absolute;
-        top: -30px;
+        top: -60px;
         right: 0px;
         a {
             display: block;
-            width: 25px;
-            height: 25px;
+            width: 44px;
+            height: 44px;
             &:before {
                 content: '';
                 position: absolute;

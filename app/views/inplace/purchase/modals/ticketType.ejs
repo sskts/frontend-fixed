@@ -1,30 +1,30 @@
 <div class="modal" data-modal="ticket_type">
     <div class="inner">
-        <div class="box radius bg-white">
-            <ul class="box radius bg-light-gray">
-                <% for (let ticket of tickets) { %>
-                <li>
-                    <dl class="d-table">
-                        <dt class="d-td">
-                            <div class="mb-xx-small"><strong><%= ticket.ticket_name %> ￥<%= formatPrice(ticket.sale_price) %></strong></div>
-                            <p class="small-x-text"><%= ticket.ticket_note %></p>
-                        </dt>
-                        <dd class="d-td width-small">
-                            <div class="button blue-button ticket-type-select">
-                                <a href="#" 
-                                data-ticket-code="<%= ticket.ticket_code %>"
-                                data-ticket-name="<%= ticket.ticket_name %>"
-                                data-sale-price="<%= ticket.sale_price %>"
-                                data-glasses="<%= ticket.glasses %>"
-                                data-add-price-glasses="<%= ticket.add_price_glasses %>"
-                                data-mvtk-num="<%= ticket.mvtk_num %>">選択</a>
-                            </div>
-                        </dd>
-                    </dl>
-                </li>
-                <% } %>
-            </ul>
-        </div>
+        <ul>
+            <% for (let ticket of tickets) { %>
+            <li>
+                <dl class="d-table">
+                    <dt class="d-td">
+                        <div class="mb-small"><%= ticket.ticket_name %> <strong>￥<%= formatPrice(ticket.sale_price) %></strong></div>
+                        <% if (ticket.ticket_note) { %>
+                        <p class="small-text"><%= ticket.ticket_note %></p>
+                        <% } %>
+                    </dt>
+                    <dd class="d-td width-small">
+                        <div class="button blue-button ticket-type-select">
+                            <a href="#" 
+                            data-ticket-code="<%= ticket.ticket_code %>"
+                            data-ticket-name="<%= ticket.ticket_name %>"
+                            data-sale-price="<%= ticket.sale_price %>"
+                            data-glasses="<%= ticket.glasses %>"
+                            data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                            data-mvtk-num="<%= ticket.mvtk_num %>">選択</a>
+                        </div>
+                    </dd>
+                </dl>
+            </li>
+            <% } %>
+        </ul>
     </div>
     <div class="close-button">
         <a class="modal-close" href="#"></a>

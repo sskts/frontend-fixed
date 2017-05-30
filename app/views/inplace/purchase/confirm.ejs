@@ -18,7 +18,7 @@
             <dl>
                 <dt><%- __('common.appreciation_date') %></dt>
                 <dd>
-                    <div class="mb-xx-small">
+                    <div class="mb-small">
                         <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
                     </div>
                 </dd>

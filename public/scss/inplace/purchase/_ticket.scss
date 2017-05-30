@@ -52,9 +52,27 @@
 }
 
 .modal[data-modal="ticket_type"] {
-    dl {
-        dt {
-            padding-right: 10px;
+    li {
+        padding: 30px 20px;
+        border-bottom: 1px solid #DFDFDF;
+        &:last-child {
+            border-bottom: none;
+        }
+        dl {
+            dt {
+                width: 590px;
+                .mb-small:last-child {
+                    margin-bottom: 0 !important;
+                }
+            }
+            dd {
+                width: 160px;
+                a {
+                    padding: 22px 0;
+                    background-color: #333;
+                    border: none;
+                }
+            }
         }
     }
 }

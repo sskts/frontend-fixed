@@ -279,6 +279,9 @@ a {
 .mb-small {
   margin-bottom: 20px !important; }
 
+.mb-x-small {
+  margin-bottom: 10px !important; }
+
 .radius {
   border-radius: 4px; }
 
@@ -437,17 +440,17 @@ a {
   z-index: 10; }
   .modal .inner {
     overflow: hidden;
-    border-radius: 5px; }
-    .modal .inner > .box {
-      border-radius: 0; }
+    border-radius: 5px;
+    background-color: #FFF;
+    color: #333; }
   .modal .close-button {
     position: absolute;
-    top: -30px;
+    top: -60px;
     right: 0px; }
     .modal .close-button a {
       display: block;
-      width: 25px;
-      height: 25px; }
+      width: 44px;
+      height: 44px; }
       .modal .close-button a:before {
         content: '';
         position: absolute;
@@ -697,8 +700,21 @@ a {
   height: 22px;
   vertical-align: bottom; }
 
-.modal[data-modal="ticket_type"] dl dt {
-  padding-right: 10px; }
+.modal[data-modal="ticket_type"] li {
+  padding: 30px 20px;
+  border-bottom: 1px solid #DFDFDF; }
+  .modal[data-modal="ticket_type"] li:last-child {
+    border-bottom: none; }
+  .modal[data-modal="ticket_type"] li dl dt {
+    width: 590px; }
+    .modal[data-modal="ticket_type"] li dl dt .mb-small:last-child {
+      margin-bottom: 0 !important; }
+  .modal[data-modal="ticket_type"] li dl dd {
+    width: 160px; }
+    .modal[data-modal="ticket_type"] li dl dd a {
+      padding: 22px 0;
+      background-color: #333;
+      border: none; }
 
 .purchase-input .form-layout {
   width: 800px; }

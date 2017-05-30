@@ -20,7 +20,7 @@
         data-screen-code="<%= performanceCOA.screenCode %>">
             <div class="radius bg-light-gray">
                 <div class="screen">
-                    <div class="zoom-btn"><a class="icon-zoom-out bg-white text-center small-x-text" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
+                    <div class="zoom-btn"><a class="icon-zoom-out bg-white text-center small-text" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
                     <div class="screen-scroll">
                     </div>
                     <div class="device-type-pc"></div>
@@ -51,7 +51,7 @@
     
     <h2 class="section-ttl"><%- __('common.agreement') %></h2>
     <p class="mb-small"><%- __('common.agreement_read') %></p>
-    <div class="box radius bg-ultra-light-gray mb-medium agree small-x-text">
+    <div class="box radius bg-ultra-light-gray mb-middle agree small-text">
         <%- include('agreement/ja/' + performance.attributes.theater.id, {}) %>
     </div>
     <form method="post">

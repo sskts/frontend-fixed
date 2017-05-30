@@ -33,7 +33,7 @@
             $(document).on('click', 'a[data-modal]', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
-                var modalName = $(event.target).attr('data-modal');
+                var modalName = $(this).attr('data-modal');
                 _this._trigger = $(this);
                 _this.open(modalName);
             });
@@ -125,6 +125,9 @@
             var height = this.modal.find('.inner').height();
             var top = height / 2;
             var fixHeight = 80;
+            if (isInplace()) {
+                fixHeight = 160;
+            }
             if (height > $(window).height() - fixHeight) {
                 this.modal.addClass('scroll');
                 this.modal.find('.inner').height($(window).height() - fixHeight);
