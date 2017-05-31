@@ -1,21 +1,9 @@
+var modal;
 $(function () {
-    saveInquiry();
-
-    /**
-     * コピークリックイベント
-     */
-    $(document).on('click', '.copy-button a', function (event) {
-        event.preventDefault();
-        var parent = $(this).parent().parent().parent();
-        var text = parent.find('input[name=copy]').val();
-        var textArea = $('<textarea></textarea>');
-        textArea.val(text);
-        $('body').append(textArea);
-        textArea.select();
-        document.execCommand("copy");
-        textArea.remove();
-        alert('コピーしました');
-    });
+    modal = new SASAKI.Modal();
+    if (!isInplace()) {
+        saveInquiry();
+    }
 
     /**
      * チケット情報へ移動
@@ -25,6 +13,14 @@ $(function () {
         var target = $('.qr-tickets');
         var top = target.offset().top - 20;
         $('html,body').animate({scrollTop: top}, 300);
+    });
+
+    /**
+     * チケット発券
+     */
+    $(document).on('click', '.print-button a', function(event) {
+        event.preventDefault();
+        showComplete();
     });
 });
 
@@ -53,4 +49,30 @@ function saveInquiry() {
     saveData.push(inquiryInfo);
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
 }
-            
+
+/**
+ * 完了画面表示
+ * @function showError
+ * @param {any} result
+ * @returns {void}
+ */
+function showComplete() {
+    // (印刷可能そうな状態かのBooleanが返ってくる)
+    if (!window.epsonThermalPrint.isReady()) {
+        printAlert('プリンタが使用可能な状態にありません\n\n' + window.epsonThermalPrint.getErrorStatusString());
+        return;
+    }
+    //コンテンツ切り替え
+    $('.inquiry-confirm').remove();
+    $('.inquiry-print').show();
+    $(window).scrollTop(0);
+    ticketing(function () {
+        //step変更
+        $('.steps li').removeClass('active');
+        $('.steps li:last-child').addClass('active');
+        //コンテンツ切り替え
+        $('.inquiry-print').remove();
+        $('.inquiry-complete').show();
+        $(window).scrollTop(0);
+    });
+}

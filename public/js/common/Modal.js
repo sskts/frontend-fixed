@@ -44,6 +44,9 @@
             });
             //カバー閉じる
             $(document).on('click', '.modal-cover', function (event) {
+                if (this.modal.hasClass('not-event')) {
+                    return;
+                }
                 event.preventDefault();
                 _this.close();
             });

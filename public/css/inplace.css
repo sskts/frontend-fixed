@@ -107,7 +107,9 @@ body {
   font-family: "Lucida Grande", "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", "游ゴシック", "メイリオ", Meiryo, Helvetica, Arial, sans-serif;
   font-size: 30px;
   color: #FFF;
-  background-color: #003d7f; }
+  background-color: #003d7f;
+  background: radial-gradient(ellipse at center, #00a0e9 0%, #003d7f 100%);
+  background-attachment: fixed; }
 
 a {
   color: #FFF; }
@@ -152,7 +154,7 @@ input[type=tel],
 input[type=email],
 input[type=number] {
   width: 100%;
-  padding: 0 10px;
+  padding: 0 20px;
   background-color: rgba(255, 255, 255, 0.85);
   line-height: 90px;
   height: 90px;
@@ -161,7 +163,7 @@ input[type=number] {
 textarea {
   width: 100%;
   border: 1px solid #989898;
-  padding: 8px 10px;
+  padding: 20px 20px;
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 3px; }
 
@@ -171,7 +173,7 @@ select {
   appearance: none;
   overflow: hidden;
   width: 100%;
-  padding: 0 10px;
+  padding: 0 20px;
   line-height: 90px;
   height: 90px;
   position: relative;
@@ -297,27 +299,35 @@ a {
   border: 1px solid #00A0E9;
   position: relative; }
 
+.white-box {
+  width: 800px;
+  color: #333;
+  text-align: center;
+  padding: 20px 0;
+  border-radius: 5px;
+  background-color: #FFF; }
+
 .form-layout {
-  width: 600px; }
+  width: 800px; }
   .form-layout dl {
     display: table;
-    border-radius: 10px;
+    border-radius: 5px;
     overflow: hidden; }
     .form-layout dl dt {
       display: table-cell;
-      width: 190px;
+      width: 200px;
       font-weight: bold;
       background-color: #333;
       text-align: center; }
     .form-layout dl dd {
       display: table-cell;
-      width: 410px;
+      width: 600px;
       background-color: rgba(255, 255, 255, 0.85); }
 
 .table-layout {
   width: 800px;
   display: table;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden; }
   .table-layout dl {
     display: table-row-group; }
@@ -359,6 +369,7 @@ a {
 
 .gray-button a, .gray-button button, .gray-button label {
   background-color: #333;
+  background: linear-gradient(45deg, black 0%, #666666 100%);
   border: none; }
 
 .page-ttl {
@@ -411,8 +422,8 @@ a {
   height: 100%;
   position: relative; }
   .contents .contents-inner {
-    padding: 80px 0;
-    width: 1100px;
+    padding: 80px 0 40px;
+    width: 1140px;
     margin: 0 auto; }
 
 .modal-cover {
@@ -529,22 +540,22 @@ a {
 .loading .bar5 {
   animation-delay: 0.9s; }
 
-.index .buttons {
-  margin: 0 0 40px;
-  display: flex;
-  justify-content: space-between; }
-
-.index .purchase-button a, .index .inquiry-button a {
-  padding: 140px 0 0; }
-
-.index .qr-code {
-  position: absolute;
-  top: 50%;
-  right: 30px;
-  margin-top: -50px; }
-
-.index .box p {
-  margin: 0 130px 0 0; }
+.index {
+  width: 1050px;
+  margin: 0 auto; }
+  .index .buttons {
+    margin: 0 0 40px;
+    display: flex;
+    justify-content: space-between; }
+  .index .purchase-button a, .index .inquiry-button a {
+    padding: 140px 0 0; }
+  .index .qr-code {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    margin-top: -50px; }
+  .index .box {
+    padding: 45px 160px 45px 30px; }
 
 .purchase .steps {
   position: absolute;
@@ -633,7 +644,7 @@ a {
     margin: 0 20px 20px 0; }
     .purchase-ticket .seats li dl {
       display: table;
-      border-radius: 10px;
+      border-radius: 5px;
       overflow: hidden; }
       .purchase-ticket .seats li dl dt {
         width: 130px;
@@ -683,23 +694,25 @@ a {
   .modal[data-modal="ticket_type"] li dl dd {
     width: 160px; }
 
-.purchase-input .form-layout {
-  width: 800px; }
-  .purchase-input .form-layout dl dt {
-    width: 200px; }
-  .purchase-input .form-layout dl dd {
-    width: 600px; }
-  .purchase-input .form-layout .expire {
-    display: flex;
-    justify-content: space-between; }
-    .purchase-input .form-layout .expire dl {
-      width: 390px; }
-      .purchase-input .form-layout .expire dl dd {
-        width: 190px; }
-  .purchase-input .form-layout .securitycode dt {
+.purchase-input .form-layout dl dt {
+  width: 200px; }
+
+.purchase-input .form-layout dl dd {
+  width: 600px; }
+
+.purchase-input .form-layout .expire {
+  display: flex;
+  justify-content: space-between; }
+  .purchase-input .form-layout .expire dl {
     width: 390px; }
-  .purchase-input .form-layout .securitycode dd {
-    width: 410px; }
+    .purchase-input .form-layout .expire dl dd {
+      width: 190px; }
+
+.purchase-input .form-layout .securitycode dt {
+  width: 390px; }
+
+.purchase-input .form-layout .securitycode dd {
+  width: 410px; }
 
 .purchase-input .credit-image {
   display: inline-block;
@@ -716,23 +729,52 @@ a {
   width: 100%;
   max-width: 300px; }
 
-.performances li {
-  background-color: rgba(255, 255, 255, 0.85);
-  border-radius: 5px;
-  color: #333; }
-  .performances li dl strong {
-    display: inline-block;
-    width: 100px; }
-  .performances li dl dt {
-    padding: 20px;
-    border-bottom: 1px solid #ACACAC; }
-  .performances li dl dd {
-    padding: 20px 0 0 20px; }
-    .performances li dl dd ul {
-      display: flex;
-      flex-wrap: wrap; }
-      .performances li dl dd ul li {
-        margin: 0 20px 20px 0; }
+.performances {
+  width: 1100px;
+  margin: 0 auto; }
+  .performances li {
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 5px;
+    color: #333; }
+    .performances li dl strong {
+      display: inline-block;
+      width: 100px; }
+    .performances li dl dt {
+      padding: 20px;
+      border-bottom: 1px solid #ACACAC; }
+    .performances li dl dd {
+      padding: 20px 0 0 20px; }
+      .performances li dl dd ul {
+        display: flex;
+        flex-wrap: wrap; }
+        .performances li dl dd ul li {
+          margin: 0 20px 20px 0; }
+
+.purchase-mvtk-input .clone {
+  display: none; }
+
+.purchase-mvtk-input .add-button a {
+  padding: 22px 0; }
+
+.purchase-mvtk-input .ticket-list .mvtk-box {
+  display: none;
+  position: relative; }
+  .purchase-mvtk-input .ticket-list .mvtk-box .remove-button {
+    position: absolute;
+    top: 0;
+    right: 0; }
+  .purchase-mvtk-input .ticket-list .mvtk-box.active {
+    display: block; }
+
+.purchase-mvtk-input .ticket-list .zoom {
+  -webkit-animation: zoom 0.2s;
+  animation: zoom 0.2s; }
+
+.purchase-mvtk-input .ticket-list .form-layout dl dt {
+  width: 280px; }
+
+.purchase-mvtk-input .ticket-list .form-layout dl dd {
+  width: 520px; }
 
 .screen {
   visibility: hidden;
@@ -859,3 +901,9 @@ a {
     width: 400px; }
   .purchase-overlap .table-layout dl dd {
     width: 600px; }
+
+.setting .form-layout dl dt {
+  width: 240px; }
+
+.setting .form-layout dl dd {
+  width: 560px; }

@@ -1,5 +1,7 @@
 <%- contentFor('script') %>
-<script src="/js/ScreenSeatStatusesMap.js"></script>
+<script src="/js/common/epos-2.3.0.js"></script>
+<script src="/js/common/epsonprint.js"></script>
+<script src="/js/common/print.js"></script>
 <script src="/js/purchase/confirm.js"></script>
 <script src="/js/purchase/complete.js"></script>
 <%- contentFor('step') %>
@@ -20,9 +22,7 @@
             <dl>
                 <dt><%- __('common.appreciation_date') %></dt>
                 <dd>
-                    <div class="mb-small">
-                        <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
-                    </div>
+                    <%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %>
                 </dd>
             </dl>
             <dl>
@@ -51,3 +51,4 @@
 
 <%- contentFor('modals') %>
 <%- include('modals/updateReserveError') %>
+<%- include('modals/print') %>

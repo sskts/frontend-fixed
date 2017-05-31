@@ -98,8 +98,13 @@ function createSchedule(performances) {
  */
 function createScheduleDom(data) {
     var performances = data.performances.map(function (performance) {
+        var link = '/purchase?id=' + performance.id;
+        if (isInplace()) {
+            // 券売機
+            link = '/purchase/inplace.html?id=' + performance.id;
+        }
         return ('<li class="button small-button gray-button">'+
-            '<a href="/purchase?id='+performance.id+'">'+ 
+            '<a href="'+ link +'">'+ 
             '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
             '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
             '<div class="small-text">' + performance.attributes.screen.name.ja + '</div>' + 

@@ -44,6 +44,13 @@ $(function () {
 function pageInit() {
     if (isInplace()) {
         // 券売機
+        var data = localStorage.getItem('config');
+        var json = JSON.parse(data);
+        $('input[name=last_name_hira]').val(json.last_name_hira);
+        $('input[name=first_name_hira]').val(json.first_name_hira);
+        $('input[name=mail_addr]').val(json.mail_addr);
+        $('input[name=mail_confirm]').val(json.mail_addr);
+
         var str = $('input[name=validation]').val();
         var errors = JSON.parse(str);
         if (errors === null) return;
@@ -131,6 +138,7 @@ function someCallbackFunction(response) {
  */
 function validationScroll() {
     if (isInplace()) {
+        // 券売機
         return;
     }
     var target = $('.validation').eq(0);
@@ -231,11 +239,12 @@ function validation() {
             names.push(validation.name)
         }
     });
-    if (isInplace()) {
-        // 券売機
-        modal.open('validation');
-    }
+    
     if (validations.length > 0) {
+        if (isInplace()) {
+            // 券売機
+            modal.open('validation');
+        }
         // 計測
         collection({
             client: 'sskts-frontend',

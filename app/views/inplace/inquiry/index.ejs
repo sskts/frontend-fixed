@@ -1,4 +1,7 @@
 <%- contentFor('script') %>
+<script src="/js/common/epos-2.3.0.js"></script>
+<script src="/js/common/epsonprint.js"></script>
+<script src="/js/common/print.js"></script>
 <script src="/js/inquiry/index.js"></script>
 
 <%- contentFor('body') %>
@@ -30,7 +33,7 @@
         </dl>
     </div>
 
-    <div class="button middle-button next-button"><a class="center" href="#"><%- __('inquiry.confirm.next') %></a></div>
+    <div class="button middle-button print-button"><a class="center" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
 </div>
 
 <input type="hidden" name="theater_code" value="<%= login.theater_code %>">
@@ -38,3 +41,7 @@
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
 <input type="hidden" name="transaction_id" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+<%- include('completeContents') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/print') %>

@@ -6,8 +6,10 @@
 		"keywords": "シネマサンシャイン,映画,シネマ,チケット購入"
 	},
 	"navigation": {
-		"restart": "最初の画面",
-		"prev": "一つ前に戻る"
+		"top": "最初の画面",
+		"prev": "一つ前に戻る",
+		"setting": "設定",
+		"stop": "利用停止"
 	},
 	"noscript": "javascrptの設定を有効にしてご覧ください",
 	"index": {
@@ -21,7 +23,8 @@
 	},
 	"setting": {
 		"page_ttl": "設定",
-		"read": "設定してください"
+		"read": "端末の情報を設定してください",
+		"next": "設定"
 	},
 	"stop": {
 		"page_ttl": "利用停止",
@@ -101,7 +104,11 @@
 		"confirm": {
 			"page_ttl": "購入内容確認",
 			"read": "ご購入内容をご確認頂き「購入完了」ボタンを押して購入を確定してください。",
-			"next": "購入完了"
+			"next": "発券する"
+		},
+		"print": {
+			"page_ttl": "購入完了",
+			"read": "印刷です。"
 		},
 		"complete": {
 			"page_ttl": "購入完了",
@@ -111,7 +118,7 @@
 		"mvtk": {
 			"input": {
 				"page_ttl": "ムビチケ券認証",
-				"read": "ご利用になるムビチケ券の購入番号と、暗証番号を入力してください。<br>複数枚ご利用になる場合は「ムビチケ券を追加」ボタンを押して追加してください。",
+				"read": "ご利用になるムビチケ券の購入番号と、暗証番号を入力してください。<br>複数枚ご利用になる場合は「ムビチケ券を追加」ボタンを押して追加してください。<br><span class=\"small-text\">※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。",
 				"next": "認証する",
 				"prev": "戻る",
 				"add": "ムビチケ券を追加",
@@ -126,7 +133,7 @@
 			},
 			"confirm": {
 				"page_ttl": "ムビチケ券適用内容確認",
-				"read": "内容に問題なければ「券種選択へ戻る」ボタンを押してください。<br><span class=\"small-text\">※券種選択よりムビチケ券を選択してください。</span>",
+				"read": "内容に問題なければ「券種選択へ戻る」ボタンを押してください。<br><span class=\"small-text\">※券種選択よりムビチケ券を選択してください。<span>",
 				"next": "券種選択へ戻る",
 				"prev": "戻る",
 				"note": "※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。",
@@ -152,7 +159,7 @@
 		"login": {
 			"page_ttl": "チケット発券",
 			"read": "下記にチケット購入時の予約番号と電話番号を<br>入力して「照会」ボタンを押してください。",
-			"next": "発券する",
+			"next": "照会する",
 			"modal": {
 				"validation": {
 					"ttl": "入力内容に誤りがあります。"
@@ -163,6 +170,15 @@
 			"page_ttl": "チケット発券",
 			"read": "内容に問題がなければ「発券する」ボタンをタップしてください。",
 			"next": "発券する"
+		},
+		"print": {
+			"page_ttl": "チケット発券",
+			"read": "印刷です。"
+		},
+		"complete": {
+			"page_ttl": "チケット発券",
+			"read": "印刷が完了しました。<br>チケットを受け取ってご入場ください。<br>ご利用ありがとうございました。",
+			"next": "終了"
 		}
 	},
 	"not_found": {
@@ -232,6 +248,7 @@
 		"agree": "利用規約に同意する",
 		"notes_agree": "上記内容に同意する",
 		"site_seal": "この画面は、高いセキュリティでプライバシーを保護する為に、SSL暗号化通信を採用しています。",
+		"printer": "プリンター",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
@@ -246,7 +263,8 @@
 			"securitycode": "(例)123",
 			"holdername": "(例)TARO CINEMA",
 			"mvtk_code": "(例)012345789",
-			"mvtk_password": "(例)0123"
+			"mvtk_password": "(例)0123",
+			"printer": "(例)0.0.0.0"
 		},
 		"validation": {
 			"maxlength %s": "は%s文字以内で入力してください",
@@ -261,10 +279,8 @@
 			"agree": "に同意してください",
 			"card": "をご確認ください",
 			"mvtk": "入力内容をご確認ください",
-			"mvtk_code": "common.validation.mvtk_code",
-			"mvtk_password": "common.validation.mvtk_password",
-			"equals_email": "common.validation.equals_email",
-			"inquiry": "をご確認ください"
+			"inquiry": "をご確認ください",
+			"is_ip": "が正しくありません"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@ticket-cinemasunshine.com」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@ticket-cinemasunshine.com」の追加設定をしてください。",

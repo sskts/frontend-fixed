@@ -68,8 +68,6 @@ function purchase() {
             showError(res.err.message);
         } else {
             var transactionId = $('input[name=transaction_id]').val();
-            //完了画面表示
-            showComplete(res.result);
             // 計測
             collection({
                 client: 'sskts-frontend',
@@ -89,6 +87,10 @@ function purchase() {
             } catch (err) {
                 console.error(err);
             }
+            
+            //完了画面表示
+            showComplete(res.result);
+            
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
@@ -171,15 +173,32 @@ function showError(message) {
  * @returns {void}
  */
 function showComplete(result) {
-    //step変更
-    $('.steps li').removeClass('active');
-    $('.steps li:last-child').addClass('active');
-    //コンテンツ切り替え
-    $('.purchase-confirm').remove();
-    $('.purchase-complete').show();
-    $(window).scrollTop(0);
-    history.pushState(null, null, '/purchase/complete');
-    heightFix();
+    if (isInplace()) {
+        // 券売機
+        //コンテンツ切り替え
+        $('.inquiry-confirm').remove();
+        $('.inquiry-print').show();
+        $(window).scrollTop(0);
+        ticketing(function () {
+            //step変更
+            $('.steps li').removeClass('active');
+            $('.steps li:last-child').addClass('active');
+            //コンテンツ切り替え
+            $('.inquiry-print').remove();
+            $('.inquiry-complete').show();
+            $(window).scrollTop(0);
+        });
+    } else {
+        //step変更
+        $('.steps li').removeClass('active');
+        $('.steps li:last-child').addClass('active');
+        //コンテンツ切り替え
+        $('.purchase-confirm').remove();
+        $('.purchase-complete').show();
+        $(window).scrollTop(0);
+        history.pushState(null, null, '/purchase/complete');
+        heightFix();
+    }
 }
 
 /**

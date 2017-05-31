@@ -1,27 +1,56 @@
+<%- contentFor('script') %>
+<script src="/js/setting/index.js"></script>
 <%- contentFor('body') %>
-<div class="index">
+<div class="setting">
     <h1 class="page-ttl"><%- __('setting.page_ttl') %></h1>
     <p class="read"><%- __('setting.read') %></p>
     <form method="post">
         <div class="form-layout center">
             <dl class="mb-small">
-                <dt><%- __('common.purchase_number') %></dt>
+                <dt><%- __('common.theater') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="reserve_num" maxlength="8" autocomplete="off" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= reserveNum %>">
+                    <select>
+                        <% if (env === 'production') { %>
+                        <option selected value="012">北島</option>
+                        <option selected value="018">姶良</option>
+                        <% } else { %>
+                        <option selected value="112">北島</option>
+                        <option selected value="118">姶良</option>
+                        <% } %>
+                    </select>
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.last_name_hira') %></dt>
+                <dd>
+                    <input type="text" name="last_name_hira" autocomplete="off" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.first_name_hira') %></dt>
+                <dd>
+                    <input type="text" name="first_name_hira" autocomplete="off" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.mail_addr') %></dt>
+                <dd>
+                    <input type="text" name="mail_addr" autocomplete="off" placeholder="<%- __('common.placeholder.mail') %>" value="">
                 </dd>
             </dl>
             <dl class="mb-large">
-                <dt><%- __('common.tel_num') %></dt>
+                <dt><%- __('common.printer') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= telNum %>">
+                    <input type="text" pattern="\d*" name="printer" autocomplete="off" placeholder="<%- __('common.placeholder.printer') %>" value="">
                 </dd>
             </dl>
         </div>
-
-        <% if (theaterCode) { %>
-            <input type="hidden" name="theater_code" value="<%= theaterCode %>">
-        <% } %>
         
-        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('inquiry.login.next') %></button></div>
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('setting.next') %></button></div>
     </form>
 </div>
+
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('../purchase/modals/validation') %>

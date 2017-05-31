@@ -2,6 +2,8 @@
 <script src="/js/purchase/mvtk/confirm.js"></script>
 <%- contentFor('step') %>
 2
+<%- contentFor('prev') %>
+/purchase/mvtk
 <%- contentFor('body') %>
 <div class="purchase-mvtk-confirm">
     <h1 class="page-ttl"><%- __('purchase.mvtk.confirm.page_ttl') %></h1>
@@ -9,12 +11,12 @@
 
     <form method="post">
         <% if (purchaseNoList.length > 0) { %>
-        <ul class="box radius bg-light-gray mb-middle mvtk-lists">
+        <ul class="mb-middle mvtk-lists">
             <% for (const purchaseNo of purchaseNoList) { %>
-            <li>
+            <li class="white-box mb-small center">
                 <dl class="d-table">
                     <dt class="d-td"><%- __('common.mvtk_code') %> <%= purchaseNo %></dt>
-                    <dd class="d-td width-medium">
+                    <dd class="d-td">
                         <% for (const mvtkTicket of mvtk) { %>
                         <% if (mvtkTicket.code === purchaseNo) { %>
                         <p><strong><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
@@ -26,16 +28,12 @@
             <% } %>
         </ul>
         <% } else { %>
-        <div class="box radius bg-light-gray mb-middle">
+        <div class="mb-middle">
             <p><%- __('purchase.mvtk.confirm.not_ticket') %></p>
         </div>
         <% } %>
         
-
-        <div class="button-area clearfix">
-            <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev-black"href="/purchase/mvtk"><%- __('purchase.mvtk.confirm.prev') %></a></div>
-        </div>
+        <div class="button next-button middle-button"><button class="center" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>

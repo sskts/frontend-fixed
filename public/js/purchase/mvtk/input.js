@@ -36,6 +36,8 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         var mvtkList = [];
+        var modalBody = $('.modal[data-modal=validation] .modal-body');
+        modalBody.html('');
         $('.ticket-list .mvtk-box.active').each(function (index, elem) {
             var target = $(elem);
             var code = target.find('input[name=mvtk_code]').val();
@@ -49,7 +51,7 @@ $(function () {
             validation(target);
         });
 
-        if ($('.validation-text').length > 0) {
+        if ($('.validation').length > 0) {
             validationScroll();
             return;
         }
@@ -89,6 +91,10 @@ function pageInit() {
  * @returns {void}
  */
 function validationScroll() {
+    if (isInplace()) {
+        // 券売機
+        return;
+    }
     var target = $('.validation').eq(0);
     var top = target.offset().top - 20;
     $('html,body').animate({ scrollTop: top }, 300);
@@ -103,6 +109,7 @@ function validationScroll() {
 function validation(parent) {
     parent.find('.validation').removeClass('validation');
     parent.find('.validation-text').remove();
+    var modalBody = $('.modal[data-modal=validation] .modal-body');
 
     var validationList = [
         { name: 'mvtk_code', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
@@ -113,37 +120,44 @@ function validation(parent) {
 
         var target = parent.find('input[name=' + validation.name + ']');
         var value = target.val();
+        var msg = '';
 
         if (validation.required
             && !value
             && value == '') {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
+            msg = validation.label + locales.validation.required;
         } else if (validation.maxLength
             && value
             && value.length > validation.maxLength) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.maxlength.replace('30', validation.maxLength) + '</div>');
+            msg = validation.label + locales.validation.maxlength.replace('30', validation.maxLength);
         } else if (validation.minLength
             && value
             && value.length < validation.minLength) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.minlength.replace('30', validation.minLength) + '</div>');
+            msg = validation.label + locales.validation.minlength.replace('30', validation.minLength);
         } else if (validation.regex
             && value
             && !value.match(validation.regex[0])) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
+            msg = validation.label + validation.regex[1];
         } else if (validation.equals
             && value !== $('input[name=' + validation.equals + ']').val()) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.equals + '</div>');
+            msg = validation.label + locales.validation.equals;
         } else if (validation.agree
             && !target.is(':checked')) {
             target = $('label[for=' + validation.name + ']');
+            msg = validation.label + locales.validation.agree;
+        }
+        if (msg !== '') {
             target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
+            if (isInplace()) {
+                // 券売機
+                modalBody.append('<div class="mb-small">' + msg + '</div>');
+            } else {
+                target.after('<div class="validation-text">' + msg + '</div>');
+            }
         }
     });
-
+    if (isInplace()) {
+        // 券売機
+        modal.open('validation');
+    }
 }
