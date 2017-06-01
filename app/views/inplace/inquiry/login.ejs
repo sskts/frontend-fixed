@@ -1,7 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/inquiry/login.js"></script>
-
 <%- contentFor('body') %>
+<%- include('../layouts/inquiry/steps', {step: '0'}) %>
 <div class="inquiry-confirm">
     <h1 class="page-ttl"><%- __('inquiry.login.page_ttl') %></h1>
     <p class="read"><%- __('inquiry.login.read') %></p>

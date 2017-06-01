@@ -3,7 +3,6 @@
     <ul class="buttons">
         <% if (env !== 'production') { %>
         <li class="prev-button"><a href="/setting" class="small-x-text text-center"><%- __('navigation.setting') %></a></li>
-        <li class="prev-button"><a href="/stop" class="small-x-text text-center"><%- __('navigation.stop') %></a></li>
         <% } %>
         <% if (defineContent('prev')) { %>
         <li class="prev-button"><a href="<%- defineContent('prev') %>" class="small-x-text text-center"><%- __('navigation.prev') %></a></li>

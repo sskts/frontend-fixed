@@ -1,28 +1,30 @@
-.performances {
-    width: 1100px;
-    margin: 0 auto;
-    li {
-        background-color: rgba(255, 255, 255, 0.85);
-        border-radius: 5px;
-        color: #333;
-        dl {
-            strong {
-                display: inline-block;
-                width: 100px;
-            }
-            dt {
-                padding: 20px;
-                border-bottom: 1px solid #ACACAC;
-            }
-            dd {
-                padding: 20px 0 0 20px;
-                ul {
-                    display: flex;
-                    flex-wrap:wrap;
-                    li {
-                        margin: 0 20px 20px 0;
-                        a {
+.purchase-performances {
+    .performances {
+        width: 1100px;
+        margin: 0 auto;
+        li {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 5px;
+            color: #333;
+            dl {
+                strong {
+                    display: inline-block;
+                    width: 100px;
+                }
+                dt {
+                    padding: 20px;
+                    border-bottom: 1px solid #ACACAC;
+                }
+                dd {
+                    padding: 20px 0 0 20px;
+                    ul {
+                        display: flex;
+                        flex-wrap:wrap;
+                        li {
+                            margin: 0 20px 20px 0;
+                            a {
 
+                            }
                         }
                     }
                 }

@@ -6,9 +6,20 @@
     <title>シネマサンシャイン／チケット予約</title>
     <meta name="description" content="シネマサンシャインオンラインチケット。簡単操作でチケット購入をしていただけます。">
     <meta name="keywords" content="シネマサンシャイン,映画,シネマ,チケット購入">
-    <meta name="viewport" content="width=device-width,user-scalable=no,maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
     <meta name="format-detection" content="telephone=no">
     <meta name="robots" content="noindex">
+    <script>
+    changeViewport();
+    function changeViewport() {
+        var base = 1366;
+        var ua = navigator.userAgent.toLowerCase();
+        var isiOS = (ua.indexOf('iphone') > -1) || (ua.indexOf('ipod') > -1) || (ua.indexOf('ipad') > -1);
+        var width = (isiOS) ? document.documentElement.clientWidth / base : window.outerWidth / base;
+        var viewport = 'width=device-width, initial-scale=' + width + ', maximum-scale=1, user-scalable=no, minimal-ui';
+        document.querySelector('meta[name=viewport]').setAttribute('content', viewport);
+    }
+</script>
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="icon" href="/images/favicon.ico" type="image/vnd.microsoft.icon">
     <link rel="apple-touch-icon" href="images/touch_icon.png">

@@ -3,23 +3,17 @@
 <%- contentFor('step') %>
 0
 <%- contentFor('body') %>
-<div class="performance">
+<div class="purchase-performances">
     <h1 class="page-ttl"><%- __('purchase.performances.page_ttl') %></h1>
     <p class="read"><%- __('purchase.performances.read') %></p>
-
-    <input type="hidden" name="theater" value="118">
     <div class="form-layout center mb-middle">
         <dl>
             <dt><%- __('purchase.performances.date') %></dt>
             <dd class="date">
                 <select>
-                    <% for (let i = 0; i < 15; i++) { %>
-                    <% const date = moment().add((i - 5), 'days'); %>
-                    <% if (moment().add((i - 6), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
-                    <option selected value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
-                    <% } else { %>
+                    <% for (let i = 0; i < 7; i++) { %>
+                    <% const date = moment().add(i, 'days'); %>
                     <option value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
-                    <% } %>
                     <% } %>
                 </select>
             </dd>

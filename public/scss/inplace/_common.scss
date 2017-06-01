@@ -29,9 +29,7 @@ body {
     font-family: $font-family;
     font-size: 30px;
     color: #FFF;
-    background-color: rgb(0, 61, 127);
-    background: radial-gradient(ellipse at center, rgba(0,160,233,1) 0%,rgba(0,61,127,1) 100%);
-    background-attachment: fixed;
+    background-color: #000;
 }
 
 a {
@@ -385,13 +383,14 @@ a {
 }
 
 .navigation {
+    transition: height 0.25s;
     position: fixed;
     top: 0;
-    bottom: 0;
     left: 0;
     width: 120px;
     height: 100%;
     background-color: #000;
+    background: linear-gradient(-112deg, rgba(102,102,102,1) 0%, rgba(0,0,0,1) 50%);
     padding: 40px 0 0;
     .logo {
         margin: 0 auto;
@@ -416,8 +415,11 @@ a {
 }
 
 .contents {
-    height: 100%;
+    min-height: 100vh;
     position: relative;
+    background-color: rgb(0, 61, 127);
+    background: radial-gradient(ellipse at center, rgba(0,160,233,1) 0%,rgba(0,61,127,1) 100%);
+    background-attachment: fixed;
     .contents-inner {
         padding: 80px 0 40px;
         width: 1140px;

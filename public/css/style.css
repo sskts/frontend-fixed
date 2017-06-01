@@ -1356,15 +1356,33 @@ p a {
   .purchase-complete .print-button {
     display: none; } }
 
-.performance li .button {
-  width: 150px;
-  margin-right: 10px; }
-  @media screen and (max-width: 767px) {
-    .performance li .button {
-      width: auto;
-      margin-right: 0; } }
-  .performance li .button:last-child {
-    margin-bottom: 0; }
+.purchase-performances .performances li {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 5px;
+  color: #333;
+  padding-bottom: 10px; }
+  .purchase-performances .performances li:after {
+    display: none; }
+  .purchase-performances .performances li dl strong {
+    display: inline-block;
+    width: 100px; }
+  .purchase-performances .performances li dl dt {
+    padding: 20px;
+    border-bottom: 1px solid #ACACAC; }
+  .purchase-performances .performances li dl dd {
+    padding: 20px 0 0 20px; }
+    .purchase-performances .performances li dl dd ul {
+      display: flex;
+      flex-wrap: wrap; }
+      .purchase-performances .performances li dl dd ul li {
+        width: 20%;
+        margin: 0 10px 10px 0;
+        padding-bottom: 0; }
+        @media screen and (max-width: 767px) {
+          .purchase-performances .performances li dl dd ul li {
+            width: 30%; } }
+        .purchase-performances .performances li dl dd ul li:after {
+          display: none; }
 
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],

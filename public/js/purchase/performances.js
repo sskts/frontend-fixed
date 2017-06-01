@@ -11,7 +11,7 @@ $(function () {
     // 検索クリック
     $(document).on('click', '.search a', function (event) {
         event.preventDefault();
-        getPerformance();
+        getPerformances();
     });
     // 検索セレクト
     $(document).on('change', '.date select', function (event) {
@@ -28,7 +28,7 @@ function getPerformances() {
     var theater = $('.theater select').val();
     if (isInplace()) {
         // 券売機
-        theater = $('input[name=theater]').val();
+        theater = config.theater;
     }
     var day = $('.date select').val();
     $.ajax({
