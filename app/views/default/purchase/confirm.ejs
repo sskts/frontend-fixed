@@ -103,7 +103,7 @@
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
         <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
-            <%- include('notes/ja/' + performance.attributes.theater.id) %>
+            <%- include('notes/ja/' + performance.attributes.theater.id.slice(-2), {}) %>
         </div>
 
         <div class="mb-x-large text-center">
