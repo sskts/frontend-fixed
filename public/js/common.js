@@ -1,7 +1,7 @@
 var SASAKI = {};
 
 $(function () {
-    if (!isInplace()) {
+    if (!isFixed()) {
         settingValidation();
     }
     /**
@@ -21,11 +21,11 @@ $(function () {
 
 /**
  * 券売機判定
- * @function isInplace
+ * @function isFixed
  * @returns {boolean} 
  */
-function isInplace() {
-    return $('body').hasClass('inplace');
+function isFixed() {
+    return $('body').hasClass('fixed');
 }
 
 /**

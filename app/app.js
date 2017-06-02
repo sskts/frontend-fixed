@@ -26,8 +26,8 @@ app.use(basicAuth_1.default); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
-if (process.env.VIEW_TYPE === 'inplace') {
-    app.set('views', __dirname + '/views/inplace');
+if (process.env.VIEW_TYPE === 'fixed') {
+    app.set('views', __dirname + '/views/fixed');
 }
 else {
     app.set('views', __dirname + '/views/default');

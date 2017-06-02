@@ -15,7 +15,7 @@ const SeatModule = require("../modules/Purchase/SeatModule");
 const TicketModule = require("../modules/Purchase/TicketModule");
 const TransactionModule = require("../modules/Purchase/TransactionModule");
 const router = express.Router();
-if (process.env.VIEW_TYPE === 'inplace'
+if (process.env.VIEW_TYPE === 'fixed'
     || (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
     // パフォーマンス一覧
     router.get('/performances', PerformancesModule.index);

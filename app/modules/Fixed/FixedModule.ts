@@ -1,16 +1,16 @@
 /**
  * 照会
- * @namespace Inplace.InplaceModule
+ * @namespace Fixed.FixedModule
  */
 
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-const log = debug('SSKTS:Inplace.InplaceModule');
+const log = debug('SSKTS:Fixed.FixedModule');
 
 /**
  * 券売機TOPページ表示
- * @memberOf InplaceModule
+ * @memberOf FixedModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -31,7 +31,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
 /**
  * 券売機設定ページ表示
- * @memberOf InplaceModule
+ * @memberOf FixedModule
  * @function setting
  * @param {Response} res
  * @returns {void}
@@ -42,7 +42,7 @@ export function setting(_: Request, res: Response): void {
 
 /**
  * 利用停止ページ表示
- * @memberOf InplaceModule
+ * @memberOf FixedModule
  * @function stop
  * @param {Response} res
  * @returns {void}

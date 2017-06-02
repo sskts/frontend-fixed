@@ -1,7 +1,7 @@
 var modal;
 $(function () {
     modal = new SASAKI.Modal();
-    if (!isInplace()) {
+    if (!isFixed()) {
         saveInquiry();
     }
 

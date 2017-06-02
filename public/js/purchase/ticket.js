@@ -128,7 +128,7 @@ function ticketSelect(target, ticket) {
         mvtk_num: ticket.mvtk_num // ムビチケ購入番号
     };
     target.find('dd a').text(afterData.ticket_name + ' ￥' + afterData.sale_price);
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         target.find('dd a').html('<div class="small-text mb-x-small">' + afterData.ticket_name + '</div><div><strong>￥' + afterData.sale_price + '</strong></div>');
     }

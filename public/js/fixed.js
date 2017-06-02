@@ -15,14 +15,14 @@ document.addEventListener('touchend', function (event) {
     lastTouch = now;
 }, true);
 
-inplaceInit();
+fixedInit();
 
 /**
  * 券売機初期化
- * @function inplaceInit
+ * @function fixedInit
  * @returns {void}
  */
-function inplaceInit() {
+function fixedInit() {
     // 設定確認
     if (!(location.pathname.indexOf('/setting') > -1 
     || location.pathname.indexOf('/stop') > -1)) {

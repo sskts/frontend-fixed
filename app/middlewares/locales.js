@@ -5,8 +5,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const i18n = require("i18n");
 let directory = `${__dirname}/../locales/default`;
-if (process.env.VIEW_TYPE === 'inplace') {
-    directory = `${__dirname}/../locales/inplace`;
+if (process.env.VIEW_TYPE === 'fixed') {
+    directory = `${__dirname}/../locales/fixed`;
 }
 i18n.configure({
     locales: ['ja'],

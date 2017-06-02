@@ -128,7 +128,7 @@
             var height = this.modal.find('.inner').height();
             var top = height / 2;
             var fixHeight = 80;
-            if (isInplace()) {
+            if (isFixed()) {
                 fixHeight = 160;
             }
             if (height > $(window).height() - fixHeight) {

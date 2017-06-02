@@ -26,7 +26,7 @@ $(function () {
  */
 function getPerformances() {
     var theater = $('.theater select').val();
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         theater = config.theater;
     }
@@ -99,9 +99,9 @@ function createSchedule(performances) {
 function createScheduleDom(data) {
     var performances = data.performances.map(function (performance) {
         var link = '/purchase?id=' + performance.id;
-        if (isInplace()) {
+        if (isFixed()) {
             // 券売機
-            link = '/purchase/inplace.html?id=' + performance.id;
+            link = '/purchase/fixed.html?id=' + performance.id;
         }
         return ('<li class="button small-button gray-button">'+
             '<a href="'+ link +'">'+ 

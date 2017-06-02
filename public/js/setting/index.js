@@ -120,7 +120,7 @@ function validation() {
         }
     });
     if (validations.length > 0) {
-        if (isInplace()) {
+        if (isFixed()) {
             // 券売機
             modal.open('validation');
         }

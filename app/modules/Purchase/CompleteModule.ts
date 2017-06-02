@@ -4,7 +4,6 @@
  */
 
 import { NextFunction, Request, Response } from 'express';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
 /**

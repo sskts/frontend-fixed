@@ -173,7 +173,7 @@ function showError(message) {
  * @returns {void}
  */
 function showComplete(result) {
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         //コンテンツ切り替え
         $('.inquiry-confirm').remove();

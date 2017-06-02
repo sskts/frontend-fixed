@@ -91,7 +91,7 @@ function pageInit() {
  * @returns {void}
  */
 function validationScroll() {
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         return;
     }
@@ -148,7 +148,7 @@ function validation(parent) {
         }
         if (msg !== '') {
             target.addClass('validation');
-            if (isInplace()) {
+            if (isFixed()) {
                 // 券売機
                 modalBody.append('<div class="mb-small">' + msg + '</div>');
             } else {
@@ -156,7 +156,7 @@ function validation(parent) {
             }
         }
     });
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         modal.open('validation');
     }

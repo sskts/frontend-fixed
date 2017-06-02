@@ -90,7 +90,7 @@ function zoomButtonScroll() {
     var screen = $('.screen');
     var screenTop = screen.offset().top;
     var screenRight = screen.offset().left;
-    if (isInplace()) {
+    if (isFixed()) {
         screenRight = screen.offset().left - $('.navigation').width();
     }
     var screenH = screen.height();

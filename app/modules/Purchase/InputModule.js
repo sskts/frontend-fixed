@@ -188,7 +188,7 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
-            if (process.env.VIEW_TYPE !== 'inplace') {
+            if (process.env.VIEW_TYPE !== 'fixed') {
                 const locals = {
                     performance: purchaseModel.performance,
                     reserveSeats: purchaseModel.reserveSeats,

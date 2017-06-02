@@ -4,7 +4,7 @@
 
 import * as express from 'express';
 import * as ErrorModule from '../modules/Error/ErrorModule';
-import inplace from './inplace';
+import fixed from './fixed';
 import inquiry from './inquiry';
 import method from './method';
 import purchase from './purchase';
@@ -18,8 +18,8 @@ export default (app: express.Application) => {
     app.use('/inquiry', inquiry); // 照会
     app.use('/method', method); // 方法
 
-    if (process.env.VIEW_TYPE === 'inplace') {
-        app.use('', inplace); // 券売機
+    if (process.env.VIEW_TYPE === 'fixed') {
+        app.use('', fixed); // 券売機
     }
 
     //エラー

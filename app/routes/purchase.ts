@@ -15,7 +15,7 @@ import * as TicketModule from '../modules/Purchase/TicketModule';
 import * as TransactionModule from '../modules/Purchase/TransactionModule';
 
 const router = express.Router();
-if (process.env.VIEW_TYPE === 'inplace'
+if (process.env.VIEW_TYPE === 'fixed'
 || (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
 // パフォーマンス一覧
 router.get('/performances', PerformancesModule.index);

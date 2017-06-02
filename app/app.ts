@@ -29,8 +29,8 @@ app.use(helmet()); //セキュリティー対策
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-if (process.env.VIEW_TYPE === 'inplace') {
-    app.set('views', __dirname + '/views/inplace');
+if (process.env.VIEW_TYPE === 'fixed') {
+    app.set('views', __dirname + '/views/fixed');
 } else {
     app.set('views', __dirname + '/views/default');
 }
