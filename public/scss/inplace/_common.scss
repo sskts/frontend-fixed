@@ -25,6 +25,8 @@ html {
 
 body {
     -webkit-text-size-adjust: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     width: 100%;
     font-family: $font-family;
     font-size: 30px;
