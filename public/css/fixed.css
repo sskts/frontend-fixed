@@ -55,15 +55,39 @@ img {
   font-size: 0;
   line-height: 0; }
 
+@-webkit-keyframes loading {
+  30% {
+    -webkit-transform: scaleY(2);
+            transform: scaleY(2); } }
+
 @keyframes loading {
   30% {
-    transform: scaleY(2); } }
+    -webkit-transform: scaleY(2);
+            transform: scaleY(2); } }
+
+@-webkit-keyframes zoom {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
 
 @keyframes zoom {
   0% {
-    transform: scale(0.5); }
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5); }
   100% {
-    transform: scale(1); } }
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+
+@-webkit-keyframes fadein {
+  0% {
+    visibility: hidden;
+    opacity: 0; }
+  100% {
+    visibility: visible;
+    opacity: 1; } }
 
 @keyframes fadein {
   0% {
@@ -72,6 +96,14 @@ img {
   100% {
     visibility: visible;
     opacity: 1; } }
+
+@-webkit-keyframes fadeout {
+  0% {
+    visibility: visible;
+    opacity: 1; }
+  100% {
+    visibility: hidden;
+    opacity: 0; } }
 
 @keyframes fadeout {
   0% {
@@ -481,15 +513,18 @@ a {
 .modal-cover.active,
 .modal.active {
   visibility: visible;
-  animation: fadein 0.4s both; }
+  -webkit-animation: fadein 0.4s both;
+          animation: fadein 0.4s both; }
 
 .modal-cover.disabled,
 .modal.disabled {
   visibility: visible;
-  animation: fadeout 0.4s both; }
+  -webkit-animation: fadeout 0.4s both;
+          animation: fadeout 0.4s both; }
 
 .blur {
-  filter: blur(5px); }
+  -webkit-filter: blur(5px);
+          filter: blur(5px); }
 
 .loading-cover {
   opacity: 0;
@@ -505,7 +540,8 @@ a {
 .loading-cover.active,
 .loading.active {
   visibility: visible;
-  animation: fadein 0.4s both; }
+  -webkit-animation: fadein 0.4s both;
+          animation: fadein 0.4s both; }
 
 .loading {
   opacity: 0;
@@ -525,32 +561,42 @@ a {
   background-color: #FFF;
   display: inline-block;
   margin-right: 13px;
-  animation: loading 1s infinite; }
+  -webkit-animation: loading 1s infinite;
+          animation: loading 1s infinite; }
   .loading div:last-child {
     margin-right: 0; }
 
 .loading .bar1 {
-  animation-delay: 0.5s; }
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s; }
 
 .loading .bar2 {
-  animation-delay: 0.6s; }
+  -webkit-animation-delay: 0.6s;
+          animation-delay: 0.6s; }
 
 .loading .bar3 {
-  animation-delay: 0.7s; }
+  -webkit-animation-delay: 0.7s;
+          animation-delay: 0.7s; }
 
 .loading .bar4 {
-  animation-delay: 0.8s; }
+  -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s; }
 
 .loading .bar5 {
-  animation-delay: 0.9s; }
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s; }
 
 .index {
   width: 1050px;
   margin: 0 auto; }
   .index .buttons {
     margin: 0 0 40px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-between; }
+    -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+            justify-content: space-between; }
   .index .purchase-button a, .index .inquiry-button a {
     padding: 140px 0 0; }
   .index .qr-code {
@@ -638,12 +684,20 @@ a {
 .purchase-seat .seat-info {
   color: #333;
   padding: 20px 0;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center; }
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
 
 .purchase-ticket .seats {
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap; }
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap; }
   .purchase-ticket .seats li {
     margin: 0 20px 20px 0; }
     .purchase-ticket .seats li dl {
@@ -705,8 +759,12 @@ a {
   width: 600px; }
 
 .purchase-input .form-layout .expire {
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between; }
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
   .purchase-input .form-layout .expire dl {
     width: 390px; }
     .purchase-input .form-layout .expire dl dd {
@@ -749,8 +807,12 @@ a {
     .purchase-performances .performances li dl dd {
       padding: 20px 0 0 20px; }
       .purchase-performances .performances li dl dd ul {
+        display: -webkit-flex;
+        display: -ms-flexbox;
         display: flex;
-        flex-wrap: wrap; }
+        -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap; }
         .purchase-performances .performances li dl dd ul li {
           margin: 0 20px 20px 0; }
 
@@ -930,10 +992,18 @@ a {
 
 .zoom .screen-scroll {
   overflow: auto;
-  transition: transform 0.2s; }
+  transition: -webkit-transform 0.2s;
+  transition: transform 0.2s;
+  transition: transform 0.2s, -webkit-transform 0.2s; }
 
 .zoom .seat a span {
   display: block; }
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
 
 @keyframes fadeIn {
   0% {
