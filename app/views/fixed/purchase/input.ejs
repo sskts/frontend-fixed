@@ -1,0 +1,94 @@
+<%- contentFor('script') %>
+<script src="/js/purchase/input.js"></script>
+<script src="<%= gmoModuleUrl %>"></script>
+<script>Multipayment.init('<%= gmoShopId %>');</script>
+<%- contentFor('step') %>
+3
+<%- contentFor('prev') %>
+/purchase/ticket
+<%- contentFor('body') %>
+<div class="purchase-input">
+    <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.input.read') %></p>
+    <form id="purchaseform" method="post">
+        <div class="form-layout center">
+            <dl class="mb-middle">
+                <dt><%- __('common.tel_num') %></dt>
+                <dd>
+                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
+                </dd>
+            </dl>
+            <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="げきじょう">
+            <input type="hidden" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="けんばいき">
+            <input type="hidden" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="hataguchi@motionpicture.jp">
+            <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="hataguchi@motionpicture.jp">
+            <% if (price > 0) { %>
+            <h2 class="payment-ttl mb-small">
+                <%- __('common.payment') %><span class="image credit-image"><img src="/images/common/credit_card.png" alt=""></span>
+            </h2>
+            <dl class="mb-small">
+                <dt><%- __('common.cardno') %></dt>
+                <dd>
+                    <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" maxlength="16" placeholder="<%- __('common.placeholder.cardno') %>">
+                </dd>
+            </dl>
+            <div class="mb-small expire">
+                <dl>
+                    <dt><%- __('common.expire') %> / <%- __('common.month') %></dt>
+                    <dd>
+                        <select name="credit_month" id="cardExpirationMonth">
+                            <%
+                            for (let i = 0; i < 12; i++) {
+                                let num = i + 1;
+                                let month = (num < 10) ? '0' + String(num) : String(num);
+                            %>
+                                <option value="<%= month %>"><%= month %></option>
+                            <% } %>
+                        </select>
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><%- __('common.expire') %> / <%- __('common.year') %></dt>
+                    <dd>
+                        <select name="credit_year" id="cardExpirationYear">
+                            <%
+                            let choices = {};
+                            let year2digits = moment().format('YY');
+                            for (let i = 0; i < 10; i++) {
+                                let key = (parseInt(year2digits) + i).toString();
+                                choices[key] = `20${key}`;
+                            }
+                            %>
+                            <% for (let key in choices) { %>
+                            <option value="20<%- key %>"><%- choices[key] %></option>
+                            <% } %>
+                        </select>
+                    </dd>
+                </dl>
+                <input type="hidden" name="expire" value="">
+            </div>
+            <dl class="mb-large securitycode">
+                <dt><%- __('common.securitycode') %></dt>
+                <dd>
+                    <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                </dd>
+            </dl>
+            <input type="hidden" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
+            <input type="hidden" name="gmo_token_object" value="">
+            <input type="hidden" name="gmo_error" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
+            <input type="hidden" name="gmo_error_message" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
+            <% } %>
+        </div>
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.input.next') %></button></div>
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+    <input type="hidden" name="price" value="<%= price %>">
+    <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
+</div>
+
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/validation') %>
+<%- include('modals/securitycode') %>
+<%- include('modals/creditcardAlert') %>

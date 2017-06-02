@@ -45,7 +45,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.performance = purchaseModel.performance;
         res.locals.reserveSeats = purchaseModel.reserveSeats;
         res.locals.reserveTickets = purchaseModel.reserveTickets;
-        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.updateReserve = null;
         res.locals.error = null;

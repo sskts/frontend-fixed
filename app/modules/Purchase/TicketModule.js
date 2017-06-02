@@ -62,7 +62,6 @@ function index(req, res, next) {
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = purchaseModel.reserveTickets;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
             //セッション更新
@@ -211,7 +210,6 @@ function select(req, res, next) {
                 res.locals.performance = performance;
                 res.locals.reserveSeats = purchaseModel.reserveSeats;
                 res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
-                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
                 res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });

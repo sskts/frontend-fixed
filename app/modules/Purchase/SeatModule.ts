@@ -53,7 +53,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         res.locals.performance = purchaseModel.performance;
         res.locals.performanceCOA = purchaseModel.performanceCOA;
-        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
         res.locals.reserveSeats = (purchaseModel.reserveSeats !== null)
             ? JSON.stringify(purchaseModel.reserveSeats) //仮予約中
             : null;
@@ -112,7 +111,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (!validationResult.isEmpty()) {
             res.locals.transactionId = purchaseModel.transactionMP;
             res.locals.performance = purchaseModel.performance;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;

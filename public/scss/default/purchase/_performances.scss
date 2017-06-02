@@ -1,0 +1,54 @@
+.purchase-performances {
+    .performances {
+        // li {
+        //     .button {
+        //         width: 150px;
+        //         margin-right: 10px;
+        //         @media screen and (max-width: $mobile){
+        //             width: auto;
+        //             margin-right: 0;
+        //         }
+        //         &:last-child {
+        //             margin-bottom: 0;
+        //         }
+        //     }
+        // }
+        li {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 5px;
+            color: #333;
+            padding-bottom: 10px;
+            &:after {
+                display: none;
+            }
+            dl {
+                strong {
+                    display: inline-block;
+                    width: 100px;
+                }
+                dt {
+                    padding: 20px;
+                    border-bottom: 1px solid #ACACAC;
+                }
+                dd {
+                    padding: 20px 0 0 20px;
+                    ul {
+                        display: flex;
+                        flex-wrap:wrap;
+                        li {
+                            width: 20%;
+                            margin: 0 10px 10px 0;
+                            padding-bottom: 0;
+                            @media screen and (max-width: $mobile){
+                                width: 30%;
+                            }
+                            &:after {
+                                display: none;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

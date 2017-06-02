@@ -1,0 +1,40 @@
+.purchase-mvtk-input {
+    .clone {
+        display: none;
+    }
+    .add-button {
+        a {
+            padding: 22px 0;
+        }
+    }
+    .ticket-list {
+        .mvtk-box {
+            display: none;
+            position: relative;
+            .remove-button {
+                position: absolute;
+                top: 0;
+                right: 0;
+                a {
+                }
+            }
+            &.active {
+                display: block
+            }
+        }
+        .zoom {
+            -webkit-animation: zoom 0.2s;
+            animation: zoom 0.2s;
+        }
+        .form-layout {
+            dl {
+                dt {
+                    width: 280px;
+                }
+                dd {
+                    width: 520px;
+                }
+            }
+        }
+    }
+}

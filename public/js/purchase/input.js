@@ -42,8 +42,15 @@ $(function () {
  * @returns {void}
  */
 function pageInit() {
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
+        var data = localStorage.getItem('config');
+        var json = JSON.parse(data);
+        $('input[name=last_name_hira]').val(json.last_name_hira);
+        $('input[name=first_name_hira]').val(json.first_name_hira);
+        $('input[name=mail_addr]').val(json.mail_addr);
+        $('input[name=mail_confirm]').val(json.mail_addr);
+
         var str = $('input[name=validation]').val();
         var errors = JSON.parse(str);
         if (errors === null) return;
@@ -130,7 +137,8 @@ function someCallbackFunction(response) {
  * @returns {void}
  */
 function validationScroll() {
-    if (isInplace()) {
+    if (isFixed()) {
+        // 券売機
         return;
     }
     var target = $('.validation').eq(0);
@@ -153,7 +161,7 @@ function validation() {
     var MAIL_MAX_LENGTH = 50;
     var TEL_MAX_LENGTH = 11;
     var TEL_MIN_LENGTH = 9;
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         var validationList = [
             { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
@@ -218,7 +226,7 @@ function validation() {
 
         if (msg !== '') {
             target.addClass('validation');
-            if (isInplace()) {
+            if (isFixed()) {
                 // 券売機
                 modalBody.append('<div class="mb-small">' + msg + '</div>');
             } else {
@@ -231,11 +239,12 @@ function validation() {
             names.push(validation.name)
         }
     });
-    if (isInplace()) {
-        // 券売機
-        modal.open('validation');
-    }
+    
     if (validations.length > 0) {
+        if (isFixed()) {
+            // 券売機
+            modal.open('validation');
+        }
         // 計測
         collection({
             client: 'sskts-frontend',
@@ -266,7 +275,7 @@ function gmoValidation() {
         { name: 'securitycode', label: locales.label.securitycode },
         { name: 'holdername', label: locales.label.holdername },
     ];
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         validationList.forEach(function (validation, index) {
             var target = $('input[name=' + validation.name + ']');

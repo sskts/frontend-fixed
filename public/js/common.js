@@ -1,7 +1,7 @@
 var SASAKI = {};
 
 $(function () {
-    if (!isInplace()) {
+    if (!isFixed()) {
         settingValidation();
     }
     /**
@@ -21,11 +21,11 @@ $(function () {
 
 /**
  * 券売機判定
- * @function isInplace
+ * @function isFixed
  * @returns {boolean} 
  */
-function isInplace() {
-    return $('body').hasClass('inplace');
+function isFixed() {
+    return $('body').hasClass('fixed');
 }
 
 /**
@@ -151,4 +151,19 @@ function getParameter() {
         }
     }
     return result;
+}
+
+/**
+ * 時間フォーマット
+ * @function timeFormat
+ * @param {string} str
+ * @returns {string}
+ */
+function timeFormat(str) {
+    if (typeof str !== 'string') {
+        return '';
+    }
+    const start = 2;
+    const end = 4;
+    return str.slice(0, start) + ':' + str.slice(start, end);
 }

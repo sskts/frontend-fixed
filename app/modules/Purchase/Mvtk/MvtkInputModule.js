@@ -49,7 +49,6 @@ function index(req, res, next) {
         delete req.session.mvtk;
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
@@ -193,7 +192,6 @@ function select(req, res, next) {
                     return;
                 }
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });

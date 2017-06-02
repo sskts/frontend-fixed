@@ -50,7 +50,6 @@ function index(req, res, next) {
         //購入者情報入力表示
         res.locals.error = null;
         res.locals.gmoError = null;
-        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
         res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
         res.locals.price = purchaseModel.getReserveAmount();
@@ -135,7 +134,6 @@ function submit(req, res, next) {
                 res.locals.error = validationResult.mapped();
                 res.locals.gmoError = null;
                 res.locals.input = req.body;
-                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                 res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
                 res.locals.price = purchaseModel.getReserveAmount();
@@ -190,7 +188,7 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
-            if (process.env.VIEW_TYPE !== 'inplace') {
+            if (process.env.VIEW_TYPE !== 'fixed') {
                 const locals = {
                     performance: purchaseModel.performance,
                     reserveSeats: purchaseModel.reserveSeats,
@@ -231,7 +229,6 @@ function submit(req, res, next) {
                 log('GMO処理エラー');
                 res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
                 res.locals.input = req.body;
-                res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                 res.locals.gmoShopId = gmoShopId;
                 res.locals.price = purchaseModel.getReserveAmount();

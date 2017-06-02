@@ -1,0 +1,89 @@
+<%- contentFor('script') %>
+<script src="/js/purchase/mvtk/input.js"></script>
+<%- contentFor('step') %>
+2
+<%- contentFor('prev') %>
+/purchase/ticket
+<%- contentFor('body') %>
+<div class="purchase-mvtk-input">
+    <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.mvtk.input.read') %></p>
+
+    <div class="mb-small white-box center">
+        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', reserveSeatLength) %></strong>
+    </div>
+
+    <div class="ticket-list mb-small">
+        <% for (let i = 0; i < reserveSeatLength; i++) { %>
+        <% if (mvtkInfo[i] !== undefined) { %>
+        <div class="mvtk-box active">
+            <div class="button small-button gray-button remove-button">
+                <a href="#"><%- __('common.remove') %></a>
+            </div>
+            <ul class="mb-small form-layout center">
+                <li class="mb-small">
+                    <dl>
+                        <dt><%- __('common.mvtk_code') %></dt>
+                        <dd>
+                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_password') %></dt>
+                        <dd>
+                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <% } else { %>
+        <div class="mvtk-box zoom">
+            <div class="button small-button gray-button remove-button">
+                <a href="#"><%- __('common.remove') %></a>
+            </div>
+            <ul class="mb-small form-layout center">
+                <li class="mb-small">
+                    <dl>
+                        <dt><%- __('common.mvtk_code') %></dt>
+                        <dd>
+                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                        </dd>
+                    </dl>
+                </li>
+                <li>
+                    <dl>
+                        <dt><%- __('common.mvtk_password') %></dt>
+                        <dd>
+                            <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                        </dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+        <% } %>
+        <% } %>
+    </div>   
+    <% if (reserveSeatLength > 1) { %>
+    <div class="button middle-button gray-button add-button mb-large">
+        <a class="center" href="#"><%- __('purchase.mvtk.input.add') %></a>
+    </div>
+    <% } %>
+        
+    <form method="post">
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
+        <input type="hidden" name="mvtk" value="">
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+
+</div>
+
+<input type="hidden" class="mvtk-validation" value="<%= error %>">
+
+<%- include('../../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('../modals/validation') %>
+<%- include('../modals/mvtkValidation') %>

@@ -1,0 +1,49 @@
+
+<%- contentFor('script') %>
+<script src="/js/purchase/seat.js"></script>
+<script src="/js/ScreenSeatStatusesMap.js"></script>
+<%- contentFor('step') %>
+1
+<%- contentFor('prev') %>
+/purchase/performances
+<%- contentFor('body') %>
+<div class="purchase-seat">
+    <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.seat.read') %></p>
+
+    <div class="screen-cover mb-middle" 
+    data-limit="<%= performance.attributes.coa_available_num %>" 
+    data-theater="<%= performance.attributes.theater.id %>" 
+    data-day="<%= performance.attributes.day %>" 
+    data-coa-title-code="<%= performanceCOA.titleCode %>"
+    data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
+    data-time-start="<%= performance.attributes.time_start %>"
+    data-screen-code="<%= performanceCOA.screenCode %>">
+        <div class="screen">
+            <div class="zoom-btn"><a class="icon-zoom-out text-center" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
+            <div class="screen-scroll">
+            </div>
+            <div class="device-type-pc"></div>
+            <div class="device-type-sp"></div>
+        </div>
+        <div class="seat-info">
+            <div class="seat"><%- __('purchase.seat.seats.default') %></div>
+            <div class="seat active"><%- __('purchase.seat.seats.active') %></div>
+            <div class="seat disabled"><%- __('purchase.seat.seats.disabled') %></div>
+        </div>
+    </div>
+    
+    <form method="post">
+        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.seat.next') %></button></div>
+        <input type="hidden" name="agree" value="true" id="agree">  
+        <input type="hidden" name="seats" value="<%= reserveSeats %>">
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+    </form>
+    <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
+</div>
+
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/seatNotSelect') %>
+<%- include('modals/seatUpperLimit') %>

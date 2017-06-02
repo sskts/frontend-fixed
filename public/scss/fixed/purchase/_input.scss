@@ -1,0 +1,54 @@
+.purchase-input {
+    .form-layout {
+        dl {
+            dt {
+                width: 200px;
+            }
+            dd {
+                width: 600px;
+            }
+        }
+        .expire {
+            display: flex;
+            justify-content: space-between;
+            dl {
+                width: 390px;
+                dd {
+                    width: 190px;
+                }
+            }
+        }
+        .securitycode {
+            dt {
+                width: 390px;
+            }
+            dd {
+                width: 410px;
+            }
+        }
+    }
+    .credit-image {
+        display: inline-block;
+        padding: 2px 10px;
+        background-color: #FFF;
+        margin: 0 0 0 20px;
+        border-radius: 5px;
+        img {
+            width: 200px;
+        }
+    }
+    
+}
+
+.modal[data-modal=securitycode] {
+    dl {
+        dd {
+            img {
+                display: block;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    }
+}

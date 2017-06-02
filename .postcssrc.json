@@ -2,8 +2,8 @@
   "use": [
     "autoprefixer"
   ],
-  "input": "public/css/style.css",
-  "output": "public/css/style.css",
+  "input": "public/css/**/*.css",
+  "dir": "public/css",
   "autoprefixer": {
     "browsers": "last 5 versions"
   }

@@ -1,0 +1,12 @@
+<nav class="navigation">
+    <div class="logo"><img src="/images/common/logo.svg" alt="<%- __('header.logo') %>"></div>
+    <ul class="buttons">
+        <% if (env !== 'production') { %>
+        <li class="prev-button"><a href="/setting" class="small-x-text text-center"><%- __('navigation.setting') %></a></li>
+        <% } %>
+        <% if (defineContent('prev')) { %>
+        <li class="prev-button"><a href="<%- defineContent('prev') %>" class="small-x-text text-center"><%- __('navigation.prev') %></a></li>
+        <% } %>
+        <li class="restart-button"><a href="/" class="small-x-text text-center"><%- __('navigation.top') %></a></li>
+    </ul>
+</nav>

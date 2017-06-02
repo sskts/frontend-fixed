@@ -1,0 +1,47 @@
+<%- contentFor('script') %>
+<script src="/js/common/epos-2.3.0.js"></script>
+<script src="/js/common/epsonprint.js"></script>
+<script src="/js/common/print.js"></script>
+<script src="/js/inquiry/index.js"></script>
+<%- contentFor('body') %>
+<%- include('../layouts/inquiry/steps', {step: '1'}) %>
+<div class="inquiry-confirm">
+    <h1 class="page-ttl"><%- __('inquiry.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('inquiry.confirm.read') %></p>
+
+    <div class="table-layout center mb-large">
+        <dl>
+            <dt><%- __('common.purchase_number') %></dt>
+            <dd><%= login.reserve_num %></dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.film_title') %></dt>
+            <dd><%= performance.attributes.film.name[__('lang')] %></dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.appreciation_date') %></dt>
+            <dd><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.seat') %></dt>
+            <dd>
+                <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
+                <% const ticket = stateReserve.list_ticket[i] %>
+                <p><%= `${ticket.seat_num} ${ticket.ticket_name}` %></p>
+                <% } %>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="button middle-button print-button"><a class="center" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
+</div>
+
+<input type="hidden" name="theater_code" value="<%= login.theater_code %>">
+<input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
+<input type="hidden" name="tel_num" value="<%= login.tel_num %>">
+<input type="hidden" name="transaction_id" value="<%= transactionId %>">
+<input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+<%- include('completeContents') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/print') %>

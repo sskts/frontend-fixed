@@ -7,8 +7,8 @@ import * as i18n from 'i18n';
 
 let directory = `${__dirname}/../locales/default`;
 
-if (process.env.VIEW_TYPE === 'inplace') {
-    directory = `${__dirname}/../locales/inplace`;
+if (process.env.VIEW_TYPE === 'fixed') {
+    directory = `${__dirname}/../locales/fixed`;
 }
 
 i18n.configure({

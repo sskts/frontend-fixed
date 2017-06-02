@@ -1,6 +1,8 @@
+var modal;
 $(function () {
+    modal = new SASAKI.Modal();
     validation();
-    if (!isInplace()) {
+    if (!isFixed()) {
         toInquiry();
     }
 });
@@ -14,7 +16,7 @@ function validation() {
     var validations = [];
     var names = [];
 
-    if (isInplace()) {
+    if (isFixed()) {
         // 券売機
         var str = $('input[name=validation]').val();
         var errors = JSON.parse(str);

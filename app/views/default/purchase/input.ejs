@@ -2,7 +2,8 @@
 <script src="/js/purchase/input.js"></script>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>');</script>
-
+<%- contentFor('step') %>
+3
 <%- contentFor('body') %>
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
