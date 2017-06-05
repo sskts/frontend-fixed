@@ -119,7 +119,7 @@ select {
     border-radius: 3px;
     position: relative;
     background-color: #FFF;
-    background-image: url(/images/common/select_box.svg);
+    background-image: url(/images/default/common/select_box.svg);
     background-repeat: no-repeat;
     background-size: 44px;
     background-position: right center;
@@ -133,7 +133,7 @@ select {
 /*　IE11,IE10　*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     select:not(:target) {
-        background-image: url(/images/common/select_box.png);
+        background-image: url(/images/default/common/select_box.png);
     }
     select::-ms-expand {
         display: none;
@@ -179,7 +179,7 @@ label {
         top: 50%;
         left: 0;
         margin-top: -10px;
-        background-image: url(/images/common/icon/icon_check.svg);
+        background-image: url(/images/default/common/icon/icon_check.svg);
         background-size: 20px 20px;
         
     }
@@ -367,7 +367,7 @@ p {
         left: 0;
         width: 100%;
         height: 3px;
-        background-image: url(/images/common/line_dotte.png);
+        background-image: url(/images/default/common/line_dotte.png);
         background-size: contain;
     }
 }
@@ -416,7 +416,7 @@ p {
             left: 0;
             width: 100%;
             height: 3px;
-            background-image: url(/images/common/line_dotte.png);
+            background-image: url(/images/default/common/line_dotte.png);
             background-size: contain;
         }
         &:last-child {
@@ -863,7 +863,7 @@ p {
                 position: absolute;
                 top: 50%;
                 left: 0;
-                background-image: url(/images/common/modal_close.svg);
+                background-image: url(/images/default/common/modal_close.svg);
                 background-size: contain;
                 width: 100%;
                 height: 100%;

@@ -190,7 +190,7 @@ select {
   border-radius: 3px;
   position: relative;
   background-color: #FFF;
-  background-image: url(/images/common/select_box.svg);
+  background-image: url(/images/default/common/select_box.svg);
   background-repeat: no-repeat;
   background-size: 44px;
   background-position: right center;
@@ -202,7 +202,7 @@ select {
 /*　IE11,IE10　*/
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   select:not(:target) {
-    background-image: url(/images/common/select_box.png); }
+    background-image: url(/images/default/common/select_box.png); }
   select::-ms-expand {
     display: none; } }
 
@@ -242,7 +242,7 @@ label {
     top: 50%;
     left: 0;
     margin-top: -10px;
-    background-image: url(/images/common/icon/icon_check.svg);
+    background-image: url(/images/default/common/icon/icon_check.svg);
     background-size: 20px 20px; }
   label:last-child {
     margin-bottom: 0; }
@@ -383,7 +383,7 @@ p a {
     left: 0;
     width: 100%;
     height: 3px;
-    background-image: url(/images/common/line_dotte.png);
+    background-image: url(/images/default/common/line_dotte.png);
     background-size: contain; }
 
 .radius {
@@ -422,7 +422,7 @@ p a {
       left: 0;
       width: 100%;
       height: 3px;
-      background-image: url(/images/common/line_dotte.png);
+      background-image: url(/images/default/common/line_dotte.png);
       background-size: contain; }
     .box li:last-child {
       border: none;
@@ -784,7 +784,7 @@ p a {
         position: absolute;
         top: 50%;
         left: 0;
-        background-image: url(/images/common/modal_close.svg);
+        background-image: url(/images/default/common/modal_close.svg);
         background-size: contain;
         width: 100%;
         height: 100%;
@@ -940,7 +940,7 @@ p a {
   position: absolute;
   top: 50%;
   right: 20px;
-  background-image: url(/images/common/icon/icon_new_tab_white.svg);
+  background-image: url(/images/default/common/icon/icon_new_tab_white.svg);
   background-size: contain;
   width: 15px;
   height: 15px;
@@ -951,7 +951,7 @@ p a {
   position: absolute;
   top: 50%;
   right: 20px;
-  background-image: url(/images/common/icon/icon_new_tab_blue.svg);
+  background-image: url(/images/default/common/icon/icon_new_tab_blue.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -962,7 +962,7 @@ p a {
   position: absolute;
   top: 50%;
   right: 20px;
-  background-image: url(/images/common/icon/icon_next_white.svg);
+  background-image: url(/images/default/common/icon/icon_next_white.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -973,7 +973,7 @@ p a {
   position: absolute;
   top: 50%;
   right: 20px;
-  background-image: url(/images/common/icon/icon_print_white.svg);
+  background-image: url(/images/default/common/icon/icon_print_white.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -984,7 +984,7 @@ p a {
   position: absolute;
   top: 50%;
   left: 20px;
-  background-image: url(/images/common/icon/icon_next_white.svg);
+  background-image: url(/images/default/common/icon/icon_next_white.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -998,7 +998,7 @@ p a {
   position: absolute;
   top: 50%;
   left: 0;
-  background-image: url(/images/common/icon/icon_prev_black.svg);
+  background-image: url(/images/default/common/icon/icon_prev_black.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -1009,7 +1009,7 @@ p a {
   position: absolute;
   top: 50%;
   left: 0;
-  background-image: url(/images/common/icon/icon_close_black.svg);
+  background-image: url(/images/default/common/icon/icon_close_black.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -1020,7 +1020,7 @@ p a {
   position: absolute;
   top: 50%;
   right: 20px;
-  background-image: url(/images/common/icon/icon_add_white.svg);
+  background-image: url(/images/default/common/icon/icon_add_white.svg);
   background-size: 15px;
   width: 15px;
   height: 15px;
@@ -1031,7 +1031,7 @@ p a {
   position: absolute;
   top: 50%;
   left: 20px;
-  background-image: url(/images/common/icon/icon_ticket_black.svg);
+  background-image: url(/images/default/common/icon/icon_ticket_black.svg);
   background-size: 25px 15px;
   width: 25px;
   height: 15px;
@@ -1042,7 +1042,7 @@ p a {
   position: absolute;
   top: 50%;
   left: 20px;
-  background-image: url(/images/common/icon/icon_zoom_in.svg);
+  background-image: url(/images/default/common/icon/icon_zoom_in.svg);
   background-size: 15px 15px;
   width: 15px;
   height: 15px;
@@ -1053,7 +1053,7 @@ p a {
   position: absolute;
   top: 10px;
   left: 50%;
-  background-image: url(/images/common/icon/icon_zoom_out.svg);
+  background-image: url(/images/default/common/icon/icon_zoom_out.svg);
   background-size: 15px 15px;
   width: 15px;
   height: 15px;
@@ -1712,7 +1712,7 @@ p a {
         right: 10px; } }
   .inquiry-confirm .ticket .not-qr-code {
     padding: 40px;
-    background-image: url(/images/common/bg_ticket.svg);
+    background-image: url(/images/default/common/bg_ticket.svg);
     background-size: 100px 60px;
     background-repeat: no-repeat;
     background-position: center; }
