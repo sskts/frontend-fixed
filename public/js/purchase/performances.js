@@ -115,7 +115,7 @@ function createScheduleDom(data) {
         '<dl>' +
             '<dt class="small-text"><strong>作品名</strong>' + data.performances[0].attributes.film.name.ja + '</dt>' +
             '<dd>'+
-                '<div class="mb-small small-text"><strong>上映時間</strong>' + 0 + '分</div>'+
+                '<div class="mb-small small-text"><strong>上映時間</strong>' + data.performances[0].attributes.film.minutes + '分</div>'+
                 '<ul>'+
                     performances.join('\n') +
                 '</ul>'+

@@ -137,9 +137,6 @@ export interface IPerformance {
         film: {
             id: string;
             name: ILanguage;
-            name_kana: string;
-            name_short: string;
-            name_original: string;
             minutes: number;
         },
         screen: {
@@ -150,6 +147,7 @@ export interface IPerformance {
             id: string;
             name: ILanguage;
         },
+        stock_status: boolean;
         time_end: string;
         time_start: string;
         coa_trailer_time: number;
