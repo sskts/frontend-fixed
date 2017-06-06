@@ -85,7 +85,7 @@ img {
   0% {
     background-position: 0 0; }
   100% {
-    background-position: -4606px 0; } }
+    background-position: -4240px 0; } }
 
 .icon-triangle-01:after {
   position: absolute;
@@ -681,7 +681,7 @@ a {
   width: 360px;
   height: 255px;
   background-image: url(/images/fixed/animation_print.png);
-  animation: animationPtint 0.5s steps(13) 0s infinite; }
+  animation: animationPtint 1s steps(12) 0s infinite; }
 
 .index {
   width: 1050px;
