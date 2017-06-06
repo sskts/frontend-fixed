@@ -18,6 +18,7 @@
                     vertical-align: middle
                 }
                 dd a {
+                    position: relative;
                     width: 400px;
                     height: 110px;
                     display: table-cell;
@@ -38,11 +39,13 @@
             right: 20px;
             margin-top: -52.5px;
             label, a {
-                width: 250px;
+                border-color: #929292;
+                width: 320px;
                 height: 105px;
+                background-color: #FFF;
                 background-image: url(/images/default/common/mvtk_logo.svg);
                 background-repeat: no-repeat;
-                background-size: 150px 33px;
+                background-size: 214px 46px;
                 background-position: center;
             }
         }

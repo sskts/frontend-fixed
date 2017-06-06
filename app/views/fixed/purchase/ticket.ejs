@@ -14,8 +14,8 @@
         <% if (mvtkLength === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
         <div class="box mb-middle mvtk center">
-            <div class="mvtk-text"><%- __('purchase.ticket.mvtk.read') %></div>
-            <div class="button mvtk-button"><a href="/purchase/mvtk"></a></div>
+            <div class="mvtk-text small-text"><%- __('purchase.ticket.mvtk.read') %></div>
+            <div class="button mvtk-button"><a class="icon-triangle-02" href="/purchase/mvtk"></a></div>
         </div>
         <% } %>
         <% } %>
@@ -34,7 +34,7 @@
                 <dl>
                     <dt class="text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
                     <dd>                                
-                        <a href="#" data-modal="ticket_type">
+                        <a href="#" data-modal="ticket_type" class="icon-select">
                             <div class="small-text mb-x-small"><%= ticket.ticket_name %></div>
                             <div><strong>￥<%= ticket.sale_price %></strong></div>
                         </a>
@@ -55,7 +55,7 @@
                 <dl>
                     <dt class="text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
                     <dd data-ticket="">
-                        <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
+                        <a href="#" data-modal="ticket_type" class="icon-select"><%- __('purchase.ticket.ticket_select') %></a>
                     </dd>
                 </dl>
             </li>
@@ -73,7 +73,7 @@
         </div>    
     
     
-        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.ticket.next') %></button></div>
+        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.ticket.next') %></button></div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 

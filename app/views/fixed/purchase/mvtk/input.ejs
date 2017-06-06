@@ -68,12 +68,12 @@
     </div>   
     <% if (reserveSeatLength > 1) { %>
     <div class="button middle-button gray-button add-button mb-large">
-        <a class="center" href="#"><%- __('purchase.mvtk.input.add') %></a>
+        <a class="center icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
     <% } %>
         
     <form method="post">
-        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
+        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
         <input type="hidden" name="mvtk" value="">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
