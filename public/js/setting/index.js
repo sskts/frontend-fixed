@@ -42,10 +42,11 @@ function pageInit() {
 function saveConfig() {
     var data = {
         theater: $('select[name=theater]').val(),
+        device_id: $('input[name=device_id]').val(),
         last_name_hira: $('input[name=last_name_hira]').val(),
         first_name_hira: $('input[name=first_name_hira]').val(),
         mail_addr: $('input[name=mail_addr]').val(),
-        printer: $('input[name=printer]').val()
+        printer: $('input[name=printer]').val(),
     }
     localStorage.setItem('config', JSON.stringify(data));
 }
@@ -66,6 +67,7 @@ function validation() {
     var TEL_MAX_LENGTH = 11;
     var TEL_MIN_LENGTH = 9;
     var validationList = [
+        { name: 'device_id', label: locales.label.device_id, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+$/, locales.validation.is_alphanumeric_characters] },
         { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
         { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
         { name: 'mail_addr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },

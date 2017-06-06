@@ -238,11 +238,19 @@ window.epsonThermalPrint = (function (epson) {
 
             // 強調解除して購入番号見出し
             printer.addTextStyle(false, false, false);
-            printer.addText('\n購入番号\n');
+            printer.addText('\n購入番号 ');
 
             // 予約番号を強調で
             printer.addTextStyle(false, false, true);
-            printer.addText(reservation.reserve_no + '\n\n');
+            printer.addText(reservation.reserve_no + '\n');
+
+            // 強調解除して端末名見出し
+            printer.addTextStyle(false, false, false);
+            printer.addText('端末ID ');
+
+            // 端末名を強調で
+            printer.addTextStyle(false, false, true);
+            printer.addText(config.device_id + '\n\n');
 
             //最後右端に印刷時刻(Y/m/d H:i:s)を入れる
             printer.addTextAlign(printer.ALIGN_RIGHT);

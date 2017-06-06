@@ -252,6 +252,7 @@
 		"notes_agree": "上記内容に同意する",
 		"site_seal": "この画面は、高いセキュリティでプライバシーを保護する為に、SSL暗号化通信を採用しています。",
 		"printer": "プリンター",
+		"device_id": "端末ID",
 		"placeholder": {
 			"last_name_kanji": "(例)しねま",
 			"first_name_kanji": "(例)たろう",
@@ -267,7 +268,8 @@
 			"holdername": "(例)TARO CINEMA",
 			"mvtk_code": "(例)012345789",
 			"mvtk_password": "(例)0123",
-			"printer": "(例)0.0.0.0"
+			"printer": "(例)0.0.0.0",
+			"device_id": "(例)cinema"
 		},
 		"validation": {
 			"maxlength %s": "は%s文字以内で入力してください",
@@ -283,7 +285,8 @@
 			"card": "をご確認ください",
 			"mvtk": "入力内容をご確認ください",
 			"inquiry": "をご確認ください",
-			"is_ip": "が正しくありません"
+			"is_ip": "が正しくありません",
+			"is_alphanumeric_characters": "は英数字で入力してください"
 		},
 		"note": {
 			"mail": "<strong>【ドメイン指定受信をご利用の場合について】</strong><br>※ 携帯電話のドメイン指定受信をされている場合、「@ticket-cinemasunshine.com」を追加設定してください。<br>※ au(@ezweb.ne.jp)をご利用の場合、上記に加え「なりすまし規制回避リスト」にも「@ticket-cinemasunshine.com」の追加設定をしてください。",
