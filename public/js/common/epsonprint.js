@@ -145,12 +145,11 @@ window.epsonThermalPrint = (function (epson) {
             // 印刷に必要な情報が欠けていないか確認
             var missings = [
                 'reserve_no',
-                'payment_no',
-                'film_name',
+                'film_name_ja',
+                'film_name_en',
                 'theater_name',
                 'screen_name',
                 'performance_day',
-                'performance_open_time',
                 'performance_start_time',
                 'seat_code',
                 'ticket_name',
@@ -192,19 +191,20 @@ window.epsonThermalPrint = (function (epson) {
 
             // 作品名を強調で
             printer.addTextStyle(false, false, true);
-            printer.addText(reservation.film_name + '\n');
+            printer.addText(reservation.film_name_ja + '\n');
+            printer.addText(reservation.film_name_en + '\n');
 
             // 強調を解除して日時見出し
             printer.addTextStyle(false, false, false);
-            printer.addText('日時-DATE-\n');
+            printer.addText('鑑賞日時\n');
 
             // 日付と上映時刻を強調で
             printer.addTextStyle(false, false, true);
-            printer.addText(reservation.performance_day + '\nOPEN: ' + reservation.performance_open_time + '\nSTART: ' + reservation.performance_start_time + '\n');
+            printer.addText(reservation.performance_day + ' ' + reservation.performance_start_time + '\n');
 
             // 強調を解除して座席位置の見出し
             printer.addTextStyle(false, false, false);
-            printer.addText('座席位置-SCREEN & SEAT-\n');
+            printer.addText('座席位置-スクリーン\n');
 
             // 中央揃え開始
             printer.addTextAlign(printer.ALIGN_CENTER);
@@ -222,7 +222,7 @@ window.epsonThermalPrint = (function (epson) {
             printer.addTextSize(1, 1);
 
             // 劇場名見出し
-            printer.addText('劇場-THEATER-\n');
+            printer.addText('劇場\n');
 
             // 劇場名を強調で
             printer.addTextStyle(false, false, true);
@@ -230,7 +230,7 @@ window.epsonThermalPrint = (function (epson) {
 
             // 強調解除して券種金額見出し
             printer.addTextStyle(false, false, false);
-            printer.addText('券種・金額-TICKET/PRICE-\n');
+            printer.addText('券種・金額\n');
 
             // 券種と金額を強調で
             printer.addTextStyle(false, false, true);
@@ -238,7 +238,7 @@ window.epsonThermalPrint = (function (epson) {
 
             // 強調解除して購入番号見出し
             printer.addTextStyle(false, false, false);
-            printer.addText('\n購入番号-TRANSACTION NUMBER-\n');
+            printer.addText('\n購入番号\n');
 
             // 予約番号を強調で
             printer.addTextStyle(false, false, true);

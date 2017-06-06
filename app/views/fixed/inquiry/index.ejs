@@ -41,6 +41,7 @@
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
 <input type="hidden" name="transaction_id" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+<input type="hidden" name="reservations" value="<%= reservations %>">
 <%- include('completeContents') %>
 
 <%- contentFor('modals') %>

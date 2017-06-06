@@ -14,6 +14,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
+const moment = require("moment");
 const MP = require("../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
@@ -198,6 +199,25 @@ function index(req, res, next) {
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
         res.locals.transactionId = inquiryModel.transactionId;
+        // 印刷用
+        const reservations = inquiryModel.stateReserve.list_ticket.map((ticket) => {
+            return {
+                reserve_no: inquiryModel.login.reserve_num,
+                film_name_ja: inquiryModel.performance.attributes.film.name.ja,
+                film_name_en: inquiryModel.performance.attributes.film.name.en,
+                theater_name: inquiryModel.performance.attributes.theater.name.ja,
+                screen_name: inquiryModel.performance.attributes.screen.name.ja,
+                performance_day: moment(inquiryModel.performance.attributes.day).format('YYYY/MM/DD'),
+                performance_start_time: UtilModule.timeFormat(inquiryModel.performance.attributes.time_start) + '～',
+                seat_code: ticket.seat_num,
+                ticket_name: (ticket.add_glasses > 0)
+                    ? `${ticket.ticket_name}${req.__('common.glasses')}`
+                    : ticket.ticket_name,
+                ticket_sale_price: `￥${ticket.ticket_price}`,
+                qr_str: ticket.seat_qrcode
+            };
+        });
+        res.locals.reservations = JSON.stringify(reservations);
         delete req.session.inquiry;
         res.render('inquiry/index');
         return;
