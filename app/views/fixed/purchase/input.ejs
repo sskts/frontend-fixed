@@ -24,7 +24,7 @@
             <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="hataguchi@motionpicture.jp">
             <% if (price > 0) { %>
             <h2 class="payment-ttl mb-small">
-                <%- __('common.payment') %><span class="image credit-image"><img src="/images/common/credit_card.png" alt=""></span>
+                <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
             </h2>
             <dl class="mb-small">
                 <dt><%- __('common.cardno') %></dt>
@@ -79,7 +79,7 @@
             <input type="hidden" name="gmo_error_message" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
             <% } %>
         </div>
-        <div class="button middle-button next-button"><button class="center" type="submit"><%- __('purchase.input.next') %></button></div>
+        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.input.next') %></button></div>
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">

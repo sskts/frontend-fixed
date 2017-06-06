@@ -98,16 +98,16 @@ function createSchedule(performances) {
  */
 function createScheduleDom(data) {
     var performances = data.performances.map(function (performance) {
-        var link = '/purchase?id=' + performance.id;
+        var link = '/purchase ?id=' + performance.id;
         if (isFixed()) {
             // 券売機
             link = '/purchase/fixed.html?id=' + performance.id;
         }
         return ('<li class="button small-button gray-button">'+
-            '<a href="'+ link +'">'+ 
+            '<a href="'+ link +'" class="icon-triangle-02">'+ 
             '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
             '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
-            '<div class="small-text">' + performance.attributes.screen.name.ja + '</div>' + 
+            '<div class="small-text">' + performance.attributes.screen.name.ja + ' ' + performance.attributes.stock_status + '</div>' + 
             '</a>' +
         '</li>');
     });

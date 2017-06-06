@@ -3,10 +3,10 @@
 @import "common/reset";
 @import "common/config";
 @import "fixed/animations";
+@import "fixed/icons";
 
 @import "fixed/common";
 @import "fixed/index";
-@import "fixed/purchase/style";
 @import "fixed/purchase/seat";
 @import "fixed/purchase/ticket";
 @import "fixed/purchase/input";
@@ -16,8 +16,6 @@
 
 @import "fixed/purchase/mvtk/input";
 @import "fixed/purchase/mvtk/confirm";
-
-@import "fixed/inquiry/steps";
 
 @import "fixed/screen/style";
 @import "fixed/overlap/overlap";

@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // IPを指定して接続(Promiseが返ってくる。失敗してもそのままもう一度実行可能)
     window.epsonThermalPrint.init(machineProperties.printer).then(function () {
         // printButton.innerText = '入場券を印刷';
-        printButton.disabled = false;
+        // printButton.disabled = false;
     }).catch(function (errorMsg) {
         printAlert('プリンターの呼び出しでエラーが発生しました。<br>大変お手数ですが係員をお呼びください。<br>' + errorMsg);
     });
@@ -76,6 +76,5 @@ function printAlert(msg) {
     window.modal = window.modal || new SASAKI.Modal();
     var modalBody = $('.modal[data-modal=print] .modal-body');
     modalBody.html(msg);
-    // TODO 開発用に警告off
-    // modal.open('print');
+    modal.open('print');
 }

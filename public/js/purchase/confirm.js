@@ -176,16 +176,17 @@ function showComplete(result) {
     if (isFixed()) {
         // 券売機
         //コンテンツ切り替え
-        $('.inquiry-confirm').remove();
-        $('.inquiry-print').show();
+        $('.purchase-confirm').remove();
+        $('.purchase-print').show();
         $(window).scrollTop(0);
         ticketing(function () {
             //step変更
             $('.steps li').removeClass('active');
             $('.steps li:last-child').addClass('active');
             //コンテンツ切り替え
-            $('.inquiry-print').remove();
-            $('.inquiry-complete').show();
+            $('.purchase-print').remove();
+            $('.purchase-complete').show();
+            history.pushState(null, null, '/purchase/complete');
             $(window).scrollTop(0);
         });
     } else {
