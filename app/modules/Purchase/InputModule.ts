@@ -3,6 +3,7 @@
  * @namespace Purchase.InputModule
  */
 
+import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -107,6 +108,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -174,6 +176,10 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             });
             log('MPメール削除');
         }
+        // APIへ移行予定
+        const theater = await COA.MasterService.theater({
+            theater_code: purchaseModel.theater.id
+        });
         if (process.env.VIEW_TYPE !== 'fixed') {
             const locals = {
                 performance: purchaseModel.performance,
@@ -182,7 +188,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 reserveSeatsString: reserveSeatsString,
                 amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
                 domain: req.headers.host,
-                theaterTelNumber: '0995-55-0333',
+                theaterTelNumber: theater.theater_tel_num,
                 moment: moment,
                 timeFormat: UtilModule.timeFormat,
                 __: req.__,

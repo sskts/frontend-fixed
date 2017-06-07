@@ -20,7 +20,7 @@
     "postversion": "git push origin --tags"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^2.0.10",
+    "@motionpicture/coa-service": "^3.1.0",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
     "basic-auth": "^1.1.0",

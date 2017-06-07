@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const moment = require("moment");
@@ -124,6 +125,8 @@ function submit(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.reserveTickets === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.performanceCOA === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
             if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
                 throw ErrorUtilModule.ERROR_ACCESS;
@@ -190,6 +193,10 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
+            // TODO APIへ移行予定
+            const theater = yield COA.MasterService.theater({
+                theater_code: purchaseModel.theater.id
+            });
             if (process.env.VIEW_TYPE !== 'fixed') {
                 const locals = {
                     performance: purchaseModel.performance,
@@ -198,7 +205,7 @@ function submit(req, res, next) {
                     reserveSeatsString: reserveSeatsString,
                     amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
                     domain: req.headers.host,
-                    theaterTelNumber: '0995-55-0333',
+                    theaterTelNumber: theater.theater_tel_num,
                     moment: moment,
                     timeFormat: UtilModule.timeFormat,
                     __: req.__,
