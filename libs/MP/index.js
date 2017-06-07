@@ -50,7 +50,7 @@ function errorHandler(args, response) {
 }
 /**
  * アクセストークン取得
- * @memberOf MP
+ * @memberof MP
  * @function oauthToken
  * @requires {Promise<Performance[]>}
  */
@@ -77,7 +77,7 @@ function oauthToken() {
 exports.oauthToken = oauthToken;
 /**
  * 劇場取得
- * @memberOf MP
+ * @memberof MP
  * @function getTheater
  * @param {GetTheaterArgs} args
  * @requires {Promise<ITheater>}
@@ -103,7 +103,7 @@ function getTheater(id) {
 exports.getTheater = getTheater;
 /**
  * スクリーン取得
- * @memberOf MP
+ * @memberof MP
  * @function getScreen
  * @param {GetScreenArgs} args
  * @requires {Promise<Screen>}
@@ -129,7 +129,7 @@ function getScreen(id) {
 exports.getScreen = getScreen;
 /**
  * 作品取得
- * @memberOf MP
+ * @memberof MP
  * @function getFilm
  * @param {GetFilmArgs} args
  * @requires {Promise<IFilm>}
@@ -155,7 +155,7 @@ function getFilm(id) {
 exports.getFilm = getFilm;
 /**
  * パフォーマンス一覧取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformances
  * @param {string} theater 劇場コード
  * @param {string} day 日付
@@ -185,7 +185,7 @@ function getPerformances(theater, day) {
 exports.getPerformances = getPerformances;
 /**
  * パフォーマンス取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformance
  * @param {GetPerformanceArgs} args
  * @requires {Promise<IPerformance>}
@@ -211,7 +211,7 @@ function getPerformance(id) {
 exports.getPerformance = getPerformance;
 /**
  * 取引開始
- * @memberOf MP
+ * @memberof MP
  * @function transactionStart
  * @param {TransactionStartArgs} args
  * @returns {Promise<ITransactionStartResult>}
@@ -241,7 +241,7 @@ function transactionStart(args) {
 exports.transactionStart = transactionStart;
 /**
  * COAオーソリ追加
- * @memberOf MP
+ * @memberof MP
  * @function addCOAAuthorization
  * @param {IAddCOAAuthorizationArgs} args
  * @returns {Promise<IAddCOAAuthorizationResult>}
@@ -311,7 +311,7 @@ function addCOAAuthorization(args) {
 exports.addCOAAuthorization = addCOAAuthorization;
 /**
  * COAオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeCOAAuthorization
  * @param {IRemoveCOAAuthorizationArgs} args
  * @requires {Promise<void>}
@@ -335,7 +335,7 @@ function removeCOAAuthorization(args) {
 exports.removeCOAAuthorization = removeCOAAuthorization;
 /**
  * GMOオーソリ追加
- * @memberOf MP
+ * @memberof MP
  * @function addGMOAuthorization
  * @param {IAddGMOAuthorizationArgs} args
  * @requires {Promise<IAddGMOAuthorizationResult>}
@@ -380,7 +380,7 @@ function addGMOAuthorization(args) {
 exports.addGMOAuthorization = addGMOAuthorization;
 /**
  * GMOオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeGMOAuthorization
  * @param {IRemoveGMOAuthorizationArgs} args
  * @returns {Promise<void>}
@@ -404,7 +404,7 @@ function removeGMOAuthorization(args) {
 exports.removeGMOAuthorization = removeGMOAuthorization;
 /**
  * 購入者情報登録
- * @memberOf MP
+ * @memberof MP
  * @function ownersAnonymous
  * @param {IOwnersAnonymousArgs} args
  * @returns {Promise<void>}
@@ -434,7 +434,7 @@ function ownersAnonymous(args) {
 exports.ownersAnonymous = ownersAnonymous;
 /**
  * 照会情報登録(購入番号と電話番号で照会する場合)
- * @memberOf MP
+ * @memberof MP
  * @function transactionsEnableInquiry
  * @param {ITransactionsEnableInquiryArgs} args
  * @returns {Promise<void>}
@@ -463,7 +463,7 @@ function transactionsEnableInquiry(args) {
 exports.transactionsEnableInquiry = transactionsEnableInquiry;
 /**
  * 取引成立
- * @memberOf MP
+ * @memberof MP
  * @function transactionClose
  * @param {ITransactionCloseArgs} args
  * @returns {Promise<void>}
@@ -487,7 +487,7 @@ function transactionClose(args) {
 exports.transactionClose = transactionClose;
 /**
  * メール追加
- * @memberOf MP
+ * @memberof MP
  * @function addEmail
  * @param {IAddEmailArgs} args
  * @returns {Promise<string>}
@@ -511,14 +511,14 @@ function addEmail(args) {
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(body, response);
-        log('addEmail result:' + response.body.data);
+        log(`addEmail result: ${response.body.data}`);
         return response.body.data.id;
     });
 }
 exports.addEmail = addEmail;
 /**
  * メール削除
- * @memberOf MP
+ * @memberof MP
  * @function removeEmail
  * @param {IRemoveEmailArgs} args
  * @returns {Promise<void>}
@@ -542,7 +542,7 @@ function removeEmail(args) {
 exports.removeEmail = removeEmail;
 /**
  * 照会取引情報取得
- * @memberOf MP
+ * @memberof MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<string | null>}
@@ -567,14 +567,14 @@ function makeInquiry(args) {
             return null;
         if (response.statusCode !== HTTPStatus.OK)
             errorHandler(body, response);
-        log('makeInquiry result:' + response.body.data);
+        log(`makeInquiry result: ${response.body.data}`);
         return response.body.data.id;
     });
 }
 exports.makeInquiry = makeInquiry;
 /**
  * COA情報取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformanceCOA
  * @param {string} theater 劇場id
  * @param {string} screenId スクリーンid
@@ -604,7 +604,7 @@ function getPerformanceCOA(theaterId, screenId, filmId) {
 exports.getPerformanceCOA = getPerformanceCOA;
 /**
  * 照会取引情報取得
- * @memberOf MP
+ * @memberof MP
  * @function addMvtkauthorization
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<void>}
@@ -665,7 +665,7 @@ function addMvtkauthorization(args) {
 exports.addMvtkauthorization = addMvtkauthorization;
 /**
  * ムビチケオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeCOAAuthorization
  * @param {IRemoveMvtkAuthorizationArgs} args
  * @requires {Promise<void>}

@@ -3,11 +3,11 @@
  * @namespace MethodModule
  */
 
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 /**
  * 発券方法ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function ticketing
  * @param {Request} req
  * @param {Response} res
@@ -17,12 +17,13 @@ import {NextFunction, Request, Response} from 'express';
 // tslint:disable-next-line:variable-name
 export function ticketing(_req: Request, res: Response, _next: NextFunction): void {
     res.render('method/ticketing');
+
     return;
 }
 
 /**
  * 入場方法説明ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function entry
  * @param {Request} req
  * @param {Response} res
@@ -32,12 +33,13 @@ export function ticketing(_req: Request, res: Response, _next: NextFunction): vo
 // tslint:disable-next-line:variable-name
 export function entry(_req: Request, res: Response, _next: NextFunction): void {
     res.render('method/entry');
+
     return;
 }
 
 /**
  * ブックマーク方法説明ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function bookmark
  * @param {Request} req
  * @param {Response} res
@@ -47,5 +49,6 @@ export function entry(_req: Request, res: Response, _next: NextFunction): void {
 // tslint:disable-next-line:variable-name
 export function bookmark(_req: Request, res: Response, _next: NextFunction): void {
     res.render('method/bookmark');
+
     return;
 }

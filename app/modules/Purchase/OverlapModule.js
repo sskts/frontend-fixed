@@ -129,7 +129,7 @@ function prevReserve(req, res, next) {
         return;
     }
     //座席選択へ
-    res.redirect('/purchase/seat/' + req.body.performance_id + '/');
+    res.redirect(`/purchase/seat/${req.body.performance_id}/`);
     return;
 }
 exports.prevReserve = prevReserve;

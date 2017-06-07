@@ -18,7 +18,7 @@
     ScreenSeatStatusesMap.prototype = {
         /**
          * 初期化
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method init
          * @returns {void}
          */
@@ -28,7 +28,7 @@
         },
         /**
          * イベント登録
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method 
          * @returns {void}
          */
@@ -65,7 +65,7 @@
         },
         /**
          * 拡大
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method scaleUp
          * @returns {void}
          */
@@ -83,7 +83,7 @@
         },
         /**
          * 縮小
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method scaleDown
          * @returns {void}
          */
@@ -102,7 +102,7 @@
         },
         /**
          * 拡大判定
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method isZoom
          * @returns {boolean}
          */
@@ -113,7 +113,7 @@
         },
         /**
          * 拡大許可
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method setPermission
          * @returns {void}
          */
@@ -122,7 +122,7 @@
         },
         /**
          * 拡大コールバック設定
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method setScaleUpCallback
          * @param {function} cb
          * @returns {void}
@@ -132,7 +132,7 @@
         },
         /**
          * 縮小コールバック設定
-         * @memberOf ScreenSeatStatusesMap
+         * @memberof ScreenSeatStatusesMap
          * @method setScaleDownCallback
          * @param {function} cb
          * @returns {void}

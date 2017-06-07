@@ -17,7 +17,7 @@ const log = debug('SSKTS:Purchase.InputModule');
 
 /**
  * 購入者情報入力
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -68,6 +68,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         req.session.purchase = purchaseModel.toSession();
         res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
         return;
 
     } catch (err) {
@@ -75,13 +76,14 @@ export function index(req: Request, res: Response, next: NextFunction): void {
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * 購入者情報入力完了
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function submit
  * @param {Request} req
  * @param {Response} res
@@ -93,6 +95,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 export async function submit(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     try {
@@ -121,6 +124,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
             return;
         }
         // 入力情報をセッションへ
@@ -171,39 +175,41 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             log('MPメール削除');
         }
         if (process.env.VIEW_TYPE !== 'fixed') {
-        const locals = {
-            performance: purchaseModel.performance,
-            reserveSeats: purchaseModel.reserveSeats,
-            input: purchaseModel.input,
-            reserveSeatsString: reserveSeatsString,
-            amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
-            domain: req.headers.host,
-            theaterTelNumber: '0995-55-0333',
-            moment: moment,
-            timeFormat: UtilModule.timeFormat,
-            __: req.__,
-            layout: false
-        };
-        const emailTemplate = await UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
-        purchaseModel.completeMailId = await MP.addEmail({
-            transactionId: purchaseModel.transactionMP.id,
-            from: 'noreply@ticket-cinemasunshine.com',
-            to: purchaseModel.input.mail_addr,
-            subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
-            content: emailTemplate
-        });
-        log('MPメール登録');
+            const locals = {
+                performance: purchaseModel.performance,
+                reserveSeats: purchaseModel.reserveSeats,
+                input: purchaseModel.input,
+                reserveSeatsString: reserveSeatsString,
+                amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
+                domain: req.headers.host,
+                theaterTelNumber: '0995-55-0333',
+                moment: moment,
+                timeFormat: UtilModule.timeFormat,
+                __: req.__,
+                layout: false
+            };
+            const emailTemplate = await UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
+            purchaseModel.completeMailId = await MP.addEmail({
+                transactionId: purchaseModel.transactionMP.id,
+                from: 'noreply@ticket-cinemasunshine.com',
+                to: purchaseModel.input.mail_addr,
+                subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
+                content: emailTemplate
+            });
+            log('MPメール登録');
         }
         // セッション更新
         req.session.purchase = purchaseModel.toSession();
         // 購入者内容確認へ
         res.redirect('/purchase/confirm');
+
         return;
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.theater === null || purchaseModel.transactionMP === null) {
                 next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
                 return;
             }
             const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
@@ -216,19 +222,21 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
             return;
         }
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * オーソリ追加
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function addAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
@@ -300,7 +308,7 @@ async function addAuthorization(req: Request, res: Response, purchaseModel: Purc
 
 /**
  * オーソリ削除
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function removeAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}

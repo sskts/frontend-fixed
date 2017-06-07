@@ -229,7 +229,7 @@ export class PurchaseModel {
 
     /**
      * セッションObjectへ変換
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method toSession
      * @returns {Object} result
      */
@@ -279,7 +279,7 @@ export class PurchaseModel {
 
     /**
      * ステータス確認
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method accessAuth
      * @param {number} value
      * @returns {boolean}
@@ -307,12 +307,13 @@ export class PurchaseModel {
             default:
                 break;
         }
+
         return result;
     }
 
     /**
      * ムビチケ券有無判定
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method isReserveMvtkTicket
      * @returns {boolean}
      */
@@ -322,12 +323,13 @@ export class PurchaseModel {
         for (const reserveTicket of this.reserveTickets) {
             if (reserveTicket.mvtk_num !== '' && reserveTicket.mvtk_num.length > 0) result = true;
         }
+
         return result;
     }
 
     /**
      * 予約金額取得（決済する分）
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getReserveAmount
      * @returns {number}
      */
@@ -338,12 +340,13 @@ export class PurchaseModel {
         for (const ticket of reserveTickets) {
             amount += ticket.sale_price;
         }
+
         return amount;
     }
 
     /**
      * チケット価値取得（チケット価値）
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getPrice
      * @returns {number}
      */
@@ -353,7 +356,7 @@ export class PurchaseModel {
 
     /**
      * ムビチケ計上単価合計取得
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getMvtkPrice
      * @returns {number}
      */
@@ -364,12 +367,13 @@ export class PurchaseModel {
         for (const ticket of reserveTickets) {
             price += ticket.mvtk_app_price;
         }
+
         return price;
     }
 
     /**
      * GMOオーソリ回数取得
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method authorizationCountGMOToString
      * @returns {string}
      */
@@ -379,7 +383,7 @@ export class PurchaseModel {
 
     /**
      * 有効期限確認
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method isExpired
      * @returns {boolean}
      */

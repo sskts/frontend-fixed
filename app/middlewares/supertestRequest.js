@@ -20,12 +20,7 @@ function supertestSession(req, _res, next) {
     }
     const session = (req.method === 'POST') ? req.body.session : req.query.session;
     Object.keys(session).forEach((key) => {
-        if (req.method === 'POST') {
-            req.session[key] = session[key];
-        }
-        else {
-            req.session[key] = session[key];
-        }
+        req.session[key] = session[key];
     });
     next();
     return;

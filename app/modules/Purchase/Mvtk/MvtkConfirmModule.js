@@ -41,14 +41,12 @@ function index(req, res, next) {
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
-        return;
     }
     catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
 }
 exports.index = index;
@@ -101,14 +99,12 @@ function submit(req, res, next) {
         // ムビチケセッション削除
         delete req.session.mvtk;
         res.redirect('/purchase/ticket');
-        return;
     }
     catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
 }
 exports.submit = submit;

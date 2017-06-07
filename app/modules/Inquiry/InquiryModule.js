@@ -208,7 +208,7 @@ function index(req, res, next) {
                 theater_name: inquiryModel.performance.attributes.theater.name.ja,
                 screen_name: inquiryModel.performance.attributes.screen.name.ja,
                 performance_day: moment(inquiryModel.performance.attributes.day).format('YYYY/MM/DD'),
-                performance_start_time: UtilModule.timeFormat(inquiryModel.performance.attributes.time_start) + '～',
+                performance_start_time: `${UtilModule.timeFormat(inquiryModel.performance.attributes.time_start)}～`,
                 seat_code: ticket.seat_num,
                 ticket_name: (ticket.add_glasses > 0)
                     ? `${ticket.ticket_name}${req.__('common.glasses')}`

@@ -14,6 +14,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
     // ベーシック認証のための環境変数設定なければスルー
     if (process.env.SSKTS_BASIC_AUTH_NAME === undefined || process.env.SSKTS_BASIC_AUTH_PASS === undefined) {
         next();
+
         return;
     }
 
@@ -25,6 +26,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
         debug('authenticated!');
         // 認証情報が正しければOK
         next();
+
         return;
     }
 

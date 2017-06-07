@@ -35,7 +35,7 @@ exports.index = index;
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
 function getScreenStateReserve(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -44,7 +44,7 @@ function getScreenStateReserve(req, res) {
             const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
-            return res.json({
+            res.json({
                 err: null,
                 result: {
                     screen: screen,
@@ -53,7 +53,7 @@ function getScreenStateReserve(req, res) {
             });
         }
         catch (err) {
-            return res.json({ err: err, result: null });
+            res.json({ err: err, result: null });
         }
     });
 }

@@ -47,11 +47,9 @@ function getPerformances(req, res) {
         try {
             const result = yield MP.getPerformances(req.body.theater, req.body.day);
             res.json({ error: null, result: result });
-            return;
         }
         catch (err) {
             res.json({ error: err, result: null });
-            return;
         }
     });
 }

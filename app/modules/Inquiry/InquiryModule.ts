@@ -16,7 +16,7 @@ const log = debug('SSKTS:InquiryModule');
 
 /**
  * 照会認証ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function login
  * @param {Request} req
  * @param {Response} res
@@ -28,6 +28,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
     if (req.query.theater === undefined) {
         const status = 404;
         res.status(status).render('error/notFound');
+
         return;
     }
     try {
@@ -37,19 +38,21 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         res.locals.telNum = '';
         res.locals.error = null;
         res.render('inquiry/login');
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * 劇場URL取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getPortalTheaterSite
  * @param {string} id
  * @returns {Promise<string>}
@@ -58,12 +61,13 @@ async function getPortalTheaterSite(id: string): Promise<string> {
     const theater = await MP.getTheater(id);
     const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
     if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+
     return website.url;
 }
 
 /**
  * 照会認証
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function auth
  * @param {Request} req
  * @param {Response} res
@@ -89,6 +93,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 res.locals.telNum = req.body.tel_num;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
+
                 return;
             }
             log('MP取引Id取得', inquiryModel.transactionId);
@@ -114,6 +119,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             req.session.inquiry = inquiryModel.toSession();
             //購入者内容確認へ
             res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
+
             return;
         } else {
             res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
@@ -122,6 +128,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             res.locals.telNum = req.body.tel_num;
             res.locals.error = validationResult.mapped();
             res.render('inquiry/login');
+
             return;
         }
     } catch (err) {
@@ -129,13 +136,14 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * 照会エラー取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getGMOError
  * @param {Request} req
  * @returns {any}
@@ -156,7 +164,7 @@ function getInquiryError(req: Request) {
 
 /**
  * 照会確認ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -166,10 +174,12 @@ function getInquiryError(req: Request) {
 export function index(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     if (req.query.theater === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
@@ -191,7 +201,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
                 theater_name: (<MP.IPerformance>inquiryModel.performance).attributes.theater.name.ja,
                 screen_name: (<MP.IPerformance>inquiryModel.performance).attributes.screen.name.ja,
                 performance_day: moment((<MP.IPerformance>inquiryModel.performance).attributes.day).format('YYYY/MM/DD'),
-                performance_start_time: UtilModule.timeFormat((<MP.IPerformance>inquiryModel.performance).attributes.time_start) + '～',
+                performance_start_time: `${UtilModule.timeFormat((<MP.IPerformance>inquiryModel.performance).attributes.time_start)}～`,
                 seat_code: ticket.seat_num,
                 ticket_name: (ticket.add_glasses > 0)
                     ? `${ticket.ticket_name}${req.__('common.glasses')}`
@@ -203,10 +213,12 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.reservations = JSON.stringify(reservations);
         delete req.session.inquiry;
         res.render('inquiry/index');
+
         return;
     } else {
         //照会認証ページへ
         res.redirect(`/inquiry/login?theater=${req.query.theater}&transactionId=${req.params.transactionId}`);
+
         return;
     }
 }

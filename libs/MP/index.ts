@@ -147,7 +147,7 @@ export interface IPerformance {
             id: string;
             name: ILanguage;
         },
-        stock_status: boolean;
+        stock_status: string;
         time_end: string;
         time_start: string;
         coa_trailer_time: number;
@@ -188,7 +188,7 @@ function errorHandler(args: any, response: any): void {
 
 /**
  * アクセストークン取得
- * @memberOf MP
+ * @memberof MP
  * @function oauthToken
  * @requires {Promise<Performance[]>}
  */
@@ -208,12 +208,13 @@ export async function oauthToken(): Promise<string> {
 
     if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('oauthToken:', response.body.access_token);
+
     return response.body.access_token;
 }
 
 /**
  * 劇場取得
- * @memberOf MP
+ * @memberof MP
  * @function getTheater
  * @param {GetTheaterArgs} args
  * @requires {Promise<ITheater>}
@@ -231,12 +232,13 @@ export async function getTheater(id: string): Promise<ITheater> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getTheater:', response.body.data);
+
     return response.body.data;
 }
 
 /**
  * スクリーン取得
- * @memberOf MP
+ * @memberof MP
  * @function getScreen
  * @param {GetScreenArgs} args
  * @requires {Promise<Screen>}
@@ -254,12 +256,13 @@ export async function getScreen(id: string): Promise<IScreen> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getScreen:', response.body.data);
+
     return response.body.data;
 }
 
 /**
  * 作品取得
- * @memberOf MP
+ * @memberof MP
  * @function getFilm
  * @param {GetFilmArgs} args
  * @requires {Promise<IFilm>}
@@ -277,12 +280,13 @@ export async function getFilm(id: string): Promise<IFilm> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('getFilm:', response.body.data);
+
     return response.body.data;
 }
 
 /**
  * パフォーマンス一覧取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformances
  * @param {string} theater 劇場コード
  * @param {string} day 日付
@@ -304,12 +308,13 @@ export async function getPerformances(theater: string, day: string): Promise<IPe
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(qs, response);
     // log('performances:', response.body.data);
+
     return response.body.data;
 }
 
 /**
  * パフォーマンス取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformance
  * @param {GetPerformanceArgs} args
  * @requires {Promise<IPerformance>}
@@ -327,12 +332,13 @@ export async function getPerformance(id: string): Promise<IPerformance> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
     log('performance:', response.body.data);
+
     return response.body.data;
 }
 
 /**
  * 取引開始in
- * @memberOf MP
+ * @memberof MP
  * @interface ITransactionStartArgs
  */
 export interface ITransactionStartArgs {
@@ -340,7 +346,7 @@ export interface ITransactionStartArgs {
 }
 /**
  * 取引開始out
- * @memberOf MP
+ * @memberof MP
  * @interface ITransactionStartResult
  */
 export interface ITransactionStartResult {
@@ -361,7 +367,7 @@ export interface ITransactionStartResult {
 }
 /**
  * オーナー情報
- * @memberOf MP
+ * @memberof MP
  * @interface IOwner
  */
 interface IOwner {
@@ -371,7 +377,7 @@ interface IOwner {
 
 /**
  * 取引開始
- * @memberOf MP
+ * @memberof MP
  * @function transactionStart
  * @param {TransactionStartArgs} args
  * @returns {Promise<ITransactionStartResult>}
@@ -399,7 +405,7 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
 
 /**
  * COAオーソリ追加in
- * @memberOf MP
+ * @memberof MP
  * @interface IAddCOAAuthorizationArgs
  */
 export interface IAddCOAAuthorizationArgs {
@@ -497,7 +503,7 @@ export interface IReserveTicket {
 
 /**
  * COAオーソリ追加out
- * @memberOf MP
+ * @memberof MP
  * @interface IAddCOAAuthorizationResult
  */
 export interface IAddCOAAuthorizationResult {
@@ -507,7 +513,7 @@ export interface IAddCOAAuthorizationResult {
 }
 /**
  * COAオーソリ追加
- * @memberOf MP
+ * @memberof MP
  * @function addCOAAuthorization
  * @param {IAddCOAAuthorizationArgs} args
  * @returns {Promise<IAddCOAAuthorizationResult>}
@@ -571,12 +577,13 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
 
     log('addCOAAuthorization result');
+
     return response.body.data;
 }
 
 /**
  * COAオーソリ削除in
- * @memberOf MP
+ * @memberof MP
  * @interface IRemoveCOAAuthorizationArgs
  */
 export interface IRemoveCOAAuthorizationArgs {
@@ -585,7 +592,7 @@ export interface IRemoveCOAAuthorizationArgs {
 }
 /**
  * COAオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeCOAAuthorization
  * @param {IRemoveCOAAuthorizationArgs} args
  * @requires {Promise<void>}
@@ -607,7 +614,7 @@ export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs):
 
 /**
  * GMOオーソリ追加in
- * @memberOf MP
+ * @memberof MP
  * @interface AddGMOAuthorizationArgs
  */
 export interface IAddGMOAuthorizationArgs {
@@ -620,7 +627,7 @@ export interface IAddGMOAuthorizationArgs {
 }
 /**
  * GMOオーソリ追加out
- * @memberOf MP
+ * @memberof MP
  * @interface IAddGMOAuthorizationResult
  */
 export interface IAddGMOAuthorizationResult {
@@ -630,7 +637,7 @@ export interface IAddGMOAuthorizationResult {
 }
 /**
  * GMOオーソリ追加
- * @memberOf MP
+ * @memberof MP
  * @function addGMOAuthorization
  * @param {IAddGMOAuthorizationArgs} args
  * @requires {Promise<IAddGMOAuthorizationResult>}
@@ -668,12 +675,13 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
 
     log('addGMOAuthorization result:');
+
     return response.body.data;
 }
 
 /**
  * GMOオーソリ削除in
- * @memberOf MP
+ * @memberof MP
  * @interface IRemoveGMOAuthorizationArgs
  */
 export interface IRemoveGMOAuthorizationArgs {
@@ -682,7 +690,7 @@ export interface IRemoveGMOAuthorizationArgs {
 }
 /**
  * GMOオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeGMOAuthorization
  * @param {IRemoveGMOAuthorizationArgs} args
  * @returns {Promise<void>}
@@ -704,7 +712,7 @@ export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs):
 
 /**
  * 購入者情報登録in
- * @memberOf MP
+ * @memberof MP
  * @interface OwnersAnonymousArgs
  */
 export interface IOwnersAnonymousArgs {
@@ -716,7 +724,7 @@ export interface IOwnersAnonymousArgs {
 }
 /**
  * 購入者情報登録
- * @memberOf MP
+ * @memberof MP
  * @function ownersAnonymous
  * @param {IOwnersAnonymousArgs} args
  * @returns {Promise<void>}
@@ -744,7 +752,7 @@ export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void>
 
 /**
  * 照会情報登録in
- * @memberOf MP
+ * @memberof MP
  * @interface ITransactionsEnableInquiryArgs
  */
 export interface ITransactionsEnableInquiryArgs {
@@ -755,7 +763,7 @@ export interface ITransactionsEnableInquiryArgs {
 }
 /**
  * 照会情報登録(購入番号と電話番号で照会する場合)
- * @memberOf MP
+ * @memberof MP
  * @function transactionsEnableInquiry
  * @param {ITransactionsEnableInquiryArgs} args
  * @returns {Promise<void>}
@@ -782,7 +790,7 @@ export async function transactionsEnableInquiry(args: ITransactionsEnableInquiry
 
 /**
  * 取引成立in
- * @memberOf MP
+ * @memberof MP
  * @interface ITransactionCloseArgs
  */
 export interface ITransactionCloseArgs {
@@ -790,7 +798,7 @@ export interface ITransactionCloseArgs {
 }
 /**
  * 取引成立
- * @memberOf MP
+ * @memberof MP
  * @function transactionClose
  * @param {ITransactionCloseArgs} args
  * @returns {Promise<void>}
@@ -811,7 +819,7 @@ export async function transactionClose(args: ITransactionCloseArgs): Promise<voi
 
 /**
  * メール追加in
- * @memberOf MP
+ * @memberof MP
  * @interface IAddEmailArgs
  */
 export interface IAddEmailArgs {
@@ -825,7 +833,7 @@ export interface IAddEmailArgs {
 
 /**
  * メール追加
- * @memberOf MP
+ * @memberof MP
  * @function addEmail
  * @param {IAddEmailArgs} args
  * @returns {Promise<string>}
@@ -847,13 +855,14 @@ export async function addEmail(args: IAddEmailArgs): Promise<string> {
         timeout: timeout
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
-    log('addEmail result:' + (<string>response.body.data));
+    log(`addEmail result: ${response.body.data}`);
+
     return response.body.data.id;
 }
 
 /**
  * メール削除in
- * @memberOf MP
+ * @memberof MP
  * @interface IRemoveEmailArgs
  */
 export interface IRemoveEmailArgs {
@@ -862,7 +871,7 @@ export interface IRemoveEmailArgs {
 }
 /**
  * メール削除
- * @memberOf MP
+ * @memberof MP
  * @function removeEmail
  * @param {IRemoveEmailArgs} args
  * @returns {Promise<void>}
@@ -883,7 +892,7 @@ export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
 
 /**
  * 照会取引情報取得in
- * @memberOf MP
+ * @memberof MP
  * @interface makeInquiry
  */
 export interface IMakeInquiryArgs {
@@ -893,7 +902,7 @@ export interface IMakeInquiryArgs {
 }
 /**
  * 照会取引情報取得
- * @memberOf MP
+ * @memberof MP
  * @function makeInquiry
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<string | null>}
@@ -915,13 +924,14 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string | null
     }).promise();
     if (response.statusCode === HTTPStatus.NOT_FOUND) return null;
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
-    log('makeInquiry result:' + (<string>response.body.data));
+    log(`makeInquiry result: ${response.body.data}`);
+
     return response.body.data.id;
 }
 
 /**
  * CAO情報
- * @memberOf MP
+ * @memberof MP
  * @interface IPerformanceCOA
  */
 export interface IPerformanceCOA {
@@ -936,7 +946,7 @@ export interface IPerformanceCOA {
 
 /**
  * COA情報取得
- * @memberOf MP
+ * @memberof MP
  * @function getPerformanceCOA
  * @param {string} theater 劇場id
  * @param {string} screenId スクリーンid
@@ -951,6 +961,7 @@ export async function getPerformanceCOA(theaterId: string, screenId: string, fil
     log('スクリーン取得');
     const film = await getFilm(filmId);
     log('作品取得');
+
     return {
         theaterCode: theater.id,
         screenCode: screen.attributes.coa_screen_code,
@@ -1010,7 +1021,7 @@ export interface IAuthorizationsMvtkArgs {
 
 /**
  * ムビチケオーソリ追加out
- * @memberOf MP
+ * @memberof MP
  * @interface IAddMvtkAuthorizationResult
  */
 export interface IAddMvtkAuthorizationResult {
@@ -1021,7 +1032,7 @@ export interface IAddMvtkAuthorizationResult {
 
 /**
  * 照会取引情報取得
- * @memberOf MP
+ * @memberof MP
  * @function addMvtkauthorization
  * @param {IMakeInquiryArgs} args
  * @returns {Promise<void>}
@@ -1074,12 +1085,13 @@ export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promi
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) errorHandler(body, response);
     log('addMvtkauthorization result:');
+
     return response.body.data;
 }
 
 /**
  * ムビチケオーソリ削除in
- * @memberOf MP
+ * @memberof MP
  * @interface IRemoveCOAAuthorizationArgs
  */
 export interface IRemoveMvtkAuthorizationArgs {
@@ -1088,7 +1100,7 @@ export interface IRemoveMvtkAuthorizationArgs {
 }
 /**
  * ムビチケオーソリ削除
- * @memberOf MP
+ * @memberof MP
  * @function removeCOAAuthorization
  * @param {IRemoveMvtkAuthorizationArgs} args
  * @requires {Promise<void>}

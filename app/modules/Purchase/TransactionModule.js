@@ -64,7 +64,6 @@ function start(req, res) {
             req.session.purchase = purchaseModel.toSession();
             //座席選択へ
             res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
-            return;
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_ACCESS
@@ -73,7 +72,6 @@ function start(req, res) {
                 return;
             }
             res.json({ redirect: null, contents: 'access-congestion' });
-            return;
         }
     });
 }

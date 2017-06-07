@@ -11,7 +11,7 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
 /**
  * ムビチケ券適用確認ページ表示
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -28,6 +28,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
+
             return;
         }
 
@@ -39,20 +40,17 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
-        return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
-
 }
 
 /**
  * 購入番号リスト生成
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function creatPurchaseNoList
  * @param {PurchaseSession.Mvtk[]} mvtk
  * @returns {string[]}
@@ -65,12 +63,13 @@ function creatPurchaseNoList(mvtk: PurchaseSession.IMvtk[]) {
         });
         if (purchaseNo === undefined) result.push(target.code);
     }
+
     return result;
 }
 
 /**
  * 券種選択へ
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function submit
  * @param {Request} req
  * @param {Response} res
@@ -96,12 +95,10 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
         // ムビチケセッション削除
         delete req.session.mvtk;
         res.redirect('/purchase/ticket');
-        return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
 }

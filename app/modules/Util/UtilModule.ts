@@ -3,11 +3,11 @@
  * @namespace Util.UtilModule
  */
 
-import {NextFunction, Request, Response} from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 /**
  * テンプレート変数へ渡す
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function setLocals
  * @param {Request} req
  * @param {Response} res
@@ -24,12 +24,11 @@ export function setLocals(_req: Request, res: Response, next: NextFunction): voi
     res.locals.env = process.env.NODE_ENV;
     res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
     next();
-    return;
 }
 
 /**
  * 時間フォーマット
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function timeFormat
  * @param {string} str
  * @returns {string}
@@ -40,12 +39,13 @@ export function timeFormat(str: string): string {
     }
     const start = 2;
     const end = 4;
+
     return `${str.slice(0, start)}:${str.slice(start, end)}`;
 }
 
 /**
  * HTMLエスケープ
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function escapeHtml
  * @param {string} str
  * @returns {string}
@@ -63,14 +63,16 @@ export function escapeHtml(str: string): string {
             '<': '&lt;',
             '>': '&gt;'
         };
+
         return changeList[match];
     };
+
     return str.replace(/[&'`"<>]/g, change);
 }
 
 /**
  * カンマ区切りへ変換
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function formatPrice
  * @param {number} price
  * @returns {string}
@@ -81,7 +83,7 @@ export function formatPrice(price: number): string {
 
 /**
  * パフォーマンスID取得
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function getPerformanceId
  * @param {Object} args
  * @param {string} args.theaterCode
@@ -105,7 +107,7 @@ export function getPerformanceId(args: {
 
 /**
  * ベース64エンコード
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function bace64Encode
  * @param {string} str
  * @returns {string}
@@ -116,7 +118,7 @@ export function bace64Encode(str: string): string {
 
 /**
  * ベース64デコード
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function base64Decode
  * @param {string} str
  * @returns {string}
@@ -127,7 +129,7 @@ export function base64Decode(str: string): string {
 
 /**
  * メール内容取得
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function getMailTemplate
  * @param {Response} res
  * @param {string} file
@@ -139,17 +141,17 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
         res.render(file, locals, (err, html) => {
             if (err !== null) {
                 reject(err);
+
                 return;
             }
             resolve(html);
-            return;
         });
     });
 }
 
 /**
  * 2桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_02
  * @type number
  */
@@ -157,7 +159,7 @@ export const DIGITS_02 = -2;
 
 /**
  * 3桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_03
  * @type number
  */
@@ -165,7 +167,7 @@ export const DIGITS_03 = -3;
 
 /**
  * 8桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_08
  * @type number
  */

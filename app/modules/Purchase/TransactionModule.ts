@@ -13,7 +13,7 @@ const log = debug('SSKTS:Purchase.TransactionModule');
 
 /**
  * 取引開始
- * @memberOf Purchase.TransactionModule
+ * @memberof Purchase.TransactionModule
  * @function start
  * @param {Request} req
  * @param {Response} res
@@ -41,6 +41,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
             //重複確認へ
             res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+
             return;
         }
         purchaseModel = new PurchaseSession.PurchaseModel({});
@@ -58,14 +59,13 @@ export async function start(req: Request, res: Response): Promise<void> {
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
         res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
-        return;
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_ACCESS
             || err === ErrorUtilModule.ERROR_PROPERTY) {
             res.json({ redirect: null, contents: 'access-error' });
+
             return;
         }
         res.json({ redirect: null, contents: 'access-congestion' });
-        return;
     }
 }

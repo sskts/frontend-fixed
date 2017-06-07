@@ -9,7 +9,7 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
 /**
  * Not Found
- * @memberOf ErrorModule
+ * @memberof ErrorModule
  * @function notFound
  * @param {Request} req
  * @param {Response} res
@@ -24,12 +24,13 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
     } else {
         res.status(status).render('error/notFound');
     }
+
     return;
 }
 
 /**
  * エラーページ
- * @memberOf ErrorModule
+ * @memberof ErrorModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -90,5 +91,6 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
         res.locals.error = err;
         res.status(status).render('error/error');
     }
+
     return;
 }

@@ -27,10 +27,10 @@ app.use(helmet()); //セキュリティー対策
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
 if (process.env.VIEW_TYPE === 'fixed') {
-    app.set('views', __dirname + '/views/fixed');
+    app.set('views', `${__dirname}/views/fixed`);
 }
 else {
-    app.set('views', __dirname + '/views/default');
+    app.set('views', `${__dirname}/views/default`);
 }
 app.set('view engine', 'ejs');
 app.use(expressLayouts);

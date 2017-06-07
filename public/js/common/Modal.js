@@ -13,7 +13,7 @@
     Modal.prototype = {
         /**
          * 初期化
-         * @memberOf Modal
+         * @memberof Modal
          * @method init
          * @returns {void}
          */
@@ -23,7 +23,7 @@
         },
         /**
          * イベント登録
-         * @memberOf Modal
+         * @memberof Modal
          * @method setEvent
          * @returns {void}
          */
@@ -59,7 +59,7 @@
         },
         /**
          * モーダル開く
-         * @memberOf open
+         * @memberof open
          * @method init
          * @param {string} modalName
          * @returns {void}
@@ -79,7 +79,7 @@
         },
         /**
          * モーダル閉じる
-         * @memberOf Modal
+         * @memberof Modal
          * @method close
          * @returns {void}
          */
@@ -96,7 +96,7 @@
         },
         /**
          * トリガー取得
-         * @memberOf Modal
+         * @memberof Modal
          * @method getTrigger
          * @returns {JQuery}
          */
@@ -105,7 +105,7 @@
         },
         /**
          * モーダル表示判定
-         * @memberOf Modal
+         * @memberof Modal
          * @method isOpen
          * @returns {boolean}
          */
@@ -118,7 +118,7 @@
         },
         /**
          * リサイズ処理
-         * @memberOf Modal
+         * @memberof Modal
          * @method resize
          * @returns {void}
          */

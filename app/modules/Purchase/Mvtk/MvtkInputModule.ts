@@ -18,7 +18,7 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 
 /**
  * ムビチケ券入力ページ表示
- * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @memberof Purchase.Mvtk.MvtkInputModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -44,19 +44,17 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
-        return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
 }
 
 /**
  * 券種選択
- * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @memberof Purchase.Mvtk.MvtkInputModule
  * @function select
  * @param {Request} req
  * @param {Response} res
@@ -68,6 +66,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     try {
@@ -169,6 +168,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.reserveSeats === null || purchaseModel.transactionMP === null) {
                 next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
                 return;
             }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
@@ -176,13 +176,13 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
+
             return;
         }
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-        return;
     }
 }
 

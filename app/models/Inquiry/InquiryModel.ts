@@ -58,7 +58,7 @@ export class InquiryModel {
 
     /**
      * セッションObjectへ変換
-     * @memberOf InquiryModel
+     * @memberof InquiryModel
      * @method toSession
      * @returns {Object}
      */

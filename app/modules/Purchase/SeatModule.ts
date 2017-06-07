@@ -16,7 +16,7 @@ const log = debug('SSKTS:Purchase.SeatModule');
 
 /**
  * 座席選択
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -63,12 +63,14 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
@@ -84,7 +86,7 @@ interface ISelectSeats {
 
 /**
  * 座席決定
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function select
  * @param {Request} req
  * @param {Response} res
@@ -116,6 +118,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
             res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
+
             return;
         }
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;
@@ -126,19 +129,21 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         delete req.session.mvtk;
         //券種選択へ
         res.redirect('/purchase/ticket');
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * 座席仮予約
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function reserve
  * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
@@ -247,7 +252,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
 
 /**
  * スクリーン状態取得
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function getScreenStateReserve
  * @param {Request} req
  * @param {Response} res
@@ -280,16 +285,14 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
                 state: state
             }
         });
-        return;
     } catch (err) {
         res.json({ err: err, result: null });
-        return;
     }
 }
 
 /**
  * 券種情報をセションへ保存
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function getSalesTickets
  * @param {Request} req
  * @param {Response} res
@@ -318,13 +321,10 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
             log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
             req.session.purchase = purchaseModel.toSession();
             res.json({ err: null });
-            return;
         } else {
             res.json({ err: null });
-            return;
         }
     } catch (err) {
         res.json({ err: err });
-        return;
     }
 }

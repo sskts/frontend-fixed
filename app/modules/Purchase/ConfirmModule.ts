@@ -17,7 +17,7 @@ const log = debug('SSKTS:Purchase.ConfirmModule');
 
 /**
  * 購入者内容確認
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -54,19 +54,21 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * ムビチケ決済
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function reserveMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
@@ -124,7 +126,7 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
 
 /**
  * ムビチケ決済取り消し
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function cancelMvtk
  * @param {Request} req
  * @param {Response} res
@@ -175,7 +177,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
         if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
     } catch (err) {
-        result =  false;
+        result = false;
         logger.error('SSKTS-APP:ConfirmModule.reserveMvtk In', seatInfoSyncIn);
         logger.error('SSKTS-APP:ConfirmModule.reserveMvtk Out', err);
     }
@@ -184,21 +186,21 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     //ムビチケセッション削除
     delete req.session.mvtk;
     log('MVTKムビチケ着券削除');
-    res.json({isSuccess: result});
+    res.json({ isSuccess: result });
 }
 
 /**
  * 購入確定
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function purchase
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
-export async function purchase(req: Request, res: Response, _next: NextFunction): Promise<Response> {
+export async function purchase(req: Request, res: Response, _next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -277,45 +279,33 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
         //購入セッション削除
         delete req.session.purchase;
         //購入完了情報を返す
-        return res.json({ err: null, result: req.session.complete });
+        res.json({ err: null, result: req.session.complete });
     } catch (err) {
         log('ERROR', err);
-        let msg: string;
-        if (err === ErrorUtilModule.ERROR_PROPERTY) {
-            msg = req.__('common.error.property');
-        } else if (err === ErrorUtilModule.ERROR_ACCESS) {
-            msg = req.__('common.error.access');
-        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-            msg = req.__('common.error.expire');
-        } else {
-            msg = err.message;
-        }
-        return res.json({ err: msg, result: null });
+        const msg: string = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+                    : err.message;
+        res.json({ err: msg, result: null });
     }
 }
 
 /**
  * 完了情報取得
  * @function getCompleteData
- * @returns {Response}
+ * @returns {void}
  */
 // tslint:disable-next-line:variable-name
-export function getCompleteData(req: Request, res: Response, _next: NextFunction): Response {
+export function getCompleteData(req: Request, res: Response, _next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        return res.json({ err: null, result: req.session.complete });
+        res.json({ err: null, result: req.session.complete });
     } catch (err) {
-        let msg: string;
-        if (err === ErrorUtilModule.ERROR_PROPERTY) {
-            msg = req.__('common.error.property');
-        } else if (err === ErrorUtilModule.ERROR_ACCESS) {
-            msg = req.__('common.error.access');
-        } else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-            msg = req.__('common.error.expire');
-        } else {
-            msg = err.message;
-        }
-        return res.json({ err: msg, result: null });
+        const msg: string = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+                    : err.message;
+        res.json({ err: msg, result: null });
     }
 }

@@ -81,9 +81,9 @@
     "selenium-webdriver": "^3.0.1",
     "snyk": "^1.28.1",
     "supertest": "^3.0.0",
-    "tslint": "^4.5.1",
-    "tslint-microsoft-contrib": "^4.0.1",
-    "typescript": "^2.3.3"
+    "tslint": "^5.4.3",
+    "tslint-microsoft-contrib": "^5.0.0",
+    "typescript": "^2.3.4"
   },
   "repository": {},
   "author": {

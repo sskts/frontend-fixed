@@ -8,7 +8,7 @@ import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 /**
  * 購入完了表示
- * @memberOf Purchase.CompleteModule
+ * @memberof Purchase.CompleteModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -29,13 +29,14 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.updateReserve = complete.updateReserve;
         res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
         res.render('purchase/complete', { layout: 'layouts/purchase/layout' });
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
-
 }

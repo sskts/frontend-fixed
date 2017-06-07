@@ -293,11 +293,9 @@ function getScreenStateReserve(req, res) {
                     state: state
                 }
             });
-            return;
         }
         catch (err) {
             res.json({ err: err, result: null });
-            return;
         }
     });
 }
@@ -337,16 +335,13 @@ function saveSalesTickets(req, res) {
                 log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
                 req.session.purchase = purchaseModel.toSession();
                 res.json({ err: null });
-                return;
             }
             else {
                 res.json({ err: null });
-                return;
             }
         }
         catch (err) {
             res.json({ err: err });
-            return;
         }
     });
 }

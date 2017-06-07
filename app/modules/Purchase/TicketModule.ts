@@ -16,7 +16,7 @@ const log = debug('SSKTS:Purchase.TicketModule');
 
 /**
  * 券種選択
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -54,19 +54,21 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         req.session.purchase = purchaseModel.toSession();
         //券種選択表示
         res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
+
         return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
 
 /**
  * 券種決定
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function select
  * @param {Request} req
  * @param {Response} res
@@ -78,6 +80,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     try {
@@ -161,6 +164,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             req.session.purchase = purchaseModel.toSession();
             log('セッション更新');
             res.redirect('/purchase/input');
+
             return;
         } else {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -185,12 +189,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
+
             return;
         }
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+
         return;
     }
 }
@@ -247,7 +253,7 @@ export interface ISalesTicket {
 
 /**
  * 券種リスト取得
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function getSalesTickets
  * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
@@ -332,12 +338,13 @@ async function getSalesTickets(
         }
     }
     log('券種', mvtkTickets.concat(result));
+
     return mvtkTickets.concat(result);
 }
 
 /**
  * 券種検証
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function ticketValidation
  * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
@@ -455,5 +462,6 @@ async function ticketValidation(
             });
         }
     }
+
     return result;
 }

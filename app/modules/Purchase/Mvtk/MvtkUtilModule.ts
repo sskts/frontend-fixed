@@ -7,14 +7,14 @@ import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../../Util/UtilModule';
 /**
  * 興行会社コード
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @const COMPANY_CODE
  */
 export const COMPANY_CODE = 'SSK000';
 
 /**
  * 作品コード取得
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function getfilmCode
  * @param {string} titleCode COA作品コード
  * @param {string} titleBranchNum COA作品枝番
@@ -22,12 +22,13 @@ export const COMPANY_CODE = 'SSK000';
  */
 export function getfilmCode(titleCode: string, titleBranchNum: string): string {
     const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS_02);
+
     return `${titleCode}${branch}`;
 }
 
 /**
  * サイトコード取得
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function getSiteCode
  * @param {string} id 劇場コード
  * @returns {string}
@@ -38,7 +39,7 @@ export function getSiteCode(id: string): string {
 
 /**
  * ムビチケ情報生成
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
@@ -83,6 +84,7 @@ export function createMvtkInfo(
         }
         seats.push({ ZSK_CD: reserveTicket.seat_code });
     }
+
     return {
         tickets: tickets,
         seats: seats

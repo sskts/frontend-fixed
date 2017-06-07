@@ -32,7 +32,6 @@ function setLocals(_req, res, next) {
     res.locals.env = process.env.NODE_ENV;
     res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
     next();
-    return;
 }
 exports.setLocals = setLocals;
 /**
@@ -144,7 +143,6 @@ function getEmailTemplate(res, file, locals) {
                     return;
                 }
                 resolve(html);
-                return;
             });
         });
     });

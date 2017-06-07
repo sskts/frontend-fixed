@@ -223,7 +223,7 @@ exports.cancelMvtk = cancelMvtk;
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
 // tslint:disable-next-line:variable-name
@@ -311,24 +311,15 @@ function purchase(req, res, _next) {
             //購入セッション削除
             delete req.session.purchase;
             //購入完了情報を返す
-            return res.json({ err: null, result: req.session.complete });
+            res.json({ err: null, result: req.session.complete });
         }
         catch (err) {
             log('ERROR', err);
-            let msg;
-            if (err === ErrorUtilModule.ERROR_PROPERTY) {
-                msg = req.__('common.error.property');
-            }
-            else if (err === ErrorUtilModule.ERROR_ACCESS) {
-                msg = req.__('common.error.access');
-            }
-            else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-                msg = req.__('common.error.expire');
-            }
-            else {
-                msg = err.message;
-            }
-            return res.json({ err: msg, result: null });
+            const msg = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
+                : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
+                    : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+                        : err.message;
+            res.json({ err: msg, result: null });
         }
     });
 }
@@ -336,7 +327,7 @@ exports.purchase = purchase;
 /**
  * 完了情報取得
  * @function getCompleteData
- * @returns {Response}
+ * @returns {void}
  */
 // tslint:disable-next-line:variable-name
 function getCompleteData(req, res, _next) {
@@ -345,23 +336,14 @@ function getCompleteData(req, res, _next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.complete === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
-        return res.json({ err: null, result: req.session.complete });
+        res.json({ err: null, result: req.session.complete });
     }
     catch (err) {
-        let msg;
-        if (err === ErrorUtilModule.ERROR_PROPERTY) {
-            msg = req.__('common.error.property');
-        }
-        else if (err === ErrorUtilModule.ERROR_ACCESS) {
-            msg = req.__('common.error.access');
-        }
-        else if (err === ErrorUtilModule.ERROR_EXPIRE) {
-            msg = req.__('common.error.expire');
-        }
-        else {
-            msg = err.message;
-        }
-        return res.json({ err: msg, result: null });
+        const msg = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+                    : err.message;
+        res.json({ err: msg, result: null });
     }
 }
 exports.getCompleteData = getCompleteData;

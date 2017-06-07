@@ -10,7 +10,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
 
 /**
  * 券売機TOPページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -20,6 +20,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
 export function index(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+
         return;
     }
     delete req.session.purchase;
@@ -31,7 +32,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
 /**
  * 券売機設定ページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function setting
  * @param {Response} res
  * @returns {void}
@@ -42,7 +43,7 @@ export function setting(_: Request, res: Response): void {
 
 /**
  * 利用停止ページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function stop
  * @param {Response} res
  * @returns {void}

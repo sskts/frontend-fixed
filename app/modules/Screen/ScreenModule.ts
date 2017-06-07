@@ -9,7 +9,7 @@ import * as UtilModule from '../Util/UtilModule';
 
 /**
  * 座席選択
- * @memberOf Screen.ScreenModule
+ * @memberof Screen.ScreenModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -21,20 +21,20 @@ export async function index(_: Request, res: Response): Promise<void> {
 
 /**
  * スクリーン状態取得
- * @memberOf Screen.ScreenModule
+ * @memberof Screen.ScreenModule
  * @function getScreenStateReserve
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {Promise<Response>}
+ * @returns {Promise<void>}
  */
-export async function getScreenStateReserve(req: Request, res: Response): Promise<Response> {
+export async function getScreenStateReserve(req: Request, res: Response): Promise<void> {
     try {
         const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS_02);
         const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
-        return res.json({
+        res.json({
             err: null,
             result: {
                 screen: screen,
@@ -42,6 +42,6 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
             }
         });
     } catch (err) {
-        return res.json({ err: err, result: null });
+        res.json({ err: err, result: null });
     }
 }

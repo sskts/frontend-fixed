@@ -10,6 +10,7 @@ export default (__: Request, res: Response, next: NextFunction) => {
     // メンテナンステキストの環境変数設定なければスルー
     if (process.env.SSKTS_MAINTENANCE_TEXT === undefined) {
         next();
+
         return;
     }
 

@@ -14,13 +14,15 @@ export default (req: Request, res: Response, next: NextFunction) => {
     if (process.env.SSKTS_ALLOWED_IPS !== undefined) {
         const allowedIps = (<string>process.env.SSKTS_ALLOWED_IPS).split(',');
         const forbidden = allowedIps.every((ip) => {
-            const regex = new RegExp('^' + ip + '(:\\d+)?$');
+            const regex = new RegExp(`^${ip}(:\\d+)?$`);
+
             return !regex.test(req.headers['x-forwarded-for']);
         });
 
         // 許可IPリストのどれにも適合しなければ拒否
         if (forbidden) {
             res.status(FORBIDDEN).type('text').send('Forbidden');
+
             return;
         }
     }
