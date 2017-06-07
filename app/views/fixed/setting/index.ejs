@@ -10,12 +10,8 @@
                 <dt><%- __('common.theater') %></dt>
                 <dd>
                     <select name="theater">
-                        <% if (env === 'production') { %>
-                        <option selected value="012">北島</option>
-                        <option selected value="018">姶良</option>
-                        <% } else { %>
-                        <option selected value="112">北島</option>
-                        <option selected value="118">姶良</option>
+                        <% for (const theater of theaters) { %>
+                        <option selected value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
                         <% } %>
                     </select>
                 </dd>

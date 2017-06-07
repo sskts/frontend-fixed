@@ -5,7 +5,7 @@ const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * Not Found
- * @memberOf ErrorModule
+ * @memberof ErrorModule
  * @function notFound
  * @param {Request} req
  * @param {Response} res
@@ -26,7 +26,7 @@ function notFound(req, res, _next) {
 exports.notFound = notFound;
 /**
  * エラーページ
- * @memberOf ErrorModule
+ * @memberof ErrorModule
  * @function index
  * @param {Request} req
  * @param {Response} res

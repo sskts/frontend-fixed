@@ -24,7 +24,7 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -93,7 +93,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 購入者情報入力完了
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function submit
  * @param {Request} req
  * @param {Response} res
@@ -250,7 +250,7 @@ function submit(req, res, next) {
 exports.submit = submit;
 /**
  * オーソリ追加
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function addAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
@@ -331,7 +331,7 @@ function addAuthorization(req, res, purchaseModel) {
 }
 /**
  * オーソリ削除
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function removeAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}

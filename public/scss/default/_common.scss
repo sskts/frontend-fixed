@@ -507,17 +507,21 @@ p {
     }
 }
 
-.not-link {
+.disabled {
     position: relative;
     cursor: default !important;
+    opacity: 0.5;
     &:after {
         content: '';
-        display: block;
+        display: block !important;
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 1;
     }
 }
 

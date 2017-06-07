@@ -125,7 +125,7 @@ img {
   100% {
     background-position: -3060px 0; } }
 
-.icon-triangle-01:after {
+.icon-triangle-01:before {
   position: absolute;
   bottom: 20px;
   right: 20px;
@@ -135,7 +135,7 @@ img {
   height: 12px;
   background-image: url(/images/fixed/icon/icon_triangle_01.svg); }
 
-.icon-triangle-02:after {
+.icon-triangle-02:before {
   position: absolute;
   bottom: 10px;
   right: 10px;
@@ -145,7 +145,7 @@ img {
   height: 12px;
   background-image: url(/images/fixed/icon/icon_triangle_02.svg); }
 
-.icon-select:after {
+.icon-select:before {
   position: absolute;
   top: 50%;
   right: 20px;
@@ -157,7 +157,7 @@ img {
   background-size: 17px 12px;
   background-image: url(/images/fixed/icon/icon_select.png); }
 
-.icon-prev:after {
+.icon-prev:before {
   position: absolute;
   top: 30px;
   left: 50%;
@@ -168,7 +168,7 @@ img {
   height: 29px;
   background-image: url(/images/fixed/icon/icon_prev.svg); }
 
-.icon-top:after {
+.icon-top:before {
   position: absolute;
   top: 30px;
   left: 50%;
@@ -464,6 +464,21 @@ a {
       background-color: rgba(255, 255, 255, 0.85);
       color: #333;
       padding: 30px 20px; }
+
+.disabled {
+  position: relative;
+  opacity: 0.5; }
+  .disabled:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; }
 
 .button a, .button button, .button label {
   line-height: 1;

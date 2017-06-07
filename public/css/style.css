@@ -493,17 +493,21 @@ p a {
     .center-button {
       width: auto; } }
 
-.not-link {
+.disabled {
   position: relative;
-  cursor: default !important; }
-  .not-link:after {
+  cursor: default !important;
+  opacity: 0.5; }
+  .disabled:after {
     content: '';
-    display: block;
+    display: block !important;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0; }
+    bottom: 0;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 1; }
 
 .button a, .button button, .button label {
   line-height: 1;
@@ -1448,7 +1452,8 @@ p a {
           .purchase-performances .performances li dl dd ul li {
             width: 30%; } }
         .purchase-performances .performances li dl dd ul li:after {
-          display: none; }
+          display: none;
+          background-image: none; }
 
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],

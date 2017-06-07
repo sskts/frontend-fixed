@@ -8,7 +8,7 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * 購入完了表示
- * @memberOf Purchase.CompleteModule
+ * @memberof Purchase.CompleteModule
  * @function index
  * @param {Request} req
  * @param {Response} res

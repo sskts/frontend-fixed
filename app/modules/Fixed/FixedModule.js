@@ -3,13 +3,22 @@
  * 照会
  * @namespace Fixed.FixedModule
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
+const MP = require("../../../libs/MP");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
 /**
  * 券売機TOPページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -30,18 +39,26 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 券売機設定ページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function setting
  * @param {Response} res
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function setting(_, res) {
-    res.render('setting/index');
+function setting(_, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            res.locals.theaters = yield MP.getTheaters();
+            res.render('setting/index');
+        }
+        catch (err) {
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
+        }
+    });
 }
 exports.setting = setting;
 /**
  * 利用停止ページ表示
- * @memberOf FixedModule
+ * @memberof FixedModule
  * @function stop
  * @param {Response} res
  * @returns {void}

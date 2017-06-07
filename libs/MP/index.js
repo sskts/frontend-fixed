@@ -102,6 +102,30 @@ function getTheater(id) {
 }
 exports.getTheater = getTheater;
 /**
+ * 劇場一覧取得
+ * @memberof MP
+ * @function getTheaters
+ * @requires {Promise<ITheater[]>}
+ */
+function getTheaters() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield request.get({
+            url: `${endPoint}/theaters`,
+            auth: { bearer: yield oauthToken() },
+            body: {},
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: timeout
+        }).promise();
+        if (response.statusCode !== HTTPStatus.OK)
+            errorHandler({}, response);
+        log('getTheaters:', response.body.data);
+        return response.body.data;
+    });
+}
+exports.getTheaters = getTheaters;
+/**
  * スクリーン取得
  * @memberof MP
  * @function getScreen

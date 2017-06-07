@@ -25,7 +25,7 @@ const UtilModule = require("../../Util/UtilModule");
 const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 /**
  * ムビチケ券入力ページ表示
- * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @memberof Purchase.Mvtk.MvtkInputModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -65,7 +65,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 券種選択
- * @memberOf Purchase.Mvtk.MvtkInputModule
+ * @memberof Purchase.Mvtk.MvtkInputModule
  * @function select
  * @param {Request} req
  * @param {Response} res

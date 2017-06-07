@@ -23,7 +23,7 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.SeatModule');
 /**
  * 座席選択
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -70,21 +70,19 @@ function index(req, res, next) {
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
-            return;
         }
         catch (err) {
             const error = (err instanceof Error)
                 ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
-            return;
         }
     });
 }
 exports.index = index;
 /**
  * 座席決定
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function select
  * @param {Request} req
  * @param {Response} res
@@ -148,7 +146,7 @@ function select(req, res, next) {
 exports.select = select;
 /**
  * 座席仮予約
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function reserve
  * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
@@ -258,7 +256,7 @@ function reserve(selectSeats, purchaseModel) {
 }
 /**
  * スクリーン状態取得
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function getScreenStateReserve
  * @param {Request} req
  * @param {Response} res
@@ -302,7 +300,7 @@ function getScreenStateReserve(req, res) {
 exports.getScreenStateReserve = getScreenStateReserve;
 /**
  * 券種情報をセションへ保存
- * @memberOf Purchase.SeatModule
+ * @memberof Purchase.SeatModule
  * @function getSalesTickets
  * @param {Request} req
  * @param {Response} res

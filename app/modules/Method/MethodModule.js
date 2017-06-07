@@ -6,7 +6,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 発券方法ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function ticketing
  * @param {Request} req
  * @param {Response} res
@@ -21,7 +21,7 @@ function ticketing(_req, res, _next) {
 exports.ticketing = ticketing;
 /**
  * 入場方法説明ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function entry
  * @param {Request} req
  * @param {Response} res
@@ -36,7 +36,7 @@ function entry(_req, res, _next) {
 exports.entry = entry;
 /**
  * ブックマーク方法説明ページ表示
- * @memberOf MethodModule
+ * @memberof MethodModule
  * @function bookmark
  * @param {Request} req
  * @param {Response} res

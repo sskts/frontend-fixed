@@ -24,7 +24,7 @@ const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS:Purchase.ConfirmModule');
 /**
  * 購入者内容確認
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -80,7 +80,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * ムビチケ決済
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function reserveMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
@@ -145,7 +145,7 @@ function reserveMvtk(purchaseModel) {
 }
 /**
  * ムビチケ決済取り消し
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function cancelMvtk
  * @param {Request} req
  * @param {Response} res
@@ -218,7 +218,7 @@ function cancelMvtk(req, res) {
 exports.cancelMvtk = cancelMvtk;
 /**
  * 購入確定
- * @memberOf Purchase.ConfirmModule
+ * @memberof Purchase.ConfirmModule
  * @function purchase
  * @param {Request} req
  * @param {Response} res

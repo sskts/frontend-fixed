@@ -15,13 +15,16 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
 
         return;
+    }
+    if (process.env.VIEW_TYPE === undefined) {
+        res.locals.theaters = await MP.getTheaters();
     }
     res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
     res.render('purchase/performances', { layout: 'layouts/purchase/layout' });

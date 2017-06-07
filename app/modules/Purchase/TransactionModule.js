@@ -20,7 +20,7 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 取引開始
- * @memberOf Purchase.TransactionModule
+ * @memberof Purchase.TransactionModule
  * @function start
  * @param {Request} req
  * @param {Response} res

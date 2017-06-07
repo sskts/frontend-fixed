@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 /**
  * supertestでセッション変更
- * @memberOf middlewares.SupertestRequest
+ * @memberof middlewares.SupertestRequest
  * @function supertestSession
  * @param {express.Request} req
  * @param {express.Response} res

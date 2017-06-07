@@ -103,7 +103,11 @@ function createScheduleDom(data) {
             // 券売機
             link = '/purchase/fixed.html?id=' + performance.id;
         }
-        return ('<li class="button small-button gray-button">'+
+        // 購入可能化の判定
+        var status = (performance.attributes.stock_status === '×' || performance.attributes.stock_status === '-') 
+            ? 'disabled'
+            : ''
+        return ('<li class="button small-button gray-button ' + status + '">'+
             '<a href="'+ link +'" class="icon-triangle-02">'+ 
             '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
             '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 

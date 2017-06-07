@@ -5,6 +5,7 @@
 
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as MP from '../../../libs/MP';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Fixed.FixedModule');
 
@@ -35,10 +36,15 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @memberof FixedModule
  * @function setting
  * @param {Response} res
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function setting(_: Request, res: Response): void {
-    res.render('setting/index');
+export async function setting(_: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        res.locals.theaters = await MP.getTheaters();
+        res.render('setting/index');
+    } catch (err) {
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
+    }
 }
 
 /**

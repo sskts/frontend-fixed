@@ -17,26 +17,31 @@ const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * パフォーマンス一覧表示
- * @memberOf Purchase.PerformancesModule
+ * @memberof Purchase.PerformancesModule
  * @function index
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function index(req, res, next) {
-    if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined) {
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            return;
+        }
+        if (process.env.VIEW_TYPE === undefined) {
+            res.locals.theaters = yield MP.getTheaters();
+        }
+        res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
+        res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
         return;
-    }
-    res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
-    res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
-    return;
+    });
 }
 exports.index = index;
 /**
  * パフォーマンスリスト取得
- * @memberOf Purchase.PerformancesModule
+ * @memberof Purchase.PerformancesModule
  * @function getPerformances
  * @param {Request} req
  * @param {Response} res

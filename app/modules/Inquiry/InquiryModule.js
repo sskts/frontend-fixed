@@ -23,7 +23,7 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function login
  * @param {Request} req
  * @param {Response} res
@@ -59,7 +59,7 @@ function login(req, res, next) {
 exports.login = login;
 /**
  * 劇場URL取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getPortalTheaterSite
  * @param {string} id
  * @returns {Promise<string>}
@@ -75,7 +75,7 @@ function getPortalTheaterSite(id) {
 }
 /**
  * 照会認証
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function auth
  * @param {Request} req
  * @param {Response} res
@@ -153,7 +153,7 @@ function auth(req, res, next) {
 exports.auth = auth;
 /**
  * 照会エラー取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getGMOError
  * @param {Request} req
  * @returns {any}
@@ -173,7 +173,7 @@ function getInquiryError(req) {
 }
 /**
  * 照会確認ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function index
  * @param {Request} req
  * @param {Response} res
