@@ -98,7 +98,7 @@ function createSchedule(performances) {
  */
 function createScheduleDom(data) {
     var performances = data.performances.map(function (performance) {
-        var link = '/purchase ?id=' + performance.id;
+        var link = '/purchase?id=' + performance.id;
         if (isFixed()) {
             // 券売機
             link = '/purchase/fixed.html?id=' + performance.id;

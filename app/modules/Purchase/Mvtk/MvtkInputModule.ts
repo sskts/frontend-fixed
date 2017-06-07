@@ -42,6 +42,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
+        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
         return;
     } catch (err) {
@@ -173,6 +174,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
             return;
         }

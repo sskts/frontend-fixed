@@ -112,11 +112,12 @@ export interface IValidTicketResult {
  * @class PurchaseModel
  */
 export class PurchaseModel {
-    public static SEAT_STATE: number = 0;
-    public static TICKET_STATE: number = 1;
-    public static INPUT_STATE: number = 2;
-    public static CONFIRM_STATE: number = 3;
-    public static COMPLETE_STATE: number = 4;
+    public static PERFORMANCE_STATE: number = 0;
+    public static SEAT_STATE: number = 1;
+    public static TICKET_STATE: number = 2;
+    public static INPUT_STATE: number = 3;
+    public static CONFIRM_STATE: number = 4;
+    public static COMPLETE_STATE: number = 5;
 
     /**
      * パフォーマンス

@@ -50,7 +50,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.error = null;
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
-
+        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });

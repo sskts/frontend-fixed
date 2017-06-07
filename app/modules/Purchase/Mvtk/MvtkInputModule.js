@@ -52,6 +52,7 @@ function index(req, res, next) {
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
+        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
         return;
     }
@@ -194,6 +195,7 @@ function select(req, res, next) {
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+                res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }

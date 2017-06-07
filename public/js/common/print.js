@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
  * @returns {void}
  */
 function ticketing(cb) {
-    loadingStart();
     var reservations = JSON.parse($('input[name=reservations]').val());
     // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
     window.epsonThermalPrint.printReservationArray(reservations).then(function () {
@@ -48,8 +47,6 @@ function ticketing(cb) {
         cb();
     }).catch(function (errMsg) {
         printAlert('印刷に失敗しました\n' + errMsg);
-    }).then(function () {
-        loadingEnd();
     });
 }
 

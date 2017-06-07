@@ -174,6 +174,7 @@ function showError(message) {
  */
 function showComplete(result) {
     if (isFixed()) {
+        loadingEnd();
         // 券売機
         //コンテンツ切り替え
         $('.purchase-confirm').remove();

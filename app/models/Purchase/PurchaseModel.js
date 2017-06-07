@@ -180,9 +180,10 @@ class PurchaseModel {
         return (this.expired < moment().unix());
     }
 }
-PurchaseModel.SEAT_STATE = 0;
-PurchaseModel.TICKET_STATE = 1;
-PurchaseModel.INPUT_STATE = 2;
-PurchaseModel.CONFIRM_STATE = 3;
-PurchaseModel.COMPLETE_STATE = 4;
+PurchaseModel.PERFORMANCE_STATE = 0;
+PurchaseModel.SEAT_STATE = 1;
+PurchaseModel.TICKET_STATE = 2;
+PurchaseModel.INPUT_STATE = 3;
+PurchaseModel.CONFIRM_STATE = 4;
+PurchaseModel.COMPLETE_STATE = 5;
 exports.PurchaseModel = PurchaseModel;

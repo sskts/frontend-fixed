@@ -66,6 +66,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         // }
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
+        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         return;
 
@@ -118,6 +119,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
             return;
         }
@@ -212,6 +214,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.gmoShopId = gmoShopId;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
             return;
         }

@@ -39,6 +39,7 @@ function index(req, res, next) {
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
+        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
         return;
     }

@@ -59,7 +59,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.error = null;
         res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
-
+        res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -114,6 +114,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
+            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
             return;
         }

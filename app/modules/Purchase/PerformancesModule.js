@@ -13,6 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MP = require("../../../libs/MP");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * パフォーマンス一覧表示
@@ -28,6 +29,7 @@ function index(req, res, next) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
+    res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
     res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
     return;
 }

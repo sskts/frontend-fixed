@@ -5,6 +5,7 @@
 
 import {NextFunction, Request, Response} from 'express';
 import * as MP from '../../../libs/MP';
+import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
 /**
@@ -21,6 +22,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
         return;
     }
+    res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
     res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
     return;
 }
