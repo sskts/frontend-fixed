@@ -6,7 +6,6 @@
 import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
@@ -192,25 +191,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
         res.locals.transactionId = inquiryModel.transactionId;
-        // 印刷用
-        const reservations = inquiryModel.stateReserve.list_ticket.map((ticket) => {
-            return {
-                reserve_no: (<InquirySession.ILogin>inquiryModel.login).reserve_num,
-                film_name_ja: (<MP.IPerformance>inquiryModel.performance).attributes.film.name.ja,
-                film_name_en: (<MP.IPerformance>inquiryModel.performance).attributes.film.name.en,
-                theater_name: (<MP.IPerformance>inquiryModel.performance).attributes.theater.name.ja,
-                screen_name: (<MP.IPerformance>inquiryModel.performance).attributes.screen.name.ja,
-                performance_day: moment((<MP.IPerformance>inquiryModel.performance).attributes.day).format('YYYY/MM/DD'),
-                performance_start_time: `${UtilModule.timeFormat((<MP.IPerformance>inquiryModel.performance).attributes.time_start)}～`,
-                seat_code: ticket.seat_num,
-                ticket_name: (ticket.add_glasses > 0)
-                    ? `${ticket.ticket_name}${req.__('common.glasses')}`
-                    : ticket.ticket_name,
-                ticket_sale_price: `￥${ticket.ticket_price}`,
-                qr_str: ticket.seat_qrcode
-            };
-        });
-        res.locals.reservations = JSON.stringify(reservations);
         delete req.session.inquiry;
         res.render('inquiry/index');
 

@@ -293,10 +293,11 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
 /**
  * 完了情報取得
  * @function getCompleteData
+ * @param {Request} req
+ * @param {Response} res
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function getCompleteData(req: Request, res: Response, _next: NextFunction): void {
+export function getCompleteData(req: Request, res: Response): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;

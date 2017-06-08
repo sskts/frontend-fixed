@@ -36,12 +36,12 @@
     <div class="button middle-button print-button"><a class="center" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
 </div>
 
+<input type="hidden" name="ticketLength" value="<%= stateReserve.list_ticket.length %>">
 <input type="hidden" name="theater_code" value="<%= login.theater_code %>">
 <input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
 <input type="hidden" name="transaction_id" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
-<input type="hidden" name="reservations" value="<%= reservations %>">
 <%- include('completeContents') %>
 
 <%- contentFor('modals') %>

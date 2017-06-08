@@ -327,10 +327,11 @@ exports.purchase = purchase;
 /**
  * 完了情報取得
  * @function getCompleteData
+ * @param {Request} req
+ * @param {Response} res
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function getCompleteData(req, res, _next) {
+function getCompleteData(req, res) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;

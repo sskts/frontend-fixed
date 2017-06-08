@@ -176,11 +176,12 @@ function showComplete(result) {
     if (isFixed()) {
         loadingEnd();
         // 券売機
+        $('.ticket-length').text($('input[name=ticketLength]').val());
         //コンテンツ切り替え
         $('.purchase-confirm').remove();
         $('.purchase-print').show();
         $(window).scrollTop(0);
-        ticketing(function () {
+        printTicket(0, function () {
             //step変更
             $('.steps li').removeClass('active');
             $('.steps li:last-child').addClass('active');

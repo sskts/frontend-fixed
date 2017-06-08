@@ -9,3 +9,7 @@
     <div class="text-center mb-large"><img src="/images/fixed/print.svg" width="400" height="259" alt=""></div>
     <div class="button middle-button"><a class="center" href="/"><%- __('purchase.complete.next') %></a></div>
 </div>
+<input type="hidden" name="ticketLength" value="<%= stateReserve.list_ticket.length %>">
+<input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+<input type="hidden" name="reserve_num" value="<%= reserveSeats.tmp_reserve_num %>">
+<input type="hidden" name="tel_num" value="<%= input.tel_num %>">

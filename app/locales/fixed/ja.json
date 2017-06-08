@@ -108,7 +108,7 @@
 		},
 		"print": {
 			"page_ttl": "購入完了",
-			"read": "印刷です。"
+			"read": "只今<span class=\"ticket-length\"></span>枚のチケットを印刷中"
 		},
 		"complete": {
 			"page_ttl": "購入完了",
@@ -176,7 +176,7 @@
 		},
 		"print": {
 			"page_ttl": "チケット発券",
-			"read": "印刷です。"
+			"read": "只今<span class=\"ticket-length\"></span>枚のチケットを印刷中"
 		},
 		"complete": {
 			"page_ttl": "チケット発券",
