@@ -22,8 +22,7 @@ const moment = require("moment");
  * @param {NextFunctiont} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function setLocals(_req, res, next) {
+function setLocals(_, res, next) {
     res.locals.escapeHtml = escapeHtml;
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;

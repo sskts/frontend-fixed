@@ -222,12 +222,10 @@ exports.cancelMvtk = cancelMvtk;
  * @function purchase
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
-// tslint:disable-next-line:variable-name
-function purchase(req, res, _next) {
+function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)

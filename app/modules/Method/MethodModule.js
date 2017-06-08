@@ -10,11 +10,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @function ticketing
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function ticketing(_req, res, _next) {
+function ticketing(_, res) {
     res.render('method/ticketing');
     return;
 }
@@ -25,11 +23,9 @@ exports.ticketing = ticketing;
  * @function entry
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function entry(_req, res, _next) {
+function entry(_, res) {
     res.render('method/entry');
     return;
 }
@@ -40,11 +36,9 @@ exports.entry = entry;
  * @function bookmark
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function bookmark(_req, res, _next) {
+function bookmark(_, res) {
     res.render('method/bookmark');
     return;
 }

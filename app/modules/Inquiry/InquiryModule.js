@@ -29,7 +29,6 @@ const log = debug('SSKTS:InquiryModule');
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:variable-name
 function login(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.query.theater === undefined) {

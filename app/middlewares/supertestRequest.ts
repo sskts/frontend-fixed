@@ -13,8 +13,7 @@ import * as express from 'express';
  * @param {express.NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function supertestSession(req: express.Request, _res: express.Response, next: express.NextFunction): void {
+export function supertestSession(req: express.Request, _: express.Response, next: express.NextFunction): void {
     if (req.body.session === undefined && req.query.session === undefined) {
         next();
 

@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @param {express.NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function supertestSession(req, _res, next) {
+function supertestSession(req, _, next) {
     if (req.body.session === undefined && req.query.session === undefined) {
         next();
         return;

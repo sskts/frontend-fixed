@@ -14,8 +14,7 @@ import * as moment from 'moment';
  * @param {NextFunctiont} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function setLocals(_req: Request, res: Response, next: NextFunction): void {
+export function setLocals(_: Request, res: Response, next: NextFunction): void {
     res.locals.escapeHtml = escapeHtml;
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;

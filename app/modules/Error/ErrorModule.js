@@ -9,11 +9,9 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
  * @function notFound
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function notFound(req, res, _next) {
+function notFound(req, res) {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -33,8 +31,7 @@ exports.notFound = notFound;
  * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function index(err, req, res, _next) {
+function index(err, req, res) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {

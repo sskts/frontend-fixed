@@ -195,12 +195,10 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
  * @function purchase
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
-// tslint:disable-next-line:variable-name
-export async function purchase(req: Request, res: Response, _next: NextFunction): Promise<void> {
+export async function purchase(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;

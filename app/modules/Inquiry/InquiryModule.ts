@@ -22,7 +22,6 @@ const log = debug('SSKTS:InquiryModule');
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:variable-name
 export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.query.theater === undefined) {
         const status = 404;

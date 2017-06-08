@@ -20,8 +20,8 @@ exports.default = (app) => {
         app.use('', fixed_1.default); // 券売機
     }
     //エラー
-    router.get('/error', (req, res, next) => {
-        ErrorModule.index(new Error(), req, res, next);
+    router.get('/error', (req, res) => {
+        ErrorModule.index(new Error(), req, res);
     });
     app.use(ErrorModule.index); // error handlers
     app.use(ErrorModule.notFound); // 404

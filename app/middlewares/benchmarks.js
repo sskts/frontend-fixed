@@ -5,8 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const log = debug('SSKTS:benchmark');
-// tslint:disable-next-line:variable-name
-exports.default = (req, _res, next) => {
+exports.default = (req, _, next) => {
     if (process.env.NODE_ENV === 'development') {
         const startMemory = process.memoryUsage();
         const startTime = process.hrtime();
