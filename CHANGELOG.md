@@ -5,8 +5,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Unreleased
 ### Added
+- 券売機フロー追加
+    - Template出し分け（環境変数で制御）
+    - 発券機連携
+- 北島マスタ追加（スクリーン座席）
 
 ### Changed
+- 購入完了メールの劇場電話番号を動的に変更
+- packageアップデート
+    - @motionpicture/coa-service ^2.0.10 => ^3.1.0
+    - fs-extra ^2.1.2 => ^3.0.1
+
+### Fixed
+- tslint修正（disable-next-line:variable-name）
+
 
 ## 1.3.3 - 2017-05-23
 ### Fixed

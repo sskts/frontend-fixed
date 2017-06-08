@@ -13,10 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @namespace Fixed.FixedModule
  */
 const COA = require("@motionpicture/coa-service");
+const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
+const logger_1 = require("../../middlewares/logger");
+const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
@@ -27,18 +30,93 @@ const log = debug('SSKTS:Fixed.FixedModule');
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function index(req, res, next) {
-    if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
-        return;
-    }
-    delete req.session.purchase;
-    delete req.session.mvtk;
-    delete req.session.complete;
-    res.render('index/index');
-    log('券売機TOPページ表示');
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined) {
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            return;
+        }
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        // GMO取消
+        if (purchaseModel.transactionGMO !== null
+            && purchaseModel.authorizationGMO !== null
+            && purchaseModel.orderId !== null
+            && purchaseModel.transactionMP !== null
+            && purchaseModel.theater !== null) {
+            const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+            const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
+            // GMOオーソリ取消
+            const alterTranIn = {
+                shopId: gmoShopId,
+                shopPass: gmoShopPassword,
+                accessId: purchaseModel.transactionGMO.accessId,
+                accessPass: purchaseModel.transactionGMO.accessPass,
+                jobCd: GMO.Util.JOB_CD_VOID
+            };
+            const removeGMOAuthorizationIn = {
+                transactionId: purchaseModel.transactionMP.id,
+                gmoAuthorizationId: purchaseModel.authorizationGMO.id
+            };
+            try {
+                const alterTranResult = yield GMO.CreditService.alterTran(alterTranIn);
+                log('GMOオーソリ取消', alterTranResult);
+                // GMOオーソリ削除
+                yield MP.removeGMOAuthorization(removeGMOAuthorizationIn);
+                log('MPGMOオーソリ削除');
+            }
+            catch (err) {
+                logger_1.default.error('SSKTS-APP:FixedModule.index', {
+                    alterTranIn: alterTranIn,
+                    removeGMOAuthorizationIn: removeGMOAuthorizationIn,
+                    err: err
+                });
+            }
+        }
+        // COA仮予約削除
+        if (purchaseModel.reserveSeats !== null
+            && purchaseModel.authorizationCOA !== null
+            && purchaseModel.reserveSeats !== null
+            && purchaseModel.transactionMP !== null
+            && purchaseModel.performance !== null
+            && purchaseModel.performanceCOA !== null) {
+            if (purchaseModel.authorizationCOA === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            const delTmpReserveIn = {
+                theater_code: purchaseModel.performance.attributes.theater.id,
+                date_jouei: purchaseModel.performance.attributes.day,
+                title_code: purchaseModel.performanceCOA.titleCode,
+                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
+                time_begin: purchaseModel.performance.attributes.time_start,
+                tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num
+            };
+            const removeCOAAuthorizationIn = {
+                transactionId: purchaseModel.transactionMP.id,
+                coaAuthorizationId: purchaseModel.authorizationCOA.id
+            };
+            try {
+                // COA仮予約削除
+                yield COA.ReserveService.delTmpReserve(delTmpReserveIn);
+                log('COA仮予約削除');
+                // COAオーソリ削除
+                yield MP.removeCOAAuthorization(removeCOAAuthorizationIn);
+                log('MPCOAオーソリ削除');
+            }
+            catch (err) {
+                logger_1.default.error('SSKTS-APP:FixedModule.index', {
+                    delTmpReserveIn: delTmpReserveIn,
+                    removeCOAAuthorizationIn: removeCOAAuthorizationIn,
+                    err: err
+                });
+            }
+        }
+        delete req.session.purchase;
+        delete req.session.mvtk;
+        delete req.session.complete;
+        res.render('index/index');
+        log('券売機TOPページ表示');
+    });
 }
 exports.index = index;
 /**

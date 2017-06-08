@@ -279,8 +279,7 @@ async function addAuthorization(req: Request, res: Response, purchaseModel: Purc
         purchaseModel.transactionGMO = await GMO.CreditService.entryTran(entryTranIn);
         log('GMO取引作成Out', purchaseModel.orderId);
     } catch (err) {
-        logger.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-        logger.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
+        logger.error('SSKTS-APP:InputModule.addAuthorization', 'orderId', entryTranIn.orderId, 'entryTranResult', err);
         res.locals.gmoError = err;
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
@@ -296,8 +295,7 @@ async function addAuthorization(req: Request, res: Response, purchaseModel: Purc
         const execTranResult = await GMO.CreditService.execTran(execTranIn);
         log('GMOオーソリ取得Out', execTranResult);
     } catch (err) {
-        logger.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-        logger.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
+        logger.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId, 'execTranResult', err);
         res.locals.gmoError = err;
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
@@ -338,8 +336,7 @@ async function removeAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
         const alterTranResult = await GMO.CreditService.alterTran(alterTranIn);
         log('GMOオーソリ取消', alterTranResult);
     } catch (err) {
-        logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
-        logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
+        logger.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn, 'alterTranResult', err);
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ削除

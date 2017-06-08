@@ -302,8 +302,7 @@ function addAuthorization(req, res, purchaseModel) {
             log('GMO取引作成Out', purchaseModel.orderId);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization', 'orderId', entryTranIn.orderId, 'entryTranResult', err);
             res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
@@ -320,8 +319,7 @@ function addAuthorization(req, res, purchaseModel) {
             log('GMOオーソリ取得Out', execTranResult);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId, 'execTranResult', err);
             res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
@@ -368,8 +366,7 @@ function removeAuthorization(purchaseModel) {
             log('GMOオーソリ取消', alterTranResult);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
-            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn, 'alterTranResult', err);
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ削除
