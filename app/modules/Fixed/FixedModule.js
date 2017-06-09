@@ -202,12 +202,12 @@ function getInquiryData(req, res) {
                         theater_name: performance.attributes.theater.name.ja,
                         screen_name: performance.attributes.screen.name.ja,
                         performance_day: moment(performance.attributes.day).format('YYYY/MM/DD'),
-                        performance_start_time: `${UtilModule.timeFormat(performance.attributes.time_start)}～`,
+                        performance_start_time: `${UtilModule.timeFormat(performance.attributes.time_start)}`,
                         seat_code: ticket.seat_num,
                         ticket_name: (ticket.add_glasses > 0)
                             ? `${ticket.ticket_name}${req.__('common.glasses')}`
                             : ticket.ticket_name,
-                        ticket_sale_price: `￥${ticket.ticket_price}`,
+                        ticket_sale_price: ticket.ticket_price,
                         qr_str: ticket.seat_qrcode
                     };
                 });

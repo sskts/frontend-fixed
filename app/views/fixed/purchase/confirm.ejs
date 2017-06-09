@@ -1,4 +1,5 @@
 <%- contentFor('script') %>
+<script src="/js/common/VanillaQR.js"></script>
 <script src="/js/print/star/StarWebPrintTrader.js"></script>
 <script src="/js/print/star/StarWebPrintBuilder.js"></script>
 <script src="/js/print/star/starprint.js"></script>
@@ -43,7 +44,7 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>
-
+<canvas id="print" style="display: none"></canvas>
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>
