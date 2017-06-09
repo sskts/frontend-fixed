@@ -57,11 +57,6 @@ function saveInquiry() {
  * @returns {void}
  */
 function showComplete() {
-    // (印刷可能そうな状態かのBooleanが返ってくる)
-    if (!window.epsonThermalPrint.isReady()) {
-        printAlert('プリンタが使用可能な状態にありません\n\n' + window.epsonThermalPrint.getErrorStatusString());
-        return;
-    }
     $('.ticket-length').text($('input[name=ticketLength]').val());
     //コンテンツ切り替え
     $('.inquiry-confirm').remove();

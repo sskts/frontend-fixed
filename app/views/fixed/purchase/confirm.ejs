@@ -1,7 +1,9 @@
 <%- contentFor('script') %>
-<script src="/js/common/epos-2.3.0.js"></script>
-<script src="/js/common/epsonprint.js"></script>
-<script src="/js/common/print.js"></script>
+<script src="/js/common/VanillaQR.js"></script>
+<script src="/js/print/star/StarWebPrintTrader.js"></script>
+<script src="/js/print/star/StarWebPrintBuilder.js"></script>
+<script src="/js/print/star/starprint.js"></script>
+<script src="/js/print/star/print.js"></script>
 <script src="/js/purchase/confirm.js"></script>
 <script src="/js/purchase/complete.js"></script>
 <%- contentFor('prev') %>
@@ -42,7 +44,7 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
 </div>
-
+<canvas id="print" style="display: none"></canvas>
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>
