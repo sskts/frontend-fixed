@@ -92,8 +92,8 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             if (missings[0]) {
                 throw ({ message: '[!] 予約番号' + reservation.reserve_no + 'の以下の情報が見つかりませんでした\n' + missings.join('\n') });
             }
-            console.log(reservation)
-            var canvas = document.getElementById('print');
+
+            var canvas = document.createElement('canvas');
             var ctx = canvas.getContext('2d');
             canvas.width = 560;
             canvas.height = 450;

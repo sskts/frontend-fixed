@@ -1,5 +1,4 @@
 <%- contentFor('script') %>
-<script src="/js/common/VanillaQR.js"></script>
 <script src="/js/index.js"></script>
 <%- contentFor('body') %>
 <div class="index">
@@ -26,77 +25,5 @@
         <div class="qr-code"><img src="/images/fixed/qr.png" alt="" width="100" height="100"></div>
     </div>
 </div>
-<canvas id="print"></canvas>
-<div id="qr"></div>
-<style>
-    canvas {
-        background: #FFF;
-    }
-</style>
-<script>
-    var zp = function (num) { return (parseInt(num, 10) < 10) ? '0' + num : num; };
-    var canvas = document.getElementById('print');
-    var ctx = canvas.getContext('2d');
-    canvas.width = 600;
-    canvas.height = 450;
-    var left = 0;
-    var center = canvas.width / 2;
-    var right = canvas.width;
-    var top = 0;
-    var bottom = 450;
-
-    // 劇場
-    ctx.fillStyle = "black";
-    ctx.font = "normal 24px sans-serif";
-    ctx.textAlign = 'center';
-    ctx.fillText('(シネマサンシャイン姶良)[ネット]', center, 30);
-    // 鑑賞日時
-    ctx.font = "bold 30px sans-serif";
-    ctx.fillText('04/13(木) 17:05～', center, 70);
-    ctx.font = "normal 30px sans-serif";
-    // 作品名
-    var title = 'ゴーストインザシェル【字幕版】';
-    var titleLimit = 20;
-    if (title.length > titleLimit) {
-        ctx.fillText(title.slice(0, titleLimit), center, 110);
-        ctx.fillText(title.slice(titleLimit, title.length), center, 150);
-    } else {
-        ctx.fillText(title, center, 110);
-    }
-    // スクリーン
-    ctx.font = "bold 40px sans-serif";
-    ctx.fillText('シアター5', center, 200);
-    // 座席
-    ctx.fillText('Ｂ－１', center, 250);
-    // 券種
-    ctx.textAlign = 'left';
-    ctx.font = "normal 30px sans-serif";
-    ctx.fillText('一般', 0, 290);
-    // 金額
-    ctx.textAlign = 'right';
-    ctx.fillText('￥1,800', right, 290);
-    // QR
-    var qr = new VanillaQR({
-        url: '1111111111111',
-        width: 100,
-        height: 100,
-        colorLight: '#FFF',
-        colorDark: '#000',
-        noBorder: true
-    });
-
-    ctx.drawImage(qr.domElement, 0, 315, 100, 100);
-    // 発券時間
-    ctx.textAlign = 'left';
-    ctx.font = "normal 24px sans-serif";
-    var dateObj = new Date();
-    var dateStr = dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()) + ' ' + zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()) + ':' + zp(dateObj.getSeconds());
-    ctx.fillText(dateStr, left, bottom);
-    // 購入番号
-    ctx.textAlign = 'right';
-    ctx.fillText('購入番号: ' + '1993', right, bottom - 30);
-    // 端末ID
-    ctx.fillText('端末ID: ' + 'aira01', right, bottom);
-</script>
 <%- contentFor('modals') %>
 <%- include('../purchase/modals/print') %>
