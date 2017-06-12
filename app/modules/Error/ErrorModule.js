@@ -31,7 +31,7 @@ exports.notFound = notFound;
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(err, req, res) {
+function index(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {
