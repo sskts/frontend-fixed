@@ -46,9 +46,8 @@ function getPerformances() {
     }).done(function (res) {
         $('.performances').html('');
         if (res.error) {
-
+            console.log(res);
         } else {
-            console.log(res)
             createSchedule(res.result)
             var performances = res.result;
             

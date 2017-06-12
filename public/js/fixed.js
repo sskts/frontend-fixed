@@ -29,7 +29,7 @@ function fixedInit() {
         var data = localStorage.getItem('config');
         if (data === null) {
             // 設定なければリダイレクト
-            location.replace = '/stop';
+            location.href = '/stop';
             return;
         }
         window.config = JSON.parse(data);

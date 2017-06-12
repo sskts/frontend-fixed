@@ -380,7 +380,11 @@ function screenStateUpdate(cb) {
         screenStateChange(result.state);
         var screen = $('.screen');
         screen.css('visibility', 'visible');
-        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
+        if (isFixed()) {
+            screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen, 2);
+        } else {
+            screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
+        }
         screenSeatStatusesMap.setScaleUpCallback(function () {
             $('.zoom-btn').show();
             zoomButtonScroll();

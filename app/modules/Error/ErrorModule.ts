@@ -2,7 +2,7 @@
  * エラー
  * @namespace ErrorModule
  */
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
@@ -35,7 +35,7 @@ export function notFound(req: Request, res: Response): void {
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response): void {
+export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _: NextFunction): void {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {

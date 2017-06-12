@@ -510,7 +510,6 @@ p {
 .disabled {
     position: relative;
     cursor: default !important;
-    opacity: 0.5;
     &:after {
         content: '';
         display: block !important;
