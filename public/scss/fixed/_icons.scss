@@ -1,9 +1,9 @@
 .icon-triangle-01 {
     &:before {
+        content: '';
         position: absolute;
         bottom: 20px;
         right: 20px;
-        content: '';
         display: block;
         width: 12px;
         height: 12px;
@@ -13,10 +13,10 @@
 
 .icon-triangle-02 {
     &:before {
+        content: '';
         position: absolute;
         bottom: 10px;
         right: 10px;
-        content: '';
         display: block;
         width: 12px;
         height: 12px;
@@ -26,11 +26,11 @@
 
 .icon-select {
     &:before {
+        content: '';
         position: absolute;
         top: 50%;
         right: 20px;
         margin-top: -6px;
-        content: '';
         display: block;
         width: 17px;
         height: 12px;
@@ -41,11 +41,11 @@
 
 .icon-prev {
     &:before {
+        content: '';
         position: absolute;
         top: 30px;
         left: 50%;
         margin-left: -15.5px;
-        content: '';
         display: block;
         width: 31px;
         height: 29px;
@@ -55,13 +55,13 @@
 
 .icon-top {
     &:before {
+        content: '';
         position: absolute;
         top: 30px;
         left: 50%;
-        margin-left: -16px;
-        content: '';
+        margin-left: -15.5px;
         display: block;
-        width: 32px;
+        width: 31px;
         height: 31px;
         background-image: url(/images/fixed/icon/icon_top.svg);
     }

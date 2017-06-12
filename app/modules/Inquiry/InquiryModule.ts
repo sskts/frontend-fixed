@@ -148,9 +148,6 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
  */
 function getInquiryError(req: Request) {
     return {
-        theater_code: {
-            parm: 'theater_code', msg: `${req.__('common.theater_code')}${req.__('common.validation.inquiry')}`, value: ''
-        },
         reserve_num: {
             parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },

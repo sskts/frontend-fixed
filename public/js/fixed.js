@@ -27,9 +27,10 @@ function fixedInit() {
     if (!(location.pathname.indexOf('/setting') > -1 
     || location.pathname.indexOf('/stop') > -1)) {
         var data = localStorage.getItem('config');
+        console.log(data)
         if (data === null) {
             // 設定なければリダイレクト
-            location.replace = '/stop';
+            location.href = '/stop';
             return;
         }
         window.config = JSON.parse(data);
