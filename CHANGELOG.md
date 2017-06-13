@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+## 1.4.1 - 2017-06-13
+### Fixed
+- テストコード修正
 
 ## 1.4.0 - 2017-06-13
 ### Added
