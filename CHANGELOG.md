@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Unreleased
 ### Added
+
+
+### Changed
+
+
+### Fixed
+
+
+## 1.4.0 - 2017-06-13
+### Added
 - 券売機フロー追加
     - Template出し分け（環境変数で制御）
     - 発券機連携
@@ -18,7 +28,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - tslint修正（disable-next-line:variable-name）
-
 
 ## 1.3.3 - 2017-05-23
 ### Fixed
