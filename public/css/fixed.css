@@ -437,14 +437,14 @@ a {
     display: table;
     border-radius: 5px;
     overflow: hidden; }
+    .form-layout dl dt, .form-layout dl dd {
+      display: table-cell; }
     .form-layout dl dt {
-      display: table-cell;
       width: 200px;
       font-weight: bold;
       background-color: #333;
       text-align: center; }
     .form-layout dl dd {
-      display: table-cell;
       width: 600px;
       background-color: rgba(255, 255, 255, 0.85); }
 
@@ -455,14 +455,17 @@ a {
   overflow: hidden; }
   .table-layout dl {
     display: table-row-group; }
-    .table-layout dl dt {
+    .table-layout dl dt, .table-layout dl dd {
       display: table-cell;
+      border-bottom: 1px solid #ACACAC; }
+    .table-layout dl:last-child dt, .table-layout dl:last-child dd {
+      border-bottom: none; }
+    .table-layout dl dt {
       width: 230px;
       font-weight: bold;
       background-color: #333;
       text-align: center; }
     .table-layout dl dd {
-      display: table-cell;
       width: 670px;
       background-color: rgba(255, 255, 255, 0.85);
       color: #333;

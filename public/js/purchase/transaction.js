@@ -34,6 +34,7 @@ function getTransaction(id) {
         if (res.redirect !== null) {
             location.replace(res.redirect);
         } else {
+            $('.error').hide();
             $('.' + res.contents).show();
             $('.wrapper-inner').show();
             if (res.contents === 'access-congestion') {
@@ -41,7 +42,9 @@ function getTransaction(id) {
             }
         }
     }).fail(function (jqxhr, textStatus, error) {
-        retry();
+        $('.error').hide();
+        $('.access-congestion').show();
+        $('.wrapper-inner').show();
     }).always(function () {
         loadingEnd();
     });

@@ -281,15 +281,16 @@ a {
         display: table;
         border-radius: 5px;
         overflow: hidden;
-        dt {
+        dt, dd {
             display: table-cell;
+        }
+        dt {
             width: 200px;
             font-weight: bold;
             background-color: #333;
             text-align: center;
         }
         dd {
-            display: table-cell;
             width: 600px;
             background-color: rgba(255, 255, 255, 0.85);
         }
@@ -303,15 +304,22 @@ a {
     overflow: hidden;
     dl {
         display: table-row-group;
-        dt {
+        dt, dd {
             display: table-cell;
+            border-bottom: 1px solid #ACACAC;
+        }
+        &:last-child {
+            dt, dd {
+                border-bottom: none;
+            }
+        }
+        dt {
             width: 230px;
             font-weight: bold;
             background-color: #333;
             text-align: center;
         }
         dd {
-            display: table-cell;
             width: 670px;
             background-color: rgba(255, 255, 255, 0.85);
             color: #333;

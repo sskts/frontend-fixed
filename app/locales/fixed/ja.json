@@ -113,7 +113,7 @@
 			"next": "発券する"
 		},
 		"print": {
-			"page_ttl": "購入完了",
+			"page_ttl": "印刷中",
 			"read": "只今<span class=\"ticket-length\"></span>枚のチケットを印刷中"
 		},
 		"complete": {
