@@ -57,17 +57,22 @@ function saveInquiry() {
  * @returns {void}
  */
 function showComplete() {
+    var printDom = $('.inquiry-print');
+    var navigationDom = $('.navigation');
+    navigationDom.hide();
     $('.ticket-length').text($('input[name=ticketLength]').val());
     //コンテンツ切り替え
     $('.inquiry-confirm').remove();
-    $('.inquiry-print').show();
+    printDom.show();
     $(window).scrollTop(0);
     printTicket(0, function () {
         //step変更
         $('.steps li').removeClass('active');
         $('.steps li:last-child').addClass('active');
+        navigationDom.find('.prev-button').hide();
+        navigationDom.show();
         //コンテンツ切り替え
-        $('.inquiry-print').remove();
+        printDom.remove();
         $('.inquiry-complete').show();
         $(window).scrollTop(0);
     });

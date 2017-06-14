@@ -16,8 +16,14 @@
         top: 50%;
         right: 30px;
         margin-top: -50px;
+        width: 100px;
+        height: 100px;
+        img {
+            padding: 10px;
+            background-color: #FFF;
+        }
     }
     .box {
-        padding: 45px 160px 45px 30px;
+        padding: 25px 160px 25px 30px;
     }
 }
