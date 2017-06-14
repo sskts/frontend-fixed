@@ -89,14 +89,29 @@ function getInquiryData(req, res) {
                 if (transactionId === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('MP取引Id取得', transactionId);
-                const stateReserve = yield COA.ReserveService.stateReserve({
+                let stateReserve = yield COA.ReserveService.stateReserve({
                     theater_code: req.body.theater_code,
                     reserve_num: req.body.reserve_num,
                     tel_num: req.body.tel_num // 電話番号
                 });
                 log('COA照会情報取得', stateReserve);
-                if (stateReserve === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                if (stateReserve === null) {
+                    // 本予約して照会情報取得
+                    if (req.session.fixed === undefined)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                    if (req.session.fixed.updateReserveIn === undefined)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                    const updReserve = yield COA.ReserveService.updReserve(req.session.fixed.updateReserveIn);
+                    log('COA本予約', updReserve);
+                    stateReserve = yield COA.ReserveService.stateReserve({
+                        theater_code: req.body.theater_code,
+                        reserve_num: req.body.reserve_num,
+                        tel_num: req.body.tel_num // 電話番号
+                    });
+                    log('COA照会情報取得', stateReserve);
+                    if (stateReserve === null)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                }
                 const performanceId = UtilModule.getPerformanceId({
                     theaterCode: req.body.theater_code,
                     day: stateReserve.date_jouei,
@@ -128,6 +143,7 @@ function getInquiryData(req, res) {
                         qr_str: ticket.seat_qrcode
                     };
                 });
+                delete req.session.fixed;
                 res.json({ result: reservations });
                 return;
             }
