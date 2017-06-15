@@ -1,7 +1,8 @@
 $(function() {
     var inquiryUrl = '/inquiry/login?theater=' + window.config.theater; 
     $('.inquiry-button a').attr('href', inquiryUrl);
-    createQRCode($('input[name=portalSite]').val() + inquiryUrl);
+    var qr = createQRCode($('input[name=portalSite]').val() + inquiryUrl);
+    $('.qr-code').append(qr);
 });
 
 /**
@@ -9,11 +10,14 @@ $(function() {
  * @function createQRCode
  * @param {string} url QRコードURL
  * @param {any} option オプション
+ * @returns {HTMLImageElement} QR画像
  */
-function createQRCode(url, option) {
-    var width = (option !== undefined && option.width !== undefined) ? option.width : 100;
-    var height = (option !== undefined && option.height !== undefined) ? option.height : 100;
-    var alt = (option !== undefined && option.alt !== undefined) ? option.alt : '';
+function createQRCode(url, options) {
+    options = options || {};
+    var width = (options.width !== undefined) ? options.width : 100;
+    var height = (options.height !== undefined) ? options.height : 100;
+    var alt = (options.alt !== undefined) ? options.alt : '';
+    var ext = (options.ext !== undefined) ? options.ext : 'png';
     // QR
     var qr = new VanillaQR({
         url: url,
@@ -23,9 +27,9 @@ function createQRCode(url, option) {
         colorDark: '#000',
         noBorder: true
     });
-    var image = qr.toImage('png');
+    var image = qr.toImage(ext);
     image.width = width;
     image.height = height;
     image.alt = alt;
-    $('.qr-code').append(image);
+    return image;
 }
