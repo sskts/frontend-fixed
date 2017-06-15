@@ -354,5 +354,7 @@
 	"week[Thu]": "木",
 	"week[Fri]": "金",
 	"week[Sat]": "土",
-	"week[Sun]": "日"
+	"week[Sun]": "日",
+	"today": "本日",
+	"tomorrow": "明日"
 }
