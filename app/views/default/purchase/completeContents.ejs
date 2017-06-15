@@ -63,37 +63,20 @@
 
     <div class="not-print">
         <h2 class="page-ttl"><%- __('purchase.complete.entry') %></h2>
-        <p class="read"><%- __('purchase.complete.entry_read') %></p>
 
-        <ul class="entry-method heighfix-group">
+        <ul class="entry-method">
             <li>
                 <dl class="box radius bg-light-gray">
-                    <dt class="mb-x-small">
-                        <div class="entry-number bg-dark-blue small-x-text text-center mb-x-small"><%- __('purchase.complete.entry') %>1</div>
-                        <span class="text-icon-dark-blue small-x-text"><%- __('common.recommend') %></span>
-                        <strong><%- __('purchase.complete.entry_01_title') %></strong>
+                    <dt class="mb-x-small text-center mb-x-small">
+                        <strong><%- __('purchase.complete.entry_title') %></strong>
                     </dt>
                     <dd>
-                        <p class="mb-small heighfix"><%- __('purchase.complete.entry_01_read') %></p>
+                        <p class="mb-small"><%- __('purchase.complete.entry_read_01') %></p>
                         <div class="image mb-x-small"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
-                        <div class="button blue-button inquiry-button">
-                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= reserveSeats.tmp_reserve_num %>" target="_blank"><%- __('purchase.complete.entry_01_button') %></a>
+                        <div class="button blue-button inquiry-button mb-small center-button">
+                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= reserveSeats.tmp_reserve_num %>" target="_blank"><%- __('purchase.complete.entry_button') %></a>
                         </div>
-                    </dd>
-                </dl>
-            </li>
-            <li>
-                <dl class="box radius bg-light-gray">
-                    <dt class="mb-x-small">
-                        <div class="entry-number bg-gray small-x-text text-center mb-x-small"><%- __('purchase.complete.entry') %>2</div>
-                        <strong><%- __('purchase.complete.entry_02_title') %></strong>
-                    </dt>
-                    <dd>
-                        <p class="mb-small heighfix"><%- __('purchase.complete.entry_02_read') %></p>
-                        <div class="image mb-x-small"><img src="/images/default/method/ticketing/ticketing_01.svg" alt=""></div>
-                        <div class="button blue-button">
-                            <a class="icon-new-tab-white" href="/method/ticketing" target="_blank"><%- __('purchase.complete.entry_02_button') %></a>
-                        </div>
+                        <p><%- __('purchase.complete.entry_read_02') %></p>
                     </dd>
                 </dl>
             </li>
