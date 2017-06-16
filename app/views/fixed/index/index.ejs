@@ -1,5 +1,12 @@
 <%- contentFor('script') %>
+<script src="/js/common/VanillaQR.js"></script>
 <script src="/js/index.js"></script>
+<%- contentFor('style') %>
+<style>
+    .navigation .buttons .restart-button {
+        display: none;
+    }
+</style>
 <%- contentFor('body') %>
 <div class="index">
     <h1 class="page-ttl"><%- __('index.page_ttl') %></h1>
@@ -21,9 +28,10 @@
         </div>
     </div>
     <div class="box">
-        <p class="small-text"><%- __('index.qr_read') %></p>
-        <div class="qr-code"><img src="/images/fixed/qr.png" alt="" width="100" height="100"></div>
+        <p class="small-x-text"><%- __('index.qr_read') %></p>
+        <div class="qr-code"></div>
     </div>
 </div>
+<input type="hidden" name="portalSite" value="<%= portalSite %>">
 <%- contentFor('modals') %>
 <%- include('../purchase/modals/print') %>

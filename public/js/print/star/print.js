@@ -42,7 +42,8 @@ function printTicket(count, cb) {
         timeout: 60000,
         data: {
             theater_code: $('input[name=theater_code]').val(),
-            reserve_num: $('input[name=reserve_num]').val(),
+            reserve_num: $('input[name=reserve_num]').val(
+                            ),
             tel_num: $('input[name=tel_num]').val()
         },
     }).done(function (res) {
@@ -53,7 +54,7 @@ function printTicket(count, cb) {
                 // printAlert('印刷完了');
                 cb();
             }).catch(function (errMsg) {
-                printAlert('印刷に失敗しました\n' + errMsg);
+                printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
             });
         } else {
             setTimeout(function () {

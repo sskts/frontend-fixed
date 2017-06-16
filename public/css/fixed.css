@@ -384,6 +384,9 @@ a {
 .red-text {
   color: #C30D23; }
 
+.small-x-text {
+  font-size: 18px; }
+
 .small-text {
   font-size: 22px; }
 
@@ -771,9 +774,14 @@ a {
     position: absolute;
     top: 50%;
     right: 30px;
-    margin-top: -50px; }
+    margin-top: -50px;
+    width: 100px;
+    height: 100px; }
+    .index .qr-code img {
+      padding: 10px;
+      background-color: #FFF; }
   .index .box {
-    padding: 45px 160px 45px 30px; }
+    padding: 25px 160px 25px 30px; }
 
 .purchase-seat .screen-cover {
   margin: 0 180px;

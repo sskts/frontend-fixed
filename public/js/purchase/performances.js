@@ -25,6 +25,10 @@ $(function () {
  * @returns {void}
  */
 function getPerformances() {
+    var performancesDom = $('.performances');
+    var noPerformancesDom = $('.no-performances');
+    performancesDom.hide();
+    noPerformancesDom.hide();
     var theater = $('.theater select').val();
     if (isFixed()) {
         // 券売機
@@ -44,16 +48,17 @@ function getPerformances() {
             loadingStart();
         }
     }).done(function (res) {
-        $('.performances').html('');
-        if (res.error) {
+        if (res.error || res.result.length === 0) {
             console.log(res);
+            noPerformancesDom.show();
         } else {
-            createSchedule(res.result)
-            var performances = res.result;
-            
+            var html = createSchedule(res.result);
+            performancesDom.html(html);
+            performancesDom.show();
         }
     }).fail(function (jqxhr, textStatus, error) {
-        console.log(jqxhr, textStatus, error)
+        console.log(jqxhr, textStatus, error);
+        noPerformancesDom.show();
     }).always(function () {
         loadingEnd();
     });
@@ -63,7 +68,7 @@ function getPerformances() {
  * スケジュール作成
  * @function createSchedule
  * @param {any[]} performances
- * @returns {void}
+ * @returns {string}
  */
 function createSchedule(performances) {
     // 作品別へ変換
@@ -86,7 +91,7 @@ function createSchedule(performances) {
     films.forEach(function (film) {
         dom.push(createScheduleDom(film));
     });
-    $('.performances').append(dom.join('\n'));
+    return dom.join('\n');
 }
 
 /**
