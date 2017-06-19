@@ -12,6 +12,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+
+## 1.4.3 - 2017-06-16
+### Fixed 
+ - ムビチケ選択後クレジットカードへ変更時エラー修正
+ 
+## 1.4.2 - 2017-06-14
+### Added
+- 券売機COA本予約が間に合わなかった場合本予約する機能追加
+### Fixed
+- 券売機ムビチケバリデーション画面修正
+
 ## 1.4.1 - 2017-06-13
 ### Fixed
 - テストコード修正

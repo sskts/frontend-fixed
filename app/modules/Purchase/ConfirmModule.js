@@ -250,8 +250,12 @@ function purchase(req, res) {
                 delete req.session.purchase;
                 throw ErrorUtilModule.ERROR_EXPIRE;
             }
+            const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
+                return (ticket.mvtk_num !== '');
+            });
+            log('ムビチケ券', mvtkTickets);
             // ムビチケ使用
-            if (purchaseModel.mvtk !== null) {
+            if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
                 yield reserveMvtk(purchaseModel);
                 log('ムビチケ決済');
             }
