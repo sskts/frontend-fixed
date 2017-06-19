@@ -63,15 +63,11 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
-
-        return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-
-        return;
     }
 }
 

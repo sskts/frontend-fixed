@@ -6,9 +6,7 @@ import * as debug from 'debug';
 import * as express from 'express';
 const log = debug('SSKTS:benchmark');
 
-// tslint:disable-next-line:variable-name
-export default (req: express.Request, _res: express.Response, next: express.NextFunction) => {
-
+export default (req: express.Request, _: express.Response, next: express.NextFunction) => {
     if (process.env.NODE_ENV === 'development') {
         const startMemory = process.memoryUsage();
         const startTime = process.hrtime();

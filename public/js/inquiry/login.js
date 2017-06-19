@@ -5,6 +5,12 @@ $(function () {
     if (!isFixed()) {
         toInquiry();
     }
+    $(document).on('click', '.next-button button', function (event) {
+        event.preventDefault();
+        loadingStart(function () {
+            $('form').submit();
+        });
+    });
 });
 
 /**

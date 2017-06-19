@@ -38,7 +38,7 @@ class PurchaseModel {
     }
     /**
      * セッションObjectへ変換
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method toSession
      * @returns {Object} result
      */
@@ -67,7 +67,7 @@ class PurchaseModel {
     }
     /**
      * ステータス確認
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method accessAuth
      * @param {number} value
      * @returns {boolean}
@@ -106,7 +106,7 @@ class PurchaseModel {
     }
     /**
      * ムビチケ券有無判定
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method isReserveMvtkTicket
      * @returns {boolean}
      */
@@ -122,7 +122,7 @@ class PurchaseModel {
     }
     /**
      * 予約金額取得（決済する分）
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getReserveAmount
      * @returns {number}
      */
@@ -138,7 +138,7 @@ class PurchaseModel {
     }
     /**
      * チケット価値取得（チケット価値）
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getPrice
      * @returns {number}
      */
@@ -147,7 +147,7 @@ class PurchaseModel {
     }
     /**
      * ムビチケ計上単価合計取得
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method getMvtkPrice
      * @returns {number}
      */
@@ -163,7 +163,7 @@ class PurchaseModel {
     }
     /**
      * GMOオーソリ回数取得
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method authorizationCountGMOToString
      * @returns {string}
      */
@@ -172,7 +172,7 @@ class PurchaseModel {
     }
     /**
      * 有効期限確認
-     * @memberOf PurchaseModel
+     * @memberof PurchaseModel
      * @method isExpired
      * @returns {boolean}
      */

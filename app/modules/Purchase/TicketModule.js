@@ -24,7 +24,7 @@ const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS:Purchase.TicketModule');
 /**
  * 券種選択
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -83,7 +83,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 券種決定
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function select
  * @param {Request} req
  * @param {Response} res
@@ -228,7 +228,7 @@ function select(req, res, next) {
 exports.select = select;
 /**
  * 券種リスト取得
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function getSalesTickets
  * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
@@ -315,7 +315,7 @@ function getSalesTickets(req, purchaseModel) {
 }
 /**
  * 券種検証
- * @memberOf Purchase.TicketModule
+ * @memberof Purchase.TicketModule
  * @function ticketValidation
  * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel

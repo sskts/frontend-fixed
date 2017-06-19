@@ -1,7 +1,9 @@
 <%- contentFor('script') %>
-<script src="/js/common/epos-2.3.0.js"></script>
-<script src="/js/common/epsonprint.js"></script>
-<script src="/js/common/print.js"></script>
+<script src="/js/common/VanillaQR.js"></script>
+<script src="/js/print/star/StarWebPrintTrader.js"></script>
+<script src="/js/print/star/StarWebPrintBuilder.js"></script>
+<script src="/js/print/star/starprint.js"></script>
+<script src="/js/print/star/print.js"></script>
 <script src="/js/inquiry/index.js"></script>
 <%- contentFor('body') %>
 <%- include('../layouts/inquiry/steps', {step: 1}) %>
@@ -33,15 +35,14 @@
         </dl>
     </div>
 
-    <div class="button middle-button print-button"><a class="center" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
+    <div class="button middle-button print-button"><a class="center icon-triangle-01" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
 </div>
-
+<input type="hidden" name="ticketLength" value="<%= stateReserve.list_ticket.length %>">
 <input type="hidden" name="theater_code" value="<%= login.theater_code %>">
 <input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
 <input type="hidden" name="tel_num" value="<%= login.tel_num %>">
 <input type="hidden" name="transaction_id" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
-<input type="hidden" name="reservations" value="<%= reservations %>">
 <%- include('completeContents') %>
 
 <%- contentFor('modals') %>

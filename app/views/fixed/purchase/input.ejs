@@ -16,14 +16,18 @@
                     <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
                 </dd>
             </dl>
-            <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="げきじょう">
-            <input type="hidden" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="けんばいき">
-            <input type="hidden" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="hataguchi@motionpicture.jp">
-            <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="hataguchi@motionpicture.jp">
+            <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
+            <input type="hidden" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
+            <input type="hidden" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="">
+            <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="">
             <% if (price > 0) { %>
             <h2 class="payment-ttl mb-small">
                 <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
             </h2>
+            <div class="box mb-small center credit-reader">
+                <p class="small-text"><%- __('purchase.input.credit_reader') %></p>
+                <div class="image"><img src="/images/fixed/card_reader.png" alt=""></div>
+            </div>
             <dl class="mb-small">
                 <dt><%- __('common.cardno') %></dt>
                 <dd>

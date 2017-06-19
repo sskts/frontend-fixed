@@ -20,7 +20,7 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
- * @memberOf Purchase.OverlapModule
+ * @memberof Purchase.OverlapModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -58,7 +58,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 新規予約へ
- * @memberOf Purchase.OverlapModule
+ * @memberof Purchase.OverlapModule
  * @function newReserve
  * @param {Request} req
  * @param {Response} res
@@ -116,7 +116,7 @@ function newReserve(req, res, next) {
 exports.newReserve = newReserve;
 /**
  * 前回の予約へ
- * @memberOf Purchase.OverlapModule
+ * @memberof Purchase.OverlapModule
  * @function prevReserve
  * @param {Request} req
  * @param {Response} res

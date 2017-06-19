@@ -49,13 +49,23 @@ set SSKTS_BASIC_AUTH_PASS=**********認証パスワード**********
 set SSKTS_MAINTENANCE_TEXT=**********適当な文字列**********
 ```
 
+券売機モード
+
+```shell
+set VIEW_TYPE=fixed
+```
 
 # Build
 
 ビルドは以下で実行できます。
-
+- typescript
 ```shell
 npm run build
+```
+
+- scss
+```shell
+npm run css
 ```
 
 # Tests

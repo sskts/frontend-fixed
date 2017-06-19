@@ -116,6 +116,9 @@ function validation(parent) {
         { name: 'mvtk_password', label: locales.label.mvtk_password, required: true, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number] }
     ];
 
+    var validations = [];
+    var names = [];
+
     validationList.forEach(function (validation, index) {
 
         var target = parent.find('input[name=' + validation.name + ']');
@@ -155,9 +158,26 @@ function validation(parent) {
                 target.after('<div class="validation-text">' + msg + '</div>');
             }
         }
+        if (target.hasClass('validation')) {
+            validations.push(validation.label + ': ' + msg);
+            names.push(validation.name)
+        }
     });
-    if (isFixed()) {
-        // 券売機
-        modal.open('validation');
+
+    if (validations.length > 0) {
+        if (isFixed()) {
+            // 券売機
+            modal.open('validation');
+        }
+        // 計測
+        collection({
+            client: 'sskts-frontend',
+            label: 'mvtkValidationMessage',
+            action: 'validation',
+            category: 'form',
+            message: validations.join(', '),
+            notes: names.join(', '),
+            transaction: $('input[name=transaction_id]').val()
+        });
     }
 }

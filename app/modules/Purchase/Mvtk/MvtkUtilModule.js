@@ -3,13 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const UtilModule = require("../../Util/UtilModule");
 /**
  * 興行会社コード
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @const COMPANY_CODE
  */
 exports.COMPANY_CODE = 'SSK000';
 /**
  * 作品コード取得
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function getfilmCode
  * @param {string} titleCode COA作品コード
  * @param {string} titleBranchNum COA作品枝番
@@ -22,7 +22,7 @@ function getfilmCode(titleCode, titleBranchNum) {
 exports.getfilmCode = getfilmCode;
 /**
  * サイトコード取得
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function getSiteCode
  * @param {string} id 劇場コード
  * @returns {string}
@@ -33,7 +33,7 @@ function getSiteCode(id) {
 exports.getSiteCode = getSiteCode;
 /**
  * ムビチケ情報生成
- * @memberOf Purchase.Mvtk.MvtkUtilModule
+ * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}

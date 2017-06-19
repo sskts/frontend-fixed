@@ -436,6 +436,7 @@ describe('POST /input/', () => {
                         reserveTickets: normalDAta.reserveTickets,
                         reserveSeats: normalDAta.reserveSeats,
                         performance: normalDAta.performance,
+                        performanceCOA: normalDAta.performanceCOA,
                         expired: 9999999999,
                         transactionMP: {
                             id: '12345678'
@@ -462,6 +463,7 @@ describe('POST /input/', () => {
                         reserveTickets: normalDAta.reserveTickets,
                         reserveSeats: normalDAta.reserveSeats,
                         performance: normalDAta.performance,
+                        performanceCOA: normalDAta.performanceCOA,
                         expired: 9999999999,
                         transactionMP: {
                             id: '12345678'
@@ -488,6 +490,7 @@ describe('POST /input/', () => {
                         reserveTickets: normalDAta.reserveTickets,
                         reserveSeats: normalDAta.reserveSeats,
                         performance: normalDAta.performance,
+                        performanceCOA: normalDAta.performanceCOA,
                         expired: 9999999999,
                         transactionMP: {
                             id: '12345678'

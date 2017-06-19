@@ -1,7 +1,4 @@
 <%- contentFor('script') %>
-<script src="/js/common/epos-2.3.0.js"></script>
-<script src="/js/common/epsonprint.js"></script>
-<script src="/js/common/print.js"></script>
 <script src="/js/index.js"></script>
 <%- contentFor('body') %>
 <div class="index">
@@ -16,7 +13,7 @@
             </a>
         </div>
         <div class="button large-button inquiry-button">
-            <a href="#" class="icon-triangle-01">
+            <a href="/inquiry/login" class="icon-triangle-01">
                 <div class="small-text mb-small"><%- __('index.inquiry-read') %></div>
                 <div class="large-x-text mb-large"><%- __('index.inquiry') %></div>
                 <div><img src="/images/fixed/ticket.svg" alt="" width="243" height="175"></div>
@@ -28,6 +25,5 @@
         <div class="qr-code"><img src="/images/fixed/qr.png" alt="" width="100" height="100"></div>
     </div>
 </div>
-
 <%- contentFor('modals') %>
 <%- include('../purchase/modals/print') %>

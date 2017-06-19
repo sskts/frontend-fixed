@@ -57,16 +57,12 @@ function saveInquiry() {
  * @returns {void}
  */
 function showComplete() {
-    // (印刷可能そうな状態かのBooleanが返ってくる)
-    if (!window.epsonThermalPrint.isReady()) {
-        printAlert('プリンタが使用可能な状態にありません\n\n' + window.epsonThermalPrint.getErrorStatusString());
-        return;
-    }
+    $('.ticket-length').text($('input[name=ticketLength]').val());
     //コンテンツ切り替え
     $('.inquiry-confirm').remove();
     $('.inquiry-print').show();
     $(window).scrollTop(0);
-    ticketing(function () {
+    printTicket(0, function () {
         //step変更
         $('.steps li').removeClass('active');
         $('.steps li:last-child').addClass('active');

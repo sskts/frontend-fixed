@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const moment = require("moment");
@@ -24,7 +25,7 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -93,7 +94,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 購入者情報入力完了
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function submit
  * @param {Request} req
  * @param {Response} res
@@ -123,6 +124,8 @@ function submit(req, res, next) {
             if (purchaseModel.reserveSeats === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.reserveTickets === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
             if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
@@ -190,6 +193,10 @@ function submit(req, res, next) {
                 });
                 log('MPメール削除');
             }
+            // APIへ移行予定
+            const theater = yield COA.MasterService.theater({
+                theater_code: purchaseModel.theater.id
+            });
             if (process.env.VIEW_TYPE !== 'fixed') {
                 const locals = {
                     performance: purchaseModel.performance,
@@ -198,7 +205,7 @@ function submit(req, res, next) {
                     reserveSeatsString: reserveSeatsString,
                     amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
                     domain: req.headers.host,
-                    theaterTelNumber: '0995-55-0333',
+                    theaterTelNumber: theater.theater_tel_num,
                     moment: moment,
                     timeFormat: UtilModule.timeFormat,
                     __: req.__,
@@ -250,7 +257,7 @@ function submit(req, res, next) {
 exports.submit = submit;
 /**
  * オーソリ追加
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function addAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
@@ -295,8 +302,7 @@ function addAuthorization(req, res, purchaseModel) {
             log('GMO取引作成Out', purchaseModel.orderId);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization entryTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization', 'orderId', entryTranIn.orderId, 'entryTranResult', err);
             res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
@@ -313,8 +319,7 @@ function addAuthorization(req, res, purchaseModel) {
             log('GMOオーソリ取得Out', execTranResult);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId);
-            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization execTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.addAuthorization orderId', entryTranIn.orderId, 'execTranResult', err);
             res.locals.gmoError = err;
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
@@ -331,7 +336,7 @@ function addAuthorization(req, res, purchaseModel) {
 }
 /**
  * オーソリ削除
- * @memberOf Purchase.InputModule
+ * @memberof Purchase.InputModule
  * @function removeAuthorization
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {void}
@@ -361,8 +366,7 @@ function removeAuthorization(purchaseModel) {
             log('GMOオーソリ取消', alterTranResult);
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn);
-            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranResult', err);
+            logger_1.default.error('SSKTS-APP:InputModule.removeAuthorization alterTranIn', alterTranIn, 'alterTranResult', err);
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ削除

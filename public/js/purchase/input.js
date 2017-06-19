@@ -235,7 +235,7 @@ function validation() {
         }
 
         if (target.hasClass('validation')) {
-            validations.push(validation.label + ': ' + target.next().text());
+            validations.push(validation.label + ': ' + msg);
             names.push(validation.name)
         }
     });

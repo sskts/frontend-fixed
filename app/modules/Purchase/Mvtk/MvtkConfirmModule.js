@@ -11,7 +11,7 @@ const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 /**
  * ムビチケ券適用確認ページ表示
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -52,7 +52,7 @@ function index(req, res, next) {
 exports.index = index;
 /**
  * 購入番号リスト生成
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function creatPurchaseNoList
  * @param {PurchaseSession.Mvtk[]} mvtk
  * @returns {string[]}
@@ -70,7 +70,7 @@ function creatPurchaseNoList(mvtk) {
 }
 /**
  * 券種選択へ
- * @memberOf Purchase.Mvtk.MvtkConfirmModule
+ * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function submit
  * @param {Request} req
  * @param {Response} res

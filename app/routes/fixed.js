@@ -12,4 +12,6 @@ fixedRouter.get('/', FixedModule.index);
 fixedRouter.get('/setting', FixedModule.setting);
 // 利用停止
 fixedRouter.get('/stop', FixedModule.stop);
+// 照会情報取得
+fixedRouter.post('/fixed/getInquiryData', FixedModule.getInquiryData);
 exports.default = fixedRouter;

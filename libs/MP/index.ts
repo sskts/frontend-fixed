@@ -237,6 +237,28 @@ export async function getTheater(id: string): Promise<ITheater> {
 }
 
 /**
+ * 劇場一覧取得
+ * @memberof MP
+ * @function getTheaters
+ * @requires {Promise<ITheater[]>}
+ */
+export async function getTheaters(): Promise<ITheater[]> {
+    const response = await request.get({
+        url: `${endPoint}/theaters`,
+        auth: { bearer: await oauthToken() },
+        body: {},
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: timeout
+    }).promise();
+    if (response.statusCode !== HTTPStatus.OK) errorHandler({}, response);
+    log('getTheaters:', response.body.data);
+
+    return response.body.data;
+}
+
+/**
  * スクリーン取得
  * @memberof MP
  * @function getScreen

@@ -15,15 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 /**
  * テンプレート変数へ渡す
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function setLocals
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunctiont} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-function setLocals(_req, res, next) {
+function setLocals(_, res, next) {
     res.locals.escapeHtml = escapeHtml;
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
@@ -36,7 +35,7 @@ function setLocals(_req, res, next) {
 exports.setLocals = setLocals;
 /**
  * 時間フォーマット
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function timeFormat
  * @param {string} str
  * @returns {string}
@@ -52,7 +51,7 @@ function timeFormat(str) {
 exports.timeFormat = timeFormat;
 /**
  * HTMLエスケープ
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function escapeHtml
  * @param {string} str
  * @returns {string}
@@ -77,7 +76,7 @@ function escapeHtml(str) {
 exports.escapeHtml = escapeHtml;
 /**
  * カンマ区切りへ変換
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function formatPrice
  * @param {number} price
  * @returns {string}
@@ -88,7 +87,7 @@ function formatPrice(price) {
 exports.formatPrice = formatPrice;
 /**
  * パフォーマンスID取得
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function getPerformanceId
  * @param {Object} args
  * @param {string} args.theaterCode
@@ -105,7 +104,7 @@ function getPerformanceId(args) {
 exports.getPerformanceId = getPerformanceId;
 /**
  * ベース64エンコード
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function bace64Encode
  * @param {string} str
  * @returns {string}
@@ -116,7 +115,7 @@ function bace64Encode(str) {
 exports.bace64Encode = bace64Encode;
 /**
  * ベース64デコード
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function base64Decode
  * @param {string} str
  * @returns {string}
@@ -127,7 +126,7 @@ function base64Decode(str) {
 exports.base64Decode = base64Decode;
 /**
  * メール内容取得
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @function getMailTemplate
  * @param {Response} res
  * @param {string} file
@@ -150,21 +149,21 @@ function getEmailTemplate(res, file, locals) {
 exports.getEmailTemplate = getEmailTemplate;
 /**
  * 2桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_02
  * @type number
  */
 exports.DIGITS_02 = -2;
 /**
  * 3桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_03
  * @type number
  */
 exports.DIGITS_03 = -3;
 /**
  * 8桁
- * @memberOf Util.UtilModule
+ * @memberof Util.UtilModule
  * @const DIGITS_08
  * @type number
  */

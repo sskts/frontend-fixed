@@ -35,18 +35,49 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /**
  * 発券
- * @function ticketing
+ * @function printTicket
+ * @param {number} count
  * @param {Function} cb
  * @returns {void}
  */
-function ticketing(cb) {
-    var reservations = JSON.parse($('input[name=reservations]').val());
-    // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
-    window.epsonThermalPrint.printReservationArray(reservations).then(function () {
-        // printAlert('印刷完了');
-        cb();
-    }).catch(function (errMsg) {
-        printAlert('印刷に失敗しました\n' + errMsg);
+function printTicket(count, cb) {
+    var retryTime = 5000;
+    var limit = 10;
+    count++;
+    if (count > limit) {
+        printAlert('印刷情報が取得できません');
+
+        return;
+    }
+    $.ajax({
+        dataType: 'json',
+        url: '/fixed/getInquiryData',
+        type: 'POST',
+        timeout: 10000,
+        data: {
+            theater_code: $('input[name=theater_code]').val(),
+            reserve_num: $('input[name=reserve_num]').val(),
+            tel_num: $('input[name=tel_num]').val()
+        },
+    }).done(function (res) {
+        var reservations = res.result;
+        if (reservations !== null) {
+            // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
+            window.epsonThermalPrint.printReservationArray(reservations).then(function () {
+                // printAlert('印刷完了');
+                cb();
+            }).catch(function (errMsg) {
+                printAlert('印刷に失敗しました\n' + errMsg);
+            });
+        } else {
+            setTimeout(function(){
+                printTicket(count, cb);
+            }, retryTime);
+        }
+    }).fail(function (jqxhr, textStatus, error) {
+        setTimeout(function(){
+            printTicket(count, cb);
+        }, retryTime);
     });
 }
 
@@ -61,5 +92,5 @@ function printAlert(msg) {
     var modalBody = $('.modal[data-modal=print] .modal-body');
     modalBody.html(msg);
     loadingEnd();
-    modal.open('print');
+    // modal.open('print');
 }

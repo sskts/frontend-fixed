@@ -22,8 +22,8 @@
                         flex-wrap:wrap;
                         li {
                             margin: 0 20px 20px 0;
-                            a {
-
+                            &.disabled {
+                                opacity: 0.5;
                             }
                         }
                     }

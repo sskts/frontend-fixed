@@ -6,7 +6,42 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 ### Added
 
+
 ### Changed
+
+
+### Fixed
+
+
+## 1.4.3 - 2017-06-16
+### Fixed 
+ - ムビチケ選択後クレジットカードへ変更時エラー修正
+ 
+## 1.4.2 - 2017-06-14
+### Added
+- 券売機COA本予約が間に合わなかった場合本予約する機能追加
+### Fixed
+- 券売機ムビチケバリデーション画面修正
+
+## 1.4.1 - 2017-06-13
+### Fixed
+- テストコード修正
+
+## 1.4.0 - 2017-06-13
+### Added
+- 券売機フロー追加
+    - Template出し分け（環境変数で制御）
+    - 発券機連携
+- 北島マスタ追加（スクリーン座席）
+
+### Changed
+- 購入完了メールの劇場電話番号を動的に変更
+- packageアップデート
+    - @motionpicture/coa-service ^2.0.10 => ^3.1.0
+    - fs-extra ^2.1.2 => ^3.0.1
+
+### Fixed
+- tslint修正（disable-next-line:variable-name）
 
 ## 1.3.3 - 2017-05-23
 ### Fixed

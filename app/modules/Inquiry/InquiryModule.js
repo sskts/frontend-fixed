@@ -14,7 +14,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
-const moment = require("moment");
 const MP = require("../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
@@ -23,14 +22,13 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function login
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:variable-name
 function login(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.query.theater === undefined) {
@@ -59,7 +57,7 @@ function login(req, res, next) {
 exports.login = login;
 /**
  * 劇場URL取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getPortalTheaterSite
  * @param {string} id
  * @returns {Promise<string>}
@@ -75,7 +73,7 @@ function getPortalTheaterSite(id) {
 }
 /**
  * 照会認証
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function auth
  * @param {Request} req
  * @param {Response} res
@@ -153,16 +151,13 @@ function auth(req, res, next) {
 exports.auth = auth;
 /**
  * 照会エラー取得
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function getGMOError
  * @param {Request} req
  * @returns {any}
  */
 function getInquiryError(req) {
     return {
-        theater_code: {
-            parm: 'theater_code', msg: `${req.__('common.theater_code')}${req.__('common.validation.inquiry')}`, value: ''
-        },
         reserve_num: {
             parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
@@ -173,7 +168,7 @@ function getInquiryError(req) {
 }
 /**
  * 照会確認ページ表示
- * @memberOf InquiryModule
+ * @memberof InquiryModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -199,25 +194,6 @@ function index(req, res, next) {
         res.locals.performance = inquiryModel.performance;
         res.locals.login = inquiryModel.login;
         res.locals.transactionId = inquiryModel.transactionId;
-        // 印刷用
-        const reservations = inquiryModel.stateReserve.list_ticket.map((ticket) => {
-            return {
-                reserve_no: inquiryModel.login.reserve_num,
-                film_name_ja: inquiryModel.performance.attributes.film.name.ja,
-                film_name_en: inquiryModel.performance.attributes.film.name.en,
-                theater_name: inquiryModel.performance.attributes.theater.name.ja,
-                screen_name: inquiryModel.performance.attributes.screen.name.ja,
-                performance_day: moment(inquiryModel.performance.attributes.day).format('YYYY/MM/DD'),
-                performance_start_time: `${UtilModule.timeFormat(inquiryModel.performance.attributes.time_start)}～`,
-                seat_code: ticket.seat_num,
-                ticket_name: (ticket.add_glasses > 0)
-                    ? `${ticket.ticket_name}${req.__('common.glasses')}`
-                    : ticket.ticket_name,
-                ticket_sale_price: `￥${ticket.ticket_price}`,
-                qr_str: ticket.seat_qrcode
-            };
-        });
-        res.locals.reservations = JSON.stringify(reservations);
         delete req.session.inquiry;
         res.render('inquiry/index');
         return;

@@ -3,7 +3,7 @@
  * @namespace MethodModule
  */
 
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 /**
  * 発券方法ページ表示
@@ -11,11 +11,9 @@ import { NextFunction, Request, Response } from 'express';
  * @function ticketing
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function ticketing(_req: Request, res: Response, _next: NextFunction): void {
+export function ticketing(_: Request, res: Response): void {
     res.render('method/ticketing');
 
     return;
@@ -27,11 +25,9 @@ export function ticketing(_req: Request, res: Response, _next: NextFunction): vo
  * @function entry
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function entry(_req: Request, res: Response, _next: NextFunction): void {
+export function entry(_: Request, res: Response): void {
     res.render('method/entry');
 
     return;
@@ -43,11 +39,9 @@ export function entry(_req: Request, res: Response, _next: NextFunction): void {
  * @function bookmark
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function bookmark(_req: Request, res: Response, _next: NextFunction): void {
+export function bookmark(_: Request, res: Response): void {
     res.render('method/bookmark');
 
     return;

@@ -2,7 +2,7 @@
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-
+import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -195,12 +195,11 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
  * @function purchase
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {Promise<void>}
  * @description フロー(本予約成功、本予約失敗、購入期限切れ)
  */
-// tslint:disable-next-line:variable-name
-export async function purchase(req: Request, res: Response, _next: NextFunction): Promise<void> {
+// tslint:disable-next-line:max-func-body-length
+export async function purchase(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -220,45 +219,12 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
             delete req.session.purchase;
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
-
-        // COA本予約
-        // purchaseModel.updateReserve = await COA.ReserveService.updReserve({
-        //     theater_code: purchaseModel.performance.attributes.theater.id,
-        //     date_jouei: purchaseModel.performance.attributes.day,
-        //     title_code: purchaseModel.performanceCOA.titleCode,
-        //     title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-        //     time_begin: purchaseModel.performance.attributes.time_start,
-        //     tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
-        //     reserve_name: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
-        //     reserve_name_jkana: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
-        //     tel_num: purchaseModel.input.tel_num,
-        //     mail_addr: purchaseModel.input.mail_addr,
-        //     reserve_amount: purchaseModel.getReserveAmount(),
-        //     list_ticket: purchaseModel.reserveTickets.map((ticket) => {
-        //         let mvtkTicket: PurchaseSession.IMvtk | undefined;
-        //         if (purchaseModel.mvtk !== null) {
-        //             mvtkTicket = purchaseModel.mvtk.find((value) => {
-        //                 return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
-        //             });
-        //         }
-        //         return {
-        //             ticket_code: ticket.ticket_code,
-        //             std_price: ticket.std_price,
-        //             add_price: ticket.add_price,
-        //             dis_price: 0,
-        //             sale_price: (ticket.std_price + ticket.add_price),
-        //             ticket_count: 1,
-        //             mvtk_app_price: ticket.mvtk_app_price,
-        //             seat_num: ticket.seat_code,
-        //             add_glasses: (ticket.glasses) ? ticket.add_price_glasses : 0,
-        //             kbn_eisyahousiki: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.eishhshkTyp : '00'
-        //         };
-        //     })
-        // });
-        // log('COA本予約', purchaseModel.updateReserve);
-
+        const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
+            return (ticket.mvtk_num !== '');
+        });
+        log('ムビチケ券', mvtkTickets);
         // ムビチケ使用
-        if (purchaseModel.mvtk !== null) {
+        if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
             await reserveMvtk(purchaseModel);
             log('ムビチケ決済');
         }
@@ -276,9 +242,55 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
             reserveTickets: purchaseModel.reserveTickets,
             price: purchaseModel.getReserveAmount()
         };
-        //購入セッション削除
+        if (process.env.VIEW_TYPE === 'fixed') {
+            // 本予約に必要な情報を印刷セッションへ
+            const updateReserveIn: COA.ReserveService.IUpdReserveArgs = {
+                theater_code: purchaseModel.performance.attributes.theater.id,
+                date_jouei: purchaseModel.performance.attributes.day,
+                title_code: purchaseModel.performanceCOA.titleCode,
+                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
+                time_begin: purchaseModel.performance.attributes.time_start,
+                tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
+                reserve_name: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
+                reserve_name_jkana: `${purchaseModel.input.last_name_hira}　${purchaseModel.input.first_name_hira}`,
+                tel_num: purchaseModel.input.tel_num,
+                mail_addr: purchaseModel.input.mail_addr,
+                reserve_amount: purchaseModel.getReserveAmount(),
+                list_ticket: purchaseModel.reserveTickets.map((ticket) => {
+                    let mvtkTicket: PurchaseSession.IMvtk | undefined;
+                    if (purchaseModel.mvtk !== null) {
+                        mvtkTicket = purchaseModel.mvtk.find((value) => {
+                            return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+                        });
+                    }
+
+                    return {
+                        ticket_code: ticket.ticket_code,
+                        std_price: ticket.std_price,
+                        add_price: ticket.add_price,
+                        dis_price: 0,
+                        sale_price: (ticket.std_price + ticket.add_price),
+                        ticket_count: 1,
+                        mvtk_app_price: ticket.mvtk_app_price,
+                        seat_num: ticket.seat_code,
+                        add_glasses: (ticket.glasses) ? ticket.add_price_glasses : 0,
+                        kbn_eisyahousiki: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.eishhshkTyp : '00',
+                        mvtk_num: (mvtkTicket !== undefined) ? mvtkTicket.code : '',
+                        mvtk_kbn_denshiken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.dnshKmTyp : '00',
+                        mvtk_kbn_maeuriken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.znkkkytsknGkjknTyp : '00',
+                        mvtk_kbn_kensyu: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.ykknshTyp : '00',
+                        mvtk_sales_price: (mvtkTicket !== undefined) ? Number(mvtkTicket.ykknInfo.knshknhmbiUnip) : 0
+
+                    };
+                })
+            };
+            req.session.fixed = {
+                updateReserveIn: updateReserveIn
+            };
+        }
+        // 購入セッション削除
         delete req.session.purchase;
-        //購入完了情報を返す
+        // 購入完了情報を返す
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
         log('ERROR', err);
@@ -293,10 +305,11 @@ export async function purchase(req: Request, res: Response, _next: NextFunction)
 /**
  * 完了情報取得
  * @function getCompleteData
+ * @param {Request} req
+ * @param {Response} res
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function getCompleteData(req: Request, res: Response, _next: NextFunction): void {
+export function getCompleteData(req: Request, res: Response): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;

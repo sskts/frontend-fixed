@@ -13,11 +13,9 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
  * @function notFound
  * @param {Request} req
  * @param {Response} res
- * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function notFound(req: Request, res: Response, _next: NextFunction): void {
+export function notFound(req: Request, res: Response): void {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -37,8 +35,7 @@ export function notFound(req: Request, res: Response, _next: NextFunction): void
  * @param {NextFunction} next
  * @returns {void}
  */
-// tslint:disable-next-line:variable-name
-export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _next: NextFunction): void {
+export function index(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _: NextFunction): void {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {

@@ -16,7 +16,7 @@ const fs = require("fs-extra");
 const UtilModule = require("../Util/UtilModule");
 /**
  * 座席選択
- * @memberOf Screen.ScreenModule
+ * @memberof Screen.ScreenModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -30,7 +30,7 @@ function index(_, res) {
 exports.index = index;
 /**
  * スクリーン状態取得
- * @memberOf Screen.ScreenModule
+ * @memberof Screen.ScreenModule
  * @function getScreenStateReserve
  * @param {Request} req
  * @param {Response} res
