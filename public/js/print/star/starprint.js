@@ -111,28 +111,41 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             // 鑑賞日時
             ctx.font = "bold 30px sans-serif";
             ctx.fillText(reservation.performance_day + ' ' + reservation.performance_start_time + '～', center, 70);
-            ctx.font = "normal 30px sans-serif";
+            ctx.strokeStyle = '#000';
+            ctx.beginPath();
+            ctx.moveTo(80, 80);
+            ctx.lineTo((canvas.width - 80), 80);
+            ctx.closePath();
+            ctx.stroke();
+
             // 作品名
+            ctx.font = "normal 30px sans-serif";
             var title = reservation.film_name_ja;
             var titleLimit = 20;
             if (title.length > titleLimit) {
-                ctx.fillText(title.slice(0, titleLimit), center, 110);
-                ctx.fillText(title.slice(titleLimit, title.length), center, 150);
+                ctx.fillText(title.slice(0, titleLimit), center, 120);
+                ctx.fillText(title.slice(titleLimit, title.length), center, 160);
             } else {
-                ctx.fillText(title, center, 110);
+                ctx.fillText(title, center, 120);
             }
             // スクリーン
+            ctx.beginPath();
+            ctx.fillRect(0, 170, canvas.width, 50);
             ctx.font = "bold 40px sans-serif";
-            ctx.fillText(reservation.screen_name, center, 200);
+            ctx.fillStyle = '#FFF';
+            ctx.fillText(reservation.screen_name, center, 210);
             // 座席
-            ctx.fillText(reservation.seat_code, center, 250);
+            ctx.beginPath();
+            ctx.strokeRect(0, 220, canvas.width, 50);
+            ctx.fillStyle = '#000';
+            ctx.fillText(reservation.seat_code, center, 260);
             // 券種
             ctx.textAlign = 'left';
             ctx.font = "normal 30px sans-serif";
-            ctx.fillText(reservation.ticket_name, 0, 290);
+            ctx.fillText(reservation.ticket_name, 0, 310);
             // 金額
             ctx.textAlign = 'right';
-            ctx.fillText('￥' + reservation.ticket_sale_price, right, 290);
+            ctx.fillText('￥' + reservation.ticket_sale_price + '-', right, 310);
             // QR
             var qr = new VanillaQR({
                 url: reservation.qr_str,
@@ -143,18 +156,17 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
                 noBorder: true
             });
 
-            ctx.drawImage(qr.domElement, 0, 300, 120, 120);
+            ctx.drawImage(qr.domElement, (canvas.width - 120), 320, 120, 120);
             // 発券時間
             ctx.textAlign = 'left';
             ctx.font = "normal 24px sans-serif";
             var dateObj = new Date();
-            var dateStr = dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()) + ' ' + zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()) + ':' + zp(dateObj.getSeconds());
+            var dateStr = '(' + dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()) + ' ' + zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()) + ' 発券)';
             ctx.fillText(dateStr, left, bottom);
             // 購入番号
-            ctx.textAlign = 'right';
-            ctx.fillText('購入番号: ' + reservation.reserve_no, right, bottom - 30);
+            ctx.fillText('購入番号: ' + reservation.reserve_no, left, bottom - 60);
             // 端末ID
-            ctx.fillText('端末ID: ' + device_id, right, bottom);
+            ctx.fillText('端末ID: ' + device_id, left, bottom - 30);
 
             request = builder.createBitImageElement({ context: ctx, x: 0, y: 0, width: 560, height: 450 });
 
