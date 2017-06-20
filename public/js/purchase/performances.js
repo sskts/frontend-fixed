@@ -101,17 +101,32 @@ function createSchedule(performances) {
  * @returns {string}
  */
 function createScheduleDom(data) {
-    var performances = data.performances.map(function (performance) {
+    /**
+     * 販売終了時間 30分前
+     */
+    var END_TIME_DEFAULT = 30;
+    /**
+     * 販売終了時間(券売機) 10分後
+     */
+    var END_TIME_FIXED = -10;
+
+    var performances = [];
+    data.performances.forEach(function (performance) {
+        // 販売可能時間判定
+        var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
+        var limitTime = moment().add(limit, 'minutes');
+        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+            return;
+        }
+
         var link = '/purchase?id=' + performance.id;
         if (isFixed()) {
             // 券売機
             link = '/purchase/fixed.html?id=' + performance.id;
         }
-        // 購入可能化の判定
-        var status = (performance.attributes.stock_status === '×' || performance.attributes.stock_status === '-') 
-            ? 'disabled'
-            : ''
-        return ('<li class="button small-button gray-button ' + status + '">'+
+        // 販売ステータス設定
+        var disabled = (performance.attributes.stock_status === '×') ? 'disabled' : '';
+        performances.push('<li class="button small-button gray-button ' + disabled + '">'+
             '<a href="'+ link +'" class="icon-triangle-02">'+ 
             '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
             '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
@@ -119,6 +134,9 @@ function createScheduleDom(data) {
             '</a>' +
         '</li>');
     });
+
+    if (performances.length === 0) return '';
+
     return ('<li class="performance mb-small">' +
         '<dl>' +
             '<dt class="small-text"><strong>作品名</strong>' + data.performances[0].attributes.film.name.ja + '</dt>' +
