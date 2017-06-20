@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ### Fixed
-
+ - 印刷中アニメーション画像修正
 
 ## 1.4.3 - 2017-06-16
 ### Fixed 
