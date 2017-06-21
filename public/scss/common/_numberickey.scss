@@ -1,0 +1,32 @@
+.numkey{
+	overflow: hidden;
+	border: 1px solid #DDDDDD;
+	width: 308px;
+	background-color: #EBEBEB;
+	border-radius: 5px;
+	color: #4D4D4D;
+	text-shadow: 1px 1px 0px #FFFFFF;
+	font-weight: bold;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	z-index:999;
+    ul {
+        li {
+            float: left;
+            list-style: none;
+            width: 100px;
+            height: 100px;
+            line-height:100px;
+            font-size: 18px;
+            border: 1px solid #DDDDDD;
+            margin: 1px;
+            text-align:center;
+            cursor:pointer;
+            border-radius: 5px;     
+            background:linear-gradient(#FFFFFF, #C9C9C9);
+            zoom: 1;
+            user-select: none;
+        }
+    }
+}
