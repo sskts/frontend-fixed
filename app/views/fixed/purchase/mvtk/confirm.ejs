@@ -13,7 +13,7 @@
             <% for (const purchaseNo of purchaseNoList) { %>
             <li class="white-box mb-small center">
                 <dl class="d-table">
-                    <dt class="d-td"><%- __('common.mvtk_code') %> <%= purchaseNo %></dt>
+                    <dt class="d-td"><%- __('common.mvtk_code') %><br><%= purchaseNo %></dt>
                     <dd class="d-td">
                         <% for (const mvtkTicket of mvtk) { %>
                         <% if (mvtkTicket.code === purchaseNo) { %>
