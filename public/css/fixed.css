@@ -784,7 +784,7 @@ a {
     padding: 25px 160px 25px 30px; }
 
 .purchase-seat .screen-cover {
-  margin: 0 180px;
+  margin: 0 80px;
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 5px; }
 
@@ -1082,12 +1082,6 @@ a {
 
 .screen-4dx .seat-info .disabled:before {
   background-image: url(/images/theater/seat/4dx_disabled.svg); }
-
-.screen-cover .device-type-pc {
-  display: none; }
-
-.screen-cover .device-type-sp {
-  display: block; }
 
 .zoom .screen-scroll {
   overflow: auto;

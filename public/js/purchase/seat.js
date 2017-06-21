@@ -19,7 +19,8 @@ $(function () {
     });
 
     // 座席クリックイベント
-    $('.screen').on('click', '.seat a', function () {
+    $('.screen').on('click', '.seat a', function (event) {
+        event.preventDefault();
         //スマホで拡大操作
         if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
             return;
@@ -380,11 +381,7 @@ function screenStateUpdate(cb) {
         screenStateChange(result.state);
         var screen = $('.screen');
         screen.css('visibility', 'visible');
-        if (isFixed()) {
-            screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen, 2);
-        } else {
-            screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
-        }
+        screenSeatStatusesMap = new SASAKI.ScreenSeatStatusesMap(screen);
         screenSeatStatusesMap.setScaleUpCallback(function () {
             $('.zoom-btn').show();
             zoomButtonScroll();
