@@ -132,14 +132,7 @@
         } 
     } 
 }
-.screen-cover {
-    .device-type-pc {
-        display: none;
-    }
-    .device-type-sp {
-        display: block;
-    }
-}
+
 .zoom {
     .screen-scroll {
         overflow: auto;
