@@ -55,37 +55,44 @@ img {
   font-size: 0;
   line-height: 0; }
 
+.numkey-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; }
+
 .numkey {
   overflow: hidden;
-  border: 1px solid #DDDDDD;
-  width: 308px;
-  background-color: #EBEBEB;
+  background-color: #D2D6DC;
   border-radius: 5px;
-  color: #4D4D4D;
-  text-shadow: 1px 1px 0px #FFFFFF;
-  font-weight: bold;
   position: absolute;
   top: 0px;
   left: 0px;
-  z-index: 999; }
-  .numkey ul li {
-    float: left;
-    list-style: none;
-    width: 100px;
-    height: 100px;
-    line-height: 100px;
-    font-size: 18px;
-    border: 1px solid #DDDDDD;
-    margin: 1px;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 5px;
-    background: linear-gradient(#FFFFFF, #C9C9C9);
-    zoom: 1;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none; }
+  z-index: 2;
+  padding: 8px; }
+  .numkey ul {
+    width: 300px; }
+    .numkey ul li {
+      color: #080404;
+      float: left;
+      list-style: none;
+      width: 90px;
+      height: 90px;
+      line-height: 90px;
+      margin: 5px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 3px;
+      background-color: #FFF;
+      box-shadow: 0 1px 0 #A7A9AE;
+      zoom: 1;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none; }
+    .numkey ul .numerickey-button {
+      background-color: #BAC1C8; }
 
 @-webkit-keyframes loading {
   30% {

@@ -2,28 +2,33 @@
     // ターゲットID
     var target = null;
     // 数値の配列
-    var numeric = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+    var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'delete', '0', 'done'];
     $(document).ready(function () {
-        $('body').on('click', function () {
-            if ($('.numkey').is(':visible')) {
-                $('.numkey').remove();
-            }
+        $(document).on('click', '.numkey-cover', function () {
+            $('.numkey-cover').remove();
+            $('.numkey').remove();
         });
         // フォームをクリックしたとき
         $(document).on('click', '.numerickeybord', function () {
-            $('.numkey').remove(); //全部削除
+            $('.numkey-cover').remove();
+            $('.numkey').remove();
             $(this).blur(); //フォーカスを外す
 
-            var html = '';
-            html += '  <div class="numkey">';
-            html += '    <ul>';
-            for (var i = 0; i < numeric.length; i++) {
-                html += '      <li id="numerickey' + numeric[i] + '" class="numerickey" unselectable="on">' + numeric[i] + '</li>';
+            var html = '<div class="numkey-cover" onclick=""></div>';
+            html += '<div class="numkey">';
+            html += '<ul>';
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i]
+                if (key === 'delete') {
+                    html += '<li id="delete" class="numerickey-button">消去</li>';
+                } else if (key === 'done') {
+                    html += '<li id="done" class="numerickey-button">OK</li>';
+                } else {
+                    html += '<li id="numerickey' + key + '" class="numerickey" unselectable="on">' + key + '</li>';
+                }
             }
-            html += '       <li id="numkeyclear" class="numerickey_button">クリア</li>';
-            html += '       <li id="numkeyclose" class="numerickey_button">閉じる</li>';
-            html += '    </ul>';
-            html += '  </div>';
+            html += '</ul>';
+            html += '</div>';
 
             $('body').append(html);
             var offset = $(this).offset();
@@ -45,14 +50,15 @@
         });
 
         // 閉じる・クリアボタンを押したとき
-        $(document).on(eventName, '.numerickey_button', function (event) {
+        $(document).on(eventName, '.numerickey-button', function (event) {
             event.preventDefault();
             var id = $(this).attr('id');
-            if (id === 'numkeyclear') {
+            if (id === 'delete') {
                 var value = target.val();
                 target.val(value.slice(0, value.length - 1));
-            } else if (id === 'numkeyclose') {
-                $('.numkey').remove(); //全部削除
+            } else if (id === 'done') {
+                $('.numkey-cover').remove();
+                $('.numkey').remove();
             }
         });
 
