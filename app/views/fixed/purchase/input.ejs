@@ -1,4 +1,5 @@
 <%- contentFor('script') %>
+<script src="/js/common/numerickey.js"></script>
 <script src="/js/purchase/input.js"></script>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>');</script>
@@ -13,7 +14,7 @@
             <dl class="mb-middle">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
+                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
             <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
@@ -72,7 +73,7 @@
             <dl class="mb-large securitycode">
                 <dt><%- __('common.securitycode') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                    <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>" class="numerickeybord numerickeybord-top" readonly="readonly">
                 </dd>
             </dl>
             <input type="hidden" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">

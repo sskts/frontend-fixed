@@ -1,4 +1,5 @@
 <%- contentFor('script') %>
+<script src="/js/common/numerickey.js"></script>
 <script src="/js/purchase/mvtk/input.js"></script>
 <%- contentFor('prev') %>
 /purchase/ticket
@@ -23,7 +24,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_code') %></dt>
                         <dd>
-                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
@@ -31,7 +32,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_password') %></dt>
                         <dd>
-                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
@@ -47,7 +48,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_code') %></dt>
                         <dd>
-                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
@@ -55,7 +56,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_password') %></dt>
                         <dd>
-                            <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                            <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
