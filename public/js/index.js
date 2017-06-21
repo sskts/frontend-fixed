@@ -101,7 +101,8 @@ function ticketDesignTest() {
     ctx.fillText(reservation.screen_name, center, 210);
     // 座席
     ctx.beginPath();
-    ctx.strokeRect(0, 220, canvas.width, 50);
+    ctx.lineWidth = 2;
+    ctx.strokeRect(1, 220, canvas.width - 2, 50);
     ctx.fillStyle = '#000';
     ctx.fillText(reservation.seat_code, center, 260);
     // 券種
@@ -134,5 +135,6 @@ function ticketDesignTest() {
     ctx.fillText('端末ID: ' + device_id, left, bottom - 30);
     // --------
     canvas.style.backgroundColor = '#FFF';
+    canvas.style.padding = '10px';
     $('.contents').append(canvas);
 }
