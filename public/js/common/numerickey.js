@@ -4,7 +4,11 @@
     // 数値の配列
     var numeric = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
     $(document).ready(function () {
-
+        $('body').on('click', function () {
+            if ($('.numkey').is(':visible')) {
+                $('.numkey').remove();
+            }
+        });
         // フォームをクリックしたとき
         $(document).on('click', '.numerickeybord', function () {
             $('.numkey').remove(); //全部削除
