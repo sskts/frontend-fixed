@@ -24,7 +24,8 @@
 	"setting": {
 		"page_ttl": "設定",
 		"read": "端末の情報を設定してください",
-		"next": "設定"
+		"next": "設定",
+		"certificate": "上記IPアドレスの証明書は<a class=\"certificate\" href=\"#\" download=\"\">こちら</a>"
 	},
 	"stop": {
 		"page_ttl": "利用停止",
@@ -168,7 +169,7 @@
 		"step02": "",
 		"login": {
 			"page_ttl": "チケット発券",
-			"read": "チケット購入時の予約番号と電話番号を入力して「照会する」ボタンを押してください。",
+			"read": "チケット購入時の予約番号と電話番号を入力して<br>「照会する」ボタンを押してください。",
 			"next": "照会する",
 			"modal": {
 				"validation": {
