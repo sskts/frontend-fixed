@@ -555,6 +555,19 @@ a {
   background: linear-gradient(45deg, black 0%, #666666 100%);
   border: none; }
 
+.staff-button {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100; }
+  .staff-button a {
+    display: block;
+    opacity: 0.1;
+    background-color: #FFF;
+    width: 100px;
+    height: 100px;
+    border-radius: 0 0 0 10px; }
+
 .page-ttl {
   line-height: 1;
   font-weight: bold;
