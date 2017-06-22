@@ -58,7 +58,7 @@ function saveInquiry() {
  */
 function showComplete() {
     var printDom = $('.inquiry-print');
-    var navigationDom = $('.navigation');
+    var navigationDom = $('.navigation .buttons');
     navigationDom.hide();
     $('.ticket-length').text($('input[name=ticketLength]').val());
     //コンテンツ切り替え

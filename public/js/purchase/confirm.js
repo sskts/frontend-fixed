@@ -176,7 +176,7 @@ function showComplete(result) {
     if (isFixed()) {
         loadingEnd();
         var printDom = $('.purchase-print');
-        var navigationDom = $('.navigation');
+        var navigationDom = $('.navigation .buttons');
         // 券売機
         $('.ticket-length').text($('input[name=ticketLength]').val());
         navigationDom.hide();
