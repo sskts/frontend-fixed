@@ -13,6 +13,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 
+## 1.5.1 - 2017-06-23
+### Added
+ - [券売機] 設定ページへ証明書ダウンロードリンク追加
+ - [券売機] プリンターエラー時に再試行ボタン追加
+### Fixed
+ - [北島] 利用規約修正
+ - [券売機] TOPページQRコード修正
+
+
 ## 1.5.0 - 2017-06-22
 ### Added
  - [券売機] テンキー追加
