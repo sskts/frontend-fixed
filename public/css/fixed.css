@@ -1144,3 +1144,6 @@ a {
 
 .setting .form-layout dl dd {
   width: 560px; }
+
+.setting .certificate {
+  text-decoration: underline; }
