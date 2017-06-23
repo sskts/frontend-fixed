@@ -71,6 +71,7 @@ function printTicket(count, cb) {
 function printerSend(reservations, cb) {
     // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
     window.starThermalPrint.printReservationArray(reservations).then(function () {
+        loadingEnd();
         cb();
     }).catch(function (errMsg) {
         printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
