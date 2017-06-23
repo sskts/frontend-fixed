@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+## 1.5.2 - 2017-06-23
+### Fixed
+ - [券売機] ナビゲーション文言修正
+ - [券売機] テンキー操作性改善
+ - [券売機] エラー画面へ戻るボタン設置
 
 ## 1.5.1 - 2017-06-23
 ### Added
