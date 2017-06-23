@@ -31,7 +31,7 @@ function printTicket(count, cb) {
     var limit = 10;
     count++;
     if (count > limit) {
-        printAlert('印刷情報が取得できません');
+        printAlert('印刷情報が取得できません<br>劇場係員をお呼びください。');
 
         return;
     }
@@ -43,19 +43,13 @@ function printTicket(count, cb) {
         data: {
             theater_code: $('input[name=theater_code]').val(),
             reserve_num: $('input[name=reserve_num]').val(
-                            ),
+            ),
             tel_num: $('input[name=tel_num]').val()
         },
     }).done(function (res) {
         var reservations = res.result;
         if (reservations !== null) {
-            // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
-            window.starThermalPrint.printReservationArray(reservations).then(function () {
-                // printAlert('印刷完了');
-                cb();
-            }).catch(function (errMsg) {
-                printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
-            });
+            printerSend(reservations, cb);
         } else {
             setTimeout(function () {
                 printTicket(count, cb);
@@ -65,6 +59,30 @@ function printTicket(count, cb) {
         setTimeout(function () {
             printTicket(count, cb);
         }, retryTime);
+    });
+}
+
+/**
+ * プリンタへ送信
+ * @function printerSend
+ * @param {*} reservations 
+ * @param {*} cb 
+ */
+function printerSend(reservations, cb) {
+    // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
+    window.starThermalPrint.printReservationArray(reservations).then(function () {
+        loadingEnd();
+        cb();
+    }).catch(function (errMsg) {
+        printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
+        $('body').append('<div class="staff-button"><a href="#"></a></div>');
+        $('.staff-button a').on('click', function (event) {
+            event.preventDefault();
+            modal.close();
+            loadingStart();
+            $('.staff-button').remove();
+            printerSend(reservations, cb);
+        });
     });
 }
 

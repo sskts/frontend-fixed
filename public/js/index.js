@@ -1,7 +1,7 @@
 $(function () {
     var inquiryUrl = '/inquiry/login?theater=' + window.config.theater;
     $('.inquiry-button a').attr('href', inquiryUrl);
-    var qr = createQRCode($('input[name=portalSite]').val() + inquiryUrl);
+    var qr = createQRCode('https://ticket-cinemasunshine.com' + inquiryUrl);
     $('.qr-code').append(qr);
     // ticketDesignTest();
 });
