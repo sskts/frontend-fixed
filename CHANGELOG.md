@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+## 1.5.3 - 2017-06-23
+### Changed
+ - [券売機] GoogleアナリティクスID変更
+
 ## 1.5.2 - 2017-06-23
 ### Fixed
  - [券売機] ナビゲーション文言修正
