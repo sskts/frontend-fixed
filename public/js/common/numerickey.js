@@ -4,12 +4,13 @@
     // 数値の配列
     var keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'delete', '0', 'done'];
     $(document).ready(function () {
-        $(document).on('click', '.numkey-cover', function () {
+        var eventName = (window.ontouchend === null) ? 'touchend' : 'click';
+        $(document).on(eventName, '.numkey-cover', function () {
             $('.numkey-cover').remove();
             $('.numkey').remove();
         });
         // フォームをクリックしたとき
-        $(document).on('click', '.numerickeybord', function () {
+        $(document).on(eventName, '.numerickeybord', function () {
             $('.numkey-cover').remove();
             $('.numkey').remove();
             $(this).blur(); //フォーカスを外す
@@ -33,14 +34,13 @@
             $('body').append(html);
             var offset = $(this).offset();
             var top = ($(this).hasClass('numerickeybord-top'))
-                ? Math.ceil(offset.top) - ($('.numkey').height() + 10)
+                ? Math.ceil(offset.top) - ($('.numkey').outerHeight() + 10)
                 : Math.ceil(offset.top) + $(this).height() + 10;
             var left = Math.ceil(offset.left);
             $('.numkey').css({ 'top': top, 'left': left });
             target = $(this);
         });
 
-        var eventName = (window.ontouchend === null) ? 'touchend' : 'click';
         // マウスで押したときの処理
         $(document).on(eventName, '.numerickey', function () {
             var id = $(this).attr('id');
