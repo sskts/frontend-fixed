@@ -10,6 +10,27 @@ import * as MP from '../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
+/**
+ * 販売終了時間 30分前
+ * @const {number} END_TIME_DEFAULT
+ */
+const END_TIME_DEFAULT = 30;
+/**
+ * 販売終了時間(券売機) 10分後
+ * @const {number} END_TIME_DEFAULT
+ */
+const END_TIME_FIXED = -10;
+
+/**
+ * 取引有効時間 15分間
+ * @const {number} END_TIME_DEFAULT
+ */
+const VALID_TIME_DEFAULT = 15;
+/**
+ * 取引有効時間(券売機) 5分間
+ * @const {number} END_TIME_DEFAULT
+ */
+const VALID_TIME_FIXED = 5;
 
 /**
  * 取引開始
@@ -31,9 +52,11 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
-        const timeLimit = 1;
+
         // 終了可能日判定
-        if (moment().add(timeLimit, 'hours').unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+        const limit = (process.env.VIEW_TYPE === 'fixed') ? END_TIME_FIXED : END_TIME_DEFAULT;
+        const limitTime = moment().add(limit, 'minutes');
+        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
 
@@ -46,10 +69,10 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
         purchaseModel = new PurchaseSession.PurchaseModel({});
         // 取引開始
-        const minutes = 15;
-        purchaseModel.expired = moment().add(minutes, 'minutes').unix();
+        const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
+        purchaseModel.expired = moment().add(valid, 'minutes').unix();
         purchaseModel.transactionMP = await MP.transactionStart({
-            expires_at: moment.unix(purchaseModel.expired).add(1, 'minutes').unix()
+            expires_at: purchaseModel.expired
         });
         log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
         delete req.session.purchase;

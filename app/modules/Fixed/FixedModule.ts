@@ -22,6 +22,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
  * @returns {Promise<void>}
  */
 export async function index(_: Request, res: Response): Promise<void> {
+    res.locals.ticketingSite = process.env.TICKETING_SITE_URL;
     res.render('index/index');
     log('券売機TOPページ表示');
 }

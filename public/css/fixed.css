@@ -55,6 +55,45 @@ img {
   font-size: 0;
   line-height: 0; }
 
+.numkey-cover {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; }
+
+.numkey {
+  overflow: hidden;
+  background-color: #D2D6DC;
+  border-radius: 5px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+  padding: 8px; }
+  .numkey ul {
+    width: 300px; }
+    .numkey ul li {
+      color: #080404;
+      float: left;
+      list-style: none;
+      width: 90px;
+      height: 90px;
+      line-height: 90px;
+      margin: 5px;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 3px;
+      background-color: #FFF;
+      box-shadow: 0 1px 0 #A7A9AE;
+      zoom: 1;
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none; }
+    .numkey ul .numerickey-button {
+      background-color: #BAC1C8; }
+
 @-webkit-keyframes loading {
   30% {
     -webkit-transform: scaleY(2);
@@ -384,6 +423,9 @@ a {
 .red-text {
   color: #C30D23; }
 
+.small-x-text {
+  font-size: 18px; }
+
 .small-text {
   font-size: 22px; }
 
@@ -512,6 +554,19 @@ a {
   background-color: #333;
   background: linear-gradient(45deg, black 0%, #666666 100%);
   border: none; }
+
+.staff-button {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100; }
+  .staff-button a {
+    display: block;
+    opacity: 0.1;
+    background-color: #FFF;
+    width: 100px;
+    height: 100px;
+    border-radius: 0 0 0 10px; }
 
 .page-ttl {
   line-height: 1;
@@ -771,12 +826,17 @@ a {
     position: absolute;
     top: 50%;
     right: 30px;
-    margin-top: -50px; }
+    margin-top: -50px;
+    width: 100px;
+    height: 100px; }
+    .index .qr-code img {
+      padding: 10px;
+      background-color: #FFF; }
   .index .box {
-    padding: 45px 160px 45px 30px; }
+    padding: 25px 160px 25px 30px; }
 
 .purchase-seat .screen-cover {
-  margin: 0 180px;
+  margin: 0 80px;
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 5px; }
 
@@ -1075,12 +1135,6 @@ a {
 .screen-4dx .seat-info .disabled:before {
   background-image: url(/images/theater/seat/4dx_disabled.svg); }
 
-.screen-cover .device-type-pc {
-  display: none; }
-
-.screen-cover .device-type-sp {
-  display: block; }
-
 .zoom .screen-scroll {
   overflow: auto;
   transition: -webkit-transform 0.2s;
@@ -1103,3 +1157,6 @@ a {
 
 .setting .form-layout dl dd {
   width: 560px; }
+
+.setting .certificate {
+  text-decoration: underline; }

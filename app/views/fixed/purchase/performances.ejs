@@ -12,8 +12,13 @@
             <dd class="date">
                 <select>
                     <% for (let i = 0; i < 7; i++) { %>
-                    <% const date = moment().add(i, 'days'); %>
-                    <option value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
+                    <% 
+                    const date = moment().add(i, 'days');
+                    const dateText = (i === 0) ? __('today')
+                    : (i === 1) ? __('tomorrow')
+                    : date.format('YYYY年MM月DD日');
+                    %>
+                    <option value="<%= date.format('YYYYMMDD') %>"><%= dateText %></option>
                     <% } %>
                 </select>
             </dd>
@@ -21,4 +26,5 @@
     </div>
     
     <ul class="performances"></ul>
+    <p class="no-performances text-center"><%= __('purchase.performances.no_performances') %></p>
 </div>

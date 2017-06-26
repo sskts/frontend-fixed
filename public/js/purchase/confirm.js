@@ -175,18 +175,23 @@ function showError(message) {
 function showComplete(result) {
     if (isFixed()) {
         loadingEnd();
+        var printDom = $('.purchase-print');
+        var navigationDom = $('.navigation .buttons');
         // 券売機
         $('.ticket-length').text($('input[name=ticketLength]').val());
+        navigationDom.hide();
         //コンテンツ切り替え
         $('.purchase-confirm').remove();
-        $('.purchase-print').show();
+        printDom.show();
         $(window).scrollTop(0);
         printTicket(0, function () {
             //step変更
             $('.steps li').removeClass('active');
             $('.steps li:last-child').addClass('active');
+            navigationDom.find('.prev-button').hide();
+            navigationDom.show();
             //コンテンツ切り替え
-            $('.purchase-print').remove();
+            printDom.remove();
             $('.purchase-complete').show();
             history.pushState(null, null, '/purchase/complete');
             $(window).scrollTop(0);

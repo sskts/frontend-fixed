@@ -213,6 +213,10 @@ a {
     color: #C30D23;
 }
 
+.small-x-text {
+    font-size: 18px;
+}
+
 .small-text {
     font-size: 22px;
 }
@@ -384,6 +388,21 @@ a {
         background-color: #333;
         background: linear-gradient(45deg, rgba(0,0,0,1) 0%,rgba(102,102,102,1) 100%);
         border: none;
+    }
+}
+
+.staff-button {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    a {
+        display: block;
+        opacity: 0.1;
+        background-color: #FFF;
+        width: 100px;
+        height: 100px;
+        border-radius: 0 0 0 10px;
     }
 }
 

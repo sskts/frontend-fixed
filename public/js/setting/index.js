@@ -16,6 +16,15 @@ $(function () {
             loadingEnd();
         });
     });
+    $(document).on('click', '.certificate', function (event) {
+        var value = $('input[name=printer]').val();
+        if (!value) {
+            event.preventDefault();
+            alert('プリンターが入力されていません。');
+        }
+        $(this).attr('download', value + '.cer');
+        $(this).attr('href', '/cer/' + value + '.cer');
+    });
 });
 
 /**

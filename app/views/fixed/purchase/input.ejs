@@ -1,4 +1,5 @@
 <%- contentFor('script') %>
+<script src="/js/common/numerickey.js"></script>
 <script src="/js/purchase/input.js"></script>
 <script src="<%= gmoModuleUrl %>"></script>
 <script>Multipayment.init('<%= gmoShopId %>');</script>
@@ -13,7 +14,7 @@
             <dl class="mb-middle">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
+                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
             <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
@@ -25,7 +26,7 @@
                 <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
             </h2>
             <div class="box mb-small center credit-reader">
-                <p class="small-text"><%- __('purchase.input.credit_reader') %></p>
+                <p class="small-x-text"><%- __('purchase.input.credit_reader') %></p>
                 <div class="image"><img src="/images/fixed/card_reader.png" alt=""></div>
             </div>
             <dl class="mb-small">
@@ -72,7 +73,7 @@
             <dl class="mb-large securitycode">
                 <dt><%- __('common.securitycode') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>">
+                    <input type="text" pattern="\d*" name="securitycode" maxlength="4" autocomplete="off" value="" placeholder="<%- __('common.placeholder.securitycode') %>" class="numerickeybord numerickeybord-top" readonly="readonly">
                 </dd>
             </dl>
             <input type="hidden" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">

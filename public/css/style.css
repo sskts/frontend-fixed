@@ -1382,37 +1382,24 @@ p a {
 .modal[data-modal=screen] .screen .seat a {
   cursor: default; }
 
-.purchase-complete .entry-method {
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
-  margin: 0 -10px; }
-  .purchase-complete .entry-method li {
-    width: 50%; }
-    @media screen and (max-width: 767px) {
-      .purchase-complete .entry-method li {
-        margin-bottom: 20px;
-        width: 100%; }
-        .purchase-complete .entry-method li:last-child {
-          margin-bottom: 0; } }
-  .purchase-complete .entry-method dl {
-    height: 100%;
-    margin: 0 10px; }
-    .purchase-complete .entry-method dl dt .entry-number {
-      padding: 5px 0;
-      margin: -20px -20px 0;
-      color: #FFF; }
-    .purchase-complete .entry-method dl dt .text-icon-dark-blue {
-      border-radius: 11px;
-      margin-right: 5px; }
-    .purchase-complete .entry-method dl dt strong {
-      line-height: 22px; }
+.purchase-complete .entry-method dl dt {
+  background-color: #cfcfcf;
+  padding: 10px 0;
+  margin: -20px -20px 0; }
+
+.purchase-complete .entry-method dl dd img {
+  background-color: #FFF; }
+
+.purchase-complete .entry-method dl dd .button {
+  margin: 0 auto;
+  width: auto;
+  max-width: 500px; }
+
+.purchase-complete .entry-method dl dd p a {
+  padding-right: 20px;
+  position: relative; }
+  .purchase-complete .entry-method dl dd p a:before {
+    right: 0; }
 
 .purchase-complete .button-area {
   margin-top: 40px; }

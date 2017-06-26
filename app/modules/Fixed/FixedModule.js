@@ -31,6 +31,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
  */
 function index(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        res.locals.ticketingSite = process.env.TICKETING_SITE_URL;
         res.render('index/index');
         log('券売機TOPページ表示');
     });
