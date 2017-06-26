@@ -68,10 +68,11 @@ function purchase() {
             showError(res.err.message);
         } else {
             var transactionId = $('input[name=transaction_id]').val();
+            var theaterCode = $('input[name=theater_code]').val();
             // 計測
             collection({
                 client: 'sskts-frontend',
-                label: 'purchaseCompleteConversion',
+                label: 'purchaseCompleteConversion-' + theaterCode,
                 action: 'complete',
                 category: 'purchase',
                 message: '購入完了',
@@ -82,7 +83,7 @@ function purchase() {
                     hitType: 'event',
                     eventCategory: 'purchase',
                     eventAction: 'complete',
-                    eventLabel: 'conversion'
+                    eventLabel: 'conversion-' + theaterCode
                 });
             } catch (err) {
                 console.error(err);

@@ -66,6 +66,27 @@ function showComplete() {
     printDom.show();
     $(window).scrollTop(0);
     printTicket(0, function () {
+        var transactionId = $('input[name=transaction_id]').val();
+        var theaterCode = $('input[name=theater_code]').val();
+        // 計測
+        collection({
+            client: 'sskts-frontend',
+            label: 'inquiryPrintConversion-' + theaterCode,
+            action: 'print',
+            category: 'inquiry',
+            message: '発券完了',
+            transaction: transactionId
+        });
+        try {
+            ga('send', {
+                hitType: 'event',
+                eventCategory: 'inquiry',
+                eventAction: 'print',
+                eventLabel: 'conversion-' + theaterCode
+            });
+        } catch (err) {
+            console.error(err);
+        }
         //step変更
         $('.steps li').removeClass('active');
         $('.steps li:last-child').addClass('active');
