@@ -125,12 +125,15 @@ function createScheduleDom(data) {
             link = '/purchase/fixed.html?id=' + performance.id;
         }
         // 販売ステータス設定
-        var disabled = (performance.attributes.stock_status === '×') ? 'disabled' : '';
+        var status = (performance.attributes.stock_status === 0) ? ' ×' 
+        : (performance.attributes.stock_status <= 10) ? ' △'
+        : '';
+        var disabled = (performance.attributes.stock_status === 0) ? 'disabled' : '';
         performances.push('<li class="button small-button gray-button ' + disabled + '">'+
             '<a href="'+ link +'" class="icon-triangle-02">'+ 
             '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
             '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
-            '<div class="small-text">' + performance.attributes.screen.name.ja + ' ' + performance.attributes.stock_status + '</div>' + 
+            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' + 
             '</a>' +
         '</li>');
     });
