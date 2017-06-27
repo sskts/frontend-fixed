@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 
 ### Fixed
+ - アナリティクスのイベントへ劇場ID追加、カスタムイベントへ劇場ID追加、発券時計測イベント追加
 
 ## 1.5.3 - 2017-06-23
 ### Changed
