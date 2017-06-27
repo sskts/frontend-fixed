@@ -11,11 +11,12 @@
             <dt><%- __('purchase.performances.date') %></dt>
             <dd class="date">
                 <select>
-                    <% for (let i = 0; i < 7; i++) { %>
+                    <% for (let i = 0; i < 3; i++) { %>
                     <% 
                     const date = moment().add(i, 'days');
                     const dateText = (i === 0) ? __('today')
                     : (i === 1) ? __('tomorrow')
+                    : (i === 2) ? __('day_after_tomorrow')
                     : date.format('YYYY年MM月DD日');
                     %>
                     <option value="<%= date.format('YYYYMMDD') %>"><%= dateText %></option>
