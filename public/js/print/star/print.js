@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(function () {
         loadingEnd();
     }).catch(function (errorMsg) {
-        printAlert('プリンターの呼び出しでエラーが発生しました。\n大変お手数ですが係員をお呼びください。\n' + errorMsg);
+        printAlert('プリンターの呼び出しでエラーが発生しました。<br>劇場係員をお呼びください。<br>' + '<div class="small-text">' + errMsg.replace(/\n/g, '<br>') + '</div>');
     });
 });
 
@@ -74,12 +74,12 @@ function printerSend(reservations, cb) {
         loadingEnd();
         cb();
     }).catch(function (errMsg) {
-        printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
+        printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + '<div class="small-text">' + errMsg.replace(/\n/g, '<br>') + '</div>');
         $('body').append('<div class="staff-button"><a href="#"></a></div>');
         $('.staff-button a').on('click', function (event) {
             event.preventDefault();
             modal.close();
-            loadingStart();
+            loadingEnd();
             $('.staff-button').remove();
             printerSend(reservations, cb);
         });
