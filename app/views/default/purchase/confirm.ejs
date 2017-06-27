@@ -123,7 +123,7 @@
     </form>
 <%- include('../layouts/siteSeal') %>
 </div>
-<input type="hidden" name="theater_code" value="<%= purchaseModel.performance.attributes.theater.id %>">
+<input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>
