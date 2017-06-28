@@ -59,12 +59,16 @@ $(function () {
                 qr_str: 'TEST'
             }];
 
-            printerSend(reservations, function () {
-                alert('印刷が完了しました');
+            // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
+            window.starThermalPrint.printReservationArray(reservations).then(function () {
+                loadingEnd();
+            }).catch(function (errMsg) {
+                loadingEnd();
+                alert('印刷に失敗しました\n' + errMsg);
             });
         }).catch(function (errorMsg) {
             loadingEnd();
-            alert('プリンターの呼び出しでエラーが発生しました。\n劇場係員をお呼びください。\n' + errMsg);
+            alert('プリンターの呼び出しでエラーが発生しました。\n' + errMsg);
         });
     });
 });
