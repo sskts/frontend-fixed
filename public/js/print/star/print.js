@@ -3,10 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var machineProperties = JSON.parse(window.localStorage.getItem('config')) || {};
     if (!machineProperties.device_id || !machineProperties.printer) {
         // printAlert('スター精密プリンターのIPアドレスが設定されていません');
+        loadingEnd();
         return;
     }
     // console.log('machineProperties', machineProperties);
-
+    
     // IPを指定して接続(Promiseが返ってくる。失敗してもそのままもう一度実行可能)
     window.starThermalPrint.init({
         ipAddress: machineProperties.printer,
