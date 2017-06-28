@@ -25,7 +25,8 @@
 		"page_ttl": "設定",
 		"read": "端末の情報を設定してください",
 		"next": "設定",
-		"certificate": "上記IPアドレスの証明書は<a class=\"certificate\" href=\"#\" download=\"\">こちら</a>"
+		"certificate": "上記IPアドレスの証明書は<a class=\"certificate\" href=\"#\" download=\"\">こちら</a>",
+		"print": "テスト印刷"
 	},
 	"stop": {
 		"page_ttl": "利用停止",
