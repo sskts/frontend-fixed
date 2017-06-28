@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     loadingStart();
     var machineProperties = JSON.parse(window.localStorage.getItem('config')) || {};
-    if (!machineProperties.device_id) {
-        printAlert('スター精密プリンターのIPアドレスが設定されていません');
+    if (!machineProperties.device_id || !machineProperties.printer) {
+        // printAlert('スター精密プリンターのIPアドレスが設定されていません');
         return;
     }
     // console.log('machineProperties', machineProperties);
