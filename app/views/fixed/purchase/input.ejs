@@ -87,6 +87,7 @@
     </form>
     <input type="hidden" name="price" value="<%= price %>">
     <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
+    <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
 </div>
 
 <%- include('../locales/validation') %>

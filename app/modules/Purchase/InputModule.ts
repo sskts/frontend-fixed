@@ -44,6 +44,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.performance = purchaseModel.performance;
         if (purchaseModel.input !== null) {
             res.locals.input = purchaseModel.input;
         } else {
@@ -124,6 +125,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.performance = purchaseModel.performance;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
 
@@ -226,6 +228,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.gmoShopId = gmoShopId;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.performance = purchaseModel.performance;
             res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
 

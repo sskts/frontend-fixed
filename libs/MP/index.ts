@@ -147,7 +147,7 @@ export interface IPerformance {
             id: string;
             name: ILanguage;
         },
-        stock_status: string;
+        stock_status: number;
         time_end: string;
         time_start: string;
         coa_trailer_time: number;

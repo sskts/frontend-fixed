@@ -25,36 +25,39 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
     var getErrorMsgByReceivedResponse = function (response) {
         var msg = '';
         try {
-            if (!response.traderSuccess || response.traderCode !== '0') {
-                msg += '印刷に失敗しました\n\n';
-                msg += 'traderSuccess:' + response.traderSuccess + '\n';
-                msg += 'TraderCode:' + response.traderCode + '\n';
-                msg += 'TraderStatus:' + response.traderStatus + '\n';
-                msg += 'Status:' + response.status + '\n';
-            }
+            
             if (trader.isOffLine({ traderStatus: response.traderStatus })) {
-                msg += 'プリンターがオフラインです("isOffLine")\n';
+                msg += 'プリンターがオフラインです\n';
             }
             if (trader.isNonRecoverableError({ traderStatus: response.traderStatus })) {
-                msg += 'プリンターに復帰不可能エラーが発生しています("isNonRecoverableError")\n';
+                msg += 'プリンターに復帰不可能エラーが発生しています\n';
             }
             if (response.traderCode === '1100') {
-                msg += 'プリンターまたはご利用端末が通信不能な状態です("traderCode:1100")\n';
+                msg += 'プリンターまたはご利用端末が通信不能な状態です\n';
             }
             if (response.traderCode === '2001') {
-                msg += 'プリンターがビジー状態です("traderCode:2001")\n';
+                msg += 'プリンターがビジー状態です\n';
             }
             if (trader.isHighTemperatureStop({ traderStatus: response.traderStatus })) {
-                msg += '印字ヘッドが高温のため停止しています("isHighTemperatureStop")\n';
+                msg += '印字ヘッドが高温のため停止しています\n';
             }
             if (trader.isAutoCutterError({ traderStatus: response.traderStatus })) {
-                msg += '用紙カッターに異常が起きています("isAutoCutterError")\n';
+                msg += '用紙カッターに異常が起きています\n';
             }
             if (trader.isBlackMarkError({ traderStatus: response.traderStatus })) {
-                msg += 'ブラックマークエラー("isBlackMarkError")\n';
+                msg += 'ブラックマークエラー\n';
+            }
+            if (trader.isCoverOpen({ traderStatus: response.traderStatus })) {
+                msg += 'プリンターカバーが開いています\n';
             }
             if (trader.isPaperEnd({ traderStatus: response.traderStatus })) {
-                msg += '用紙切れです("isPaperEnd")\n';
+                msg += '用紙切れです\n';
+            }
+            if (!response.traderSuccess || response.traderCode !== '0') {
+                msg += '[traderSuccess:' + response.traderSuccess + ', ';
+                msg += 'TraderCode:' + response.traderCode + ', ';
+                msg += 'TraderStatus:' + response.traderStatus + ', ';
+                msg += 'Status:' + response.status + ']';
             }
         } catch (e) {
             msg = e.message;
@@ -382,7 +385,7 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
 
                 // 印刷命令失敗処理 (ajax:errorの意味であって印刷のエラーで着火するものではない)
                 trader.onError = function (response) {
-                    var errorMsg = 'プリンターとの通信に失敗しました [' + trader.url + '] ErrorStatus:' + response.status + ' ResponseText:' + response.responseText;
+                    var errorMsg = 'プリンターとの通信に失敗しました\n[' + trader.url + ', ErrorStatus:' + response.status + ', ResponseText:' + response.responseText + ']';
                     console.log('StarWebPRNT: ' + errorMsg);
                     reject(errorMsg);
                 };

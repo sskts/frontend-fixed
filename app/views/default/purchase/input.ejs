@@ -162,6 +162,7 @@
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">
+    <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
 <%- include('../layouts/siteSeal') %>
 </div>
 

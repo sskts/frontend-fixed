@@ -25,6 +25,52 @@ $(function () {
         $(this).attr('download', value + '.cer');
         $(this).attr('href', '/cer/' + value + '.cer');
     });
+
+    $(document).on('click', '.print-button a', function (event) {
+        event.preventDefault();
+        var data = localStorage.getItem('config');
+        window.config = JSON.parse(data);
+        if (!config) {
+            alert('設定が保存されていません。');
+
+            return;
+        }
+        loadingStart();
+        // 初期化
+        window.starThermalPrint.init({
+            ipAddress: config.printer,
+            deviceId: config.device_id,
+            timeout: 10000
+        }).then(function () {
+            // 印刷
+            var zp = function (num) { return (parseInt(num, 10) < 10) ? '0' + num : num; };
+            var dateObj = new Date();
+            var reservations = [{
+                reserve_no: '0000',
+                film_name_ja: 'テスト',
+                film_name_en: 'TEST',
+                theater_name: 'テスト劇場',
+                screen_name: 'テストスクリーン',
+                performance_day: dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()),
+                performance_start_time: zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()),
+                seat_code: 'Ａ－１',
+                ticket_name: 'テスト',
+                ticket_sale_price: '0',
+                qr_str: 'TEST'
+            }];
+
+            // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
+            window.starThermalPrint.printReservationArray(reservations).then(function () {
+                loadingEnd();
+            }).catch(function (errMsg) {
+                loadingEnd();
+                alert('印刷に失敗しました\n' + errMsg);
+            });
+        }).catch(function (errorMsg) {
+            loadingEnd();
+            alert('プリンターの呼び出しでエラーが発生しました。\n' + errMsg);
+        });
+    });
 });
 
 /**

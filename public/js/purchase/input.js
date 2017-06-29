@@ -69,13 +69,16 @@ function pageInit() {
 
     if ($('input[name=gmo_error]').val()) {
         // 計測 ※GMOエラーはコードのみ。詳細は送らない。
+        var theaterCode = $('input[name=theater_code]').val();
+        var gmoErrorMessage = $('input[name=gmo_error_message]').val();
+        var transactionId = $('input[name=transaction_id]').val();
         collection({
             client: 'sskts-frontend',
-            label: 'GMOErrorMessage',
+            label: 'GMOErrorMessage-' + theaterCode,
             action: 'error',
             category: 'GMO',
-            message: $('input[name=gmo_error_message]').val(),
-            transaction: $('input[name=transaction_id]').val()
+            message: gmoErrorMessage,
+            transaction: transactionId
         });
         var msg = $('input[name=gmo_error]').val();
         var target = $('.modal[data-modal=creditcard_alert]');

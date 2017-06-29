@@ -1,12 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
     loadingStart();
     var machineProperties = JSON.parse(window.localStorage.getItem('config')) || {};
-    if (!machineProperties.device_id) {
-        printAlert('スター精密プリンターのIPアドレスが設定されていません');
+    if (!machineProperties.device_id || !machineProperties.printer) {
+        // printAlert('スター精密プリンターのIPアドレスが設定されていません');
+        loadingEnd();
         return;
     }
     // console.log('machineProperties', machineProperties);
-
+    
     // IPを指定して接続(Promiseが返ってくる。失敗してもそのままもう一度実行可能)
     window.starThermalPrint.init({
         ipAddress: machineProperties.printer,
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }).then(function () {
         loadingEnd();
     }).catch(function (errorMsg) {
-        printAlert('プリンターの呼び出しでエラーが発生しました。\n大変お手数ですが係員をお呼びください。\n' + errorMsg);
+        printAlert('プリンターの呼び出しでエラーが発生しました。<br>劇場係員をお呼びください。<br>' + '<div class="small-text">' + errMsg.replace(/\n/g, '<br>') + '</div>');
     });
 });
 
@@ -74,12 +75,12 @@ function printerSend(reservations, cb) {
         loadingEnd();
         cb();
     }).catch(function (errMsg) {
-        printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + errMsg);
+        printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + '<div class="small-text">' + errMsg.replace(/\n/g, '<br>') + '</div>');
         $('body').append('<div class="staff-button"><a href="#"></a></div>');
         $('.staff-button a').on('click', function (event) {
             event.preventDefault();
             modal.close();
-            loadingStart();
+            loadingEnd();
             $('.staff-button').remove();
             printerSend(reservations, cb);
         });
