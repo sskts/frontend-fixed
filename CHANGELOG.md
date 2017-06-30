@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+## 1.6.1 - 2017-06-30
+### Fixed
+ - [券売機] スケジュール選択デザイン修正
 
 ## 1.6.0 - 2017-06-28
 ### Added

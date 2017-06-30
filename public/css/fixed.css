@@ -990,7 +990,7 @@ a {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 5px;
     color: #333; }
-    .purchase-performances .performances li dl strong {
+    .purchase-performances .performances li dl .film-ttl, .purchase-performances .performances li dl .date-ttl {
       display: inline-block;
       width: 100px; }
     .purchase-performances .performances li dl dt {
