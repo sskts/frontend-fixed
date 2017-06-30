@@ -36,13 +36,13 @@ app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.set('layout', 'layouts/layout');
 app.use(locales.setLocale); // 言語
-app.use(UtilModule.setLocals); // viewSet
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../public`)); // staticDir設定
 app.use(maintenance_1.default); // メンテナンスページ
 app.use(express.static(`${__dirname}/../static`)); // staticDir設定
+app.use(UtilModule.setLocals); // viewSet
 app.use(expressValidator()); // バリデーション
 // ムビチケサービス初期化
 MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);

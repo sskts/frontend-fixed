@@ -14,7 +14,7 @@ import * as moment from 'moment';
  * @param {NextFunctiont} next
  * @returns {void}
  */
-export function setLocals(_: Request, res: Response, next: NextFunction): void {
+export function setLocals(req: Request, res: Response, next: NextFunction): void {
     res.locals.escapeHtml = escapeHtml;
     res.locals.formatPrice = formatPrice;
     res.locals.moment = moment;
@@ -22,7 +22,22 @@ export function setLocals(_: Request, res: Response, next: NextFunction): void {
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
     res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
+    // クッキーからアプリ判定
+    res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();
+}
+
+/**
+ * アプリ判定
+ * @memberof Util.UtilModule
+ * @function isApp
+ * @param {Request} req
+ * @returns {boolean}
+ */
+export function isApp(req: Request): boolean {
+    const viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
+
+    return (viewType === 'app');
 }
 
 /**
