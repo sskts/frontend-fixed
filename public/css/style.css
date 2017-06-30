@@ -1415,7 +1415,7 @@ p a {
   padding-bottom: 10px; }
   .purchase-performances .performances li:after {
     display: none; }
-  .purchase-performances .performances li dl strong {
+  .purchase-performances .performances li dl .film-ttl, .purchase-performances .performances li dl .date-ttl {
     display: inline-block;
     width: 100px; }
   .purchase-performances .performances li dl dt {
