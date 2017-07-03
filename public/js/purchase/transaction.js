@@ -40,12 +40,12 @@ function getTransaction(id) {
             if (res.contents === 'access-congestion') {
                 retry();
             }
+            loadingEnd();
         }
     }).fail(function (jqxhr, textStatus, error) {
         $('.error').hide();
         $('.access-congestion').show();
         $('.wrapper-inner').show();
-    }).always(function () {
         loadingEnd();
     });
 }
