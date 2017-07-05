@@ -94,7 +94,7 @@ function index(req, res, next) {
             };
             try {
                 // COA仮予約削除
-                yield COA.ReserveService.delTmpReserve(delTmpReserveIn);
+                yield COA.services.reserve.delTmpReserve(delTmpReserveIn);
                 log('COA仮予約削除');
                 // COAオーソリ削除
                 yield MP.removeCOAAuthorization(removeCOAAuthorizationIn);

@@ -121,7 +121,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 });
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
-                const ticket = await COA.MasterService.mvtkTicketcode({
+                const ticket = await COA.services.master.mvtkTicketcode({
                     theater_code: purchaseModel.performance.attributes.theater.id,
                     kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
                     kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,

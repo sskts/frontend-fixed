@@ -74,7 +74,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             });
             if (transactionId === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MP取引Id取得', transactionId);
-            let stateReserve = await COA.ReserveService.stateReserve({
+            let stateReserve = await COA.services.reserve.stateReserve({
                 theater_code: req.body.theater_code, // 施設コード
                 reserve_num: req.body.reserve_num, // 座席チケット購入番号
                 tel_num: req.body.tel_num // 電話番号
@@ -85,9 +85,9 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 // 本予約して照会情報取得
                 if (req.session.fixed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 if (req.session.fixed.updateReserveIn === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                const updReserve = await COA.ReserveService.updReserve(req.session.fixed.updateReserveIn);
+                const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
-                stateReserve = await COA.ReserveService.stateReserve({
+                stateReserve = await COA.services.reserve.stateReserve({
                     theater_code: req.body.theater_code, // 施設コード
                     reserve_num: req.body.reserve_num, // 座席チケット購入番号
                     tel_num: req.body.tel_num // 電話番号

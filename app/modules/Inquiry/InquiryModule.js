@@ -105,7 +105,7 @@ function auth(req, res, next) {
                 }
                 log('MP取引Id取得', inquiryModel.transactionId);
                 inquiryModel.login = req.body;
-                inquiryModel.stateReserve = yield COA.ReserveService.stateReserve({
+                inquiryModel.stateReserve = yield COA.services.reserve.stateReserve({
                     theater_code: req.body.theater_code,
                     reserve_num: req.body.reserve_num,
                     tel_num: req.body.tel_num // 電話番号

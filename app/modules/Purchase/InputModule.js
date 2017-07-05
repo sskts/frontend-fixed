@@ -196,7 +196,7 @@ function submit(req, res, next) {
                 log('MPメール削除');
             }
             // APIへ移行予定
-            const theater = yield COA.MasterService.theater({
+            const theater = yield COA.services.master.theater({
                 theater_code: purchaseModel.theater.id
             });
             if (process.env.VIEW_TYPE !== 'fixed') {

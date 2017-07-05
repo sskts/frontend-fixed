@@ -69,7 +69,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         const reserveSeats = purchaseModel.reserveSeats;
 
         //COA仮予約削除
-        await COA.ReserveService.delTmpReserve({
+        await COA.services.reserve.delTmpReserve({
             theater_code: performance.attributes.theater.id,
             date_jouei: performance.attributes.day,
             title_code: purchaseModel.performanceCOA.titleCode,

@@ -84,7 +84,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         };
         try {
             // COA仮予約削除
-            await COA.ReserveService.delTmpReserve(delTmpReserveIn);
+            await COA.services.reserve.delTmpReserve(delTmpReserveIn);
             log('COA仮予約削除');
             // COAオーソリ削除
             await MP.removeCOAAuthorization(removeCOAAuthorizationIn);

@@ -140,7 +140,7 @@ function select(req, res, next) {
                     if (input === undefined)
                         continue;
                     // ムビチケチケットコード取得
-                    const ticket = yield COA.MasterService.mvtkTicketcode({
+                    const ticket = yield COA.services.master.mvtkTicketcode({
                         theater_code: purchaseModel.performance.attributes.theater.id,
                         kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
                         kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,

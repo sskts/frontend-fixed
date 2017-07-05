@@ -96,7 +96,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             }
             log('MP取引Id取得', inquiryModel.transactionId);
             inquiryModel.login = req.body;
-            inquiryModel.stateReserve = await COA.ReserveService.stateReserve({
+            inquiryModel.stateReserve = await COA.services.reserve.stateReserve({
                 theater_code: req.body.theater_code, // 施設コード
                 reserve_num: req.body.reserve_num, // 座席チケット購入番号
                 tel_num: req.body.tel_num // 電話番号

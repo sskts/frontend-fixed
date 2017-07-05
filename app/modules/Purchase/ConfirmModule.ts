@@ -244,7 +244,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         };
         if (process.env.VIEW_TYPE === 'fixed') {
             // 本予約に必要な情報を印刷セッションへ
-            const updateReserveIn: COA.ReserveService.IUpdReserveArgs = {
+            const updateReserveIn: COA.services.reserve.IUpdReserveArgs = {
                 theater_code: purchaseModel.performance.attributes.theater.id,
                 date_jouei: purchaseModel.performance.attributes.day,
                 title_code: purchaseModel.performanceCOA.titleCode,

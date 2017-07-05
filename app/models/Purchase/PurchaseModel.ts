@@ -69,7 +69,7 @@ export interface IMvtk {
     /**
      * チケット情報
      */
-    ticket: COA.MasterService.IMvtkTicketcodeResult;
+    ticket: COA.services.master.IMvtkTicketcodeResult;
 }
 
 /**
@@ -130,7 +130,7 @@ export class PurchaseModel {
     /**
      * COA仮予約
      */
-    public reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null;
+    public reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
     /**
      * 予約チケット
      */
@@ -146,7 +146,7 @@ export class PurchaseModel {
     /**
      * COA本予約
      */
-    public updateReserve: COA.ReserveService.IUpdReserveResult | null;
+    public updateReserve: COA.services.reserve.IUpdReserveResult | null;
     /**
      * 取引MP
      */
@@ -190,7 +190,7 @@ export class PurchaseModel {
     /**
      * COA販売可能チケット情報
      */
-    public salesTicketsCOA: COA.ReserveService.ISalesTicketResult[] | null;
+    public salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null;
     /**
      * 完了メールID
      */
@@ -236,11 +236,11 @@ export class PurchaseModel {
     public toSession(): {
         performance: MP.IPerformance | null;
         theater: MP.ITheater | null;
-        reserveSeats: COA.ReserveService.IUpdTmpReserveSeatResult | null;
+        reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
         reserveTickets: MP.IReserveTicket[] | null;
         input: IInput | null;
         gmo: IGMO | null;
-        updateReserve: COA.ReserveService.IUpdReserveResult | null;
+        updateReserve: COA.services.reserve.IUpdReserveResult | null;
         transactionMP: MP.ITransactionStartResult | null;
         transactionGMO: GMO.CreditService.EntryTranResult | null;
         authorizationCOA: MP.IAddCOAAuthorizationResult | null;
@@ -251,7 +251,7 @@ export class PurchaseModel {
         expired: number;
         mvtk: IMvtk[] | null;
         performanceCOA: MP.IPerformanceCOA | null;
-        salesTicketsCOA: COA.ReserveService.ISalesTicketResult[] | null
+        salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null
         completeMailId: string | null
     } {
         return {
