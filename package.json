@@ -20,7 +20,7 @@
     "postversion": "git push origin --tags"
   },
   "dependencies": {
-    "@motionpicture/coa-service": "^3.3.0",
+    "@motionpicture/coa-service": "^3.3.1",
     "@motionpicture/gmo-service": "^2.0.10",
     "@motionpicture/mvtk-service": "^2.0.2",
     "basic-auth": "^1.1.0",
@@ -80,7 +80,7 @@
     "selenium-webdriver": "^3.4.0",
     "snyk": "^1.36.2",
     "supertest": "^3.0.0",
-    "tslint": "^5.4.3",
+    "tslint": "^5.5.0",
     "tslint-microsoft-contrib": "^5.0.1",
     "tsutils": "^2.5.1",
     "typescript": "^2.4.1"
