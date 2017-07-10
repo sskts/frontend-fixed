@@ -230,7 +230,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         }
 
         // MP取引成立
-        await MP.transactionClose({
+        await MP.services.transaction.transactionClose({
             transactionId: purchaseModel.transactionMP.id
         });
         log('MP取引成立');

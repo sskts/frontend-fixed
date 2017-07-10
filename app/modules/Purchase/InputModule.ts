@@ -153,7 +153,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             await addAuthorization(req, res, purchaseModel);
             log('オーソリ追加');
         }
-        await MP.ownersAnonymous({
+        await MP.services.transaction.ownersAnonymous({
             transactionId: purchaseModel.transactionMP.id,
             name_first: purchaseModel.input.first_name_hira,
             name_last: purchaseModel.input.last_name_hira,
@@ -161,18 +161,24 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             email: purchaseModel.input.mail_addr
         });
         log('MP購入者情報登録');
-        await MP.transactionsEnableInquiry({
+        await MP.services.transaction.transactionsEnableInquiry({
             transactionId: purchaseModel.transactionMP.id,
             inquiry_theater: purchaseModel.performance.attributes.theater.id,
             inquiry_id: purchaseModel.reserveSeats.tmp_reserve_num,
             inquiry_pass: purchaseModel.input.tel_num
         });
+        // await MP.services.transaction.transactionsInquiryKey({
+        //     transactionId: purchaseModel.transactionMP.id,
+        //     theater_code: purchaseModel.performance.attributes.theater.id,
+        //     reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
+        //     tel: purchaseModel.input.tel_num
+        // });
         log('MP照会情報登録');
         const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
             return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
         });
         if (purchaseModel.completeMailId !== null) {
-            await MP.removeEmail({
+            await MP.services.transaction.removeEmail({
                 transactionId: purchaseModel.transactionMP.id,
                 emailId: purchaseModel.completeMailId
             });
@@ -197,7 +203,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 layout: false
             };
             const emailTemplate = await UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
-            purchaseModel.completeMailId = await MP.addEmail({
+            purchaseModel.completeMailId = await MP.services.transaction.addEmail({
                 transactionId: purchaseModel.transactionMP.id,
                 from: 'noreply@ticket-cinemasunshine.com',
                 to: purchaseModel.input.mail_addr,
@@ -303,7 +309,7 @@ async function addAuthorization(req: Request, res: Response, purchaseModel: Purc
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ追加
-    purchaseModel.authorizationGMO = await MP.addGMOAuthorization({
+    purchaseModel.authorizationGMO = await MP.services.transaction.addGMOAuthorization({
         transaction: purchaseModel.transactionMP,
         orderId: purchaseModel.orderId,
         amount: amount,
@@ -343,7 +349,7 @@ async function removeAuthorization(purchaseModel: PurchaseSession.PurchaseModel)
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ削除
-    await MP.removeGMOAuthorization({
+    await MP.services.transaction.removeGMOAuthorization({
         transactionId: purchaseModel.transactionMP.id,
         gmoAuthorizationId: purchaseModel.authorizationGMO.id
     });

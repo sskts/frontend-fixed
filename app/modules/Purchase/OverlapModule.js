@@ -38,7 +38,7 @@ function index(req, res, next) {
             if (purchaseModel.performance === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //パフォーマンス取得
-            const result = yield MP.getPerformance(req.params.id);
+            const result = yield MP.services.performance.getPerformance(req.params.id);
             res.locals.performances = {
                 after: result,
                 before: purchaseModel.performance
@@ -94,7 +94,7 @@ function newReserve(req, res, next) {
             });
             log('COA仮予約削除');
             // COAオーソリ削除
-            yield MP.removeCOAAuthorization({
+            yield MP.services.transaction.removeCOAAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });

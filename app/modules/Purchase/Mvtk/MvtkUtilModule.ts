@@ -42,14 +42,14 @@ export function getSiteCode(id: string): string {
  * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
+ * @returns {{ tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
  */
 export function createMvtkInfo(
-    reserveTickets: MP.IReserveTicket[],
+    reserveTickets: MP.services.transaction.IReserveTicket[],
     mvtkInfo: PurchaseSession.IMvtk[]
-): { tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] } {
-    const seats: MP.IMvtkSeat[] = [];
-    const tickets: MP.IMvtkPurchaseNoInfo[] = [];
+): { tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.services.transaction.IMvtkSeat[] } {
+    const seats: MP.services.transaction.IMvtkSeat[] = [];
+    const tickets: MP.services.transaction.IMvtkPurchaseNoInfo[] = [];
     for (const reserveTicket of reserveTickets) {
         const mvtk = mvtkInfo.find((value) => {
             return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);

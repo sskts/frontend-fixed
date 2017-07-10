@@ -53,7 +53,7 @@ function start(req, res) {
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
-            const performance = yield MP.getPerformance(req.body.id);
+            const performance = yield MP.services.performance.getPerformance(req.body.id);
             // 開始可能日判定
             if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
                 throw ErrorUtilModule.ERROR_ACCESS;
@@ -74,7 +74,7 @@ function start(req, res) {
             // 取引開始
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').unix();
-            purchaseModel.transactionMP = yield MP.transactionStart({
+            purchaseModel.transactionMP = yield MP.services.transaction.transactionStart({
                 expires_at: purchaseModel.expired
             });
             log('MP取引開始', purchaseModel.transactionMP.attributes.owners);

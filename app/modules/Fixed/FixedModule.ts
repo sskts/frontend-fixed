@@ -36,7 +36,7 @@ export async function index(_: Request, res: Response): Promise<void> {
  */
 export async function setting(_: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        res.locals.theaters = await MP.getTheaters();
+        res.locals.theaters = await MP.services.theater.getTheaters();
         res.render('setting/index');
     } catch (err) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
@@ -67,11 +67,16 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            const transactionId = await MP.makeInquiry({
+            const transactionId = await MP.services.transaction.makeInquiry({
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
             });
+            // const transactionId = await MP.services.transaction.findByInquiryKey({
+            //     theater_code: req.body.theater_code, // 施設コード
+            //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
+            //     tel: req.body.tel_num // 電話番号
+            // });
             if (transactionId === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MP取引Id取得', transactionId);
             let stateReserve = await COA.services.reserve.stateReserve({
@@ -105,7 +110,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 timeBegin: stateReserve.time_begin
             });
             log('パフォーマンスID取得', performanceId);
-            const performance = await MP.getPerformance(performanceId);
+            const performance = await MP.services.performance.getPerformance(performanceId);
             if (performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MPパフォーマンス取得');
             // 印刷用

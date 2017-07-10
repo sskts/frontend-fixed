@@ -127,24 +127,27 @@ function select(req, res, next) {
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, reserveTickets);
                 log('券種検証');
                 // COAオーソリ削除
-                yield MP.removeCOAAuthorization({
+                yield MP.services.transaction.removeCOAAuthorization({
                     transactionId: purchaseModel.transactionMP.id,
                     coaAuthorizationId: purchaseModel.authorizationCOA.id
                 });
                 log('MPCOAオーソリ削除');
                 //COAオーソリ追加
-                purchaseModel.authorizationCOA = yield MP.addCOAAuthorization({
+                purchaseModel.authorizationCOA = yield MP.services.transaction.addCOAAuthorization({
                     transaction: purchaseModel.transactionMP,
                     reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                     salesTicketResults: purchaseModel.reserveTickets,
                     performance: purchaseModel.performance,
-                    performanceCOA: purchaseModel.performanceCOA,
+                    theaterCode: purchaseModel.performanceCOA.theaterCode,
+                    titleCode: purchaseModel.performanceCOA.titleCode,
+                    titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                    screenCode: purchaseModel.performanceCOA.screenCode,
                     price: purchaseModel.getPrice()
                 });
                 log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
                 if (purchaseModel.authorizationMvtk !== null) {
                     // ムビチケオーソリ削除
-                    yield MP.removeMvtkAuthorization({
+                    yield MP.services.transaction.removeMvtkAuthorization({
                         transactionId: purchaseModel.transactionMP.id,
                         mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
                     });
@@ -164,7 +167,7 @@ function select(req, res, next) {
                         day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
                         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
                     };
-                    purchaseModel.authorizationMvtk = yield MP.addMvtkauthorization({
+                    purchaseModel.authorizationMvtk = yield MP.services.transaction.addMvtkauthorization({
                         transaction: purchaseModel.transactionMP,
                         amount: purchaseModel.getMvtkPrice(),
                         kgygishCd: MvtkUtilModule.COMPANY_CODE,

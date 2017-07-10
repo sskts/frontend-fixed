@@ -32,7 +32,7 @@ export class InquiryModel {
     /**
      * パフォーマンス
      */
-    public performance: MP.IPerformance | null;
+    public performance: MP.services.performance.IPerformance | null;
     /**
      * COA照会情報
      */
@@ -64,7 +64,7 @@ export class InquiryModel {
      */
     public toSession(): {
         transactionId: string | null,
-        performance: MP.IPerformance | null,
+        performance: MP.services.performance.IPerformance | null,
         stateReserve: COA.services.reserve.IStateReserveResult | null,
         login: ILogin | null
     } {

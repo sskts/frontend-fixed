@@ -47,7 +47,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
 
-        const performance = await MP.getPerformance(req.body.id);
+        const performance = await MP.services.performance.getPerformance(req.body.id);
         // 開始可能日判定
         if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -71,7 +71,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         // 取引開始
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').unix();
-        purchaseModel.transactionMP = await MP.transactionStart({
+        purchaseModel.transactionMP = await MP.services.transaction.transactionStart({
             expires_at: purchaseModel.expired
         });
         log('MP取引開始', purchaseModel.transactionMP.attributes.owners);

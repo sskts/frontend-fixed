@@ -47,7 +47,7 @@ exports.index = index;
 function setting(_, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            res.locals.theaters = yield MP.getTheaters();
+            res.locals.theaters = yield MP.services.theater.getTheaters();
             res.render('setting/index');
         }
         catch (err) {
@@ -82,11 +82,16 @@ function getInquiryData(req, res) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                const transactionId = yield MP.makeInquiry({
+                const transactionId = yield MP.services.transaction.makeInquiry({
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
                     inquiry_pass: req.body.tel_num // 電話番号
                 });
+                // const transactionId = await MP.services.transaction.findByInquiryKey({
+                //     theater_code: req.body.theater_code, // 施設コード
+                //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
+                //     tel: req.body.tel_num // 電話番号
+                // });
                 if (transactionId === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('MP取引Id取得', transactionId);
@@ -122,7 +127,7 @@ function getInquiryData(req, res) {
                     timeBegin: stateReserve.time_begin
                 });
                 log('パフォーマンスID取得', performanceId);
-                const performance = yield MP.getPerformance(performanceId);
+                const performance = yield MP.services.performance.getPerformance(performanceId);
                 if (performance === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('MPパフォーマンス取得');

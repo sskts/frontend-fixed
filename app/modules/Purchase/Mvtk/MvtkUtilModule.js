@@ -36,7 +36,7 @@ exports.getSiteCode = getSiteCode;
  * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {{ tickets: MP.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
+ * @returns {{ tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
  */
 function createMvtkInfo(reserveTickets, mvtkInfo) {
     const seats = [];

@@ -60,7 +60,7 @@ function index(req, res, next) {
                 const alterTranResult = yield GMO.CreditService.alterTran(alterTranIn);
                 log('GMOオーソリ取消', alterTranResult);
                 // GMOオーソリ削除
-                yield MP.removeGMOAuthorization(removeGMOAuthorizationIn);
+                yield MP.services.transaction.removeGMOAuthorization(removeGMOAuthorizationIn);
                 log('MPGMOオーソリ削除');
             }
             catch (err) {
@@ -97,7 +97,7 @@ function index(req, res, next) {
                 yield COA.services.reserve.delTmpReserve(delTmpReserveIn);
                 log('COA仮予約削除');
                 // COAオーソリ削除
-                yield MP.removeCOAAuthorization(removeCOAAuthorizationIn);
+                yield MP.services.transaction.removeCOAAuthorization(removeCOAAuthorizationIn);
                 log('MPCOAオーソリ削除');
             }
             catch (err) {
@@ -112,7 +112,7 @@ function index(req, res, next) {
         delete req.session.mvtk;
         delete req.session.complete;
         if (process.env.VIEW_TYPE === undefined) {
-            res.locals.theaters = yield MP.getTheaters();
+            res.locals.theaters = yield MP.services.theater.getTheaters();
         }
         res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
         res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
@@ -131,7 +131,7 @@ exports.index = index;
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield MP.getPerformances(req.body.theater, req.body.day);
+            const result = yield MP.services.performance.getPerformances(req.body.theater, req.body.day);
             res.json({ error: null, result: result });
         }
         catch (err) {

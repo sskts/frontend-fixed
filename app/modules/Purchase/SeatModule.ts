@@ -34,21 +34,30 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         }
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        purchaseModel.performance = await MP.getPerformance(req.params.id);
+        purchaseModel.performance = await MP.services.performance.getPerformance(req.params.id);
         log('パフォーマンス取得');
 
-        purchaseModel.theater = await MP.getTheater(purchaseModel.performance.attributes.theater.id);
+        purchaseModel.theater = await MP.services.theater.getTheater(purchaseModel.performance.attributes.theater.id);
         log('劇場詳細取得');
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         const website = purchaseModel.theater.attributes.websites.find((value) => {
             return (value.group === 'PORTAL');
         });
 
-        purchaseModel.performanceCOA = await MP.getPerformanceCOA(
-            purchaseModel.performance.attributes.theater.id,
-            purchaseModel.performance.attributes.screen.id,
-            purchaseModel.performance.attributes.film.id
-        );
+        const screen = await MP.services.screen.getScreen(purchaseModel.performance.attributes.screen.id);
+        log('スクリーン取得');
+        const film = await MP.services.film.getFilm(purchaseModel.performance.attributes.film.id);
+        log('作品取得');
+
+        purchaseModel.performanceCOA = {
+            theaterCode: purchaseModel.theater.id,
+            screenCode: screen.attributes.coa_screen_code,
+            titleCode: film.attributes.coa_title_code,
+            titleBranchNum: film.attributes.coa_title_branch_num,
+            flgMvtkUse: film.attributes.flg_mvtk_use,
+            dateMvtkBegin: film.attributes.date_mvtk_begin,
+            kbnJoueihousiki: film.attributes.kbn_joueihousiki
+        };
         log('COAパフォーマンス取得');
 
         res.locals.performance = purchaseModel.performance;
@@ -145,6 +154,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -166,7 +176,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         });
         log('COA仮予約削除');
         // COAオーソリ削除
-        await MP.removeCOAAuthorization({
+        await MP.services.transaction.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
@@ -232,12 +242,15 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         price += tmpReserveTicket.sale_price;
     }
     //COAオーソリ追加
-    const coaAuthorizationResult = await MP.addCOAAuthorization({
+    const coaAuthorizationResult = await MP.services.transaction.addCOAAuthorization({
         transaction: purchaseModel.transactionMP,
         reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
         salesTicketResults: tmpReserveTickets,
         performance: performance,
-        performanceCOA: purchaseModel.performanceCOA,
+        theaterCode: purchaseModel.performanceCOA.theaterCode,
+        titleCode: purchaseModel.performanceCOA.titleCode,
+        titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+        screenCode: purchaseModel.performanceCOA.screenCode,
         price: price
     });
     log('MPCOAオーソリ追加', coaAuthorizationResult);

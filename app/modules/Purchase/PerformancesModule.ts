@@ -52,7 +52,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             const alterTranResult = await GMO.CreditService.alterTran(alterTranIn);
             log('GMOオーソリ取消', alterTranResult);
             // GMOオーソリ削除
-            await MP.removeGMOAuthorization(removeGMOAuthorizationIn);
+            await MP.services.transaction.removeGMOAuthorization(removeGMOAuthorizationIn);
             log('MPGMOオーソリ削除');
         } catch (err) {
             logger.error('SSKTS-APP:FixedModule.index', {
@@ -87,7 +87,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             await COA.services.reserve.delTmpReserve(delTmpReserveIn);
             log('COA仮予約削除');
             // COAオーソリ削除
-            await MP.removeCOAAuthorization(removeCOAAuthorizationIn);
+            await MP.services.transaction.removeCOAAuthorization(removeCOAAuthorizationIn);
             log('MPCOAオーソリ削除');
         } catch (err) {
             logger.error('SSKTS-APP:FixedModule.index', {
@@ -103,7 +103,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
     delete req.session.complete;
 
     if (process.env.VIEW_TYPE === undefined) {
-        res.locals.theaters = await MP.getTheaters();
+        res.locals.theaters = await MP.services.theater.getTheaters();
     }
     res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
     res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
@@ -121,7 +121,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
-        const result = await MP.getPerformances(req.body.theater, req.body.day);
+        const result = await MP.services.performance.getPerformances(req.body.theater, req.body.day);
         res.json({ error: null, result: result });
     } catch (err) {
         res.json({ error: err, result: null });

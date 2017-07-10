@@ -56,7 +56,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
  * @returns {Promise<string>}
  */
 async function getPortalTheaterSite(id: string): Promise<string> {
-    const theater = await MP.getTheater(id);
+    const theater = await MP.services.theater.getTheater(id);
     const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
     if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
 
@@ -79,11 +79,16 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            inquiryModel.transactionId = await MP.makeInquiry({
+            inquiryModel.transactionId = await MP.services.transaction.makeInquiry({
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
             });
+            // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
+            //     theater_code: req.body.theater_code, // 施設コード
+            //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
+            //     tel: req.body.tel_num // 電話番号
+            // });
             if (inquiryModel.transactionId === null) {
                 res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
                 res.locals.theaterCode = req.body.theater_code;
@@ -112,7 +117,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 timeBegin: inquiryModel.stateReserve.time_begin
             });
             log('パフォーマンスID取得', performanceId);
-            inquiryModel.performance = await MP.getPerformance(performanceId);
+            inquiryModel.performance = await MP.services.performance.getPerformance(performanceId);
             log('MPパフォーマンス取得');
             req.session.inquiry = inquiryModel.toSession();
             //購入者内容確認へ

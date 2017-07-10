@@ -108,6 +108,20 @@ export interface IValidTicketResult {
 }
 
 /**
+ * COA
+ * @interface IPerformanceCOA
+ */
+export interface IPerformanceCOA {
+    theaterCode: string;
+    screenCode: string;
+    titleCode: string;
+    titleBranchNum: string;
+    flgMvtkUse: string;
+    dateMvtkBegin: string;
+    kbnJoueihousiki: string;
+}
+
+/**
  * 購入セッション
  * @class PurchaseModel
  */
@@ -122,11 +136,11 @@ export class PurchaseModel {
     /**
      * パフォーマンス
      */
-    public performance: MP.IPerformance | null;
+    public performance: MP.services.performance.IPerformance | null;
     /**
      * 劇場
      */
-    public theater: MP.ITheater | null;
+    public theater: MP.services.theater.ITheater | null;
     /**
      * COA仮予約
      */
@@ -134,7 +148,7 @@ export class PurchaseModel {
     /**
      * 予約チケット
      */
-    public reserveTickets: MP.IReserveTicket[] | null;
+    public reserveTickets: MP.services.transaction.IReserveTicket[] | null;
     /**
      * 入力情報
      */
@@ -150,7 +164,7 @@ export class PurchaseModel {
     /**
      * 取引MP
      */
-    public transactionMP: MP.ITransactionStartResult | null;
+    public transactionMP: MP.services.transaction.ITransactionStartResult | null;
     /**
      * 取引GMO
      */
@@ -158,15 +172,15 @@ export class PurchaseModel {
     /**
      * COAオーソリ
      */
-    public authorizationCOA: MP.IAddCOAAuthorizationResult | null;
+    public authorizationCOA: MP.services.transaction.IAddCOAAuthorizationResult | null;
     /**
      * ムビチケオーソリ
      */
-    public authorizationMvtk: MP.IAddMvtkAuthorizationResult | null;
+    public authorizationMvtk: MP.services.transaction.IAddMvtkAuthorizationResult | null;
     /**
      * GMOオーソリ
      */
-    public authorizationGMO: MP.IAddGMOAuthorizationResult | null;
+    public authorizationGMO: MP.services.transaction.IAddGMOAuthorizationResult | null;
     /**
      * GMOオーソリ回数
      */
@@ -186,7 +200,7 @@ export class PurchaseModel {
     /**
      * CAO情報
      */
-    public performanceCOA: MP.IPerformanceCOA | null;
+    public performanceCOA: IPerformanceCOA | null;
     /**
      * COA販売可能チケット情報
      */
@@ -234,23 +248,23 @@ export class PurchaseModel {
      * @returns {Object} result
      */
     public toSession(): {
-        performance: MP.IPerformance | null;
-        theater: MP.ITheater | null;
+        performance: MP.services.performance.IPerformance | null;
+        theater: MP.services.theater.ITheater | null;
         reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
-        reserveTickets: MP.IReserveTicket[] | null;
+        reserveTickets: MP.services.transaction.IReserveTicket[] | null;
         input: IInput | null;
         gmo: IGMO | null;
         updateReserve: COA.services.reserve.IUpdReserveResult | null;
-        transactionMP: MP.ITransactionStartResult | null;
+        transactionMP: MP.services.transaction.ITransactionStartResult | null;
         transactionGMO: GMO.CreditService.EntryTranResult | null;
-        authorizationCOA: MP.IAddCOAAuthorizationResult | null;
-        authorizationMvtk: MP.IAddMvtkAuthorizationResult | null;
-        authorizationGMO: MP.IAddGMOAuthorizationResult | null;
+        authorizationCOA: MP.services.transaction.IAddCOAAuthorizationResult | null;
+        authorizationMvtk: MP.services.transaction.IAddMvtkAuthorizationResult | null;
+        authorizationGMO: MP.services.transaction.IAddGMOAuthorizationResult | null;
         authorizationCountGMO: number;
         orderId: string | null;
         expired: number;
         mvtk: IMvtk[] | null;
-        performanceCOA: MP.IPerformanceCOA | null;
+        performanceCOA: IPerformanceCOA | null;
         salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null
         completeMailId: string | null
     } {

@@ -64,7 +64,7 @@ exports.login = login;
  */
 function getPortalTheaterSite(id) {
     return __awaiter(this, void 0, void 0, function* () {
-        const theater = yield MP.getTheater(id);
+        const theater = yield MP.services.theater.getTheater(id);
         const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
         if (website === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -89,11 +89,16 @@ function auth(req, res, next) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                inquiryModel.transactionId = yield MP.makeInquiry({
+                inquiryModel.transactionId = yield MP.services.transaction.makeInquiry({
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
                     inquiry_pass: req.body.tel_num // 電話番号
                 });
+                // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
+                //     theater_code: req.body.theater_code, // 施設コード
+                //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
+                //     tel: req.body.tel_num // 電話番号
+                // });
                 if (inquiryModel.transactionId === null) {
                     res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
                     res.locals.theaterCode = req.body.theater_code;
@@ -122,7 +127,7 @@ function auth(req, res, next) {
                     timeBegin: inquiryModel.stateReserve.time_begin
                 });
                 log('パフォーマンスID取得', performanceId);
-                inquiryModel.performance = yield MP.getPerformance(performanceId);
+                inquiryModel.performance = yield MP.services.performance.getPerformance(performanceId);
                 log('MPパフォーマンス取得');
                 req.session.inquiry = inquiryModel.toSession();
                 //購入者内容確認へ

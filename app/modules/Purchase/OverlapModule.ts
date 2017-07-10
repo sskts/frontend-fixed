@@ -28,7 +28,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //パフォーマンス取得
-        const result = await MP.getPerformance(req.params.id);
+        const result = await MP.services.performance.getPerformance(req.params.id);
         res.locals.performances = {
             after: result,
             before: purchaseModel.performance
@@ -80,7 +80,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         log('COA仮予約削除');
 
         // COAオーソリ削除
-        await MP.removeCOAAuthorization({
+        await MP.services.transaction.removeCOAAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });

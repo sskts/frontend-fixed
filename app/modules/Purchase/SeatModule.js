@@ -47,16 +47,28 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            purchaseModel.performance = yield MP.getPerformance(req.params.id);
+            purchaseModel.performance = yield MP.services.performance.getPerformance(req.params.id);
             log('パフォーマンス取得');
-            purchaseModel.theater = yield MP.getTheater(purchaseModel.performance.attributes.theater.id);
+            purchaseModel.theater = yield MP.services.theater.getTheater(purchaseModel.performance.attributes.theater.id);
             log('劇場詳細取得');
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const website = purchaseModel.theater.attributes.websites.find((value) => {
                 return (value.group === 'PORTAL');
             });
-            purchaseModel.performanceCOA = yield MP.getPerformanceCOA(purchaseModel.performance.attributes.theater.id, purchaseModel.performance.attributes.screen.id, purchaseModel.performance.attributes.film.id);
+            const screen = yield MP.services.screen.getScreen(purchaseModel.performance.attributes.screen.id);
+            log('スクリーン取得');
+            const film = yield MP.services.film.getFilm(purchaseModel.performance.attributes.film.id);
+            log('作品取得');
+            purchaseModel.performanceCOA = {
+                theaterCode: purchaseModel.theater.id,
+                screenCode: screen.attributes.coa_screen_code,
+                titleCode: film.attributes.coa_title_code,
+                titleBranchNum: film.attributes.coa_title_branch_num,
+                flgMvtkUse: film.attributes.flg_mvtk_use,
+                dateMvtkBegin: film.attributes.date_mvtk_begin,
+                kbnJoueihousiki: film.attributes.kbn_joueihousiki
+            };
             log('COAパフォーマンス取得');
             res.locals.performance = purchaseModel.performance;
             res.locals.performanceCOA = purchaseModel.performanceCOA;
@@ -152,6 +164,7 @@ exports.select = select;
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 function reserve(selectSeats, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
@@ -177,7 +190,7 @@ function reserve(selectSeats, purchaseModel) {
             });
             log('COA仮予約削除');
             // COAオーソリ削除
-            yield MP.removeCOAAuthorization({
+            yield MP.services.transaction.removeCOAAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
@@ -240,12 +253,15 @@ function reserve(selectSeats, purchaseModel) {
             price += tmpReserveTicket.sale_price;
         }
         //COAオーソリ追加
-        const coaAuthorizationResult = yield MP.addCOAAuthorization({
+        const coaAuthorizationResult = yield MP.services.transaction.addCOAAuthorization({
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: tmpReserveTickets,
             performance: performance,
-            performanceCOA: purchaseModel.performanceCOA,
+            theaterCode: purchaseModel.performanceCOA.theaterCode,
+            titleCode: purchaseModel.performanceCOA.titleCode,
+            titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+            screenCode: purchaseModel.performanceCOA.screenCode,
             price: price
         });
         log('MPCOAオーソリ追加', coaAuthorizationResult);

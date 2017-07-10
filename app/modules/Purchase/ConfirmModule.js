@@ -260,7 +260,7 @@ function purchase(req, res) {
                 log('ムビチケ決済');
             }
             // MP取引成立
-            yield MP.transactionClose({
+            yield MP.services.transaction.transactionClose({
                 transactionId: purchaseModel.transactionMP.id
             });
             log('MP取引成立');

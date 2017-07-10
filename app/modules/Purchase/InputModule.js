@@ -170,7 +170,7 @@ function submit(req, res, next) {
                 yield addAuthorization(req, res, purchaseModel);
                 log('オーソリ追加');
             }
-            yield MP.ownersAnonymous({
+            yield MP.services.transaction.ownersAnonymous({
                 transactionId: purchaseModel.transactionMP.id,
                 name_first: purchaseModel.input.first_name_hira,
                 name_last: purchaseModel.input.last_name_hira,
@@ -178,18 +178,24 @@ function submit(req, res, next) {
                 email: purchaseModel.input.mail_addr
             });
             log('MP購入者情報登録');
-            yield MP.transactionsEnableInquiry({
+            yield MP.services.transaction.transactionsEnableInquiry({
                 transactionId: purchaseModel.transactionMP.id,
                 inquiry_theater: purchaseModel.performance.attributes.theater.id,
                 inquiry_id: purchaseModel.reserveSeats.tmp_reserve_num,
                 inquiry_pass: purchaseModel.input.tel_num
             });
+            // await MP.services.transaction.transactionsInquiryKey({
+            //     transactionId: purchaseModel.transactionMP.id,
+            //     theater_code: purchaseModel.performance.attributes.theater.id,
+            //     reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
+            //     tel: purchaseModel.input.tel_num
+            // });
             log('MP照会情報登録');
             const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
                 return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
             });
             if (purchaseModel.completeMailId !== null) {
-                yield MP.removeEmail({
+                yield MP.services.transaction.removeEmail({
                     transactionId: purchaseModel.transactionMP.id,
                     emailId: purchaseModel.completeMailId
                 });
@@ -214,7 +220,7 @@ function submit(req, res, next) {
                     layout: false
                 };
                 const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
-                purchaseModel.completeMailId = yield MP.addEmail({
+                purchaseModel.completeMailId = yield MP.services.transaction.addEmail({
                     transactionId: purchaseModel.transactionMP.id,
                     from: 'noreply@ticket-cinemasunshine.com',
                     to: purchaseModel.input.mail_addr,
@@ -327,7 +333,7 @@ function addAuthorization(req, res, purchaseModel) {
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ追加
-        purchaseModel.authorizationGMO = yield MP.addGMOAuthorization({
+        purchaseModel.authorizationGMO = yield MP.services.transaction.addGMOAuthorization({
             transaction: purchaseModel.transactionMP,
             orderId: purchaseModel.orderId,
             amount: amount,
@@ -373,7 +379,7 @@ function removeAuthorization(purchaseModel) {
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ削除
-        yield MP.removeGMOAuthorization({
+        yield MP.services.transaction.removeGMOAuthorization({
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });

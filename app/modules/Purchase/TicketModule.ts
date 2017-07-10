@@ -100,28 +100,31 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         TicketForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            const reserveTickets: MP.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
+            const reserveTickets: MP.services.transaction.IReserveTicket[] = JSON.parse(req.body.reserve_tickets);
             purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, reserveTickets);
             log('券種検証');
             // COAオーソリ削除
-            await MP.removeCOAAuthorization({
+            await MP.services.transaction.removeCOAAuthorization({
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
             //COAオーソリ追加
-            purchaseModel.authorizationCOA = await MP.addCOAAuthorization({
+            purchaseModel.authorizationCOA = await MP.services.transaction.addCOAAuthorization({
                 transaction: purchaseModel.transactionMP,
                 reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                 salesTicketResults: purchaseModel.reserveTickets,
                 performance: purchaseModel.performance,
-                performanceCOA: purchaseModel.performanceCOA,
+                theaterCode: purchaseModel.performanceCOA.theaterCode,
+                titleCode: purchaseModel.performanceCOA.titleCode,
+                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                screenCode: purchaseModel.performanceCOA.screenCode,
                 price: purchaseModel.getPrice()
             });
             log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
             if (purchaseModel.authorizationMvtk !== null) {
                 // ムビチケオーソリ削除
-                await MP.removeMvtkAuthorization({
+                await MP.services.transaction.removeMvtkAuthorization({
                     transactionId: purchaseModel.transactionMP.id,
                     mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
                 });
@@ -142,7 +145,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
                     time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
                 };
-                purchaseModel.authorizationMvtk = await MP.addMvtkauthorization({
+                purchaseModel.authorizationMvtk = await MP.services.transaction.addMvtkauthorization({
                     transaction: purchaseModel.transactionMP, // 取引情報
                     amount: purchaseModel.getMvtkPrice(), // 合計金額
                     kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
@@ -357,13 +360,13 @@ async function ticketValidation(
     req: Request,
     res: Response,
     purchaseModel: PurchaseSession.PurchaseModel,
-    reserveTickets: MP.IReserveTicket[]
-): Promise<MP.IReserveTicket[]> {
+    reserveTickets: MP.services.transaction.IReserveTicket[]
+): Promise<MP.services.transaction.IReserveTicket[]> {
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.salesTicketsCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-    const result: MP.IReserveTicket[] = [];
+    const result: MP.services.transaction.IReserveTicket[] = [];
     //コアAPI券種取得
     const salesTickets = purchaseModel.salesTicketsCOA;
 
