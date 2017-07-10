@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+### Security
+- packageアップデート
+- @motionpicture/coa-service@^3.4.0に対応。
+- @types/request-promise-native@1.0.6に対応。
+- [express-validator@3.2.1](https://github.com/ctavan/express-validator)に対応。
+
 ## 1.6.1 - 2017-06-30
 ### Fixed
  - [券売機] スケジュール選択デザイン修正
@@ -85,12 +91,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 - 購入完了メールの劇場電話番号を動的に変更
-- packageアップデート
-    - @motionpicture/coa-service ^2.0.10 => ^3.1.0
-    - fs-extra ^2.1.2 => ^3.0.1
 
 ### Fixed
 - tslint修正（disable-next-line:variable-name）
+
+### Security
+- packageアップデート
+- @motionpicture/coa-service@^3.1.0に対応。
+- [fs-extra@^3.0.1](https://github.com/jprichardson/node-fs-extra)に対応。
 
 ## 1.3.3 - 2017-05-23
 ### Fixed

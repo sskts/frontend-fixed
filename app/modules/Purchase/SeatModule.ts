@@ -193,7 +193,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
             title_code: purchaseModel.performanceCOA.titleCode,
             title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
             time_begin: purchaseModel.performance.attributes.time_start
-            // flg_member: COA.services.reserve.NON_MEMBER
+            // flg_member: COA.services.reserve.FlgMember.NonMember
         });
         log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
     }
@@ -312,7 +312,7 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
                 title_code: req.body.title_code,
                 title_branch_num: req.body.title_branch_num,
                 time_begin: req.body.time_begin
-                // flg_member: COA.services.reserve.NON_MEMBER
+                // flg_member: COA.services.reserve.FlgMember.NonMember
             });
             log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
             req.session.purchase = purchaseModel.toSession();
