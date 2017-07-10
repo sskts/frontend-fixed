@@ -203,7 +203,7 @@ function reserve(selectSeats, purchaseModel) {
                 title_code: purchaseModel.performanceCOA.titleCode,
                 title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
                 time_begin: purchaseModel.performance.attributes.time_start
-                // screen_code: performance.screen.id
+                // flg_member: COA.services.reserve.FlgMember.NonMember
             });
             log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
         }
@@ -328,7 +328,7 @@ function saveSalesTickets(req, res) {
                     title_code: req.body.title_code,
                     title_branch_num: req.body.title_branch_num,
                     time_begin: req.body.time_begin
-                    // screen_code: req.body.screen_code
+                    // flg_member: COA.services.reserve.FlgMember.NonMember
                 });
                 log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
                 req.session.purchase = purchaseModel.toSession();
