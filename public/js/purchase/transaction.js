@@ -84,3 +84,13 @@ function isSupportBrowser() {
     }
     return result;
 }
+
+/**
+ * ログイン
+ * @function login
+ * @param {string} token 
+ * @returns {void}
+ */
+function login(token) {
+    alert(token);
+}
