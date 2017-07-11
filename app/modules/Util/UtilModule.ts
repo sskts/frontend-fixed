@@ -2,9 +2,10 @@
  * 共通
  * @namespace Util.UtilModule
  */
-
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
+import * as MP from '../../../libs/MP';
+import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
@@ -161,6 +162,44 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
             resolve(html);
         });
     });
+}
+
+/**
+ * アクセストークン取得
+ * @function getAccessToken
+ * @param {Reqest} req
+ * @returns {Promise<string>}
+ */
+export async function getAccessToken(req: Request): Promise<string> {
+    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+    let oauth: MP.services.oauth.IOauthTokenResult;
+    if (req.session.oauth === undefined) {
+        // sessionなし
+        oauth = await MP.services.oauth.oauthToken({
+            grant_type: MP.services.oauth.GrantType.clientCredentials,
+            scopes: ['admin'],
+            client_id: 'sskts-frontend',
+            state: req.sessionID
+        });
+        req.session.oauth = oauth;
+
+        return oauth.access_token;
+    }
+    if (req.session.oauth.expires_in < moment().unix()) {
+        // 期限切れ
+        oauth = await MP.services.oauth.oauthToken({
+            grant_type: MP.services.oauth.GrantType.clientCredentials,
+            scopes: ['admin'],
+            client_id: 'sskts-frontend',
+            state: req.sessionID
+        });
+        req.session.oauth = oauth;
+
+        return oauth.access_token;
+    }
+    oauth = (<MP.services.oauth.IOauthTokenResult>req.session.oauth);
+
+    return oauth.access_token;
 }
 
 /**

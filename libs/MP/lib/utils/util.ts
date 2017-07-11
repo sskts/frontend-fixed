@@ -5,6 +5,23 @@ import logger from '../../../../app/middlewares/logger';
 const log = debug('SSKTS:MP-util');
 
 /**
+ * 言語
+ * @interface ILanguage
+ */
+export interface ILanguage {
+    en: string;
+    ja: string;
+}
+
+/**
+ * 認証
+ * @interface IAuth
+ */
+export interface IAuth {
+    accessToken: string;
+}
+
+/**
  * エンドポイント
  * @const endPoint
  */

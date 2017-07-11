@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const oauth = require("../services/oauth");
 const util = require("../utils/util");
 const log = debug('SSKTS:services.film');
 /**
@@ -23,23 +22,21 @@ const log = debug('SSKTS:services.film');
  * @desc IDで作品情報を取得します。
  * @memberof services.film
  * @function getFilm
- * @param {GetFilmArgs} args
+ * @param {IGetFilmArgs} args
  * @requires {Promise<IFilm>}
  */
-function getFilm(id) {
+function getFilm(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('getFilm args:', id);
         const response = yield request.get({
-            url: `${util.endPoint}/films/${id}`,
-            auth: { bearer: yield oauth.oauthToken() },
-            body: {},
+            url: `${util.endPoint}/films/${args.filmId}`,
+            auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: util.timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            util.errorHandler({}, response);
+            util.errorHandler(args, response);
         log('getFilm:', response.body.data);
         return response.body.data;
     });

@@ -34,19 +34,32 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         }
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        purchaseModel.performance = await MP.services.performance.getPerformance(req.params.id);
+        const accessToken = await UtilModule.getAccessToken(req);
+        purchaseModel.performance = await MP.services.performance.getPerformance({
+            accessToken: accessToken,
+            performanceId: req.params.id
+        });
         log('パフォーマンス取得');
 
-        purchaseModel.theater = await MP.services.theater.getTheater(purchaseModel.performance.attributes.theater.id);
+        purchaseModel.theater = await MP.services.theater.getTheater({
+            accessToken: accessToken,
+            theaterId: purchaseModel.performance.attributes.theater.id
+        });
         log('劇場詳細取得');
         if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
         const website = purchaseModel.theater.attributes.websites.find((value) => {
             return (value.group === 'PORTAL');
         });
 
-        const screen = await MP.services.screen.getScreen(purchaseModel.performance.attributes.screen.id);
+        const screen = await MP.services.screen.getScreen({
+            accessToken: accessToken,
+            screenId: purchaseModel.performance.attributes.screen.id
+        });
         log('スクリーン取得');
-        const film = await MP.services.film.getFilm(purchaseModel.performance.attributes.film.id);
+        const film = await MP.services.film.getFilm({
+            accessToken: accessToken,
+            filmId: purchaseModel.performance.attributes.film.id
+        });
         log('作品取得');
 
         purchaseModel.performanceCOA = {
@@ -112,6 +125,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         const website = purchaseModel.theater.attributes.websites.find((value) => {
             return (value.group === 'PORTAL');
         });
+        const accessToken = await UtilModule.getAccessToken(req);
         //バリデーション
         seatForm.seatSelect(req);
         const validationResult = await req.getValidationResult();
@@ -127,7 +141,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             return;
         }
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).list_tmp_reserve;
-        await reserve(selectSeats, purchaseModel);
+        await reserve(selectSeats, purchaseModel, accessToken);
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         // ムビチケセッション削除
@@ -152,10 +166,11 @@ export async function select(req: Request, res: Response, next: NextFunction): P
  * @function reserve
  * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @param {string} accessToken
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSession.PurchaseModel, accessToken: string): Promise<void> {
     if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -177,6 +192,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
         log('COA仮予約削除');
         // COAオーソリ削除
         await MP.services.transaction.removeCOAAuthorization({
+            accessToken: accessToken,
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });
@@ -243,6 +259,7 @@ async function reserve(selectSeats: ISelectSeats[], purchaseModel: PurchaseSessi
     }
     //COAオーソリ追加
     const coaAuthorizationResult = await MP.services.transaction.addCOAAuthorization({
+        accessToken: accessToken,
         transaction: purchaseModel.transactionMP,
         reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
         salesTicketResults: tmpReserveTickets,

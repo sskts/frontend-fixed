@@ -96,6 +96,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
 
         //取引id確認
         if (req.body.transaction_id !== purchaseModel.transactionMP.id) throw ErrorUtilModule.ERROR_ACCESS;
+        const accessToken = await UtilModule.getAccessToken(req);
         //バリデーション
         TicketForm(req);
         const validationResult = await req.getValidationResult();
@@ -105,12 +106,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('券種検証');
             // COAオーソリ削除
             await MP.services.transaction.removeCOAAuthorization({
+                accessToken: accessToken,
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
             //COAオーソリ追加
             purchaseModel.authorizationCOA = await MP.services.transaction.addCOAAuthorization({
+                accessToken: accessToken,
                 transaction: purchaseModel.transactionMP,
                 reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                 salesTicketResults: purchaseModel.reserveTickets,
@@ -125,6 +128,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             if (purchaseModel.authorizationMvtk !== null) {
                 // ムビチケオーソリ削除
                 await MP.services.transaction.removeMvtkAuthorization({
+                    accessToken: accessToken,
                     transactionId: purchaseModel.transactionMP.id,
                     mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
                 });
@@ -146,6 +150,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
                 };
                 purchaseModel.authorizationMvtk = await MP.services.transaction.addMvtkauthorization({
+                    accessToken: accessToken,
                     transaction: purchaseModel.transactionMP, // 取引情報
                     amount: purchaseModel.getMvtkPrice(), // 合計金額
                     kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード

@@ -15,22 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const oauth = require("../services/oauth");
 const util = require("../utils/util");
 const log = debug('SSKTS:services.theater');
 /**
  * 劇場取得
  * @memberof services.theater
  * @function getTheater
- * @param {GetTheaterArgs} args
+ * @param {IGetTheaterArgs} args
  * @requires {Promise<ITheater>}
  */
-function getTheater(id) {
+function getTheater(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('getTheater args:', id);
         const response = yield request.get({
-            url: `${process.env.MP_ENDPOINT}/theaters/${id}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            url: `${process.env.MP_ENDPOINT}/theaters/${args.theaterId}`,
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -38,7 +36,7 @@ function getTheater(id) {
             timeout: util.timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            util.errorHandler({}, response);
+            util.errorHandler(args, response);
         log('getTheater:', response.body.data);
         return response.body.data;
     });
@@ -48,13 +46,14 @@ exports.getTheater = getTheater;
  * 劇場一覧取得
  * @memberof MP
  * @function getTheaters
- * @requires {Promise<ITheater[]>}
+ * @param {IGetTheatersArgs} args
+ * @returns {Promise<ITheater[]>}
  */
-function getTheaters() {
+function getTheaters(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
             url: `${process.env.MP_ENDPOINT}/theaters`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -62,7 +61,7 @@ function getTheaters() {
             timeout: util.timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            util.errorHandler({}, response);
+            util.errorHandler(args, response);
         log('getTheaters:', response.body.data);
         return response.body.data;
     });

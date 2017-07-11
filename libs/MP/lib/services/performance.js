@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const oauth = require("../services/oauth");
 const util = require("../utils/util");
 const log = debug('SSKTS:services.performance');
 /**
@@ -23,19 +22,18 @@ const log = debug('SSKTS:services.performance');
  * @desc 条件を指定してパフォーマンスを検索します。
  * @memberof services.performance
  * @function getPerformances
- * @param {string} theater 劇場コード
- * @param {string} day 日付
+ * @param {IGetPerformancesArgs} args
  * @requires {Promise<IPerformance[]>}
  */
-function getPerformances(theater, day) {
+function getPerformances(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const qs = {
-            theater: theater,
-            day: day
+            theater: args.theater,
+            day: args.day
         };
         const response = yield request.get({
             url: `${util.endPoint}/performances`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             qs: qs,
             json: true,
             simple: false,
@@ -54,23 +52,21 @@ exports.getPerformances = getPerformances;
  * @desc IDでパフォーマンス情報を取得します。
  * @memberof services.performance
  * @function getPerformance
- * @param {GetPerformanceArgs} args
+ * @param {IGetPerformanceArgs} args
  * @requires {Promise<IPerformance>}
  */
-function getPerformance(id) {
+function getPerformance(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('getPerformance args:', id);
         const response = yield request.get({
-            url: `${util.endPoint}/performances/${id}`,
-            auth: { bearer: yield oauth.oauthToken() },
-            body: {},
+            url: `${util.endPoint}/performances/${args.performanceId}`,
+            auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
             timeout: util.timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            util.errorHandler({}, response);
+            util.errorHandler(args, response);
         log('performance:', response.body.data);
         return response.body.data;
     });

@@ -3,18 +3,18 @@ import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
-import * as oauth from '../services/oauth';
 import * as performance from '../services/performance';
 import * as util from '../utils/util';
 
-const log = debug('SSKTS:services.theater');
+const log = debug('SSKTS:services.transaction');
 
 /**
  * 取引開始in
  * @memberof services.transaction
  * @interface ITransactionStartArgs
+ * @extends util.IAuth
  */
-export interface ITransactionStartArgs {
+export interface ITransactionStartArgs extends util.IAuth {
     expires_at: number;
 }
 /**
@@ -30,7 +30,10 @@ export interface ITransactionStartResult {
         id: string,
         status: string,
         events: any[],
-        owners: IOwner[],
+        owners: {
+            id: string;
+            group: string;
+        }[],
         queues: any[],
         expired_at: string,
         inquiry_id: string,
@@ -38,19 +41,11 @@ export interface ITransactionStartResult {
         queues_status: string
     };
 }
-/**
- * オーナー情報
- * @memberof services.transaction
- * @interface IOwner
- */
-interface IOwner {
-    id: string;
-    group: string;
-}
 
 /**
  * 取引開始
  * @memberof services.transaction
+ * @desc 取引を開始します。
  * @function transactionStart
  * @param {TransactionStartArgs} args
  * @returns {Promise<ITransactionStartResult>}
@@ -61,7 +56,7 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
     };
     const response = await request.post({
         url: `${util.endPoint}/transactions/startIfPossible`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -80,8 +75,9 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
  * COAオーソリ追加in
  * @memberof services.transaction
  * @interface IAddCOAAuthorizationArgs
+ * @extends util.IAuth
  */
-export interface IAddCOAAuthorizationArgs {
+export interface IAddCOAAuthorizationArgs extends util.IAuth {
     transaction: ITransactionStartResult;
     reserveSeatsTemporarilyResult: COA.services.reserve.IUpdTmpReserveSeatResult;
     salesTicketResults: IReserveTicket[];
@@ -242,7 +238,7 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
 
     const response = await request.post({
         url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -260,8 +256,9 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
  * COAオーソリ削除in
  * @memberof services.transaction
  * @interface IRemoveCOAAuthorizationArgs
+ * @extends util.IAuth
  */
-export interface IRemoveCOAAuthorizationArgs {
+export interface IRemoveCOAAuthorizationArgs extends util.IAuth {
     transactionId: string;
     coaAuthorizationId: string;
 }
@@ -275,7 +272,7 @@ export interface IRemoveCOAAuthorizationArgs {
 export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs): Promise<void> {
     const response = await request.del({
         url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
@@ -291,8 +288,9 @@ export async function removeCOAAuthorization(args: IRemoveCOAAuthorizationArgs):
  * GMOオーソリ追加in
  * @memberof services.transaction
  * @interface AddGMOAuthorizationArgs
+ * @extends util.IAuth
  */
-export interface IAddGMOAuthorizationArgs {
+export interface IAddGMOAuthorizationArgs extends util.IAuth {
     transaction: ITransactionStartResult;
     orderId: string;
     amount: number;
@@ -340,7 +338,7 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
     };
     const response = await request.post({
         url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -358,8 +356,9 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
  * GMOオーソリ削除in
  * @memberof services.transaction
  * @interface IRemoveGMOAuthorizationArgs
+ * @extends util.IAuth
  */
-export interface IRemoveGMOAuthorizationArgs {
+export interface IRemoveGMOAuthorizationArgs extends util.IAuth {
     transactionId: string;
     gmoAuthorizationId: string;
 }
@@ -373,7 +372,7 @@ export interface IRemoveGMOAuthorizationArgs {
 export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs): Promise<void> {
     const response = await request.del({
         url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
@@ -389,8 +388,9 @@ export async function removeGMOAuthorization(args: IRemoveGMOAuthorizationArgs):
  * 購入者情報登録in
  * @memberof services.transaction
  * @interface OwnersAnonymousArgs
+ * @extends util.IAuth
  */
-export interface IOwnersAnonymousArgs {
+export interface IOwnersAnonymousArgs extends util.IAuth {
     transactionId: string;
     name_first: string;
     name_last: string;
@@ -399,6 +399,7 @@ export interface IOwnersAnonymousArgs {
 }
 /**
  * 取引中所有者更新
+ * @deprecated updateOwnersへ変更予定
  * @desc 取引中の匿名所有者のプロフィールを更新します。
  * @memberof services.transaction
  * @function ownersAnonymous
@@ -414,7 +415,72 @@ export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void>
     };
     const response = await request.patch({
         url: `${util.endPoint}/transactions/${args.transactionId}/anonymousOwner`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
+        body: body,
+        json: true,
+        simple: false,
+        resolveWithFullResponse: true,
+        timeout: util.timeout
+    }).promise();
+    if (response.statusCode !== HTTPStatus.NO_CONTENT) util.errorHandler(body, response);
+
+    log('ownersAnonymous result:');
+}
+
+/**
+ * 所有者
+ * @memberof services.transaction
+ * @enum OwnersGroup
+ */
+export enum OwnersGroup {
+    /**
+     * 匿名
+     */
+    ANONYMOUS = 'ANONYMOUS',
+    /**
+     * 会員
+     */
+    MEMBER = 'MEMBER'
+}
+
+/**
+ * 取引中所有者更新in
+ * @memberof services.transaction
+ * @interface IUpdateOwnersArgs
+ * @extends util.IAuth
+ */
+export interface IUpdateOwnersArgs extends util.IAuth {
+    ownerId: string;
+    transactionId: string;
+    name_first: string;
+    name_last: string;
+    tel: string;
+    email: string;
+    group: OwnersGroup;
+    username?: string;
+    password?: string;
+}
+/**
+ * 取引中所有者更新
+ * @desc 取引中の匿名所有者のプロフィールを更新します。
+ * @memberof services.transaction
+ * @function updateOwners
+ * @param {IUpdateOwnersArgs} args
+ * @returns {Promise<void>}
+ */
+export async function updateOwners(args: IUpdateOwnersArgs): Promise<void> {
+    const body = {
+        name_first: args.name_first,
+        name_last: args.name_last,
+        tel: args.tel,
+        email: args.email,
+        group: args.group,
+        username: args.username,
+        password: args.password
+    };
+    const response = await request.put({
+        url: `${util.endPoint}/transactions/${args.transactionId}/owners/${args.ownerId}`,
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -430,8 +496,9 @@ export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void>
  * 照会情報登録in
  * @memberof services.transaction
  * @interface ITransactionsInquiryKeyArgs
+ * @extends util.IAuth
  */
-export interface ITransactionsEnableInquiryArgs {
+export interface ITransactionsEnableInquiryArgs extends util.IAuth {
     transactionId: string;
     inquiry_theater: string;
     inquiry_id: number;
@@ -439,6 +506,7 @@ export interface ITransactionsEnableInquiryArgs {
 }
 /**
  * 照会情報登録(購入番号と電話番号で照会する場合)
+ * @deprecated transactionsInquiryKeyへ変更予定
  * @memberof services.transaction
  * @function transactionsEnableInquiry
  * @param {ITransactionsInquiryKeyArgs} args
@@ -452,7 +520,7 @@ export async function transactionsEnableInquiry(args: ITransactionsEnableInquiry
     };
     const response = await request.patch({
         url: `${util.endPoint}/transactions/${args.transactionId}/enableInquiry`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -468,8 +536,9 @@ export async function transactionsEnableInquiry(args: ITransactionsEnableInquiry
  * 照会情報登録in
  * @memberof services.transaction
  * @interface ITransactionsInquiryKeyArgs
+ * @extends util.IAuth
  */
-export interface ITransactionsInquiryKeyArgs {
+export interface ITransactionsInquiryKeyArgs extends util.IAuth {
     transactionId: string;
     theater_code: string;
     reserve_num: number;
@@ -490,7 +559,7 @@ export async function transactionsInquiryKey(args: ITransactionsInquiryKeyArgs):
     };
     const response = await request.put({
         url: `${util.endPoint}/transactions/${args.transactionId}/inquiryKey`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -506,8 +575,9 @@ export async function transactionsInquiryKey(args: ITransactionsInquiryKeyArgs):
  * 取引成立in
  * @memberof services.transaction
  * @interface ITransactionCloseArgs
+ * @extends util.IAuth
  */
-export interface ITransactionCloseArgs {
+export interface ITransactionCloseArgs extends util.IAuth {
     transactionId: string;
 }
 /**
@@ -520,7 +590,7 @@ export interface ITransactionCloseArgs {
 export async function transactionClose(args: ITransactionCloseArgs): Promise<void> {
     const response = await request.patch({
         url: `${util.endPoint}/transactions/${args.transactionId}/close`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
@@ -535,8 +605,9 @@ export async function transactionClose(args: ITransactionCloseArgs): Promise<voi
  * メール追加in
  * @memberof services.transaction
  * @interface IAddEmailArgs
+ * @extends util.IAuth
  */
-export interface IAddEmailArgs {
+export interface IAddEmailArgs extends util.IAuth {
     transactionId: string;
     // tslint:disable-next-line:no-reserved-keywords
     from: string;
@@ -561,7 +632,7 @@ export async function addEmail(args: IAddEmailArgs): Promise<string> {
     };
     const response = await request.post({
         url: `${util.endPoint}/transactions/${args.transactionId}/notifications/email`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -578,8 +649,9 @@ export async function addEmail(args: IAddEmailArgs): Promise<string> {
  * メール削除in
  * @memberof services.transaction
  * @interface IRemoveEmailArgs
+ * @extends util.IAuth
  */
-export interface IRemoveEmailArgs {
+export interface IRemoveEmailArgs extends util.IAuth {
     transactionId: string;
     emailId: string;
 }
@@ -593,7 +665,7 @@ export interface IRemoveEmailArgs {
 export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
     const response = await request.del({
         url: `${util.endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
@@ -608,14 +680,16 @@ export async function removeEmail(args: IRemoveEmailArgs): Promise<void> {
  * 照会取引情報取得in
  * @memberof services.transaction
  * @interface IMakeInquiryArgs
+ * @extends util.IAuth
  */
-export interface IMakeInquiryArgs {
+export interface IMakeInquiryArgs extends util.IAuth {
     inquiry_theater: string;
     inquiry_id: number;
     inquiry_pass: string;
 }
 /**
  * 照会取引情報取得
+ * @deprecated findByInquiryKeyへ変更予定
  * @desc 照会キーで取引を検索します。具体的には、劇場コード&予約番号&電話番号による照会です。
  * @memberof services.transaction
  * @function makeInquiry
@@ -630,7 +704,7 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string | null
     };
     const response = await request.post({
         url: `${util.endPoint}/transactions/makeInquiry`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -648,8 +722,9 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<string | null
  * 照会取引情報取得in
  * @memberof services.transaction
  * @interface IFindByInquiryKeyArgs
+ * @extends util.IAuth
  */
-export interface IFindByInquiryKeyArgs {
+export interface IFindByInquiryKeyArgs extends util.IAuth {
     theater_code: string;
     reserve_num: number;
     tel: string;
@@ -670,7 +745,7 @@ export async function findByInquiryKey(args: IFindByInquiryKeyArgs): Promise<str
     };
     const response = await request.get({
         url: `${util.endPoint}/transactions/findByInquiryKey`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         qs: query,
         json: true,
         simple: false,
@@ -711,8 +786,9 @@ export interface IMvtkSeat {
 /**
  * 照会取引情報取得in
  * @interface IAuthorizationsMvtkArgs
+ * @extends util.IAuth
  */
-export interface IAuthorizationsMvtkArgs {
+export interface IAuthorizationsMvtkArgs extends util.IAuth {
     transaction: ITransactionStartResult; // 取引情報
     amount: number; // 合計金額
     kgygishCd: string; // 興行会社コード
@@ -787,7 +863,7 @@ export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promi
     };
     const response = await request.post({
         url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
@@ -804,8 +880,9 @@ export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promi
  * ムビチケオーソリ削除in
  * @memberof services.transaction
  * @interface IRemoveCOAAuthorizationArgs
+ * @extends util.IAuth
  */
-export interface IRemoveMvtkAuthorizationArgs {
+export interface IRemoveMvtkAuthorizationArgs extends util.IAuth {
     transactionId: string;
     mvtkAuthorizationId: string;
 }
@@ -819,7 +896,7 @@ export interface IRemoveMvtkAuthorizationArgs {
 export async function removeMvtkAuthorization(args: IRemoveMvtkAuthorizationArgs): Promise<void> {
     const response = await request.del({
         url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.mvtkAuthorizationId}`,
-        auth: { bearer: await oauth.oauthToken() },
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,

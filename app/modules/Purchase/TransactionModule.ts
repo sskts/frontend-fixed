@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import * as MP from '../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
@@ -46,8 +47,11 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
-
-        const performance = await MP.services.performance.getPerformance(req.body.id);
+        const accessToken = await UtilModule.getAccessToken(req);
+        const performance = await MP.services.performance.getPerformance({
+            accessToken: accessToken,
+            performanceId: req.body.id
+        });
         // 開始可能日判定
         if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
@@ -72,6 +76,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').unix();
         purchaseModel.transactionMP = await MP.services.transaction.transactionStart({
+            accessToken: accessToken,
             expires_at: purchaseModel.expired
         });
         log('MP取引開始', purchaseModel.transactionMP.attributes.owners);

@@ -34,9 +34,12 @@ export async function index(_: Request, res: Response): Promise<void> {
  * @param {Response} res
  * @returns {Promise<void>}
  */
-export async function setting(_: Request, res: Response, next: NextFunction): Promise<void> {
+export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        res.locals.theaters = await MP.services.theater.getTheaters();
+        const accessToken = await UtilModule.getAccessToken(req);
+        res.locals.theaters = await MP.services.theater.getTheaters({
+            accessToken: accessToken
+        });
         res.render('setting/index');
     } catch (err) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
@@ -67,7 +70,9 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
+            const accessToken = await UtilModule.getAccessToken(req);
             const transactionId = await MP.services.transaction.makeInquiry({
+                accessToken: accessToken,
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
@@ -110,7 +115,10 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 timeBegin: stateReserve.time_begin
             });
             log('パフォーマンスID取得', performanceId);
-            const performance = await MP.services.performance.getPerformance(performanceId);
+            const performance = await MP.services.performance.getPerformance({
+                accessToken: accessToken,
+                performanceId: performanceId
+            });
             if (performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MPパフォーマンス取得');
             // 印刷用

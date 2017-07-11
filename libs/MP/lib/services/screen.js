@@ -15,22 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const oauth = require("../services/oauth");
 const util = require("../utils/util");
 const log = debug('SSKTS:services.screen');
 /**
  * スクリーン取得
  * @memberof services.screen
  * @function getScreen
- * @param {GetScreenArgs} args
+ * @param {IGetScreenArgs} args
  * @requires {Promise<Screen>}
  */
-function getScreen(id) {
+function getScreen(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        log('getScreen args:', id);
         const response = yield request.get({
-            url: `${util.endPoint}/screens/${id}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            url: `${util.endPoint}/screens/${args.screenId}`,
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -38,7 +36,7 @@ function getScreen(id) {
             timeout: util.timeout
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
-            util.errorHandler({}, response);
+            util.errorHandler(args, response);
         log('getScreen:', response.body.data);
         return response.body.data;
     });

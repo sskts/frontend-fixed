@@ -17,6 +17,7 @@ const debug = require("debug");
 const MP = require("../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
@@ -81,6 +82,7 @@ function newReserve(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const accessToken = yield UtilModule.getAccessToken(req);
             const performance = purchaseModel.performance;
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
@@ -95,6 +97,7 @@ function newReserve(req, res, next) {
             log('COA仮予約削除');
             // COAオーソリ削除
             yield MP.services.transaction.removeCOAAuthorization({
+                accessToken: accessToken,
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });

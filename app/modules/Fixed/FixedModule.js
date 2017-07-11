@@ -44,10 +44,13 @@ exports.index = index;
  * @param {Response} res
  * @returns {Promise<void>}
  */
-function setting(_, res, next) {
+function setting(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            res.locals.theaters = yield MP.services.theater.getTheaters();
+            const accessToken = yield UtilModule.getAccessToken(req);
+            res.locals.theaters = yield MP.services.theater.getTheaters({
+                accessToken: accessToken
+            });
             res.render('setting/index');
         }
         catch (err) {
@@ -82,7 +85,9 @@ function getInquiryData(req, res) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
+                const accessToken = yield UtilModule.getAccessToken(req);
                 const transactionId = yield MP.services.transaction.makeInquiry({
+                    accessToken: accessToken,
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
                     inquiry_pass: req.body.tel_num // 電話番号
@@ -127,7 +132,10 @@ function getInquiryData(req, res) {
                     timeBegin: stateReserve.time_begin
                 });
                 log('パフォーマンスID取得', performanceId);
-                const performance = yield MP.services.performance.getPerformance(performanceId);
+                const performance = yield MP.services.performance.getPerformance({
+                    accessToken: accessToken,
+                    performanceId: performanceId
+                });
                 if (performance === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('MPパフォーマンス取得');

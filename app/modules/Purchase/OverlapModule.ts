@@ -9,6 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../libs/MP';
 import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.OverlapModule');
 
 /**
@@ -65,6 +66,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        const accessToken = await UtilModule.getAccessToken(req);
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
 
@@ -81,6 +83,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         // COAオーソリ削除
         await MP.services.transaction.removeCOAAuthorization({
+            accessToken: accessToken,
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });

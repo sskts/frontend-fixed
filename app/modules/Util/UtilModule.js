@@ -1,8 +1,4 @@
 "use strict";
-/**
- * 共通
- * @namespace Util.UtilModule
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -13,6 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
+const MP = require("../../../libs/MP");
+const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
@@ -161,6 +159,44 @@ function getEmailTemplate(res, file, locals) {
     });
 }
 exports.getEmailTemplate = getEmailTemplate;
+/**
+ * アクセストークン取得
+ * @function getAccessToken
+ * @param {Reqest} req
+ * @returns {Promise<string>}
+ */
+function getAccessToken(req) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
+        let oauth;
+        if (req.session.oauth === undefined) {
+            // sessionなし
+            oauth = yield MP.services.oauth.oauthToken({
+                grant_type: MP.services.oauth.GrantType.clientCredentials,
+                scopes: ['admin'],
+                client_id: 'sskts-frontend',
+                state: req.sessionID
+            });
+            req.session.oauth = oauth;
+            return oauth.access_token;
+        }
+        if (req.session.oauth.expires_in < moment().unix()) {
+            // 期限切れ
+            oauth = yield MP.services.oauth.oauthToken({
+                grant_type: MP.services.oauth.GrantType.clientCredentials,
+                scopes: ['admin'],
+                client_id: 'sskts-frontend',
+                state: req.sessionID
+            });
+            req.session.oauth = oauth;
+            return oauth.access_token;
+        }
+        oauth = req.session.oauth;
+        return oauth.access_token;
+    });
+}
+exports.getAccessToken = getAccessToken;
 /**
  * 2桁
  * @memberof Util.UtilModule

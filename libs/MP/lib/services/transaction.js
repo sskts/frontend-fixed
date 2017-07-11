@@ -12,12 +12,12 @@ const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const request = require("request-promise-native");
-const oauth = require("../services/oauth");
 const util = require("../utils/util");
-const log = debug('SSKTS:services.theater');
+const log = debug('SSKTS:services.transaction');
 /**
  * 取引開始
  * @memberof services.transaction
+ * @desc 取引を開始します。
  * @function transactionStart
  * @param {TransactionStartArgs} args
  * @returns {Promise<ITransactionStartResult>}
@@ -29,7 +29,7 @@ function transactionStart(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/startIfPossible`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -101,7 +101,7 @@ function addCOAAuthorization(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/coaSeatReservation`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -126,7 +126,7 @@ function removeCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.coaAuthorizationId}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -170,7 +170,7 @@ function addGMOAuthorization(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/gmo`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -195,7 +195,7 @@ function removeGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.gmoAuthorizationId}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -210,6 +210,7 @@ function removeGMOAuthorization(args) {
 exports.removeGMOAuthorization = removeGMOAuthorization;
 /**
  * 取引中所有者更新
+ * @deprecated updateOwnersへ変更予定
  * @desc 取引中の匿名所有者のプロフィールを更新します。
  * @memberof services.transaction
  * @function ownersAnonymous
@@ -226,7 +227,7 @@ function ownersAnonymous(args) {
         };
         const response = yield request.patch({
             url: `${util.endPoint}/transactions/${args.transactionId}/anonymousOwner`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -240,7 +241,58 @@ function ownersAnonymous(args) {
 }
 exports.ownersAnonymous = ownersAnonymous;
 /**
+ * 所有者
+ * @memberof services.transaction
+ * @enum OwnersGroup
+ */
+var OwnersGroup;
+(function (OwnersGroup) {
+    /**
+     * 匿名
+     */
+    OwnersGroup["ANONYMOUS"] = "ANONYMOUS";
+    /**
+     * 会員
+     */
+    OwnersGroup["MEMBER"] = "MEMBER";
+})(OwnersGroup = exports.OwnersGroup || (exports.OwnersGroup = {}));
+/**
+ * 取引中所有者更新
+ * @desc 取引中の匿名所有者のプロフィールを更新します。
+ * @memberof services.transaction
+ * @function updateOwners
+ * @param {IUpdateOwnersArgs} args
+ * @returns {Promise<void>}
+ */
+function updateOwners(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const body = {
+            name_first: args.name_first,
+            name_last: args.name_last,
+            tel: args.tel,
+            email: args.email,
+            group: args.group,
+            username: args.username,
+            password: args.password
+        };
+        const response = yield request.put({
+            url: `${util.endPoint}/transactions/${args.transactionId}/owners/${args.ownerId}`,
+            auth: { bearer: args.accessToken },
+            body: body,
+            json: true,
+            simple: false,
+            resolveWithFullResponse: true,
+            timeout: util.timeout
+        }).promise();
+        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+            util.errorHandler(body, response);
+        log('ownersAnonymous result:');
+    });
+}
+exports.updateOwners = updateOwners;
+/**
  * 照会情報登録(購入番号と電話番号で照会する場合)
+ * @deprecated transactionsInquiryKeyへ変更予定
  * @memberof services.transaction
  * @function transactionsEnableInquiry
  * @param {ITransactionsInquiryKeyArgs} args
@@ -255,7 +307,7 @@ function transactionsEnableInquiry(args) {
         };
         const response = yield request.patch({
             url: `${util.endPoint}/transactions/${args.transactionId}/enableInquiry`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -284,7 +336,7 @@ function transactionsInquiryKey(args) {
         };
         const response = yield request.put({
             url: `${util.endPoint}/transactions/${args.transactionId}/inquiryKey`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -308,7 +360,7 @@ function transactionClose(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.patch({
             url: `${util.endPoint}/transactions/${args.transactionId}/close`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -338,7 +390,7 @@ function addEmail(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/${args.transactionId}/notifications/email`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -363,7 +415,7 @@ function removeEmail(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${util.endPoint}/transactions/${args.transactionId}/notifications/${args.emailId}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
@@ -378,6 +430,7 @@ function removeEmail(args) {
 exports.removeEmail = removeEmail;
 /**
  * 照会取引情報取得
+ * @deprecated findByInquiryKeyへ変更予定
  * @desc 照会キーで取引を検索します。具体的には、劇場コード&予約番号&電話番号による照会です。
  * @memberof services.transaction
  * @function makeInquiry
@@ -393,7 +446,7 @@ function makeInquiry(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/makeInquiry`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -426,7 +479,7 @@ function findByInquiryKey(args) {
         };
         const response = yield request.get({
             url: `${util.endPoint}/transactions/findByInquiryKey`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             qs: query,
             json: true,
             simple: false,
@@ -489,7 +542,7 @@ function addMvtkauthorization(args) {
         };
         const response = yield request.post({
             url: `${util.endPoint}/transactions/${args.transaction.id}/authorizations/mvtk`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
@@ -514,7 +567,7 @@ function removeMvtkAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.del({
             url: `${util.endPoint}/transactions/${args.transactionId}/authorizations/${args.mvtkAuthorizationId}`,
-            auth: { bearer: yield oauth.oauthToken() },
+            auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,

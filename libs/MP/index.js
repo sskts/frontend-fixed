@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * MPサービス
- * @namespace MP
+ * @desc シネマサンシャインAPI
  */
 const filmService = require("./lib/services/film");
 const oauthService = require("./lib/services/oauth");

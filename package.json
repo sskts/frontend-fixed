@@ -82,7 +82,6 @@
     "supertest": "^3.0.0",
     "tslint": "^5.5.0",
     "tslint-microsoft-contrib": "^5.0.1",
-    "tsutils": "^2.5.1",
     "typescript": "^2.4.1"
   },
   "repository": {},

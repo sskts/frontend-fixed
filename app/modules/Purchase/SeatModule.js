@@ -47,18 +47,31 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            purchaseModel.performance = yield MP.services.performance.getPerformance(req.params.id);
+            const accessToken = yield UtilModule.getAccessToken(req);
+            purchaseModel.performance = yield MP.services.performance.getPerformance({
+                accessToken: accessToken,
+                performanceId: req.params.id
+            });
             log('パフォーマンス取得');
-            purchaseModel.theater = yield MP.services.theater.getTheater(purchaseModel.performance.attributes.theater.id);
+            purchaseModel.theater = yield MP.services.theater.getTheater({
+                accessToken: accessToken,
+                theaterId: purchaseModel.performance.attributes.theater.id
+            });
             log('劇場詳細取得');
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const website = purchaseModel.theater.attributes.websites.find((value) => {
                 return (value.group === 'PORTAL');
             });
-            const screen = yield MP.services.screen.getScreen(purchaseModel.performance.attributes.screen.id);
+            const screen = yield MP.services.screen.getScreen({
+                accessToken: accessToken,
+                screenId: purchaseModel.performance.attributes.screen.id
+            });
             log('スクリーン取得');
-            const film = yield MP.services.film.getFilm(purchaseModel.performance.attributes.film.id);
+            const film = yield MP.services.film.getFilm({
+                accessToken: accessToken,
+                filmId: purchaseModel.performance.attributes.film.id
+            });
             log('作品取得');
             purchaseModel.performanceCOA = {
                 theaterCode: purchaseModel.theater.id,
@@ -123,6 +136,7 @@ function select(req, res, next) {
             const website = purchaseModel.theater.attributes.websites.find((value) => {
                 return (value.group === 'PORTAL');
             });
+            const accessToken = yield UtilModule.getAccessToken(req);
             //バリデーション
             seatForm.seatSelect(req);
             const validationResult = yield req.getValidationResult();
@@ -137,7 +151,7 @@ function select(req, res, next) {
                 return;
             }
             const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
-            yield reserve(selectSeats, purchaseModel);
+            yield reserve(selectSeats, purchaseModel, accessToken);
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             // ムビチケセッション削除
@@ -162,10 +176,11 @@ exports.select = select;
  * @function reserve
  * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @param {string} accessToken
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-function reserve(selectSeats, purchaseModel) {
+function reserve(selectSeats, purchaseModel, accessToken) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -191,6 +206,7 @@ function reserve(selectSeats, purchaseModel) {
             log('COA仮予約削除');
             // COAオーソリ削除
             yield MP.services.transaction.removeCOAAuthorization({
+                accessToken: accessToken,
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
@@ -254,6 +270,7 @@ function reserve(selectSeats, purchaseModel) {
         }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.services.transaction.addCOAAuthorization({
+            accessToken: accessToken,
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: tmpReserveTickets,

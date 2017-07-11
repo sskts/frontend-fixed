@@ -17,6 +17,7 @@ const moment = require("moment");
 const MP = require("../../../libs/MP");
 const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
@@ -53,7 +54,11 @@ function start(req, res) {
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
-            const performance = yield MP.services.performance.getPerformance(req.body.id);
+            const accessToken = yield UtilModule.getAccessToken(req);
+            const performance = yield MP.services.performance.getPerformance({
+                accessToken: accessToken,
+                performanceId: req.body.id
+            });
             // 開始可能日判定
             if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
                 throw ErrorUtilModule.ERROR_ACCESS;
@@ -75,6 +80,7 @@ function start(req, res) {
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').unix();
             purchaseModel.transactionMP = yield MP.services.transaction.transactionStart({
+                accessToken: accessToken,
                 expires_at: purchaseModel.expired
             });
             log('MP取引開始', purchaseModel.transactionMP.attributes.owners);

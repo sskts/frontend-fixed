@@ -1,6 +1,6 @@
 /**
  * MPサービス
- * @namespace MP
+ * @desc シネマサンシャインAPI
  */
 import * as filmService from './lib/services/film';
 import * as oauthService from './lib/services/oauth';

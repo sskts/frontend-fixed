@@ -2,4 +2,4 @@
  * テスト共通
  */
 
-console.error = () => { return; };
+// console.error = () => { return; };

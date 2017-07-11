@@ -6,19 +6,9 @@
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
-import * as oauth from '../services/oauth';
 import * as util from '../utils/util';
 
 const log = debug('SSKTS:services.screen');
-
-/**
- * 言語
- * @interface ILanguage
- */
-export interface ILanguage {
-    en: string;
-    ja: string;
-}
 
 /**
  * スクリーン詳細
@@ -28,11 +18,11 @@ export interface IScreen {
     id: string;
     attributes: {
         coa_screen_code: string;
-        name: ILanguage;
+        name: util.ILanguage;
         seats_numbers_by_seat_grade: any[];
         sections: {
             code: string;
-            name: ILanguage;
+            name: util.ILanguage;
             seats: {
                 code: string;
             }[];
@@ -42,24 +32,31 @@ export interface IScreen {
 }
 
 /**
+ * スクリーン取得in
+ * @interface IGetScreenArgs
+ */
+export interface IGetScreenArgs extends util.IAuth {
+    screenId: string;
+}
+
+/**
  * スクリーン取得
  * @memberof services.screen
  * @function getScreen
- * @param {GetScreenArgs} args
+ * @param {IGetScreenArgs} args
  * @requires {Promise<Screen>}
  */
-export async function getScreen(id: string): Promise<IScreen> {
-    log('getScreen args:', id);
+export async function getScreen(args: IGetScreenArgs): Promise<IScreen> {
     const response = await request.get({
-        url: `${util.endPoint}/screens/${id}`,
-        auth: { bearer: await oauth.oauthToken() },
+        url: `${util.endPoint}/screens/${args.screenId}`,
+        auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: util.timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) util.errorHandler({}, response);
+    if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getScreen:', response.body.data);
 
     return response.body.data;

@@ -6,22 +6,13 @@
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
-import * as oauth from '../services/oauth';
 import * as util from '../utils/util';
 
 const log = debug('SSKTS:services.film');
 
 /**
- * 言語
- * @interface ILanguage
- */
-export interface ILanguage {
-    en: string;
-    ja: string;
-}
-
-/**
  * 作品詳細
+ * @memberof services.film
  * @interface IFilm
  */
 export interface IFilm {
@@ -39,7 +30,7 @@ export interface IFilm {
         kbn_jimakufukikae: string;
         kbn_joueihousiki: string;
         minutes: number;
-        name: ILanguage;
+        name: util.ILanguage;
         name_kana: string;
         name_original: string;
         name_short: string;
@@ -50,25 +41,32 @@ export interface IFilm {
 }
 
 /**
+ * 作品取得in
+ * @memberof services.film
+ * @interface IGetFilmArgs
+ */
+export interface IGetFilmArgs extends util.IAuth {
+    filmId: string;
+}
+
+/**
  * 作品取得
  * @desc IDで作品情報を取得します。
  * @memberof services.film
  * @function getFilm
- * @param {GetFilmArgs} args
+ * @param {IGetFilmArgs} args
  * @requires {Promise<IFilm>}
  */
-export async function getFilm(id: string): Promise<IFilm> {
-    log('getFilm args:', id);
+export async function getFilm(args: IGetFilmArgs): Promise<IFilm> {
     const response = await request.get({
-        url: `${util.endPoint}/films/${id}`,
-        auth: { bearer: await oauth.oauthToken() },
-        body: {},
+        url: `${util.endPoint}/films/${args.filmId}`,
+        auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
         timeout: util.timeout
     }).promise();
-    if (response.statusCode !== HTTPStatus.OK) util.errorHandler({}, response);
+    if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getFilm:', response.body.data);
 
     return response.body.data;
