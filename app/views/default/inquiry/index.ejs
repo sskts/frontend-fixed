@@ -54,11 +54,7 @@
                     <p class="text-center"><%- __('inquiry.confirm.qr_after') %></p>
                 </div>
                 <% } else { %>
-                <div class="box radius border-bottom-dot qr-code bg-white">
-                    <div class="text-center">
-                        <img src="//chart.apis.google.com/chart?chs=150x150&cht=qr&chl=<%- ticket.seat_qrcode %>" alt="QRコード">
-                    </div>
-                </div>
+                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- ticket.seat_qrcode %>"></div>
                 <% } %>
                 <div class="box">
                     <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>

@@ -3,6 +3,7 @@ $(function () {
     modal = new SASAKI.Modal();
     if (!isFixed()) {
         saveInquiry();
+        showQRCode();
     }
 
     /**
@@ -23,6 +24,22 @@ $(function () {
         showComplete();
     });
 });
+
+/**
+ * QRコード表示
+ * @function showQRCode
+ * @returns {void}
+ */
+function showQRCode() {
+    $('.qr-code').each(function(index, element) {
+        var target = $(element);
+        var url = target.attr('data-qrcode');
+        var code = createQRCode(url, {
+            alt: 'QRコード'
+        });
+        target.append(code);
+    });
+}
 
 /**
  * 照会情報保存
