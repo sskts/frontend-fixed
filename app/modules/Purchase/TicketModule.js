@@ -119,7 +119,6 @@ function select(req, res, next) {
             //取引id確認
             if (req.body.transaction_id !== purchaseModel.transactionMP.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
-            const accessToken = yield UtilModule.getAccessToken(req);
             //バリデーション
             TicketForm_1.default(req);
             const validationResult = yield req.getValidationResult();
@@ -129,14 +128,14 @@ function select(req, res, next) {
                 log('券種検証');
                 // COAオーソリ削除
                 yield MP.services.transaction.removeCOAAuthorization({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     coaAuthorizationId: purchaseModel.authorizationCOA.id
                 });
                 log('MPCOAオーソリ削除');
                 //COAオーソリ追加
                 purchaseModel.authorizationCOA = yield MP.services.transaction.addCOAAuthorization({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transaction: purchaseModel.transactionMP,
                     reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
                     salesTicketResults: purchaseModel.reserveTickets,
@@ -151,7 +150,7 @@ function select(req, res, next) {
                 if (purchaseModel.authorizationMvtk !== null) {
                     // ムビチケオーソリ削除
                     yield MP.services.transaction.removeMvtkAuthorization({
-                        accessToken: accessToken,
+                        accessToken: yield UtilModule.getAccessToken(req),
                         transactionId: purchaseModel.transactionMP.id,
                         mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
                     });
@@ -172,7 +171,7 @@ function select(req, res, next) {
                         time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
                     };
                     purchaseModel.authorizationMvtk = yield MP.services.transaction.addMvtkauthorization({
-                        accessToken: accessToken,
+                        accessToken: yield UtilModule.getAccessToken(req),
                         transaction: purchaseModel.transactionMP,
                         amount: purchaseModel.getMvtkPrice(),
                         kgygishCd: MvtkUtilModule.COMPANY_CODE,

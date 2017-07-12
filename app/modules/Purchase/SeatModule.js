@@ -47,14 +47,13 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.transactionMP === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const accessToken = yield UtilModule.getAccessToken(req);
             purchaseModel.performance = yield MP.services.performance.getPerformance({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 performanceId: req.params.id
             });
             log('パフォーマンス取得');
             purchaseModel.theater = yield MP.services.theater.getTheater({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 theaterId: purchaseModel.performance.attributes.theater.id
             });
             log('劇場詳細取得');
@@ -64,12 +63,12 @@ function index(req, res, next) {
                 return (value.group === 'PORTAL');
             });
             const screen = yield MP.services.screen.getScreen({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 screenId: purchaseModel.performance.attributes.screen.id
             });
             log('スクリーン取得');
             const film = yield MP.services.film.getFilm({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 filmId: purchaseModel.performance.attributes.film.id
             });
             log('作品取得');
@@ -136,7 +135,6 @@ function select(req, res, next) {
             const website = purchaseModel.theater.attributes.websites.find((value) => {
                 return (value.group === 'PORTAL');
             });
-            const accessToken = yield UtilModule.getAccessToken(req);
             //バリデーション
             seatForm.seatSelect(req);
             const validationResult = yield req.getValidationResult();
@@ -151,7 +149,7 @@ function select(req, res, next) {
                 return;
             }
             const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
-            yield reserve(selectSeats, purchaseModel, accessToken);
+            yield reserve(req, selectSeats, purchaseModel);
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             // ムビチケセッション削除
@@ -174,13 +172,13 @@ exports.select = select;
  * 座席仮予約
  * @memberof Purchase.SeatModule
  * @function reserve
+ * @param {Request} req
  * @param {ReserveSeats[]} reserveSeats
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @param {string} accessToken
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-function reserve(selectSeats, purchaseModel, accessToken) {
+function reserve(req, selectSeats, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -206,7 +204,7 @@ function reserve(selectSeats, purchaseModel, accessToken) {
             log('COA仮予約削除');
             // COAオーソリ削除
             yield MP.services.transaction.removeCOAAuthorization({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });
@@ -270,7 +268,7 @@ function reserve(selectSeats, purchaseModel, accessToken) {
         }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.services.transaction.addCOAAuthorization({
-            accessToken: accessToken,
+            accessToken: yield UtilModule.getAccessToken(req),
             transaction: purchaseModel.transactionMP,
             reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
             salesTicketResults: tmpReserveTickets,

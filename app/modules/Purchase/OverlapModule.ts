@@ -66,7 +66,6 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        const accessToken = await UtilModule.getAccessToken(req);
         const performance = purchaseModel.performance;
         const reserveSeats = purchaseModel.reserveSeats;
 
@@ -83,7 +82,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         // COAオーソリ削除
         await MP.services.transaction.removeCOAAuthorization({
-            accessToken: accessToken,
+            accessToken: await UtilModule.getAccessToken(req),
             transactionId: purchaseModel.transactionMP.id,
             coaAuthorizationId: purchaseModel.authorizationCOA.id
         });

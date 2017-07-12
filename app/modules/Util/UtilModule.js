@@ -169,31 +169,28 @@ function getAccessToken(req) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        let oauth;
         if (req.session.oauth === undefined) {
-            // sessionなし
-            oauth = yield MP.services.oauth.oauthToken({
+            const sessionID = req.sessionID;
+            const oauthTokenArgs = {
                 grant_type: MP.services.oauth.GrantType.clientCredentials,
                 scopes: ['admin'],
                 client_id: 'motionpicture',
-                state: req.sessionID
-            });
-            req.session.oauth = oauth;
-            return oauth.access_token;
+                state: sessionID
+            };
+            const oauthToken = yield MP.services.oauth.oauthToken(oauthTokenArgs);
+            req.session.oauth = {
+                accessToken: oauthToken.access_token,
+                tokenType: oauthToken.token_type,
+                expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
+                grantType: oauthTokenArgs.grant_type
+            };
         }
-        if (req.session.oauth.expires_in < moment().unix()) {
+        const oauth = req.session.oauth;
+        if (req.session.oauth.expires < moment().unix()) {
             // 期限切れ
-            oauth = yield MP.services.oauth.oauthToken({
-                grant_type: MP.services.oauth.GrantType.clientCredentials,
-                scopes: ['admin'],
-                client_id: 'motionpicture',
-                state: req.sessionID
-            });
-            req.session.oauth = oauth;
-            return oauth.access_token;
+            throw ErrorUtilModule.ERROR_EXPIRE;
         }
-        oauth = req.session.oauth;
-        return oauth.access_token;
+        return oauth.accessToken;
     });
 }
 exports.getAccessToken = getAccessToken;

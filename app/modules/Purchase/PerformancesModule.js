@@ -35,7 +35,6 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const accessToken = yield UtilModule.getAccessToken(req);
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             // GMO取消
             if (purchaseModel.transactionGMO !== null
@@ -54,7 +53,7 @@ function index(req, res, next) {
                     jobCd: GMO.Util.JOB_CD_VOID
                 };
                 const removeGMOAuthorizationIn = {
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     gmoAuthorizationId: purchaseModel.authorizationGMO.id
                 };
@@ -91,7 +90,7 @@ function index(req, res, next) {
                     tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num
                 };
                 const removeCOAAuthorizationIn = {
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     coaAuthorizationId: purchaseModel.authorizationCOA.id
                 };
@@ -116,7 +115,7 @@ function index(req, res, next) {
             delete req.session.complete;
             if (process.env.VIEW_TYPE === undefined) {
                 res.locals.theaters = yield MP.services.theater.getTheaters({
-                    accessToken: accessToken
+                    accessToken: yield UtilModule.getAccessToken(req)
                 });
             }
             res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
@@ -143,9 +142,8 @@ exports.index = index;
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accessToken = yield UtilModule.getAccessToken(req);
             const result = yield MP.services.performance.getPerformances({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 theater: req.body.theater,
                 day: req.body.day
             });

@@ -25,7 +25,6 @@ const log = debug('SSKTS:Purchase.PerformancesModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const accessToken = await UtilModule.getAccessToken(req);
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         // GMO取消
         if (purchaseModel.transactionGMO !== null
@@ -44,7 +43,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
                 jobCd: GMO.Util.JOB_CD_VOID
             };
             const removeGMOAuthorizationIn = {
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 gmoAuthorizationId: purchaseModel.authorizationGMO.id
             };
@@ -79,7 +78,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
                 tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num
             };
             const removeCOAAuthorizationIn = {
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             };
@@ -105,7 +104,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         if (process.env.VIEW_TYPE === undefined) {
             res.locals.theaters = await MP.services.theater.getTheaters({
-                accessToken: accessToken
+                accessToken: await UtilModule.getAccessToken(req)
             });
         }
         res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
@@ -131,9 +130,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
-        const accessToken = await UtilModule.getAccessToken(req);
         const result = await MP.services.performance.getPerformances({
-            accessToken: accessToken,
+            accessToken: await UtilModule.getAccessToken(req),
             theater: req.body.theater,
             day: req.body.day
         });

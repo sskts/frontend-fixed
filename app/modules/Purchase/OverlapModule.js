@@ -82,7 +82,6 @@ function newReserve(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const accessToken = yield UtilModule.getAccessToken(req);
             const performance = purchaseModel.performance;
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
@@ -97,7 +96,7 @@ function newReserve(req, res, next) {
             log('COA仮予約削除');
             // COAオーソリ削除
             yield MP.services.transaction.removeCOAAuthorization({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 coaAuthorizationId: purchaseModel.authorizationCOA.id
             });

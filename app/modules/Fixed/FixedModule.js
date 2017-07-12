@@ -47,9 +47,8 @@ exports.index = index;
 function setting(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const accessToken = yield UtilModule.getAccessToken(req);
             res.locals.theaters = yield MP.services.theater.getTheaters({
-                accessToken: accessToken
+                accessToken: yield UtilModule.getAccessToken(req)
             });
             res.render('setting/index');
         }
@@ -85,9 +84,8 @@ function getInquiryData(req, res) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                const accessToken = yield UtilModule.getAccessToken(req);
                 const transactionId = yield MP.services.transaction.makeInquiry({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
                     inquiry_pass: req.body.tel_num // 電話番号
@@ -133,7 +131,7 @@ function getInquiryData(req, res) {
                 });
                 log('パフォーマンスID取得', performanceId);
                 const performance = yield MP.services.performance.getPerformance({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     performanceId: performanceId
                 });
                 if (performance === null)

@@ -47,9 +47,9 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (req.session === undefined || req.body.id === undefined) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
-        const accessToken = await UtilModule.getAccessToken(req);
+        req.session.oauth = await login(<string>req.sessionID, req.body.username, req.body.password);
         const performance = await MP.services.performance.getPerformance({
-            accessToken: accessToken,
+            accessToken: await UtilModule.getAccessToken(req),
             performanceId: req.body.id
         });
         // 開始可能日判定
@@ -76,7 +76,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').unix();
         purchaseModel.transactionMP = await MP.services.transaction.transactionStart({
-            accessToken: accessToken,
+            accessToken: await UtilModule.getAccessToken(req),
             expires_at: purchaseModel.expired
         });
         log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
@@ -96,4 +96,38 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
         res.json({ redirect: null, contents: 'access-congestion' });
     }
+}
+
+/**
+ * ログイン
+ * @function login
+ * @param {string} sessionID
+ * @param {string | undefined} username
+ * @param {string | undefined} password
+ */
+async function login(sessionID: string, username?: string, password?: string) {
+    const oauthTokenArgs: MP.services.oauth.IOauthTokenArgs = (username !== undefined && password !== undefined)
+        ? {
+            grant_type: MP.services.oauth.GrantType.password,
+            scopes: ['admin'],
+            client_id: 'motionpicture',
+            state: sessionID,
+            username: username,
+            password: password
+        }
+        : {
+            grant_type: MP.services.oauth.GrantType.clientCredentials,
+            scopes: ['admin'],
+            client_id: 'motionpicture',
+            state: sessionID
+        };
+
+    const oauthToken = await MP.services.oauth.oauthToken(oauthTokenArgs);
+
+    return {
+        accessToken: oauthToken.access_token,
+        tokenType: oauthToken.token_type,
+        expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
+        grantType: oauthTokenArgs.grant_type
+    };
 }

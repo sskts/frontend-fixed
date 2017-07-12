@@ -219,7 +219,6 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             delete req.session.purchase;
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
-        const accessToken = await UtilModule.getAccessToken(req);
         const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
             return (ticket.mvtk_num !== '');
         });
@@ -232,7 +231,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
 
         // MP取引成立
         await MP.services.transaction.transactionClose({
-            accessToken: accessToken,
+            accessToken: await UtilModule.getAccessToken(req),
             transactionId: purchaseModel.transactionMP.id
         });
         log('MP取引成立');

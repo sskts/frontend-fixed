@@ -54,9 +54,9 @@ function start(req, res) {
             if (req.session === undefined || req.body.id === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
-            const accessToken = yield UtilModule.getAccessToken(req);
+            req.session.oauth = yield login(req.sessionID, req.body.username, req.body.password);
             const performance = yield MP.services.performance.getPerformance({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 performanceId: req.body.id
             });
             // 開始可能日判定
@@ -80,7 +80,7 @@ function start(req, res) {
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').unix();
             purchaseModel.transactionMP = yield MP.services.transaction.transactionStart({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 expires_at: purchaseModel.expired
             });
             log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
@@ -103,3 +103,36 @@ function start(req, res) {
     });
 }
 exports.start = start;
+/**
+ * ログイン
+ * @function login
+ * @param {string} sessionID
+ * @param {string | undefined} username
+ * @param {string | undefined} password
+ */
+function login(sessionID, username, password) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const oauthTokenArgs = (username !== undefined && password !== undefined)
+            ? {
+                grant_type: MP.services.oauth.GrantType.password,
+                scopes: ['admin'],
+                client_id: 'motionpicture',
+                state: sessionID,
+                username: username,
+                password: password
+            }
+            : {
+                grant_type: MP.services.oauth.GrantType.clientCredentials,
+                scopes: ['admin'],
+                client_id: 'motionpicture',
+                state: sessionID
+            };
+        const oauthToken = yield MP.services.oauth.oauthToken(oauthTokenArgs);
+        return {
+            accessToken: oauthToken.access_token,
+            tokenType: oauthToken.token_type,
+            expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
+            grantType: oauthTokenArgs.grant_type
+        };
+    });
+}

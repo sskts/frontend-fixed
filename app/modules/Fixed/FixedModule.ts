@@ -36,9 +36,8 @@ export async function index(_: Request, res: Response): Promise<void> {
  */
 export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        const accessToken = await UtilModule.getAccessToken(req);
         res.locals.theaters = await MP.services.theater.getTheaters({
-            accessToken: accessToken
+            accessToken: await UtilModule.getAccessToken(req)
         });
         res.render('setting/index');
     } catch (err) {
@@ -70,9 +69,8 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            const accessToken = await UtilModule.getAccessToken(req);
             const transactionId = await MP.services.transaction.makeInquiry({
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
@@ -116,7 +114,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             });
             log('パフォーマンスID取得', performanceId);
             const performance = await MP.services.performance.getPerformance({
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 performanceId: performanceId
             });
             if (performance === null) throw ErrorUtilModule.ERROR_PROPERTY;

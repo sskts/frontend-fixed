@@ -135,7 +135,6 @@ function submit(req, res, next) {
             //バリデーション
             InputForm_1.default(req);
             const validationResult = yield req.getValidationResult();
-            const accessToken = yield UtilModule.getAccessToken(req);
             if (!validationResult.isEmpty()) {
                 res.locals.error = validationResult.mapped();
                 res.locals.gmoError = null;
@@ -161,18 +160,18 @@ function submit(req, res, next) {
             if (purchaseModel.transactionGMO !== null
                 && purchaseModel.authorizationGMO !== null
                 && purchaseModel.orderId !== null) {
-                yield removeAuthorization(purchaseModel, accessToken);
+                yield removeAuthorization(req, purchaseModel);
                 log('GMOオーソリ削除');
             }
             if (purchaseModel.getReserveAmount() > 0) {
                 res.locals.gmoError = null;
                 // クレジット決済
                 purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
-                yield addAuthorization(req, res, purchaseModel, accessToken);
+                yield addAuthorization(req, res, purchaseModel);
                 log('オーソリ追加');
             }
             yield MP.services.transaction.ownersAnonymous({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 name_first: purchaseModel.input.first_name_hira,
                 name_last: purchaseModel.input.last_name_hira,
@@ -181,7 +180,7 @@ function submit(req, res, next) {
             });
             log('MP購入者情報登録');
             yield MP.services.transaction.transactionsEnableInquiry({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
                 inquiry_theater: purchaseModel.performance.attributes.theater.id,
                 inquiry_id: purchaseModel.reserveSeats.tmp_reserve_num,
@@ -199,7 +198,7 @@ function submit(req, res, next) {
             });
             if (purchaseModel.completeMailId !== null) {
                 yield MP.services.transaction.removeEmail({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     emailId: purchaseModel.completeMailId
                 });
@@ -225,7 +224,7 @@ function submit(req, res, next) {
                 };
                 const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
                 purchaseModel.completeMailId = yield MP.services.transaction.addEmail({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     from: 'noreply@ticket-cinemasunshine.com',
                     to: purchaseModel.input.mail_addr,
@@ -279,7 +278,7 @@ exports.submit = submit;
  * @param {string} accessToken
  * @returns {void}
  */
-function addAuthorization(req, res, purchaseModel, accessToken) {
+function addAuthorization(req, res, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -342,7 +341,7 @@ function addAuthorization(req, res, purchaseModel, accessToken) {
         }
         // GMOオーソリ追加
         purchaseModel.authorizationGMO = yield MP.services.transaction.addGMOAuthorization({
-            accessToken: accessToken,
+            accessToken: yield UtilModule.getAccessToken(req),
             transaction: purchaseModel.transactionMP,
             orderId: purchaseModel.orderId,
             amount: amount,
@@ -356,11 +355,11 @@ function addAuthorization(req, res, purchaseModel, accessToken) {
  * オーソリ削除
  * @memberof Purchase.InputModule
  * @function removeAuthorization
+ * @param {Request} req
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @param {string} accessToken
  * @returns {void}
  */
-function removeAuthorization(purchaseModel, accessToken) {
+function removeAuthorization(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -390,7 +389,7 @@ function removeAuthorization(purchaseModel, accessToken) {
         }
         // GMOオーソリ削除
         yield MP.services.transaction.removeGMOAuthorization({
-            accessToken: accessToken,
+            accessToken: yield UtilModule.getAccessToken(req),
             transactionId: purchaseModel.transactionMP.id,
             gmoAuthorizationId: purchaseModel.authorizationGMO.id
         });

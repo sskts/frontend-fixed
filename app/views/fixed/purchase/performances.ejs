@@ -9,8 +9,8 @@
     <div class="form-layout center mb-middle">
         <dl>
             <dt><%- __('purchase.performances.date') %></dt>
-            <dd class="date">
-                <select>
+            <dd>
+                <select name="date">
                     <% for (let i = 0; i < 3; i++) { %>
                     <% 
                     const date = moment().add(i, 'days');

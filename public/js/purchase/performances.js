@@ -1,6 +1,6 @@
 $(function () {
     getPerformances();
-    
+
     // 照会クリック
     $(document).on('click', '.inquiry-button a', function (event) {
         event.preventDefault();
@@ -8,13 +8,8 @@ $(function () {
         var url = $(this).attr('href') + '?theater=' + theater;
         location.href = url;
     });
-    // 検索クリック
-    $(document).on('click', '.search a', function (event) {
-        event.preventDefault();
-        getPerformances();
-    });
     // 検索セレクト
-    $(document).on('change', '.date select', function (event) {
+    $(document).on('change', 'select[name=theater], select[name=date], select[name=type]', function (event) {
         getPerformances();
     });
 });
@@ -29,12 +24,12 @@ function getPerformances() {
     var noPerformancesDom = $('.no-performances');
     performancesDom.hide();
     noPerformancesDom.hide();
-    var theater = $('.theater select').val();
+    var theater = $('select[name=theater]').val();
     if (isFixed()) {
         // 券売機
         theater = config.theater;
     }
-    var day = $('.date select').val();
+    var day = $('select[name=date]').val();
     $.ajax({
         dataType: 'json',
         url: '/purchase/performances',
@@ -118,37 +113,40 @@ function createScheduleDom(data) {
         if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
             return;
         }
-
-        var link = '/purchase?id=' + performance.id;
+        var type = $('select[name=type]').val();
+        var link = (type === '0')
+            ? '/purchase?id=' + performance.id
+            : (type === '1') ? '/purchase/app.html?id=' + performance.id
+            : '';
         if (isFixed()) {
             // 券売機
             link = '/purchase/fixed.html?id=' + performance.id;
         }
         // 販売ステータス設定
-        var status = (performance.attributes.stock_status === 0) ? ' ×' 
-        : (performance.attributes.stock_status <= 10) ? ' △'
-        : '';
+        var status = (performance.attributes.stock_status === 0) ? ' ×'
+            : (performance.attributes.stock_status <= 10) ? ' △'
+            : '';
         var disabled = (performance.attributes.stock_status === 0) ? 'disabled' : '';
-        performances.push('<li class="button small-button gray-button ' + disabled + '">'+
-            '<a href="'+ link +'" class="icon-triangle-02">'+ 
-            '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
-            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
-            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' + 
+        performances.push('<li class="button small-button gray-button ' + disabled + '">' +
+            '<a href="' + link + '" class="icon-triangle-02">' +
+            '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' +
+            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' +
+            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' +
             '</a>' +
-        '</li>');
+            '</li>');
     });
 
     if (performances.length === 0) return '';
 
     return ('<li class="performance mb-small">' +
         '<dl>' +
-            '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.performances[0].attributes.film.name.ja + '</strong></dt>' +
-            '<dd>'+
-                '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + data.performances[0].attributes.film.minutes + '分</strong></div>'+
-                '<ul>'+
-                    performances.join('\n') +
-                '</ul>'+
-            '</dd>' +
+        '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.performances[0].attributes.film.name.ja + '</strong></dt>' +
+        '<dd>' +
+        '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + data.performances[0].attributes.film.minutes + '分</strong></div>' +
+        '<ul>' +
+        performances.join('\n') +
+        '</ul>' +
+        '</dd>' +
         '</dl>' +
-    '</li>');
+        '</li>');
 }

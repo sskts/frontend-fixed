@@ -250,7 +250,6 @@ function purchase(req, res) {
                 delete req.session.purchase;
                 throw ErrorUtilModule.ERROR_EXPIRE;
             }
-            const accessToken = yield UtilModule.getAccessToken(req);
             const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
                 return (ticket.mvtk_num !== '');
             });
@@ -262,7 +261,7 @@ function purchase(req, res) {
             }
             // MP取引成立
             yield MP.services.transaction.transactionClose({
-                accessToken: accessToken,
+                accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id
             });
             log('MP取引成立');

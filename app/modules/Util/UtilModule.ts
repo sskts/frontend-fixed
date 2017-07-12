@@ -172,34 +172,36 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
  */
 export async function getAccessToken(req: Request): Promise<string> {
     if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-    let oauth: MP.services.oauth.IOauthTokenResult;
     if (req.session.oauth === undefined) {
-        // sessionなし
-        oauth = await MP.services.oauth.oauthToken({
+        const sessionID = req.sessionID;
+        const oauthTokenArgs: MP.services.oauth.IOauthTokenArgs = {
             grant_type: MP.services.oauth.GrantType.clientCredentials,
             scopes: ['admin'],
             client_id: 'motionpicture',
-            state: req.sessionID
-        });
-        req.session.oauth = oauth;
+            state: sessionID
+        };
 
-        return oauth.access_token;
+        const oauthToken = await MP.services.oauth.oauthToken(oauthTokenArgs);
+
+        req.session.oauth = {
+            accessToken: oauthToken.access_token,
+            tokenType: oauthToken.token_type,
+            expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
+            grantType: oauthTokenArgs.grant_type
+        };
     }
-    if (req.session.oauth.expires_in < moment().unix()) {
+    const oauth: {
+        accessToken: string;
+        tokenType: string;
+        expires: number;
+        grantType: string;
+    } = req.session.oauth;
+    if (req.session.oauth.expires < moment().unix()) {
         // 期限切れ
-        oauth = await MP.services.oauth.oauthToken({
-            grant_type: MP.services.oauth.GrantType.clientCredentials,
-            scopes: ['admin'],
-            client_id: 'motionpicture',
-            state: req.sessionID
-        });
-        req.session.oauth = oauth;
-
-        return oauth.access_token;
+        throw ErrorUtilModule.ERROR_EXPIRE;
     }
-    oauth = (<MP.services.oauth.IOauthTokenResult>req.session.oauth);
 
-    return oauth.access_token;
+    return oauth.accessToken;
 }
 
 /**

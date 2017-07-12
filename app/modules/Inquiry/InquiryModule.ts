@@ -30,8 +30,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         return;
     }
     try {
-        const accessToken = await UtilModule.getAccessToken(req);
-        res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater, accessToken);
+        res.locals.portalTheaterSite = await getPortalTheaterSite(req);
         res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
         res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
         res.locals.telNum = '';
@@ -53,14 +52,13 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
  * 劇場URL取得
  * @memberof InquiryModule
  * @function getPortalTheaterSite
- * @param {string} id
- * @param {string} accessToken
+ * @param {Request} req
  * @returns {Promise<string>}
  */
-async function getPortalTheaterSite(id: string, accessToken: string): Promise<string> {
+async function getPortalTheaterSite(req: Request): Promise<string> {
     const theater = await MP.services.theater.getTheater({
-        accessToken: accessToken,
-        theaterId: id
+        accessToken: await UtilModule.getAccessToken(req),
+        theaterId: req.query.theater
     });
     const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
     if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -80,13 +78,12 @@ async function getPortalTheaterSite(id: string, accessToken: string): Promise<st
 export async function auth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const accessToken = await UtilModule.getAccessToken(req);
         const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             inquiryModel.transactionId = await MP.services.transaction.makeInquiry({
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
@@ -97,7 +94,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             //     tel: req.body.tel_num // 電話番号
             // });
             if (inquiryModel.transactionId === null) {
-                res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater, accessToken);
+                res.locals.portalTheaterSite = await getPortalTheaterSite(req);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
                 res.locals.telNum = req.body.tel_num;
@@ -125,7 +122,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             });
             log('パフォーマンスID取得', performanceId);
             inquiryModel.performance = await MP.services.performance.getPerformance({
-                accessToken: accessToken,
+                accessToken: await UtilModule.getAccessToken(req),
                 performanceId: performanceId
             });
             log('MPパフォーマンス取得');
@@ -135,7 +132,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
             return;
         } else {
-            res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater, accessToken);
+            res.locals.portalTheaterSite = await getPortalTheaterSite(req);
             res.locals.theaterCode = req.body.theater_code;
             res.locals.reserveNum = req.body.reserve_num;
             res.locals.telNum = req.body.tel_num;

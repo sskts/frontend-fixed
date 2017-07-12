@@ -37,8 +37,7 @@ function login(req, res, next) {
             return;
         }
         try {
-            const accessToken = yield UtilModule.getAccessToken(req);
-            res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater, accessToken);
+            res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
             res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
             res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
             res.locals.telNum = '';
@@ -60,15 +59,14 @@ exports.login = login;
  * 劇場URL取得
  * @memberof InquiryModule
  * @function getPortalTheaterSite
- * @param {string} id
- * @param {string} accessToken
+ * @param {Request} req
  * @returns {Promise<string>}
  */
-function getPortalTheaterSite(id, accessToken) {
+function getPortalTheaterSite(req) {
     return __awaiter(this, void 0, void 0, function* () {
         const theater = yield MP.services.theater.getTheater({
-            accessToken: accessToken,
-            theaterId: id
+            accessToken: yield UtilModule.getAccessToken(req),
+            theaterId: req.query.theater
         });
         const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
         if (website === undefined)
@@ -90,13 +88,12 @@ function auth(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const accessToken = yield UtilModule.getAccessToken(req);
             const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 inquiryModel.transactionId = yield MP.services.transaction.makeInquiry({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
                     inquiry_pass: req.body.tel_num // 電話番号
@@ -107,7 +104,7 @@ function auth(req, res, next) {
                 //     tel: req.body.tel_num // 電話番号
                 // });
                 if (inquiryModel.transactionId === null) {
-                    res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater, accessToken);
+                    res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
                     res.locals.theaterCode = req.body.theater_code;
                     res.locals.reserveNum = req.body.reserve_num;
                     res.locals.telNum = req.body.tel_num;
@@ -135,7 +132,7 @@ function auth(req, res, next) {
                 });
                 log('パフォーマンスID取得', performanceId);
                 inquiryModel.performance = yield MP.services.performance.getPerformance({
-                    accessToken: accessToken,
+                    accessToken: yield UtilModule.getAccessToken(req),
                     performanceId: performanceId
                 });
                 log('MPパフォーマンス取得');
@@ -145,7 +142,7 @@ function auth(req, res, next) {
                 return;
             }
             else {
-                res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater, accessToken);
+                res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
                 res.locals.telNum = req.body.tel_num;

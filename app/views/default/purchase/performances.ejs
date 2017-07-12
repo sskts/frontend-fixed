@@ -4,23 +4,13 @@
 <div class="purchase-performances">
     <h1 class="page-ttl">performance</h1>
     <p class="read">選択してください</p>
-    <div class="mb-medium inquiry-theater">
-        <select>
+    <div class="mb-medium">
+        <select name="theater">
             <% for (const theater of theaters) { %>
-            <option selected value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
+            <option value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
             <% } %>
         </select>
-    </div>
-    <div class="mb-medium button blue-button center-button inquiry-button"><a href="/inquiry/login" target="_blank">照会ページ</a></div>
-    <div class="mb-medium theater">
-        <select>
-            <% for (const theater of theaters) { %>
-            <option selected value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
-            <% } %>
-        </select>
-    </div>
-    <div class="mb-medium date">
-        <select>
+        <select name="date">
             <% for (let i = 0; i < 15; i++) { %>
             <% const date = moment().add((i - 5), 'days'); %>
             <% if (moment().add((i - 6), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
@@ -30,8 +20,13 @@
             <% } %>
             <% } %>
         </select>
+        <select name="type">
+            <option value="0">オンライン</option>
+            <option value="1">アプリ</option>
+        </select>
     </div>
-    <div class="mb-medium search button blue-button center-button"><a href="#">検索</a></div>
+    <div class="mb-medium button blue-button center-button inquiry-button"><a href="/inquiry/login" target="_blank">照会ページ</a></div>
+    
     <div>
         <ul class="box radius bg-light-gray performances"></ul>
     </div>
