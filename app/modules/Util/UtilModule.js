@@ -175,7 +175,7 @@ function getAccessToken(req) {
             oauth = yield MP.services.oauth.oauthToken({
                 grant_type: MP.services.oauth.GrantType.clientCredentials,
                 scopes: ['admin'],
-                client_id: 'sskts-frontend',
+                client_id: 'motionpicture',
                 state: req.sessionID
             });
             req.session.oauth = oauth;
@@ -186,7 +186,7 @@ function getAccessToken(req) {
             oauth = yield MP.services.oauth.oauthToken({
                 grant_type: MP.services.oauth.GrantType.clientCredentials,
                 scopes: ['admin'],
-                client_id: 'sskts-frontend',
+                client_id: 'motionpicture',
                 state: req.sessionID
             });
             req.session.oauth = oauth;

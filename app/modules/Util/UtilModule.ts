@@ -178,7 +178,7 @@ export async function getAccessToken(req: Request): Promise<string> {
         oauth = await MP.services.oauth.oauthToken({
             grant_type: MP.services.oauth.GrantType.clientCredentials,
             scopes: ['admin'],
-            client_id: 'sskts-frontend',
+            client_id: 'motionpicture',
             state: req.sessionID
         });
         req.session.oauth = oauth;
@@ -190,7 +190,7 @@ export async function getAccessToken(req: Request): Promise<string> {
         oauth = await MP.services.oauth.oauthToken({
             grant_type: MP.services.oauth.GrantType.clientCredentials,
             scopes: ['admin'],
-            client_id: 'sskts-frontend',
+            client_id: 'motionpicture',
             state: req.sessionID
         });
         req.session.oauth = oauth;
