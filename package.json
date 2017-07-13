@@ -58,7 +58,6 @@
     "@types/i18n": "^0.5.20",
     "@types/jquery": "^2.0.48",
     "@types/mocha": "^2.2.41",
-    "@types/moment": "^2.13.0",
     "@types/redis": "^0.12.36",
     "@types/request": "0.0.45",
     "@types/request-promise-native": "^1.0.6",
