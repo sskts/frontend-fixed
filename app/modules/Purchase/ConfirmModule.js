@@ -335,6 +335,7 @@ function purchase(req, res) {
 exports.purchase = purchase;
 /**
  * 完了情報取得
+ * @memberof Purchase.ConfirmModule
  * @function getCompleteData
  * @param {Request} req
  * @param {Response} res

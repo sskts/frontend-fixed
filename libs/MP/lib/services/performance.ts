@@ -69,13 +69,13 @@ export async function getPerformances(args: IGetPerformancesArgs): Promise<IPerf
         day: args.day
     };
     const response = await request.get({
-        url: `${util.endPoint}/performances`,
+        url: `${util.ENDPOINT}/performances`,
         auth: { bearer: args.accessToken },
         qs: qs,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(qs, response);
     // log('performances:', response.body.data);
@@ -101,12 +101,12 @@ export interface IGetPerformanceArgs extends util.IAuth {
  */
 export async function getPerformance(args: IGetPerformanceArgs): Promise<IPerformance> {
     const response = await request.get({
-        url: `${util.endPoint}/performances/${args.performanceId}`,
+        url: `${util.ENDPOINT}/performances/${args.performanceId}`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('performance:', response.body.data);

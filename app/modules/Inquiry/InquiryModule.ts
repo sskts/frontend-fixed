@@ -82,18 +82,19 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            inquiryModel.transactionId = await MP.services.transaction.makeInquiry({
+            const makeInquiryResult = await MP.services.transaction.makeInquiry({
                 accessToken: await UtilModule.getAccessToken(req),
                 inquiry_theater: req.body.theater_code, // 施設コード
                 inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
                 inquiry_pass: req.body.tel_num // 電話番号
             });
+
             // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
             //     theater_code: req.body.theater_code, // 施設コード
             //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
             //     tel: req.body.tel_num // 電話番号
             // });
-            if (inquiryModel.transactionId === null) {
+            if (makeInquiryResult === null) {
                 res.locals.portalTheaterSite = await getPortalTheaterSite(req);
                 res.locals.theaterCode = req.body.theater_code;
                 res.locals.reserveNum = req.body.reserve_num;
@@ -103,6 +104,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
                 return;
             }
+            inquiryModel.transactionId = makeInquiryResult.id;
             log('MP取引Id取得', inquiryModel.transactionId);
             inquiryModel.login = req.body;
             inquiryModel.stateReserve = await COA.services.reserve.stateReserve({

@@ -56,7 +56,7 @@ export async function getTheater(args: IGetTheaterArgs): Promise<ITheater> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getTheater:', response.body.data);
@@ -85,7 +85,7 @@ export async function getTheaters(args: IGetTheatersArgs): Promise<ITheater[]> {
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getTheaters:', response.body.data);

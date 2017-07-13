@@ -48,13 +48,13 @@ export interface IGetScreenArgs extends util.IAuth {
  */
 export async function getScreen(args: IGetScreenArgs): Promise<IScreen> {
     const response = await request.get({
-        url: `${util.endPoint}/screens/${args.screenId}`,
+        url: `${util.ENDPOINT}/screens/${args.screenId}`,
         auth: { bearer: args.accessToken },
         body: {},
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getScreen:', response.body.data);

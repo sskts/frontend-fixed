@@ -5,6 +5,7 @@
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import * as request from 'request-promise-native';
+import * as transaction from '../services/transaction';
 import * as util from '../utils/util';
 
 const log = debug('SSKTS:services.owner');
@@ -42,12 +43,12 @@ export type IGetProfileArgs = util.IAuth;
  */
 export async function getProfile(args: IGetProfileArgs): Promise<IProfile> {
     const response = await request.get({
-        url: `${util.endPoint}/owners/me/profile`,
+        url: `${util.ENDPOINT}/owners/me/profile`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(undefined, response);
 
@@ -60,7 +61,9 @@ export async function getProfile(args: IGetProfileArgs): Promise<IProfile> {
  * 会員プロフィール更新in
  * @type IUpdateProfileArgs
  */
-export type IUpdateProfileArgs = util.IAuth & IProfile;
+export interface IUpdateProfileArgs extends util.IAuth {
+    profile: IProfile;
+}
 
 /**
  * 会員プロフィール更新
@@ -70,15 +73,19 @@ export type IUpdateProfileArgs = util.IAuth & IProfile;
  * @param {IUpdateProfileArgs} args
  */
 export async function updateProfile(args: IUpdateProfileArgs): Promise<void> {
-    const body = args;
+    const body = {
+        type: 'owners',
+        id: args.profile.id,
+        attributes: args.profile.attributes
+    };
     const response = await request.put({
-        url: `${util.endPoint}/owners/me/profile`,
+        url: `${util.ENDPOINT}/owners/me/profile`,
         auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) util.errorHandler(body, response);
 
@@ -96,13 +103,7 @@ export interface ICard {
     // tslint:disable-next-line:no-reserved-keywords
     type: string;
     id: string;
-    attributes: {
-        card_seq: string;
-        card_name: string;
-        card_no: string;
-        expire: string;
-        holder_name: string;
-    };
+    attributes: transaction.IExportCardInfo;
 }
 
 /**
@@ -121,12 +122,12 @@ export type ISearchCardsArgs = util.IAuth;
  */
 export async function searchCards(args: ISearchCardsArgs): Promise<ICard[]> {
     const response = await request.get({
-        url: `${util.endPoint}/owners/me/cards`,
+        url: `${util.ENDPOINT}/owners/me/cards`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(undefined, response);
 
@@ -136,10 +137,12 @@ export async function searchCards(args: ISearchCardsArgs): Promise<ICard[]> {
 }
 
 /**
- * 会員カード検索in
+ * 会員カード追加in
  * @type IAddCardArgs
  */
-export type IAddCardArgs = util.IAuth & ICard;
+export interface IAddCardArgs extends util.IAuth {
+    card: ICard;
+}
 
 /**
  * 会員カード追加
@@ -150,15 +153,20 @@ export type IAddCardArgs = util.IAuth & ICard;
  * @returns {Promise<void>}
  */
 export async function addCard(args: IAddCardArgs): Promise<void> {
-    const body = args;
+    const body = {
+        data: {
+            type: 'cards',
+            attributes: args.card.attributes
+        }
+    };
     const response = await request.post({
-        url: `${util.endPoint}/owners/me/cards`,
+        url: `${util.ENDPOINT}/owners/me/cards`,
         auth: { bearer: args.accessToken },
         body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.CREATED) util.errorHandler(undefined, response);
 
@@ -185,12 +193,12 @@ export interface IRemoveCardArgs extends util.IAuth {
  */
 export async function removeCard(args: IRemoveCardArgs): Promise<void> {
     const response = await request.delete({
-        url: `${util.endPoint}/owners/me/cards${args.cardId}`,
+        url: `${util.ENDPOINT}/owners/me/cards${args.cardId}`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.NO_CONTENT) util.errorHandler(args, response);
 
@@ -266,12 +274,12 @@ export interface ISeatReservationResult {
  */
 export async function searchSeatReservation(args: ISeatReservationArgs): Promise<ISeatReservationResult[]> {
     const response = await request.get({
-        url: `${util.endPoint}/owners/me/assets/seatReservation`,
+        url: `${util.ENDPOINT}/owners/me/assets/seatReservation`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(undefined, response);
 

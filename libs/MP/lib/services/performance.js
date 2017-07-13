@@ -32,13 +32,13 @@ function getPerformances(args) {
             day: args.day
         };
         const response = yield request.get({
-            url: `${util.endPoint}/performances`,
+            url: `${util.ENDPOINT}/performances`,
             auth: { bearer: args.accessToken },
             qs: qs,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(qs, response);
@@ -58,12 +58,12 @@ exports.getPerformances = getPerformances;
 function getPerformance(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/performances/${args.performanceId}`,
+            url: `${util.ENDPOINT}/performances/${args.performanceId}`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);

@@ -127,10 +127,10 @@ function select(req, res, next) {
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, reserveTickets);
                 log('券種検証');
                 // COAオーソリ削除
-                yield MP.services.transaction.removeCOAAuthorization({
+                yield MP.services.transaction.removeAuthorization({
                     accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
-                    coaAuthorizationId: purchaseModel.authorizationCOA.id
+                    authorizationId: purchaseModel.authorizationCOA.id
                 });
                 log('MPCOAオーソリ削除');
                 //COAオーソリ追加
@@ -149,10 +149,10 @@ function select(req, res, next) {
                 log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
                 if (purchaseModel.authorizationMvtk !== null) {
                     // ムビチケオーソリ削除
-                    yield MP.services.transaction.removeMvtkAuthorization({
+                    yield MP.services.transaction.removeAuthorization({
                         accessToken: yield UtilModule.getAccessToken(req),
                         transactionId: purchaseModel.transactionMP.id,
-                        mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
+                        authorizationId: purchaseModel.authorizationMvtk.id
                     });
                     log('MPムビチケオーソリ削除');
                 }

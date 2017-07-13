@@ -104,10 +104,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, reserveTickets);
             log('券種検証');
             // COAオーソリ削除
-            await MP.services.transaction.removeCOAAuthorization({
+            await MP.services.transaction.removeAuthorization({
                 accessToken: await UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
-                coaAuthorizationId: purchaseModel.authorizationCOA.id
+                authorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
             //COAオーソリ追加
@@ -126,10 +126,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
             if (purchaseModel.authorizationMvtk !== null) {
                 // ムビチケオーソリ削除
-                await MP.services.transaction.removeMvtkAuthorization({
+                await MP.services.transaction.removeAuthorization({
                     accessToken: await UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
-                    mvtkAuthorizationId: purchaseModel.authorizationMvtk.id
+                    authorizationId: purchaseModel.authorizationMvtk.id
                 });
                 log('MPムビチケオーソリ削除');
             }

@@ -189,10 +189,10 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
         });
         log('COA仮予約削除');
         // COAオーソリ削除
-        await MP.services.transaction.removeCOAAuthorization({
+        await MP.services.transaction.removeAuthorization({
             accessToken: await UtilModule.getAccessToken(req),
             transactionId: purchaseModel.transactionMP.id,
-            coaAuthorizationId: purchaseModel.authorizationCOA.id
+            authorizationId: purchaseModel.authorizationCOA.id
         });
         log('MPCOAオーソリ削除');
     }

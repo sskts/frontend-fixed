@@ -27,13 +27,13 @@ const log = debug('SSKTS:services.screen');
 function getScreen(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/screens/${args.screenId}`,
+            url: `${util.ENDPOINT}/screens/${args.screenId}`,
             auth: { bearer: args.accessToken },
             body: {},
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);

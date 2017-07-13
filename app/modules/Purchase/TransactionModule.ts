@@ -13,22 +13,26 @@ import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const END_TIME_DEFAULT = 30;
 /**
  * 販売終了時間(券売機) 10分後
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const END_TIME_FIXED = -10;
 
 /**
  * 取引有効時間 15分間
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const VALID_TIME_DEFAULT = 15;
 /**
  * 取引有効時間(券売機) 5分間
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const VALID_TIME_FIXED = 5;
@@ -100,6 +104,7 @@ export async function start(req: Request, res: Response): Promise<void> {
 
 /**
  * ログイン
+ * @memberof Purchase.TransactionModule
  * @function login
  * @param {string} sessionID
  * @param {string | undefined} username

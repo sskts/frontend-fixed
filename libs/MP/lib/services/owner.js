@@ -28,12 +28,12 @@ const log = debug('SSKTS:services.owner');
 function getProfile(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/owners/me/profile`,
+            url: `${util.ENDPOINT}/owners/me/profile`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(undefined, response);
@@ -51,15 +51,19 @@ exports.getProfile = getProfile;
  */
 function updateProfile(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = args;
+        const body = {
+            type: 'owners',
+            id: args.profile.id,
+            attributes: args.profile.attributes
+        };
         const response = yield request.put({
-            url: `${util.endPoint}/owners/me/profile`,
+            url: `${util.ENDPOINT}/owners/me/profile`,
             auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             util.errorHandler(body, response);
@@ -79,12 +83,12 @@ exports.updateProfile = updateProfile;
 function searchCards(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/owners/me/cards`,
+            url: `${util.ENDPOINT}/owners/me/cards`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(undefined, response);
@@ -103,15 +107,20 @@ exports.searchCards = searchCards;
  */
 function addCard(args) {
     return __awaiter(this, void 0, void 0, function* () {
-        const body = args;
+        const body = {
+            data: {
+                type: 'cards',
+                attributes: args.card.attributes
+            }
+        };
         const response = yield request.post({
-            url: `${util.endPoint}/owners/me/cards`,
+            url: `${util.ENDPOINT}/owners/me/cards`,
             auth: { bearer: args.accessToken },
             body: body,
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.CREATED)
             util.errorHandler(undefined, response);
@@ -131,12 +140,12 @@ exports.addCard = addCard;
 function removeCard(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.delete({
-            url: `${util.endPoint}/owners/me/cards${args.cardId}`,
+            url: `${util.ENDPOINT}/owners/me/cards${args.cardId}`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.NO_CONTENT)
             util.errorHandler(args, response);
@@ -156,12 +165,12 @@ exports.removeCard = removeCard;
 function searchSeatReservation(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/owners/me/assets/seatReservation`,
+            url: `${util.ENDPOINT}/owners/me/assets/seatReservation`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(undefined, response);

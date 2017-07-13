@@ -166,6 +166,7 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
 
 /**
  * アクセストークン取得
+ * @memberof Util.UtilModule
  * @function getAccessToken
  * @param {Reqest} req
  * @returns {Promise<string>}

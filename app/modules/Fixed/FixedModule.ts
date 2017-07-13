@@ -14,7 +14,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
 
 /**
  * 券売機TOPページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -29,7 +29,7 @@ export async function index(_: Request, res: Response): Promise<void> {
 
 /**
  * 券売機設定ページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function setting
  * @param {Response} res
  * @returns {Promise<void>}
@@ -47,7 +47,7 @@ export async function setting(req: Request, res: Response, next: NextFunction): 
 
 /**
  * 利用停止ページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function stop
  * @param {Response} res
  * @returns {void}
@@ -58,6 +58,7 @@ export function stop(_: Request, res: Response): void {
 
 /**
  * 照会情報取得
+ * @memberof Fixed.FixedModule
  * @function getInquiryData
  * @param {Request} req
  * @param {Response} res

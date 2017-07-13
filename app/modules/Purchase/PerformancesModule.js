@@ -55,13 +55,13 @@ function index(req, res, next) {
                 const removeGMOAuthorizationIn = {
                     accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
-                    gmoAuthorizationId: purchaseModel.authorizationGMO.id
+                    authorizationId: purchaseModel.authorizationGMO.id
                 };
                 try {
                     const alterTranResult = yield GMO.CreditService.alterTran(alterTranIn);
                     log('GMOオーソリ取消', alterTranResult);
                     // GMOオーソリ削除
-                    yield MP.services.transaction.removeGMOAuthorization(removeGMOAuthorizationIn);
+                    yield MP.services.transaction.removeAuthorization(removeGMOAuthorizationIn);
                     log('MPGMOオーソリ削除');
                 }
                 catch (err) {
@@ -92,14 +92,14 @@ function index(req, res, next) {
                 const removeCOAAuthorizationIn = {
                     accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
-                    coaAuthorizationId: purchaseModel.authorizationCOA.id
+                    authorizationId: purchaseModel.authorizationCOA.id
                 };
                 try {
                     // COA仮予約削除
                     yield COA.services.reserve.delTmpReserve(delTmpReserveIn);
                     log('COA仮予約削除');
                     // COAオーソリ削除
-                    yield MP.services.transaction.removeCOAAuthorization(removeCOAAuthorizationIn);
+                    yield MP.services.transaction.removeAuthorization(removeCOAAuthorizationIn);
                     log('MPCOAオーソリ削除');
                 }
                 catch (err) {

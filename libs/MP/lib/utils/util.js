@@ -1,21 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 共通
+ * @namespace utils.util
+ */
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../../../app/middlewares/logger");
 const log = debug('SSKTS:MP-util');
 /**
  * エンドポイント
- * @const endPoint
+ * @memberof utils.util
+ * @const ENDPOINT
  */
-exports.endPoint = process.env.MP_ENDPOINT;
+exports.ENDPOINT = process.env.MP_ENDPOINT;
 /**
  * タイムアウト
- * @const timeout
+ * @memberof utils.util
+ * @const TIMEOUT
  */
-exports.timeout = 10000;
+exports.TIMEOUT = 10000;
 /**
  * エラー
+ * @memberof utils.util
  * @function errorHandler
  * @param {any} args
  * @param {any} response

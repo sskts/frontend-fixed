@@ -1,3 +1,7 @@
+/**
+ * 共通
+ * @namespace utils.util
+ */
 import * as debug from 'debug';
 import * as HTTPStatus from 'http-status';
 import logger from '../../../../app/middlewares/logger';
@@ -6,6 +10,7 @@ const log = debug('SSKTS:MP-util');
 
 /**
  * 言語
+ * @memberof utils.util
  * @interface ILanguage
  */
 export interface ILanguage {
@@ -15,6 +20,7 @@ export interface ILanguage {
 
 /**
  * 認証
+ * @memberof utils.util
  * @interface IAuth
  */
 export interface IAuth {
@@ -23,18 +29,21 @@ export interface IAuth {
 
 /**
  * エンドポイント
- * @const endPoint
+ * @memberof utils.util
+ * @const ENDPOINT
  */
-export const endPoint = process.env.MP_ENDPOINT;
+export const ENDPOINT = process.env.MP_ENDPOINT;
 
 /**
  * タイムアウト
- * @const timeout
+ * @memberof utils.util
+ * @const TIMEOUT
  */
-export const timeout = 10000;
+export const TIMEOUT = 10000;
 
 /**
  * エラー
+ * @memberof utils.util
  * @function errorHandler
  * @param {any} args
  * @param {any} response

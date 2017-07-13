@@ -33,7 +33,7 @@ function getTheater(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);
@@ -58,7 +58,7 @@ function getTheaters(args) {
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);

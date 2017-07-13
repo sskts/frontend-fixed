@@ -11,8 +11,7 @@ import * as transactionService from './lib/services/transaction';
 
 /**
  * サービスモジュール群
- *
- * @namespace
+ * @namespace services
  */
 export namespace services {
     export import film = filmService;

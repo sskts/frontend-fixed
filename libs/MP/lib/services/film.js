@@ -28,12 +28,12 @@ const log = debug('SSKTS:services.film');
 function getFilm(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield request.get({
-            url: `${util.endPoint}/films/${args.filmId}`,
+            url: `${util.ENDPOINT}/films/${args.filmId}`,
             auth: { bearer: args.accessToken },
             json: true,
             simple: false,
             resolveWithFullResponse: true,
-            timeout: util.timeout
+            timeout: util.TIMEOUT
         }).promise();
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);

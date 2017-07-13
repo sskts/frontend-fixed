@@ -388,10 +388,10 @@ function removeAuthorization(req, purchaseModel) {
             throw ErrorUtilModule.ERROR_VALIDATION;
         }
         // GMOオーソリ削除
-        yield MP.services.transaction.removeGMOAuthorization({
+        yield MP.services.transaction.removeAuthorization({
             accessToken: yield UtilModule.getAccessToken(req),
             transactionId: purchaseModel.transactionMP.id,
-            gmoAuthorizationId: purchaseModel.authorizationGMO.id
+            authorizationId: purchaseModel.authorizationGMO.id
         });
     });
 }

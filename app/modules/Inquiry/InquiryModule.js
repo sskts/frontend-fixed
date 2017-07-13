@@ -92,7 +92,7 @@ function auth(req, res, next) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                inquiryModel.transactionId = yield MP.services.transaction.makeInquiry({
+                const makeInquiryResult = yield MP.services.transaction.makeInquiry({
                     accessToken: yield UtilModule.getAccessToken(req),
                     inquiry_theater: req.body.theater_code,
                     inquiry_id: Number(req.body.reserve_num),
@@ -103,7 +103,7 @@ function auth(req, res, next) {
                 //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
                 //     tel: req.body.tel_num // 電話番号
                 // });
-                if (inquiryModel.transactionId === null) {
+                if (makeInquiryResult === null) {
                     res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
                     res.locals.theaterCode = req.body.theater_code;
                     res.locals.reserveNum = req.body.reserve_num;
@@ -112,6 +112,7 @@ function auth(req, res, next) {
                     res.render('inquiry/login');
                     return;
                 }
+                inquiryModel.transactionId = makeInquiryResult.id;
                 log('MP取引Id取得', inquiryModel.transactionId);
                 inquiryModel.login = req.body;
                 inquiryModel.stateReserve = yield COA.services.reserve.stateReserve({

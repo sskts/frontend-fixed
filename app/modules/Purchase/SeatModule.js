@@ -203,10 +203,10 @@ function reserve(req, selectSeats, purchaseModel) {
             });
             log('COA仮予約削除');
             // COAオーソリ削除
-            yield MP.services.transaction.removeCOAAuthorization({
+            yield MP.services.transaction.removeAuthorization({
                 accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
-                coaAuthorizationId: purchaseModel.authorizationCOA.id
+                authorizationId: purchaseModel.authorizationCOA.id
             });
             log('MPCOAオーソリ削除');
         }

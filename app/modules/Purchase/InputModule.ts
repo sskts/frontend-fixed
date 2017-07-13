@@ -362,9 +362,9 @@ async function removeAuthorization(req: Request, purchaseModel: PurchaseSession.
         throw ErrorUtilModule.ERROR_VALIDATION;
     }
     // GMOオーソリ削除
-    await MP.services.transaction.removeGMOAuthorization({
+    await MP.services.transaction.removeAuthorization({
         accessToken: await UtilModule.getAccessToken(req),
         transactionId: purchaseModel.transactionMP.id,
-        gmoAuthorizationId: purchaseModel.authorizationGMO.id
+        authorizationId: purchaseModel.authorizationGMO.id
     });
 }

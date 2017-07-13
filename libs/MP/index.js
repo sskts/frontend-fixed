@@ -12,8 +12,7 @@ const theaterService = require("./lib/services/theater");
 const transactionService = require("./lib/services/transaction");
 /**
  * サービスモジュール群
- *
- * @namespace
+ * @namespace services
  */
 var services;
 (function (services) {

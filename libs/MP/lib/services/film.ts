@@ -59,12 +59,12 @@ export interface IGetFilmArgs extends util.IAuth {
  */
 export async function getFilm(args: IGetFilmArgs): Promise<IFilm> {
     const response = await request.get({
-        url: `${util.endPoint}/films/${args.filmId}`,
+        url: `${util.ENDPOINT}/films/${args.filmId}`,
         auth: { bearer: args.accessToken },
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getFilm:', response.body.data);

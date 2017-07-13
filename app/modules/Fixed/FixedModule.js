@@ -22,7 +22,7 @@ const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
 /**
  * 券売機TOPページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function index
  * @param {Request} req
  * @param {Response} res
@@ -39,7 +39,7 @@ function index(_, res) {
 exports.index = index;
 /**
  * 券売機設定ページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function setting
  * @param {Response} res
  * @returns {Promise<void>}
@@ -60,7 +60,7 @@ function setting(req, res, next) {
 exports.setting = setting;
 /**
  * 利用停止ページ表示
- * @memberof FixedModule
+ * @memberof Fixed.FixedModule
  * @function stop
  * @param {Response} res
  * @returns {void}
@@ -71,6 +71,7 @@ function stop(_, res) {
 exports.stop = stop;
 /**
  * 照会情報取得
+ * @memberof Fixed.FixedModule
  * @function getInquiryData
  * @param {Request} req
  * @param {Response} res

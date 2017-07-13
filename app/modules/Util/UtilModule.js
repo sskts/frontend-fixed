@@ -161,6 +161,7 @@ function getEmailTemplate(res, file, locals) {
 exports.getEmailTemplate = getEmailTemplate;
 /**
  * アクセストークン取得
+ * @memberof Util.UtilModule
  * @function getAccessToken
  * @param {Reqest} req
  * @returns {Promise<string>}

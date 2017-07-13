@@ -45,13 +45,13 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             const removeGMOAuthorizationIn = {
                 accessToken: await UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
-                gmoAuthorizationId: purchaseModel.authorizationGMO.id
+                authorizationId: purchaseModel.authorizationGMO.id
             };
             try {
                 const alterTranResult = await GMO.CreditService.alterTran(alterTranIn);
                 log('GMOオーソリ取消', alterTranResult);
                 // GMOオーソリ削除
-                await MP.services.transaction.removeGMOAuthorization(removeGMOAuthorizationIn);
+                await MP.services.transaction.removeAuthorization(removeGMOAuthorizationIn);
                 log('MPGMOオーソリ削除');
             } catch (err) {
                 logger.error('SSKTS-APP:FixedModule.index', {
@@ -80,14 +80,14 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             const removeCOAAuthorizationIn = {
                 accessToken: await UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
-                coaAuthorizationId: purchaseModel.authorizationCOA.id
+                authorizationId: purchaseModel.authorizationCOA.id
             };
             try {
                 // COA仮予約削除
                 await COA.services.reserve.delTmpReserve(delTmpReserveIn);
                 log('COA仮予約削除');
                 // COAオーソリ削除
-                await MP.services.transaction.removeCOAAuthorization(removeCOAAuthorizationIn);
+                await MP.services.transaction.removeAuthorization(removeCOAAuthorizationIn);
                 log('MPCOAオーソリ削除');
             } catch (err) {
                 logger.error('SSKTS-APP:FixedModule.index', {

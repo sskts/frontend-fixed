@@ -56,12 +56,12 @@ export interface IOauthTokenResult {
 export async function oauthToken(args: IOauthTokenArgs): Promise<IOauthTokenResult> {
     const body = args;
     const response = await request.post({
-        url: `${util.endPoint}/oauth/token`,
+        url: `${util.ENDPOINT}/oauth/token`,
         body: body,
         json: true,
         simple: false,
         resolveWithFullResponse: true,
-        timeout: util.timeout
+        timeout: util.TIMEOUT
     }).promise();
 
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(body, response);
