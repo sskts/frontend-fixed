@@ -275,13 +275,17 @@ export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void>
  */
 export enum OwnersGroup {
     /**
+     * プロモーター
+     */
+    Promoter = 'PROMOTER',
+    /**
      * 匿名
      */
-    ANONYMOUS = 'ANONYMOUS',
+    Anonyamous = 'ANONYMOUS',
     /**
      * 会員
      */
-    MEMBER = 'MEMBER'
+    Member = 'MEMBER'
 }
 
 /**
@@ -513,11 +517,11 @@ export interface IAddGMOAuthorizationResult {
  */
 export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promise<IAddGMOAuthorizationResult> {
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'PROMOTER');
+        return (owner.group === OwnersGroup.Promoter);
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'ANONYMOUS');
+        return (owner.group === OwnersGroup.Anonyamous);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {
@@ -673,11 +677,11 @@ export interface IAddCOAAuthorizationResult {
  */
 export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promise<IAddCOAAuthorizationResult> {
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'PROMOTER');
+        return (owner.group === OwnersGroup.Promoter);
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'ANONYMOUS');
+        return (owner.group === OwnersGroup.Anonyamous);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {
@@ -857,11 +861,11 @@ export interface IAddMvtkAuthorizationResult {
 export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promise<IAddMvtkAuthorizationResult> {
     log('addMvtkauthorization args:', args);
     const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'PROMOTER');
+        return (owner.group === OwnersGroup.Promoter);
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === 'ANONYMOUS');
+        return (owner.group === OwnersGroup.Anonyamous);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {

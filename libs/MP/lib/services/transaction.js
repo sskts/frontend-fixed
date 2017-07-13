@@ -162,13 +162,17 @@ exports.ownersAnonymous = ownersAnonymous;
 var OwnersGroup;
 (function (OwnersGroup) {
     /**
+     * プロモーター
+     */
+    OwnersGroup["Promoter"] = "PROMOTER";
+    /**
      * 匿名
      */
-    OwnersGroup["ANONYMOUS"] = "ANONYMOUS";
+    OwnersGroup["Anonyamous"] = "ANONYMOUS";
     /**
      * 会員
      */
-    OwnersGroup["MEMBER"] = "MEMBER";
+    OwnersGroup["Member"] = "MEMBER";
 })(OwnersGroup = exports.OwnersGroup || (exports.OwnersGroup = {}));
 /**
  * 取引中所有者更新
@@ -259,11 +263,11 @@ exports.addOwnersCard = addOwnersCard;
 function addGMOAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'PROMOTER');
+            return (owner.group === OwnersGroup.Promoter);
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'ANONYMOUS');
+            return (owner.group === OwnersGroup.Anonyamous);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {
@@ -309,11 +313,11 @@ exports.addGMOAuthorization = addGMOAuthorization;
 function addCOAAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'PROMOTER');
+            return (owner.group === OwnersGroup.Promoter);
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'ANONYMOUS');
+            return (owner.group === OwnersGroup.Anonyamous);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {
@@ -385,11 +389,11 @@ function addMvtkauthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         log('addMvtkauthorization args:', args);
         const promoterOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'PROMOTER');
+            return (owner.group === OwnersGroup.Promoter);
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === 'ANONYMOUS');
+            return (owner.group === OwnersGroup.Anonyamous);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {
