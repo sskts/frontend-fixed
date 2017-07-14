@@ -35,6 +35,7 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            delete req.session.oauth;
             const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             // GMO取消
             if (purchaseModel.transactionGMO !== null

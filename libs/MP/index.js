@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const filmService = require("./lib/services/film");
 const oauthService = require("./lib/services/oauth");
+const ownerService = require("./lib/services/owner");
 const performanceService = require("./lib/services/performance");
 const screenService = require("./lib/services/screen");
 const theaterService = require("./lib/services/theater");
@@ -18,6 +19,7 @@ var services;
 (function (services) {
     services.film = filmService;
     services.oauth = oauthService;
+    services.owner = ownerService;
     services.performance = performanceService;
     services.screen = screenService;
     services.theater = theaterService;

@@ -30,67 +30,82 @@ const log = debug('SSKTS:Purchase.InputModule');
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
 function index(req, res, next) {
-    try {
-        if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired())
-            throw ErrorUtilModule.ERROR_EXPIRE;
-        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
-            throw ErrorUtilModule.ERROR_EXPIRE;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (req.session.purchase === undefined)
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            }
+            if (purchaseModel.theater === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.transactionMP === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            //購入者情報入力表示
+            res.locals.error = null;
+            res.locals.gmoError = null;
+            res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
+            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+            res.locals.price = purchaseModel.getReserveAmount();
+            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.performance = purchaseModel.performance;
+            if (purchaseModel.isMember()) {
+                const profile = yield MP.services.owner.getProfile({
+                    accessToken: yield UtilModule.getAccessToken(req)
+                });
+                purchaseModel.input = {
+                    last_name_hira: profile.attributes.name_last,
+                    first_name_hira: profile.attributes.name_first,
+                    mail_addr: profile.attributes.email,
+                    mail_confirm: profile.attributes.email,
+                    tel_num: profile.attributes.tel,
+                    agree: ''
+                };
+            }
+            if (purchaseModel.input !== null) {
+                res.locals.input = purchaseModel.input;
+            }
+            else {
+                res.locals.input = {
+                    last_name_hira: '',
+                    first_name_hira: '',
+                    mail_addr: '',
+                    mail_confirm: '',
+                    tel_num: '',
+                    agree: ''
+                };
+            }
+            // if (process.env.NODE_ENV === 'development' && purchaseModel.input === null) {
+            //     res.locals.input = {
+            //         last_name_hira: 'はたぐち',
+            //         first_name_hira: 'あきと',
+            //         mail_addr: 'hataguchi@motionpicture.jp',
+            //         mail_confirm: 'hataguchi@motionpicture.jp',
+            //         tel_num: '09040007648'
+            //     };
+            // }
+            //セッション更新
+            req.session.purchase = purchaseModel.toSession();
+            res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            return;
         }
-        if (purchaseModel.theater === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        //購入者情報入力表示
-        res.locals.error = null;
-        res.locals.gmoError = null;
-        res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-        res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-        res.locals.price = purchaseModel.getReserveAmount();
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.performance = purchaseModel.performance;
-        if (purchaseModel.input !== null) {
-            res.locals.input = purchaseModel.input;
+        catch (err) {
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
+            return;
         }
-        else {
-            res.locals.input = {
-                last_name_hira: '',
-                first_name_hira: '',
-                mail_addr: '',
-                mail_confirm: '',
-                tel_num: '',
-                agree: ''
-            };
-        }
-        // if (process.env.NODE_ENV === 'development' && purchaseModel.input === null) {
-        //     res.locals.input = {
-        //         last_name_hira: 'はたぐち',
-        //         first_name_hira: 'あきと',
-        //         mail_addr: 'hataguchi@motionpicture.jp',
-        //         mail_confirm: 'hataguchi@motionpicture.jp',
-        //         tel_num: '09040007648'
-        //     };
-        // }
-        //セッション更新
-        req.session.purchase = purchaseModel.toSession();
-        res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
-        res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-        return;
-    }
-    catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
-        next(error);
-        return;
-    }
+    });
 }
 exports.index = index;
 /**
@@ -170,14 +185,28 @@ function submit(req, res, next) {
                 yield addAuthorization(req, res, purchaseModel);
                 log('オーソリ追加');
             }
-            yield MP.services.transaction.ownersAnonymous({
-                accessToken: yield UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
-                name_first: purchaseModel.input.first_name_hira,
-                name_last: purchaseModel.input.last_name_hira,
-                tel: purchaseModel.input.tel_num,
-                email: purchaseModel.input.mail_addr
-            });
+            // await MP.services.transaction.ownersAnonymous({
+            //     accessToken: await UtilModule.getAccessToken(req),
+            //     transactionId: purchaseModel.transactionMP.id,
+            //     name_first: purchaseModel.input.first_name_hira,
+            //     name_last: purchaseModel.input.last_name_hira,
+            //     tel: purchaseModel.input.tel_num,
+            //     email: purchaseModel.input.mail_addr
+            // });
+            // const owner = purchaseModel.getOwner();
+            // if (owner === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+            // await MP.services.transaction.updateOwners({
+            //     accessToken: await UtilModule.getAccessToken(req),
+            //     transactionId: purchaseModel.transactionMP.id,
+            //     name_first: purchaseModel.input.first_name_hira,
+            //     name_last: purchaseModel.input.last_name_hira,
+            //     tel: purchaseModel.input.tel_num,
+            //     email: purchaseModel.input.mail_addr,
+            //     ownerId: owner.id,
+            //     group: MP.services.transaction.OwnersGroup.Member,
+            //     username: 'hataguchi',
+            //     password: '1q2w3e4r5t'
+            // });
             log('MP購入者情報登録');
             yield MP.services.transaction.transactionsEnableInquiry({
                 accessToken: yield UtilModule.getAccessToken(req),

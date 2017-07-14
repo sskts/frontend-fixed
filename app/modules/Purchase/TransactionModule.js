@@ -55,13 +55,13 @@ const VALID_TIME_FIXED = 5;
 function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session === undefined || req.body.id === undefined) {
+            if (req.session === undefined || req.body.performanceId === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
             req.session.oauth = yield login(req.sessionID, req.body.username, req.body.password);
             const performance = yield MP.services.performance.getPerformance({
                 accessToken: yield UtilModule.getAccessToken(req),
-                performanceId: req.body.id
+                performanceId: req.body.performanceId
             });
             // 開始可能日判定
             if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
@@ -76,7 +76,7 @@ function start(req, res) {
             let purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
             if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
                 //重複確認へ
-                res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
+                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });
                 return;
             }
             purchaseModel = new PurchaseSession.PurchaseModel({});
@@ -94,7 +94,7 @@ function start(req, res) {
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
             //座席選択へ
-            res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
+            res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_ACCESS
@@ -117,10 +117,31 @@ exports.start = start;
  */
 function login(sessionID, username, password) {
     return __awaiter(this, void 0, void 0, function* () {
+        const scopes = [
+            'admin',
+            'owners.profile',
+            'owners.profile.read-only',
+            'owners.cards',
+            'owners.cards.read-only',
+            'owners.assets',
+            'owners.assets.read-only',
+            'performances',
+            'performances.read-only',
+            'films',
+            'films.read-only',
+            'screens',
+            'screens.read-only',
+            'transactions',
+            'transactions.read-only',
+            'transactions.owners',
+            'transactions.owners.cards',
+            'transactions.authorizations',
+            'transactions.notifications'
+        ];
         const oauthTokenArgs = (username !== undefined && password !== undefined)
             ? {
                 grant_type: MP.services.oauth.GrantType.password,
-                scopes: ['admin'],
+                scopes: scopes,
                 client_id: 'motionpicture',
                 state: sessionID,
                 username: username,
@@ -128,7 +149,7 @@ function login(sessionID, username, password) {
             }
             : {
                 grant_type: MP.services.oauth.GrantType.clientCredentials,
-                scopes: ['admin'],
+                scopes: scopes,
                 client_id: 'motionpicture',
                 state: sessionID
             };

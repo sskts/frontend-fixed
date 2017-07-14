@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
+const MP = require("../../../libs/MP");
 const UtilModule = require("../../modules/Util/UtilModule");
 /**
  * 購入セッション
@@ -178,6 +179,30 @@ class PurchaseModel {
      */
     isExpired() {
         return (this.expired < moment().unix());
+    }
+    /**
+     * 会員判定
+     * @returns {boolean}
+     */
+    isMember() {
+        if (this.transactionMP === null)
+            return false;
+        const member = this.transactionMP.attributes.owners.find((owner) => {
+            return (owner.group === MP.services.transaction.OwnersGroup.Member);
+        });
+        return (member !== undefined);
+    }
+    /**
+     * 所有者取得
+     * @returns {MP.services.transaction.IOwner}
+     */
+    getOwner() {
+        if (this.transactionMP === null)
+            return undefined;
+        return this.transactionMP.attributes.owners.find((owner) => {
+            return (owner.group === MP.services.transaction.OwnersGroup.Anonyamous
+                || owner.group === MP.services.transaction.OwnersGroup.Member);
+        });
     }
 }
 PurchaseModel.PERFORMANCE_STATE = 0;

@@ -4,6 +4,7 @@
  */
 import * as filmService from './lib/services/film';
 import * as oauthService from './lib/services/oauth';
+import * as ownerService from './lib/services/owner';
 import * as performanceService from './lib/services/performance';
 import * as screenService from './lib/services/screen';
 import * as theaterService from './lib/services/theater';
@@ -16,6 +17,7 @@ import * as transactionService from './lib/services/transaction';
 export namespace services {
     export import film = filmService;
     export import oauth = oauthService;
+    export import owner = ownerService;
     export import performance = performanceService;
     export import screen = screenService;
     export import theater = theaterService;

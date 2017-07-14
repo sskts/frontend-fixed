@@ -25,6 +25,7 @@ const log = debug('SSKTS:Purchase.PerformancesModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        delete req.session.oauth;
         const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
         // GMO取消
         if (purchaseModel.transactionGMO !== null

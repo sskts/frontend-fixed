@@ -208,7 +208,7 @@ function updateOwners(args) {
             resolveWithFullResponse: true,
             timeout: util.TIMEOUT
         }).promise();
-        if (response.statusCode !== HTTPStatus.NO_CONTENT)
+        if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(body, response);
         log('ownersAnonymous result:', response.body.data);
         return response.body.data;
@@ -267,7 +267,7 @@ function addGMOAuthorization(args) {
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === OwnersGroup.Anonyamous);
+            return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {
@@ -317,7 +317,7 @@ function addCOAAuthorization(args) {
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === OwnersGroup.Anonyamous);
+            return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {
@@ -393,7 +393,7 @@ function addMvtkauthorization(args) {
         });
         const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
         const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-            return (owner.group === OwnersGroup.Anonyamous);
+            return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
         });
         const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
         const body = {

@@ -23,9 +23,9 @@ const log = debug('SSKTS:Purchase.InputModule');
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
- * @returns {void}
+ * @returns {Promise<void>}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -45,6 +45,19 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.locals.price = purchaseModel.getReserveAmount();
         res.locals.transactionId = purchaseModel.transactionMP.id;
         res.locals.performance = purchaseModel.performance;
+        if (purchaseModel.isMember()) {
+            const profile = await MP.services.owner.getProfile({
+                accessToken: await UtilModule.getAccessToken(req)
+            });
+            purchaseModel.input = {
+                last_name_hira: profile.attributes.name_last,
+                first_name_hira: profile.attributes.name_first,
+                mail_addr: profile.attributes.email,
+                mail_confirm: profile.attributes.email,
+                tel_num: profile.attributes.tel,
+                agree: ''
+            };
+        }
         if (purchaseModel.input !== null) {
             res.locals.input = purchaseModel.input;
         } else {
@@ -153,14 +166,30 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             await addAuthorization(req, res, purchaseModel);
             log('オーソリ追加');
         }
-        await MP.services.transaction.ownersAnonymous({
-            accessToken: await UtilModule.getAccessToken(req),
-            transactionId: purchaseModel.transactionMP.id,
-            name_first: purchaseModel.input.first_name_hira,
-            name_last: purchaseModel.input.last_name_hira,
-            tel: purchaseModel.input.tel_num,
-            email: purchaseModel.input.mail_addr
-        });
+        // await MP.services.transaction.ownersAnonymous({
+        //     accessToken: await UtilModule.getAccessToken(req),
+        //     transactionId: purchaseModel.transactionMP.id,
+        //     name_first: purchaseModel.input.first_name_hira,
+        //     name_last: purchaseModel.input.last_name_hira,
+        //     tel: purchaseModel.input.tel_num,
+        //     email: purchaseModel.input.mail_addr
+        // });
+
+        // const owner = purchaseModel.getOwner();
+        // if (owner === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        // await MP.services.transaction.updateOwners({
+        //     accessToken: await UtilModule.getAccessToken(req),
+        //     transactionId: purchaseModel.transactionMP.id,
+        //     name_first: purchaseModel.input.first_name_hira,
+        //     name_last: purchaseModel.input.last_name_hira,
+        //     tel: purchaseModel.input.tel_num,
+        //     email: purchaseModel.input.mail_addr,
+        //     ownerId: owner.id,
+        //     group: MP.services.transaction.OwnersGroup.Member,
+        //     username: 'hataguchi',
+        //     password: '1q2w3e4r5t'
+        // });
+
         log('MP購入者情報登録');
         await MP.services.transaction.transactionsEnableInquiry({
             accessToken: await UtilModule.getAccessToken(req),

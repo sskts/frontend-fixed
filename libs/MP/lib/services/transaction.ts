@@ -362,7 +362,7 @@ export async function updateOwners(args: IUpdateOwnersArgs): Promise<IUpdateOwne
         resolveWithFullResponse: true,
         timeout: util.TIMEOUT
     }).promise();
-    if (response.statusCode !== HTTPStatus.NO_CONTENT) util.errorHandler(body, response);
+    if (response.statusCode !== HTTPStatus.OK) util.errorHandler(body, response);
 
     log('ownersAnonymous result:', response.body.data);
 
@@ -521,7 +521,7 @@ export async function addGMOAuthorization(args: IAddGMOAuthorizationArgs): Promi
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === OwnersGroup.Anonyamous);
+        return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {
@@ -681,7 +681,7 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === OwnersGroup.Anonyamous);
+        return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {
@@ -865,7 +865,7 @@ export async function addMvtkauthorization(args: IAuthorizationsMvtkArgs): Promi
     });
     const promoterOwnerId = (promoterOwner !== undefined) ? promoterOwner.id : null;
     const anonymousOwner = args.transaction.attributes.owners.find((owner) => {
-        return (owner.group === OwnersGroup.Anonyamous);
+        return (owner.group === OwnersGroup.Anonyamous || owner.group === OwnersGroup.Member);
     });
     const anonymousOwnerId = (anonymousOwner !== undefined) ? anonymousOwner.id : null;
     const body = {

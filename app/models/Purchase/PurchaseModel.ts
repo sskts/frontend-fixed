@@ -404,4 +404,30 @@ export class PurchaseModel {
     public isExpired(): boolean {
         return (this.expired < moment().unix());
     }
+
+    /**
+     * 会員判定
+     * @returns {boolean}
+     */
+    public isMember(): boolean {
+        if (this.transactionMP === null) return false;
+        const member = this.transactionMP.attributes.owners.find((owner) => {
+            return (owner.group === MP.services.transaction.OwnersGroup.Member);
+        });
+
+        return (member !== undefined);
+    }
+
+    /**
+     * 所有者取得
+     * @returns {MP.services.transaction.IOwner}
+     */
+    public getOwner(): MP.services.transaction.IOwner | undefined {
+        if (this.transactionMP === null) return undefined;
+
+        return this.transactionMP.attributes.owners.find((owner) => {
+            return (owner.group === MP.services.transaction.OwnersGroup.Anonyamous
+                || owner.group === MP.services.transaction.OwnersGroup.Member);
+        });
+    }
 }

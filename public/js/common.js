@@ -20,6 +20,15 @@ $(function () {
 });
 
 /**
+ * アプリ判定
+ * @function isApp
+ * @returns {boolean} 
+ */
+function isApp() {
+    return $('body').hasClass('app');
+}
+
+/**
  * 券売機判定
  * @function isFixed
  * @returns {boolean} 

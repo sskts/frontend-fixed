@@ -4,29 +4,35 @@ $(function () {
         $('.wrapper-inner').show();
         return;
     }
-    var id = getParameter()['id'];
-    if (id === undefined) {
+    var performanceId = getParameter()['id'];
+    if (performanceId === undefined) {
         $('.access-error').show();
         $('.wrapper-inner').show();
         return;
     }
-    getTransaction(id);
+    getTransaction({
+        performanceId: performanceId,
+        username: $('input[name=username]').val(),
+        password: $('input[name=password]').val()
+    });
 });
 
 /**
  * 取引取得
- * @param {string} id
+ * @param {Object} args
+ * @param {string} args.performanceId
+ * @param {string} args.username
+ * @param {string} args.password
  * @returns {void}
  */
-function getTransaction(id) {
+function getTransaction(args) {
+    var body = args;
     $.ajax({
         dataType: 'json',
         url: '/purchase/transaction',
         type: 'POST',
         timeout: 10000,
-        data: {
-            id: id
-        },
+        data: body,
         beforeSend: function () {
             loadingStart();
         }
