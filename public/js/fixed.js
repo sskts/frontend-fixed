@@ -7,7 +7,7 @@
         if (event.touches.length > 1) {
             event.preventDefault();
         }
-    }, true);
+    });
 
     // ダブルタップ禁止
     var lastTouch = 0;
@@ -17,7 +17,7 @@
             event.preventDefault();
         }
         lastTouch = now;
-    }, true);
+    });
 
     // 戻るボタン禁止
     history.pushState(null, null, null);
@@ -28,6 +28,11 @@
     // 初期処理
     fixedInit();
 })();
+
+$(function () {
+    // 自動TOP遷移
+    autoTop();
+});
 
 /**
  * viewport変更
@@ -60,4 +65,31 @@ function fixedInit() {
         }
         window.config = JSON.parse(data);
     }
+}
+
+/**
+ * 自動TOP遷移
+ * @function autoTop
+ * @return {void}
+ */
+function autoTop() {
+    if ($('.index').length === 1) {
+        return;
+    }
+    var controlTime = 1000 * 60 * 5;
+    var timeFunction = function () {
+        window.timer = setTimeout(function () {
+            location.href = '/';
+        }, controlTime);
+    }
+    timeFunction();
+    // 自動TOP遷移
+    $(document).on('touchstart', function (event) {
+        clearTimeout(window.timer);
+        timeFunction();
+    });
+    $(document).on('touchend', function (event) {
+        clearTimeout(window.timer);
+        timeFunction();
+    });
 }

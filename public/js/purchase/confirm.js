@@ -2,7 +2,6 @@ var screenSeatStatusesMap;
 
 $(function () {
     $('.purchase-complete').hide();
-    var modal = new SASAKI.Modal();
     /**
      * 次へクリックイベント
      */
