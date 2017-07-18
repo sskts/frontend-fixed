@@ -6,11 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 ### Added
 
-
 ### Changed
-
+ - [券売機] QRコードの発行を上映日から1ヶ月に変更
+ - [Webアプリ] Google Chart APIでのQR生成を廃止、jsで生成へ変更
 
 ### Fixed
+ - 座席選択表示スピード改善
 
 ### Security
 - packageアップデート
