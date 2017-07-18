@@ -179,7 +179,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             log('MPメール削除');
         }
         // APIへ移行予定
-        const theater = await COA.MasterService.theater({
+        const theater = await COA.services.master.theater({
             theater_code: purchaseModel.theater.id
         });
         if (process.env.VIEW_TYPE !== 'fixed') {

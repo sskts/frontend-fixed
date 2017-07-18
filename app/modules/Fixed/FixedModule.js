@@ -90,7 +90,7 @@ function getInquiryData(req, res) {
                 if (transactionId === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('MP取引Id取得', transactionId);
-                let stateReserve = yield COA.ReserveService.stateReserve({
+                let stateReserve = yield COA.services.reserve.stateReserve({
                     theater_code: req.body.theater_code,
                     reserve_num: req.body.reserve_num,
                     tel_num: req.body.tel_num // 電話番号
@@ -102,9 +102,9 @@ function getInquiryData(req, res) {
                         throw ErrorUtilModule.ERROR_PROPERTY;
                     if (req.session.fixed.updateReserveIn === undefined)
                         throw ErrorUtilModule.ERROR_PROPERTY;
-                    const updReserve = yield COA.ReserveService.updReserve(req.session.fixed.updateReserveIn);
+                    const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                     log('COA本予約', updReserve);
-                    stateReserve = yield COA.ReserveService.stateReserve({
+                    stateReserve = yield COA.services.reserve.stateReserve({
                         theater_code: req.body.theater_code,
                         reserve_num: req.body.reserve_num,
                         tel_num: req.body.tel_num // 電話番号

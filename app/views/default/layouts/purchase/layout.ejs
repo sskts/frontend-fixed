@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="<%- __('lang') %>">
 <%- include ../head %>
-
+<% if (viewType === 'app') { %>
+<body class="app purchase">
+<h1>アプリ</h1>
+<% } else { %>
 <body class="purchase">
+<% } %>
 <%- include ../tags/body %>
 <%- include ../noscript %>
 <div class="wrapper">

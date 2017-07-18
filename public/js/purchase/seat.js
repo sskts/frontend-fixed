@@ -4,11 +4,11 @@ $(function () {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     var modal = new SASAKI.Modal();
     saveSalesTickets();
-    loadingStart(function () {
-        screenStateUpdate(function () {
-            loadingEnd();
-        });
+    loadingStart();
+    screenStateUpdate(function () {
+        loadingEnd();
     });
+    
 
     // 座席クリックイベント
     $(document).on('click', '.zoom-btn a', function (event) {

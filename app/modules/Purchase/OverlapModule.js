@@ -84,7 +84,7 @@ function newReserve(req, res, next) {
             const performance = purchaseModel.performance;
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
-            yield COA.ReserveService.delTmpReserve({
+            yield COA.services.reserve.delTmpReserve({
                 theater_code: performance.attributes.theater.id,
                 date_jouei: performance.attributes.day,
                 title_code: purchaseModel.performanceCOA.titleCode,

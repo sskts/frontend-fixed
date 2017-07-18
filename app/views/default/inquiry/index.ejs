@@ -49,16 +49,12 @@
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
                 </div>
-                <% } else if (moment(`${performance.attributes.day} ${performance.attributes.time_end}`).unix() < moment().unix()) { %>
+                <% } else if (moment(`${performance.attributes.day} ${performance.attributes.time_end}`).add(1, 'months').unix() < moment().unix()) { %>
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_after') %></p>
                 </div>
                 <% } else { %>
-                <div class="box radius border-bottom-dot qr-code bg-white">
-                    <div class="text-center">
-                        <img src="//chart.apis.google.com/chart?chs=150x150&cht=qr&chl=<%- ticket.seat_qrcode %>" alt="QRコード">
-                    </div>
-                </div>
+                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- ticket.seat_qrcode %>"></div>
                 <% } %>
                 <div class="box">
                     <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>
