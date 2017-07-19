@@ -89,7 +89,7 @@ function submit(req, res, next) {
         if (purchaseModel.transactionMP === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        if (req.body.transactionId !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         // ムビチケ情報を購入セッションへ保存

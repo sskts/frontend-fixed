@@ -9,39 +9,39 @@ const TEL_MIN_LENGTH = 9;
  */
 exports.default = (req) => {
     // 名前（せい）
-    req.checkBody('last_name_hira', `${req.__('common.last_name_hira')}${req.__('common.validation.required')}`).notEmpty();
-    req.checkBody('last_name_hira', `${req.__('common.last_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`).isLength({
+    req.checkBody('lastNameHira', `${req.__('common.last_name_hira')}${req.__('common.validation.required')}`).notEmpty();
+    req.checkBody('lastNameHira', `${req.__('common.last_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`).isLength({
         min: 0,
         max: NAME_MAX_LENGTH
     });
-    req.checkBody('last_name_hira', `${req.__('common.last_name_hira')}${req.__('common.validation.is_hira')}`).matches(/^[ぁ-ゞー]+$/);
+    req.checkBody('lastNameHira', `${req.__('common.last_name_hira')}${req.__('common.validation.is_hira')}`).matches(/^[ぁ-ゞー]+$/);
     // 名前（めい）
-    req.checkBody('last_name_hira', `${req.__('common.first_name_hira')}${req.__('common.validation.required')}`).notEmpty();
-    req.checkBody('last_name_hira', `${req.__('common.first_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`).isLength({
+    req.checkBody('lastNameHira', `${req.__('common.first_name_hira')}${req.__('common.validation.required')}`).notEmpty();
+    req.checkBody('lastNameHira', `${req.__('common.first_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`).isLength({
         min: 0,
         max: NAME_MAX_LENGTH
     });
-    req.checkBody('last_name_hira', `${req.__('common.first_name_hira')}${req.__('common.validation.is_hira')}`).matches(/^[ぁ-ゞー]+$/);
+    req.checkBody('lastNameHira', `${req.__('common.first_name_hira')}${req.__('common.validation.is_hira')}`).matches(/^[ぁ-ゞー]+$/);
     // メールアドレス
-    req.checkBody('mail_addr', `${req.__('common.mail_addr')}${req.__('common.validation.required')}`).notEmpty();
-    req.checkBody('mail_addr', `${req.__('common.mail_addr')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`).isLength({
+    req.checkBody('mailAddr', `${req.__('common.mail_addr')}${req.__('common.validation.required')}`).notEmpty();
+    req.checkBody('mailAddr', `${req.__('common.mail_addr')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`).isLength({
         max: MAIL_MAX_LENGTH
     });
-    req.checkBody('mail_addr', `${req.__('common.mail_addr')}${req.__('common.validation.is_email')}`).isEmail();
+    req.checkBody('mailAddr', `${req.__('common.mail_addr')}${req.__('common.validation.is_email')}`).isEmail();
     // メールアドレス確認
-    req.checkBody('mail_confirm', `${req.__('common.mail_confirm')}${req.__('common.validation.required')}`).notEmpty();
-    req.checkBody('mail_confirm', `${req.__('common.mail_confirm')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`).isLength({
+    req.checkBody('mailConfirm', `${req.__('common.mail_confirm')}${req.__('common.validation.required')}`).notEmpty();
+    req.checkBody('mailConfirm', `${req.__('common.mail_confirm')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`).isLength({
         max: MAIL_MAX_LENGTH
     });
-    req.checkBody('mail_confirm', `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`).isEmail();
-    req.checkBody('mail_confirm', `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`).equals(req.body.mail_addr);
+    req.checkBody('mailConfirm', `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`).isEmail();
+    req.checkBody('mailConfirm', `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`).equals(req.body.mailAddr);
     // 電話番号
-    req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.required')}`).notEmpty();
-    req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`).matches(/^[0-9]+$/);
-    req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.maxlength %s', String(TEL_MAX_LENGTH))}`).isLength({
+    req.checkBody('telNum', `${req.__('common.tel_num')}${req.__('common.validation.required')}`).notEmpty();
+    req.checkBody('telNum', `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`).matches(/^[0-9]+$/);
+    req.checkBody('telNum', `${req.__('common.tel_num')}${req.__('common.validation.maxlength %s', String(TEL_MAX_LENGTH))}`).isLength({
         max: TEL_MAX_LENGTH
     });
-    req.checkBody('tel_num', `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(TEL_MIN_LENGTH))}`).isLength({
+    req.checkBody('telNum', `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(TEL_MIN_LENGTH))}`).isLength({
         min: TEL_MIN_LENGTH
     });
 };

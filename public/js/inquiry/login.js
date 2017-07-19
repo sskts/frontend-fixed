@@ -55,7 +55,7 @@ function validation() {
             category: 'form',
             message: validations.join(', '),
             notes: names.join(', '),
-            transaction: $('input[name=transaction_id]').val()
+            transaction: $('input[name=transactionId]').val()
         });
     }
 }
@@ -85,9 +85,9 @@ function toInquiry() {
         var info = inquiryInfo[i];
         if (transactionId === info.transaction_id) {
             //対象取引データ
-            $('input[name=theater_code]').val(info.theater_code);
-            $('input[name=reserve_num]').val(info.reserve_num);
-            $('input[name=tel_num]').val(info.tel_num);
+            $('input[name=theaterCode]').val(info.theaterCode);
+            $('input[name=reserveNum]').val(info.reserveNum);
+            $('input[name=telNum]').val(info.telNum);
             submitFlg = true;
             break;
         }

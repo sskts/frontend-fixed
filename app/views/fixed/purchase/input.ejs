@@ -14,13 +14,13 @@
             <dl class="mb-middle">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>" class="numerickeybord" readonly="readonly">
+                    <input type="tel" name="telNum" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.telNum %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
-            <input type="hidden" name="last_name_hira" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
-            <input type="hidden" name="first_name_hira" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
-            <input type="hidden" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="">
-            <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="">
+            <input type="hidden" name="lastNameHira" placeholder="<%- __('common.placeholder.lastNameHira') %>" value="">
+            <input type="hidden" name="firstNameHira" placeholder="<%- __('common.placeholder.firstNameHira') %>" value="">
+            <input type="hidden" name="mailAddr" placeholder="<%- __('common.placeholder.mail') %>" value="">
+            <input type="hidden" name="mailConfirm" placeholder="<%- __('common.placeholder.mailConfirm') %>" value="">
             <% if (price > 0) { %>
             <h2 class="payment-ttl mb-small">
                 <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
@@ -39,7 +39,7 @@
                 <dl>
                     <dt><%- __('common.expire') %> / <%- __('common.month') %></dt>
                     <dd>
-                        <select name="credit_month" id="cardExpirationMonth">
+                        <select name="creditMonth" id="cardExpirationMonth">
                             <%
                             for (let i = 0; i < 12; i++) {
                                 let num = i + 1;
@@ -53,7 +53,7 @@
                 <dl>
                     <dt><%- __('common.expire') %> / <%- __('common.year') %></dt>
                     <dd>
-                        <select name="credit_year" id="cardExpirationYear">
+                        <select name="creditYear" id="cardExpirationYear">
                             <%
                             let choices = {};
                             let year2digits = moment().format('YY');
@@ -77,9 +77,9 @@
                 </dd>
             </dl>
             <input type="hidden" name="holdername" autocomplete="off" value="" placeholder="<%- __('common.placeholder.holdername') %>">
-            <input type="hidden" name="gmo_token_object" value="">
-            <input type="hidden" name="gmo_error" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
-            <input type="hidden" name="gmo_error_message" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
+            <input type="hidden" name="gmoTokenObject" value="">
+            <input type="hidden" name="gmoError" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
+            <input type="hidden" name="gmoErrorMessage" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
             <% } %>
         </div>
         <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.input.next') %></button></div>
@@ -87,7 +87,7 @@
     </form>
     <input type="hidden" name="price" value="<%= price %>">
     <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
-    <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+    <input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
 </div>
 
 <%- include('../locales/validation') %>

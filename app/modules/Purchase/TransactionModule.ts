@@ -58,14 +58,14 @@ export async function start(req: Request, res: Response): Promise<void> {
             performanceId: req.body.performanceId
         });
         // 開始可能日判定
-        if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
+        if (moment().unix() < moment(`${performance.attributes.coaRsvStartDate}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
 
         // 終了可能日判定
         const limit = (process.env.VIEW_TYPE === 'fixed') ? END_TIME_FIXED : END_TIME_DEFAULT;
         const limitTime = moment().add(limit, 'minutes');
-        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
 

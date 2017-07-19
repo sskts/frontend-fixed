@@ -57,7 +57,7 @@ function purchase() {
         data: {
             toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
             isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
-            transaction_id: $('input[name=transaction_id]').val()
+            transactionId: $('input[name=transactionId]').val()
         },
         beforeSend: function () {
             loadingStart();
@@ -67,8 +67,8 @@ function purchase() {
             //エラー表示
             showError(res.err.message);
         } else {
-            var transactionId = $('input[name=transaction_id]').val();
-            var theaterCode = $('input[name=theater_code]').val();
+            var transactionId = $('input[name=transactionId]').val();
+            var theaterCode = $('input[name=theaterCode]').val();
             // 計測
             collection({
                 client: 'sskts-frontend',
@@ -231,7 +231,7 @@ function validation() {
     $('.validation-text').remove();
 
     var validationList = [
-        { name: 'notes_agree', label: locales.label.notes, agree: true },
+        { name: 'notesAgree', label: locales.label.notes, agree: true },
     ];
 
     validationList.forEach(function (validation, index) {

@@ -91,7 +91,7 @@ describe('POST /seat/:id/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -165,7 +165,7 @@ describe('POST /ticket/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -180,7 +180,7 @@ describe('POST /ticket/', () => {
                     performance: normalDAta.performance
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -197,7 +197,7 @@ describe('POST /ticket/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -214,7 +214,7 @@ describe('POST /ticket/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -308,7 +308,7 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -325,7 +325,7 @@ describe('POST /input/', () => {
                     performance: normalDAta.performance
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -344,7 +344,7 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -363,7 +363,7 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -382,7 +382,7 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -401,7 +401,7 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.BAD_REQUEST);
     }));
@@ -422,12 +422,12 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '12345678',
-            last_name_hira: '',
-            first_name_hira: '',
-            mail_addr: '',
-            mail_confirm: '',
-            tel_num: ''
+            transactionId: '12345678',
+            lastNameHira: '',
+            firstNameHira: '',
+            mailAddr: '',
+            mailConfirm: '',
+            telNum: ''
         })
             .expect(httpStatus.OK);
     }));
@@ -448,12 +448,12 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '12345678',
-            last_name_hira: 11111111111,
-            first_name_hira: 11111111111,
-            mail_addr: 11111111111,
-            mail_confirm: 11111111111,
-            tel_num: 11111111111
+            transactionId: '12345678',
+            lastNameHira: 11111111111,
+            firstNameHira: 11111111111,
+            mailAddr: 11111111111,
+            mailConfirm: 11111111111,
+            telNum: 11111111111
         })
             .expect(httpStatus.OK);
     }));
@@ -474,12 +474,12 @@ describe('POST /input/', () => {
                     }
                 }
             },
-            transaction_id: '12345678',
-            last_name_hira: 'てすと',
-            first_name_hira: 'てすと',
-            mail_addr: 'test@test.jp',
-            mail_confirm: 'test2@test.jp',
-            tel_num: '09012345678'
+            transactionId: '12345678',
+            lastNameHira: 'てすと',
+            firstNameHira: 'てすと',
+            mailAddr: 'test@test.jp',
+            mailConfirm: 'test2@test.jp',
+            telNum: '09012345678'
         })
             .expect(httpStatus.OK);
     }));
@@ -595,7 +595,7 @@ describe('POST /confirm/', () => {
                     }
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.OK);
         assert(!response.body.result);
@@ -614,7 +614,7 @@ describe('POST /confirm/', () => {
                     performance: normalDAta.performance
                 }
             },
-            transaction_id: '02345678'
+            transactionId: '02345678'
         })
             .expect(httpStatus.OK);
         assert(!response.body.result);
@@ -636,7 +636,7 @@ describe('POST /confirm/', () => {
                     }
                 }
             },
-            transaction_id: '12345678'
+            transactionId: '12345678'
         })
             .expect(httpStatus.OK);
         assert(!response.body.result);
@@ -658,7 +658,7 @@ describe('POST /confirm/', () => {
                     }
                 }
             },
-            transaction_id: '12345678'
+            transactionId: '12345678'
         })
             .expect(httpStatus.OK);
         assert(!response.body.result);

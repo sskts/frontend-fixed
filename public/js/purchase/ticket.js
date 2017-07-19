@@ -4,7 +4,7 @@ $(function () {
     // 初期化
     pageInit();
     // 券種クリックイベント
-    $(document).on('click', '.modal[data-modal=ticket_type] .button a', function (event) {
+    $(document).on('click', '.modal[data-modal=ticketType] .button a', function (event) {
         event.preventDefault();
         
         var ticket = getSalseTicketData($(this));
@@ -26,17 +26,17 @@ $(function () {
         $('.seats li').each(function (index, elem) {
             var ticket = getTicketData($(elem));
             result.push(ticket);
-            if (!ticket.ticket_code) {
+            if (!ticket.ticketCode) {
                 flag = false;
             }
         });
 
         if (!flag) {
-            modal.open('ticket_not_select');
+            modal.open('ticketNotSelect');
         } else {
             // location.hrefにpostする
             var form = $('form');
-            var dom = $('<input type="hidden" name="reserve_tickets">').val(JSON.stringify(result));
+            var dom = $('<input type="hidden" name="reserveTickets">').val(JSON.stringify(result));
             form.append(dom);
             loadingStart(function () {
                 form.submit();
@@ -54,13 +54,13 @@ $(function () {
 function getTicketData(target) {
     return {
         section: target.attr('data-section'), // 座席セクション
-        seat_code: target.attr('data-seat-code'), // 座席番号
-        ticket_code: target.attr('data-ticket-code'), // チケットコード
-        ticket_name: target.attr('data-ticket-name'), // チケット名
-        sale_price: Number(target.attr('data-sale-price')), // 販売単価
+        seatCode: target.attr('data-seat-code'), // 座席番号
+        ticketCode: target.attr('data-ticket-code'), // チケットコード
+        ticketName: target.attr('data-ticket-name'), // チケット名
+        salePrice: Number(target.attr('data-sale-price')), // 販売単価
         glasses: (target.attr('data-glasses') === 'true') ? true : false, // メガネ有り無し
-        add_price_glasses: Number(target.attr('data-add-price-glasses')), // メガネ加算単価
-        mvtk_num: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
+        addPriceGlasses: Number(target.attr('data-add-price-glasses')), // メガネ加算単価
+        mvtkNum: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
     };
 }
 
@@ -72,12 +72,12 @@ function getTicketData(target) {
  */
 function getSalseTicketData(target) {
     return {
-        ticket_code: target.attr('data-ticket-code'), // チケットコード
-        ticket_name: target.attr('data-ticket-name'), // チケット名
-        sale_price: Number(target.attr('data-sale-price')), // 販売単価
+        ticketCode: target.attr('data-ticket-code'), // チケットコード
+        ticketName: target.attr('data-ticket-name'), // チケット名
+        salePrice: Number(target.attr('data-sale-price')), // 販売単価
         glasses: (target.attr('data-glasses') === 'true') ? true : false, // メガネ有り無し
-        add_price_glasses: Number(target.attr('data-add-price-glasses')), // メガネ加算単価
-        mvtk_num: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
+        addPriceGlasses: Number(target.attr('data-add-price-glasses')), // メガネ加算単価
+        mvtkNum: (target.attr('data-mvtk-num')) ? target.attr('data-mvtk-num') : '' // ムビチケ購入番号
     };
 }
 
@@ -88,7 +88,7 @@ function getSalseTicketData(target) {
  */
 function pageInit() {
     if ($('.ticket-validation').val()) {
-        modal.open('ticket_validation');
+        modal.open('ticketValidation');
         var errorData = JSON.parse($('.ticket-validation').val());
         errorData.forEach(function(value){
             var ticketCode = $('.seats li').attr('data-ticket-code');
@@ -111,7 +111,7 @@ function pageInit() {
  * @returns {void}
  */
 function ticketSelect(target, ticket) {
-    var triggerIndex = $('.modal[data-modal=ticket_type]').attr('data-modal-trigger-index');
+    var triggerIndex = $('.modal[data-modal=ticketType]').attr('data-modal-trigger-index');
 
     target.find('.button')
         .removeClass('button')
@@ -119,28 +119,28 @@ function ticketSelect(target, ticket) {
     var beforeData = getTicketData(target);
     var afterData = {
         section: beforeData.section, // 座席セクション
-        seat_code: beforeData.seat_code, // 座席番号
-        ticket_code: ticket.ticket_code, // チケットコード
-        ticket_name: ticket.ticket_name, // チケット名
-        sale_price: ticket.sale_price, // 販売単価
-        add_price_glasses: ticket.add_price_glasses, // メガネ加算単価
+        seatCode: beforeData.seatCode, // 座席番号
+        ticketCode: ticket.ticketCode, // チケットコード
+        ticketName: ticket.ticketName, // チケット名
+        salePrice: ticket.salePrice, // 販売単価
+        addPriceGlasses: ticket.addPriceGlasses, // メガネ加算単価
         glasses: ticket.glasses, // メガネ有り無し
-        mvtk_num: ticket.mvtk_num // ムビチケ購入番号
+        mvtkNum: ticket.mvtkNum // ムビチケ購入番号
     };
-    target.find('dd a').text(afterData.ticket_name + ' ￥' + afterData.sale_price);
+    target.find('dd a').text(afterData.ticketName + ' ￥' + afterData.salePrice);
     if (isFixed()) {
         // 券売機
-        target.find('dd a').html('<div class="small-text mb-x-small">' + afterData.ticket_name + '</div><div><strong>￥' + afterData.sale_price + '</strong></div>');
+        target.find('dd a').html('<div class="small-text mb-x-small">' + afterData.ticketName + '</div><div><strong>￥' + afterData.salePrice + '</strong></div>');
     }
     target.attr({
         'data-section': afterData.section, // 座席セクション
-        'data-seat-code': afterData.seat_code, // 座席番号
-        'data-ticket-code': afterData.ticket_code, // チケットコード
-        'data-ticket-name': afterData.ticket_name, // チケット名
-        'data-sale-price': afterData.sale_price, // 販売単価
-        'data-add-price-glasses': ticket.add_price_glasses, // メガネ加算単価
+        'data-seat-code': afterData.seatCode, // 座席番号
+        'data-ticket-code': afterData.ticketCode, // チケットコード
+        'data-ticket-name': afterData.ticketName, // チケット名
+        'data-sale-price': afterData.salePrice, // 販売単価
+        'data-add-price-glasses': ticket.addPriceGlasses, // メガネ加算単価
         'data-glasses': afterData.glasses, // メガネ有り無し
-        'data-mvtk-num': afterData.mvtk_num, // ムビチケ購入番号
+        'data-mvtk-num': afterData.mvtkNum, // ムビチケ購入番号
     });
 
     mvtkToggle(beforeData, afterData);
@@ -154,15 +154,15 @@ function ticketSelect(target, ticket) {
  * @returns {void}
  */
 function mvtkToggle(beforeData, afterData) {
-    var modalDom = $('.modal[data-modal=ticket_type]');
-    if (beforeData && beforeData.mvtk_num) {
-        var limit = (beforeData.add_price_glasses > 0) ? 2 : 1;
+    var modalDom = $('.modal[data-modal=ticketType]');
+    if (beforeData && beforeData.mvtkNum) {
+        var limit = (beforeData.addPriceGlasses > 0) ? 2 : 1;
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
             var data = getSalseTicketData(target.find('.button a'));
-            if (data.mvtk_num === beforeData.mvtk_num
-                && data.ticket_code === beforeData.ticket_code
+            if (data.mvtkNum === beforeData.mvtkNum
+                && data.ticketCode === beforeData.ticketCode
                 && target.is(':hidden')) {
                 if (count < limit) {
                     target.show();
@@ -171,14 +171,14 @@ function mvtkToggle(beforeData, afterData) {
             }
         });
     }
-    if (afterData && afterData.mvtk_num) {
-        var limit = (afterData.add_price_glasses > 0) ? 2 : 1;
+    if (afterData && afterData.mvtkNum) {
+        var limit = (afterData.addPriceGlasses > 0) ? 2 : 1;
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
             var data = getSalseTicketData(target.find('.button a'));
-            if (data.mvtk_num === afterData.mvtk_num
-                && data.ticket_code === afterData.ticket_code
+            if (data.mvtkNum === afterData.mvtkNum
+                && data.ticketCode === afterData.ticketCode
                 && target.is(':visible')) {
                 if (count < limit) {
                     target.hide();

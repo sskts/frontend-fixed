@@ -1217,7 +1217,7 @@ p a {
   height: 22px;
   vertical-align: bottom; }
 
-.modal[data-modal="ticket_type"] dl dt {
+.modal[data-modal="ticketType"] dl dt {
   padding-right: 10px; }
 
 .purchase-input .text-icon-red {

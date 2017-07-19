@@ -38,7 +38,27 @@ function getScreen(args) {
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);
         log('getScreen:', response.body.data);
-        return response.body.data;
+        const data = response.body.data;
+        return {
+            id: data.id,
+            attributes: {
+                coaScreenCode: data.attributes.coa_screen_code,
+                name: data.attributes.name,
+                seatsNumbersBySeatGrade: data.attributes.seats_numbers_by_seat_grade,
+                sections: data.attributes.sections.map((section) => {
+                    return {
+                        code: section.code,
+                        name: section.name,
+                        seats: section.seats.map((seat) => {
+                            return {
+                                code: seat.code
+                            };
+                        })
+                    };
+                }),
+                theater: data.attributes.theater
+            }
+        };
     });
 }
 exports.getScreen = getScreen;

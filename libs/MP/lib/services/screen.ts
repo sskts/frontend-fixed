@@ -17,9 +17,9 @@ const log = debug('SSKTS:services.screen');
 export interface IScreen {
     id: string;
     attributes: {
-        coa_screen_code: string;
+        coaScreenCode: string;
         name: util.ILanguage;
-        seats_numbers_by_seat_grade: any[];
+        seatsNumbersBySeatGrade: any[];
         sections: {
             code: string;
             name: util.ILanguage;
@@ -58,6 +58,26 @@ export async function getScreen(args: IGetScreenArgs): Promise<IScreen> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getScreen:', response.body.data);
+    const data = response.body.data;
 
-    return response.body.data;
+    return {
+        id: data.id,
+        attributes: {
+            coaScreenCode: data.attributes.coa_screen_code,
+            name: data.attributes.name,
+            seatsNumbersBySeatGrade: data.attributes.seats_numbers_by_seat_grade,
+            sections: data.attributes.sections.map((section: any) => {
+                return {
+                    code: section.code,
+                    name: section.name,
+                    seats: section.seats.map((seat: any) => {
+                        return {
+                            code: seat.code
+                        };
+                    })
+                };
+            }),
+            theater: data.attributes.theater
+        }
+    };
 }

@@ -17,7 +17,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_code') %></dt>
                         <dd>
-                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
+                            <input type="text" name="mvtkCode" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10">
                         </dd>
                     </dl>
                 </li>
@@ -25,7 +25,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_password') %></dt>
                         <dd>
-                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
+                            <input type="password" name="mvtkPassword" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4">
                         </dd>
                     </dl>
                 </li>
@@ -79,7 +79,7 @@
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket"><%- __('purchase.mvtk.input.prev') %></a></div>
         </div>
         <input type="hidden" name="mvtk" value="">
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
 <%- include('../../layouts/siteSeal') %>
 </div>

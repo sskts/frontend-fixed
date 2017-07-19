@@ -16,18 +16,18 @@
                 <dl>
                     <dt><%- __('common.last_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="last_name_hira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.last_name_hira %>">
-                        <% if (error && error.last_name_hira) { %>
-                        <div class="validation-text"><%= error.last_name_hira.msg %></div>
+                        <input type="text" name="lastNameHira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.lastNameHira %>">
+                        <% if (error && error.lastNameHira) { %>
+                        <div class="validation-text"><%= error.lastNameHira.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
                 <dl>
                     <dt><%- __('common.first_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="first_name_hira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.first_name_hira %>">
-                        <% if (error && error.first_name_hira) { %>
-                        <div class="validation-text"><%= error.first_name_hira.msg %></div>
+                        <input type="text" name="firstNameHira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.firstNameHira %>">
+                        <% if (error && error.firstNameHira) { %>
+                        <div class="validation-text"><%= error.firstNameHira.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -37,18 +37,18 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="email" name="mail_addr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
-                    <% if (error && error.mail_addr) { %>
-                    <div class="validation-text"><%= error.mail_addr.msg %></div>
+                    <input type="email" name="mailAddr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mailAddr %>">
+                    <% if (error && error.mailAddr) { %>
+                    <div class="validation-text"><%= error.mailAddr.msg %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
                 <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="email" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mail_confirm %>">
-                    <% if (error && error.mail_confirm) { %>
-                    <div class="validation-text"><%= error.mail_confirm.msg %></div>
+                    <input type="email" name="mailConfirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mailConfirm %>">
+                    <% if (error && error.mailConfirm) { %>
+                    <div class="validation-text"><%= error.mailConfirm.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.mail') %></p>
                 </dd>
@@ -59,9 +59,9 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="tel" name="tel_num" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
-                    <% if (error && error.tel_num) { %>
-                    <div class="validation-text"><%= error.tel_num.msg %></div>
+                    <input type="tel" name="telNum" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.telNum %>">
+                    <% if (error && error.telNum) { %>
+                    <div class="validation-text"><%= error.telNum.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.tel') %></p>
                 </dd>
@@ -98,7 +98,7 @@
                     <dt><%- __('common.expire') %></dt>
                     <dd>
                         
-                        <select name="credit_month" id="cardExpirationMonth">
+                        <select name="creditMonth" id="cardExpirationMonth">
                             <%
                             for (let i = 0; i < 12; i++) {
                                 let num = i + 1;
@@ -107,7 +107,7 @@
                                 <option value="<%= month %>"><%= month %></option>
                             <% } %>
                         </select> <%- __('common.month') %> 
-                        <select name="credit_year" id="cardExpirationYear">
+                        <select name="creditYear" id="cardExpirationYear">
                             <%
                             let choices = {};
                             let year2digits = moment().format('YY');
@@ -151,15 +151,15 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="gmo_token_object" value="">
-        <input type="hidden" name="gmo_error" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
-        <input type="hidden" name="gmo_error_message" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
+        <input type="hidden" name="gmoTokenObject" value="">
+        <input type="hidden" name="gmoError" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
+        <input type="hidden" name="gmoErrorMessage" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
         <% } %>
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.input.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket/"><%- __('purchase.input.prev') %></a></div>
         </div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
     <input type="hidden" name="price" value="<%= price %>">
     <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">

@@ -74,12 +74,12 @@ function index(req, res, next) {
             log('作品取得');
             purchaseModel.performanceCOA = {
                 theaterCode: purchaseModel.theater.id,
-                screenCode: screen.attributes.coa_screen_code,
-                titleCode: film.attributes.coa_title_code,
-                titleBranchNum: film.attributes.coa_title_branch_num,
-                flgMvtkUse: film.attributes.flg_mvtk_use,
-                dateMvtkBegin: film.attributes.date_mvtk_begin,
-                kbnJoueihousiki: film.attributes.kbn_joueihousiki
+                screenCode: screen.attributes.coaScreenCode,
+                titleCode: film.attributes.coaTitleCode,
+                titleBranchNum: film.attributes.coaTitleBranchNum,
+                flgMvtkUse: film.attributes.flgMvtkUse,
+                dateMvtkBegin: film.attributes.dateMvtkBegin,
+                kbnJoueihousiki: film.attributes.kbnJoueihousiki
             };
             log('COAパフォーマンス取得');
             res.locals.performance = purchaseModel.performance;
@@ -128,7 +128,7 @@ function select(req, res, next) {
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
             //取引id確認
-            if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+            if (req.body.transactionId !== purchaseModel.transactionMP.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -148,7 +148,7 @@ function select(req, res, next) {
                 res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
+            const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
             yield reserve(req, selectSeats, purchaseModel);
             //セッション更新
             req.session.purchase = purchaseModel.toSession();
@@ -194,12 +194,12 @@ function reserve(req, selectSeats, purchaseModel) {
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
             yield COA.services.reserve.delTmpReserve({
-                theater_code: performance.attributes.theater.id,
-                date_jouei: performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num
+                theaterCode: performance.attributes.theater.id,
+                dateJouei: performance.attributes.day,
+                titleCode: purchaseModel.performanceCOA.titleCode,
+                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                timeBegin: performance.attributes.timeStart,
+                tmpReserveNum: reserveSeats.tmpReserveNum
             });
             log('COA仮予約削除');
             // COAオーソリ削除
@@ -210,26 +210,27 @@ function reserve(req, selectSeats, purchaseModel) {
             });
             log('MPCOAオーソリ削除');
         }
+        log('11111111111111', selectSeats[0]);
         //COA仮予約
         purchaseModel.reserveSeats = yield COA.services.reserve.updTmpReserveSeat({
-            theater_code: performance.attributes.theater.id,
-            date_jouei: performance.attributes.day,
-            title_code: purchaseModel.performanceCOA.titleCode,
-            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-            time_begin: performance.attributes.time_start,
+            theaterCode: performance.attributes.theater.id,
+            dateJouei: performance.attributes.day,
+            titleCode: purchaseModel.performanceCOA.titleCode,
+            titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+            timeBegin: performance.attributes.timeStart,
             // cnt_reserve_seat: number,
-            screen_code: purchaseModel.performanceCOA.screenCode,
-            list_seat: selectSeats
+            screenCode: purchaseModel.performanceCOA.screenCode,
+            listSeat: selectSeats
         });
         log('COA仮予約', purchaseModel.reserveSeats);
         if (purchaseModel.salesTicketsCOA === null) {
             //コアAPI券種取得
             purchaseModel.salesTicketsCOA = yield COA.services.reserve.salesTicket({
-                theater_code: purchaseModel.performance.attributes.theater.id,
-                date_jouei: purchaseModel.performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: purchaseModel.performance.attributes.time_start
+                theaterCode: purchaseModel.performance.attributes.theater.id,
+                dateJouei: purchaseModel.performance.attributes.day,
+                titleCode: purchaseModel.performanceCOA.titleCode,
+                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                timeBegin: purchaseModel.performance.attributes.timeStart
                 // flg_member: COA.services.reserve.FlgMember.NonMember
             });
             log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
@@ -238,33 +239,32 @@ function reserve(req, selectSeats, purchaseModel) {
         const salesTickets = purchaseModel.salesTicketsCOA;
         purchaseModel.reserveTickets = [];
         //予約チケット作成
-        const tmpReserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
+        const tmpReserveTickets = purchaseModel.reserveSeats.listTmpReserve.map((tmpReserve) => {
             return {
-                section: tmpReserve.seat_section,
-                seat_code: tmpReserve.seat_num,
-                ticket_code: salesTickets[0].ticket_code,
-                ticket_name: salesTickets[0].ticket_name,
-                ticket_name_eng: salesTickets[0].ticket_name_eng,
-                ticket_name_kana: salesTickets[0].ticket_name_kana,
-                std_price: salesTickets[0].std_price,
-                add_price: salesTickets[0].add_price,
-                dis_price: 0,
-                sale_price: salesTickets[0].sale_price,
-                add_price_glasses: 0,
+                section: tmpReserve.seatSection,
+                seatCode: tmpReserve.seatNum,
+                ticketCode: salesTickets[0].ticketCode,
+                ticketName: salesTickets[0].ticketName,
+                ticketNameEng: salesTickets[0].ticketNameEng,
+                ticketNameKana: salesTickets[0].ticketNameKana,
+                stdPrice: salesTickets[0].stdPrice,
+                addPrice: salesTickets[0].addPrice,
+                disPrice: 0,
+                salePrice: salesTickets[0].salePrice,
+                addPriceGlasses: 0,
                 glasses: false,
-                mvtk_app_price: 0,
-                add_glasses: 0,
-                kbn_eisyahousiki: '00',
-                mvtk_num: '',
-                mvtk_kbn_denshiken: '00',
-                mvtk_kbn_maeuriken: '00',
-                mvtk_kbn_kensyu: '00',
-                mvtk_sales_price: 0 // ムビチケ販売単価
+                mvtkAppPrice: 0,
+                kbnEisyahousiki: '00',
+                mvtkNum: '',
+                mvtkKbnDenshiken: '00',
+                mvtkKbnMaeuriken: '00',
+                mvtkKbnKensyu: '00',
+                mvtkSalesPrice: 0 // ムビチケ販売単価
             };
         });
         let price = 0;
         for (const tmpReserveTicket of tmpReserveTickets) {
-            price += tmpReserveTicket.sale_price;
+            price += tmpReserveTicket.salePrice;
         }
         //COAオーソリ追加
         const coaAuthorizationResult = yield MP.services.transaction.addCOAAuthorization({
@@ -302,17 +302,17 @@ function getScreenStateReserve(req, res) {
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
                 throw ErrorUtilModule.ERROR_VALIDATION;
-            const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS_02);
-            const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
+            const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS_02);
+            const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS_03);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
             const state = yield COA.services.reserve.stateReserveSeat({
-                theater_code: req.body.theater_code,
-                date_jouei: req.body.date_jouei,
-                title_code: req.body.title_code,
-                title_branch_num: req.body.title_branch_num,
-                time_begin: req.body.time_begin,
-                screen_code: req.body.screen_code // スクリーンコード
+                theaterCode: req.body.theaterCode,
+                dateJouei: req.body.dateJouei,
+                titleCode: req.body.titleCode,
+                titleBranchNum: req.body.titleBranchNum,
+                timeBegin: req.body.timeBegin,
+                screenCode: req.body.screenCode // スクリーンコード
             });
             res.json({
                 err: null,
@@ -354,12 +354,12 @@ function saveSalesTickets(req, res) {
             if (purchaseModel.salesTicketsCOA === null) {
                 //コアAPI券種取得
                 purchaseModel.salesTicketsCOA = yield COA.services.reserve.salesTicket({
-                    theater_code: req.body.theater_code,
-                    date_jouei: req.body.date_jouei,
-                    title_code: req.body.title_code,
-                    title_branch_num: req.body.title_branch_num,
-                    time_begin: req.body.time_begin
-                    // flg_member: COA.services.reserve.FlgMember.NonMember
+                    theaterCode: req.body.theaterCode,
+                    dateJouei: req.body.dateJouei,
+                    titleCode: req.body.titleCode,
+                    titleBranchNum: req.body.titleBranchNum,
+                    timeBegin: req.body.timeBegin
+                    // flgMember: coa.services.reserve.FlgMember.NonMember
                 });
                 log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
                 req.session.purchase = purchaseModel.toSession();

@@ -86,12 +86,12 @@ function newReserve(req, res, next) {
             const reserveSeats = purchaseModel.reserveSeats;
             //COA仮予約削除
             yield COA.services.reserve.delTmpReserve({
-                theater_code: performance.attributes.theater.id,
-                date_jouei: performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num
+                theaterCode: performance.attributes.theater.id,
+                dateJouei: performance.attributes.day,
+                titleCode: purchaseModel.performanceCOA.titleCode,
+                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                timeBegin: performance.attributes.timeStart,
+                tmpReserveNum: reserveSeats.tmpReserveNum
             });
             log('COA仮予約削除');
             // COAオーソリ削除

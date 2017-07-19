@@ -77,10 +77,10 @@
 </div>
 <div id="copy" style="display: none"></div>
 
-<input type="hidden" name="theater_code" value="<%= login.theater_code %>">
-<input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
-<input type="hidden" name="tel_num" value="<%= login.tel_num %>">
-<input type="hidden" name="transaction_id" value="<%= transactionId %>">
+<input type="hidden" name="theaterCode" value="<%= login.theaterCode %>">
+<input type="hidden" name="reserveNum" value="<%= login.reserveNum %>">
+<input type="hidden" name="telNum" value="<%= login.telNum %>">
+<input type="hidden" name="transactionId" value="<%= transactionId %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
 
 

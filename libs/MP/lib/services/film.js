@@ -38,7 +38,31 @@ function getFilm(args) {
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);
         log('getFilm:', response.body.data);
-        return response.body.data;
+        const data = response.body.data;
+        return {
+            id: data.id,
+            attributes: {
+                coaTitleBranchNum: data.attributes.coa_title_branch_num,
+                coaTitleCode: data.attributes.coa_title_code,
+                createdAt: data.attributes.created_at,
+                dateEnd: data.attributes.date_end,
+                dateStart: data.attributes.date_start,
+                filmBranchCode: data.attributes.film_branch_code,
+                filmGroup: data.attributes.film_group,
+                kbnEirin: data.attributes.kbn_eirin,
+                kbnEizou: data.attributes.kbn_eizou,
+                kbnJimakufukikae: data.attributes.kbn_jimakufukikae,
+                kbnJoueihousiki: data.attributes.kbn_joueihousiki,
+                minutes: data.attributes.minutes,
+                name: data.attributes.name,
+                nameKana: data.attributes.name_kana,
+                nameOriginal: data.attributes.name_original,
+                nameShort: data.attributes.name_short,
+                theater: data.attributes.theater,
+                flgMvtkUse: data.attributes.flg_mvtk_use,
+                dateMvtkBegin: data.attributes.date_mvtk_begin
+            }
+        };
     });
 }
 exports.getFilm = getFilm;

@@ -84,21 +84,21 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         if (validationResult.isEmpty()) {
             const makeInquiryResult = await MP.services.transaction.makeInquiry({
                 accessToken: await UtilModule.getAccessToken(req),
-                inquiry_theater: req.body.theater_code, // 施設コード
-                inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
-                inquiry_pass: req.body.tel_num // 電話番号
+                inquiryTheater: req.body.theaterCode, // 施設コード
+                inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
+                inquiryPass: req.body.telNum // 電話番号
             });
 
             // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
-            //     theater_code: req.body.theater_code, // 施設コード
-            //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
-            //     tel: req.body.tel_num // 電話番号
+            //     theaterCode: req.body.theaterCode, // 施設コード
+            //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
+            //     tel: req.body.telNum // 電話番号
             // });
             if (makeInquiryResult === null) {
                 res.locals.portalTheaterSite = await getPortalTheaterSite(req);
-                res.locals.theaterCode = req.body.theater_code;
-                res.locals.reserveNum = req.body.reserve_num;
-                res.locals.telNum = req.body.tel_num;
+                res.locals.theaterCode = req.body.theaterCode;
+                res.locals.reserveNum = req.body.reserveNum;
+                res.locals.telNum = req.body.telNum;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
 
@@ -108,19 +108,19 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             log('MP取引Id取得', inquiryModel.transactionId);
             inquiryModel.login = req.body;
             inquiryModel.stateReserve = await COA.services.reserve.stateReserve({
-                theater_code: req.body.theater_code, // 施設コード
-                reserve_num: req.body.reserve_num, // 座席チケット購入番号
-                tel_num: req.body.tel_num // 電話番号
+                theaterCode: req.body.theaterCode, // 施設コード
+                reserveNum: req.body.reserveNum, // 座席チケット購入番号
+                telNum: req.body.telNum // 電話番号
             });
             log('COA照会情報取得', inquiryModel.stateReserve);
             if (inquiryModel.stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const performanceId = UtilModule.getPerformanceId({
-                theaterCode: req.body.theater_code,
-                day: inquiryModel.stateReserve.date_jouei,
-                titleCode: inquiryModel.stateReserve.title_code,
-                titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-                screenCode: inquiryModel.stateReserve.screen_code,
-                timeBegin: inquiryModel.stateReserve.time_begin
+                theaterCode: req.body.theaterCode,
+                day: inquiryModel.stateReserve.dateJouei,
+                titleCode: inquiryModel.stateReserve.titleCode,
+                titleBranchNum: inquiryModel.stateReserve.titleBranchNum,
+                screenCode: inquiryModel.stateReserve.screenCode,
+                timeBegin: inquiryModel.stateReserve.timeBegin
             });
             log('パフォーマンスID取得', performanceId);
             inquiryModel.performance = await MP.services.performance.getPerformance({
@@ -130,14 +130,14 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             log('MPパフォーマンス取得');
             req.session.inquiry = inquiryModel.toSession();
             //購入者内容確認へ
-            res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
+            res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theaterCode}`);
 
             return;
         } else {
             res.locals.portalTheaterSite = await getPortalTheaterSite(req);
-            res.locals.theaterCode = req.body.theater_code;
-            res.locals.reserveNum = req.body.reserve_num;
-            res.locals.telNum = req.body.tel_num;
+            res.locals.theaterCode = req.body.theaterCode;
+            res.locals.reserveNum = req.body.reserveNum;
+            res.locals.telNum = req.body.telNum;
             res.locals.error = validationResult.mapped();
             res.render('inquiry/login');
 
@@ -163,10 +163,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 function getInquiryError(req: Request) {
     return {
         reserve_num: {
-            parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+            parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
         tel_num: {
-            parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+            parm: 'telNum', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
 }

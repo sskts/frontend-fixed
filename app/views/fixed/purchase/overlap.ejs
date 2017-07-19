@@ -28,7 +28,7 @@
     <p class="text-center mb-small"><%- __('purchase.overlap.prev_read') %></p>
     <form method="post" action="/purchase/overlap/prev">
         <div class="button prev-button middle-button mb-large"><button class="center" type="submit"><%- __('purchase.overlap.prev') %></button></div>
-        <input type="hidden" name="performance_id" value="<%= performances.before.id %>">
+        <input type="hidden" name="performanceId" value="<%= performances.before.id %>">
     </form>
     
     <h2 class="mb-small text-center"><%- __('purchase.overlap.next_ttl') %></h2>
@@ -53,7 +53,7 @@
     <p class="text-center  mb-small"><%- __('purchase.overlap.next_read') %></p>
     <form method="post" action="/purchase/overlap/new">
         <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.overlap.next') %></button></div>
-        <input type="hidden" name="performance_id" value="<%= performances.after.id %>">
+        <input type="hidden" name="performanceId" value="<%= performances.after.id %>">
     </form>
 
     

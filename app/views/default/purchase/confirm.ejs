@@ -106,8 +106,8 @@
         </div>
 
         <div class="mb-x-large text-center">
-            <input type="checkbox" name="notes_agree" value="true" id="notes_agree">
-            <label for="notes_agree" class="notes_agree-label"><strong><%- __('common.notes_agree') %></strong></label>
+            <input type="checkbox" name="notesAgree" value="true" id="notesAgree">
+            <label for="notesAgree" class="notes_agree-label"><strong><%- __('common.notes_agree') %></strong></label>
             <% if (error && error.notes_agree) { %>
                 <div class="validation-text"><%= error.notes_agree[0] %></div>
             <% } %>
@@ -119,11 +119,11 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.confirm.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/input"><%- __('purchase.confirm.prev') %></a></div>
         </div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
 <%- include('../layouts/siteSeal') %>
 </div>
-<input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+<input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>

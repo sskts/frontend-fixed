@@ -38,7 +38,27 @@ function getTheater(args) {
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);
         log('getTheater:', response.body.data);
-        return response.body.data;
+        const data = response.body.data;
+        return {
+            id: data.id,
+            attributes: {
+                address: data.attributes.address,
+                name: data.attributes.name,
+                nameKana: data.attributes.name_kana,
+                gmo: {
+                    siteId: data.attributes.gmo.site_id,
+                    shopId: data.attributes.gmo.shop_id,
+                    shopPass: data.attributes.gmo.shop_pass
+                },
+                websites: data.attributes.websites.map((website) => {
+                    return {
+                        group: website.group,
+                        name: website.name,
+                        url: website.url
+                    };
+                })
+            }
+        };
     });
 }
 exports.getTheater = getTheater;
@@ -63,7 +83,23 @@ function getTheaters(args) {
         if (response.statusCode !== HTTPStatus.OK)
             util.errorHandler(args, response);
         log('getTheaters:', response.body.data);
-        return response.body.data;
+        return response.body.data.map((data) => {
+            return {
+                id: data.id,
+                attributes: {
+                    address: data.attributes.address,
+                    name: data.attributes.name,
+                    nameKana: data.attributes.name_kana,
+                    websites: data.attributes.websites.map((website) => {
+                        return {
+                            group: website.group,
+                            name: website.name,
+                            url: website.url
+                        };
+                    })
+                }
+            };
+        });
     });
 }
 exports.getTheaters = getTheaters;

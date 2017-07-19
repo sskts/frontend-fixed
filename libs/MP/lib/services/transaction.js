@@ -66,8 +66,8 @@ exports.transactionStart = transactionStart;
 function findByInquiryKey(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const query = {
-            theater_code: args.theater_code,
-            reserve_num: args.reserve_num,
+            theater_code: args.theaterCode,
+            reserve_num: args.reserveNum,
             tel: args.tel
         };
         const response = yield request.get({
@@ -100,9 +100,9 @@ exports.findByInquiryKey = findByInquiryKey;
 function makeInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = {
-            inquiry_theater: args.inquiry_theater,
-            inquiry_id: args.inquiry_id,
-            inquiry_pass: args.inquiry_pass
+            inquiry_theater: args.inquiryTheater,
+            inquiry_id: args.inquiryId,
+            inquiry_pass: args.inquiryPass
         };
         const response = yield request.post({
             url: `${util.ENDPOINT}/transactions/makeInquiry`,
@@ -134,8 +134,8 @@ exports.makeInquiry = makeInquiry;
 function ownersAnonymous(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = {
-            name_first: args.name_first,
-            name_last: args.name_last,
+            name_first: args.nameFirst,
+            name_last: args.nameLast,
             tel: args.tel,
             email: args.email
         };
@@ -189,8 +189,8 @@ function updateOwners(args) {
                 type: 'owners',
                 id: args.ownerId,
                 attributes: {
-                    name_first: args.name_first,
-                    name_last: args.name_last,
+                    name_first: args.nameFirst,
+                    name_last: args.nameLast,
                     tel: args.tel,
                     email: args.email,
                     group: args.group,
@@ -229,10 +229,10 @@ function addOwnersCard(args) {
             data: {
                 type: 'cards',
                 attributes: {
-                    card_no: args.card_no,
-                    card_pass: args.card_pass,
+                    card_no: args.cardNo,
+                    card_pass: args.cardPass,
                     expire: args.expire,
-                    holder_name: args.holder_name,
+                    holder_name: args.holderName,
                     token: args.token
                 }
             }
@@ -326,36 +326,36 @@ function addCOAAuthorization(args) {
                 attributes: {
                     owner_from: promoterOwnerId,
                     owner_to: anonymousOwnerId,
-                    coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
+                    coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmpReserveNum,
                     coa_theater_code: args.theaterCode,
                     coa_date_jouei: args.performance.attributes.day,
                     coa_title_code: args.titleCode,
                     coa_title_branch_num: args.titleBranchNum,
-                    coa_time_begin: args.performance.attributes.time_start,
+                    coa_time_begin: args.performance.attributes.timeStart,
                     coa_screen_code: args.screenCode,
                     seats: args.salesTicketResults.map((tmpReserve) => {
                         return {
                             performance: args.performance.id,
                             screen_section: tmpReserve.section,
-                            seat_code: tmpReserve.seat_code,
-                            ticket_code: tmpReserve.ticket_code,
+                            seat_code: tmpReserve.seatCode,
+                            ticket_code: tmpReserve.ticketCode,
                             ticket_name: {
-                                ja: tmpReserve.ticket_name,
-                                en: tmpReserve.ticket_name_eng
+                                ja: tmpReserve.ticketName,
+                                en: tmpReserve.ticketNameEng
                             },
-                            ticket_name_kana: tmpReserve.ticket_name_kana,
-                            std_price: tmpReserve.std_price,
-                            add_price: tmpReserve.add_price,
-                            dis_price: tmpReserve.dis_price,
-                            sale_price: tmpReserve.sale_price,
-                            mvtk_app_price: tmpReserve.mvtk_app_price,
-                            add_glasses: tmpReserve.add_price_glasses,
-                            kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki,
-                            mvtk_num: tmpReserve.mvtk_num,
-                            mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken,
-                            mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken,
-                            mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu,
-                            mvtk_sales_price: tmpReserve.mvtk_sales_price
+                            ticket_name_kana: tmpReserve.ticketNameKana,
+                            std_price: tmpReserve.stdPrice,
+                            add_price: tmpReserve.addPrice,
+                            dis_price: tmpReserve.disPrice,
+                            sale_price: tmpReserve.salePrice,
+                            mvtk_app_price: tmpReserve.mvtkAppPrice,
+                            add_glasses: tmpReserve.addPriceGlasses,
+                            kbn_eisyahousiki: tmpReserve.kbnEisyahousiki,
+                            mvtk_num: tmpReserve.mvtkNum,
+                            mvtk_kbn_denshiken: tmpReserve.mvtkKbnDenshiken,
+                            mvtk_kbn_maeuriken: tmpReserve.mvtkKbnMaeuriken,
+                            mvtk_kbn_kensyu: tmpReserve.mvtkKbnKensyu,
+                            mvtk_sales_price: tmpReserve.mvtkSalesPrice
                         };
                     }),
                     price: args.price
@@ -480,8 +480,8 @@ function transactionsInquiryKey(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = {
             data: {
-                theater_code: args.theater_code,
-                reserve_num: args.reserve_num,
+                theater_code: args.theaterCode,
+                reserve_num: args.reserveNum,
                 tel: args.tel
             }
         };
@@ -511,9 +511,9 @@ exports.transactionsInquiryKey = transactionsInquiryKey;
 function transactionsEnableInquiry(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const body = {
-            inquiry_theater: args.inquiry_theater,
-            inquiry_id: args.inquiry_id,
-            inquiry_pass: args.inquiry_pass
+            inquiry_theater: args.inquiryTheater,
+            inquiry_id: args.inquiryId,
+            inquiry_pass: args.inquiryPass
         };
         const response = yield request.patch({
             url: `${util.ENDPOINT}/transactions/${args.transactionId}/enableInquiry`,

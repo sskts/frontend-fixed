@@ -17,32 +17,32 @@ export const performance = {
     id: '11820170329162210101000',
     attributes:
     {
-        _id: '11820170329162210101000',
-        updated_at: '2017-03-29T07:00:56.620Z',
-        theater: { _id: '118', name: { en: 'CinemasunshineTest118', ja: 'シネマサンシャイン１１８' }, id: '118' },
-        screen: { _id: '11810', name: { en: 'CINEMA1', ja: 'シアター１' }, id: '11810' },
+        Id: '11820170329162210101000',
+        updatedAt: '2017-03-29t07:00:56.620z',
+        theater: { Id: '118', name: { en: 'cinemasunshineTest118', ja: 'シネマサンシャイン１１８' }, id: '118' },
+        screen: { Id: '11810', name: { en: 'cinema1', ja: 'シアター１' }, id: '11810' },
         film:
         {
-            _id: '118162210',
-            name_kana: 'ペット（フキカエバン）',
-            name_short: 'ペット【吹替版】',
-            name_original: 'ペット【吹替版】',
+            Id: '118162210',
+            nameKana: 'ペット（フキカエバン）',
+            nameShort: 'ペット【吹替版】',
+            nameOriginal: 'ペット【吹替版】',
             minutes: 91,
-            name: { en: 'The Secret Life of Pets', ja: 'ペット【吹替版】' },
+            name: { en: 'the secret life of pets', ja: 'ペット【吹替版】' },
             id: '118162210'
         },
         day: '20170329',
-        time_start: '1000',
-        time_end: '1136',
+        timeStart: '1000',
+        timeEnd: '1136',
         canceled: false,
-        coa_trailer_time: 5,
-        coa_kbn_service: '000',
-        coa_kbn_acoustic: '000',
-        coa_name_service_day: 'ﾚﾃﾞｨｰｽﾃﾞｲ',
-        coa_available_num: 4,
-        coa_rsv_start_date: '20170327',
-        __v: 0,
-        created_at: '2017-03-24T05:00:56.848Z',
+        coaTrailerTime: 5,
+        coaKbnService: '000',
+        coaKbnAcoustic: '000',
+        coaNameServiceDay: 'ﾚﾃﾞｨｰｽﾃﾞｲ',
+        coaAvailableNum: 4,
+        coaRsvStartDate: '20170327',
+        V: 0,
+        createdAt: '2017-03-24t05:00:56.848z',
         id: '11820170329162210101000'
     }
 };
@@ -55,16 +55,16 @@ export const theater = {
     id: '118',
     attributes:
     {
-        _id: '118',
-        updated_at: '2017-03-29T07:01:02.106Z',
-        name_kana: 'シネマサンシャイン１１８',
+        Id: '118',
+        updatedAt: '2017-03-29t07:01:02.106z',
+        nameKana: 'シネマサンシャイン１１８',
         gmo: {
-            site_id: 'tsite00022126',
-            shop_id: 'tshop00026096',
-            shop_pass: 'xbxmkaa6'
+            siteId: 'tsite00022126',
+            shopId: 'tshop00026096',
+            shopPass: 'xbxmkaa6'
         },
         websites: {
-            group: 'PORTAL',
+            group: 'portal',
             name: {
                 en: 'portal site',
                 ja: 'ポータルサイト'
@@ -72,10 +72,10 @@ export const theater = {
             // tslint:disable-next-line:no-http-string
             url: 'http://www.cinemasunshine.co.jp/theater/aira/'
         },
-        __v: 0,
-        created_at: '2017-03-10T08:49:55.603Z',
+        V: 0,
+        createdAt: '2017-03-10t08:49:55.603z',
         address: { en: '', ja: '' },
-        name: { en: 'CinemasunshineTest118', ja: 'シネマサンシャイン１１８' },
+        name: { en: 'cinemasunshineTest118', ja: 'シネマサンシャイン１１８' },
         id: '118'
     }
 };
@@ -94,10 +94,10 @@ export const performanceCOA = {
  * 予約座席情報
  */
 export const reserveSeats = {
-    tmp_reserve_num: 738,
-    list_tmp_reserve: [
-        { seat_num: 'Ｍ－１', seat_section: '   ', sts_tmp_reserve: 'OK' },
-        { sts_tmp_reserve: 'OK', seat_section: '   ', seat_num: 'Ｍ－２' }
+    tmpReserveNum: 738,
+    listTmpReserve: [
+        { seatNum: 'Ｍ－１', seatSection: '   ', stsTmpReserve: 'OK' },
+        { stsTmpReserve: 'OK', seatSection: '   ', seatNum: 'Ｍ－２' }
     ]
 };
 
@@ -106,42 +106,42 @@ export const reserveSeats = {
  */
 export const reserveTickets = [{
     section: '   ',
-    seat_code: 'Ｍ－１',
-    ticket_code: '10',
-    ticket_name: '当日一般',
-    ticket_name_eng: 'General Price',
-    ticket_name_kana: 'トウジツイッパン',
-    std_price: 1800,
-    add_price: 0,
-    dis_price: 0,
-    sale_price: 1800,
-    add_price_glasses: 0,
+    seatCode: 'Ｍ－１',
+    ticketCode: '10',
+    ticketName: '当日一般',
+    ticketNameEng: 'general price',
+    ticketNameKana: 'トウジツイッパン',
+    stdPrice: 1800,
+    addPrice: 0,
+    disPrice: 0,
+    salePrice: 1800,
+    addPriceGlasses: 0,
     glasses: false,
-    mvtk_num: ''
+    mvtkNum: ''
 },
 {
     section: '   ',
-    seat_code: 'Ｍ－２',
-    ticket_code: '40',
-    ticket_name: '大学生',
-    ticket_name_eng: '',
-    ticket_name_kana: '',
-    std_price: 1500,
-    add_price: 0,
-    dis_price: 0,
-    sale_price: 1500,
-    add_price_glasses: 0,
+    seatCode: 'Ｍ－２',
+    ticketCode: '40',
+    ticketName: '大学生',
+    ticketNameEng: '',
+    ticketNameKana: '',
+    stdPrice: 1500,
+    addPrice: 0,
+    disPrice: 0,
+    salePrice: 1500,
+    addPriceGlasses: 0,
     glasses: false,
-    mvtk_num: ''
+    mvtkNum: ''
 }];
 
 /**
  * 入力情報
  */
 export const input = {
-    last_name_hira: 'はたぐち',
-    first_name_hira: 'あきと',
-    mail_addr: 'hataguchi@motionpicture.jp',
-    mail_confirm: 'hataguchi@motionpicture.jp',
-    tel_num: '09040007648'
+    lastNameHira: 'はたぐち',
+    firstNameHira: 'あきと',
+    mailAddr: 'hataguchi@motionpicture.jp',
+    mailConfirm: 'hataguchi@motionpicture.jp',
+    telNum: '09040007648'
 };

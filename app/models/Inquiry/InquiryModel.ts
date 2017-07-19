@@ -9,15 +9,15 @@ export interface ILogin {
     /**
      * 劇場コード
      */
-    theater_code: string;
+    theaterCode: string;
     /**
      * 購入番号
      */
-    reserve_num: string;
+    reserveNum: string;
     /**
      * 電話番号
      */
-    tel_num: string;
+    telNum: string;
 }
 
 /**

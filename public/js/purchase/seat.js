@@ -32,7 +32,7 @@ $(function () {
         // 座席数上限チェック
         if (!$(this).hasClass('active')) {
             if ($('.screen .seat a.active').length > limit - 1) {
-                modal.open('seat_upper_limit');
+                modal.open('seatUpperLimit');
                 return;
             }
         }
@@ -45,17 +45,17 @@ $(function () {
         event.preventDefault();
         // 座席コードリストを取得
         var seats = {
-            list_tmp_reserve: []
+            listTmpReserve: []
         };
         $('.screen .seat a.active').each(function (index, elem) {
-            seats.list_tmp_reserve.push({
-                seat_num: $(this).attr('data-seat-code'),
-                seat_section: '0'
+            seats.listTmpReserve.push({
+                seatNum: $(this).attr('data-seat-code'),
+                seatSection: '0'
             });
         });
 
-        if (seats.list_tmp_reserve.length < 1) {
-            modal.open('seat_not_select');
+        if (seats.listTmpReserve.length < 1) {
+            modal.open('seatNotSelect');
             return;
         }
         validation();
@@ -125,12 +125,12 @@ function getScreenStateReserve(count, cb) {
         type: 'POST',
         timeout: 10000,
         data: {
-            theater_code: target.attr('data-theater'), // 施設コード
-            date_jouei: target.attr('data-day'), // 上映日
-            title_code: target.attr('data-coa-title-code'), // 作品コード
-            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
-            time_begin: target.attr('data-time-start'), // 上映時刻
-            screen_code: target.attr('data-screen-code'), // スクリーンコード
+            theaterCode: target.attr('data-theater'), // 施設コード
+            dateJouei: target.attr('data-day'), // 上映日
+            titleCode: target.attr('data-coa-title-code'), // 作品コード
+            titleBranchNum: target.attr('data-coa-title-branch-num'), // 作品枝番
+            timeBegin: target.attr('data-time-start'), // 上映時刻
+            screenCode: target.attr('data-screen-code'), // スクリーンコード
         },
         beforeSend: function () { }
     }).done(function (res) {
@@ -157,12 +157,12 @@ function saveSalesTickets() {
         type: 'POST',
         timeout: 10000,
         data: {
-            theater_code: target.attr('data-theater'), // 施設コード
-            date_jouei: target.attr('data-day'), // 上映日
-            title_code: target.attr('data-coa-title-code'), // 作品コード
-            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
-            time_begin: target.attr('data-time-start'), // 上映時刻
-            screen_code: target.attr('data-screen-code'), // スクリーンコード
+            theaterCode: target.attr('data-theater'), // 施設コード
+            dateJouei: target.attr('data-day'), // 上映日
+            titleCode: target.attr('data-coa-title-code'), // 作品コード
+            titleBranchNum: target.attr('data-coa-title-branch-num'), // 作品枝番
+            timeBegin: target.attr('data-time-start'), // 上映時刻
+            screenCode: target.attr('data-screen-code'), // スクリーンコード
         }
     }).done(function (res) {
     }).fail(function (jqxhr, textStatus, error) {
@@ -201,21 +201,21 @@ function screenStateChange(state) {
     var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
     if (purchaseSeats) {
         //予約している席設定
-        for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
-            var seatNum = purchaseSeat.seat_num;
+        for (var i = 0, len = purchaseSeats.listTmpReserve.length; i < len; i++) {
+            var purchaseSeat = purchaseSeats.listTmpReserve[i];
+            var seatNum = purchaseSeat.seatNum;
             var seat = $('.seat a[data-seat-code=' + seatNum + ']');
             seat.removeClass('disabled');
             seat.addClass('active');
         }
     }
-    if (state && state.cnt_reserve_free > 0) {
+    if (state && state.cntReserveFree > 0) {
         //空いている座席設定
-        var freeSeats = state.list_seat[0].list_free_seat;
+        var freeSeats = state.listSeat[0].listFreeSeat;
         for (var i = 0, len = freeSeats.length; i < len; i++) {
             var freeSeat = freeSeats[i];
-            // var seatNum = replaceHalfSize(freeSeat.seat_num);
-            var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
+            // var seatNum = replaceHalfSize(freeSeat.seatNum);
+            var seat = $('.seat a[data-seat-code=' + freeSeat.seatNum + ']');
             if (seat && !seat.hasClass('active')) {
                 seat.removeClass('disabled');
                 seat.addClass('default');

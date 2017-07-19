@@ -28,7 +28,7 @@
                 <dt><%- __('common.seat') %></dt>
                 <dd>
                     <% for (ticket of reserveTickets) { %>
-                    <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                    <p><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %></p>
                     <% } %>
                     <div style="display: none" class="right">
                         <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
@@ -40,10 +40,10 @@
         <input type="hidden" name="notes_agree" value="true">
        
         <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.confirm.next') %></button></div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
 </div>
-<input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+<input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>

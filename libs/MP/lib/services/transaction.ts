@@ -28,11 +28,11 @@ export interface IOwnersInfo {
     /**
      * 名
      */
-    name_first: string;
+    nameFirst: string;
     /**
      * 姓
      */
-    name_last: string;
+    nameLast: string;
     /**
      * 電話番号
      */
@@ -133,8 +133,8 @@ export async function transactionStart(args: ITransactionStartArgs): Promise<ITr
  * @extends util.IAuth
  */
 export interface IFindByInquiryKeyArgs extends util.IAuth {
-    theater_code: string;
-    reserve_num: number;
+    theaterCode: string;
+    reserveNum: number;
     tel: string;
 }
 
@@ -155,8 +155,8 @@ export type IFindByInquiryKeyResult = ITransactionResult;
  */
 export async function findByInquiryKey(args: IFindByInquiryKeyArgs): Promise<IFindByInquiryKeyResult | null> {
     const query = {
-        theater_code: args.theater_code,
-        reserve_num: args.reserve_num,
+        theater_code: args.theaterCode,
+        reserve_num: args.reserveNum,
         tel: args.tel
     };
     const response = await request.get({
@@ -182,9 +182,9 @@ export async function findByInquiryKey(args: IFindByInquiryKeyArgs): Promise<IFi
  * @extends util.IAuth
  */
 export interface IMakeInquiryArgs extends util.IAuth {
-    inquiry_theater: string;
-    inquiry_id: number;
-    inquiry_pass: string;
+    inquiryTheater: string;
+    inquiryId: number;
+    inquiryPass: string;
 }
 
 /**
@@ -205,9 +205,9 @@ export type IMakeInquiryResult = ITransactionResult;
  */
 export async function makeInquiry(args: IMakeInquiryArgs): Promise<IMakeInquiryResult | null> {
     const body = {
-        inquiry_theater: args.inquiry_theater,
-        inquiry_id: args.inquiry_id,
-        inquiry_pass: args.inquiry_pass
+        inquiry_theater: args.inquiryTheater,
+        inquiry_id: args.inquiryId,
+        inquiry_pass: args.inquiryPass
     };
     const response = await request.post({
         url: `${util.ENDPOINT}/transactions/makeInquiry`,
@@ -233,8 +233,8 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<IMakeInquiryR
  */
 export interface IOwnersAnonymousArgs extends util.IAuth {
     transactionId: string;
-    name_first: string;
-    name_last: string;
+    nameFirst: string;
+    nameLast: string;
     tel: string;
     email: string;
 }
@@ -249,8 +249,8 @@ export interface IOwnersAnonymousArgs extends util.IAuth {
  */
 export async function ownersAnonymous(args: IOwnersAnonymousArgs): Promise<void> {
     const body = {
-        name_first: args.name_first,
-        name_last: args.name_last,
+        name_first: args.nameFirst,
+        name_last: args.nameLast,
         tel: args.tel,
         email: args.email
     };
@@ -343,8 +343,8 @@ export async function updateOwners(args: IUpdateOwnersArgs): Promise<IUpdateOwne
             type: 'owners',
             id: args.ownerId,
             attributes: {
-                name_first: args.name_first,
-                name_last: args.name_last,
+                name_first: args.nameFirst,
+                name_last: args.nameLast,
                 tel: args.tel,
                 email: args.email,
                 group: args.group,
@@ -378,7 +378,7 @@ export interface ICardInfo {
     /**
      * カード番号
      */
-    card_no: string;
+    cardNo: string;
     /**
      * 有効期限
      */
@@ -386,7 +386,7 @@ export interface ICardInfo {
     /**
      * 名義人
      */
-    holder_name: string;
+    holderName: string;
 }
 
 /**
@@ -399,7 +399,7 @@ export interface IImportCardInfo extends ICardInfo {
     /**
      * パスワード
      */
-    card_pass: string;
+    cardPass: string;
     /**
      * トークン化カード情報
      */
@@ -460,10 +460,10 @@ export async function addOwnersCard(args: IAddOwnersCardArgs): Promise<IAddOwner
         data: {
             type: 'cards',
             attributes: {
-                card_no: args.card_no,
-                card_pass: args.card_pass,
+                card_no: args.cardNo,
+                card_pass: args.cardPass,
                 expire: args.expire,
-                holder_name: args.holder_name,
+                holder_name: args.holderName,
                 token: args.token
             }
         }
@@ -587,43 +587,43 @@ export interface IReserveTicket {
     /**
      * 座席番号
      */
-    seat_code: string;
+    seatCode: string;
     /**
      * チケットコード
      */
-    ticket_code: string;
+    ticketCode: string;
     /**
      * チケット名
      */
-    ticket_name: string;
+    ticketName: string;
     /**
      * チケット名（英）
      */
-    ticket_name_eng: string;
+    ticketNameEng: string;
     /**
      * チケット名（カナ）
      */
-    ticket_name_kana: string;
+    ticketNameKana: string;
     /**
      * 標準単価
      */
-    std_price: number;
+    stdPrice: number;
     /**
      * 加算単価(３Ｄ，ＩＭＡＸ、４ＤＸ等の加算料金)
      */
-    add_price: number;
+    addPrice: number;
     /**
      * 割引額
      */
-    dis_price: number;
+    disPrice: number;
     /**
      * 販売単価(標準単価＋加算単価)
      */
-    sale_price: number;
+    salePrice: number;
     /**
      * メガネ単価
      */
-    add_price_glasses: number;
+    addPriceGlasses: number;
     /**
      * メガネ有り無し(現状ムビチケ)
      */
@@ -631,31 +631,31 @@ export interface IReserveTicket {
     /**
      * ムビチケ購入番号
      */
-    mvtk_num: string;
+    mvtkNum: string;
     /**
      * ムビチケ計上単価
      */
-    mvtk_app_price: number;
+    mvtkAppPrice: number;
     /**
      * ムビチケ映写方式区分
      */
-    kbn_eisyahousiki: string;
+    kbnEisyahousiki: string;
     /**
      * ムビチケ電子券区分
      */
-    mvtk_kbn_denshiken: string;
+    mvtkKbnDenshiken: string;
     /**
      * ムビチケ前売券区分
      */
-    mvtk_kbn_maeuriken: string;
+    mvtkKbnMaeuriken: string;
     /**
      * ムビチケ券種区分
      */
-    mvtk_kbn_kensyu: string;
+    mvtkKbnKensyu: string;
     /**
      * ムビチケ販売単価
      */
-    mvtk_sales_price: number;
+    mvtkSalesPrice: number;
 }
 
 /**
@@ -690,36 +690,36 @@ export async function addCOAAuthorization(args: IAddCOAAuthorizationArgs): Promi
             attributes: {
                 owner_from: promoterOwnerId,
                 owner_to: anonymousOwnerId,
-                coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmp_reserve_num,
+                coa_tmp_reserve_num: args.reserveSeatsTemporarilyResult.tmpReserveNum,
                 coa_theater_code: args.theaterCode,
                 coa_date_jouei: args.performance.attributes.day,
                 coa_title_code: args.titleCode,
                 coa_title_branch_num: args.titleBranchNum,
-                coa_time_begin: args.performance.attributes.time_start,
+                coa_time_begin: args.performance.attributes.timeStart,
                 coa_screen_code: args.screenCode,
                 seats: args.salesTicketResults.map((tmpReserve) => {
                     return {
                         performance: args.performance.id,
                         screen_section: tmpReserve.section,
-                        seat_code: tmpReserve.seat_code,
-                        ticket_code: tmpReserve.ticket_code,
+                        seat_code: tmpReserve.seatCode,
+                        ticket_code: tmpReserve.ticketCode,
                         ticket_name: {
-                            ja: tmpReserve.ticket_name,
-                            en: tmpReserve.ticket_name_eng
+                            ja: tmpReserve.ticketName,
+                            en: tmpReserve.ticketNameEng
                         },
-                        ticket_name_kana: tmpReserve.ticket_name_kana,
-                        std_price: tmpReserve.std_price,
-                        add_price: tmpReserve.add_price,
-                        dis_price: tmpReserve.dis_price,
-                        sale_price: tmpReserve.sale_price,
-                        mvtk_app_price: tmpReserve.mvtk_app_price,
-                        add_glasses: tmpReserve.add_price_glasses,
-                        kbn_eisyahousiki: tmpReserve.kbn_eisyahousiki,
-                        mvtk_num: tmpReserve.mvtk_num,
-                        mvtk_kbn_denshiken: tmpReserve.mvtk_kbn_denshiken,
-                        mvtk_kbn_maeuriken: tmpReserve.mvtk_kbn_maeuriken,
-                        mvtk_kbn_kensyu: tmpReserve.mvtk_kbn_kensyu,
-                        mvtk_sales_price: tmpReserve.mvtk_sales_price
+                        ticket_name_kana: tmpReserve.ticketNameKana,
+                        std_price: tmpReserve.stdPrice,
+                        add_price: tmpReserve.addPrice,
+                        dis_price: tmpReserve.disPrice,
+                        sale_price: tmpReserve.salePrice,
+                        mvtk_app_price: tmpReserve.mvtkAppPrice,
+                        add_glasses: tmpReserve.addPriceGlasses,
+                        kbn_eisyahousiki: tmpReserve.kbnEisyahousiki,
+                        mvtk_num: tmpReserve.mvtkNum,
+                        mvtk_kbn_denshiken: tmpReserve.mvtkKbnDenshiken,
+                        mvtk_kbn_maeuriken: tmpReserve.mvtkKbnMaeuriken,
+                        mvtk_kbn_kensyu: tmpReserve.mvtkKbnKensyu,
+                        mvtk_sales_price: tmpReserve.mvtkSalesPrice
                     };
                 }),
                 price: args.price
@@ -956,8 +956,8 @@ export async function removeAuthorization(args: IRemoveAuthorizationArgs): Promi
  */
 export interface ITransactionsInquiryKeyArgs extends util.IAuth {
     transactionId: string;
-    theater_code: string;
-    reserve_num: number;
+    theaterCode: string;
+    reserveNum: number;
     tel: string;
 }
 /**
@@ -970,8 +970,8 @@ export interface ITransactionsInquiryKeyArgs extends util.IAuth {
 export async function transactionsInquiryKey(args: ITransactionsInquiryKeyArgs): Promise<void> {
     const body = {
         data: {
-            theater_code: args.theater_code,
-            reserve_num: args.reserve_num,
+            theater_code: args.theaterCode,
+            reserve_num: args.reserveNum,
             tel: args.tel
         }
     };
@@ -997,9 +997,9 @@ export async function transactionsInquiryKey(args: ITransactionsInquiryKeyArgs):
  */
 export interface ITransactionsEnableInquiryArgs extends util.IAuth {
     transactionId: string;
-    inquiry_theater: string;
-    inquiry_id: number;
-    inquiry_pass: string;
+    inquiryTheater: string;
+    inquiryId: number;
+    inquiryPass: string;
 }
 /**
  * 照会情報登録(購入番号と電話番号で照会する場合)
@@ -1011,9 +1011,9 @@ export interface ITransactionsEnableInquiryArgs extends util.IAuth {
  */
 export async function transactionsEnableInquiry(args: ITransactionsEnableInquiryArgs): Promise<void> {
     const body = {
-        inquiry_theater: args.inquiry_theater,
-        inquiry_id: args.inquiry_id,
-        inquiry_pass: args.inquiry_pass
+        inquiry_theater: args.inquiryTheater,
+        inquiry_id: args.inquiryId,
+        inquiry_pass: args.inquiryPass
     };
     const response = await request.patch({
         url: `${util.ENDPOINT}/transactions/${args.transactionId}/enableInquiry`,

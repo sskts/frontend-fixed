@@ -117,13 +117,13 @@ function select(req, res, next) {
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
-            if (req.body.transaction_id !== purchaseModel.transactionMP.id)
+            if (req.body.transactionId !== purchaseModel.transactionMP.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
             //バリデーション
             TicketForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                const reserveTickets = JSON.parse(req.body.reserve_tickets);
+                const reserveTickets = JSON.parse(req.body.reserveTickets);
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, reserveTickets);
                 log('券種検証');
                 // COAオーソリ削除
@@ -168,7 +168,7 @@ function select(req, res, next) {
                     // 興行会社ユーザー座席予約番号(予約番号)
                     const startDate = {
                         day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
-                        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.time_start)}:00`
+                        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.timeStart)}:00`
                     };
                     purchaseModel.authorizationMvtk = yield MP.services.transaction.addMvtkauthorization({
                         accessToken: yield UtilModule.getAccessToken(req),
@@ -178,8 +178,8 @@ function select(req, res, next) {
                         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
                         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
                         // tslint:disable-next-line:max-line-length
-                        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmp_reserve_num}`,
-                        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmp_reserve_num),
+                        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmpReserveNum}`,
+                        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmpReserveNum),
                         jeiDt: `${startDate.day} ${startDate.time}`,
                         kijYmd: startDate.day,
                         stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id),
@@ -217,7 +217,7 @@ function select(req, res, next) {
                 res.locals.tickets = salesTicketsResult;
                 res.locals.performance = performance;
                 res.locals.reserveSeats = purchaseModel.reserveSeats;
-                res.locals.reserveTickets = JSON.parse(req.body.reserve_tickets);
+                res.locals.reserveTickets = JSON.parse(req.body.reserveTickets);
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -252,30 +252,30 @@ function getSalesTickets(req, purchaseModel) {
         const result = [];
         for (const ticket of purchaseModel.salesTicketsCOA) {
             result.push({
-                ticket_code: ticket.ticket_code,
-                ticket_name: ticket.ticket_name,
-                ticket_name_kana: ticket.ticket_name_kana,
-                ticket_name_eng: ticket.ticket_name_eng,
-                std_price: ticket.std_price,
-                add_price: ticket.add_price,
-                sale_price: ticket.sale_price,
-                ticket_note: ticket.ticket_note,
-                add_price_glasses: 0,
-                mvtk_num: '',
+                ticketCode: ticket.ticketCode,
+                ticketName: ticket.ticketName,
+                ticketNameKana: ticket.ticketNameKana,
+                ticketNameEng: ticket.ticketNameEng,
+                stdPrice: ticket.stdPrice,
+                addPrice: ticket.addPrice,
+                salePrice: ticket.salePrice,
+                ticketNote: ticket.ticketNote,
+                addPriceGlasses: 0,
+                mvtkNum: '',
                 glasses: false // メガネ有無
             });
-            if (ticket.add_glasses > 0) {
+            if (ticket.addGlasses > 0) {
                 result.push({
-                    ticket_code: ticket.ticket_code,
-                    ticket_name: `${ticket.ticket_name}${req.__('common.glasses')}`,
-                    ticket_name_kana: ticket.ticket_name_kana,
-                    ticket_name_eng: ticket.ticket_name_eng,
-                    std_price: ticket.std_price,
-                    add_price: ticket.add_price,
-                    sale_price: ticket.sale_price + ticket.add_glasses,
-                    ticket_note: ticket.ticket_note,
-                    add_price_glasses: ticket.add_glasses,
-                    mvtk_num: '',
+                    ticketCode: ticket.ticketCode,
+                    ticketName: `${ticket.ticketName}${req.__('common.glasses')}`,
+                    ticketNameKana: ticket.ticketNameKana,
+                    ticketNameEng: ticket.ticketNameEng,
+                    stdPrice: ticket.stdPrice,
+                    addPrice: ticket.addPrice,
+                    salePrice: ticket.salePrice + ticket.addGlasses,
+                    ticketNote: ticket.ticketNote,
+                    addPriceGlasses: ticket.addGlasses,
+                    mvtkNum: '',
                     glasses: true // メガネ有無
                 });
             }
@@ -287,30 +287,30 @@ function getSalesTickets(req, purchaseModel) {
         for (const mvtk of purchaseModel.mvtk) {
             for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i += 1) {
                 mvtkTickets.push({
-                    ticket_code: mvtk.ticket.ticket_code,
-                    ticket_name: mvtk.ticket.ticket_name,
-                    ticket_name_kana: mvtk.ticket.ticket_name_kana,
-                    ticket_name_eng: mvtk.ticket.ticket_name_eng,
-                    std_price: 0,
-                    add_price: mvtk.ticket.add_price,
-                    sale_price: mvtk.ticket.add_price,
-                    ticket_note: req.__('common.mvtk_code') + mvtk.code,
-                    add_price_glasses: mvtk.ticket.add_price_glasses,
-                    mvtk_num: mvtk.code,
+                    ticketCode: mvtk.ticket.ticketCode,
+                    ticketName: mvtk.ticket.ticketName,
+                    ticketNameKana: mvtk.ticket.ticketNameKana,
+                    ticketNameEng: mvtk.ticket.ticketNameEng,
+                    stdPrice: 0,
+                    addPrice: mvtk.ticket.addPrice,
+                    salePrice: mvtk.ticket.addPrice,
+                    ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                    addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                    mvtkNum: mvtk.code,
                     glasses: false // メガネ有無
                 });
-                if (mvtk.ticket.add_price_glasses > 0) {
+                if (mvtk.ticket.addPriceGlasses > 0) {
                     mvtkTickets.push({
-                        ticket_code: mvtk.ticket.ticket_code,
-                        ticket_name: `${mvtk.ticket.ticket_name}${req.__('common.glasses')}`,
-                        ticket_name_kana: mvtk.ticket.ticket_name_kana,
-                        ticket_name_eng: mvtk.ticket.ticket_name_eng,
-                        std_price: 0,
-                        add_price: mvtk.ticket.add_price,
-                        sale_price: mvtk.ticket.add_price + mvtk.ticket.add_price_glasses,
-                        ticket_note: req.__('common.mvtk_code') + mvtk.code,
-                        add_price_glasses: mvtk.ticket.add_price_glasses,
-                        mvtk_num: mvtk.code,
+                        ticketCode: mvtk.ticket.ticketCode,
+                        ticketName: `${mvtk.ticket.ticketName}${req.__('common.glasses')}`,
+                        ticketNameKana: mvtk.ticket.ticketNameKana,
+                        ticketNameEng: mvtk.ticket.ticketNameEng,
+                        stdPrice: 0,
+                        addPrice: mvtk.ticket.addPrice,
+                        salePrice: mvtk.ticket.addPrice + mvtk.ticket.addPriceGlasses,
+                        ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                        addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                        mvtkNum: mvtk.code,
                         glasses: true // メガネ有無
                     });
                 }
@@ -343,68 +343,68 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
         //コアAPI券種取得
         const salesTickets = purchaseModel.salesTicketsCOA;
         for (const ticket of reserveTickets) {
-            if (ticket.mvtk_num !== '') {
+            if (ticket.mvtkNum !== '') {
                 // ムビチケ
                 if (purchaseModel.mvtk === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 const mvtkTicket = purchaseModel.mvtk.find((value) => {
-                    return (value.code === ticket.mvtk_num && value.ticket.ticket_code === ticket.ticket_code);
+                    return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
                 });
                 if (mvtkTicket === undefined)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 result.push({
                     section: ticket.section,
-                    seat_code: ticket.seat_code,
-                    ticket_code: mvtkTicket.ticket.ticket_code,
-                    ticket_name: (ticket.glasses)
-                        ? `${mvtkTicket.ticket.ticket_name}${req.__('common.glasses')}`
-                        : mvtkTicket.ticket.ticket_name,
-                    ticket_name_eng: mvtkTicket.ticket.ticket_name_eng,
-                    ticket_name_kana: mvtkTicket.ticket.ticket_name_kana,
-                    std_price: 0,
-                    add_price: mvtkTicket.ticket.add_price,
-                    dis_price: 0,
-                    sale_price: (ticket.glasses)
-                        ? mvtkTicket.ticket.add_price + mvtkTicket.ticket.add_price_glasses
-                        : mvtkTicket.ticket.add_price,
-                    add_price_glasses: (ticket.glasses)
-                        ? mvtkTicket.ticket.add_price_glasses
+                    seatCode: ticket.seatCode,
+                    ticketCode: mvtkTicket.ticket.ticketCode,
+                    ticketName: (ticket.glasses)
+                        ? `${mvtkTicket.ticket.ticketName}${req.__('common.glasses')}`
+                        : mvtkTicket.ticket.ticketName,
+                    ticketNameEng: mvtkTicket.ticket.ticketNameEng,
+                    ticketNameKana: mvtkTicket.ticket.ticketNameKana,
+                    stdPrice: 0,
+                    addPrice: mvtkTicket.ticket.addPrice,
+                    disPrice: 0,
+                    salePrice: (ticket.glasses)
+                        ? mvtkTicket.ticket.addPrice + mvtkTicket.ticket.addPriceGlasses
+                        : mvtkTicket.ticket.addPrice,
+                    addPriceGlasses: (ticket.glasses)
+                        ? mvtkTicket.ticket.addPriceGlasses
                         : 0,
                     glasses: ticket.glasses,
-                    mvtk_app_price: Number(mvtkTicket.ykknInfo.kijUnip),
-                    kbn_eisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp,
-                    mvtk_num: mvtkTicket.code,
-                    mvtk_kbn_denshiken: mvtkTicket.ykknInfo.dnshKmTyp,
-                    mvtk_kbn_maeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp,
-                    mvtk_kbn_kensyu: mvtkTicket.ykknInfo.ykknshTyp,
-                    mvtk_sales_price: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
+                    mvtkAppPrice: Number(mvtkTicket.ykknInfo.kijUnip),
+                    kbnEisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp,
+                    mvtkNum: mvtkTicket.code,
+                    mvtkKbnDenshiken: mvtkTicket.ykknInfo.dnshKmTyp,
+                    mvtkKbnMaeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp,
+                    mvtkKbnKensyu: mvtkTicket.ykknInfo.ykknshTyp,
+                    mvtkSalesPrice: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
                 });
             }
             else {
                 // 通常券種
                 const salesTicket = salesTickets.find((value) => {
-                    return (value.ticket_code === ticket.ticket_code);
+                    return (value.ticketCode === ticket.ticketCode);
                 });
                 if (salesTicket === undefined)
                     throw ErrorUtilModule.ERROR_ACCESS;
                 // 制限単位、人数制限判定
                 const mismatchTickets = [];
                 const sameTickets = reserveTickets.filter((value) => {
-                    return (value.ticket_code === salesTicket.ticket_code);
+                    return (value.ticketCode === salesTicket.ticketCode);
                 });
                 if (sameTickets.length === 0)
                     throw ErrorUtilModule.ERROR_ACCESS;
-                if (salesTicket.limit_unit === '001') {
-                    if (sameTickets.length % salesTicket.limit_count !== 0) {
-                        if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
-                            mismatchTickets.push(ticket.ticket_code);
+                if (salesTicket.limitUnit === '001') {
+                    if (sameTickets.length % salesTicket.limitCount !== 0) {
+                        if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
+                            mismatchTickets.push(ticket.ticketCode);
                         }
                     }
                 }
-                else if (salesTicket.limit_unit === '002') {
-                    if (sameTickets.length < salesTicket.limit_count) {
-                        if (mismatchTickets.indexOf(ticket.ticket_code) === -1) {
-                            mismatchTickets.push(ticket.ticket_code);
+                else if (salesTicket.limitUnit === '002') {
+                    if (sameTickets.length < salesTicket.limitCount) {
+                        if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
+                            mismatchTickets.push(ticket.ticketCode);
                         }
                     }
                 }
@@ -414,30 +414,30 @@ function ticketValidation(req, res, purchaseModel, reserveTickets) {
                 }
                 result.push({
                     section: ticket.section,
-                    seat_code: ticket.seat_code,
-                    ticket_code: salesTicket.ticket_code,
-                    ticket_name: (ticket.glasses)
-                        ? `${salesTicket.ticket_name}${req.__('common.glasses')}`
-                        : salesTicket.ticket_name,
-                    ticket_name_eng: salesTicket.ticket_name_eng,
-                    ticket_name_kana: salesTicket.ticket_name_kana,
-                    std_price: salesTicket.std_price,
-                    add_price: salesTicket.add_price,
-                    dis_price: 0,
-                    sale_price: (ticket.glasses)
-                        ? salesTicket.sale_price + salesTicket.add_glasses
-                        : salesTicket.sale_price,
-                    add_price_glasses: (ticket.glasses)
-                        ? salesTicket.add_glasses
+                    seatCode: ticket.seatCode,
+                    ticketCode: salesTicket.ticketCode,
+                    ticketName: (ticket.glasses)
+                        ? `${salesTicket.ticketName}${req.__('common.glasses')}`
+                        : salesTicket.ticketName,
+                    ticketNameEng: salesTicket.ticketNameEng,
+                    ticketNameKana: salesTicket.ticketNameKana,
+                    stdPrice: salesTicket.stdPrice,
+                    addPrice: salesTicket.addPrice,
+                    disPrice: 0,
+                    salePrice: (ticket.glasses)
+                        ? salesTicket.salePrice + salesTicket.addGlasses
+                        : salesTicket.salePrice,
+                    addPriceGlasses: (ticket.glasses)
+                        ? salesTicket.addGlasses
                         : 0,
                     glasses: ticket.glasses,
-                    mvtk_app_price: 0,
-                    kbn_eisyahousiki: '00',
-                    mvtk_num: '',
-                    mvtk_kbn_denshiken: '00',
-                    mvtk_kbn_maeuriken: '00',
-                    mvtk_kbn_kensyu: '00',
-                    mvtk_sales_price: 0 // ムビチケ販売単価
+                    mvtkAppPrice: 0,
+                    kbnEisyahousiki: '00',
+                    mvtkNum: '',
+                    mvtkKbnDenshiken: '00',
+                    mvtkKbnMaeuriken: '00',
+                    mvtkKbnKensyu: '00',
+                    mvtkSalesPrice: 0 // ムビチケ販売単価
                 });
             }
         }

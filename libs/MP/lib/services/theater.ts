@@ -19,11 +19,11 @@ export interface ITheater {
     attributes: {
         address: util.ILanguage;
         name: util.ILanguage;
-        name_kana: string;
-        gmo: {
-            site_id: string;
-            shop_id: string;
-            shop_pass: string;
+        nameKana: string;
+        gmo?: {
+            siteId: string;
+            shopId: string;
+            shopPass: string;
         };
         websites: {
             group: string;
@@ -60,8 +60,28 @@ export async function getTheater(args: IGetTheaterArgs): Promise<ITheater> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getTheater:', response.body.data);
+    const data = response.body.data;
 
-    return response.body.data;
+    return {
+        id: data.id,
+        attributes: {
+            address: data.attributes.address,
+            name: data.attributes.name,
+            nameKana: data.attributes.name_kana,
+            gmo: {
+                siteId: data.attributes.gmo.site_id,
+                shopId: data.attributes.gmo.shop_id,
+                shopPass: data.attributes.gmo.shop_pass
+            },
+            websites: data.attributes.websites.map((website: any) => {
+                return {
+                    group: website.group,
+                    name: website.name,
+                    url: website.url
+                };
+            })
+        }
+    };
 }
 
 /**
@@ -90,5 +110,21 @@ export async function getTheaters(args: IGetTheatersArgs): Promise<ITheater[]> {
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getTheaters:', response.body.data);
 
-    return response.body.data;
+    return response.body.data.map((data: any) => {
+        return {
+            id: data.id,
+            attributes: {
+                address: data.attributes.address,
+                name: data.attributes.name,
+                nameKana: data.attributes.name_kana,
+                websites: data.attributes.websites.map((website: any) => {
+                    return {
+                        group: website.group,
+                        name: website.name,
+                        url: website.url
+                    };
+                })
+            }
+        };
+    });
 }

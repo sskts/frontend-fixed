@@ -40,8 +40,8 @@ $(function () {
         modalBody.html('');
         $('.ticket-list .mvtk-box.active').each(function (index, elem) {
             var target = $(elem);
-            var code = target.find('input[name=mvtk_code]').val();
-            var password = target.find('input[name=mvtk_password]').val();
+            var code = target.find('input[name=mvtkCode]').val();
+            var password = target.find('input[name=mvtkPassword]').val();
             if (code && password) {
                 mvtkList.push({
                     code: code,
@@ -72,11 +72,11 @@ $(function () {
  */
 function pageInit() {
     if ($('.mvtk-validation').val()) {
-        modal.open('mvtk_validation');
+        modal.open('mvtkValidation');
         var errorData = JSON.parse($('.mvtk-validation').val());
         errorData.forEach(function (value) {
             var target = $('.ticket-list .mvtk-box input[value=' + value + ']').parents('.mvtk-box');
-            target.find('input[name=mvtk_password]').val('');
+            target.find('input[name=mvtkPassword]').val('');
             target.find('input').addClass('validation');
         });
     }
@@ -112,8 +112,8 @@ function validation(parent) {
     var modalBody = $('.modal[data-modal=validation] .modal-body');
 
     var validationList = [
-        { name: 'mvtk_code', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
-        { name: 'mvtk_password', label: locales.label.mvtk_password, required: true, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number] }
+        { name: 'mvtkCode', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
+        { name: 'mvtkPassword', label: locales.label.mvtk_password, required: true, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number] }
     ];
 
     var validations = [];
@@ -177,7 +177,7 @@ function validation(parent) {
             category: 'form',
             message: validations.join(', '),
             notes: names.join(', '),
-            transaction: $('input[name=transaction_id]').val()
+            transaction: $('input[name=transactionId]').val()
         });
     }
 }

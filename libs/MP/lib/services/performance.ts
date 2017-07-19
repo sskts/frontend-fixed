@@ -32,17 +32,17 @@ export interface IPerformance {
             id: string;
             name: util.ILanguage;
         },
-        stock_status: number;
-        time_end: string;
-        time_start: string;
-        coa_trailer_time: number;
-        coa_kbn_service: string;
-        coa_kbn_acoustic: string;
-        coa_name_service_day: string;
-        coa_available_num: string;
-        coa_rsv_start_date: string;
-        coa_rsv_end_date: string;
-        coa_flg_early_booking: string;
+        stockStatus: number;
+        timeEnd: string;
+        timeStart: string;
+        coaTrailerTime: number;
+        coaKbnService: string;
+        coaKbnAcoustic: string;
+        coaNameServiceDay: string;
+        coaAvailableNum: string;
+        coaRsvStartDate: string;
+        coaRsvEndDate: string;
+        coaFlgEarlyBooking: string;
     };
 }
 
@@ -80,7 +80,39 @@ export async function getPerformances(args: IGetPerformancesArgs): Promise<IPerf
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(qs, response);
     // log('performances:', response.body.data);
 
-    return response.body.data;
+    return response.body.data.map((data: any) => {
+        return {
+            id: data.id,
+            attributes: {
+                canceled: data.attributes.canceled,
+                day: data.attributes.day,
+                film: {
+                    id: data.attributes.film.id,
+                    name: data.attributes.film.name,
+                    minutes: data.attributes.film.minutes
+                },
+                screen: {
+                    id: data.attributes.screen.id,
+                    name: data.attributes.screen.name
+                },
+                theater: {
+                    id: data.attributes.theater.id,
+                    name: data.attributes.theater.name
+                },
+                stockStatus: data.attributes.stock_status,
+                timeEnd: data.attributes.time_end,
+                timeStart: data.attributes.time_start,
+                coaTrailerTime: data.attributes.coa_trailer_time,
+                coaKbnService: data.attributes.coa_kbn_service,
+                coaKbnAcoustic: data.attributes.coa_kbn_acoustic,
+                coaNameServiceDay: data.attributes.coa_name_service_day,
+                coaAvailableNum: data.attributes.coa_available_num,
+                coaRsvStartDate: data.attributes.coa_rsv_start_date,
+                coaRsvEndDate: data.attributes.coa_rsv_end_date,
+                coaFlgEarlyBooking: data.attributes.coa_flg_early_booking
+            }
+        };
+    });
 }
 
 /**
@@ -110,6 +142,37 @@ export async function getPerformance(args: IGetPerformanceArgs): Promise<IPerfor
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('performance:', response.body.data);
+    const data = response.body.data;
 
-    return response.body.data;
+    return {
+        id: data.id,
+        attributes: {
+            canceled: data.attributes.canceled,
+            day: data.attributes.day,
+            film: {
+                id: data.attributes.film.id,
+                name: data.attributes.film.name,
+                minutes: data.attributes.film.minutes
+            },
+            screen: {
+                id: data.attributes.screen.id,
+                name: data.attributes.screen.name
+            },
+            theater: {
+                id: data.attributes.theater.id,
+                name: data.attributes.theater.name
+            },
+            stockStatus: data.attributes.stock_status,
+            timeEnd: data.attributes.time_end,
+            timeStart: data.attributes.time_start,
+            coaTrailerTime: data.attributes.coa_trailer_time,
+            coaKbnService: data.attributes.coa_kbn_service,
+            coaKbnAcoustic: data.attributes.coa_kbn_acoustic,
+            coaNameServiceDay: data.attributes.coa_name_service_day,
+            coaAvailableNum: data.attributes.coa_available_num,
+            coaRsvStartDate: data.attributes.coa_rsv_start_date,
+            coaRsvEndDate: data.attributes.coa_rsv_end_date,
+            coaFlgEarlyBooking: data.attributes.coa_flg_early_booking
+        }
+    };
 }

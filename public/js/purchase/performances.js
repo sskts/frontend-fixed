@@ -110,7 +110,7 @@ function createScheduleDom(data) {
         // 販売可能時間判定
         var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
         var limitTime = moment().add(limit, 'minutes');
-        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).unix()) {
             return;
         }
         var type = $('select[name=type]').val();
@@ -123,14 +123,14 @@ function createScheduleDom(data) {
             link = '/purchase/fixed.html?id=' + performance.id;
         }
         // 販売ステータス設定
-        var status = (performance.attributes.stock_status === 0) ? ' ×'
-            : (performance.attributes.stock_status <= 10) ? ' △'
+        var status = (performance.attributes.stockStatus === 0) ? ' ×'
+            : (performance.attributes.stockStatus <= 10) ? ' △'
             : '';
-        var disabled = (performance.attributes.stock_status === 0) ? 'disabled' : '';
+        var disabled = (performance.attributes.stockStatus === 0) ? 'disabled' : '';
         performances.push('<li class="button small-button gray-button ' + disabled + '">' +
             '<a href="' + link + '" class="icon-triangle-02">' +
-            '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' +
-            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' +
+            '<div class="mb-x-small">' + timeFormat(performance.attributes.timeStart) + '</div>' +
+            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.timeEnd) + '</div>' +
             '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' +
             '</a>' +
             '</li>');

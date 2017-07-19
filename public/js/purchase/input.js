@@ -20,7 +20,7 @@ $(function () {
         } else {
             loadingStart(function () {
                 var cardno = $('input[name=cardno]').val();
-                var expire = $('select[name=credit_year]').val() + $('select[name=credit_month]').val();
+                var expire = $('select[name=creditYear]').val() + $('select[name=creditMonth]').val();
                 var securitycode = $('input[name=securitycode]').val();
                 var holdername = $('input[name=holdername]').val();
                 var sendParam = {
@@ -46,10 +46,10 @@ function pageInit() {
         // 券売機
         var data = localStorage.getItem('config');
         var json = JSON.parse(data);
-        $('input[name=last_name_hira]').val(json.last_name_hira);
-        $('input[name=first_name_hira]').val(json.first_name_hira);
-        $('input[name=mail_addr]').val(json.mail_addr);
-        $('input[name=mail_confirm]').val(json.mail_addr);
+        $('input[name=lastNameHira]').val(json.lastNameHira);
+        $('input[name=firstNameHira]').val(json.firstNameHira);
+        $('input[name=mailAddr]').val(json.mailAddr);
+        $('input[name=mailConfirm]').val(json.mailAddr);
 
         var str = $('input[name=validation]').val();
         var errors = JSON.parse(str);
@@ -67,11 +67,11 @@ function pageInit() {
         return;
     }
 
-    if ($('input[name=gmo_error]').val()) {
-        // 計測 ※GMOエラーはコードのみ。詳細は送らない。
-        var theaterCode = $('input[name=theater_code]').val();
-        var gmoErrorMessage = $('input[name=gmo_error_message]').val();
-        var transactionId = $('input[name=transaction_id]').val();
+    if ($('input[name=gmoError]').val()) {
+        // 計測 ※gmoエラーはコードのみ。詳細は送らない。
+        var theaterCode = $('input[name=theaterCode]').val();
+        var gmoErrorMessage = $('input[name=gmoErrorMessage]').val();
+        var transactionId = $('input[name=transactionId]').val();
         collection({
             client: 'sskts-frontend',
             label: 'GMOErrorMessage-' + theaterCode,
@@ -80,10 +80,10 @@ function pageInit() {
             message: gmoErrorMessage,
             transaction: transactionId
         });
-        var msg = $('input[name=gmo_error]').val();
-        var target = $('.modal[data-modal=creditcard_alert]');
+        var msg = $('input[name=gmoError]').val();
+        var target = $('.modal[data-modal=creditcardAlert]');
         target.find('p').html(msg);
-        modal.open('creditcard_alert');
+        modal.open('creditcardAlert');
 
         // バリデーション
         $('.validation').removeClass('validation');
@@ -97,7 +97,7 @@ function pageInit() {
         validationList.forEach(function (validation, index) {
             var target = $('input[name=' + validation.name + ']');
             if (validation.name === 'expire') {
-                $('select[name=credit_month], select[name=credit_year]').addClass('validation');
+                $('select[name=creditMonth], select[name=creditYear]').addClass('validation');
             } else {
                 target.addClass('validation');
             }
@@ -118,8 +118,8 @@ function someCallbackFunction(response) {
     //カード情報は念のため値を除去
     var date = new Date();
     $('input[name=cardno]').val('');
-    $('select[name=credit_year]').val((String(date.getFullYear())));
-    $('select[name=credit_month]').val((date.getMonth() + 1 < 10) ? '0' + String(date.getMonth() + 1) : String(date.getMonth() + 1));
+    $('select[name=creditYear]').val((string(date.getFullYear())));
+    $('select[name=creditMonth]').val((date.getMonth() + 1 < 10) ? '0' + String(date.getMonth() + 1) : String(date.getMonth() + 1));
     $('input[name=securitycode]').val('');
     $('input[name=holdername]').val('');
     if (response.resultCode != 000) {
@@ -128,7 +128,7 @@ function someCallbackFunction(response) {
         validationScroll();
     } else {
         //予め購入フォームに用意した token フィールドに、値を設定
-        $('input[name=gmo_token_object]').val(JSON.stringify(response.tokenObject));
+        $('input[name=gmoTokenObject]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
         $('#purchaseform').submit();
     }
@@ -167,21 +167,21 @@ function validation() {
     if (isFixed()) {
         // 券売機
         var validationList = [
-            { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'mail_addr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
-            { name: 'mail_confirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
-            { name: 'tel_num', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+            { name: 'lastNameHira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'firstNameHira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'mailAddr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+            { name: 'mailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
+            { name: 'telNum', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
             { name: 'cardno', label: locales.label.cardno, required: true },
             { name: 'securitycode', label: locales.label.securitycode, required: true }
         ];
     } else {
         var validationList = [
-            { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'mail_addr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
-            { name: 'mail_confirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
-            { name: 'tel_num', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+            { name: 'lastNameHira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'firstNameHira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'mailAddr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+            { name: 'mailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mail_addr' },
+            { name: 'telNum', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
             { name: 'cardno', label: locales.label.cardno, required: true },
             { name: 'securitycode', label: locales.label.securitycode, required: true },
             { name: 'holdername', label: locales.label.holdername, required: true },
@@ -256,7 +256,7 @@ function validation() {
             category: 'form',
             message: validations.join(', '),
             notes: names.join(', '),
-            transaction: $('input[name=transaction_id]').val()
+            transaction: $('input[name=transactionId]').val()
         });
     }
 }
@@ -283,7 +283,7 @@ function gmoValidation() {
         validationList.forEach(function (validation, index) {
             var target = $('input[name=' + validation.name + ']');
             if (validation.name === 'expire') {
-                $('select[name=credit_month], select[name=credit_year]').addClass('validation');
+                $('select[name=creditMonth], select[name=creditYear]').addClass('validation');
             } else {
                 target.addClass('validation');
             }
@@ -294,7 +294,7 @@ function gmoValidation() {
         validationList.forEach(function (validation, index) {
             var target = $('input[name=' + validation.name + ']');
             if (validation.name === 'expire') {
-                $('select[name=credit_month], select[name=credit_year]').addClass('validation');
+                $('select[name=creditMonth], select[name=creditYear]').addClass('validation');
             } else {
                 target.addClass('validation');
             }

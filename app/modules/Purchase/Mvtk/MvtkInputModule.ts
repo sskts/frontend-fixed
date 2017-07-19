@@ -40,7 +40,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
         res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+        res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
@@ -78,7 +78,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+        if (req.body.transactionId !== purchaseModel.transactionMP.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         MvtkInputForm(req);
@@ -122,15 +122,15 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
                 const ticket = await COA.services.master.mvtkTicketcode({
-                    theater_code: purchaseModel.performance.attributes.theater.id,
-                    kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
-                    kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
-                    kbn_kensyu: info.ykknshTyp,
-                    sales_price: Number(info.knshknhmbiUnip),
-                    app_price: Number(info.kijUnip),
-                    kbn_eisyahousiki: info.eishhshkTyp,
-                    title_code: purchaseModel.performanceCOA.titleCode,
-                    title_branch_num: purchaseModel.performanceCOA.titleBranchNum
+                    theaterCode: purchaseModel.performance.attributes.theater.id,
+                    kbnDenshiken: purchaseNumberAuthResult.dnshKmTyp,
+                    kbnMaeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
+                    kbnKensyu: info.ykknshTyp,
+                    salesPrice: Number(info.knshknhmbiUnip),
+                    appPrice: Number(info.kijUnip),
+                    kbnEisyahousiki: info.eishhshkTyp,
+                    titleCode: purchaseModel.performanceCOA.titleCode,
+                    titleBranchNum: purchaseModel.performanceCOA.titleBranchNum
                 });
                 log('ムビチケチケットコード取得', ticket);
                 const validTicket = {
@@ -173,7 +173,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
+            res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
 

@@ -28,7 +28,7 @@ $(function () {
         // 座席数上限チェック
         if (!$(this).hasClass('active')) {
             if ($('.screen .seat a.active').length > limit - 1) {
-                modal.open('seat_upper_limit');
+                modal.open('seatUpperLimit');
                 return;
             }
         }
@@ -90,8 +90,8 @@ function getScreenStateReserve(count, cb) {
         type: 'POST',
         timeout: 10000,
         data: {
-            theater_code: params.theater, // 施設コード
-            screen_code: params.screen, // スクリーンコード
+            theaterCode: params.theater, // 施設コード
+            screenCode: params.screen, // スクリーンコード
         },
         beforeSend: function () { }
     }).done(function (res) {
@@ -136,21 +136,21 @@ function screenStateChange(state) {
     var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
     if (purchaseSeats) {
         //予約している席設定
-        for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
-            var seatNum = purchaseSeat.seat_num;
+        for (var i = 0, len = purchaseSeats.listTmpReserve.length; i < len; i++) {
+            var purchaseSeat = purchaseSeats.listTmpReserve[i];
+            var seatNum = purchaseSeat.seatNum;
             var seat = $('.seat a[data-seat-code=' + seatNum + ']');
             seat.removeClass('disabled');
             seat.addClass('active');
         }
     }
-    if (state && state.cnt_reserve_free > 0) {
+    if (state && state.cntReserveFree > 0) {
         //空いている座席設定
-        var freeSeats = state.list_seat[0].list_free_seat;
+        var freeSeats = state.listSeat[0].listFreeSeat;
         for (var i = 0, len = freeSeats.length; i < len; i++) {
             var freeSeat = freeSeats[i];
-            // var seatNum = replaceHalfSize(freeSeat.seat_num);
-            var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
+            // var seatNum = replaceHalfSize(freeseat.seatNum);
+            var seat = $('.seat a[data-seat-code=' + freeSeat.seatNum + ']');
             if (seat && !seat.hasClass('active')) {
                 seat.removeClass('disabled');
                 seat.addClass('default');

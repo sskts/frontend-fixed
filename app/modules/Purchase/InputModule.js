@@ -53,7 +53,7 @@ function index(req, res, next) {
             res.locals.error = null;
             res.locals.gmoError = null;
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+            res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.performance = purchaseModel.performance;
@@ -62,11 +62,11 @@ function index(req, res, next) {
                     accessToken: yield UtilModule.getAccessToken(req)
                 });
                 purchaseModel.input = {
-                    last_name_hira: profile.attributes.name_last,
-                    first_name_hira: profile.attributes.name_first,
-                    mail_addr: profile.attributes.email,
-                    mail_confirm: profile.attributes.email,
-                    tel_num: profile.attributes.tel,
+                    lastNameHira: profile.attributes.name_last,
+                    firstNameHira: profile.attributes.name_first,
+                    mailAddr: profile.attributes.email,
+                    mailConfirm: profile.attributes.email,
+                    telNum: profile.attributes.tel,
                     agree: ''
                 };
             }
@@ -144,7 +144,7 @@ function submit(req, res, next) {
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
-            if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
+            if (req.body.transactionId !== purchaseModel.transactionMP.id) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             //バリデーション
@@ -155,7 +155,7 @@ function submit(req, res, next) {
                 res.locals.gmoError = null;
                 res.locals.input = req.body;
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
-                res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+                res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
                 res.locals.price = purchaseModel.getReserveAmount();
                 res.locals.transactionId = purchaseModel.transactionMP.id;
                 res.locals.performance = purchaseModel.performance;
@@ -165,11 +165,11 @@ function submit(req, res, next) {
             }
             // 入力情報をセッションへ
             purchaseModel.input = {
-                last_name_hira: req.body.last_name_hira,
-                first_name_hira: req.body.first_name_hira,
-                mail_addr: req.body.mail_addr,
-                mail_confirm: req.body.mail_confirm,
-                tel_num: req.body.tel_num,
+                lastNameHira: req.body.lastNameHira,
+                firstNameHira: req.body.firstNameHira,
+                mailAddr: req.body.mailAddr,
+                mailConfirm: req.body.mailConfirm,
+                telNum: req.body.telNum,
                 agree: req.body.agree
             };
             if (purchaseModel.transactionGMO !== null
@@ -211,19 +211,19 @@ function submit(req, res, next) {
             yield MP.services.transaction.transactionsEnableInquiry({
                 accessToken: yield UtilModule.getAccessToken(req),
                 transactionId: purchaseModel.transactionMP.id,
-                inquiry_theater: purchaseModel.performance.attributes.theater.id,
-                inquiry_id: purchaseModel.reserveSeats.tmp_reserve_num,
-                inquiry_pass: purchaseModel.input.tel_num
+                inquiryTheater: purchaseModel.performance.attributes.theater.id,
+                inquiryId: purchaseModel.reserveSeats.tmpReserveNum,
+                inquiryPass: purchaseModel.input.telNum
             });
             // await MP.services.transaction.transactionsInquiryKey({
-            //     transactionId: purchaseModel.transactionMP.id,
-            //     theater_code: purchaseModel.performance.attributes.theater.id,
-            //     reserve_num: purchaseModel.reserveSeats.tmp_reserve_num,
-            //     tel: purchaseModel.input.tel_num
+            //     transactionId: purchaseModel.transactionMp.id,
+            //     theaterCode: purchaseModel.performance.attributes.theater.id,
+            //     reserveNum: purchaseModel.reserveSeats.tmpReserveNum,
+            //     tel: purchaseModel.input.telNum
             // });
             log('MP照会情報登録');
             const reserveSeatsString = purchaseModel.reserveTickets.map((ticket) => {
-                return `${ticket.seat_code} ${ticket.ticket_name} ￥${UtilModule.formatPrice(ticket.sale_price)}`;
+                return `${ticket.seatCode} ${ticket.ticketName} ￥${UtilModule.formatPrice(ticket.salePrice)}`;
             });
             if (purchaseModel.completeMailId !== null) {
                 yield MP.services.transaction.removeEmail({
@@ -235,7 +235,7 @@ function submit(req, res, next) {
             }
             // APIへ移行予定
             const theater = yield COA.services.master.theater({
-                theater_code: purchaseModel.theater.id
+                theaterCode: purchaseModel.theater.id
             });
             if (process.env.VIEW_TYPE !== 'fixed') {
                 const locals = {
@@ -245,7 +245,7 @@ function submit(req, res, next) {
                     reserveSeatsString: reserveSeatsString,
                     amount: UtilModule.formatPrice(purchaseModel.getReserveAmount()),
                     domain: req.headers.host,
-                    theaterTelNumber: theater.theater_tel_num,
+                    theaterTelNumber: theater.theaterTelNum,
                     moment: moment,
                     timeFormat: UtilModule.timeFormat,
                     __: req.__,
@@ -256,7 +256,7 @@ function submit(req, res, next) {
                     accessToken: yield UtilModule.getAccessToken(req),
                     transactionId: purchaseModel.transactionMP.id,
                     from: 'noreply@ticket-cinemasunshine.com',
-                    to: purchaseModel.input.mail_addr,
+                    to: purchaseModel.input.mailAddr,
                     subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
                     content: emailTemplate
                 });
@@ -275,7 +275,7 @@ function submit(req, res, next) {
                     next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
                     return;
                 }
-                const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
+                const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
                 log('GMO処理エラー');
                 res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
                 res.locals.input = req.body;
@@ -321,12 +321,12 @@ function addAuthorization(req, res, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.theater === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-        const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
+        const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
+        const gmoShopPassword = purchaseModel.theater.attributes.gmo.shopPass;
         const amount = purchaseModel.getReserveAmount();
         // GMOオーソリ取得
         const theaterId = `000${purchaseModel.performance.attributes.theater.id}`.slice(UtilModule.DIGITS_03);
-        const reservenum = `00000000${purchaseModel.reserveSeats.tmp_reserve_num}`.slice(UtilModule.DIGITS_08);
+        const reservenum = `00000000${purchaseModel.reserveSeats.tmpReserveNum}`.slice(UtilModule.DIGITS_08);
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
         purchaseModel.orderId = `${moment().format('YYYYMMDD')}${theaterId}${reservenum}${purchaseModel.authorizationCountGMOToString()}`;
         const entryTranIn = {
@@ -375,8 +375,8 @@ function addAuthorization(req, res, purchaseModel) {
             orderId: purchaseModel.orderId,
             amount: amount,
             entryTranResult: purchaseModel.transactionGMO,
-            gmoShopId: purchaseModel.theater.attributes.gmo.shop_id,
-            gmoShopPassword: purchaseModel.theater.attributes.gmo.shop_pass
+            gmoShopId: purchaseModel.theater.attributes.gmo.shopId,
+            gmoShopPassword: purchaseModel.theater.attributes.gmo.shopPass
         });
     });
 }
@@ -398,8 +398,8 @@ function removeAuthorization(req, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.theater === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-        const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
+        const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
+        const gmoShopPassword = purchaseModel.theater.attributes.gmo.shopPass;
         //GMOオーソリ取消
         const alterTranIn = {
             shopId: gmoShopId,

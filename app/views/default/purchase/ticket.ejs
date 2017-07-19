@@ -26,27 +26,27 @@
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
-                data-seat-code="<%= ticket.seat_code %>"
-                data-ticket-code="<%= ticket.ticket_code %>"
-                data-ticket-name="<%= ticket.ticket_name %>"
-                data-sale-price="<%= ticket.sale_price %>"
-                data-mvtk-num="<%= ticket.mvtk_num %>"
-                data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                data-seat-code="<%= ticket.seatCode %>"
+                data-ticket-code="<%= ticket.ticketCode %>"
+                data-ticket-name="<%= ticket.ticketName %>"
+                data-sale-price="<%= ticket.salePrice %>"
+                data-mvtk-num="<%= ticket.mvtkNum %>"
+                data-add-price-glasses="<%= ticket.addPriceGlasses %>"
                 data-glasses="<%= ticket.glasses %>">
                 <dl class="d-table">
-                    <dt class="d-td seat-code"><%= ticket.seat_code %></dt>
+                    <dt class="d-td seat-code"><%= ticket.seatCode %></dt>
                     <dd class="d-td width-medium">                                
                         <div class="ghost-button blue-button">
-                            <a href="#" data-modal="ticket_type"><%= ticket.ticket_name %> ￥<%= ticket.sale_price %></a>
+                            <a href="#" data-modal="ticketType"><%= ticket.ticketName %> ￥<%= ticket.salePrice %></a>
                         </div>
                     </dd>
                 </dl>
             </li>
             <% } %>
             <% } else { %>
-            <% for (let seat of reserveSeats.list_tmp_reserve) { %>
-            <li data-section="<%= seat.seat_section %>"
-                data-seat-code="<%= seat.seat_num %>"
+            <% for (let seat of reserveSeats.listTmpReserve) { %>
+            <li data-section="<%= seat.seatSection %>"
+                data-seat-code="<%= seat.seatNum %>"
                 data-ticket-code=""
                 data-ticket-name=""
                 data-sale-price=""
@@ -54,10 +54,10 @@
                 data-add-price-glasses=""
                 data-glasses="">
                 <dl class="d-table">
-                    <dt class="d-td seat-code"><%= seat.seat_num %></dt>
+                    <dt class="d-td seat-code"><%= seat.seatNum %></dt>
                     <dd class="d-td width-medium" data-ticket="">
                         <div class="button blue-button">
-                            <a href="#" data-modal="ticket_type"><%- __('purchase.ticket.ticket_select') %></a>
+                            <a href="#" data-modal="ticketType"><%- __('purchase.ticket.ticketSelect') %></a>
                         </div>
                     </dd>
                 </dl>
@@ -68,7 +68,7 @@
 
         <div class="box radius bg-light-gray mb-large total">
             <div class="text-right mb-small">
-                <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.list_tmp_reserve.length) %></strong></div>
+                <div class="length mb-x-small"><%- __('common.purchase_length') %> <strong class="red-text large-text"><%- __n('%s ticket', reserveSeats.listTmpReserve.length) %></strong></div>
                 <div class="price"><%- __('common.total_fee') %> <strong class="red-text large-text"><span>0</span><%- __('common.price') %></strong></div>
             </div>
             <div class="border-bottom-dot mb-small"></div>
@@ -84,7 +84,7 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.ticket.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/seat/<%- performance.id %>/"><%- __('purchase.ticket.prev') %></a></div>
         </div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
 <%- include('../layouts/siteSeal') %>
 </div>

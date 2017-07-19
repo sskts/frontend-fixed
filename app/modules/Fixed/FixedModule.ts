@@ -72,21 +72,21 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         if (validationResult.isEmpty()) {
             const transactionId = await MP.services.transaction.makeInquiry({
                 accessToken: await UtilModule.getAccessToken(req),
-                inquiry_theater: req.body.theater_code, // 施設コード
-                inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
-                inquiry_pass: req.body.tel_num // 電話番号
+                inquiryTheater: req.body.theaterCode, // 施設コード
+                inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
+                inquiryPass: req.body.telNum // 電話番号
             });
             // const transactionId = await MP.services.transaction.findByInquiryKey({
-            //     theater_code: req.body.theater_code, // 施設コード
-            //     reserve_num: Number(req.body.reserve_num), // 座席チケット購入番号
-            //     tel: req.body.tel_num // 電話番号
+            //     theaterCode: req.body.theaterCode, // 施設コード
+            //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
+            //     tel: req.body.telNum // 電話番号
             // });
             if (transactionId === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MP取引Id取得', transactionId);
             let stateReserve = await COA.services.reserve.stateReserve({
-                theater_code: req.body.theater_code, // 施設コード
-                reserve_num: req.body.reserve_num, // 座席チケット購入番号
-                tel_num: req.body.tel_num // 電話番号
+                theaterCode: req.body.theaterCode, // 施設コード
+                reserveNum: req.body.reserveNum, // 座席チケット購入番号
+                telNum: req.body.telNum // 電話番号
             });
             log('COA照会情報取得', stateReserve);
 
@@ -97,21 +97,21 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
                 stateReserve = await COA.services.reserve.stateReserve({
-                    theater_code: req.body.theater_code, // 施設コード
-                    reserve_num: req.body.reserve_num, // 座席チケット購入番号
-                    tel_num: req.body.tel_num // 電話番号
+                    theaterCode: req.body.theaterCode, // 施設コード
+                    reserveNum: req.body.reserveNum, // 座席チケット購入番号
+                    telNum: req.body.telNum // 電話番号
                 });
                 log('COA照会情報取得', stateReserve);
                 if (stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
             }
 
             const performanceId = UtilModule.getPerformanceId({
-                theaterCode: req.body.theater_code,
-                day: stateReserve.date_jouei,
-                titleCode: stateReserve.title_code,
-                titleBranchNum: stateReserve.title_branch_num,
-                screenCode: stateReserve.screen_code,
-                timeBegin: stateReserve.time_begin
+                theaterCode: req.body.theaterCode,
+                day: stateReserve.dateJouei,
+                titleCode: stateReserve.titleCode,
+                titleBranchNum: stateReserve.titleBranchNum,
+                screenCode: stateReserve.screenCode,
+                timeBegin: stateReserve.timeBegin
             });
             log('パフォーマンスID取得', performanceId);
             const performance = await MP.services.performance.getPerformance({
@@ -121,21 +121,21 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             if (performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MPパフォーマンス取得');
             // 印刷用
-            const reservations = stateReserve.list_ticket.map((ticket) => {
+            const reservations = stateReserve.listTicket.map((ticket) => {
                 return {
-                    reserve_no: req.body.reserve_num,
-                    film_name_ja: performance.attributes.film.name.ja,
-                    film_name_en: performance.attributes.film.name.en,
-                    theater_name: performance.attributes.theater.name.ja,
-                    screen_name: performance.attributes.screen.name.ja,
-                    performance_day: moment(performance.attributes.day).format('YYYY/MM/DD'),
-                    performance_start_time: `${UtilModule.timeFormat(performance.attributes.time_start)}`,
-                    seat_code: ticket.seat_num,
-                    ticket_name: (ticket.add_glasses > 0)
-                        ? `${ticket.ticket_name}${req.__('common.glasses')}`
-                        : ticket.ticket_name,
-                    ticket_sale_price: ticket.ticket_price,
-                    qr_str: ticket.seat_qrcode
+                    reserveNo: req.body.reserveNum,
+                    filmNameJa: performance.attributes.film.name.ja,
+                    filmNameEn: performance.attributes.film.name.en,
+                    theaterName: performance.attributes.theater.name.ja,
+                    screenName: performance.attributes.screen.name.ja,
+                    performanceDay: moment(performance.attributes.day).format('YYYY/MM/DD'),
+                    performanceStartTime: `${UtilModule.timeFormat(performance.attributes.timeStart)}`,
+                    seatCode: ticket.seatNum,
+                    ticketName: (ticket.addGlasses > 0)
+                        ? `${ticket.ticketName}${req.__('common.glasses')}`
+                        : ticket.ticketName,
+                    ticketSalePrice: ticket.ticketPrice,
+                    qrStr: ticket.seatQrcode
                 };
             });
             delete req.session.fixed;

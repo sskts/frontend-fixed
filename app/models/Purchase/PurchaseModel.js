@@ -116,7 +116,7 @@ class PurchaseModel {
         if (this.reserveTickets === null)
             return result;
         for (const reserveTicket of this.reserveTickets) {
-            if (reserveTicket.mvtk_num !== '' && reserveTicket.mvtk_num.length > 0)
+            if (reserveTicket.mvtkNum !== '' && reserveTicket.mvtkNum.length > 0)
                 result = true;
         }
         return result;
@@ -133,7 +133,7 @@ class PurchaseModel {
         if (reserveTickets === null)
             return amount;
         for (const ticket of reserveTickets) {
-            amount += ticket.sale_price;
+            amount += ticket.salePrice;
         }
         return amount;
     }
@@ -158,7 +158,7 @@ class PurchaseModel {
         if (reserveTickets === null)
             return price;
         for (const ticket of reserveTickets) {
-            price += ticket.mvtk_app_price;
+            price += ticket.mvtkAppPrice;
         }
         return price;
     }

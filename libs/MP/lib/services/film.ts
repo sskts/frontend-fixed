@@ -18,25 +18,25 @@ const log = debug('SSKTS:services.film');
 export interface IFilm {
     id: string;
     attributes: {
-        coa_title_branch_num: string;
-        coa_title_code: string;
-        created_at: string;
-        date_end: string;
-        date_start: string;
-        film_branch_code: string;
-        film_group: string;
-        kbn_eirin: string;
-        kbn_eizou: string;
-        kbn_jimakufukikae: string;
-        kbn_joueihousiki: string;
+        coaTitleBranchNum: string;
+        coaTitleCode: string;
+        createdAt: string;
+        dateEnd: string;
+        dateStart: string;
+        filmBranchCode: string;
+        filmGroup: string;
+        kbnEirin: string;
+        kbnEizou: string;
+        kbnJimakufukikae: string;
+        kbnJoueihousiki: string;
         minutes: number;
         name: util.ILanguage;
-        name_kana: string;
-        name_original: string;
-        name_short: string;
+        nameKana: string;
+        nameOriginal: string;
+        nameShort: string;
         theater: string;
-        flg_mvtk_use: string;
-        date_mvtk_begin: string;
+        flgMvtkUse: string;
+        dateMvtkBegin: string;
     };
 }
 
@@ -68,6 +68,30 @@ export async function getFilm(args: IGetFilmArgs): Promise<IFilm> {
     }).promise();
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(args, response);
     log('getFilm:', response.body.data);
+    const data = response.body.data;
 
-    return response.body.data;
+    return {
+        id: data.id,
+        attributes: {
+            coaTitleBranchNum: data.attributes.coa_title_branch_num,
+            coaTitleCode: data.attributes.coa_title_code,
+            createdAt: data.attributes.created_at,
+            dateEnd: data.attributes.date_end,
+            dateStart: data.attributes.date_start,
+            filmBranchCode: data.attributes.film_branch_code,
+            filmGroup: data.attributes.film_group,
+            kbnEirin: data.attributes.kbn_eirin,
+            kbnEizou: data.attributes.kbn_eizou,
+            kbnJimakufukikae: data.attributes.kbn_jimakufukikae,
+            kbnJoueihousiki: data.attributes.kbn_joueihousiki,
+            minutes: data.attributes.minutes,
+            name: data.attributes.name,
+            nameKana: data.attributes.name_kana,
+            nameOriginal: data.attributes.name_original,
+            nameShort: data.attributes.name_short,
+            theater: data.attributes.theater,
+            flgMvtkUse: data.attributes.flg_mvtk_use,
+            dateMvtkBegin: data.attributes.date_mvtk_begin
+        }
+    };
 }

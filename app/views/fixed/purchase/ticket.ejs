@@ -22,28 +22,28 @@
             <% if (reserveTickets.length > 0) { %>
             <% for (let ticket of reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
-                data-seat-code="<%= ticket.seat_code %>"
-                data-ticket-code="<%= ticket.ticket_code %>"
-                data-ticket-name="<%= ticket.ticket_name %>"
-                data-sale-price="<%= ticket.sale_price %>"
-                data-mvtk-num="<%= ticket.mvtk_num %>"
-                data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                data-seat-code="<%= ticket.seatCode %>"
+                data-ticket-code="<%= ticket.ticketCode %>"
+                data-ticket-name="<%= ticket.ticketName %>"
+                data-sale-price="<%= ticket.salePrice %>"
+                data-mvtk-num="<%= ticket.mvtkNum %>"
+                data-add-price-glasses="<%= ticket.addPriceGlasses %>"
                 data-glasses="<%= ticket.glasses %>">
                 <dl>
-                    <dt class="text-center mb-small"><strong><%= ticket.seat_code %></strong></dt>
+                    <dt class="text-center mb-small"><strong><%= ticket.seatCode %></strong></dt>
                     <dd>                                
-                        <a href="#" data-modal="ticket_type" class="icon-select">
-                            <div class="small-text mb-x-small"><%= ticket.ticket_name %></div>
-                            <div><strong>￥<%= ticket.sale_price %></strong></div>
+                        <a href="#" data-modal="ticketType" class="icon-select">
+                            <div class="small-text mb-x-small"><%= ticket.ticketName %></div>
+                            <div><strong>￥<%= ticket.salePrice %></strong></div>
                         </a>
                     </dd>
                 </dl>
             </li>
             <% } %>
             <% } else { %>
-            <% for (let seat of reserveSeats.list_tmp_reserve) { %>
-            <li data-section="<%= seat.seat_section %>"
-                data-seat-code="<%= seat.seat_num %>"
+            <% for (let seat of reserveSeats.listTmpReserve) { %>
+            <li data-section="<%= seat.seatSection %>"
+                data-seat-code="<%= seat.seatNum %>"
                 data-ticket-code=""
                 data-ticket-name=""
                 data-sale-price=""
@@ -51,9 +51,9 @@
                 data-add-price-glasses=""
                 data-glasses="">
                 <dl>
-                    <dt class="text-center mb-small"><strong><%= seat.seat_num %></strong></dt>
+                    <dt class="text-center mb-small"><strong><%= seat.seatNum %></strong></dt>
                     <dd data-ticket="">
-                        <a href="#" data-modal="ticket_type" class="icon-select"><%- __('purchase.ticket.ticket_select') %></a>
+                        <a href="#" data-modal="ticketType" class="icon-select"><%- __('purchase.ticket.ticket_select') %></a>
                     </dd>
                 </dl>
             </li>
@@ -72,7 +72,7 @@
     
     
         <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.ticket.next') %></button></div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
 
 </div>

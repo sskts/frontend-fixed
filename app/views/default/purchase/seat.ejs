@@ -9,12 +9,12 @@
 
     <div>
         <div class="screen-cover mb-medium" 
-        data-limit="<%= performance.attributes.coa_available_num %>" 
+        data-limit="<%= performance.attributes.coaAvailableNum %>" 
         data-theater="<%= performance.attributes.theater.id %>" 
         data-day="<%= performance.attributes.day %>" 
         data-coa-title-code="<%= performanceCOA.titleCode %>"
         data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
-        data-time-start="<%= performance.attributes.time_start %>"
+        data-time-start="<%= performance.attributes.timeStart %>"
         data-screen-code="<%= performanceCOA.screenCode %>">
             <div class="radius bg-light-gray">
                 <div class="screen">
@@ -67,9 +67,9 @@
             <div class="prev-link"><a class="icon-prev-black" href="<%= portalTheaterSite %>"><%- __('purchase.seat.prev') %></a></div>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= transactionId %>">
     </form>
-    <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
+    <div style="display: none"><a data-modal="seatClose" href="#"></a></div>
 </div>
 
 <%- include('../locales/validation') %>

@@ -33,8 +33,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             && purchaseModel.orderId !== null
             && purchaseModel.transactionMP !== null
             && purchaseModel.theater !== null) {
-            const gmoShopId = purchaseModel.theater.attributes.gmo.shop_id;
-            const gmoShopPassword = purchaseModel.theater.attributes.gmo.shop_pass;
+            const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
+            const gmoShopPassword = purchaseModel.theater.attributes.gmo.shopPass;
             // GMOオーソリ取消
             const alterTranIn = {
                 shopId: gmoShopId,
@@ -70,13 +70,13 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             && purchaseModel.performance !== null
             && purchaseModel.performanceCOA !== null) {
             if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const delTmpReserveIn = {
-                theater_code: purchaseModel.performance.attributes.theater.id,
-                date_jouei: purchaseModel.performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: purchaseModel.performance.attributes.time_start,
-                tmp_reserve_num: purchaseModel.reserveSeats.tmp_reserve_num
+            const delTmpReserveIn: COA.services.reserve.IDelTmpReserveArgs = {
+                theaterCode: purchaseModel.performance.attributes.theater.id,
+                dateJouei: purchaseModel.performance.attributes.day,
+                titleCode: purchaseModel.performanceCOA.titleCode,
+                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
+                timeBegin: purchaseModel.performance.attributes.timeStart,
+                tmpReserveNum: purchaseModel.reserveSeats.tmpReserveNum
             };
             const removeCOAAuthorizationIn = {
                 accessToken: await UtilModule.getAccessToken(req),

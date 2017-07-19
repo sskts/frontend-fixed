@@ -43,7 +43,7 @@ function createMvtkInfo(reserveTickets, mvtkInfo) {
     const tickets = [];
     for (const reserveTicket of reserveTickets) {
         const mvtk = mvtkInfo.find((value) => {
-            return (value.code === reserveTicket.mvtk_num && value.ticket.ticket_code === reserveTicket.ticket_code);
+            return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
         });
         if (mvtk === undefined)
             continue;
@@ -76,7 +76,7 @@ function createMvtkInfo(reserveTickets, mvtkInfo) {
                 ]
             });
         }
-        seats.push({ ZSK_CD: reserveTicket.seat_code });
+        seats.push({ ZSK_CD: reserveTicket.seatCode });
     }
     return {
         tickets: tickets,

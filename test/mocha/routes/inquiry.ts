@@ -15,9 +15,9 @@ describe('GET /inquiry/login', () => {
             .query({
                 session: {
                     inquiry: {
-                        theater_code: '118',
-                        reserve_num: '',
-                        tel_num: ''
+                        theaterCode: '118',
+                        reserveNum: '',
+                        telNum: ''
                     }
                 }
             })
@@ -31,9 +31,9 @@ describe('POST /inquiry/login', () => {
         await supertest(app)
             .post('/inquiry/login?theater=118')
             .send({
-                theater_code: '118',
-                reserve_num: '',
-                tel_num: '09040007648'
+                theaterCode: '118',
+                reserveNum: '',
+                telNum: '09040007648'
             })
             .expect(httpStatus.OK);
     });
@@ -42,9 +42,9 @@ describe('POST /inquiry/login', () => {
         await supertest(app)
             .post('/inquiry/login?theater=118')
             .send({
-                theater_code: '118',
-                reserve_num: '531',
-                tel_num: ''
+                theaterCode: '118',
+                reserveNum: '531',
+                telNum: ''
             })
             .expect(httpStatus.OK);
     });

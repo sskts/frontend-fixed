@@ -919,19 +919,19 @@ a {
       background-size: 214px 46px;
       background-position: center; }
 
-.modal[data-modal="ticket_type"] .inner {
+.modal[data-modal="ticketType"] .inner {
   padding: 0; }
 
-.modal[data-modal="ticket_type"] li {
+.modal[data-modal="ticketType"] li {
   padding: 30px 20px;
   border-bottom: 1px solid #ACACAC; }
-  .modal[data-modal="ticket_type"] li:last-child {
+  .modal[data-modal="ticketType"] li:last-child {
     border-bottom: none; }
-  .modal[data-modal="ticket_type"] li dl dt {
+  .modal[data-modal="ticketType"] li dl dt {
     width: 590px; }
-    .modal[data-modal="ticket_type"] li dl dt .mb-small:last-child {
+    .modal[data-modal="ticketType"] li dl dt .mb-small:last-child {
       margin-bottom: 0 !important; }
-  .modal[data-modal="ticket_type"] li dl dd {
+  .modal[data-modal="ticketType"] li dl dd {
     width: 160px; }
 
 .purchase-input .form-layout dl dt {

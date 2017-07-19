@@ -14,23 +14,23 @@ export interface IInput {
     /**
      * せい
      */
-    last_name_hira: string;
+    lastNameHira: string;
     /**
      * めい
      */
-    first_name_hira: string;
+    firstNameHira: string;
     /**
      * メールアドレス
      */
-    mail_addr: string;
+    mailAddr: string;
     /**
      * メールアドレス確認
      */
-    mail_confirm: string;
+    mailConfirm: string;
     /**
      * 電話番号
      */
-    tel_num: string;
+    telNum: string;
     /**
      * 利用規約
      */
@@ -335,7 +335,7 @@ export class PurchaseModel {
         let result = false;
         if (this.reserveTickets === null) return result;
         for (const reserveTicket of this.reserveTickets) {
-            if (reserveTicket.mvtk_num !== '' && reserveTicket.mvtk_num.length > 0) result = true;
+            if (reserveTicket.mvtkNum !== '' && reserveTicket.mvtkNum.length > 0) result = true;
         }
 
         return result;
@@ -352,7 +352,7 @@ export class PurchaseModel {
         let amount = 0;
         if (reserveTickets === null) return amount;
         for (const ticket of reserveTickets) {
-            amount += ticket.sale_price;
+            amount += ticket.salePrice;
         }
 
         return amount;
@@ -379,7 +379,7 @@ export class PurchaseModel {
         let price = 0;
         if (reserveTickets === null) return price;
         for (const ticket of reserveTickets) {
-            price += ticket.mvtk_app_price;
+            price += ticket.mvtkAppPrice;
         }
 
         return price;
