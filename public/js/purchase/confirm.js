@@ -87,10 +87,10 @@ function purchase() {
             } catch (err) {
                 console.error(err);
             }
-            
+
             //完了画面表示
             showComplete(res.result);
-            
+
         }
         loadingEnd();
     }).fail(function (jqxhr, textStatus, error) {
@@ -148,6 +148,10 @@ function showError(message) {
     }
     $('.purchase-confirm').remove();
     $('.header .steps').remove();
+    $('.navigation .restart-button a').attr({
+        href: '/',
+        'data-modal': ''
+    });
     $('.error').show();
     $(window).scrollTop(0);
     history.pushState(null, null, '/error');
@@ -192,6 +196,10 @@ function showComplete(result) {
             navigationDom.show();
             //コンテンツ切り替え
             printDom.remove();
+            $('.navigation .restart-button a').attr({
+                href: '/',
+                'data-modal': ''
+            });
             $('.purchase-complete').show();
             history.pushState(null, null, '/purchase/complete');
             $(window).scrollTop(0);

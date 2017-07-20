@@ -30,9 +30,25 @@
 })();
 
 $(function () {
+    // ナビゲーション
+    navigationInit();
     // 自動TOP遷移
     autoTop();
 });
+
+/**
+ * ナビゲーション設定
+ * @function navigationInit
+ * @returns {void}
+ */
+function navigationInit() {
+    if ($('.purchase-seat, .purchase-ticket, .purchase-input, .purchase-confirm').length > 0) {
+        $('.navigation .restart-button a').attr({
+            href: '#',
+            'data-modal': 'backToTop'
+        });
+    }
+}
 
 /**
  * viewport変更
