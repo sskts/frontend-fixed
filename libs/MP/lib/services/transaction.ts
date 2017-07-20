@@ -218,6 +218,7 @@ export async function makeInquiry(args: IMakeInquiryArgs): Promise<IMakeInquiryR
         resolveWithFullResponse: true,
         timeout: util.TIMEOUT
     }).promise();
+    log('response.statusCode:', response.statusCode);
     if (response.statusCode === HTTPStatus.NOT_FOUND) return null;
     if (response.statusCode !== HTTPStatus.OK) util.errorHandler(body, response);
     log('makeInquiry result:', response.body.data);

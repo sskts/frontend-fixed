@@ -1,11 +1,11 @@
-<%= input.last_name_hira %> <%= input.first_name_hira %> 様
+<%= input.lastNameHira %> <%= input.firstNameHira %> 様
 この度は、<%= performance.attributes.theater.name.ja %>のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
 
 [予約番号]
-<%= reserveSeats.tmp_reserve_num %>
+<%= reserveSeats.tmpReserveNum %>
 
 [鑑賞日時]
-<%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>
+<%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.timeStart) %>
 
 [作品名]
 <%= performance.attributes.film.name.ja %>

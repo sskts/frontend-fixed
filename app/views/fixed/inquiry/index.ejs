@@ -13,7 +13,7 @@
     <div class="table-layout center mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
-            <dd><%= login.reserve_num %></dd>
+            <dd><%= login.reserveNum %></dd>
         </dl>
         <dl>
             <dt><%- __('common.film_title') %></dt>
@@ -21,19 +21,19 @@
         </dl>
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
-            <dd><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></dd>
+            <dd><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.timeStart) %> - <%= timeFormat(performance.attributes.timeEnd) %></dd>
         </dl>
         <dl>
             <dt><%- __('common.seat') %></dt>
             <dd>
-                <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
-                <% const ticket = stateReserve.list_ticket[i] %>
-                <p><%= `${ticket.seat_num} ${ticket.ticket_name}` %></p>
+                <% for (let i = 0; i < stateReserve.listTicket.length; i++) { %>
+                <% const ticket = stateReserve.listTicket[i] %>
+                <p><%= `${ticket.seatNum} ${ticket.ticketName}` %></p>
                 <% } %>
             </dd>
         </dl>
     </div>
-    <% if (moment(`${performance.attributes.day} ${performance.attributes.time_start}`).add(10 ,'minutes').unix() < moment().unix()) { %>
+    <% if (moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).add(10 ,'minutes').unix() < moment().unix()) { %>
     <p class="text-center"><%- __('inquiry.confirm.after') %></p>
     <% } else { %>
     <div class="button middle-button print-button"><a class="center icon-triangle-01" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>

@@ -83,7 +83,7 @@ function toInquiry() {
     var submitFlg = false;
     for (var i = 0; i < inquiryInfo.length; i++) {
         var info = inquiryInfo[i];
-        if (transactionId === info.transaction_id) {
+        if (transactionId === info.transactionId) {
             //対象取引データ
             $('input[name=theaterCode]').val(info.theaterCode);
             $('input[name=reserveNum]').val(info.reserveNum);

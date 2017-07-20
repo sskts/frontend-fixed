@@ -140,7 +140,7 @@ export class PurchaseModel {
     /**
      * 劇場
      */
-    public theater: MP.services.theater.ITheater | null;
+    public theater: MP.services.theater.IGetTheaterResult | null;
     /**
      * COA仮予約
      */

@@ -197,8 +197,6 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
         log('MPCOAオーソリ削除');
     }
 
-    log('11111111111111', selectSeats[0]);
-
     //COA仮予約
     purchaseModel.reserveSeats = await COA.services.reserve.updTmpReserveSeat({
         theaterCode: performance.attributes.theater.id,

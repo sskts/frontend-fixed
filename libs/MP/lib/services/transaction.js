@@ -113,6 +113,7 @@ function makeInquiry(args) {
             resolveWithFullResponse: true,
             timeout: util.TIMEOUT
         }).promise();
+        log('response.statusCode:', response.statusCode);
         if (response.statusCode === HTTPStatus.NOT_FOUND)
             return null;
         if (response.statusCode !== HTTPStatus.OK)

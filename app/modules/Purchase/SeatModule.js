@@ -210,7 +210,6 @@ function reserve(req, selectSeats, purchaseModel) {
             });
             log('MPCOAオーソリ削除');
         }
-        log('11111111111111', selectSeats[0]);
         //COA仮予約
         purchaseModel.reserveSeats = yield COA.services.reserve.updTmpReserveSeat({
             theaterCode: performance.attributes.theater.id,

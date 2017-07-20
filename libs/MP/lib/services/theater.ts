@@ -20,11 +20,6 @@ export interface ITheater {
         address: util.ILanguage;
         name: util.ILanguage;
         nameKana: string;
-        gmo?: {
-            siteId: string;
-            shopId: string;
-            shopPass: string;
-        };
         websites: {
             group: string;
             name: util.ILanguage;
@@ -42,13 +37,36 @@ export interface IGetTheaterArgs extends util.IAuth {
 }
 
 /**
+ * 劇場取得out
+ * @interface IGetTheaterResult
+ */
+export interface IGetTheaterResult extends ITheater {
+    id: string;
+    attributes: {
+        address: util.ILanguage;
+        name: util.ILanguage;
+        nameKana: string;
+        gmo: {
+            siteId: string;
+            shopId: string;
+            shopPass: string;
+        };
+        websites: {
+            group: string;
+            name: util.ILanguage;
+            url: string;
+        }[];
+    };
+}
+
+/**
  * 劇場取得
  * @memberof services.theater
  * @function getTheater
  * @param {IGetTheaterArgs} args
- * @requires {Promise<ITheater>}
+ * @requires {Promise<IGetTheaterResult>}
  */
-export async function getTheater(args: IGetTheaterArgs): Promise<ITheater> {
+export async function getTheater(args: IGetTheaterArgs): Promise<IGetTheaterResult> {
     const response = await request.get({
         url: `${process.env.MP_ENDPOINT}/theaters/${args.theaterId}`,
         auth: { bearer: args.accessToken },

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     loadingStart();
     var machineProperties = JSON.parse(window.localStorage.getItem('config')) || {};
-    if (!machineProperties.device_id || !machineProperties.printer) {
+    if (!machineProperties.deviceId || !machineProperties.printer) {
         // printAlert('スター精密プリンターのIPアドレスが設定されていません');
         loadingEnd();
         return;
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // IPを指定して接続(Promiseが返ってくる。失敗してもそのままもう一度実行可能)
     window.starThermalPrint.init({
         ipAddress: machineProperties.printer,
-        deviceId: machineProperties.device_id,
+        deviceId: machineProperties.deviceId,
         timeout: 100000
     }).then(function () {
         loadingEnd();
@@ -42,10 +42,10 @@ function printTicket(count, cb) {
         type: 'POST',
         timeout: 60000,
         data: {
-            theater_code: $('input[name=theater_code]').val(),
-            reserve_num: $('input[name=reserve_num]').val(
+            theaterCode: $('input[name=theaterCode]').val(),
+            reserveNum: $('input[name=reserveNum]').val(
             ),
-            tel_num: $('input[name=tel_num]').val()
+            telNum: $('input[name=telNum]').val()
         },
     }).done(function (res) {
         var reservations = res.result;

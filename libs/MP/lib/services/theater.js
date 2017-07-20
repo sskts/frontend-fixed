@@ -22,7 +22,7 @@ const log = debug('SSKTS:services.theater');
  * @memberof services.theater
  * @function getTheater
  * @param {IGetTheaterArgs} args
- * @requires {Promise<ITheater>}
+ * @requires {Promise<IGetTheaterResult>}
  */
 function getTheater(args) {
     return __awaiter(this, void 0, void 0, function* () {

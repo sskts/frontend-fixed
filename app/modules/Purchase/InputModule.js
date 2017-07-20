@@ -181,18 +181,18 @@ function submit(req, res, next) {
             if (purchaseModel.getReserveAmount() > 0) {
                 res.locals.gmoError = null;
                 // クレジット決済
-                purchaseModel.gmo = JSON.parse(req.body.gmo_token_object);
+                purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
                 yield addAuthorization(req, res, purchaseModel);
                 log('オーソリ追加');
             }
-            // await MP.services.transaction.ownersAnonymous({
-            //     accessToken: await UtilModule.getAccessToken(req),
-            //     transactionId: purchaseModel.transactionMP.id,
-            //     name_first: purchaseModel.input.first_name_hira,
-            //     name_last: purchaseModel.input.last_name_hira,
-            //     tel: purchaseModel.input.tel_num,
-            //     email: purchaseModel.input.mail_addr
-            // });
+            yield MP.services.transaction.ownersAnonymous({
+                accessToken: yield UtilModule.getAccessToken(req),
+                transactionId: purchaseModel.transactionMP.id,
+                nameFirst: purchaseModel.input.firstNameHira,
+                nameLast: purchaseModel.input.lastNameHira,
+                tel: purchaseModel.input.telNum,
+                email: purchaseModel.input.mailAddr
+            });
             // const owner = purchaseModel.getOwner();
             // if (owner === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
             // await MP.services.transaction.updateOwners({

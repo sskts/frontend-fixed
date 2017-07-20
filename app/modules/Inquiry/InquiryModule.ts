@@ -88,7 +88,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
                 inquiryPass: req.body.telNum // 電話番号
             });
-
+            log('照会情報', makeInquiryResult);
             // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
             //     theaterCode: req.body.theaterCode, // 施設コード
             //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
@@ -162,10 +162,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
  */
 function getInquiryError(req: Request) {
     return {
-        reserve_num: {
+        reserveNum: {
             parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
-        tel_num: {
+        telNum: {
             parm: 'telNum', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };

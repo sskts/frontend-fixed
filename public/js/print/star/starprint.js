@@ -78,22 +78,22 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
         try {
             // 印刷に必要な情報が欠けていないか確認
             var missings = [
-                'reserve_no',
-                'film_name_ja',
-                'film_name_en',
-                'theater_name',
-                'screen_name',
-                'performance_day',
-                'performance_start_time',
-                'seat_code',
-                'ticket_name',
-                'ticket_sale_price',
-                'qr_str'
+                'reserveNo',
+                'filmNameJa',
+                'filmNameEn',
+                'theaterName',
+                'screenName',
+                'performanceDay',
+                'performanceStartTime',
+                'seatCode',
+                'ticketName',
+                'ticketSalePrice',
+                'qrStr'
             ].filter(function (item) {
                 return (reservation[item] === undefined || reservation[item] === null);
             });
             if (missings[0]) {
-                throw ({ message: '[!] 予約番号' + reservation.reserve_no + 'の以下の情報が見つかりませんでした\n' + missings.join('\n') });
+                throw ({ message: '[!] 予約番号' + reservation.reserveNo + 'の以下の情報が見つかりませんでした\n' + missings.join('\n') });
             }
 
             var canvas = document.createElement('canvas');
@@ -110,10 +110,10 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             ctx.fillStyle = "black";
             ctx.font = "normal 24px sans-serif";
             ctx.textAlign = 'center';
-            ctx.fillText(reservation.theater_name, center, 30);
+            ctx.fillText(reservation.theaterName, center, 30);
             // 鑑賞日時
             ctx.font = "bold 30px sans-serif";
-            ctx.fillText(reservation.performance_day + ' ' + reservation.performance_start_time + '～', center, 70);
+            ctx.fillText(reservation.performanceDay + ' ' + reservation.performanceStartTime + '～', center, 70);
             ctx.strokeStyle = '#000';
             ctx.beginPath();
             ctx.moveTo(80, 80);
@@ -123,7 +123,7 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
 
             // 作品名
             ctx.font = "normal 30px sans-serif";
-            var title = reservation.film_name_ja;
+            var title = reservation.filmNameJa;
             var titleLimit = 20;
             if (title.length > titleLimit) {
                 ctx.fillText(title.slice(0, titleLimit), center, 120);
@@ -136,24 +136,24 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             ctx.fillRect(0, 170, canvas.width, 50);
             ctx.font = "bold 40px sans-serif";
             ctx.fillStyle = '#FFF';
-            ctx.fillText(reservation.screen_name, center, 210);
+            ctx.fillText(reservation.screenName, center, 210);
             // 座席
             ctx.beginPath();
             ctx.lineWidth = 2;
             ctx.strokeRect(1, 220, canvas.width - 2, 50);
             ctx.strokeRect(0, 220, canvas.width, 50);
             ctx.fillStyle = '#000';
-            ctx.fillText(reservation.seat_code, center, 260);
+            ctx.fillText(reservation.seatCode, center, 260);
             // 券種
             ctx.textAlign = 'left';
             ctx.font = "normal 30px sans-serif";
-            ctx.fillText(reservation.ticket_name, 0, 310);
+            ctx.fillText(reservation.ticketName, 0, 310);
             // 金額
             ctx.textAlign = 'right';
-            ctx.fillText('￥' + reservation.ticket_sale_price + '-', right, 310);
+            ctx.fillText('￥' + reservation.ticketSalePrice + '-', right, 310);
             // QR
             var qr = new VanillaQR({
-                url: reservation.qr_str,
+                url: reservation.qrStr,
                 width: 120,
                 height: 120,
                 colorLight: '#FFF',
@@ -169,7 +169,7 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             var dateStr = '(' + dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()) + ' ' + zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()) + ' 発券)';
             ctx.fillText(dateStr, left, bottom);
             // 購入番号
-            ctx.fillText('購入番号: ' + reservation.reserve_no, left, bottom - 60);
+            ctx.fillText('購入番号: ' + reservation.reserveNo, left, bottom - 60);
             // 端末ID
             ctx.fillText('端末ID: ' + device_id, left, bottom - 30);
 

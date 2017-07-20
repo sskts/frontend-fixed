@@ -45,7 +45,7 @@
                     <dt><%- __('common.seat') %></dt>
                     <dd>
                         <% for (ticket of reserveTickets) { %>
-                        <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                        <p><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %></p>
                         <% } %>
                         <div style="display: none" class="right">
                             <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
@@ -68,19 +68,19 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><%= input.last_name_hira %> <%= input.first_name_hira %></dd>
+                    <dd><%= input.lastNameHira %> <%= input.firstNameHira %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail_addr') %></dt>
-                    <dd><%= input.mail_addr %></dd>
+                    <dd><%= input.mailAddr %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel_num') %></dt>
-                    <dd><%= input.tel_num %></dd>
+                    <dd><%= input.telNum %></dd>
                 </dl>
             </li>
             <% if (gmoTokenObject) { %>

@@ -4,7 +4,7 @@ $(function () {
     // 照会クリック
     $(document).on('click', '.inquiry-button a', function (event) {
         event.preventDefault();
-        var theater = $('.inquiry-theater select').val();
+        var theater = $('select[name=theater]').val();
         var url = $(this).attr('href') + '?theater=' + theater;
         location.href = url;
     });
