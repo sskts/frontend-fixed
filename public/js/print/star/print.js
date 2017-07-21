@@ -98,6 +98,9 @@ function printerSend(reservations, cb) {
  * @returns {void}
  */
 function printAlert(msg) {
+    if (window.timer !== undefined) {
+        clearTimeout(window.timer);
+    }
     window.modal = window.modal || new SASAKI.Modal();
     var modalBody = $('.modal[data-modal=print] .modal-body');
     modalBody.html(msg);
