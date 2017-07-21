@@ -1,6 +1,7 @@
 var SASAKI = {};
-
+var modal;
 $(function () {
+    modal = new SASAKI.Modal();
     if (!isFixed()) {
         settingValidation();
     }

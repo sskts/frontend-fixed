@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Changed
+
+### Fixed
+
+### Security
+
+## 1.8.0 - 2017-07-21
+### Added
+ - [券売機] 一定時間操作しないと勝手に画面TOPに戻る機能
+ - [券売機] 購入/発券完了後すぐに画面TOPに戻す機能
+ - [券売機] 「最初に戻る」ボタン押した時「予約内容を削除して戻る」旨のアラート表示
+
+## 1.7.0 - 2017-07-18
+### Changed
  - [券売機] QRコードの発行を上映日から1ヶ月に変更
  - [Webアプリ] Google Chart APIでのQR生成を廃止、jsで生成へ変更
 
@@ -26,9 +39,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## 1.6.0 - 2017-06-28
 ### Added
  - [券売機] 設定ページへテスト印刷ボタン追加
+
 ### Changed
  - [券売機] チケット発券可能時間変更（上映後10分まで）
  - [券売機] スケジュール選択のステータス表示変更
+
 ### Fixed
  - [券売機] プリンターエラー表示修正
  - アナリティクスのイベントへ劇場ID追加、カスタムイベントへ劇場ID追加、発券時計測イベント追加
@@ -76,6 +91,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## 1.4.2 - 2017-06-14
 ### Added
 - 券売機COA本予約が間に合わなかった場合本予約する機能追加
+
 ### Fixed
 - 券売機ムビチケバリデーション画面修正
 
