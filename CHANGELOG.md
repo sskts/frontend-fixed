@@ -12,11 +12,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
-## 1.8.0 - 2017-07-21
+## 1.8.0 - 2017-07-24
 ### Added
  - [券売機] 一定時間操作しないと勝手に画面TOPに戻る機能
  - [券売機] 購入/発券完了後すぐに画面TOPに戻す機能
  - [券売機] 「最初に戻る」ボタン押した時「予約内容を削除して戻る」旨のアラート表示
+
+ ### Security
+- 依存パッケージを最新に更新。
+- [typescript@^2.4.2](https://github.com/Microsoft/TypeScript)
 
 ## 1.7.0 - 2017-07-18
 ### Changed
