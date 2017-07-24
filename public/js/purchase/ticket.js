@@ -1,6 +1,4 @@
-var modal;
 $(function () {
-    modal = new SASAKI.Modal();
     // 初期化
     pageInit();
     // 券種クリックイベント

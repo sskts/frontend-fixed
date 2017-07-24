@@ -2,7 +2,6 @@ var screenSeatStatusesMap;
 
 $(function () {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
-    var modal = new SASAKI.Modal();
     saveSalesTickets();
     loadingStart();
     screenStateUpdate(function () {
