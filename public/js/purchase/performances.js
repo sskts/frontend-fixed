@@ -62,23 +62,29 @@ function getPerformances() {
 /**
  * スケジュール作成
  * @function createSchedule
- * @param {any[]} performances
+ * @param {any[]} individualScreeningEvents
  * @returns {string}
  */
-function createSchedule(performances) {
+function createSchedule(individualScreeningEvents) {
+    console.log(individualScreeningEvents)
     // 作品別へ変換
     var films = [];
-    performances.forEach(function (performance) {
+    individualScreeningEvents.forEach(function (screeningEvent) {
         var film = films.find(function (film) {
-            return (film.id === performance.attributes.film.id)
+            return (film.coaInfo.titleCode + film.coaInfo.titleBranchNum === screeningEvent.coaInfo.titleCode + screeningEvent.coaInfo.titleBranchNum);
         });
         if (film === undefined) {
             films.push({
-                id: performance.attributes.film.id,
-                performances: [performance]
+                coaInfo: screeningEvent.coaInfo,
+                identifier: screeningEvent.identifier,
+                workPerformed: screeningEvent.workPerformed,
+                name: screeningEvent.name,
+                startDate: screeningEvent.startDate,
+                endDate: screeningEvent.endDate,
+                screeningEvents: [screeningEvent]
             });
         } else {
-            film.performances.push(performance)
+            film.screeningEvents.push(screeningEvent);
         }
     });
     // HTML生成
@@ -105,46 +111,46 @@ function createScheduleDom(data) {
      */
     var END_TIME_FIXED = -10;
 
-    var performances = [];
-    data.performances.forEach(function (performance) {
+    var screeningEvents = [];
+    data.screeningEvents.forEach(function (screeningEvent) {
         // 販売可能時間判定
         var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
         var limitTime = moment().add(limit, 'minutes');
-        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).unix()) {
+        if (limitTime.unix() > moment(screeningEvent.startDate).unix()) {
             return;
         }
         var type = $('select[name=type]').val();
         var link = (type === '0')
-            ? '/purchase?id=' + performance.id
-            : (type === '1') ? '/purchase/app.html?id=' + performance.id
-            : '';
+            ? '/purchase?id=' + screeningEvent.identifier
+            : (type === '1') ? '/purchase/app.html?id=' + screeningEvent.identifier
+                : '';
         if (isFixed()) {
             // 券売機
-            link = '/purchase/fixed.html?id=' + performance.id;
+            link = '/purchase/fixed.html?id=' + screeningEvent.identifier;
         }
         // 販売ステータス設定
-        var status = (performance.attributes.stockStatus === 0) ? ' ×'
-            : (performance.attributes.stockStatus <= 10) ? ' △'
-            : '';
-        var disabled = (performance.attributes.stockStatus === 0) ? 'disabled' : '';
-        performances.push('<li class="button small-button gray-button ' + disabled + '">' +
+        var status = (screeningEvent.stockStatus === 0) ? ' ×'
+            : (performance.stockStatus <= 10) ? ' △'
+                : '';
+        var disabled = (screeningEvent.stockStatus === 0) ? 'disabled' : '';
+        screeningEvents.push('<li class="button small-button gray-button ' + disabled + '">' +
             '<a href="' + link + '" class="icon-triangle-02">' +
-            '<div class="mb-x-small">' + timeFormat(performance.attributes.timeStart) + '</div>' +
-            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.timeEnd) + '</div>' +
-            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' +
+            '<div class="mb-x-small">' + timeFormat(screeningEvent.coaInfo.timeBegin) + '</div>' +
+            '<div class="small-text mb-x-small">～' + timeFormat(screeningEvent.coaInfo.timeEnd) + '</div>' +
+            '<div class="small-text">' + screeningEvent.location.name.ja + status + '</div>' +
             '</a>' +
             '</li>');
     });
 
-    if (performances.length === 0) return '';
+    if (screeningEvents.length === 0) return '';
 
     return ('<li class="performance mb-small">' +
         '<dl>' +
-        '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.performances[0].attributes.film.name.ja + '</strong></dt>' +
+        '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.workPerformed.name + '</strong></dt>' +
         '<dd>' +
-        '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + data.performances[0].attributes.film.minutes + '分</strong></div>' +
+        '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + 0 + '分</strong></div>' +
         '<ul>' +
-        performances.join('\n') +
+        screeningEvents.join('\n') +
         '</ul>' +
         '</dd>' +
         '</dl>' +

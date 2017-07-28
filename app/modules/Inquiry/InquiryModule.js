@@ -14,7 +14,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
-const MP = require("../../../libs/MP");
+const MP = require("../../../libs/MP/sskts-api");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const InquirySession = require("../../models/Inquiry/InquiryModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
@@ -65,7 +65,7 @@ exports.login = login;
 function getPortalTheaterSite(req) {
     return __awaiter(this, void 0, void 0, function* () {
         const theater = yield MP.services.theater.getTheater({
-            accessToken: yield UtilModule.getAccessToken(req),
+            auth: yield UtilModule.createAuth(req),
             theaterId: req.query.theater
         });
         const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
@@ -93,7 +93,7 @@ function auth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const makeInquiryResult = yield MP.services.transaction.makeInquiry({
-                    accessToken: yield UtilModule.getAccessToken(req),
+                    auth: yield UtilModule.createAuth(req),
                     inquiryTheater: req.body.theaterCode,
                     inquiryId: Number(req.body.reserveNum),
                     inquiryPass: req.body.telNum // 電話番号
@@ -134,7 +134,7 @@ function auth(req, res, next) {
                 });
                 log('パフォーマンスID取得', performanceId);
                 inquiryModel.performance = yield MP.services.performance.getPerformance({
-                    accessToken: yield UtilModule.getAccessToken(req),
+                    auth: yield UtilModule.createAuth(req),
                     performanceId: performanceId
                 });
                 log('MPパフォーマンス取得');

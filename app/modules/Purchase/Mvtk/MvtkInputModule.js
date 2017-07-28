@@ -18,7 +18,7 @@ const debug = require("debug");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const logger_1 = require("../../../middlewares/logger");
-const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const PurchaseModel_1 = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const UtilModule = require("../../Util/UtilModule");
@@ -38,10 +38,10 @@ function index(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -49,7 +49,7 @@ function index(req, res, next) {
         delete req.session.mvtk;
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.transactionId = purchaseModel.transaction.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -83,10 +83,10 @@ function select(req, res, next) {
         try {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            if (purchaseModel.transactionMP === null)
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.reserveSeats === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -95,7 +95,7 @@ function select(req, res, next) {
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
-            if (req.body.transactionId !== purchaseModel.transactionMP.id) {
+            if (req.body.transactionId !== purchaseModel.transaction.id) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             MvtkInputForm_1.default(req);
@@ -185,13 +185,13 @@ function select(req, res, next) {
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-                if (purchaseModel.reserveSeats === null || purchaseModel.transactionMP === null) {
+                const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                if (purchaseModel.reserveSeats === null || purchaseModel.transaction === null) {
                     next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
                     return;
                 }
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-                res.locals.transactionId = purchaseModel.transactionMP.id;
+                res.locals.transactionId = purchaseModel.transaction.id;
                 res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
                 res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });

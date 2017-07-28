@@ -16,10 +16,10 @@ const COA = require("@motionpicture/coa-service");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP");
+const MP = require("../../../libs/MP/sskts-api");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
@@ -39,7 +39,7 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.INPUT_STATE)) {
@@ -47,7 +47,7 @@ function index(req, res, next) {
             }
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.transactionMP === null)
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //購入者情報入力表示
             res.locals.error = null;
@@ -55,11 +55,11 @@ function index(req, res, next) {
             res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
             res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
             res.locals.price = purchaseModel.getReserveAmount();
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.transactionId = purchaseModel.transaction.id;
             res.locals.performance = purchaseModel.performance;
             if (purchaseModel.isMember()) {
                 const profile = yield MP.services.owner.getProfile({
-                    accessToken: yield UtilModule.getAccessToken(req)
+                    auth: yield UtilModule.createAuth(req)
                 });
                 purchaseModel.input = {
                     lastNameHira: profile.attributes.name_last,
@@ -128,12 +128,12 @@ function submit(req, res, next) {
         try {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.transactionMP === null)
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performance === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -144,7 +144,7 @@ function submit(req, res, next) {
             if (purchaseModel.performanceCOA === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
-            if (req.body.transactionId !== purchaseModel.transactionMP.id) {
+            if (req.body.transactionId !== purchaseModel.transaction.id) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             //バリデーション
@@ -157,7 +157,7 @@ function submit(req, res, next) {
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                 res.locals.gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
                 res.locals.price = purchaseModel.getReserveAmount();
-                res.locals.transactionId = purchaseModel.transactionMP.id;
+                res.locals.transactionId = purchaseModel.transaction.id;
                 res.locals.performance = purchaseModel.performance;
                 res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -186,8 +186,8 @@ function submit(req, res, next) {
                 log('オーソリ追加');
             }
             yield MP.services.transaction.ownersAnonymous({
-                accessToken: yield UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
+                auth: yield UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
                 nameFirst: purchaseModel.input.firstNameHira,
                 nameLast: purchaseModel.input.lastNameHira,
                 tel: purchaseModel.input.telNum,
@@ -196,8 +196,8 @@ function submit(req, res, next) {
             // const owner = purchaseModel.getOwner();
             // if (owner === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
             // await MP.services.transaction.updateOwners({
-            //     accessToken: await UtilModule.getAccessToken(req),
-            //     transactionId: purchaseModel.transactionMP.id,
+            //     auth: await UtilModule.createAuth(req),
+            //     transactionId: purchaseModel.transaction.id,
             //     name_first: purchaseModel.input.first_name_hira,
             //     name_last: purchaseModel.input.last_name_hira,
             //     tel: purchaseModel.input.tel_num,
@@ -209,8 +209,8 @@ function submit(req, res, next) {
             // });
             log('MP購入者情報登録');
             yield MP.services.transaction.transactionsEnableInquiry({
-                accessToken: yield UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
+                auth: yield UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
                 inquiryTheater: purchaseModel.performance.attributes.theater.id,
                 inquiryId: purchaseModel.reserveSeats.tmpReserveNum,
                 inquiryPass: purchaseModel.input.telNum
@@ -227,8 +227,8 @@ function submit(req, res, next) {
             });
             if (purchaseModel.completeMailId !== null) {
                 yield MP.services.transaction.removeEmail({
-                    accessToken: yield UtilModule.getAccessToken(req),
-                    transactionId: purchaseModel.transactionMP.id,
+                    auth: yield UtilModule.createAuth(req),
+                    transactionId: purchaseModel.transaction.id,
                     emailId: purchaseModel.completeMailId
                 });
                 log('MPメール削除');
@@ -253,8 +253,8 @@ function submit(req, res, next) {
                 };
                 const emailTemplate = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, locals);
                 purchaseModel.completeMailId = yield MP.services.transaction.addEmail({
-                    accessToken: yield UtilModule.getAccessToken(req),
-                    transactionId: purchaseModel.transactionMP.id,
+                    auth: yield UtilModule.createAuth(req),
+                    transactionId: purchaseModel.transaction.id,
                     from: 'noreply@ticket-cinemasunshine.com',
                     to: purchaseModel.input.mailAddr,
                     subject: `${purchaseModel.theater.attributes.name.ja} 購入完了のお知らせ`,
@@ -270,8 +270,8 @@ function submit(req, res, next) {
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-                if (purchaseModel.theater === null || purchaseModel.transactionMP === null) {
+                const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                if (purchaseModel.theater === null || purchaseModel.transaction === null) {
                     next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
                     return;
                 }
@@ -282,7 +282,7 @@ function submit(req, res, next) {
                 res.locals.gmoModuleUrl = process.env.GMO_CLIENT_MODULE;
                 res.locals.gmoShopId = gmoShopId;
                 res.locals.price = purchaseModel.getReserveAmount();
-                res.locals.transactionId = purchaseModel.transactionMP.id;
+                res.locals.transactionId = purchaseModel.transaction.id;
                 res.locals.performance = purchaseModel.performance;
                 res.locals.step = PurchaseSession.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -311,7 +311,7 @@ function addAuthorization(req, res, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.gmo === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -370,8 +370,8 @@ function addAuthorization(req, res, purchaseModel) {
         }
         // GMOオーソリ追加
         purchaseModel.authorizationGMO = yield MP.services.transaction.addGMOAuthorization({
-            accessToken: yield UtilModule.getAccessToken(req),
-            transaction: purchaseModel.transactionMP,
+            auth: yield UtilModule.createAuth(req),
+            transaction: purchaseModel.transaction,
             orderId: purchaseModel.orderId,
             amount: amount,
             entryTranResult: purchaseModel.transactionGMO,
@@ -390,7 +390,7 @@ function addAuthorization(req, res, purchaseModel) {
  */
 function removeAuthorization(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.authorizationGMO === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
@@ -418,8 +418,8 @@ function removeAuthorization(req, purchaseModel) {
         }
         // GMOオーソリ削除
         yield MP.services.transaction.removeAuthorization({
-            accessToken: yield UtilModule.getAccessToken(req),
-            transactionId: purchaseModel.transactionMP.id,
+            auth: yield UtilModule.createAuth(req),
+            transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.authorizationGMO.id
         });
     });

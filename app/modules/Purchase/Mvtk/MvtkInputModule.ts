@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import logger from '../../../middlewares/logger';
-import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
@@ -29,9 +29,9 @@ export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         // ムビチケセッション削除
@@ -39,7 +39,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.transactionId = purchaseModel.transaction.id;
         res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
         res.locals.error = null;
         res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
@@ -71,14 +71,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
     }
     try {
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transactionMP.id) {
+        if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         MvtkInputForm(req);
@@ -165,14 +165,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         res.redirect('/purchase/mvtk/confirm');
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.reserveSeats === null || purchaseModel.transactionMP === null) {
+            const purchaseModel = new PurchaseModel(req.session.purchase);
+            if (purchaseModel.reserveSeats === null || purchaseModel.transaction === null) {
                 next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
 
                 return;
             }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.transactionId = purchaseModel.transaction.id;
             res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
             res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });

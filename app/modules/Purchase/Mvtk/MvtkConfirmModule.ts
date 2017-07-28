@@ -5,7 +5,7 @@
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
@@ -22,9 +22,9 @@ export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
@@ -34,7 +34,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         // ムビチケ券適用確認ページ表示
         res.locals.error = null;
-        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.transactionId = purchaseModel.transaction.id;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
@@ -80,12 +80,12 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transactionMP.id) {
+        if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         // ムビチケ情報を購入セッションへ保存

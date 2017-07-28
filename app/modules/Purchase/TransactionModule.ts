@@ -6,8 +6,8 @@
 import * as debug from 'debug';
 import { Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as MP from '../../../libs/MP/sskts-api';
+import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
@@ -52,42 +52,80 @@ export async function start(req: Request, res: Response): Promise<void> {
             throw ErrorUtilModule.ERROR_PROPERTY;
         }
 
-        req.session.oauth = await login(<string>req.sessionID, req.body.username, req.body.password);
-        const performance = await MP.services.performance.getPerformance({
-            accessToken: await UtilModule.getAccessToken(req),
-            performanceId: req.body.performanceId
+        // イベント情報取得
+        const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
+            auth: await UtilModule.createAuth(req),
+            identifier: req.body.performanceId
         });
+        log('イベント情報取得', individualScreeningEvent);
+
         // 開始可能日判定
-        if (moment().unix() < moment(`${performance.attributes.coaRsvStartDate}`).unix()) {
+        if (moment().unix() < moment(individualScreeningEvent.coaInfo.coaRsvStartDate).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
+        log('開始可能日判定');
 
         // 終了可能日判定
         const limit = (process.env.VIEW_TYPE === 'fixed') ? END_TIME_FIXED : END_TIME_DEFAULT;
         const limitTime = moment().add(limit, 'minutes');
-        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).unix()) {
+        if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
+        log('終了可能日判定');
 
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
-            //重複確認へ
+        let purchaseModel = new PurchaseModel(req.session.purchase);
+        if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+            // 重複確認へ
             res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });
+            log('重複確認へ');
 
             return;
         }
-        purchaseModel = new PurchaseSession.PurchaseModel({});
-        // 取引開始
-        const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
-        purchaseModel.expired = moment().add(valid, 'minutes').unix();
-        purchaseModel.transactionMP = await MP.services.transaction.transactionStart({
-            accessToken: await UtilModule.getAccessToken(req),
-            expires_at: purchaseModel.expired
-        });
-        log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+
+        // セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
         delete req.session.complete;
+        delete req.session.auth;
+        log('セッション削除');
+
+        // authセッションへ
+        req.session.auth = {
+            clientId: 'motionpicture',
+            clientSecret: 'motionpicture',
+            state: 'teststate',
+            scopes: [
+                'transactions',
+                'events.read-only',
+                'organizations.read-only'
+            ]
+        };
+        log('authセッションへ');
+
+        purchaseModel = new PurchaseModel({
+            individualScreeningEvent: individualScreeningEvent
+        });
+
+        // 劇場ショップ検索
+        const movieTheaters = await MP.service.organization.searchMovieTheaters({
+            auth: await UtilModule.createAuth(req)
+        });
+        // 劇場のショップを検索
+        purchaseModel.seller = movieTheaters.find((movieTheater: any) => {
+            return (movieTheater.location.branchCode === individualScreeningEvent.coaInfo.theaterCode);
+        });
+        log('劇場のショップを検索', purchaseModel.seller);
+
+        // 取引開始
+        const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
+        purchaseModel.expired = moment().add(valid, 'minutes').toDate();
+        purchaseModel.transaction = await MP.service.transaction.placeOrder.start({
+            auth: await UtilModule.createAuth(req),
+            expires: purchaseModel.expired,
+            sellerId: purchaseModel.seller.id
+        });
+        log('MP取引開始', purchaseModel.transaction);
+
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //座席選択へ
@@ -101,60 +139,4 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
         res.json({ redirect: null, contents: 'access-congestion' });
     }
-}
-
-/**
- * ログイン
- * @memberof Purchase.TransactionModule
- * @function login
- * @param {string} sessionID
- * @param {string | undefined} username
- * @param {string | undefined} password
- */
-async function login(sessionID: string, username?: string, password?: string) {
-    const scopes = [
-        'admin',
-        'owners.profile',
-        'owners.profile.read-only',
-        'owners.cards',
-        'owners.cards.read-only',
-        'owners.assets',
-        'owners.assets.read-only',
-        'performances',
-        'performances.read-only',
-        'films',
-        'films.read-only',
-        'screens',
-        'screens.read-only',
-        'transactions',
-        'transactions.read-only',
-        'transactions.owners',
-        'transactions.owners.cards',
-        'transactions.authorizations',
-        'transactions.notifications'
-    ];
-    const oauthTokenArgs: MP.services.oauth.IOauthTokenArgs = (username !== undefined && password !== undefined)
-        ? {
-            grant_type: MP.services.oauth.GrantType.password,
-            scopes: scopes,
-            client_id: 'motionpicture',
-            state: sessionID,
-            username: username,
-            password: password
-        }
-        : {
-            grant_type: MP.services.oauth.GrantType.clientCredentials,
-            scopes: scopes,
-            client_id: 'motionpicture',
-            state: sessionID
-        };
-
-    const oauthToken = await MP.services.oauth.oauthToken(oauthTokenArgs);
-
-    return {
-        accessToken: oauthToken.access_token,
-        tokenType: oauthToken.token_type,
-        expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
-        grantType: oauthTokenArgs.grant_type
-    };
 }

@@ -3,12 +3,12 @@
  * @namespace Purchase.PerformancesModule
  */
 import * as COA from '@motionpicture/coa-service';
-import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP';
+import * as moment from 'moment';
+import * as MP from '../../../libs/MP/sskts-api';
 import logger from '../../middlewares/logger';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.PerformancesModule');
@@ -25,90 +25,24 @@ const log = debug('SSKTS:Purchase.PerformancesModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        delete req.session.oauth;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         // GMO取消
-        if (purchaseModel.transactionGMO !== null
-            && purchaseModel.authorizationGMO !== null
-            && purchaseModel.orderId !== null
-            && purchaseModel.transactionMP !== null
-            && purchaseModel.theater !== null) {
-            const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
-            const gmoShopPassword = purchaseModel.theater.attributes.gmo.shopPass;
-            // GMOオーソリ取消
-            const alterTranIn = {
-                shopId: gmoShopId,
-                shopPass: gmoShopPassword,
-                accessId: purchaseModel.transactionGMO.accessId,
-                accessPass: purchaseModel.transactionGMO.accessPass,
-                jobCd: GMO.Util.JOB_CD_VOID
-            };
-            const removeGMOAuthorizationIn = {
-                accessToken: await UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
-                authorizationId: purchaseModel.authorizationGMO.id
-            };
-            try {
-                const alterTranResult = await GMO.CreditService.alterTran(alterTranIn);
-                log('GMOオーソリ取消', alterTranResult);
-                // GMOオーソリ削除
-                await MP.services.transaction.removeAuthorization(removeGMOAuthorizationIn);
-                log('MPGMOオーソリ削除');
-            } catch (err) {
-                logger.error('SSKTS-APP:FixedModule.index', {
-                    alterTranIn: alterTranIn,
-                    removeGMOAuthorizationIn: removeGMOAuthorizationIn,
-                    err: err
-                });
-            }
-        }
-        // COA仮予約削除
-        if (purchaseModel.reserveSeats !== null
-            && purchaseModel.authorizationCOA !== null
-            && purchaseModel.reserveSeats !== null
-            && purchaseModel.transactionMP !== null
-            && purchaseModel.performance !== null
-            && purchaseModel.performanceCOA !== null) {
-            if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const delTmpReserveIn: COA.services.reserve.IDelTmpReserveArgs = {
-                theaterCode: purchaseModel.performance.attributes.theater.id,
-                dateJouei: purchaseModel.performance.attributes.day,
-                titleCode: purchaseModel.performanceCOA.titleCode,
-                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-                timeBegin: purchaseModel.performance.attributes.timeStart,
-                tmpReserveNum: purchaseModel.reserveSeats.tmpReserveNum
-            };
-            const removeCOAAuthorizationIn = {
-                accessToken: await UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
-                authorizationId: purchaseModel.authorizationCOA.id
-            };
-            try {
-                // COA仮予約削除
-                await COA.services.reserve.delTmpReserve(delTmpReserveIn);
-                log('COA仮予約削除');
-                // COAオーソリ削除
-                await MP.services.transaction.removeAuthorization(removeCOAAuthorizationIn);
-                log('MPCOAオーソリ削除');
-            } catch (err) {
-                logger.error('SSKTS-APP:FixedModule.index', {
-                    delTmpReserveIn: delTmpReserveIn,
-                    removeCOAAuthorizationIn: removeCOAAuthorizationIn,
-                    err: err
-                });
-            }
-        }
 
+        // COA仮予約削除
+
+        // セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
         delete req.session.complete;
+        delete req.session.auth;
 
         if (process.env.VIEW_TYPE === undefined) {
-            res.locals.theaters = await MP.services.theater.getTheaters({
-                accessToken: await UtilModule.getAccessToken(req)
+            res.locals.movieTheaters = await MP.service.organization.searchMovieTheaters({
+                auth: await UtilModule.createAuth(req)
             });
+            log(res.locals.movieTheaters);
         }
-        res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
+        res.locals.step = PurchaseModel.PERFORMANCE_STATE;
         res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
 
     } catch (err) {
@@ -131,12 +65,17 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
-        const result = await MP.services.performance.getPerformances({
-            accessToken: await UtilModule.getAccessToken(req),
-            theater: req.body.theater,
-            day: req.body.day
+        // 上映イベント検索
+        const individualScreeningEvents = await MP.service.event.searchIndividualScreeningEvent({
+            auth: await UtilModule.createAuth(req),
+            searchConditions: {
+                theater: req.body.theater,
+                day: moment(req.body.day).format('YYYYMMDD')
+            }
         });
-        res.json({ error: null, result: result });
+        log('上映イベント検索');
+
+        res.json({ error: null, result: individualScreeningEvents });
     } catch (err) {
         res.json({ error: err, result: null });
     }

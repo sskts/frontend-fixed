@@ -6,18 +6,14 @@
     <p class="read">選択してください</p>
     <div class="mb-medium">
         <select name="theater">
-            <% for (const theater of theaters) { %>
-            <option value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
+            <% for (const theater of movieTheaters) { %>
+            <option value="<%= theater.location.branchCode %>"><%= theater.name.ja %></option>
             <% } %>
         </select>
         <select name="date">
-            <% for (let i = 0; i < 15; i++) { %>
-            <% const date = moment().add((i - 5), 'days'); %>
-            <% if (moment().add((i - 6), 'days').format('YYYYMMDD') === moment().format('YYYYMMDD')) { %>
-            <option selected value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
-            <% } else { %>
+            <% for (let i = 0; i < 7; i++) { %>
+            <% const date = moment().add(i, 'days'); %>
             <option value="<%= date.format('YYYYMMDD') %>"><%= date.format('YYYY年MM月DD日') %></option>
-            <% } %>
             <% } %>
         </select>
         <select name="type">

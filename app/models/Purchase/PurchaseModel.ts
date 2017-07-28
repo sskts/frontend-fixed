@@ -4,38 +4,29 @@
 import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 import * as UtilModule from '../../modules/Util/UtilModule';
 /**
  * 購入者情報
- * @interface IInput
+ * @interface IProfile
  */
-export interface IInput {
+export interface IProfile {
     /**
      * せい
      */
-    lastNameHira: string;
+    familyName: string;
     /**
      * めい
      */
-    firstNameHira: string;
+    givenName: string;
     /**
      * メールアドレス
      */
-    mailAddr: string;
-    /**
-     * メールアドレス確認
-     */
-    mailConfirm: string;
+    email: string;
     /**
      * 電話番号
      */
-    telNum: string;
-    /**
-     * 利用規約
-     */
-    agree: string;
-
+    telephone: string;
 }
 
 /**
@@ -108,17 +99,90 @@ export interface IValidTicketResult {
 }
 
 /**
- * COA
- * @interface IPerformanceCOA
+ * 予約チケット
+ * @interface IReserveTicket
  */
-export interface IPerformanceCOA {
-    theaterCode: string;
-    screenCode: string;
-    titleCode: string;
-    titleBranchNum: string;
-    flgMvtkUse: string;
-    dateMvtkBegin: string;
-    kbnJoueihousiki: string;
+export interface IReserveTicket {
+    /**
+     * セクション
+     */
+    section: string;
+    /**
+     * 座席コード
+     */
+    seatCode: string;
+    /**
+     * チケットコード
+     */
+    ticketCode: string;
+    /**
+     * チケット名
+     */
+    ticketName: string;
+    /**
+     * チケット名(カナ)
+     */
+    ticketNameKana: string;
+    /**
+     * チケット名(英)
+     */
+    ticketNameEng: string;
+    /**
+     * 標準単価
+     */
+    stdPrice: number;
+    /**
+     * 割引額
+     */
+    disPrice: number;
+    /**
+     * 加算単価
+     */
+    addPrice: number;
+    /**
+     * 販売単価
+     */
+    salePrice: number;
+    /**
+     * チケット備考
+     */
+    ticketNote: string;
+    /**
+     * メガネ単価
+     */
+    addPriceGlasses: number;
+    /**
+     * メガネ有り無し
+     */
+    glasses: boolean;
+    /**
+     * ムビチケ計上単価
+     */
+    mvtkAppPrice: number;
+    /**
+     * ムビチケ映写方式区分
+     */
+    kbnEisyahousiki: string;
+    /**
+     * ムビチケ購入管理番号
+     */
+    mvtkNum: string;
+    /**
+     * ムビチケ電子券区分
+     */
+    mvtkKbnDenshiken: string;
+    /**
+     * ムビチケ前売券区分
+     */
+    mvtkKbnMaeuriken: string;
+    /**
+     * ムビチケ券種区分
+     */
+    mvtkKbnKensyu: string;
+    /**
+     * ムビチケ販売単価
+     */
+    mvtkSalesPrice: number;
 }
 
 /**
@@ -134,111 +198,87 @@ export class PurchaseModel {
     public static COMPLETE_STATE: number = 5;
 
     /**
-     * パフォーマンス
+     * 上映イベント
      */
-    public performance: MP.services.performance.IPerformance | null;
+    public individualScreeningEvent: any | null;
     /**
-     * 劇場
+     * 劇場のショップ
      */
-    public theater: MP.services.theater.IGetTheaterResult | null;
+    public seller: any | null;
     /**
-     * COA仮予約
+     * 取引
      */
-    public reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
+    public transaction: any | null;
+    /**
+     * 販売可能チケット情報
+     */
+    public salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
     /**
      * 予約チケット
      */
-    public reserveTickets: MP.services.transaction.IReserveTicket[] | null;
+    public reserveTickets: IReserveTicket[] | null;
     /**
-     * 入力情報
+     * 予約座席
      */
-    public input: IInput | null;
+    public seatReservationAuthorization: any | null;
     /**
-     * GMO TOKEN情報
-     */
-    public gmo: IGMO | null;
-    /**
-     * COA本予約
-     */
-    public updateReserve: COA.services.reserve.IUpdReserveResult | null;
-    /**
-     * 取引MP
-     */
-    public transactionMP: MP.services.transaction.ITransactionStartResult | null;
-    /**
-     * 取引GMO
-     */
-    public transactionGMO: GMO.CreditService.EntryTranResult | null;
-    /**
-     * COAオーソリ
-     */
-    public authorizationCOA: MP.services.transaction.IAddCOAAuthorizationResult | null;
-    /**
-     * ムビチケオーソリ
-     */
-    public authorizationMvtk: MP.services.transaction.IAddMvtkAuthorizationResult | null;
-    /**
-     * GMOオーソリ
-     */
-    public authorizationGMO: MP.services.transaction.IAddGMOAuthorizationResult | null;
-    /**
-     * GMOオーソリ回数
-     */
-    public authorizationCountGMO: number;
-    /**
-     * オーダーID
+     * GMOオーダーID
      */
     public orderId: string | null;
     /**
-     * 有効期限
+     * GMOオーダー回数
      */
-    public expired: number;
+    public orderCount: number | null;
+    /**
+     * GMOオーソリ
+     */
+    public gmoAuthorization: any | null;
+    /**
+     * 入力情報
+     */
+    public profile: IProfile | null;
+    /**
+     * GMO情報
+     */
+    public gmo: IGMO | null;
     /**
      * ムビチケ
      */
     public mvtk: IMvtk[] | null;
     /**
-     * CAO情報
+     * ムビチケオーソリ
      */
-    public performanceCOA: IPerformanceCOA | null;
+    public mvtkAuthorization: any | null;
     /**
-     * COA販売可能チケット情報
+     * 有効期限
      */
-    public salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null;
-    /**
-     * 完了メールID
-     */
-    public completeMailId: string | null;
+    public expired: Date;
 
     /**
      * @constructor
      * @param {any} session
      */
     // tslint:disable-next-line:cyclomatic-complexity
-    constructor(session: any) {
+    constructor(session?: any) {
         if (session === undefined) {
             session = {};
         }
 
-        this.performance = (session.performance !== undefined) ? session.performance : null;
-        this.theater = (session.theater !== undefined) ? session.theater : null;
-        this.reserveSeats = (session.reserveSeats !== undefined) ? session.reserveSeats : null;
+        this.individualScreeningEvent = (session.individualScreeningEvent !== undefined) ? session.individualScreeningEvent : null;
+        this.seller = (session.seller !== undefined) ? session.seller : null;
+        this.transaction = (session.transaction !== undefined) ? session.transaction : null;
+        this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : null;
-        this.input = (session.input !== undefined) ? session.input : null;
-        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
-        this.updateReserve = (session.updateReserve !== undefined) ? session.updateReserve : null;
-        this.transactionMP = (session.transactionMP !== undefined) ? session.transactionMP : null;
-        this.transactionGMO = (session.transactionGMO !== undefined) ? session.transactionGMO : null;
-        this.authorizationCOA = (session.authorizationCOA !== undefined) ? session.authorizationCOA : null;
-        this.authorizationMvtk = (session.authorizationMvtk !== undefined) ? session.authorizationMvtk : null;
-        this.authorizationGMO = (session.authorizationGMO !== undefined) ? session.authorizationGMO : null;
-        this.authorizationCountGMO = (session.authorizationCountGMO !== undefined) ? session.authorizationCountGMO : 0;
+        this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
+            ? session.seatReservationAuthorization : null;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
-        this.expired = (session.expired !== undefined) ? session.expired : null;
+        this.orderCount = (session.orderCount !== undefined) ? session.orderCount : null;
+        this.gmoAuthorization = (session.gmoAuthorization !== undefined) ? session.gmoAuthorization : null;
+        this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
-        this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
-        this.salesTicketsCOA = (session.salesTicketsCOA !== undefined) ? session.salesTicketsCOA : null;
-        this.completeMailId = (session.completeMailId !== undefined) ? session.completeMailId : null;
+        this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
+        this.expired = (session.expired !== undefined) ? session.expired : null;
     }
 
     /**
@@ -247,47 +287,22 @@ export class PurchaseModel {
      * @method toSession
      * @returns {Object} result
      */
-    public toSession(): {
-        performance: MP.services.performance.IPerformance | null;
-        theater: MP.services.theater.ITheater | null;
-        reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
-        reserveTickets: MP.services.transaction.IReserveTicket[] | null;
-        input: IInput | null;
-        gmo: IGMO | null;
-        updateReserve: COA.services.reserve.IUpdReserveResult | null;
-        transactionMP: MP.services.transaction.ITransactionStartResult | null;
-        transactionGMO: GMO.CreditService.EntryTranResult | null;
-        authorizationCOA: MP.services.transaction.IAddCOAAuthorizationResult | null;
-        authorizationMvtk: MP.services.transaction.IAddMvtkAuthorizationResult | null;
-        authorizationGMO: MP.services.transaction.IAddGMOAuthorizationResult | null;
-        authorizationCountGMO: number;
-        orderId: string | null;
-        expired: number;
-        mvtk: IMvtk[] | null;
-        performanceCOA: IPerformanceCOA | null;
-        salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null
-        completeMailId: string | null
-    } {
+    public toSession(): Object {
         return {
-            performance: this.performance,
-            theater: this.theater,
-            reserveSeats: this.reserveSeats,
+            individualScreeningEvent: this.individualScreeningEvent,
+            seller: this.seller,
+            transaction: this.transaction,
+            salesTickets: this.salesTickets,
             reserveTickets: this.reserveTickets,
-            input: this.input,
-            gmo: this.gmo,
-            updateReserve: this.updateReserve,
-            transactionMP: this.transactionMP,
-            transactionGMO: this.transactionGMO,
-            authorizationCOA: this.authorizationCOA,
-            authorizationMvtk: this.authorizationMvtk,
-            authorizationGMO: this.authorizationGMO,
-            authorizationCountGMO: this.authorizationCountGMO,
+            seatReservationAuthorization: this.seatReservationAuthorization,
             orderId: this.orderId,
-            expired: this.expired,
+            orderCount: this.orderCount,
+            gmoAuthorization: this.gmoAuthorization,
+            profile: this.profile,
+            gmo: this.gmo,
             mvtk: this.mvtk,
-            performanceCOA: this.performanceCOA,
-            salesTicketsCOA: this.salesTicketsCOA,
-            completeMailId: this.completeMailId
+            mvtkAuthorization: this.mvtkAuthorization,
+            expired: this.expired
         };
     }
 
@@ -300,21 +315,19 @@ export class PurchaseModel {
      */
     public accessAuth(value: number): boolean {
         let result = true;
-        if (this.transactionMP === null) result = false;
+        if (this.transaction === null) result = false;
         switch (value) {
             case PurchaseModel.SEAT_STATE:
                 break;
             case PurchaseModel.TICKET_STATE:
-                if (this.reserveSeats === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
                 break;
             case PurchaseModel.INPUT_STATE:
-                if (this.reserveSeats === null) result = false;
-                if (this.reserveTickets === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
                 break;
             case PurchaseModel.CONFIRM_STATE:
-                if (this.reserveSeats === null) result = false;
-                if (this.reserveTickets === null) result = false;
-                if (this.input === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
+                if (this.profile === null) result = false;
                 break;
             case PurchaseModel.COMPLETE_STATE:
                 break;
@@ -388,11 +401,11 @@ export class PurchaseModel {
     /**
      * GMOオーソリ回数取得
      * @memberof PurchaseModel
-     * @method authorizationCountGMOToString
+     * @method orderCountToString
      * @returns {string}
      */
-    public authorizationCountGMOToString(): string {
-        return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
+    public orderCountToString(): string {
+        return `00${this.orderCount}`.slice(UtilModule.DIGITS_02);
     }
 
     /**
@@ -402,7 +415,7 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isExpired(): boolean {
-        return (this.expired < moment().unix());
+        return (this.expired < moment().toDate());
     }
 
     /**
@@ -410,24 +423,6 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isMember(): boolean {
-        if (this.transactionMP === null) return false;
-        const member = this.transactionMP.attributes.owners.find((owner) => {
-            return (owner.group === MP.services.transaction.OwnersGroup.Member);
-        });
-
-        return (member !== undefined);
-    }
-
-    /**
-     * 所有者取得
-     * @returns {MP.services.transaction.IOwner}
-     */
-    public getOwner(): MP.services.transaction.IOwner | undefined {
-        if (this.transactionMP === null) return undefined;
-
-        return this.transactionMP.attributes.owners.find((owner) => {
-            return (owner.group === MP.services.transaction.OwnersGroup.Anonyamous
-                || owner.group === MP.services.transaction.OwnersGroup.Member);
-        });
+        return false;
     }
 }

@@ -1,5 +1,5 @@
 import * as COA from '@motionpicture/coa-service';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 
 /**
  * ログイン情報

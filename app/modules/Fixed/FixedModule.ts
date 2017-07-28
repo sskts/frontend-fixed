@@ -6,7 +6,7 @@ import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 import inquiryLoginForm from '../../forms/Inquiry/LoginForm';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -37,7 +37,7 @@ export async function index(_: Request, res: Response): Promise<void> {
 export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         res.locals.theaters = await MP.services.theater.getTheaters({
-            accessToken: await UtilModule.getAccessToken(req)
+            auth: await UtilModule.createAuth(req)
         });
         res.render('setting/index');
     } catch (err) {
@@ -71,7 +71,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const transactionId = await MP.services.transaction.makeInquiry({
-                accessToken: await UtilModule.getAccessToken(req),
+                auth: await UtilModule.createAuth(req),
                 inquiryTheater: req.body.theaterCode, // 施設コード
                 inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
                 inquiryPass: req.body.telNum // 電話番号
@@ -115,7 +115,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             });
             log('パフォーマンスID取得', performanceId);
             const performance = await MP.services.performance.getPerformance({
-                accessToken: await UtilModule.getAccessToken(req),
+                auth: await UtilModule.createAuth(req),
                 performanceId: performanceId
             });
             if (performance === null) throw ErrorUtilModule.ERROR_PROPERTY;

@@ -14,8 +14,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
-const MP = require("../../../libs/MP");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const MP = require("../../../libs/MP/sskts-api");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
@@ -33,7 +33,7 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.performance === null)
@@ -71,10 +71,10 @@ function newReserve(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.performance === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.transactionMP === null)
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.reserveSeats === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -96,8 +96,8 @@ function newReserve(req, res, next) {
             log('COA仮予約削除');
             // COAオーソリ削除
             yield MP.services.transaction.removeAuthorization({
-                accessToken: yield UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
+                auth: yield UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.authorizationCOA.id
             });
             log('COAオーソリ削除');

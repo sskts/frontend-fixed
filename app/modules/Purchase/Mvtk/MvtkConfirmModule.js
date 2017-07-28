@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
-const PurchaseSession = require("../../../models/Purchase/PurchaseModel");
+const PurchaseModel_1 = require("../../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 /**
@@ -24,10 +24,10 @@ function index(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
@@ -35,7 +35,7 @@ function index(req, res, next) {
         }
         // ムビチケ券適用確認ページ表示
         res.locals.error = null;
-        res.locals.transactionId = purchaseModel.transactionMP.id;
+        res.locals.transactionId = purchaseModel.transaction.id;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
@@ -83,13 +83,13 @@ function submit(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transactionMP.id) {
+        if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         // ムビチケ情報を購入セッションへ保存

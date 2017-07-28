@@ -2,8 +2,8 @@
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-import * as MP from '../../../../libs/MP';
-import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import * as MP from '../../../../libs/MP/sskts-api';
+import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../../Util/UtilModule';
 /**
  * 興行会社コード

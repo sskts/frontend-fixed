@@ -4,7 +4,6 @@
  * @namespace Purchase.CompleteModule
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * 購入完了表示

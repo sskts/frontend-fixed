@@ -11,9 +11,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP");
+const MP = require("../../../libs/MP/sskts-api");
 const logger_1 = require("../../middlewares/logger");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
@@ -34,13 +34,13 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
                 throw ErrorUtilModule.ERROR_EXPIRE;
             }
-            if (purchaseModel.transactionMP === null)
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.theater === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -56,7 +56,7 @@ function index(req, res, next) {
             res.locals.price = purchaseModel.getReserveAmount();
             res.locals.updateReserve = null;
             res.locals.error = null;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.transactionId = purchaseModel.transaction.id;
             res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
             res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
             //セッション更新
@@ -93,7 +93,7 @@ function reserveMvtk(purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null)
+        if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
         const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
@@ -153,7 +153,7 @@ function cancelMvtk(req, res) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.performance === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.mvtk === null)
@@ -229,8 +229,8 @@ function purchase(req, res) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transactionMP === null)
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performance === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -243,7 +243,7 @@ function purchase(req, res) {
             if (purchaseModel.input === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
-            if (req.body.transactionId !== purchaseModel.transactionMP.id)
+            if (req.body.transactionId !== purchaseModel.transaction.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
             //購入期限切れ
             if (purchaseModel.isExpired()) {
@@ -261,8 +261,8 @@ function purchase(req, res) {
             }
             // MP取引成立
             yield MP.services.transaction.transactionClose({
-                accessToken: yield UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id
+                auth: yield UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id
             });
             log('MP取引成立');
             //購入情報をセッションへ

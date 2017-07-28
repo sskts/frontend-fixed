@@ -6,7 +6,7 @@
 import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import * as InquirySession from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
@@ -57,7 +57,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
  */
 async function getPortalTheaterSite(req: Request): Promise<string> {
     const theater = await MP.services.theater.getTheater({
-        accessToken: await UtilModule.getAccessToken(req),
+        auth: await UtilModule.createAuth(req),
         theaterId: req.query.theater
     });
     const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
@@ -83,7 +83,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const makeInquiryResult = await MP.services.transaction.makeInquiry({
-                accessToken: await UtilModule.getAccessToken(req),
+                auth: await UtilModule.createAuth(req),
                 inquiryTheater: req.body.theaterCode, // 施設コード
                 inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
                 inquiryPass: req.body.telNum // 電話番号
@@ -124,7 +124,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             });
             log('パフォーマンスID取得', performanceId);
             inquiryModel.performance = await MP.services.performance.getPerformance({
-                accessToken: await UtilModule.getAccessToken(req),
+                auth: await UtilModule.createAuth(req),
                 performanceId: performanceId
             });
             log('MPパフォーマンス取得');

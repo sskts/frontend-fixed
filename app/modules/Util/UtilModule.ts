@@ -4,7 +4,7 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 /**
  * テンプレート変数へ渡す
@@ -165,44 +165,33 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
 }
 
 /**
- * アクセストークン取得
+ * 認証作成
  * @memberof Util.UtilModule
- * @function getAccessToken
+ * @function createAuth
  * @param {Reqest} req
- * @returns {Promise<string>}
+ * @returns {Promise<MP.auth.OAuth2>}
  */
-export async function getAccessToken(req: Request): Promise<string> {
+export async function createAuth(req: Request): Promise<MP.auth.OAuth2> {
     if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (req.session.oauth === undefined) {
-        const sessionID = req.sessionID;
-        const oauthTokenArgs: MP.services.oauth.IOauthTokenArgs = {
-            grant_type: MP.services.oauth.GrantType.clientCredentials,
-            scopes: ['admin'],
-            client_id: 'motionpicture',
-            state: sessionID
-        };
-
-        const oauthToken = await MP.services.oauth.oauthToken(oauthTokenArgs);
-
-        req.session.oauth = {
-            accessToken: oauthToken.access_token,
-            tokenType: oauthToken.token_type,
-            expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
-            grantType: oauthTokenArgs.grant_type
-        };
-    }
-    const oauth: {
-        accessToken: string;
-        tokenType: string;
-        expires: number;
-        grantType: string;
-    } = req.session.oauth;
-    if (req.session.oauth.expires < moment().unix()) {
-        // 期限切れ
-        throw ErrorUtilModule.ERROR_EXPIRE;
+    if (req.session.auth === undefined) {
+        return new MP.auth.OAuth2(
+            'motionpicture',
+            'motionpicture',
+            'teststate',
+            [
+                'transactions',
+                'events.read-only',
+                'organizations.read-only'
+            ]
+        );
     }
 
-    return oauth.accessToken;
+    return new MP.auth.OAuth2(
+        req.session.auth.clientId,
+        req.session.auth.clientSecret,
+        req.session.auth.state,
+        req.session.auth.scopes
+    );
 }
 
 /**

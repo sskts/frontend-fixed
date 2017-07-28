@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP");
+const MP = require("../../../libs/MP/sskts-api");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
@@ -48,7 +48,7 @@ function setting(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             res.locals.theaters = yield MP.services.theater.getTheaters({
-                accessToken: yield UtilModule.getAccessToken(req)
+                auth: yield UtilModule.createAuth(req)
             });
             res.render('setting/index');
         }
@@ -86,7 +86,7 @@ function getInquiryData(req, res) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const transactionId = yield MP.services.transaction.makeInquiry({
-                    accessToken: yield UtilModule.getAccessToken(req),
+                    auth: yield UtilModule.createAuth(req),
                     inquiryTheater: req.body.theaterCode,
                     inquiryId: Number(req.body.reserveNum),
                     inquiryPass: req.body.telNum // 電話番号
@@ -132,7 +132,7 @@ function getInquiryData(req, res) {
                 });
                 log('パフォーマンスID取得', performanceId);
                 const performance = yield MP.services.performance.getPerformance({
-                    accessToken: yield UtilModule.getAccessToken(req),
+                    auth: yield UtilModule.createAuth(req),
                     performanceId: performanceId
                 });
                 if (performance === null)

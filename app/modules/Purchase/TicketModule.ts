@@ -6,9 +6,9 @@ import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
+import * as MP from '../../../libs/MP/sskts-api';
 import TicketForm from '../../forms/Purchase/TicketForm';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import { IReserveTicket, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
@@ -27,29 +27,28 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.TICKET_STATE)) throw ErrorUtilModule.ERROR_ACCESS;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (!purchaseModel.accessAuth(PurchaseModel.TICKET_STATE)) throw ErrorUtilModule.ERROR_ACCESS;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         //券種取得
         const salesTicketsResult = await getSalesTickets(req, purchaseModel);
-        const performance = purchaseModel.performance;
-        const flgMvtkUse = purchaseModel.performanceCOA.flgMvtkUse;
-        const dateMvtkBegin = purchaseModel.performanceCOA.dateMvtkBegin;
-        const dateToday = moment().format('YYYYMMDD');
+        const individualScreeningEvent = purchaseModel.individualScreeningEvent;
+        const today = moment().format('YYYYMMDD');
         res.locals.error = '';
-        res.locals.mvtkFlg = (flgMvtkUse === '1' && dateMvtkBegin !== undefined && Number(dateMvtkBegin) <= Number(dateToday));
+        res.locals.mvtkFlg = (individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'
+            && individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin !== undefined
+            && Number(individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin) <= Number(today));
         res.locals.tickets = salesTicketsResult;
         res.locals.mvtkLength = (purchaseModel.mvtk === null) ? 0 : purchaseModel.mvtk.length;
         res.locals.performance = performance;
-        res.locals.reserveSeats = purchaseModel.reserveSeats;
+        res.locals.seatReservationAuthorization = purchaseModel.seatReservationAuthorization;
         res.locals.reserveTickets = purchaseModel.reserveTickets;
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.transactionId = purchaseModel.transaction.id;
+        res.locals.kbnJoueihousiki = individualScreeningEvent.superEvent.coaInfo.kbnJoueihousiki;
+        res.locals.step = PurchaseModel.TICKET_STATE;
         //セッション更新
         req.session.purchase = purchaseModel.toSession();
         //券種選択表示
@@ -64,6 +63,45 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         return;
     }
+}
+
+/**
+ * 選択チケット
+ * @interface ISelectTicket
+ */
+export interface ISelectTicket {
+    /**
+     * 座席セクション
+     */
+    section: string;
+    /**
+     * 座席番号
+     */
+    seatCode: string;
+    /**
+     * チケットコード
+     */
+    ticketCode: string;
+    /**
+     * チケット名
+     */
+    ticketName: string;
+    /**
+     * 販売単価
+     */
+    salePrice: number;
+    /**
+     * メガネ有り無し
+     */
+    glasses: boolean;
+    /**
+     * メガネ加算単価
+     */
+    addPriceGlasses: number;
+    /**
+     * ムビチケ購入番号
+     */
+    mvtkNum: string;
 }
 
 /**
@@ -85,50 +123,63 @@ export async function select(req: Request, res: Response, next: NextFunction): P
     }
     try {
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transactionMP.id) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
         //バリデーション
         TicketForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            const reserveTickets: MP.services.transaction.IReserveTicket[] = JSON.parse(req.body.reserveTickets);
-            purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, reserveTickets);
+            const selectTickets: ISelectTicket[] = JSON.parse(req.body.reserveTickets);
+            purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, selectTickets);
             log('券種検証');
             // COAオーソリ削除
-            await MP.services.transaction.removeAuthorization({
-                accessToken: await UtilModule.getAccessToken(req),
-                transactionId: purchaseModel.transactionMP.id,
-                authorizationId: purchaseModel.authorizationCOA.id
-            });
+
             log('MPCOAオーソリ削除');
             //COAオーソリ追加
-            purchaseModel.authorizationCOA = await MP.services.transaction.addCOAAuthorization({
-                accessToken: await UtilModule.getAccessToken(req),
-                transaction: purchaseModel.transactionMP,
-                reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
-                salesTicketResults: purchaseModel.reserveTickets,
-                performance: purchaseModel.performance,
-                theaterCode: purchaseModel.performanceCOA.theaterCode,
-                titleCode: purchaseModel.performanceCOA.titleCode,
-                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-                screenCode: purchaseModel.performanceCOA.screenCode,
-                price: purchaseModel.getPrice()
+            purchaseModel.seatReservationAuthorization = await MP.service.transaction.placeOrder.createSeatReservationAuthorization({
+                auth: await UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
+                eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
+                offers: purchaseModel.seatReservationAuthorization.result.listTmpReserve.map((seat: any) => {
+
+                    return {
+                        seatSection: seat.seatSection,
+                        seatNumber: seat.seatNum,
+                        ticket: reserveTickets.map((reserveTicket) => {
+                            return {
+                                ticketCode: reserveTicket.ticketCode,
+                                stdPrice: reserveTicket.s,
+                                addPrice: reserveTicket.,
+                                disPrice: 0,
+                                salePrice: salesTickets.salePrice,
+                                mvtkAppPrice: 0,
+                                ticketCount: 1,
+                                seatNum: seat.seatNum,
+                                addGlasses: 0,
+                                kbnEisyahousiki: '00',
+                                mvtkNum: '',
+                                mvtkKbnDenshiken: '00',
+                                mvtkKbnMaeuriken: '00',
+                                mvtkKbnKensyu: '00',
+                                mvtkSalesPrice: 0
+                            }
+                        })
+                    };
+                })
             });
             log('MPCOAオーソリ追加', purchaseModel.authorizationCOA);
             if (purchaseModel.authorizationMvtk !== null) {
                 // ムビチケオーソリ削除
                 await MP.services.transaction.removeAuthorization({
-                    accessToken: await UtilModule.getAccessToken(req),
-                    transactionId: purchaseModel.transactionMP.id,
+                    auth: await UtilModule.createAuth(req),
+                    transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.authorizationMvtk.id
                 });
                 log('MPムビチケオーソリ削除');
@@ -149,8 +200,8 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.timeStart)}:00`
                 };
                 purchaseModel.authorizationMvtk = await MP.services.transaction.addMvtkauthorization({
-                    accessToken: await UtilModule.getAccessToken(req),
-                    transaction: purchaseModel.transactionMP, // 取引情報
+                    auth: await UtilModule.createAuth(req),
+                    transaction: purchaseModel.transaction, // 取引情報
                     amount: purchaseModel.getMvtkPrice(), // 合計金額
                     kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
                     yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
@@ -179,8 +230,8 @@ export async function select(req: Request, res: Response, next: NextFunction): P
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
             if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+            const purchaseModel = new PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
             const salesTicketsResult = await getSalesTickets(req, purchaseModel);
             const performance = purchaseModel.performance;
@@ -192,9 +243,9 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             res.locals.performance = performance;
             res.locals.reserveSeats = purchaseModel.reserveSeats;
             res.locals.reserveTickets = JSON.parse(req.body.reserveTickets);
-            res.locals.transactionId = purchaseModel.transactionMP.id;
+            res.locals.transactionId = purchaseModel.transaction.id;
             res.locals.kbnJoueihousiki = purchaseModel.performanceCOA.kbnJoueihousiki;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.step = PurchaseModel.TICKET_STATE;
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
 
             return;
@@ -209,9 +260,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
 }
 
 /**
- * ムビチケ券種情報
+ * 券種
+ * @interface ISalesTicket
  */
-export interface ISalesTicket {
+interface ISalesTicket {
     /**
      * チケットコード
      */
@@ -253,7 +305,7 @@ export interface ISalesTicket {
      */
     mvtkNum: string;
     /**
-     * メガネ有り無し
+     * メガネ有無
      */
     glasses: boolean;
 }
@@ -263,20 +315,19 @@ export interface ISalesTicket {
  * @memberof Purchase.TicketModule
  * @function getSalesTickets
  * @param {Request} req
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<SalesTicket[]>}
+ * @param {PurchaseModel} purchaseModel
+ * @returns {Promise<ISalesTicket[]>}
  */
 async function getSalesTickets(
     req: Request,
-    purchaseModel: PurchaseSession.PurchaseModel
+    purchaseModel: PurchaseModel
 ): Promise<ISalesTicket[]> {
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.salesTicketsCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.salesTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
     const result: ISalesTicket[] = [];
 
-    for (const ticket of purchaseModel.salesTicketsCOA) {
+    for (const ticket of purchaseModel.salesTickets) {
         result.push({
             ticketCode: ticket.ticketCode, // チケットコード
             ticketName: ticket.ticketName, // チケット名
@@ -354,8 +405,8 @@ async function getSalesTickets(
  * @memberof Purchase.TicketModule
  * @function ticketValidation
  * @param {Request} req
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @param {PurchaseSession.ReserveTicket[]} reserveTickets
+ * @param {PurchaseModel} purchaseModel
+ * @param {ISelectTicket[]} rselectTickets
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:cyclomatic-complexity
@@ -363,18 +414,17 @@ async function getSalesTickets(
 async function ticketValidation(
     req: Request,
     res: Response,
-    purchaseModel: PurchaseSession.PurchaseModel,
-    reserveTickets: MP.services.transaction.IReserveTicket[]
-): Promise<MP.services.transaction.IReserveTicket[]> {
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.salesTicketsCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    purchaseModel: PurchaseModel,
+    selectTickets: ISelectTicket[]
+): Promise<IReserveTicket[]> {
+    if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.salesTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-    const result: MP.services.transaction.IReserveTicket[] = [];
+    const result: IReserveTicket[] = [];
     //コアAPI券種取得
-    const salesTickets = purchaseModel.salesTicketsCOA;
+    const salesTickets = purchaseModel.salesTickets;
 
-    for (const ticket of reserveTickets) {
+    for (const ticket of selectTickets) {
         if (ticket.mvtkNum !== '') {
             // ムビチケ
             if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -382,9 +432,9 @@ async function ticketValidation(
                 return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
             });
             if (mvtkTicket === undefined) throw ErrorUtilModule.ERROR_ACCESS;
-            result.push({
-                section: ticket.section, // 座席セクション
-                seatCode: ticket.seatCode, // 座席番号
+            const reserveTicket: IReserveTicket = {
+                section: ticket.section,
+                seatCode: ticket.seatCode,
                 ticketCode: mvtkTicket.ticket.ticketCode, // チケットコード
                 ticketName: (ticket.glasses)
                     ? `${mvtkTicket.ticket.ticketName}${req.__('common.glasses')}`
@@ -397,6 +447,7 @@ async function ticketValidation(
                 salePrice: (ticket.glasses)
                     ? (<number>mvtkTicket.ticket.addPrice) + (<number>mvtkTicket.ticket.addPriceGlasses)
                     : mvtkTicket.ticket.addPrice, // 販売単価
+                ticketNote: '',
                 addPriceGlasses: (ticket.glasses)
                     ? mvtkTicket.ticket.addPriceGlasses
                     : 0, // メガネ単価
@@ -408,7 +459,8 @@ async function ticketValidation(
                 mvtkKbnMaeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp, // ムビチケ前売券区分
                 mvtkKbnKensyu: mvtkTicket.ykknInfo.ykknshTyp, // ムビチケ券種区分
                 mvtkSalesPrice: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
-            });
+            };
+            result.push(reserveTicket);
         } else {
             // 通常券種
             const salesTicket = salesTickets.find((value) => {
@@ -417,7 +469,7 @@ async function ticketValidation(
             if (salesTicket === undefined) throw ErrorUtilModule.ERROR_ACCESS;
             // 制限単位、人数制限判定
             const mismatchTickets: string[] = [];
-            const sameTickets = reserveTickets.filter((value) => {
+            const sameTickets = selectTickets.filter((value) => {
                 return (value.ticketCode === salesTicket.ticketCode);
             });
             if (sameTickets.length === 0) throw ErrorUtilModule.ERROR_ACCESS;
@@ -455,6 +507,7 @@ async function ticketValidation(
                 salePrice: (ticket.glasses)
                     ? (<number>salesTicket.salePrice) + (<number>salesTicket.addGlasses)
                     : salesTicket.salePrice, // 販売単価
+                ticketNote: salesTicket.ticketNote,
                 addPriceGlasses: (ticket.glasses)
                     ? salesTicket.addGlasses
                     : 0, // メガネ単価

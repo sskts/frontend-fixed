@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
-const MP = require("../../../libs/MP");
+const MP = require("../../../libs/MP/sskts-api");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * テンプレート変数へ渡す
@@ -160,41 +160,27 @@ function getEmailTemplate(res, file, locals) {
 }
 exports.getEmailTemplate = getEmailTemplate;
 /**
- * アクセストークン取得
+ * 認証作成
  * @memberof Util.UtilModule
- * @function getAccessToken
+ * @function createAuth
  * @param {Reqest} req
- * @returns {Promise<string>}
+ * @returns {Promise<MP.auth.OAuth2>}
  */
-function getAccessToken(req) {
+function createAuth(req) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.oauth === undefined) {
-            const sessionID = req.sessionID;
-            const oauthTokenArgs = {
-                grant_type: MP.services.oauth.GrantType.clientCredentials,
-                scopes: ['admin'],
-                client_id: 'motionpicture',
-                state: sessionID
-            };
-            const oauthToken = yield MP.services.oauth.oauthToken(oauthTokenArgs);
-            req.session.oauth = {
-                accessToken: oauthToken.access_token,
-                tokenType: oauthToken.token_type,
-                expires: moment().add(Number(oauthToken.expires_in), 'second').unix(),
-                grantType: oauthTokenArgs.grant_type
-            };
+        if (req.session.auth === undefined) {
+            return new MP.auth.OAuth2('motionpicture', 'motionpicture', 'teststate', [
+                'transactions',
+                'events.read-only',
+                'organizations.read-only'
+            ]);
         }
-        const oauth = req.session.oauth;
-        if (req.session.oauth.expires < moment().unix()) {
-            // 期限切れ
-            throw ErrorUtilModule.ERROR_EXPIRE;
-        }
-        return oauth.accessToken;
+        return new MP.auth.OAuth2(req.session.auth.clientId, req.session.auth.clientSecret, req.session.auth.state, req.session.auth.scopes);
     });
 }
-exports.getAccessToken = getAccessToken;
+exports.createAuth = createAuth;
 /**
  * 2桁
  * @memberof Util.UtilModule

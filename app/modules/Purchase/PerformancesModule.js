@@ -8,16 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * パフォーマンス一覧
- * @namespace Purchase.PerformancesModule
- */
-const COA = require("@motionpicture/coa-service");
-const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
-const MP = require("../../../libs/MP");
-const logger_1 = require("../../middlewares/logger");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
+const moment = require("moment");
+const MP = require("../../../libs/MP/sskts-api");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.PerformancesModule');
@@ -35,91 +29,21 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            delete req.session.oauth;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             // GMO取消
-            if (purchaseModel.transactionGMO !== null
-                && purchaseModel.authorizationGMO !== null
-                && purchaseModel.orderId !== null
-                && purchaseModel.transactionMP !== null
-                && purchaseModel.theater !== null) {
-                const gmoShopId = purchaseModel.theater.attributes.gmo.shopId;
-                const gmoShopPassword = purchaseModel.theater.attributes.gmo.shopPass;
-                // GMOオーソリ取消
-                const alterTranIn = {
-                    shopId: gmoShopId,
-                    shopPass: gmoShopPassword,
-                    accessId: purchaseModel.transactionGMO.accessId,
-                    accessPass: purchaseModel.transactionGMO.accessPass,
-                    jobCd: GMO.Util.JOB_CD_VOID
-                };
-                const removeGMOAuthorizationIn = {
-                    accessToken: yield UtilModule.getAccessToken(req),
-                    transactionId: purchaseModel.transactionMP.id,
-                    authorizationId: purchaseModel.authorizationGMO.id
-                };
-                try {
-                    const alterTranResult = yield GMO.CreditService.alterTran(alterTranIn);
-                    log('GMOオーソリ取消', alterTranResult);
-                    // GMOオーソリ削除
-                    yield MP.services.transaction.removeAuthorization(removeGMOAuthorizationIn);
-                    log('MPGMOオーソリ削除');
-                }
-                catch (err) {
-                    logger_1.default.error('SSKTS-APP:FixedModule.index', {
-                        alterTranIn: alterTranIn,
-                        removeGMOAuthorizationIn: removeGMOAuthorizationIn,
-                        err: err
-                    });
-                }
-            }
             // COA仮予約削除
-            if (purchaseModel.reserveSeats !== null
-                && purchaseModel.authorizationCOA !== null
-                && purchaseModel.reserveSeats !== null
-                && purchaseModel.transactionMP !== null
-                && purchaseModel.performance !== null
-                && purchaseModel.performanceCOA !== null) {
-                if (purchaseModel.authorizationCOA === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                const delTmpReserveIn = {
-                    theaterCode: purchaseModel.performance.attributes.theater.id,
-                    dateJouei: purchaseModel.performance.attributes.day,
-                    titleCode: purchaseModel.performanceCOA.titleCode,
-                    titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-                    timeBegin: purchaseModel.performance.attributes.timeStart,
-                    tmpReserveNum: purchaseModel.reserveSeats.tmpReserveNum
-                };
-                const removeCOAAuthorizationIn = {
-                    accessToken: yield UtilModule.getAccessToken(req),
-                    transactionId: purchaseModel.transactionMP.id,
-                    authorizationId: purchaseModel.authorizationCOA.id
-                };
-                try {
-                    // COA仮予約削除
-                    yield COA.services.reserve.delTmpReserve(delTmpReserveIn);
-                    log('COA仮予約削除');
-                    // COAオーソリ削除
-                    yield MP.services.transaction.removeAuthorization(removeCOAAuthorizationIn);
-                    log('MPCOAオーソリ削除');
-                }
-                catch (err) {
-                    logger_1.default.error('SSKTS-APP:FixedModule.index', {
-                        delTmpReserveIn: delTmpReserveIn,
-                        removeCOAAuthorizationIn: removeCOAAuthorizationIn,
-                        err: err
-                    });
-                }
-            }
+            // セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
             delete req.session.complete;
+            delete req.session.auth;
             if (process.env.VIEW_TYPE === undefined) {
-                res.locals.theaters = yield MP.services.theater.getTheaters({
-                    accessToken: yield UtilModule.getAccessToken(req)
+                res.locals.movieTheaters = yield MP.service.organization.searchMovieTheaters({
+                    auth: yield UtilModule.createAuth(req)
                 });
+                log(res.locals.movieTheaters);
             }
-            res.locals.step = PurchaseSession.PurchaseModel.PERFORMANCE_STATE;
+            res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
@@ -143,12 +67,16 @@ exports.index = index;
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield MP.services.performance.getPerformances({
-                accessToken: yield UtilModule.getAccessToken(req),
-                theater: req.body.theater,
-                day: req.body.day
+            // 上映イベント検索
+            const individualScreeningEvents = yield MP.service.event.searchIndividualScreeningEvent({
+                auth: yield UtilModule.createAuth(req),
+                searchConditions: {
+                    theater: req.body.theater,
+                    day: moment(req.body.day).format('YYYYMMDD')
+                }
             });
-            res.json({ error: null, result: result });
+            log('上映イベント検索');
+            res.json({ error: null, result: individualScreeningEvents });
         }
         catch (err) {
             res.json({ error: err, result: null });

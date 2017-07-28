@@ -69,8 +69,10 @@ export function index(err: Error | ErrorUtilModule.CustomError, req: Request, re
     }
 
     if (req.session !== undefined) {
-        delete req.session.purchase;
-        delete req.session.mvtk;
+        // delete req.session.purchase;
+        // delete req.session.mvtk;
+        // delete req.session.complete;
+        // delete req.session.auth;
     }
     /**
      * エラーメッセージ

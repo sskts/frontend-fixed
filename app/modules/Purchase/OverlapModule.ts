@@ -6,8 +6,8 @@
 import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
+import * as MP from '../../../libs/MP/sskts-api';
+import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.OverlapModule');
@@ -24,7 +24,7 @@ const log = debug('SSKTS:Purchase.OverlapModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -59,10 +59,10 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 export async function newReserve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -82,8 +82,8 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         // COAオーソリ削除
         await MP.services.transaction.removeAuthorization({
-            accessToken: await UtilModule.getAccessToken(req),
-            transactionId: purchaseModel.transactionMP.id,
+            auth: await UtilModule.createAuth(req),
+            transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.authorizationCOA.id
         });
         log('COAオーソリ削除');
