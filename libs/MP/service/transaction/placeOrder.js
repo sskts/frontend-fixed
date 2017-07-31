@@ -79,10 +79,12 @@ function authorizeGMOCard(args) {
             body: {
                 orderId: args.orderId,
                 amount: args.amount,
-                method: (typeof args.creditCard !== 'string') ? args.creditCard.method : undefined,
-                cardNo: (typeof args.creditCard !== 'string') ? args.creditCard.cardNo : undefined,
-                expire: (typeof args.creditCard !== 'string') ? args.creditCard.expire : undefined,
-                securityCode: (typeof args.creditCard !== 'string') ? args.creditCard.securityCode : undefined,
+                method: args.method,
+                cardNo: (typeof args.creditCard === 'object') ? args.creditCard.cardNo : undefined,
+                expire: (typeof args.creditCard === 'object') ? args.creditCard.expire : undefined,
+                securityCode: (typeof args.creditCard === 'object') ? args.creditCard.securityCode : undefined,
+                cardSeq: (typeof args.creditCard === 'object') ? args.creditCard.cardSeq : undefined,
+                cardPass: (typeof args.creditCard === 'object') ? args.creditCard.cardPass : undefined,
                 token: (typeof args.creditCard === 'string') ? args.creditCard : undefined
             }
         });
@@ -161,3 +163,18 @@ function confirm(args) {
     });
 }
 exports.confirm = confirm;
+/**
+ * 確定した取引に関して、購入者にメール通知を送信する
+ */
+function sendEmailNotification(args) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield apiRequest_1.default({
+            uri: `/transactions/placeOrder/${args.transactionId}/tasks/sendEmailNotification`,
+            method: 'POST',
+            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            auth: { bearer: yield args.auth.getAccessToken() },
+            body: args.emailNotification
+        });
+    });
+}
+exports.sendEmailNotification = sendEmailNotification;

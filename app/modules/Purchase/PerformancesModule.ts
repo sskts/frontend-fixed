@@ -26,9 +26,9 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        // GMO取消
+        // TODO GMO取消
 
-        // COA仮予約削除
+        // TODO COA仮予約削除
 
         // セッション削除
         delete req.session.purchase;

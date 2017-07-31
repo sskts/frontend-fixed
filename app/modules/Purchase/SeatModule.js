@@ -49,7 +49,6 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.seller === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            log('purchaseModel.individualScreeningEvent', purchaseModel.individualScreeningEvent);
             res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
             res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
                 ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
@@ -150,7 +149,7 @@ function reserve(req, selectSeats, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
-            // 仮予約削除
+            // TODO 仮予約削除
             log('仮予約削除');
         }
         if (purchaseModel.salesTickets === null) {
@@ -160,7 +159,7 @@ function reserve(req, selectSeats, purchaseModel) {
                 dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
                 titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
                 titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
-                timeBegin: purchaseModel.individualScreeningEvent.coaInfo
+                timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
             });
             purchaseModel.salesTickets = salesTicketResult;
             log('コアAPI券種取得', purchaseModel.salesTickets);

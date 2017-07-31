@@ -30,8 +30,8 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            // GMO取消
-            // COA仮予約削除
+            // TODO GMO取消
+            // TODO COA仮予約削除
             // セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;

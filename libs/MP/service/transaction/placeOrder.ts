@@ -91,13 +91,16 @@ export async function cancelSeatReservationAuthorization(args: {
 }
 
 export interface ICreditCardRaw {
-    method: string;
     cardNo: string;
     expire: string;
     securityCode: string;
 }
 export type ICreditCardTokenized = string; // トークン決済の場合こちら
-export type ICreditCard = ICreditCardRaw | ICreditCardTokenized;
+export interface ICreditCardOfMember {
+    cardSeq: number;
+    cardPass?: string;
+}
+export type ICreditCard = ICreditCardRaw | ICreditCardTokenized | ICreditCardOfMember;
 
 /**
  * 決済方法として、クレジットカードを追加する
@@ -107,6 +110,7 @@ export async function authorizeGMOCard(args: {
     transactionId: string;
     orderId: string;
     amount: number;
+    method: string;
     creditCard: ICreditCard;
 }): Promise<sskts.factory.authorization.gmo.IAuthorization> {
     return await apiRequest({
@@ -117,10 +121,12 @@ export async function authorizeGMOCard(args: {
         body: {
             orderId: args.orderId,
             amount: args.amount,
-            method: (typeof args.creditCard !== 'string') ? args.creditCard.method : undefined,
-            cardNo: (typeof args.creditCard !== 'string') ? args.creditCard.cardNo : undefined,
-            expire: (typeof args.creditCard !== 'string') ? args.creditCard.expire : undefined,
-            securityCode: (typeof args.creditCard !== 'string') ? args.creditCard.securityCode : undefined,
+            method: args.method,
+            cardNo: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardNo : undefined,
+            expire: (typeof args.creditCard === 'object') ? (<any>args.creditCard).expire : undefined,
+            securityCode: (typeof args.creditCard === 'object') ? (<any>args.creditCard).securityCode : undefined,
+            cardSeq: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardSeq : undefined,
+            cardPass: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardPass : undefined,
             token: (typeof args.creditCard === 'string') ? args.creditCard : undefined
         }
     });
@@ -215,5 +221,30 @@ export async function confirm(args: {
         method: 'POST',
         expectedStatusCodes: [httpStatus.CREATED],
         auth: { bearer: await args.auth.getAccessToken() }
+    });
+}
+
+export interface IEmailNotification {
+    // tslint:disable-next-line:no-reserved-keywords
+    from: string;
+    to: string;
+    subject: string;
+    content: string;
+}
+
+/**
+ * 確定した取引に関して、購入者にメール通知を送信する
+ */
+export async function sendEmailNotification(args: {
+    auth: OAuth2client;
+    transactionId: string;
+    emailNotification: IEmailNotification
+}): Promise<sskts.factory.order.IOrder> {
+    return await apiRequest({
+        uri: `/transactions/placeOrder/${args.transactionId}/tasks/sendEmailNotification`,
+        method: 'POST',
+        expectedStatusCodes: [httpStatus.NO_CONTENT],
+        auth: { bearer: await args.auth.getAccessToken() },
+        body: args.emailNotification
     });
 }

@@ -2,7 +2,6 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
-import * as GMO from '@motionpicture/gmo-service';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP/sskts-api';
 import * as UtilModule from '../../modules/Util/UtilModule';
@@ -216,7 +215,7 @@ export class PurchaseModel {
     /**
      * 予約チケット
      */
-    public reserveTickets: IReserveTicket[] | null;
+    public reserveTickets: IReserveTicket[];
     /**
      * 予約座席
      */
@@ -268,7 +267,7 @@ export class PurchaseModel {
         this.seller = (session.seller !== undefined) ? session.seller : null;
         this.transaction = (session.transaction !== undefined) ? session.transaction : null;
         this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
-        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : null;
+        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
         this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
             ? session.seatReservationAuthorization : null;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
@@ -423,6 +422,8 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isMember(): boolean {
+        // TODO
+
         return false;
     }
 }

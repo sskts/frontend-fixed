@@ -35,7 +35,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.seller === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        log('purchaseModel.individualScreeningEvent', purchaseModel.individualScreeningEvent)
+
         res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
         res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
             ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
@@ -135,7 +135,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
 
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
-        // 仮予約削除
+        // TODO 仮予約削除
 
         log('仮予約削除');
     }
@@ -147,7 +147,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
             dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
             titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
             titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
-            timeBegin: purchaseModel.individualScreeningEvent.coaInfo
+            timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
         });
         purchaseModel.salesTickets = salesTicketResult;
         log('コアAPI券種取得', purchaseModel.salesTickets);

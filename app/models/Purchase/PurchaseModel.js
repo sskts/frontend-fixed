@@ -20,7 +20,7 @@ class PurchaseModel {
         this.seller = (session.seller !== undefined) ? session.seller : null;
         this.transaction = (session.transaction !== undefined) ? session.transaction : null;
         this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
-        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : null;
+        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
         this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
             ? session.seatReservationAuthorization : null;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
@@ -171,6 +171,7 @@ class PurchaseModel {
      * @returns {boolean}
      */
     isMember() {
+        // TODO
         return false;
     }
 }

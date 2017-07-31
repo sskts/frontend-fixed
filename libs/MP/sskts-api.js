@@ -5,6 +5,7 @@
  * @ignore
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const googleTokenClient_1 = require("./auth/googleTokenClient");
 const oAuth2client_1 = require("./auth/oAuth2client");
 const EventService = require("./service/event");
 const OrderService = require("./service/order");
@@ -17,6 +18,9 @@ var auth;
     class OAuth2 extends oAuth2client_1.default {
     }
     auth.OAuth2 = OAuth2;
+    class GoogleToken extends googleTokenClient_1.default {
+    }
+    auth.GoogleToken = GoogleToken;
 })(auth = exports.auth || (exports.auth = {}));
 var service;
 (function (service) {

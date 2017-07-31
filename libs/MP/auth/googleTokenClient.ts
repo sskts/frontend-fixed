@@ -1,5 +1,5 @@
 /**
- * OAuthクライアント
+ * Google Sign-In OAuthクライアント
  */
 
 import * as createDebug from 'debug';
@@ -7,63 +7,27 @@ import * as httpStatus from 'http-status';
 import * as request from 'request-promise-native';
 
 import Credentials from './credentials';
+import OAuth2client from './oAuth2client';
 
 const debug = createDebug('sskts-api:auth:oAuth2client');
 const API_ENDPOINT = <string>process.env.TEST_API_ENDPOINT;
 
-export default class OAuth2Client {
+export default class GoogleTokenClient extends OAuth2client {
     /**
      * The base endpoint for token retrieval.
      */
-    protected static readonly SSKTS_OAUTH2_TOKEN_URL: string = `${API_ENDPOINT}/oauth/token`;
+    protected static readonly SSKTS_OAUTH2_TOKEN_URL: string = `${API_ENDPOINT}/oauth/token/signInWithGoogle`;
 
-    public credentials: Credentials;
-    public clientId: string;
-    public clientSecret: string;
-    protected state: string;
-    protected scopes: string[];
+    public idToken: string;
 
     /**
      * Handles OAuth2 flow.
      * @constructor
      */
-    constructor(clientId: string, clientSecret: string, state: string, scopes: string[]) {
-        this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.scopes = scopes;
-        this.state = state;
-        this.credentials = {};
-    }
+    constructor(idToken: string, state: string, scopes: string[]) {
+        super('', '', state, scopes);
 
-    /**
-     * Retrieves the access token using refresh token
-     */
-    public async refreshAccessToken(): Promise<Credentials> {
-        return await this.refreshToken()
-            .then((tokens) => {
-                this.credentials = tokens;
-
-                return this.credentials;
-            });
-    }
-
-    /**
-     * Get a non-expired access token, after refreshing if necessary
-     */
-    public async getAccessToken(): Promise<string> {
-        const expiryDate = this.credentials.expiry_date;
-
-        // if no expiry time, assume it's not expired
-        const isTokenExpired = (expiryDate !== undefined) ? (expiryDate <= (new Date()).getTime()) : false;
-
-        const shouldRefresh = (this.credentials.access_token === undefined) || isTokenExpired;
-        if (shouldRefresh) {
-            const tokens = await this.refreshAccessToken();
-
-            return <string>tokens.access_token;
-        } else {
-            return <string>this.credentials.access_token;
-        }
+        this.idToken = idToken;
     }
 
     /**
@@ -74,13 +38,11 @@ export default class OAuth2Client {
         debug('requesting access token...');
 
         return await request.post({
-            url: OAuth2Client.SSKTS_OAUTH2_TOKEN_URL,
+            url: GoogleTokenClient.SSKTS_OAUTH2_TOKEN_URL,
             body: {
+                idToken: this.idToken,
                 scopes: this.scopes,
-                client_id: this.clientId,
-                client_secret: this.clientSecret,
-                state: this.state,
-                grant_type: 'client_credentials'
+                state: this.state
             },
             json: true,
             simple: false,
