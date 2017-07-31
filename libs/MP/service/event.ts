@@ -32,7 +32,7 @@ export async function searchIndividualScreeningEvent(args: {
 export async function findIndividualScreeningEvent(args: {
     auth: OAuth2client;
     identifier: string;
-}): Promise<any> {
+}): Promise<sskts.factory.event.individualScreeningEvent.IEvent> {
     return await apiRequest({
         uri: `/events/individualScreeningEvent/${args.identifier}`,
         auth: { bearer: await args.auth.getAccessToken() },

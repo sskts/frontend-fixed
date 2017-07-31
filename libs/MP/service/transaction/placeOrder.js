@@ -67,9 +67,9 @@ function cancelSeatReservationAuthorization(args) {
 }
 exports.cancelSeatReservationAuthorization = cancelSeatReservationAuthorization;
 /**
- * 決済方法として、クレジットカードを追加する
+ * クレジットカードのオーソリを取得する
  */
-function authorizeGMOCard(args) {
+function createCreditCardAuthorization(args) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/creditCard`,
@@ -80,17 +80,12 @@ function authorizeGMOCard(args) {
                 orderId: args.orderId,
                 amount: args.amount,
                 method: args.method,
-                cardNo: (typeof args.creditCard === 'object') ? args.creditCard.cardNo : undefined,
-                expire: (typeof args.creditCard === 'object') ? args.creditCard.expire : undefined,
-                securityCode: (typeof args.creditCard === 'object') ? args.creditCard.securityCode : undefined,
-                cardSeq: (typeof args.creditCard === 'object') ? args.creditCard.cardSeq : undefined,
-                cardPass: (typeof args.creditCard === 'object') ? args.creditCard.cardPass : undefined,
-                token: (typeof args.creditCard === 'string') ? args.creditCard : undefined
+                creditCard: args.creditCard
             }
         });
     });
 }
-exports.authorizeGMOCard = authorizeGMOCard;
+exports.createCreditCardAuthorization = createCreditCardAuthorization;
 /**
  * クレジットカードオーソリ取消
  */

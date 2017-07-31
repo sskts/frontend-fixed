@@ -103,15 +103,15 @@ export interface ICreditCardOfMember {
 export type ICreditCard = ICreditCardRaw | ICreditCardTokenized | ICreditCardOfMember;
 
 /**
- * 決済方法として、クレジットカードを追加する
+ * クレジットカードのオーソリを取得する
  */
-export async function authorizeGMOCard(args: {
+export async function createCreditCardAuthorization(args: {
     auth: OAuth2client;
     transactionId: string;
     orderId: string;
     amount: number;
     method: string;
-    creditCard: ICreditCard;
+    creditCard: sskts.service.transaction.placeOrder.ICreditCard4authorization;
 }): Promise<sskts.factory.authorization.gmo.IAuthorization> {
     return await apiRequest({
         uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/creditCard`,
@@ -122,12 +122,7 @@ export async function authorizeGMOCard(args: {
             orderId: args.orderId,
             amount: args.amount,
             method: args.method,
-            cardNo: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardNo : undefined,
-            expire: (typeof args.creditCard === 'object') ? (<any>args.creditCard).expire : undefined,
-            securityCode: (typeof args.creditCard === 'object') ? (<any>args.creditCard).securityCode : undefined,
-            cardSeq: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardSeq : undefined,
-            cardPass: (typeof args.creditCard === 'object') ? (<any>args.creditCard).cardPass : undefined,
-            token: (typeof args.creditCard === 'string') ? args.creditCard : undefined
+            creditCard: args.creditCard
         }
     });
 }

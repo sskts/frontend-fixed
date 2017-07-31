@@ -17,20 +17,16 @@ const request = require("request-promise-native");
 const debug = createDebug('sskts-api:auth:oAuth2client');
 const API_ENDPOINT = process.env.TEST_API_ENDPOINT;
 class OAuth2Client {
-    /**
-     * Handles OAuth2 flow.
-     * @constructor
-     */
     constructor(clientId, clientSecret, state, scopes) {
         this.clientId = clientId;
-        this.clientSecret = clientSecret;
-        this.scopes = scopes;
-        this.state = state;
+        this.clientSecret = (clientSecret !== undefined) ? clientSecret : '';
+        this.scopes = (scopes !== undefined) ? scopes : [];
+        this.state = (state !== undefined) ? state : '';
         this.credentials = {};
     }
-    /**
-     * Retrieves the access token using refresh token
-     */
+    setCredentials(credentials) {
+        this.credentials = credentials;
+    }
     refreshAccessToken() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.refreshToken()
@@ -56,6 +52,88 @@ class OAuth2Client {
             else {
                 return this.credentials.access_token;
             }
+        });
+    }
+    signInWithGoogle(idToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // request for new token
+            debug('requesting access token...');
+            return yield request.post({
+                url: `${API_ENDPOINT}/oauth/token/signInWithGoogle`,
+                body: {
+                    idToken: idToken,
+                    client_id: this.clientId,
+                    client_secret: this.clientSecret,
+                    scopes: this.scopes,
+                    state: this.state
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+                useQuerystring: true
+            }).then((response) => {
+                if (response.statusCode !== httpStatus.OK) {
+                    if (typeof response.body === 'string') {
+                        throw new Error(response.body);
+                    }
+                    if (typeof response.body === 'object' && response.body.errors !== undefined) {
+                        const message = response.body.errors.map((error) => {
+                            return `[${error.title}]${error.detail}`;
+                        }).join(', ');
+                        throw new Error(message);
+                    }
+                    throw new Error('An unexpected error occurred');
+                }
+                const tokens = response.body;
+                if (tokens && tokens.expires_in) {
+                    // tslint:disable-next-line:no-magic-numbers
+                    tokens.expiry_date = ((new Date()).getTime() + (tokens.expires_in * 1000));
+                    delete tokens.expires_in;
+                }
+                this.credentials = tokens;
+                return tokens;
+            });
+        });
+    }
+    signInWithLINE(idToken) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // request for new token
+            debug('requesting access token...');
+            return yield request.post({
+                url: `${API_ENDPOINT}/oauth/token/signInWithGoogle`,
+                body: {
+                    idToken: idToken,
+                    client_id: this.clientId,
+                    client_secret: this.clientSecret,
+                    scopes: this.scopes,
+                    state: this.state
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+                useQuerystring: true
+            }).then((response) => {
+                if (response.statusCode !== httpStatus.OK) {
+                    if (typeof response.body === 'string') {
+                        throw new Error(response.body);
+                    }
+                    if (typeof response.body === 'object' && response.body.errors !== undefined) {
+                        const message = response.body.errors.map((error) => {
+                            return `[${error.title}]${error.detail}`;
+                        }).join(', ');
+                        throw new Error(message);
+                    }
+                    throw new Error('An unexpected error occurred');
+                }
+                const tokens = response.body;
+                if (tokens && tokens.expires_in) {
+                    // tslint:disable-next-line:no-magic-numbers
+                    tokens.expiry_date = ((new Date()).getTime() + (tokens.expires_in * 1000));
+                    delete tokens.expires_in;
+                }
+                this.credentials = tokens;
+                return tokens;
+            });
         });
     }
     /**

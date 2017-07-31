@@ -30,8 +30,14 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            // TODO GMO取消
-            // TODO COA仮予約削除
+            if (purchaseModel.seatReservationAuthorization !== null) {
+                yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                    auth: yield UtilModule.createAuth(req),
+                    transactionId: purchaseModel.transaction.id,
+                    authorizationId: purchaseModel.seatReservationAuthorization.id
+                });
+                log('仮予約削除');
+            }
             // セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;

@@ -12,7 +12,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
 const MP = require("../../../libs/MP/sskts-api");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
@@ -36,13 +35,17 @@ function index(req, res, next) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.performance === null)
+            if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            //パフォーマンス取得
-            const result = yield MP.services.performance.getPerformance(req.params.id);
-            res.locals.performances = {
-                after: result,
-                before: purchaseModel.performance
+            // イベント情報取得
+            const individualScreeningEvent = yield MP.service.event.findIndividualScreeningEvent({
+                auth: yield UtilModule.createAuth(req),
+                identifier: req.body.performanceId
+            });
+            log('イベント情報取得', individualScreeningEvent);
+            res.locals.individualScreeningEvent = {
+                after: individualScreeningEvent,
+                before: purchaseModel.individualScreeningEvent
             };
             res.render('purchase/overlap');
             return;
@@ -72,38 +75,22 @@ function newReserve(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.performance === null)
+            if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.reserveSeats === null)
+            if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.authorizationCOA === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.performanceCOA === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const performance = purchaseModel.performance;
-            const reserveSeats = purchaseModel.reserveSeats;
-            //COA仮予約削除
-            yield COA.services.reserve.delTmpReserve({
-                theaterCode: performance.attributes.theater.id,
-                dateJouei: performance.attributes.day,
-                titleCode: purchaseModel.performanceCOA.titleCode,
-                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-                timeBegin: performance.attributes.timeStart,
-                tmpReserveNum: reserveSeats.tmpReserveNum
-            });
-            log('COA仮予約削除');
-            // COAオーソリ削除
-            yield MP.services.transaction.removeAuthorization({
+            // COA仮予約削除
+            yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
                 auth: yield UtilModule.createAuth(req),
                 transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.authorizationCOA.id
+                authorizationId: purchaseModel.seatReservationAuthorization.id
             });
-            log('COAオーソリ削除');
+            log('COA仮予約削除');
             //購入スタートへ
             delete req.session.purchase;
-            res.redirect(`/purchase?id=${req.body.performance_id}`);
+            res.redirect(`/purchase?id=${req.body.performanceId}`);
             return;
         }
         catch (err) {
@@ -131,7 +118,7 @@ function prevReserve(req, res, next) {
         return;
     }
     //座席選択へ
-    res.redirect(`/purchase/seat/${req.body.performance_id}/`);
+    res.redirect(`/purchase/seat/${req.body.performanceId}/`);
     return;
 }
 exports.prevReserve = prevReserve;

@@ -24,37 +24,22 @@ class PurchaseModel {
         this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
             ? session.seatReservationAuthorization : null;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
-        this.orderCount = (session.orderCount !== undefined) ? session.orderCount : null;
-        this.gmoAuthorization = (session.gmoAuthorization !== undefined) ? session.gmoAuthorization : null;
+        this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
+        this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
         this.profile = (session.profile !== undefined) ? session.profile : null;
         this.gmo = (session.gmo !== undefined) ? session.gmo : null;
-        this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
+        this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
         this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
         this.expired = (session.expired !== undefined) ? session.expired : null;
     }
     /**
-     * セッションObjectへ変換
+     * セッションへ保存
      * @memberof PurchaseModel
      * @method toSession
-     * @returns {Object} result
+     * @returns {void}
      */
-    toSession() {
-        return {
-            individualScreeningEvent: this.individualScreeningEvent,
-            seller: this.seller,
-            transaction: this.transaction,
-            salesTickets: this.salesTickets,
-            reserveTickets: this.reserveTickets,
-            seatReservationAuthorization: this.seatReservationAuthorization,
-            orderId: this.orderId,
-            orderCount: this.orderCount,
-            gmoAuthorization: this.gmoAuthorization,
-            profile: this.profile,
-            gmo: this.gmo,
-            mvtk: this.mvtk,
-            mvtkAuthorization: this.mvtkAuthorization,
-            expired: this.expired
-        };
+    save(session) {
+        session.purchase = this.toSession();
     }
     /**
      * ステータス確認
@@ -149,15 +134,6 @@ class PurchaseModel {
         return price;
     }
     /**
-     * GMOオーソリ回数取得
-     * @memberof PurchaseModel
-     * @method orderCountToString
-     * @returns {string}
-     */
-    orderCountToString() {
-        return `00${this.orderCount}`.slice(UtilModule.DIGITS_02);
-    }
-    /**
      * 有効期限確認
      * @memberof PurchaseModel
      * @method isExpired
@@ -168,11 +144,132 @@ class PurchaseModel {
     }
     /**
      * 会員判定
+     * @memberof PurchaseModel
      * @returns {boolean}
      */
     isMember() {
         // TODO
         return false;
+    }
+    /**
+     * 券種リスト取得
+     * @memberof PurchaseModel
+     * @method getSalesTickets
+     * @param {Request} req
+     * @returns {ISalesTicket[]}
+     */
+    getSalesTickets(req) {
+        if (this.individualScreeningEvent === null
+            || this.salesTickets === null) {
+            return [];
+        }
+        const result = [];
+        for (const ticket of this.salesTickets) {
+            result.push({
+                ticketCode: ticket.ticketCode,
+                ticketName: ticket.ticketName,
+                ticketNameKana: ticket.ticketNameKana,
+                ticketNameEng: ticket.ticketNameEng,
+                stdPrice: ticket.stdPrice,
+                addPrice: ticket.addPrice,
+                salePrice: ticket.salePrice,
+                ticketNote: ticket.ticketNote,
+                addPriceGlasses: 0,
+                mvtkNum: '',
+                glasses: false
+            });
+            if (ticket.addGlasses > 0) {
+                result.push({
+                    ticketCode: ticket.ticketCode,
+                    ticketName: `${ticket.ticketName}${req.__('common.glasses')}`,
+                    ticketNameKana: ticket.ticketNameKana,
+                    ticketNameEng: ticket.ticketNameEng,
+                    stdPrice: ticket.stdPrice,
+                    addPrice: ticket.addPrice,
+                    salePrice: ticket.salePrice + ticket.addGlasses,
+                    ticketNote: ticket.ticketNote,
+                    addPriceGlasses: ticket.addGlasses,
+                    mvtkNum: '',
+                    glasses: true
+                });
+            }
+        }
+        if (this.mvtk === null) {
+            return result;
+        }
+        // ムビチケ情報からチケット情報へ変換
+        const mvtkTickets = [];
+        for (const mvtk of this.mvtk) {
+            for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i += 1) {
+                mvtkTickets.push({
+                    ticketCode: mvtk.ticket.ticketCode,
+                    ticketName: mvtk.ticket.ticketName,
+                    ticketNameKana: mvtk.ticket.ticketNameKana,
+                    ticketNameEng: mvtk.ticket.ticketNameEng,
+                    stdPrice: 0,
+                    addPrice: mvtk.ticket.addPrice,
+                    salePrice: mvtk.ticket.addPrice,
+                    ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                    addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                    mvtkNum: mvtk.code,
+                    glasses: false
+                });
+                if (mvtk.ticket.addPriceGlasses > 0) {
+                    mvtkTickets.push({
+                        ticketCode: mvtk.ticket.ticketCode,
+                        ticketName: `${mvtk.ticket.ticketName}${req.__('common.glasses')}`,
+                        ticketNameKana: mvtk.ticket.ticketNameKana,
+                        ticketNameEng: mvtk.ticket.ticketNameEng,
+                        stdPrice: 0,
+                        addPrice: mvtk.ticket.addPrice,
+                        salePrice: mvtk.ticket.addPrice + mvtk.ticket.addPriceGlasses,
+                        ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                        addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                        mvtkNum: mvtk.code,
+                        glasses: true
+                    });
+                }
+            }
+        }
+        return mvtkTickets.concat(result);
+    }
+    /**
+     * オーダーID生成
+     * @memberof PurchaseModel
+     * @method createOrderId
+     * @returns {void}
+     */
+    createOrderId() {
+        // GMOオーソリ取得
+        const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS_03);
+        const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS_08);
+        // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
+        this.orderId = `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS_02)}`;
+        this.orderCount += 1;
+    }
+    /**
+     * セッションObjectへ変換
+     * @memberof PurchaseModel
+     * @method toSession
+     * @returns {Object}
+     */
+    toSession() {
+        return {
+            individualScreeningEvent: this.individualScreeningEvent,
+            seller: this.seller,
+            transaction: this.transaction,
+            salesTickets: this.salesTickets,
+            reserveTickets: this.reserveTickets,
+            seatReservationAuthorization: this.seatReservationAuthorization,
+            orderId: this.orderId,
+            orderCount: this.orderCount,
+            creditCardAuthorization: this.creditCardAuthorization,
+            profile: this.profile,
+            gmo: this.gmo,
+            mvtk: this.mvtk,
+            mvtkAuthorization: this.mvtkAuthorization,
+            expired: this.expired
+        };
     }
 }
 PurchaseModel.PERFORMANCE_STATE = 0;

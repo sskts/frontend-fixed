@@ -4,6 +4,7 @@
  * @namespace Purchase.CompleteModule
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * 購入完了表示
@@ -21,14 +22,9 @@ function index(req, res, next) {
         if (req.session.complete === undefined)
             throw ErrorUtilModule.ERROR_ACCESS;
         //購入者内容確認表示
-        const complete = req.session.complete;
-        res.locals.input = complete.input;
-        res.locals.performance = complete.performance;
-        res.locals.reserveSeats = complete.reserveSeats;
-        res.locals.reserveTickets = complete.reserveTickets;
-        res.locals.price = complete.price;
-        res.locals.updateReserve = complete.updateReserve;
-        res.locals.step = PurchaseSession.PurchaseModel.COMPLETE_STATE;
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.complete);
+        res.locals.purchaseModel = purchaseModel;
+        res.locals.step = PurchaseModel_1.PurchaseModel.COMPLETE_STATE;
         res.render('purchase/complete', { layout: 'layouts/purchase/layout' });
         return;
     }

@@ -1,6 +1,6 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/input.js"></script>
-<script src="<%= gmoModuleUrl %>"></script>
+<script src="<%= GMO_ENDPOINT %>/ext/js/token.js"></script>
 <script>Multipayment.init('<%= gmoShopId %>');</script>
 <%- contentFor('body') %>
 <div class="purchase-input">
@@ -16,18 +16,18 @@
                 <dl>
                     <dt><%- __('common.last_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="lastNameHira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.lastNameHira %>">
-                        <% if (error && error.lastNameHira) { %>
-                        <div class="validation-text"><%= error.lastNameHira.msg %></div>
+                        <input type="text" name="familyName" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= purchaseModel.profile.familyName %>">
+                        <% if (error && error.familyName) { %>
+                        <div class="validation-text"><%= error.familyName.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
                 <dl>
                     <dt><%- __('common.first_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="firstNameHira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.firstNameHira %>">
-                        <% if (error && error.firstNameHira) { %>
-                        <div class="validation-text"><%= error.firstNameHira.msg %></div>
+                        <input type="text" name="givenName" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= purchaseModel.profile.givenName %>">
+                        <% if (error && error.givenName) { %>
+                        <div class="validation-text"><%= error.givenName.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -37,18 +37,18 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="email" name="mailAddr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mailAddr %>">
-                    <% if (error && error.mailAddr) { %>
-                    <div class="validation-text"><%= error.mailAddr.msg %></div>
+                    <input type="email" name="email" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= purchaseModel.profile.email %>">
+                    <% if (error && error.email) { %>
+                    <div class="validation-text"><%= error.email.msg %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
                 <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="email" name="mailConfirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mailConfirm %>">
-                    <% if (error && error.mailConfirm) { %>
-                    <div class="validation-text"><%= error.mailConfirm.msg %></div>
+                    <input type="email" name="emailConfirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= purchaseModel.profile.emailConfirm %>">
+                    <% if (error && error.emailConfirm) { %>
+                    <div class="validation-text"><%= error.emailConfirm.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.mail') %></p>
                 </dd>
@@ -59,15 +59,15 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="tel" name="telNum" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.telNum %>">
-                    <% if (error && error.telNum) { %>
-                    <div class="validation-text"><%= error.telNum.msg %></div>
+                    <input type="tel" name="telephone" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= purchaseModel.profile.telephone %>">
+                    <% if (error && error.telephone) { %>
+                    <div class="validation-text"><%= error.telephone.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.tel') %></p>
                 </dd>
             </dl>
         </div>      
-        <% if (price > 0) { %>
+        <% if (purchaseModel.getReserveAmount() > 0) { %>
         <h2 class="section-ttl">
             <%- __('common.payment') %><span class="text-icon-red small-x-text"><%- __('common.required') %></span>
             <span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
@@ -78,7 +78,7 @@
             <li class="price">
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>
-                    <dd class="large-text red-text"><strong>￥<%= formatPrice(price) %></strong></dd>
+                    <dd class="large-text red-text"><strong>￥<%= formatPrice(purchaseModel.getReserveAmount()) %></strong></dd>
                 </dl>
             </li>
             <li>
@@ -159,10 +159,9 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.input.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket/"><%- __('purchase.input.prev') %></a></div>
         </div>
-        <input type="hidden" name="transactionId" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
-    <input type="hidden" name="price" value="<%= price %>">
-    <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+    <input type="hidden" name="price" value="<%= purchaseModel.getReserveAmount() %>">
 <%- include('../layouts/siteSeal') %>
 </div>
 

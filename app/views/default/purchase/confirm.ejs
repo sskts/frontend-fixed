@@ -20,13 +20,13 @@
             <li>
                 <dl>
                     <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                    <dd><%= performance.attributes.theater.name[__('lang')] %> / <%= performance.attributes.screen.name[__('lang')] %></dd>
+                    <dd><%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %> / <%= purchaseModel.individualScreeningEvent.location.name.ja %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.film_title') %></dt>
-                    <dd><%= performance.attributes.film.name[__('lang')] %></dd>
+                    <dd><%= purchaseModel.individualScreeningEvent.workPerformed.name %></dd>
                 </dl>
             </li>
             <li>
@@ -34,7 +34,9 @@
                     <dt><%- __('common.appreciation_date') %></dt>
                     <dd>
                         <div class="mb-xx-small">
-                            <strong class="red-text"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></strong>
+                            <strong class="red-text">
+                                <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin) %>
+                            </strong>
                         </div>
                         <p class="small-x-text red-text"><%- __('purchase.confirm.date_note') %></p>
                     </dd>
@@ -44,7 +46,7 @@
                 <dl>
                     <dt><%- __('common.seat') %></dt>
                     <dd>
-                        <% for (ticket of reserveTickets) { %>
+                        <% for (ticket of purchaseModel.reserveTickets) { %>
                         <p><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %></p>
                         <% } %>
                         <div style="display: none" class="right">
@@ -68,41 +70,35 @@
             <li>
                 <dl>
                     <dt><%- __('common.name_hira') %></dt>
-                    <dd><%= input.lastNameHira %> <%= input.firstNameHira %></dd>
+                    <dd><%= purchaseModel.profile.familyName %> <%= purchaseModel.profile.givenName %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.mail_addr') %></dt>
-                    <dd><%= input.mailAddr %></dd>
+                    <dd><%= purchaseModel.profile.email %></dd>
                 </dl>
             </li>
             <li>
                 <dl>
                     <dt><%- __('common.tel_num') %></dt>
-                    <dd><%= input.telNum %></dd>
+                    <dd><%= purchaseModel.profile.telephone %></dd>
                 </dl>
             </li>
-            <% if (gmoTokenObject) { %>
+            <% if (purchaseModel.gmo) { %>
             <li>
                 <dl>
                     <dt><%- __('common.cardno') %></dt>
-                    <dd><%= gmoTokenObject.maskedCardNo %></dd>
+                    <dd><%= purchaseModel.gmo.maskedCardNo %></dd>
                 </dl>
             </li>
             <% } %>
         </ul>
-        
-        <% if (gmoTokenObject) { %>
-        <input type="hidden" name="token" value="<%= gmoTokenObject.token %>">
-        <input type="hidden" name="toBeExpiredAt" value="<%= gmoTokenObject.toBeExpiredAt %>">
-        <input type="hidden" name="isSecurityCodeSet" value="<%= gmoTokenObject.isSecurityCodeSet %>">
-        <% } %>
 
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
         <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
-            <%- include('notes/ja/' + performance.attributes.theater.id.slice(-2), {}) %>
+            <%- include('notes/ja/' + purchaseModel.individualScreeningEvent.coaInfo.theaterCode.slice(-2), {}) %>
         </div>
 
         <div class="mb-x-large text-center">
@@ -119,11 +115,11 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.confirm.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/input"><%- __('purchase.confirm.prev') %></a></div>
         </div>
-        <input type="hidden" name="transactionId" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 <%- include('../layouts/siteSeal') %>
 </div>
-<input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
+<input type="hidden" name="theaterCode" value="<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>">
 <%- include('completeContents') %>
 <%- include('../error/static') %>
 <%- include('../locales/validation') %>

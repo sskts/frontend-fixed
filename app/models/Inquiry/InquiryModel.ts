@@ -17,7 +17,7 @@ export interface ILogin {
     /**
      * 電話番号
      */
-    telNum: string;
+    telephone: string;
 }
 
 /**

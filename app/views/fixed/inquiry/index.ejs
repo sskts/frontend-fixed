@@ -42,8 +42,8 @@
 <input type="hidden" name="ticketLength" value="<%= stateReserve.listTicket.length %>">
 <input type="hidden" name="theaterCode" value="<%= login.theaterCode %>">
 <input type="hidden" name="reserveNum" value="<%= login.reserveNum %>">
-<input type="hidden" name="telNum" value="<%= login.telNum %>">
-<input type="hidden" name="transactionId" value="<%= transactionId %>">
+<input type="hidden" name="telephone" value="<%= login.telephone %>">
+<input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
 <input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
 <%- include('completeContents') %>
 

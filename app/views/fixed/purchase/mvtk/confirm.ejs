@@ -32,6 +32,6 @@
         <% } %>
         
         <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
-        <input type="hidden" name="transactionId" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 </div>

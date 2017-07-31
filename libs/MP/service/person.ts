@@ -4,7 +4,7 @@
  * @namespace service.person
  */
 
-// import * as sskts from '@motionpicture/sskts-domain';
+import * as sskts from '@motionpicture/sskts-domain';
 import * as httpStatus from 'http-status';
 import apiRequest from '../apiRequest';
 
@@ -15,7 +15,7 @@ import OAuth2client from '../auth/oAuth2client';
  */
 export async function getMyProfile(args: {
     auth: OAuth2client;
-}): Promise<any> {
+}): Promise<sskts.factory.person.IProfile> {
     return await apiRequest({
         uri: '/people/me/profile',
         // qs: args.searchConditions,
@@ -30,12 +30,8 @@ export async function getMyProfile(args: {
  */
 export async function updateMyProfile(args: {
     auth: OAuth2client;
-    profile: {
-        givenName: string;
-        familyName: string;
-        telephone: string;
-    }
-}): Promise<any> {
+    profile: sskts.factory.person.IProfile
+}): Promise<void> {
     return await apiRequest({
         uri: '/people/me/profile',
         body: args.profile,

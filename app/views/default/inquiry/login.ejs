@@ -26,9 +26,9 @@
                 </dd>
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="telNum" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= telNum %>">
-                    <% if (error && error.telNum) { %>
-                    <div class="validation-text"><%= error.telNum.msg %></div>
+                    <input type="text" pattern="\d*" name="telephone" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= telephone %>">
+                    <% if (error && error.telephone) { %>
+                    <div class="validation-text"><%= error.telephone.msg %></div>
                     <% } %>
                 </dd>
             </dl>

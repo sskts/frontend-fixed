@@ -74,19 +74,19 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 auth: await UtilModule.createAuth(req),
                 inquiryTheater: req.body.theaterCode, // 施設コード
                 inquiryId: Number(req.body.reserveNum), // 座席チケット購入番号
-                inquiryPass: req.body.telNum // 電話番号
+                inquiryPass: req.body.telephone // 電話番号
             });
             // const transactionId = await MP.services.transaction.findByInquiryKey({
             //     theaterCode: req.body.theaterCode, // 施設コード
             //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
-            //     tel: req.body.telNum // 電話番号
+            //     tel: req.body.telephone // 電話番号
             // });
             if (transactionId === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('MP取引Id取得', transactionId);
             let stateReserve = await COA.services.reserve.stateReserve({
                 theaterCode: req.body.theaterCode, // 施設コード
                 reserveNum: req.body.reserveNum, // 座席チケット購入番号
-                telNum: req.body.telNum // 電話番号
+                telephone: req.body.telephone // 電話番号
             });
             log('COA照会情報取得', stateReserve);
 
@@ -99,7 +99,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 stateReserve = await COA.services.reserve.stateReserve({
                     theaterCode: req.body.theaterCode, // 施設コード
                     reserveNum: req.body.reserveNum, // 座席チケット購入番号
-                    telNum: req.body.telNum // 電話番号
+                    telephone: req.body.telephone // 電話番号
                 });
                 log('COA照会情報取得', stateReserve);
                 if (stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;

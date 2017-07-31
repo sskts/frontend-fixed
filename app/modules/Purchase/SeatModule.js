@@ -45,20 +45,14 @@ function index(req, res, next) {
             }
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.seller === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
             res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
                 ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
                 : null;
-            res.locals.transactionId = purchaseModel.transaction.id;
             res.locals.error = null;
-            res.locals.portalTheaterSite = purchaseModel.seller.sameAs;
+            res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel_1.PurchaseModel.SEAT_STATE;
             //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            purchaseModel.save(req.session);
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
@@ -89,24 +83,18 @@ function select(req, res, next) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
                 throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.seller === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
             //バリデーション
             seatForm.seatSelect(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty()) {
-                res.locals.transactionId = purchaseModel.transaction;
-                res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
                 res.locals.reserveSeats = req.body.seats;
                 res.locals.error = validationResult.mapped();
-                res.locals.portalTheaterSite = purchaseModel.seller.sameAs;
+                res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.SEAT_STATE;
                 res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
                 return;
@@ -114,7 +102,7 @@ function select(req, res, next) {
             const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
             yield reserve(req, selectSeats, purchaseModel);
             //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            purchaseModel.save(req.session);
             // ムビチケセッション削除
             delete req.session.mvtk;
             //券種選択へ
@@ -149,7 +137,11 @@ function reserve(req, selectSeats, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
-            // TODO 仮予約削除
+            yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: yield UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
+                authorizationId: purchaseModel.seatReservationAuthorization.id
+            });
             log('仮予約削除');
         }
         if (purchaseModel.salesTickets === null) {
@@ -275,7 +267,7 @@ function saveSalesTickets(req, res) {
                     // flgMember: coa.services.reserve.FlgMember.NonMember
                 });
                 log('コアAPI券種取得', purchaseModel.salesTickets);
-                req.session.purchase = purchaseModel.toSession();
+                purchaseModel.save(req.session);
                 res.json({ err: null });
             }
             else {

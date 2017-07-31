@@ -89,12 +89,12 @@ function getInquiryData(req, res) {
                     auth: yield UtilModule.createAuth(req),
                     inquiryTheater: req.body.theaterCode,
                     inquiryId: Number(req.body.reserveNum),
-                    inquiryPass: req.body.telNum // 電話番号
+                    inquiryPass: req.body.telephone // 電話番号
                 });
                 // const transactionId = await MP.services.transaction.findByInquiryKey({
                 //     theaterCode: req.body.theaterCode, // 施設コード
                 //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
-                //     tel: req.body.telNum // 電話番号
+                //     tel: req.body.telephone // 電話番号
                 // });
                 if (transactionId === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
@@ -102,7 +102,7 @@ function getInquiryData(req, res) {
                 let stateReserve = yield COA.services.reserve.stateReserve({
                     theaterCode: req.body.theaterCode,
                     reserveNum: req.body.reserveNum,
-                    telNum: req.body.telNum // 電話番号
+                    telephone: req.body.telephone // 電話番号
                 });
                 log('COA照会情報取得', stateReserve);
                 if (stateReserve === null) {
@@ -116,7 +116,7 @@ function getInquiryData(req, res) {
                     stateReserve = yield COA.services.reserve.stateReserve({
                         theaterCode: req.body.theaterCode,
                         reserveNum: req.body.reserveNum,
-                        telNum: req.body.telNum // 電話番号
+                        telephone: req.body.telephone // 電話番号
                     });
                     log('COA照会情報取得', stateReserve);
                     if (stateReserve === null)

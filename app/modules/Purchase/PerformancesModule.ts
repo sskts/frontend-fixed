@@ -26,9 +26,15 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        // TODO GMO取消
 
-        // TODO COA仮予約削除
+        if (purchaseModel.seatReservationAuthorization !== null) {
+            await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: await UtilModule.createAuth(req),
+                transactionId: purchaseModel.transaction.id,
+                authorizationId: purchaseModel.seatReservationAuthorization.id
+            });
+            log('仮予約削除');
+        }
 
         // セッション削除
         delete req.session.purchase;

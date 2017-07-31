@@ -33,19 +33,15 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.seller === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-        res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
         res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
             ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
             : null;
-        res.locals.transactionId = purchaseModel.transaction.id;
         res.locals.error = null;
-        res.locals.portalTheaterSite = purchaseModel.seller.sameAs;
+        res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.SEAT_STATE;
         //セッション更新
-        req.session.purchase = purchaseModel.toSession();
+        purchaseModel.save(req.session);
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error)
@@ -79,21 +75,16 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
-        if (purchaseModel.seller === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
-        //バリデーション
+                //バリデーション
         seatForm.seatSelect(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) {
-            res.locals.transactionId = purchaseModel.transaction;
-            res.locals.individualScreeningEvent = purchaseModel.individualScreeningEvent;
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
-            res.locals.portalTheaterSite = purchaseModel.seller.sameAs;
+            res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
 
@@ -102,7 +93,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).listTmpReserve;
         await reserve(req, selectSeats, purchaseModel);
         //セッション更新
-        req.session.purchase = purchaseModel.toSession();
+        purchaseModel.save(req.session);
         // ムビチケセッション削除
         delete req.session.mvtk;
         //券種選択へ
@@ -135,8 +126,11 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
 
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
-        // TODO 仮予約削除
-
+        await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+            auth: await UtilModule.createAuth(req),
+            transactionId: purchaseModel.transaction.id,
+            authorizationId: purchaseModel.seatReservationAuthorization.id
+        });
         log('仮予約削除');
     }
 
@@ -257,7 +251,7 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
                 // flgMember: coa.services.reserve.FlgMember.NonMember
             });
             log('コアAPI券種取得', purchaseModel.salesTickets);
-            req.session.purchase = purchaseModel.toSession();
+            purchaseModel.save(req.session);
             res.json({ err: null });
         } else {
             res.json({ err: null });

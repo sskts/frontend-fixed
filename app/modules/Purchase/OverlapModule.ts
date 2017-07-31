@@ -27,12 +27,16 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        //パフォーマンス取得
-        const result = await MP.services.performance.getPerformance(req.params.id);
-        res.locals.performances = {
-            after: result,
-            before: purchaseModel.performance
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        // イベント情報取得
+        const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
+            auth: await UtilModule.createAuth(req),
+            identifier: req.body.performanceId
+        });
+        log('イベント情報取得', individualScreeningEvent);
+        res.locals.individualScreeningEvent = {
+            after: individualScreeningEvent,
+            before: purchaseModel.individualScreeningEvent
         };
         res.render('purchase/overlap');
 
@@ -61,36 +65,22 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.authorizationCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        const performance = purchaseModel.performance;
-        const reserveSeats = purchaseModel.reserveSeats;
+        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
-        //COA仮予約削除
-        await COA.services.reserve.delTmpReserve({
-            theaterCode: performance.attributes.theater.id,
-            dateJouei: performance.attributes.day,
-            titleCode: purchaseModel.performanceCOA.titleCode,
-            titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-            timeBegin: performance.attributes.timeStart,
-            tmpReserveNum: reserveSeats.tmpReserveNum
-        });
-        log('COA仮予約削除');
-
-        // COAオーソリ削除
-        await MP.services.transaction.removeAuthorization({
+        // COA仮予約削除
+        await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
             auth: await UtilModule.createAuth(req),
             transactionId: purchaseModel.transaction.id,
-            authorizationId: purchaseModel.authorizationCOA.id
+            authorizationId: purchaseModel.seatReservationAuthorization.id
         });
-        log('COAオーソリ削除');
+
+        log('COA仮予約削除');
 
         //購入スタートへ
         delete req.session.purchase;
-        res.redirect(`/purchase?id=${req.body.performance_id}`);
+        res.redirect(`/purchase?id=${req.body.performanceId}`);
 
         return;
     } catch (err) {
@@ -119,7 +109,7 @@ export function prevReserve(req: Request, res: Response, next: NextFunction): vo
         return;
     }
     //座席選択へ
-    res.redirect(`/purchase/seat/${req.body.performance_id}/`);
+    res.redirect(`/purchase/seat/${req.body.performanceId}/`);
 
     return;
 }

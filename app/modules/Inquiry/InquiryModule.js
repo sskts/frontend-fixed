@@ -40,7 +40,7 @@ function login(req, res, next) {
             res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
             res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
             res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
-            res.locals.telNum = '';
+            res.locals.telephone = '';
             res.locals.error = null;
             res.render('inquiry/login');
             return;
@@ -96,19 +96,19 @@ function auth(req, res, next) {
                     auth: yield UtilModule.createAuth(req),
                     inquiryTheater: req.body.theaterCode,
                     inquiryId: Number(req.body.reserveNum),
-                    inquiryPass: req.body.telNum // 電話番号
+                    inquiryPass: req.body.telephone // 電話番号
                 });
                 log('照会情報', makeInquiryResult);
                 // inquiryModel.transactionId = await MP.services.transaction.findByInquiryKey({
                 //     theaterCode: req.body.theaterCode, // 施設コード
                 //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
-                //     tel: req.body.telNum // 電話番号
+                //     tel: req.body.telephone // 電話番号
                 // });
                 if (makeInquiryResult === null) {
                     res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
                     res.locals.theaterCode = req.body.theaterCode;
                     res.locals.reserveNum = req.body.reserveNum;
-                    res.locals.telNum = req.body.telNum;
+                    res.locals.telephone = req.body.telephone;
                     res.locals.error = getInquiryError(req);
                     res.render('inquiry/login');
                     return;
@@ -119,7 +119,7 @@ function auth(req, res, next) {
                 inquiryModel.stateReserve = yield COA.services.reserve.stateReserve({
                     theaterCode: req.body.theaterCode,
                     reserveNum: req.body.reserveNum,
-                    telNum: req.body.telNum // 電話番号
+                    telephone: req.body.telephone // 電話番号
                 });
                 log('COA照会情報取得', inquiryModel.stateReserve);
                 if (inquiryModel.stateReserve === null)
@@ -147,7 +147,7 @@ function auth(req, res, next) {
                 res.locals.portalTheaterSite = yield getPortalTheaterSite(req);
                 res.locals.theaterCode = req.body.theaterCode;
                 res.locals.reserveNum = req.body.reserveNum;
-                res.locals.telNum = req.body.telNum;
+                res.locals.telephone = req.body.telephone;
                 res.locals.error = validationResult.mapped();
                 res.render('inquiry/login');
                 return;
@@ -175,8 +175,8 @@ function getInquiryError(req) {
         reserveNum: {
             parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
-        telNum: {
-            parm: 'telNum', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+        telephone: {
+            parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
 }

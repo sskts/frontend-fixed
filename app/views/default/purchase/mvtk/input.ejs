@@ -79,7 +79,7 @@
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket"><%- __('purchase.mvtk.input.prev') %></a></div>
         </div>
         <input type="hidden" name="mvtk" value="">
-        <input type="hidden" name="transactionId" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 <%- include('../../layouts/siteSeal') %>
 </div>

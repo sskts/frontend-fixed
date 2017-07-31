@@ -13,7 +13,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// import * as sskts from '@motionpicture/sskts-domain';
 const httpStatus = require("http-status");
 const apiRequest_1 = require("../apiRequest");
 /**

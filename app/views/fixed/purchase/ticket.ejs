@@ -72,7 +72,7 @@
     
     
         <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.ticket.next') %></button></div>
-        <input type="hidden" name="transactionId" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 
 </div>

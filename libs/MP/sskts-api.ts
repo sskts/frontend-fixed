@@ -4,7 +4,6 @@
  * @ignore
  */
 
-import GoogleTokenClient from './auth/googleTokenClient';
 import OAuth2client from './auth/oAuth2client';
 
 import * as EventService from './service/event';
@@ -16,7 +15,6 @@ import * as PlaceOrderTransactionService from './service/transaction/placeOrder'
 
 export namespace auth {
     export class OAuth2 extends OAuth2client { }
-    export class GoogleToken extends GoogleTokenClient { }
 }
 
 export namespace service {

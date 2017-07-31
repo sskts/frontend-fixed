@@ -9,7 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP/sskts-api';
 import logger from '../../middlewares/logger';
-import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
+import { IMvtk, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
@@ -30,29 +30,17 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.CONFIRM_STATE)) {
+        if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) {
             throw ErrorUtilModule.ERROR_EXPIRE;
         }
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.theater === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        const website = purchaseModel.theater.attributes.websites.find((value) => {
-            return (value.group === 'PORTAL');
-        });
 
         //購入者内容確認表示
-        res.locals.gmoTokenObject = (purchaseModel.gmo !== null) ? purchaseModel.gmo : null;
-        res.locals.input = purchaseModel.input;
-        res.locals.performance = purchaseModel.performance;
-        res.locals.reserveSeats = purchaseModel.reserveSeats;
-        res.locals.reserveTickets = purchaseModel.reserveTickets;
-        res.locals.price = purchaseModel.getReserveAmount();
         res.locals.updateReserve = null;
         res.locals.error = null;
-        res.locals.transactionId = purchaseModel.transaction.id;
-        res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
-        res.locals.step = PurchaseSession.PurchaseModel.CONFIRM_STATE;
+        res.locals.purchaseModel = purchaseModel;
+        res.locals.step = PurchaseModel.CONFIRM_STATE;
         //セッション更新
-        req.session.purchase = purchaseModel.toSession();
+        purchaseModel.save(req.session);
         res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
 
         return;
@@ -73,12 +61,11 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * @param {PurchaseSession.PurchaseModel} purchaseModel
  * @returns {Promise<void>}
  */
-async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promise<void> {
+async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
     // 購入管理番号情報
     const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
@@ -88,24 +75,26 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
     log('購入管理番号情報', mvtkTickets);
     if (mvtkTickets.length === 0 || mvtkSeats.length === 0) throw ErrorUtilModule.ERROR_ACCESS;
     const mvtkFilmCode = MvtkUtilModule.getfilmCode(
-        purchaseModel.performanceCOA.titleCode,
-        purchaseModel.performanceCOA.titleBranchNum);
+        purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+        purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
+    );
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
-        day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
-        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.timeStart)}:00`
+        day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
+        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
         kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmpReserveNum}`, // 興行会社システム座席予約番号
-        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmpReserveNum), // 興行会社ユーザー座席予約番号
+        // tslint:disable-next-line:max-line-length
+        kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.tmpReserveNum}`, // 興行会社システム座席予約番号
+        kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.tmpReserveNum), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-        screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
+        stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+        screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkTickets, // 購入管理番号情報
         zskInfo: mvtkSeats, // 座席情報（itemArray）
         skhnCd: mvtkFilmCode// 作品コード
@@ -114,8 +103,11 @@ async function reserveMvtk(purchaseModel: PurchaseSession.PurchaseModel): Promis
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
         if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
     } catch (err) {
-        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk In', seatInfoSyncIn);
-        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk Out', err);
+        logger.error(
+            'SSKTS-APP:ConfirmModule reserveMvtk',
+            `in: ${seatInfoSyncIn}`,
+            `err: ${err}`
+        );
         throw err;
     }
     log('MVTKムビチケ着券');
@@ -136,11 +128,8 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
     if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
     const purchaseModel = new PurchaseModel(req.session.purchase);
-    if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.mvtk === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
     // 購入管理番号情報
     const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
@@ -150,24 +139,26 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     log('購入管理番号情報', mvtkTickets);
     if (mvtkTickets.length === 0 || mvtkSeats.length === 0) throw ErrorUtilModule.ERROR_ACCESS;
     const mvtkFilmCode = MvtkUtilModule.getfilmCode(
-        purchaseModel.performanceCOA.titleCode,
-        purchaseModel.performanceCOA.titleBranchNum);
+        purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+        purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
+    );
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
-        day: `${moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD')}`,
-        time: `${UtilModule.timeFormat(purchaseModel.performance.attributes.timeStart)}:00`
+        day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
+        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
         kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
         yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
         trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE, // 取消フラグ
-        kgygishSstmZskyykNo: `${purchaseModel.performance.attributes.day}${purchaseModel.reserveSeats.tmpReserveNum}`, // 興行会社システム座席予約番号
-        kgygishUsrZskyykNo: String(purchaseModel.reserveSeats.tmpReserveNum), // 興行会社ユーザー座席予約番号
+        // tslint:disable-next-line:max-line-length
+        kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.tmpReserveNum}`, // 興行会社システム座席予約番号
+        kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.tmpReserveNum), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-        screnCd: purchaseModel.performanceCOA.screenCode, // スクリーンコード
+        stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+        screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkTickets, // 購入管理番号情報
         zskInfo: mvtkSeats, // 座席情報（itemArray）
         skhnCd: mvtkFilmCode// 作品コード
@@ -178,8 +169,11 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
     } catch (err) {
         result = false;
-        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk In', seatInfoSyncIn);
-        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk Out', err);
+        logger.error(
+            'SSKTS-APP:ConfirmModule reserveMvtk',
+            `in: ${seatInfoSyncIn}`,
+            `err: ${err}`
+        );
     }
     //購入セッション削除
     delete req.session.purchase;
@@ -205,12 +199,8 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.input === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
+        if (purchaseModel.profile === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
 
@@ -229,36 +219,35 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             log('ムビチケ決済');
         }
 
-        // MP取引成立
-        await MP.services.transaction.transactionClose({
+        const order = await MP.service.transaction.placeOrder.confirm({
             auth: await UtilModule.createAuth(req),
             transactionId: purchaseModel.transaction.id
         });
-        log('MP取引成立');
+        log('注文確定', order);
+
         //購入情報をセッションへ
         req.session.complete = {
-            performance: purchaseModel.performance,
-            input: purchaseModel.input,
-            reserveSeats: purchaseModel.reserveSeats,
-            reserveTickets: purchaseModel.reserveTickets,
-            price: purchaseModel.getReserveAmount()
+            individualScreeningEvent: purchaseModel.individualScreeningEvent,
+            profile: purchaseModel.profile,
+            seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
+            reserveTickets: purchaseModel.reserveTickets
         };
         if (process.env.VIEW_TYPE === 'fixed') {
             // 本予約に必要な情報を印刷セッションへ
             const updateReserveIn: COA.services.reserve.IUpdReserveArgs = {
-                theaterCode: purchaseModel.performance.attributes.theater.id,
-                dateJouei: purchaseModel.performance.attributes.day,
-                titleCode: purchaseModel.performanceCOA.titleCode,
-                titleBranchNum: purchaseModel.performanceCOA.titleBranchNum,
-                timeBegin: purchaseModel.performance.attributes.timeStart,
-                tmpReserveNum: purchaseModel.reserveSeats.tmpReserveNum,
-                reserveName: `${purchaseModel.input.lastNameHira}　${purchaseModel.input.firstNameHira}`,
-                reserveNameJkana: `${purchaseModel.input.lastNameHira}　${purchaseModel.input.firstNameHira}`,
-                telNum: purchaseModel.input.telNum,
-                mailAddr: purchaseModel.input.mailAddr,
+                theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
+                dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
+                titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
+                timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin,
+                tmpReserveNum: purchaseModel.seatReservationAuthorization.result.tmpReserveNum,
+                reserveName: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
+                reserveNameJkana: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
+                telNum: purchaseModel.profile.telephone,
+                mailAddr: purchaseModel.profile.email,
                 reserveAmount: purchaseModel.getReserveAmount(),
                 listTicket: purchaseModel.reserveTickets.map((ticket) => {
-                    let mvtkTicket: PurchaseSession.IMvtk | undefined;
+                    let mvtkTicket: IMvtk | undefined;
                     if (purchaseModel.mvtk !== null) {
                         mvtkTicket = purchaseModel.mvtk.find((value) => {
                             return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);

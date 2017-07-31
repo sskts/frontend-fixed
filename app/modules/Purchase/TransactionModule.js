@@ -123,7 +123,7 @@ function start(req, res) {
             });
             log('MP取引開始', purchaseModel.transaction);
             //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            purchaseModel.save(req.session);
             //座席選択へ
             res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
         }

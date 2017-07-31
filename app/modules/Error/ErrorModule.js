@@ -64,6 +64,7 @@ function index(err, req, res, _) {
         }
     }
     if (req.session !== undefined) {
+        // TODO
         // delete req.session.purchase;
         // delete req.session.mvtk;
         // delete req.session.complete;
