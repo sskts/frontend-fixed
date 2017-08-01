@@ -2,12 +2,10 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP/sskts-api';
-import logger from '../../middlewares/logger';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -27,7 +25,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.seatReservationAuthorization !== null) {
+        if (purchaseModel.seatReservationAuthorization !== null
+            && purchaseModel.transaction !== null) {
             await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
                 auth: await UtilModule.createAuth(req),
                 transactionId: purchaseModel.transaction.id,

@@ -5,7 +5,7 @@
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
+import { IMvtk, PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
@@ -24,8 +24,6 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
 
@@ -34,11 +32,11 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
         // ムビチケ券適用確認ページ表示
         res.locals.error = null;
-        res.locals.transactionId = purchaseModel.transaction.id;
+        res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error)
@@ -55,7 +53,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
  * @param {PurchaseSession.Mvtk[]} mvtk
  * @returns {string[]}
  */
-function creatPurchaseNoList(mvtk: PurchaseSession.IMvtk[]) {
+function creatPurchaseNoList(mvtk: IMvtk[]) {
     const result: string[] = [];
     for (const target of mvtk) {
         const purchaseNo = result.find((value) => {

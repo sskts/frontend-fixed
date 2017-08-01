@@ -24,12 +24,61 @@ class OAuth2Client {
         this.state = (state !== undefined) ? state : '';
         this.credentials = {};
     }
+    /**
+     * クライアント認証でアクセストークンを取得します。
+     */
+    getToken() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // request for new token
+            debug('requesting access token...');
+            return yield request.post({
+                url: OAuth2Client.SSKTS_OAUTH2_TOKEN_URL,
+                body: {
+                    scopes: this.scopes,
+                    client_id: this.clientId,
+                    client_secret: this.clientSecret,
+                    state: this.state,
+                    grant_type: 'client_credentials'
+                },
+                json: true,
+                simple: false,
+                resolveWithFullResponse: true,
+                useQuerystring: true
+            }).then((response) => {
+                if (response.statusCode !== httpStatus.OK) {
+                    if (typeof response.body === 'string') {
+                        throw new Error(response.body);
+                    }
+                    if (typeof response.body === 'object' && response.body.errors !== undefined) {
+                        const message = response.body.errors.map((error) => {
+                            return `${error.title}:${error.detail}`;
+                        }).join(', ');
+                        throw new Error(message);
+                    }
+                    throw new Error('An unexpected error occurred');
+                }
+                const tokens = response.body;
+                if (tokens && tokens.expires_in) {
+                    // tslint:disable-next-line:no-magic-numbers
+                    tokens.expiry_date = ((new Date()).getTime() + (tokens.expires_in * 1000));
+                    delete tokens.expires_in;
+                }
+                return tokens;
+            });
+        });
+    }
+    /**
+     * OAuthクライアントに認証情報をセットします。
+     */
     setCredentials(credentials) {
         this.credentials = credentials;
     }
     refreshAccessToken() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.refreshToken()
+            if (this.credentials.refresh_token === undefined) {
+                throw new Error('No refresh token is set.');
+            }
+            return yield this.refreshToken(this.credentials.refresh_token)
                 .then((tokens) => {
                 this.credentials = tokens;
                 return this.credentials;
@@ -37,15 +86,19 @@ class OAuth2Client {
         });
     }
     /**
-     * Get a non-expired access token, after refreshing if necessary
+     * 期限の切れていないアクセストークンを取得します。
+     * 必要であれば更新してから取得します。
      */
     getAccessToken() {
         return __awaiter(this, void 0, void 0, function* () {
             const expiryDate = this.credentials.expiry_date;
             // if no expiry time, assume it's not expired
             const isTokenExpired = (expiryDate !== undefined) ? (expiryDate <= (new Date()).getTime()) : false;
+            if (this.credentials.access_token === undefined && this.credentials.refresh_token === undefined) {
+                throw new Error('No access or refresh token is set.');
+            }
             const shouldRefresh = (this.credentials.access_token === undefined) || isTokenExpired;
-            if (shouldRefresh) {
+            if (shouldRefresh && this.credentials.refresh_token) {
                 const tokens = yield this.refreshAccessToken();
                 return tokens.access_token;
             }
@@ -139,18 +192,17 @@ class OAuth2Client {
     /**
      * Refreshes the access token.
      */
-    refreshToken() {
+    refreshToken(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
             // request for new token
-            debug('requesting access token...');
+            debug('refreshing access token...');
             return yield request.post({
                 url: OAuth2Client.SSKTS_OAUTH2_TOKEN_URL,
                 body: {
-                    scopes: this.scopes,
+                    refresh_token: refreshToken,
                     client_id: this.clientId,
                     client_secret: this.clientSecret,
-                    state: this.state,
-                    grant_type: 'client_credentials'
+                    grant_type: 'refresh_token'
                 },
                 json: true,
                 simple: false,

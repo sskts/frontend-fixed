@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const httpStatus = require("http-status");
+const http_status_1 = require("http-status");
 const apiRequest_1 = require("../../apiRequest");
 /**
  * 取引を開始する
@@ -24,7 +24,7 @@ function start(args) {
         return yield apiRequest_1.default({
             uri: '/transactions/placeOrder/start',
             method: 'POST',
-            expectedStatusCodes: [httpStatus.NOT_FOUND, httpStatus.OK],
+            expectedStatusCodes: [http_status_1.NOT_FOUND, http_status_1.OK],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: {
                 expires: args.expires.valueOf(),
@@ -42,7 +42,7 @@ function createSeatReservationAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/seatReservationAuthorization`,
             method: 'POST',
-            expectedStatusCodes: [httpStatus.CREATED],
+            expectedStatusCodes: [http_status_1.CREATED],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: {
                 eventIdentifier: args.eventIdentifier,
@@ -60,7 +60,7 @@ function cancelSeatReservationAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/seatReservationAuthorization/${args.authorizationId}`,
             method: 'DELETE',
-            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            expectedStatusCodes: [http_status_1.NO_CONTENT],
             auth: { bearer: yield args.auth.getAccessToken() }
         });
     });
@@ -74,7 +74,7 @@ function createCreditCardAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/creditCard`,
             method: 'POST',
-            expectedStatusCodes: [httpStatus.CREATED],
+            expectedStatusCodes: [http_status_1.CREATED],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: {
                 orderId: args.orderId,
@@ -94,7 +94,7 @@ function cancelCreditCardAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/creditCard/${args.authorizationId}`,
             method: 'DELETE',
-            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            expectedStatusCodes: [http_status_1.NO_CONTENT],
             auth: { bearer: yield args.auth.getAccessToken() }
         });
     });
@@ -108,7 +108,7 @@ function createMvtkAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/mvtk`,
             method: 'POST',
-            expectedStatusCodes: [httpStatus.CREATED],
+            expectedStatusCodes: [http_status_1.CREATED],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: args.mvtk
         });
@@ -123,7 +123,7 @@ function cancelMvtkAuthorization(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/paymentInfos/mvtk/${args.authorizationId}`,
             method: 'DELETE',
-            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            expectedStatusCodes: [http_status_1.NO_CONTENT],
             auth: { bearer: yield args.auth.getAccessToken() }
         });
     });
@@ -137,7 +137,7 @@ function setAgentProfile(args) {
         yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/agent/profile`,
             method: 'PUT',
-            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            expectedStatusCodes: [http_status_1.NO_CONTENT],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: args.profile
         });
@@ -152,7 +152,7 @@ function confirm(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/confirm`,
             method: 'POST',
-            expectedStatusCodes: [httpStatus.CREATED],
+            expectedStatusCodes: [http_status_1.CREATED],
             auth: { bearer: yield args.auth.getAccessToken() }
         });
     });
@@ -166,7 +166,7 @@ function sendEmailNotification(args) {
         return yield apiRequest_1.default({
             uri: `/transactions/placeOrder/${args.transactionId}/tasks/sendEmailNotification`,
             method: 'POST',
-            expectedStatusCodes: [httpStatus.NO_CONTENT],
+            expectedStatusCodes: [http_status_1.NO_CONTENT],
             auth: { bearer: yield args.auth.getAccessToken() },
             body: args.emailNotification
         });

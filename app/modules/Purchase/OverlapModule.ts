@@ -2,8 +2,6 @@
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-
-import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as MP from '../../../libs/MP/sskts-api';

@@ -10,7 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import logger from '../../../middlewares/logger';
-import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
+import { IMvtk, PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
 import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
@@ -32,17 +32,14 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
         // ムビチケセッション削除
         delete req.session.mvtk;
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.transactionId = purchaseModel.transaction.id;
-        res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
         res.locals.error = null;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.purchaseModel = purchaseModel;
+        res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error)
@@ -74,13 +71,9 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw ErrorUtilModule.ERROR_ACCESS;
-        }
+        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
         MvtkInputForm(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_ACCESS;
@@ -96,24 +89,28 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 };
             }),
             skhnCd: MvtkUtilModule.getfilmCode(
-                purchaseModel.performanceCOA.titleCode,
-                purchaseModel.performanceCOA.titleBranchNum), // 作品コード
-            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-            jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
+                purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
+            ), // 作品コード
+            stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+            jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
         };
         let purchaseNumberAuthResults;
         try {
             purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
             log('ムビチケ認証', purchaseNumberAuthResults);
         } catch (err) {
-            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
-            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberError', err);
+            logger.error(
+                'SSKTS-APP:MvtkInputModule.select',
+                `in: ${purchaseNumberAuthIn}`,
+                `err: ${err}`
+            );
             throw err;
         }
         if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const validationList: string[] = [];
         // ムビチケセッション作成
-        const mvtkList: PurchaseSession.IMvtk[] = [];
+        const mvtkList: IMvtk[] = [];
         for (const purchaseNumberAuthResult of purchaseNumberAuthResults) {
             for (const info of purchaseNumberAuthResult.ykknInfo) {
                 const input = inputInfo.find((value) => {
@@ -122,15 +119,15 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
                 const ticket = await COA.services.master.mvtkTicketcode({
-                    theaterCode: purchaseModel.performance.attributes.theater.id,
+                    theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
                     kbnDenshiken: purchaseNumberAuthResult.dnshKmTyp,
                     kbnMaeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
                     kbnKensyu: info.ykknshTyp,
                     salesPrice: Number(info.knshknhmbiUnip),
                     appPrice: Number(info.kijUnip),
                     kbnEisyahousiki: info.eishhshkTyp,
-                    titleCode: purchaseModel.performanceCOA.titleCode,
-                    titleBranchNum: purchaseModel.performanceCOA.titleBranchNum
+                    titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                    titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
                 });
                 log('ムビチケチケットコード取得', ticket);
                 const validTicket = {
@@ -166,15 +163,9 @@ export async function select(req: Request, res: Response, next: NextFunction): P
     } catch (err) {
         if (err === ErrorUtilModule.ERROR_VALIDATION) {
             const purchaseModel = new PurchaseModel(req.session.purchase);
-            if (purchaseModel.reserveSeats === null || purchaseModel.transaction === null) {
-                next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
-
-                return;
-            }
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-            res.locals.transactionId = purchaseModel.transaction.id;
-            res.locals.reserveSeatLength = purchaseModel.reserveSeats.listTmpReserve.length;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.TICKET_STATE;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
 
             return;

@@ -3,11 +3,9 @@
  * @namespace Purchase.InputModule
  */
 
-import * as COA from '@motionpicture/coa-service';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as moment from 'moment';
 import * as MP from '../../../libs/MP/sskts-api';
 import InputForm from '../../forms/Purchase/InputForm';
 import logger from '../../middlewares/logger';
@@ -61,7 +59,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         res.locals.error = null;
         res.locals.gmoError = null;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-        res.locals.gmoShopId = 'tshop00026096'; // TODO
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -113,7 +110,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = null;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.gmoShopId = 'tshop00026096'; // TODO
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -150,7 +146,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             // クレジット決済
             res.locals.gmoError = null;
             purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
-            log('purchaseModel.gmo', purchaseModel.gmo)
             purchaseModel.createOrderId();
             purchaseModel.save(req.session);
             const createCreditCardAuthorizationArgs = {
@@ -158,12 +153,15 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 transactionId: purchaseModel.transaction.id,
                 orderId: (<string>purchaseModel.orderId),
                 amount: purchaseModel.getReserveAmount(),
-                method: '1',
-                creditCard: (<IGMO>purchaseModel.gmo).token
+                method: GMO.utils.util.Method.Lump,
+                creditCard: {
+                    token: (<IGMO>purchaseModel.gmo).token
+                }
             };
             try {
                 await MP.service.transaction.placeOrder.createCreditCardAuthorization(createCreditCardAuthorizationArgs);
             } catch (err) {
+                log (createCreditCardAuthorizationArgs);
                 logger.error(
                     'SSKTS-APP:InputModule.submit createCreditCardAuthorization',
                     `in: ${createCreditCardAuthorizationArgs}`,
@@ -202,7 +200,6 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             };
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.gmoShopId = 'tshop00026096'; // TODO
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });

@@ -17,7 +17,7 @@ class PurchaseModel {
             session = {};
         }
         this.individualScreeningEvent = (session.individualScreeningEvent !== undefined) ? session.individualScreeningEvent : null;
-        this.seller = (session.seller !== undefined) ? session.seller : null;
+        this.movieTheaterOrganization = (session.movieTheaterOrganization !== undefined) ? session.movieTheaterOrganization : null;
         this.transaction = (session.transaction !== undefined) ? session.transaction : null;
         this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
@@ -39,7 +39,23 @@ class PurchaseModel {
      * @returns {void}
      */
     save(session) {
-        session.purchase = this.toSession();
+        const purchaseSession = {
+            individualScreeningEvent: this.individualScreeningEvent,
+            movieTheaterOrganization: this.movieTheaterOrganization,
+            transaction: this.transaction,
+            salesTickets: this.salesTickets,
+            reserveTickets: this.reserveTickets,
+            seatReservationAuthorization: this.seatReservationAuthorization,
+            orderId: this.orderId,
+            orderCount: this.orderCount,
+            creditCardAuthorization: this.creditCardAuthorization,
+            profile: this.profile,
+            gmo: this.gmo,
+            mvtk: this.mvtk,
+            mvtkAuthorization: this.mvtkAuthorization,
+            expired: this.expired
+        };
+        session.purchase = purchaseSession;
     }
     /**
      * ステータス確認
@@ -129,7 +145,7 @@ class PurchaseModel {
         if (reserveTickets === null)
             return price;
         for (const ticket of reserveTickets) {
-            price += ticket.mvtkAppPrice;
+            price += ticket.mvtkSalesPrice;
         }
         return price;
     }
@@ -209,7 +225,7 @@ class PurchaseModel {
                     stdPrice: 0,
                     addPrice: mvtk.ticket.addPrice,
                     salePrice: mvtk.ticket.addPrice,
-                    ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                    ticketNote: req.__('common.mvtk_code') + mvtk.code,
                     addPriceGlasses: mvtk.ticket.addPriceGlasses,
                     mvtkNum: mvtk.code,
                     glasses: false
@@ -223,7 +239,7 @@ class PurchaseModel {
                         stdPrice: 0,
                         addPrice: mvtk.ticket.addPrice,
                         salePrice: mvtk.ticket.addPrice + mvtk.ticket.addPriceGlasses,
-                        ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                        ticketNote: req.__('common.mvtk_code') + mvtk.code,
                         addPriceGlasses: mvtk.ticket.addPriceGlasses,
                         mvtkNum: mvtk.code,
                         glasses: true
@@ -240,36 +256,16 @@ class PurchaseModel {
      * @returns {void}
      */
     createOrderId() {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null) {
+            return;
+        }
         // GMOオーソリ取得
         const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS_03);
         const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS_08);
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
         this.orderId = `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS_02)}`;
         this.orderCount += 1;
-    }
-    /**
-     * セッションObjectへ変換
-     * @memberof PurchaseModel
-     * @method toSession
-     * @returns {Object}
-     */
-    toSession() {
-        return {
-            individualScreeningEvent: this.individualScreeningEvent,
-            seller: this.seller,
-            transaction: this.transaction,
-            salesTickets: this.salesTickets,
-            reserveTickets: this.reserveTickets,
-            seatReservationAuthorization: this.seatReservationAuthorization,
-            orderId: this.orderId,
-            orderCount: this.orderCount,
-            creditCardAuthorization: this.creditCardAuthorization,
-            profile: this.profile,
-            gmo: this.gmo,
-            mvtk: this.mvtk,
-            mvtkAuthorization: this.mvtkAuthorization,
-            expired: this.expired
-        };
     }
 }
 PurchaseModel.PERFORMANCE_STATE = 0;

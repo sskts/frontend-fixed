@@ -2,9 +2,9 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
+import * as sskts from '@motionpicture/sskts-domain';
 import { Request } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
 import * as UtilModule from '../../modules/Util/UtilModule';
 /**
  * 購入者情報
@@ -197,7 +197,7 @@ export interface IReserveTicket {
  * 券種
  * @interface ISalesTicket
  */
-interface ISalesTicket {
+export interface ISalesTicket {
     /**
      * チケットコード
      */
@@ -246,6 +246,69 @@ interface ISalesTicket {
 
 /**
  * 購入セッション
+ * @interface IPurchaseSession
+ */
+export interface IPurchaseSession {
+    /**
+     * 上映イベント
+     */
+    individualScreeningEvent: sskts.factory.event.individualScreeningEvent.IEvent | null;
+    /**
+     * 劇場ショップ
+     */
+    movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
+    /**
+     * 取引
+     */
+    transaction: sskts.factory.transaction.ITransaction | null;
+    /**
+     * 販売可能チケット情報
+     */
+    salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
+    /**
+     * 予約チケット
+     */
+    reserveTickets: IReserveTicket[];
+    /**
+     * 予約座席
+     */
+    seatReservationAuthorization: sskts.factory.authorization.seatReservation.IAuthorization | null;
+    /**
+     * GMOオーダーID
+     */
+    orderId: string | null;
+    /**
+     * GMOオーダー回数
+     */
+    orderCount: number;
+    /**
+     * GMOオーソリ
+     */
+    creditCardAuthorization: sskts.factory.authorization.gmo.IAuthorization | null;
+    /**
+     * 入力情報
+     */
+    profile: IProfile | null;
+    /**
+     * GMO情報
+     */
+    gmo: IGMO | null;
+    /**
+     * ムビチケ
+     */
+    mvtk: IMvtk[];
+    /**
+     * ムビチケオーソリ
+     */
+    mvtkAuthorization: sskts.factory.authorization.mvtk.IAuthorization | null;
+    /**
+     * 有効期限
+     */
+    expired: Date;
+}
+
+/**
+ * 購入セッション
  * @class PurchaseModel
  */
 export class PurchaseModel {
@@ -259,15 +322,15 @@ export class PurchaseModel {
     /**
      * 上映イベント
      */
-    public individualScreeningEvent: any | null;
+    public individualScreeningEvent: sskts.factory.event.individualScreeningEvent.IEvent | null;
     /**
-     * 劇場のショップ
+     * 劇場ショップ
      */
-    public seller: any | null;
+    public movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
     /**
      * 取引
      */
-    public transaction: any | null;
+    public transaction: sskts.factory.transaction.ITransaction | null;
     /**
      * 販売可能チケット情報
      */
@@ -279,7 +342,7 @@ export class PurchaseModel {
     /**
      * 予約座席
      */
-    public seatReservationAuthorization: any | null;
+    public seatReservationAuthorization: sskts.factory.authorization.seatReservation.IAuthorization | null;
     /**
      * GMOオーダーID
      */
@@ -291,7 +354,7 @@ export class PurchaseModel {
     /**
      * GMOオーソリ
      */
-    public creditCardAuthorization: any | null;
+    public creditCardAuthorization: sskts.factory.authorization.gmo.IAuthorization | null;
     /**
      * 入力情報
      */
@@ -307,7 +370,7 @@ export class PurchaseModel {
     /**
      * ムビチケオーソリ
      */
-    public mvtkAuthorization: any | null;
+    public mvtkAuthorization: sskts.factory.authorization.mvtk.IAuthorization | null;
     /**
      * 有効期限
      */
@@ -324,7 +387,7 @@ export class PurchaseModel {
         }
 
         this.individualScreeningEvent = (session.individualScreeningEvent !== undefined) ? session.individualScreeningEvent : null;
-        this.seller = (session.seller !== undefined) ? session.seller : null;
+        this.movieTheaterOrganization = (session.movieTheaterOrganization !== undefined) ? session.movieTheaterOrganization : null;
         this.transaction = (session.transaction !== undefined) ? session.transaction : null;
         this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
@@ -346,9 +409,24 @@ export class PurchaseModel {
      * @method toSession
      * @returns {void}
      */
-
     public save(session: any): void {
-        session.purchase = this.toSession();
+        const purchaseSession: IPurchaseSession = {
+            individualScreeningEvent: this.individualScreeningEvent,
+            movieTheaterOrganization: this.movieTheaterOrganization,
+            transaction: this.transaction,
+            salesTickets: this.salesTickets,
+            reserveTickets: this.reserveTickets,
+            seatReservationAuthorization: this.seatReservationAuthorization,
+            orderId: this.orderId,
+            orderCount: this.orderCount,
+            creditCardAuthorization: this.creditCardAuthorization,
+            profile: this.profile,
+            gmo: this.gmo,
+            mvtk: this.mvtk,
+            mvtkAuthorization: this.mvtkAuthorization,
+            expired: this.expired
+        };
+        session.purchase = purchaseSession;
     }
 
     /**
@@ -437,7 +515,7 @@ export class PurchaseModel {
         let price = 0;
         if (reserveTickets === null) return price;
         for (const ticket of reserveTickets) {
-            price += ticket.mvtkAppPrice;
+            price += ticket.mvtkSalesPrice;
         }
 
         return price;
@@ -528,7 +606,7 @@ export class PurchaseModel {
                     stdPrice: 0,
                     addPrice: mvtk.ticket.addPrice,
                     salePrice: mvtk.ticket.addPrice,
-                    ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                    ticketNote: req.__('common.mvtk_code') + mvtk.code,
                     addPriceGlasses: mvtk.ticket.addPriceGlasses,
                     mvtkNum: mvtk.code,
                     glasses: false
@@ -543,7 +621,7 @@ export class PurchaseModel {
                         stdPrice: 0,
                         addPrice: mvtk.ticket.addPrice,
                         salePrice: (<number>mvtk.ticket.addPrice) + (<number>mvtk.ticket.addPriceGlasses),
-                        ticketNote: req.__('common.mvtkCode') + mvtk.code,
+                        ticketNote: req.__('common.mvtk_code') + mvtk.code,
                         addPriceGlasses: mvtk.ticket.addPriceGlasses,
                         mvtkNum: mvtk.code,
                         glasses: true
@@ -562,36 +640,15 @@ export class PurchaseModel {
      * @returns {void}
      */
     public createOrderId(): void {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null) {
+            return;
+        }
         // GMOオーソリ取得
         const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS_03);
         const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS_08);
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
         this.orderId = `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS_02)}`;
         this.orderCount += 1;
-    }
-
-    /**
-     * セッションObjectへ変換
-     * @memberof PurchaseModel
-     * @method toSession
-     * @returns {Object}
-     */
-    private toSession(): Object {
-        return {
-            individualScreeningEvent: this.individualScreeningEvent,
-            seller: this.seller,
-            transaction: this.transaction,
-            salesTickets: this.salesTickets,
-            reserveTickets: this.reserveTickets,
-            seatReservationAuthorization: this.seatReservationAuthorization,
-            orderId: this.orderId,
-            orderCount: this.orderCount,
-            creditCardAuthorization: this.creditCardAuthorization,
-            profile: this.profile,
-            gmo: this.gmo,
-            mvtk: this.mvtk,
-            mvtkAuthorization: this.mvtkAuthorization,
-            expired: this.expired
-        };
     }
 }

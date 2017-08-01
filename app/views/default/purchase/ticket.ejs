@@ -82,7 +82,7 @@
     
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.ticket.next') %></button></div>
-            <div class="prev-link"><a class="icon-prev-black"href="/purchase/seat/<%- purchaseModel.individualScreeningEvent.id %>/"><%- __('purchase.ticket.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev-black"href="/purchase/seat/<%- purchaseModel.individualScreeningEvent.identifier %>/"><%- __('purchase.ticket.prev') %></a></div>
         </div>
         <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>

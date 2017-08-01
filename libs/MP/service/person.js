@@ -13,65 +13,63 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const httpStatus = require("http-status");
+const http_status_1 = require("http-status");
 const apiRequest_1 = require("../apiRequest");
 /**
  * プロフィール取得
  */
-function getMyProfile(args) {
+function getProfile(args) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield apiRequest_1.default({
-            uri: '/people/me/profile',
-            // qs: args.searchConditions,
+            uri: `/people/${args.personId}/profile`,
             auth: { bearer: yield args.auth.getAccessToken() },
             method: 'GET',
-            expectedStatusCodes: [httpStatus.OK]
+            expectedStatusCodes: [http_status_1.OK]
         });
     });
 }
-exports.getMyProfile = getMyProfile;
+exports.getProfile = getProfile;
 /**
  * プロフィール変更
  */
-function updateMyProfile(args) {
+function updateProfile(args) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield apiRequest_1.default({
-            uri: '/people/me/profile',
+            uri: `/people/${args.personId}/profile`,
             body: args.profile,
             auth: { bearer: yield args.auth.getAccessToken() },
             method: 'PUT',
-            expectedStatusCodes: [httpStatus.NO_CONTENT]
+            expectedStatusCodes: [http_status_1.NO_CONTENT]
         });
     });
 }
-exports.updateMyProfile = updateMyProfile;
+exports.updateProfile = updateProfile;
 /**
  * クレジットカード検索
  */
-function findMyCreditCards(args) {
+function findCreditCards(args) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield apiRequest_1.default({
-            uri: '/people/me/creditCards',
-            // qs: args.searchConditions,
+            uri: `/people/${args.personId}/creditCards`,
             auth: { bearer: yield args.auth.getAccessToken() },
             method: 'GET',
-            expectedStatusCodes: [httpStatus.OK]
+            expectedStatusCodes: [http_status_1.OK]
         });
     });
 }
-exports.findMyCreditCards = findMyCreditCards;
+exports.findCreditCards = findCreditCards;
 /**
  * クレジットカード追加
  */
-function addMyCreditCard(args) {
+function addCreditCard(args) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield apiRequest_1.default({
-            uri: '/people/me/creditCards',
+            uri: `/people/${args.personId}/creditCards`,
             body: args.creditCard,
             auth: { bearer: yield args.auth.getAccessToken() },
             method: 'POST',
-            expectedStatusCodes: [httpStatus.CREATED]
+            expectedStatusCodes: [http_status_1.CREATED]
         });
     });
 }
-exports.addMyCreditCard = addMyCreditCard;
+exports.addCreditCard = addCreditCard;

@@ -170,14 +170,21 @@ function createAuth(req) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
+        let auth;
         if (req.session.auth === undefined) {
-            return new MP.auth.OAuth2('motionpicture', 'motionpicture', 'teststate', [
+            auth = new MP.auth.OAuth2('motionpicture', 'motionpicture', 'teststate', [
                 'transactions',
                 'events.read-only',
-                'organizations.read-only'
+                'organizations.read-only',
+                'orders.read-only'
             ]);
         }
-        return new MP.auth.OAuth2(req.session.auth.clientId, req.session.auth.clientSecret, req.session.auth.state, req.session.auth.scopes);
+        else {
+            auth = new MP.auth.OAuth2(req.session.auth.clientId, req.session.auth.clientSecret, req.session.auth.state, req.session.auth.scopes);
+        }
+        const credentials = yield auth.getToken();
+        auth.setCredentials(credentials);
+        return auth;
     });
 }
 exports.createAuth = createAuth;

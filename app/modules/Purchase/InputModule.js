@@ -12,6 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const MP = require("../../../libs/MP/sskts-api");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
@@ -70,7 +71,6 @@ function index(req, res, next) {
             res.locals.error = null;
             res.locals.gmoError = null;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.gmoShopId = 'tshop00026096'; // TODO
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -125,7 +125,6 @@ function submit(req, res, next) {
                 res.locals.error = validationResult.mapped();
                 res.locals.gmoError = null;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.gmoShopId = 'tshop00026096'; // TODO
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -158,7 +157,6 @@ function submit(req, res, next) {
                 // クレジット決済
                 res.locals.gmoError = null;
                 purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
-                log('purchaseModel.gmo', purchaseModel.gmo);
                 purchaseModel.createOrderId();
                 purchaseModel.save(req.session);
                 const createCreditCardAuthorizationArgs = {
@@ -166,13 +164,16 @@ function submit(req, res, next) {
                     transactionId: purchaseModel.transaction.id,
                     orderId: purchaseModel.orderId,
                     amount: purchaseModel.getReserveAmount(),
-                    method: '1',
-                    creditCard: purchaseModel.gmo.token
+                    method: GMO.utils.util.Method.Lump,
+                    creditCard: {
+                        token: purchaseModel.gmo.token
+                    }
                 };
                 try {
                     yield MP.service.transaction.placeOrder.createCreditCardAuthorization(createCreditCardAuthorizationArgs);
                 }
                 catch (err) {
+                    log(createCreditCardAuthorizationArgs);
                     logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
                     throw ErrorUtilModule.ERROR_VALIDATION;
                 }
@@ -206,7 +207,6 @@ function submit(req, res, next) {
                 };
                 res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.gmoShopId = 'tshop00026096'; // TODO
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });

@@ -39,6 +39,8 @@ function index(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.individualScreeningEvent === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.TICKET_STATE))
@@ -148,16 +150,18 @@ function select(req, res, next) {
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
                 log('MPCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
-                    // ムビチケオーソリ削除
+                    yield MP.service.transaction.placeOrder.cancelMvtkAuthorization({
+                        auth: yield UtilModule.createAuth(req),
+                        transactionId: purchaseModel.transaction.id,
+                        authorizationId: purchaseModel.mvtkAuthorization.id
+                    });
                     log('MPムビチケオーソリ削除');
                 }
                 if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
                     // 購入管理番号情報
-                    const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
-                    const mvtkTickets = mvtk.tickets;
-                    const mvtkSeats = mvtk.seats;
-                    log('購入管理番号情報', mvtkTickets);
-                    if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
+                    const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
+                    log('購入管理番号情報', mvtkInfo);
+                    if (mvtkInfo === null)
                         throw ErrorUtilModule.ERROR_ACCESS;
                     const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
                     // 興行会社ユーザー座席予約番号(予約番号)
@@ -165,7 +169,7 @@ function select(req, res, next) {
                         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
                         time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
                     };
-                    purchaseModel.mvtkAuthorization = yield MP.service.transaction.placeOrder.createMvtkAuthorization({
+                    const createMvtkAuthorizationArgs = {
                         auth: yield UtilModule.createAuth(req),
                         transactionId: purchaseModel.transaction.id,
                         mvtk: {
@@ -174,18 +178,34 @@ function select(req, res, next) {
                             yyk_dvc_typ: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
                             trksh_flg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
                             // tslint:disable-next-line:max-line-length
-                            kgygish_sstm_zskyyk_no: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.tmpReserveNum}`,
-                            kgygish_usr_zskyyk_no: String(purchaseModel.seatReservationAuthorization.tmpReserveNum),
+                            kgygish_sstm_zskyyk_no: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
+                            kgygish_usr_zskyyk_no: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
                             jei_dt: `${startDate.day} ${startDate.time}`,
                             kij_ymd: startDate.day,
                             st_cd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
                             scren_cd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-                            knyknr_no_info: mvtkTickets,
-                            zsk_info: mvtkSeats,
+                            knyknr_no_info: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
+                                return {
+                                    knyknr_no: purchaseNoInfo.KNYKNR_NO,
+                                    pin_cd: purchaseNoInfo.PIN_CD,
+                                    knsh_info: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
+                                        return {
+                                            knsh_typ: knshInfo.KNSH_TYP,
+                                            mi_num: knshInfo.MI_NUM
+                                        };
+                                    })
+                                };
+                            }),
+                            zsk_info: mvtkInfo.seat.map((seat) => {
+                                return { zsk_cd: seat.ZSK_CD };
+                            }),
                             skhn_cd: mvtkFilmCode // 作品コード
                         }
-                    });
-                    log('MPムビチケオーソリ追加');
+                    };
+                    log('MPムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
+                    // tslint:disable-next-line:max-line-length
+                    purchaseModel.mvtkAuthorization = yield MP.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
+                    log('MPムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
                 }
                 purchaseModel.save(req.session);
                 log('セッション更新');
@@ -201,6 +221,8 @@ function select(req, res, next) {
                 if (req.session.purchase === undefined)
                     throw ErrorUtilModule.ERROR_EXPIRE;
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                if (purchaseModel.individualScreeningEvent === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
                 const today = moment().format('YYYYMMDD');
                 res.locals.error = '';
                 res.locals.mvtkFlg = (purchaseModel.individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'

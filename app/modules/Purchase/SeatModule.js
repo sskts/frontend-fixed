@@ -81,6 +81,8 @@ function select(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (req.params.id === undefined)

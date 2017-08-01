@@ -1,30 +1,32 @@
-<%= input.familyName %> <%= input.givenName %> 様
-この度は、<%= performance.attributes.theater.name.ja %>のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
+<%= purchaseModel.profile.familyName %> <%= purchaseModel.profile.givenName %> 様
+この度は、<%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %>のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
 
 [予約番号]
-<%= reserveSeats.tmpReserveNum %>
+<%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %>
 
 [鑑賞日時]
-<%= moment(performance.attributes.day).format('YYYY年MM月DD日') %> (<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.timeStart) %>
+<%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin) %>
 
 [作品名]
-<%= performance.attributes.film.name.ja %>
+<%= purchaseModel.individualScreeningEvent.workPerformed.name %>
 
 [スクリーン名]
-<%= performance.attributes.screen.name.ja %>
+<%= purchaseModel.individualScreeningEvent.location.name.ja %>
 
 [座席]
-<%= reserveSeatsString.join('\n') %>
+<% for (ticket of purchaseModel.reserveTickets) { %>
+<%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %>
+<% } %>
 
 [合計]
-￥<%= amount %>
+￥<%= formatPrice(purchaseModel.getReserveAmount()) %>
 
 【チケット発券について】
 チケットの発券/入場方法は2通りからお選び頂けます。
 
 <発券/入場方法1 入場用QRコードで入場>
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。
-https://<%= domain %>/inquiry/login?theater=<%= performance.attributes.theater.id %>
+https://<%= domain %>/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>
 
 <発券/入場方法2 劇場発券機で発券>
 劇場に設置されている発券機にて発券頂きます。予約番号をお控えの上ご来場ください。
@@ -37,11 +39,11 @@ https://<%= domain %>/inquiry/login?theater=<%= performance.attributes.theater.i
 ・年齢や学生など各種証明が必要なチケットを購入された方は、入場時にご提示ください。
 ご提示頂けない場合は、一般料金との差額を頂きます。
 
-なお、このメールは、<%= performance.attributes.theater.name.ja %>の予約システムでチケットをご購入頂いた方にお送りしておりますが、
+なお、このメールは、<%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %>の予約システムでチケットをご購入頂いた方にお送りしておりますが、
 チケット購入に覚えのない方に届いております場合は、下記お問い合わせ先までご連絡ください。
 ※なお、このメールアドレスは送信専用となっておりますので、ご返信頂けません。
 ご不明な点がございましたら、下記番号までお問合わせください。
 
 お問い合わせはこちら
-<%= performance.attributes.theater.name.ja %>
-TEL：<%= theaterTelNumber %>
+<%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %>
+TEL：000000000000000000000<%=  %>

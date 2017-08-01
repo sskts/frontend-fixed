@@ -5,7 +5,7 @@
  */
 
 import * as sskts from '@motionpicture/sskts-domain';
-import * as httpStatus from 'http-status';
+import { NOT_FOUND, OK } from 'http-status';
 import apiRequest from '../apiRequest';
 
 import OAuth2client from '../auth/oAuth2client';
@@ -15,12 +15,15 @@ import OAuth2client from '../auth/oAuth2client';
  */
 export async function searchMovieTheaters(args: {
     auth: OAuth2client;
+    /**
+     * 検索条件
+     */
     searchConditions?: sskts.service.place.ISearchMovieTheatersConditions;
 }): Promise<sskts.service.place.ISearchMovieTheaterResult[]> {
     return await apiRequest({
         uri: '/places/movieTheater',
         method: 'GET',
-        expectedStatusCodes: [httpStatus.OK],
+        expectedStatusCodes: [OK],
         qs: args.searchConditions,
         auth: { bearer: await args.auth.getAccessToken() }
     });
@@ -31,12 +34,15 @@ export async function searchMovieTheaters(args: {
  */
 export async function findMovieTheater(args: {
     auth: OAuth2client;
+    /**
+     * 枝番号
+     */
     branchCode: string;
 }): Promise<sskts.factory.place.movieTheater.IPlace | null> {
     return await apiRequest({
         uri: `/places/movieTheater/${args.branchCode}`,
         method: 'GET',
-        expectedStatusCodes: [httpStatus.NOT_FOUND, httpStatus.OK],
+        expectedStatusCodes: [NOT_FOUND, OK],
         auth: { bearer: await args.auth.getAccessToken() }
     });
 }

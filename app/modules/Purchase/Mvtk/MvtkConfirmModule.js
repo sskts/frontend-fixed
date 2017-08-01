@@ -27,19 +27,17 @@ function index(req, res, next) {
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
             return;
         }
         // ムビチケ券適用確認ページ表示
         res.locals.error = null;
-        res.locals.transactionId = purchaseModel.transaction.id;
+        res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
         res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.step = PurchaseModel_1.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     }
     catch (err) {

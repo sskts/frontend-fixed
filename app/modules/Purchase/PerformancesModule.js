@@ -8,6 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * パフォーマンス一覧
+ * @namespace Purchase.PerformancesModule
+ */
 const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../libs/MP/sskts-api");
@@ -30,7 +34,8 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.seatReservationAuthorization !== null) {
+            if (purchaseModel.seatReservationAuthorization !== null
+                && purchaseModel.transaction !== null) {
                 yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
                     auth: yield UtilModule.createAuth(req),
                     transactionId: purchaseModel.transaction.id,

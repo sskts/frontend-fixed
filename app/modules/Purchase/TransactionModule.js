@@ -64,8 +64,10 @@ function start(req, res) {
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
+            if (individualScreeningEvent === null)
+                throw ErrorUtilModule.ERROR_ACCESS;
             // 開始可能日判定
-            if (moment().unix() < moment(individualScreeningEvent.coaInfo.coaRsvStartDate).unix()) {
+            if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             log('開始可能日判定');
@@ -104,22 +106,21 @@ function start(req, res) {
             purchaseModel = new PurchaseModel_1.PurchaseModel({
                 individualScreeningEvent: individualScreeningEvent
             });
-            // 劇場ショップ検索
-            const movieTheaters = yield MP.service.organization.searchMovieTheaters({
-                auth: yield UtilModule.createAuth(req)
-            });
             // 劇場のショップを検索
-            purchaseModel.seller = movieTheaters.find((movieTheater) => {
-                return (movieTheater.location.branchCode === individualScreeningEvent.coaInfo.theaterCode);
+            purchaseModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
+                auth: yield UtilModule.createAuth(req),
+                branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
-            log('劇場のショップを検索', purchaseModel.seller);
+            log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
+            if (purchaseModel.movieTheaterOrganization === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             // 取引開始
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
             purchaseModel.transaction = yield MP.service.transaction.placeOrder.start({
                 auth: yield UtilModule.createAuth(req),
                 expires: purchaseModel.expired,
-                sellerId: purchaseModel.seller.id
+                sellerId: purchaseModel.movieTheaterOrganization.id
             });
             log('MP取引開始', purchaseModel.transaction);
             //セッション更新

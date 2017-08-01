@@ -201,8 +201,8 @@ function screenStateChange(state) {
     var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
     if (purchaseSeats) {
         //予約している席設定
-        for (var i = 0, len = purchaseSeats.listTmpReserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.listTmpReserve[i];
+        for (var i = 0, len = purchaseSeats.result.listTmpReserve.length; i < len; i++) {
+            var purchaseSeat = purchaseSeats.result.listTmpReserve[i];
             var seatNum = purchaseSeat.seatNum;
             var seat = $('.seat a[data-seat-code=' + seatNum + ']');
             seat.removeClass('disabled');

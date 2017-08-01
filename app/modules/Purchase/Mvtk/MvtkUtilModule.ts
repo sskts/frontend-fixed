@@ -2,7 +2,6 @@
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-import * as MP from '../../../../libs/MP/sskts-api';
 import { PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as UtilModule from '../../Util/UtilModule';
 /**
@@ -41,21 +40,20 @@ export function getSiteCode(id: string): string {
  * ムビチケ情報生成
  * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
- * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @param {PurchaseModel} purchaseModel
  * @returns {{ tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
  */
-export function createMvtkInfo(
-    reserveTickets: MP.services.transaction.IReserveTicket[],
-    mvtkInfo: PurchaseSession.IMvtk[]
-): { tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.services.transaction.IMvtkSeat[] } {
-    const seats: MP.services.transaction.IMvtkSeat[] = [];
-    const tickets: MP.services.transaction.IMvtkPurchaseNoInfo[] = [];
-    for (const reserveTicket of reserveTickets) {
-        const mvtk = mvtkInfo.find((value) => {
+export function createMvtkInfo(purchaseModel: PurchaseModel): IMvtkInfo | null {
+    const result: IMvtkInfo = {
+        purchaseNoInfo: [],
+        seat: []
+    };
+    for (const reserveTicket of purchaseModel.reserveTickets) {
+        const mvtk = purchaseModel.mvtk.find((value) => {
             return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
         });
         if (mvtk === undefined) continue;
-        const mvtkTicket = tickets.find((value) => (value.KNYKNR_NO === mvtk.code));
+        const mvtkTicket = result.purchaseNoInfo.find((value) => (value.KNYKNR_NO === mvtk.code));
         if (mvtkTicket !== undefined) {
             // 券種追加
             const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
@@ -71,7 +69,7 @@ export function createMvtkInfo(
             }
         } else {
             // 新規購入番号作成
-            tickets.push({
+            result.purchaseNoInfo.push({
                 KNYKNR_NO: mvtk.code, //購入管理番号（ムビチケ購入番号）
                 PIN_CD: UtilModule.base64Decode(mvtk.password), //PINコード（ムビチケ暗証番号）
                 KNSH_INFO: [
@@ -82,11 +80,47 @@ export function createMvtkInfo(
                 ]
             });
         }
-        seats.push({ ZSK_CD: reserveTicket.seatCode });
+        result.seat.push({ ZSK_CD: reserveTicket.seatCode });
+    }
+    if (result.purchaseNoInfo.length === 0 || result.seat.length === 0) {
+        return null;
     }
 
-    return {
-        tickets: tickets,
-        seats: seats
-    };
+    return result;
+}
+
+/**
+ * ムビチケ情報
+ */
+export interface IMvtkInfo {
+    /**
+     * ムビチケ購入情報
+     */
+    purchaseNoInfo: {
+        /**
+         * 購入管理番号（ムビチケ購入番号）
+         */
+        KNYKNR_NO: string;
+        /**
+         * PINコード（ムビチケ暗証番号）
+         */
+        PIN_CD: string;
+
+        KNSH_INFO: {
+            /**
+             * 券種区分
+             */
+            KNSH_TYP: string;
+            /**
+             * 枚数
+             */
+            MI_NUM: string;
+        }[];
+    }[];
+    /**
+     * ムビチケ座席
+     */
+    seat: {
+        ZSK_CD: string;
+    }[];
 }

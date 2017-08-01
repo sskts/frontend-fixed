@@ -74,6 +74,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認

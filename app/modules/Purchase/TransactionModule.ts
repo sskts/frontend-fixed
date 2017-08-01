@@ -58,9 +58,10 @@ export async function start(req: Request, res: Response): Promise<void> {
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
+        if (individualScreeningEvent === null) throw ErrorUtilModule.ERROR_ACCESS;
 
         // 開始可能日判定
-        if (moment().unix() < moment(individualScreeningEvent.coaInfo.coaRsvStartDate).unix()) {
+        if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
             throw ErrorUtilModule.ERROR_ACCESS;
         }
         log('開始可能日判定');
@@ -106,15 +107,13 @@ export async function start(req: Request, res: Response): Promise<void> {
             individualScreeningEvent: individualScreeningEvent
         });
 
-        // 劇場ショップ検索
-        const movieTheaters = await MP.service.organization.searchMovieTheaters({
-            auth: await UtilModule.createAuth(req)
-        });
         // 劇場のショップを検索
-        purchaseModel.seller = movieTheaters.find((movieTheater: any) => {
-            return (movieTheater.location.branchCode === individualScreeningEvent.coaInfo.theaterCode);
+        purchaseModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
+            auth: await UtilModule.createAuth(req),
+            branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
-        log('劇場のショップを検索', purchaseModel.seller);
+        log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
+        if (purchaseModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
@@ -122,7 +121,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         purchaseModel.transaction = await MP.service.transaction.placeOrder.start({
             auth: await UtilModule.createAuth(req),
             expires: purchaseModel.expired,
-            sellerId: purchaseModel.seller.id
+            sellerId: purchaseModel.movieTheaterOrganization.id
         });
         log('MP取引開始', purchaseModel.transaction);
 

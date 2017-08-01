@@ -1,8 +1,4 @@
 "use strict";
-/**
- * 重複予約
- * @namespace Purchase.OverlapModule
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,6 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 重複予約
+ * @namespace Purchase.OverlapModule
+ */
 const debug = require("debug");
 const MP = require("../../../libs/MP/sskts-api");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");

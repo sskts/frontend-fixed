@@ -72,16 +72,14 @@
     </ul>
     
     <div class="button-area clearfix">
-        <div class="prev-link"><a class="icon-prev-black" href="/inquiry/login?theater=<%= theaterCode %>"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="prev-link"><a class="icon-prev-black" href="/inquiry/login?theater=<%= inquiryModel.movieTheaterOrganization.location.branchCode %>"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>
 
-<input type="hidden" name="theaterCode" value="<%= login.theaterCode %>">
-<input type="hidden" name="reserveNum" value="<%= login.reserveNum %>">
-<input type="hidden" name="telephone" value="<%= login.telephone %>">
-<input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
-<input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
+<input type="hidden" name="theaterCode" value="<%= inquiryModel.movieTheaterOrganization.location.branchCode %>">
+<input type="hidden" name="reserveNum" value="<%= inquiryModel.login.reserveNum %>">
+<input type="hidden" name="telephone" value="<%= inquiryModel.login.telephone %>">
 
 
 

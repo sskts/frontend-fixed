@@ -35,19 +35,21 @@ exports.getSiteCode = getSiteCode;
  * ムビチケ情報生成
  * @memberof Purchase.Mvtk.MvtkUtilModule
  * @function cancelMvtk
- * @param {PurchaseSession.PurchaseModel} purchaseModel
+ * @param {PurchaseModel} purchaseModel
  * @returns {{ tickets: MP.services.transaction.IMvtkPurchaseNoInfo[], seats: MP.IMvtkSeat[] }}
  */
-function createMvtkInfo(reserveTickets, mvtkInfo) {
-    const seats = [];
-    const tickets = [];
-    for (const reserveTicket of reserveTickets) {
-        const mvtk = mvtkInfo.find((value) => {
+function createMvtkInfo(purchaseModel) {
+    const result = {
+        purchaseNoInfo: [],
+        seat: []
+    };
+    for (const reserveTicket of purchaseModel.reserveTickets) {
+        const mvtk = purchaseModel.mvtk.find((value) => {
             return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
         });
         if (mvtk === undefined)
             continue;
-        const mvtkTicket = tickets.find((value) => (value.KNYKNR_NO === mvtk.code));
+        const mvtkTicket = result.purchaseNoInfo.find((value) => (value.KNYKNR_NO === mvtk.code));
         if (mvtkTicket !== undefined) {
             // 券種追加
             const tcket = mvtkTicket.KNSH_INFO.find((value) => (value.KNSH_TYP === mvtk.ykknInfo.ykknshTyp));
@@ -65,7 +67,7 @@ function createMvtkInfo(reserveTickets, mvtkInfo) {
         }
         else {
             // 新規購入番号作成
-            tickets.push({
+            result.purchaseNoInfo.push({
                 KNYKNR_NO: mvtk.code,
                 PIN_CD: UtilModule.base64Decode(mvtk.password),
                 KNSH_INFO: [
@@ -76,11 +78,11 @@ function createMvtkInfo(reserveTickets, mvtkInfo) {
                 ]
             });
         }
-        seats.push({ ZSK_CD: reserveTicket.seatCode });
+        result.seat.push({ ZSK_CD: reserveTicket.seatCode });
     }
-    return {
-        tickets: tickets,
-        seats: seats
-    };
+    if (result.purchaseNoInfo.length === 0 || result.seat.length === 0) {
+        return null;
+    }
+    return result;
 }
 exports.createMvtkInfo = createMvtkInfo;

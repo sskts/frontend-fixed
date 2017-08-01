@@ -80,11 +80,9 @@ function reserveMvtk(purchaseModel) {
         if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
-        const mvtkTickets = mvtk.tickets;
-        const mvtkSeats = mvtk.seats;
-        log('購入管理番号情報', mvtkTickets);
-        if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
+        const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
+        log('購入管理番号情報', mvtkInfo);
+        if (mvtkInfo === null)
             throw ErrorUtilModule.ERROR_ACCESS;
         const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
         // 興行会社ユーザー座席予約番号(予約番号)
@@ -98,14 +96,14 @@ function reserveMvtk(purchaseModel) {
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
             // tslint:disable-next-line:max-line-length
-            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.tmpReserveNum}`,
-            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.tmpReserveNum),
+            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
+            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
             screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-            knyknrNoInfo: mvtkTickets,
-            zskInfo: mvtkSeats,
+            knyknrNoInfo: mvtkInfo.purchaseNoInfo,
+            zskInfo: mvtkInfo.seat,
             skhnCd: mvtkFilmCode // 作品コード
         };
         try {
@@ -138,16 +136,14 @@ function cancelMvtk(req, res) {
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-        if (purchaseModel.mvtk === null)
+        if (purchaseModel.individualScreeningEvent === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveTickets === null)
+        if (purchaseModel.seatReservationAuthorization === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtk = MvtkUtilModule.createMvtkInfo(purchaseModel.reserveTickets, purchaseModel.mvtk);
-        const mvtkTickets = mvtk.tickets;
-        const mvtkSeats = mvtk.seats;
-        log('購入管理番号情報', mvtkTickets);
-        if (mvtkTickets.length === 0 || mvtkSeats.length === 0)
+        const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
+        log('購入管理番号情報', mvtkInfo);
+        if (mvtkInfo === null)
             throw ErrorUtilModule.ERROR_ACCESS;
         const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
         // 興行会社ユーザー座席予約番号(予約番号)
@@ -161,14 +157,14 @@ function cancelMvtk(req, res) {
             yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
             trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE,
             // tslint:disable-next-line:max-line-length
-            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.tmpReserveNum}`,
-            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.tmpReserveNum),
+            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
+            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
             stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
             screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-            knyknrNoInfo: mvtkTickets,
-            zskInfo: mvtkSeats,
+            knyknrNoInfo: mvtkInfo.purchaseNoInfo,
+            zskInfo: mvtkInfo.seat,
             skhnCd: mvtkFilmCode // 作品コード
         };
         let result = true;
@@ -210,9 +206,11 @@ function purchase(req, res) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.reserveTickets === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.profile === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.individualScreeningEvent === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
@@ -286,6 +284,24 @@ function purchase(req, res) {
                 req.session.fixed = {
                     updateReserveIn: updateReserveIn
                 };
+            }
+            else {
+                const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
+                    purchaseModel: purchaseModel,
+                    domain: req.headers.host
+                });
+                const sendEmailNotificationArgs = {
+                    auth: yield UtilModule.createAuth(req),
+                    transactionId: purchaseModel.transaction.id,
+                    emailNotification: {
+                        from: 'noreply@ticket-cinemasunshine.com',
+                        to: purchaseModel.profile.email,
+                        subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
+                        content: content
+                    }
+                };
+                yield MP.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
+                log('メール通知');
             }
             // 購入セッション削除
             delete req.session.purchase;

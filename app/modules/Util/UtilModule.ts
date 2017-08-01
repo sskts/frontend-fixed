@@ -173,25 +173,31 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
  */
 export async function createAuth(req: Request): Promise<MP.auth.OAuth2> {
     if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+    let auth: MP.auth.OAuth2;
     if (req.session.auth === undefined) {
-        return new MP.auth.OAuth2(
+        auth = new MP.auth.OAuth2(
             'motionpicture',
             'motionpicture',
             'teststate',
             [
                 'transactions',
                 'events.read-only',
-                'organizations.read-only'
+                'organizations.read-only',
+                'orders.read-only'
             ]
         );
+    } else {
+        auth = new MP.auth.OAuth2(
+            req.session.auth.clientId,
+            req.session.auth.clientSecret,
+            req.session.auth.state,
+            req.session.auth.scopes
+        );
     }
+    const credentials = await auth.getToken();
+    auth.setCredentials(credentials);
 
-    return new MP.auth.OAuth2(
-        req.session.auth.clientId,
-        req.session.auth.clientSecret,
-        req.session.auth.state,
-        req.session.auth.scopes
-    );
+    return auth;
 }
 
 /**

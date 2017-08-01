@@ -48,7 +48,7 @@ function createAPIRequest(options: IOptions) {
 
                 if (typeof response.body === 'object' && response.body.errors !== undefined) {
                     const message = (<any[]>response.body.errors).map((error) => {
-                        return `[${error.title}]${error.detail}`;
+                        return `${error.title}:${error.detail}`;
                     }).join(', ');
 
                     throw new Error(message);
