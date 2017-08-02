@@ -88,7 +88,7 @@ function reserveMvtk(purchaseModel) {
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
+            time: `${purchaseModel.getScreeningTime().start}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
@@ -149,7 +149,7 @@ function cancelMvtk(req, res) {
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
+            time: `${UtilModule.purchaseModel.getScreeningTime().start}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
@@ -230,7 +230,7 @@ function purchase(req, res) {
                 log('ムビチケ決済');
             }
             const order = yield MP.service.transaction.placeOrder.confirm({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id
             });
             log('注文確定', order);
@@ -291,7 +291,7 @@ function purchase(req, res) {
                     domain: req.headers.host
                 });
                 const sendEmailNotificationArgs = {
-                    auth: yield UtilModule.createAuth(req),
+                    auth: yield UtilModule.createAuth(req.session.auth),
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {
                         from: 'noreply@ticket-cinemasunshine.com',

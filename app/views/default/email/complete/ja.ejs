@@ -5,7 +5,7 @@
 <%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %>
 
 [鑑賞日時]
-<%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin) %>
+<%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= purchaseModel.getScreeningTime().start %>-<%= purchaseModel.getScreeningTime().end %>
 
 [作品名]
 <%= purchaseModel.individualScreeningEvent.workPerformed.name %>

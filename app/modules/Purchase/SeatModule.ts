@@ -128,7 +128,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
         await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });
@@ -149,7 +149,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     }
 
     purchaseModel.seatReservationAuthorization = await MP.service.transaction.placeOrder.createSeatReservationAuthorization({
-        auth: await UtilModule.createAuth(req),
+        auth: await UtilModule.createAuth(req.session.auth),
         transactionId: purchaseModel.transaction.id,
         eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
         offers: selectSeats.map((seat) => {

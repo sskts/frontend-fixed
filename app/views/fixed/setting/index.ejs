@@ -14,8 +14,8 @@
                 <dt><%- __('common.theater') %></dt>
                 <dd>
                     <select name="theater">
-                        <% for (const theater of theaters) { %>
-                        <option selected value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
+                        <% for (const theater of movieTheaters) { %>
+                        <option selected value="<%= theater.location.branchCode %>"><%= theater.name.ja %></option>
                         <% } %>
                     </select>
                 </dd>

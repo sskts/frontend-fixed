@@ -140,7 +140,7 @@ function submit(req, res, next) {
             };
             if (purchaseModel.creditCardAuthorization !== null) {
                 const cancelCreditCardAuthorizationArgs = {
-                    auth: yield UtilModule.createAuth(req),
+                    auth: yield UtilModule.createAuth(req.session.auth),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.creditCardAuthorization.id
                 };
@@ -160,7 +160,7 @@ function submit(req, res, next) {
                 purchaseModel.createOrderId();
                 purchaseModel.save(req.session);
                 const createCreditCardAuthorizationArgs = {
-                    auth: yield UtilModule.createAuth(req),
+                    auth: yield UtilModule.createAuth(req.session.auth),
                     transactionId: purchaseModel.transaction.id,
                     orderId: purchaseModel.orderId,
                     amount: purchaseModel.getReserveAmount(),
@@ -180,7 +180,7 @@ function submit(req, res, next) {
                 log('CMOオーソリ追加');
             }
             yield MP.service.transaction.placeOrder.setAgentProfile({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 profile: {
                     familyName: purchaseModel.profile.familyName,

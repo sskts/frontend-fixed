@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 const MP = require("../../../libs/MP/sskts-api");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
@@ -164,15 +163,13 @@ exports.getEmailTemplate = getEmailTemplate;
  * @memberof Util.UtilModule
  * @function createAuth
  * @param {Reqest} req
- * @returns {Promise<MP.auth.OAuth2>}
+ * @returns {Promise<MP.auth.ClientCredentials>}
  */
-function createAuth(req) {
+function createAuth(auth) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        let auth;
-        if (req.session.auth === undefined) {
-            auth = new MP.auth.OAuth2('motionpicture', 'motionpicture', 'teststate', [
+        let result;
+        if (auth === undefined) {
+            result = new MP.auth.ClientCredentials('motionpicture', 'motionpicture', 'teststate', [
                 'transactions',
                 'events.read-only',
                 'organizations.read-only',
@@ -180,11 +177,9 @@ function createAuth(req) {
             ]);
         }
         else {
-            auth = new MP.auth.OAuth2(req.session.auth.clientId, req.session.auth.clientSecret, req.session.auth.state, req.session.auth.scopes);
+            result = new MP.auth.ClientCredentials(auth.clientId, auth.clientSecret, auth.state, auth.scopes);
         }
-        const credentials = yield auth.getToken();
-        auth.setCredentials(credentials);
-        return auth;
+        return result;
     });
 }
 exports.createAuth = createAuth;

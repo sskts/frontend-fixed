@@ -127,7 +127,7 @@ function loadingStart(cb) {
     $('.loading-cover').addClass('active');
     $('.loading').addClass('active');
     $('.wrapper').addClass('blur');
-    setTimeout(function() {
+    setTimeout(function () {
         if (cb) cb();
     }, 1000);
 }
@@ -165,16 +165,18 @@ function getParameter() {
 /**
  * 時間フォーマット
  * @function timeFormat
- * @param {string} str
+ * @param {moment.Moment} referenceDate
+ * @param {moment.Moment} screeningTime
  * @returns {string}
  */
-function timeFormat(str) {
-    if (typeof str !== 'string') {
-        return '';
-    }
-    const start = 2;
-    const end = 4;
-    return str.slice(0, start) + ':' + str.slice(start, end);
+function timeFormat(referenceDate, screeningTime) {
+    const individualScreeningEvent = this.individualScreeningEvent;
+        var HOUR = 60;
+        var diff = referenceDate.diff(screeningTime, 'minutes');
+        var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
+        var minutes = ('00' + diff).slice(-2);
+
+        return hour + ':' + minutes;
 }
 
 /**
@@ -189,14 +191,14 @@ function timeFormat(str) {
  * @returns {HTMLImageElement} QR画像
  */
 function createQRCode(url, options) {
-    options = options || {};
-    var width = (options.width !== undefined) ? options.width : 100;
+            options = options || {};
+        var width = (options.width !== undefined) ? options.width : 100;
     var height = (options.height !== undefined) ? options.height : 100;
     var alt = (options.alt !== undefined) ? options.alt : '';
     var ext = (options.ext !== undefined) ? options.ext : 'png';
     // QR
     var qr = new VanillaQR({
-        url: url,
+            url: url,
         width: width,
         height: height,
         colorLight: '#FFF',

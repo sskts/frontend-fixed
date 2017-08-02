@@ -28,7 +28,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         // イベント情報取得
         const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -69,7 +69,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         // COA仮予約削除
         await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });

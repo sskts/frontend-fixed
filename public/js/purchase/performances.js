@@ -135,20 +135,19 @@ function createScheduleDom(data) {
         var disabled = (screeningEvent.stockStatus === 0) ? 'disabled' : '';
         screeningEvents.push('<li class="button small-button gray-button ' + disabled + '">' +
             '<a href="' + link + '" class="icon-triangle-02">' +
-            '<div class="mb-x-small">' + timeFormat(screeningEvent.coaInfo.timeBegin) + '</div>' +
-            '<div class="small-text mb-x-small">～' + timeFormat(screeningEvent.coaInfo.timeEnd) + '</div>' +
+            '<div class="mb-x-small">' + timeFormat(moment(screeningEvent.coaInfo.dateJouei),  moment(screeningEvent.startDate)) + '</div>' +
+            '<div class="small-text mb-x-small">～' + timeFormat(moment(screeningEvent.coaInfo.dateJouei),  moment(screeningEvent.endDate)) + '</div>' +
             '<div class="small-text">' + screeningEvent.location.name.ja + status + '</div>' +
             '</a>' +
             '</li>');
     });
 
     if (screeningEvents.length === 0) return '';
-
     return ('<li class="performance mb-small">' +
         '<dl>' +
         '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.workPerformed.name + '</strong></dt>' +
         '<dd>' +
-        '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + 0 + '分</strong></div>' +
+        '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + moment.duration(data.workPerformed.duration).asMinutes() + '分</strong></div>' +
         '<ul>' +
         screeningEvents.join('\n') +
         '</ul>' +

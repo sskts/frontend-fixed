@@ -1,4 +1,6 @@
 import * as sskts from '@motionpicture/sskts-domain';
+import * as moment from 'moment';
+import * as UtilModule from '../../modules/Util/UtilModule';
 
 /**
  * ログイン情報
@@ -78,5 +80,27 @@ export class InquiryModel {
             login: this.login
         };
         session.inquiry = inquirySession;
+    }
+
+    /**
+     * 上映開始時間取得
+     * @memberof PurchaseModel
+     * @method getScreeningTime
+     * @returns {any}
+     */
+    // tslint:disable-next-line:prefer-function-over-method
+    public getScreeningTime(offer: sskts.factory.order.IOffer): { start: string, end: string } {
+        const referenceDateStr = moment(offer.reservationFor.startDate).format('YYYYMMDD');
+        const referenceDate = moment(referenceDateStr);
+        const screeningStatTime = moment(offer.reservationFor.startDate);
+        const screeningEndTime = moment(offer.reservationFor.endDate);
+        const HOUR = 60;
+        const startDiff = referenceDate.diff(screeningStatTime, 'minutes');
+        const endDiff = referenceDate.diff(screeningEndTime, 'minutes');
+
+        return {
+            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${startDiff}`.slice(UtilModule.DIGITS_02)}`,
+            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${endDiff}`.slice(UtilModule.DIGITS_02)}`
+        };
     }
 }

@@ -35,7 +35,7 @@
                     <dd>
                         <div class="mb-xx-small">
                             <strong class="red-text">
-                                <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin) %>
+                                <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= purchaseModel.getScreeningTime().start %>-<%= purchaseModel.getScreeningTime().end %>
                             </strong>
                         </div>
                         <p class="small-x-text red-text"><%- __('purchase.confirm.date_note') %></p>

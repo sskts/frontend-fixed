@@ -17,6 +17,7 @@ const debug = require("debug");
 const moment = require("moment");
 const MP = require("../../../libs/MP/sskts-api");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
+const InquiryModel_1 = require("../../models/Inquiry/InquiryModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
@@ -47,9 +48,13 @@ exports.index = index;
 function setting(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            res.locals.theaters = yield MP.services.theater.getTheaters({
-                auth: yield UtilModule.createAuth(req)
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            const movieTheaters = yield MP.service.organization.searchMovieTheaters({
+                auth: yield UtilModule.createAuth(req.session.auth)
             });
+            log('movieTheaters: ', movieTheaters);
+            res.locals.movieTheaters = movieTheaters;
             res.render('setting/index');
         }
         catch (err) {
@@ -85,27 +90,27 @@ function getInquiryData(req, res) {
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                const transactionId = yield MP.services.transaction.makeInquiry({
-                    auth: yield UtilModule.createAuth(req),
-                    inquiryTheater: req.body.theaterCode,
-                    inquiryId: Number(req.body.reserveNum),
-                    inquiryPass: req.body.telephone // 電話番号
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
+                    auth: yield UtilModule.createAuth(req.session.auth),
+                    branchCode: req.body.theaterCode
                 });
-                // const transactionId = await MP.services.transaction.findByInquiryKey({
-                //     theaterCode: req.body.theaterCode, // 施設コード
-                //     reserveNum: Number(req.body.reserveNum), // 座席チケット購入番号
-                //     tel: req.body.telephone // 電話番号
-                // });
-                if (transactionId === null)
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
-                log('MP取引Id取得', transactionId);
-                let stateReserve = yield COA.services.reserve.stateReserve({
-                    theaterCode: req.body.theaterCode,
+                inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
-                    telephone: req.body.telephone // 電話番号
+                    telephone: req.body.telephone
+                };
+                inquiryModel.order = yield MP.service.order.findByOrderInquiryKey({
+                    auth: yield UtilModule.createAuth(req.session.auth),
+                    orderInquiryKey: {
+                        telephone: inquiryModel.login.telephone,
+                        orderNumber: Number(inquiryModel.login.reserveNum),
+                        theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+                    }
                 });
-                log('COA照会情報取得', stateReserve);
-                if (stateReserve === null) {
+                if (inquiryModel.order === null) {
                     // 本予約して照会情報取得
                     if (req.session.fixed === undefined)
                         throw ErrorUtilModule.ERROR_PROPERTY;
@@ -113,51 +118,45 @@ function getInquiryData(req, res) {
                         throw ErrorUtilModule.ERROR_PROPERTY;
                     const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                     log('COA本予約', updReserve);
-                    stateReserve = yield COA.services.reserve.stateReserve({
-                        theaterCode: req.body.theaterCode,
-                        reserveNum: req.body.reserveNum,
-                        telephone: req.body.telephone // 電話番号
+                    inquiryModel.order = yield MP.service.order.findByOrderInquiryKey({
+                        auth: yield UtilModule.createAuth(req.session.auth),
+                        orderInquiryKey: {
+                            telephone: inquiryModel.login.telephone,
+                            orderNumber: Number(inquiryModel.login.reserveNum),
+                            theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+                        }
                     });
-                    log('COA照会情報取得', stateReserve);
-                    if (stateReserve === null)
+                    log('COA照会情報取得', inquiryModel.order);
+                    if (inquiryModel.order === null)
                         throw ErrorUtilModule.ERROR_PROPERTY;
                 }
-                const performanceId = UtilModule.getPerformanceId({
-                    theaterCode: req.body.theaterCode,
-                    day: stateReserve.dateJouei,
-                    titleCode: stateReserve.titleCode,
-                    titleBranchNum: stateReserve.titleBranchNum,
-                    screenCode: stateReserve.screenCode,
-                    timeBegin: stateReserve.timeBegin
-                });
-                log('パフォーマンスID取得', performanceId);
-                const performance = yield MP.services.performance.getPerformance({
-                    auth: yield UtilModule.createAuth(req),
-                    performanceId: performanceId
-                });
-                if (performance === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                log('MPパフォーマンス取得');
                 // 印刷用
-                const reservations = stateReserve.listTicket.map((ticket) => {
+                const order = inquiryModel.order;
+                const reservations = inquiryModel.order.acceptedOffers.map((offer) => {
+                    if (offer.reservationFor.workPerformed === undefined)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                    if (offer.reservationFor.location === undefined)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                    if (inquiryModel.movieTheaterOrganization === null)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
                     return {
-                        reserveNo: req.body.reserveNum,
-                        filmNameJa: performance.attributes.film.name.ja,
-                        filmNameEn: performance.attributes.film.name.en,
-                        theaterName: performance.attributes.theater.name.ja,
-                        screenName: performance.attributes.screen.name.ja,
-                        performanceDay: moment(performance.attributes.day).format('YYYY/MM/DD'),
-                        performanceStartTime: `${UtilModule.timeFormat(performance.attributes.timeStart)}`,
-                        seatCode: ticket.seatNum,
-                        ticketName: (ticket.addGlasses > 0)
-                            ? `${ticket.ticketName}${req.__('common.glasses')}`
-                            : ticket.ticketName,
-                        ticketSalePrice: ticket.ticketPrice,
-                        qrStr: ticket.seatQrcode
+                        reserveNo: order.orderInquiryKey.orderNumber,
+                        filmNameJa: offer.reservationFor.workPerformed.name,
+                        filmNameEn: '',
+                        theaterName: inquiryModel.movieTheaterOrganization.location.name.ja,
+                        screenName: offer.reservationFor.location.name.ja,
+                        performanceDay: moment(offer.reservationFor.startDate).format('YYYY/MM/DD'),
+                        performanceStartTime: inquiryModel.getScreeningTime(offer).start,
+                        seatCode: offer.reservedTicket.coaTicketInfo.seatNum,
+                        ticketName: (offer.reservedTicket.coaTicketInfo.addGlasses > 0)
+                            ? `${offer.reservedTicket.coaTicketInfo.ticketCode}${req.__('common.glasses')}`
+                            : offer.reservedTicket.coaTicketInfo.ticketCode,
+                        ticketSalePrice: offer.reservedTicket.coaTicketInfo.salePrice,
+                        qrStr: offer.reservedTicket.ticketToken
                     };
                 });
                 delete req.session.fixed;
-                res.json({ result: reservations });
+                res.json({ result: null });
                 return;
             }
             res.json({ result: null });

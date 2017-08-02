@@ -78,7 +78,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
+        time: `${purchaseModel.getScreeningTime().start}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
@@ -138,7 +138,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
+        time: `${UtilModule.purchaseModel.getScreeningTime().start}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
@@ -214,7 +214,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         }
 
         const order = await MP.service.transaction.placeOrder.confirm({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             transactionId: purchaseModel.transaction.id
         });
         log('注文確定', order);
@@ -281,7 +281,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 }
             );
             const sendEmailNotificationArgs = {
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {
                     from: 'noreply@ticket-cinemasunshine.com',

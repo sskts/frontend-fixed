@@ -1,5 +1,5 @@
 /**
- * GooleサインインOAuthクライアント
+ * クライアント認証OAuthクライアント
  */
 
 import * as createDebug from 'debug';
@@ -11,26 +11,27 @@ import OAuth2client from './oAuth2client';
 
 const debug = createDebug('sskts-api:auth:oAuth2client');
 
-export default class GoogleTokenClient extends OAuth2client {
-    public idToken: string;
-
-    constructor(idToken: string, clientId: string, state: string, scopes: string[]) {
-        super(clientId, '', state, scopes);
-        this.idToken = idToken;
+export default class ClientCredentialsClient extends OAuth2client {
+    constructor(clientId: string, clientSecret: string, state: string, scopes: string[]) {
+        super(clientId, clientSecret, state, scopes);
 
         this.credentials = { refresh_token: 'ignored' };
     }
 
+    /**
+     * クライアント認証でアクセストークンを取得します。
+     */
     public async getToken() {
         debug('requesting an access token...');
 
         return await request.post({
-            url: OAuth2client.SSKTS_OAUTH2_TOKEN_GOOGLE_URL,
+            url: OAuth2client.SSKTS_OAUTH2_TOKEN_URL,
             form: {
-                id_token: this.idToken,
-                client_id: this.clientId,
                 scope: this.scopes.join(' '),
-                state: this.state
+                client_id: this.clientId,
+                client_secret: this.clientSecret,
+                state: this.state,
+                grant_type: 'client_credentials'
             },
             json: true,
             simple: false,
@@ -44,7 +45,7 @@ export default class GoogleTokenClient extends OAuth2client {
 
                 if (typeof response.body === 'object' && response.body.errors !== undefined) {
                     const message = (<any[]>response.body.errors).map((error) => {
-                        return `[${error.title}]${error.detail}`;
+                        return `${error.title}:${error.detail}`;
                     }).join(', ');
 
                     throw new Error(message);

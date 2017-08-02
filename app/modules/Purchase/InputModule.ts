@@ -126,7 +126,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         };
         if (purchaseModel.creditCardAuthorization !== null) {
             const cancelCreditCardAuthorizationArgs = {
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.creditCardAuthorization.id
             };
@@ -149,7 +149,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             purchaseModel.createOrderId();
             purchaseModel.save(req.session);
             const createCreditCardAuthorizationArgs = {
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 orderId: (<string>purchaseModel.orderId),
                 amount: purchaseModel.getReserveAmount(),
@@ -173,7 +173,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         }
 
         await MP.service.transaction.placeOrder.setAgentProfile({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             transactionId: purchaseModel.transaction.id,
             profile: {
                 familyName: purchaseModel.profile.familyName,

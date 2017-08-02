@@ -6,7 +6,7 @@
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
         <p class="read"><%- __('purchase.ticket.read') %></p>
 
-        <% if (mvtkFlg) { %>
+        <% if (purchaseModel.isUsedMvtk()) { %>
         <% if (purchaseModel.mvtk.length === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
         <div class="box radius bg-ultra-light-gray mb-medium mvtk">

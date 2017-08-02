@@ -54,7 +54,7 @@ export async function start(req: Request, res: Response): Promise<void> {
 
         // イベント情報取得
         const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -109,7 +109,7 @@ export async function start(req: Request, res: Response): Promise<void> {
 
         // 劇場のショップを検索
         purchaseModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -119,7 +119,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
         purchaseModel.transaction = await MP.service.transaction.placeOrder.start({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             expires: purchaseModel.expired,
             sellerId: purchaseModel.movieTheaterOrganization.id
         });

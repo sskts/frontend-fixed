@@ -93,6 +93,21 @@ class PurchaseModel {
         return result;
     }
     /**
+     * ムビチケ対応作品判定
+     * @memberof PurchaseModel
+     * @method isUsedMvtk
+     * @returns {boolean}
+     */
+    isUsedMvtk() {
+        if (this.individualScreeningEvent === null) {
+            return false;
+        }
+        const today = moment().format('YYYYMMDD');
+        return (this.individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'
+            && this.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin !== undefined
+            && Number(this.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin) <= Number(today));
+    }
+    /**
      * ムビチケ券有無判定
      * @memberof PurchaseModel
      * @method isReserveMvtkTicket
@@ -266,6 +281,25 @@ class PurchaseModel {
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
         this.orderId = `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS_02)}`;
         this.orderCount += 1;
+    }
+    /**
+     * 上映開始時間取得
+     * @memberof PurchaseModel
+     * @method getScreeningTime
+     * @returns {any}
+     */
+    getScreeningTime() {
+        const individualScreeningEvent = this.individualScreeningEvent;
+        const referenceDate = moment(individualScreeningEvent.coaInfo.dateJouei);
+        const screeningStatTime = moment(individualScreeningEvent.startDate);
+        const screeningEndTime = moment(individualScreeningEvent.endDate);
+        const HOUR = 60;
+        const startDiff = referenceDate.diff(screeningStatTime, 'minutes');
+        const endDiff = referenceDate.diff(screeningEndTime, 'minutes');
+        return {
+            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${startDiff}`.slice(UtilModule.DIGITS_02)}`,
+            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${endDiff}`.slice(UtilModule.DIGITS_02)}`
+        };
     }
 }
 PurchaseModel.PERFORMANCE_STATE = 0;

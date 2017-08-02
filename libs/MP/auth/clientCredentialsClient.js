@@ -1,6 +1,6 @@
 "use strict";
 /**
- * GooleサインインOAuthクライアント
+ * クライアント認証OAuthクライアント
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16,22 +16,25 @@ const httpStatus = require("http-status");
 const request = require("request-promise-native");
 const oAuth2client_1 = require("./oAuth2client");
 const debug = createDebug('sskts-api:auth:oAuth2client');
-class GoogleTokenClient extends oAuth2client_1.default {
-    constructor(idToken, clientId, state, scopes) {
-        super(clientId, '', state, scopes);
-        this.idToken = idToken;
+class ClientCredentialsClient extends oAuth2client_1.default {
+    constructor(clientId, clientSecret, state, scopes) {
+        super(clientId, clientSecret, state, scopes);
         this.credentials = { refresh_token: 'ignored' };
     }
+    /**
+     * クライアント認証でアクセストークンを取得します。
+     */
     getToken() {
         return __awaiter(this, void 0, void 0, function* () {
             debug('requesting an access token...');
             return yield request.post({
-                url: oAuth2client_1.default.SSKTS_OAUTH2_TOKEN_GOOGLE_URL,
+                url: oAuth2client_1.default.SSKTS_OAUTH2_TOKEN_URL,
                 form: {
-                    id_token: this.idToken,
-                    client_id: this.clientId,
                     scope: this.scopes.join(' '),
-                    state: this.state
+                    client_id: this.clientId,
+                    client_secret: this.clientSecret,
+                    state: this.state,
+                    grant_type: 'client_credentials'
                 },
                 json: true,
                 simple: false,
@@ -44,7 +47,7 @@ class GoogleTokenClient extends oAuth2client_1.default {
                     }
                     if (typeof response.body === 'object' && response.body.errors !== undefined) {
                         const message = response.body.errors.map((error) => {
-                            return `[${error.title}]${error.detail}`;
+                            return `${error.title}:${error.detail}`;
                         }).join(', ');
                         throw new Error(message);
                     }
@@ -71,4 +74,4 @@ class GoogleTokenClient extends oAuth2client_1.default {
         });
     }
 }
-exports.default = GoogleTokenClient;
+exports.default = ClientCredentialsClient;

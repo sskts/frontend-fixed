@@ -33,11 +33,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (!purchaseModel.accessAuth(PurchaseModel.TICKET_STATE)) throw ErrorUtilModule.ERROR_ACCESS;
 
         //券種取得
-        const today = moment().format('YYYYMMDD');
         res.locals.error = '';
-        res.locals.mvtkFlg = (purchaseModel.individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'
-            && purchaseModel.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin !== undefined
-            && Number(purchaseModel.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin) <= Number(today));
         res.locals.salesTickets = purchaseModel.getSalesTickets(req);
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.TICKET_STATE;
@@ -132,14 +128,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('券種検証');
             // COAオーソリ削除
             await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
             log('MPCOAオーソリ削除');
             //COAオーソリ追加
             const createSeatReservationAuthorizationArgs = {
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                 offers: (<IReserveTicket[]>purchaseModel.reserveTickets).map((reserveTicket) => {
@@ -172,7 +168,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('MPCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
             if (purchaseModel.mvtkAuthorization !== null) {
                 await MP.service.transaction.placeOrder.cancelMvtkAuthorization({
-                    auth: await UtilModule.createAuth(req),
+                    auth: await UtilModule.createAuth(req.session.auth),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.mvtkAuthorization.id
                 });
@@ -191,10 +187,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 // 興行会社ユーザー座席予約番号(予約番号)
                 const startDate = {
                     day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-                    time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin)}:00`
+                    time: `${purchaseModel.getScreeningTime().start}:00`
                 };
                 const createMvtkAuthorizationArgs = {
-                    auth: await UtilModule.createAuth(req),
+                    auth: await UtilModule.createAuth(req.session.auth),
                     transactionId: purchaseModel.transaction.id, // 取引情報
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(), // 合計金額
@@ -245,11 +241,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel(req.session.purchase);
             if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const today = moment().format('YYYYMMDD');
             res.locals.error = '';
-            res.locals.mvtkFlg = (purchaseModel.individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'
-                && purchaseModel.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin !== undefined
-                && Number(purchaseModel.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin) <= Number(today));
             res.locals.salesTickets = purchaseModel.getSalesTickets(req);
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;

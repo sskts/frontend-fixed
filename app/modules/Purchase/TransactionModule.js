@@ -60,7 +60,7 @@ function start(req, res) {
             }
             // イベント情報取得
             const individualScreeningEvent = yield MP.service.event.findIndividualScreeningEvent({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -108,7 +108,7 @@ function start(req, res) {
             });
             // 劇場のショップを検索
             purchaseModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -118,7 +118,7 @@ function start(req, res) {
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
             purchaseModel.transaction = yield MP.service.transaction.placeOrder.start({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });

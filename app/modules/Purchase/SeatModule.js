@@ -140,7 +140,7 @@ function reserve(req, selectSeats, purchaseModel) {
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
             yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -159,7 +159,7 @@ function reserve(req, selectSeats, purchaseModel) {
             log('コアAPI券種取得', purchaseModel.salesTickets);
         }
         purchaseModel.seatReservationAuthorization = yield MP.service.transaction.placeOrder.createSeatReservationAuthorization({
-            auth: yield UtilModule.createAuth(req),
+            auth: yield UtilModule.createAuth(req.session.auth),
             transactionId: purchaseModel.transaction.id,
             eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
             offers: selectSeats.map((seat) => {

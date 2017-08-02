@@ -27,7 +27,7 @@
         <li>
             <dl>
                 <dt><%- __('common.appreciation_date') %></dt>
-                <dd><%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.coaInfo.timeBegin) %></dd>
+                <dd><%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= purchaseModel.getScreeningTime().start %>-<%= purchaseModel.getScreeningTime().end %></dd>
             </dl>
         </li>
         <li>

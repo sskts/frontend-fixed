@@ -36,10 +36,12 @@ function login(req, res, next) {
             return;
         }
         try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             const inquiryModel = new InquiryModel_1.InquiryModel();
             // 劇場のショップを検索
             inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 branchCode: req.query.theater
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -76,24 +78,23 @@ function auth(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const inquiryModel = new InquiryModel_1.InquiryModel();
-            inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
-                auth: yield UtilModule.createAuth(req),
-                branchCode: req.body.theaterCode
-            });
-            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            inquiryModel.login = {
-                reserveNum: (req.body.reserveNum !== undefined) ? req.body.reserveNum : '',
-                telephone: (req.body.telephone !== undefined) ? req.body.telephone : ''
-            };
-            inquiryModel.save(req.session);
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
+                    auth: yield UtilModule.createAuth(req.session.auth),
+                    branchCode: req.body.theaterCode
+                });
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
+                inquiryModel.login = {
+                    reserveNum: req.body.reserveNum,
+                    telephone: req.body.telephone
+                };
                 inquiryModel.order = yield MP.service.order.findByOrderInquiryKey({
-                    auth: yield UtilModule.createAuth(req),
+                    auth: yield UtilModule.createAuth(req.session.auth),
                     orderInquiryKey: {
                         telephone: inquiryModel.login.telephone,
                         orderNumber: Number(inquiryModel.login.reserveNum),
@@ -107,12 +108,24 @@ function auth(req, res, next) {
                     res.render('inquiry/login');
                     return;
                 }
-                req.session.inquiry = inquiryModel.save(req.session);
+                inquiryModel.save(req.session);
                 //購入者内容確認へ
                 res.redirect(`/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.movieTheaterOrganization.location.branchCode}`);
                 return;
             }
             else {
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
+                    auth: yield UtilModule.createAuth(req.session.auth),
+                    branchCode: req.body.theaterCode
+                });
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
+                inquiryModel.login = {
+                    reserveNum: req.body.reserveNum,
+                    telephone: req.body.telephone
+                };
                 res.locals.inquiryModel = inquiryModel;
                 res.locals.error = validationResult.mapped();
                 res.render('inquiry/login');
@@ -161,7 +174,9 @@ function index(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.query.theater === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
+        log('session', req.session.inquiry);
         const inquiryModel = new InquiryModel_1.InquiryModel(req.session.inquiry);
+        log('inquiryModel', inquiryModel);
         res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;
         res.render('inquiry/index');

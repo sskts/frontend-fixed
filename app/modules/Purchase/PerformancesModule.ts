@@ -28,7 +28,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (purchaseModel.seatReservationAuthorization !== null
             && purchaseModel.transaction !== null) {
             await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: await UtilModule.createAuth(req),
+                auth: await UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -43,7 +43,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         if (process.env.VIEW_TYPE === undefined) {
             res.locals.movieTheaters = await MP.service.organization.searchMovieTheaters({
-                auth: await UtilModule.createAuth(req)
+                auth: await UtilModule.createAuth(req.session.auth)
             });
             log(res.locals.movieTheaters);
         }
@@ -72,7 +72,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
     try {
         // 上映イベント検索
         const individualScreeningEvents = await MP.service.event.searchIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req),
+            auth: await UtilModule.createAuth(req.session.auth),
             searchConditions: {
                 theater: req.body.theater,
                 day: moment(req.body.day).format('YYYYMMDD')

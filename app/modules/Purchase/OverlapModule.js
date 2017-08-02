@@ -39,7 +39,7 @@ function index(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // イベント情報取得
             const individualScreeningEvent = yield MP.service.event.findIndividualScreeningEvent({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -83,7 +83,7 @@ function newReserve(req, res, next) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // COA仮予約削除
             yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: yield UtilModule.createAuth(req),
+                auth: yield UtilModule.createAuth(req.session.auth),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });

@@ -169,13 +169,12 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
  * @memberof Util.UtilModule
  * @function createAuth
  * @param {Reqest} req
- * @returns {Promise<MP.auth.OAuth2>}
+ * @returns {Promise<MP.auth.ClientCredentials>}
  */
-export async function createAuth(req: Request): Promise<MP.auth.OAuth2> {
-    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-    let auth: MP.auth.OAuth2;
-    if (req.session.auth === undefined) {
-        auth = new MP.auth.OAuth2(
+export async function createAuth(auth: any): Promise<MP.auth.ClientCredentials> {
+    let result: MP.auth.ClientCredentials;
+    if (auth === undefined) {
+        result = new MP.auth.ClientCredentials(
             'motionpicture',
             'motionpicture',
             'teststate',
@@ -187,17 +186,15 @@ export async function createAuth(req: Request): Promise<MP.auth.OAuth2> {
             ]
         );
     } else {
-        auth = new MP.auth.OAuth2(
-            req.session.auth.clientId,
-            req.session.auth.clientSecret,
-            req.session.auth.state,
-            req.session.auth.scopes
+        result = new MP.auth.ClientCredentials(
+            auth.clientId,
+            auth.clientSecret,
+            auth.state,
+            auth.scopes
         );
     }
-    const credentials = await auth.getToken();
-    auth.setCredentials(credentials);
 
-    return auth;
+    return result;
 }
 
 /**

@@ -19,7 +19,7 @@
     <div class="box radius bg-light-gray mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
-            <dd><strong class="red-text large-x-text"><%= login.reserveNum %></strong></dd>
+            <dd><strong class="red-text large-x-text"><%= inquiryModel.login.reserveNum %></strong></dd>
             <dd class="small-x-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
@@ -27,29 +27,29 @@
     <h2 class="page-ttl qr-tickets"><%- __('inquiry.confirm.qr_ttl') %></h2>
     <p class="read"><%- __('inquiry.confirm.qr_read') %></p>
     <ul class="tickets mb-large">
-        <% for (let i = 0; i < stateReserve.listTicket.length; i++) { %>
-        <% const ticket = stateReserve.listTicket[i] %>
+        <% for (let i = 0; i < inquiryModel.order.acceptedOffers.length; i++) { %>
+        <% const offer = inquiryModel.order.acceptedOffers[i] %>
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
                     <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
-                    <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${stateReserve.listTicket.length}` %><%- __('common.ticket_number') %></div>
+                    <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${inquiryModel.order.acceptedOffers.length}` %><%- __('common.ticket_number') %></div>
                     <div class="mb-xx-small">
-                        <strong class="large-text"><%= ticket.seatNum %></strong>
+                        <strong class="large-text"><%= offer.reservedTicket.coaTicketInfo.seatNum %></strong>
                     </div>
                     <div>
-                        <% if (ticket.addGlasses > 0) { %>
-                        [<%= ticket.ticketName %><%= __('common.glasses') %>]
+                        <% if (offer.reservedTicket.coaTicketInfo.addGlasses > 0) { %>
+                        [<%= offer.reservedTicket.coaTicketInfo.ticketCode %><%= __('common.glasses') %>]
                         <% } else { %>
-                        [<%= ticket.ticketName %>]
+                        [<%= offer.reservedTicket.coaTicketInfo.ticketCode %>]
                         <% } %>
                     </div>
                 </div>
-                <% if (moment(`${performance.attributes.day} ${performance.attributes.timeStart}`).subtract(24, 'hours').unix() > moment().unix()) { %>
+                <% if (moment(offer.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
                 </div>
-                <% } else if (moment(`${performance.attributes.day} ${performance.attributes.timeEnd}`).add(1, 'months').unix() < moment().unix()) { %>
+                <% } else if (moment(offer.reservationFor.endDate).add(1, 'months').unix() < moment().unix()) { %>
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_after') %></p>
                 </div>
@@ -58,13 +58,14 @@
                 <% } %>
                 <div class="box">
                     <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>
-                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>-<%= timeFormat(performance.attributes.time_end) %></div>
+                    <% const date = moment(offer.reservationFor.startDate).format('YYYYMMDD') %>
+                    <div class="mb-x-small"><%= moment(date).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(date).format('ddd') + ']') %>) <%= inquiryModel.getScreeningTime(offer).start %>-<%= inquiryModel.getScreeningTime(offer).end %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.theater') %></strong></div>
-                    <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>
+                    <div class="mb-x-small"><%= inquiryModel.movieTheaterOrganization.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.screen') %></strong></div>
-                    <div class="mb-x-small"><%= performance.attributes.screen.name[__('lang')] %></div>
+                    <div class="mb-x-small"><%= offer.reservationFor.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.film_title') %></strong></div>
-                    <div><%= performance.attributes.film.name[__('lang')] %></div>
+                    <div><%= offer.reservationFor.workPerformed.name %></div>
                 </div>
             </div>
         </li>
