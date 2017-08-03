@@ -122,6 +122,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
  */
 // tslint:disable-next-line:max-func-body-length
 async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel: PurchaseModel): Promise<void> {
+    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
@@ -153,17 +154,20 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
         transactionId: purchaseModel.transaction.id,
         eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
         offers: selectSeats.map((seat) => {
-            const salesTickets = (<COA.services.reserve.ISalesTicketResult[]>purchaseModel.salesTickets)[0];
+            const salesTicket = (<COA.services.reserve.ISalesTicketResult[]>purchaseModel.salesTickets)[0];
 
             return {
                 seatSection: seat.seatSection,
                 seatNumber: seat.seatNum,
                 ticket: {
-                    ticketCode: salesTickets.ticketCode,
-                    stdPrice: salesTickets.stdPrice,
-                    addPrice: salesTickets.addPrice,
+                    ticketCode: salesTicket.ticketCode,
+                    ticketName: salesTicket.ticketName,
+                    ticketNameEng: salesTicket.ticketNameEng,
+                    ticketNameKana: salesTicket.ticketNameKana,
+                    stdPrice: salesTicket.stdPrice,
+                    addPrice: salesTicket.addPrice,
                     disPrice: 0,
-                    salePrice: salesTickets.salePrice,
+                    salePrice: salesTicket.salePrice,
                     mvtkAppPrice: 0,
                     ticketCount: 1,
                     seatNum: seat.seatNum,

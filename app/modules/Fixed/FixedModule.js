@@ -151,8 +151,8 @@ function getInquiryData(req, res) {
                         performanceStartTime: inquiryModel.getScreeningTime(offer).start,
                         seatCode: offer.reservedTicket.coaTicketInfo.seatNum,
                         ticketName: (offer.reservedTicket.coaTicketInfo.addGlasses > 0)
-                            ? `${offer.reservedTicket.coaTicketInfo.ticketCode}${req.__('common.glasses')}`
-                            : offer.reservedTicket.coaTicketInfo.ticketCode,
+                            ? `${offer.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
+                            : offer.reservedTicket.coaTicketInfo.ticketName,
                         ticketSalePrice: offer.reservedTicket.coaTicketInfo.salePrice,
                         qrStr: offer.reservedTicket.ticketToken
                     };

@@ -70,6 +70,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         // 上映イベント検索
         const individualScreeningEvents = await MP.service.event.searchIndividualScreeningEvent({
             auth: await UtilModule.createAuth(req.session.auth),

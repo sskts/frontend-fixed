@@ -78,6 +78,8 @@ exports.index = index;
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ERROR_PROPERTY;
             // 上映イベント検索
             const individualScreeningEvents = yield MP.service.event.searchIndividualScreeningEvent({
                 auth: yield UtilModule.createAuth(req.session.auth),

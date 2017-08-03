@@ -133,6 +133,8 @@ exports.select = select;
 // tslint:disable-next-line:max-func-body-length
 function reserve(req, selectSeats, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined)
+            throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.individualScreeningEvent === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transaction === null)
@@ -163,16 +165,19 @@ function reserve(req, selectSeats, purchaseModel) {
             transactionId: purchaseModel.transaction.id,
             eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
             offers: selectSeats.map((seat) => {
-                const salesTickets = purchaseModel.salesTickets[0];
+                const salesTicket = purchaseModel.salesTickets[0];
                 return {
                     seatSection: seat.seatSection,
                     seatNumber: seat.seatNum,
                     ticket: {
-                        ticketCode: salesTickets.ticketCode,
-                        stdPrice: salesTickets.stdPrice,
-                        addPrice: salesTickets.addPrice,
+                        ticketCode: salesTicket.ticketCode,
+                        ticketName: salesTicket.ticketName,
+                        ticketNameEng: salesTicket.ticketNameEng,
+                        ticketNameKana: salesTicket.ticketNameKana,
+                        stdPrice: salesTicket.stdPrice,
+                        addPrice: salesTicket.addPrice,
                         disPrice: 0,
-                        salePrice: salesTickets.salePrice,
+                        salePrice: salesTicket.salePrice,
                         mvtkAppPrice: 0,
                         ticketCount: 1,
                         seatNum: seat.seatNum,

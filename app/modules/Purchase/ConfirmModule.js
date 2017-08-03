@@ -149,7 +149,7 @@ function cancelMvtk(req, res) {
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${UtilModule.purchaseModel.getScreeningTime().start}:00`
+            time: `${purchaseModel.getScreeningTime().start}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {

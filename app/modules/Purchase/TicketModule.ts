@@ -144,6 +144,9 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                         seatNumber: reserveTicket.seatCode,
                         ticket: {
                             ticketCode: reserveTicket.ticketCode,
+                            ticketName: reserveTicket.ticketName,
+                            ticketNameEng: reserveTicket.ticketNameEng,
+                            ticketNameKana: reserveTicket.ticketNameKana,
                             stdPrice: reserveTicket.stdPrice,
                             addPrice: reserveTicket.addPrice,
                             disPrice: reserveTicket.disPrice,
@@ -194,32 +197,32 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     transactionId: purchaseModel.transaction.id, // 取引情報
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(), // 合計金額
-                        kgygish_cd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
-                        yyk_dvc_typ: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
-                        trksh_flg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
+                        kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
+                        yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
+                        trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
                         // tslint:disable-next-line:max-line-length
-                        kgygish_sstm_zskyyk_no: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`, // 興行会社システム座席予約番号
-                        kgygish_usr_zskyyk_no: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
-                        jei_dt: `${startDate.day} ${startDate.time}`, // 上映日時
-                        kij_ymd: startDate.day, // 計上年月日
-                        st_cd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
-                        scren_cd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
-                        knyknr_no_info: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
+                        kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`, // 興行会社システム座席予約番号
+                        kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
+                        jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
+                        kijYmd: startDate.day, // 計上年月日
+                        stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+                        screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
+                        knyknrNoInfo: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
                             return {
-                                knyknr_no: purchaseNoInfo.KNYKNR_NO,
-                                pin_cd: purchaseNoInfo.PIN_CD,
-                                knsh_info: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
+                                knyknrNo: purchaseNoInfo.KNYKNR_NO,
+                                pinCd: purchaseNoInfo.PIN_CD,
+                                knshInfo: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
                                     return {
-                                        knsh_typ: knshInfo.KNSH_TYP,
-                                        mi_num: knshInfo.MI_NUM
+                                        knshTyp: knshInfo.KNSH_TYP,
+                                        miNum: knshInfo.MI_NUM
                                     };
                                 })
                             };
                         }), // 購入管理番号情報
-                        zsk_info: mvtkInfo.seat.map((seat) => {
-                            return { zsk_cd: seat.ZSK_CD };
+                        zskInfo: mvtkInfo.seat.map((seat) => {
+                            return { zskCd: seat.ZSK_CD };
                         }), // 座席情報（itemArray）
-                        skhn_cd: mvtkFilmCode // 作品コード
+                        skhnCd: mvtkFilmCode // 作品コード
                     }
 
                 };
