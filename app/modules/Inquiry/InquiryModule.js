@@ -30,7 +30,8 @@ const log = debug('SSKTS:InquiryModule');
  */
 function login(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.query.theater === undefined) {
+        const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
+        if (theaterCode === undefined) {
             const status = 404;
             res.status(status).render('error/notFound');
             return;
@@ -42,7 +43,7 @@ function login(req, res, next) {
             // 劇場のショップを検索
             inquiryModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
                 auth: yield UtilModule.createAuth(req.session.auth),
-                branchCode: req.query.theater
+                branchCode: theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
             inquiryModel.login = {
@@ -174,9 +175,11 @@ function index(req, res, next) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.query.theater === undefined)
             throw ErrorUtilModule.ERROR_PROPERTY;
-        log('session', req.session.inquiry);
+        if (req.session.inquiry === undefined) {
+            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
+            return;
+        }
         const inquiryModel = new InquiryModel_1.InquiryModel(req.session.inquiry);
-        log('inquiryModel', inquiryModel);
         res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;
         res.render('inquiry/index');

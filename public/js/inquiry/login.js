@@ -55,7 +55,7 @@ function validation() {
             category: 'form',
             message: validations.join(', '),
             notes: names.join(', '),
-            transaction: $('input[name=transactionId]').val()
+            transaction: $('input[name=orderNumber]').val()
         });
     }
 }
@@ -66,10 +66,10 @@ function validation() {
  * @returns {void}
  */
 function toInquiry() {
-    var transactionId = getParameter()['transactionId'];
+    var orderNumber = getParameter()['orderNumber'];
 
     //取引IDなければ終了
-    if (!transactionId) return;
+    if (!orderNumber) return;
     var data = localStorage.getItem('inquiryInfo');
     //照会データなければ終了
     if (!data) return;
@@ -83,11 +83,11 @@ function toInquiry() {
     var submitFlg = false;
     for (var i = 0; i < inquiryInfo.length; i++) {
         var info = inquiryInfo[i];
-        if (transactionId === info.transactionId) {
+        if (orderNumber === info.orderNumber) {
             //対象取引データ
             $('input[name=theaterCode]').val(info.theaterCode);
             $('input[name=reserveNum]').val(info.reserveNum);
-            $('input[name=telNum]').val(info.telNum);
+            $('input[name=telephone]').val(info.telephone);
             submitFlg = true;
             break;
         }
@@ -105,8 +105,7 @@ function toInquiry() {
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
 
     if (submitFlg) {
-        loadingStart(function () {
-            $('form').submit();
-        });
+        loadingStart();
+        $('form').submit();
     }
 }

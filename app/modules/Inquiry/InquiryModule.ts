@@ -21,7 +21,8 @@ const log = debug('SSKTS:InquiryModule');
  * @returns {Promise<void>}
  */
 export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
-    if (req.query.theater === undefined) {
+    const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
+    if (theaterCode === undefined) {
         const status = 404;
         res.status(status).render('error/notFound');
 
@@ -33,7 +34,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         // 劇場のショップを検索
         inquiryModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
             auth: await UtilModule.createAuth(req.session.auth),
-            branchCode: req.query.theater
+            branchCode: theaterCode
         });
         log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
         inquiryModel.login = {
@@ -163,9 +164,12 @@ export function index(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.query.theater === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        log('session': req.session.inquiry);
+        if (req.session.inquiry === undefined) {
+            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
+
+            return;
+        }
         const inquiryModel = new InquiryModel(req.session.inquiry);
-        log('inquiryModel', inquiryModel);
         res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;
         res.render('inquiry/index');

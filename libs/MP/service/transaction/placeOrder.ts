@@ -39,31 +39,6 @@ export async function start(args: {
 }
 
 /**
- * 座席販売情報インターフェース
- */
-export interface IOffer {
-    seatSection: string;
-    seatNumber: string;
-    ticket: {
-        ticketCode: string;
-        stdPrice: number;
-        addPrice: number;
-        disPrice: number;
-        salePrice: number;
-        mvtkAppPrice: number;
-        ticketCount: number;
-        seatNum: string;
-        addGlasses: number;
-        kbnEisyahousiki: string;
-        mvtkNum: string;
-        mvtkKbnDenshiken: string;
-        mvtkKbnMaeuriken: string;
-        mvtkKbnKensyu: string;
-        mvtkSalesPrice: number;
-    };
-}
-
-/**
  * 取引に座席予約を追加する
  */
 export async function createSeatReservationAuthorization(args: {
@@ -79,7 +54,7 @@ export async function createSeatReservationAuthorization(args: {
     /**
      * 座席販売情報
      */
-    offers: IOffer[];
+    offers: sskts.service.transaction.placeOrder.ISeatReservationOffer[];
 }): Promise<sskts.factory.authorization.seatReservation.IAuthorization> {
     return await apiRequest({
         uri: `/transactions/placeOrder/${args.transactionId}/seatReservationAuthorization`,

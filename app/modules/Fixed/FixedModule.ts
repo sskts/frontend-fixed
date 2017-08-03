@@ -117,6 +117,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             const reservations = inquiryModel.order.acceptedOffers.map((offer) => {
                 if (offer.reservationFor.workPerformed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 if (offer.reservationFor.location === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (offer.reservationFor.location.name === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
                 return {
@@ -136,7 +137,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 };
             });
             delete req.session.fixed;
-            res.json({ result: null });
+            res.json({ result: reservations });
 
             return;
         }

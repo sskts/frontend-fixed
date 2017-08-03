@@ -14,6 +14,6 @@ inquiryRouter.get('/login', InquiryModule.login);
 inquiryRouter.post('/login', InquiryModule.auth);
 
 //チケット照会
-inquiryRouter.get('/:transactionId/', InquiryModule.index);
+inquiryRouter.get('/:orderNumber/', InquiryModule.index);
 
 export default inquiryRouter;

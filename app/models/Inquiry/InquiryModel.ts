@@ -62,7 +62,7 @@ export class InquiryModel {
         if (session === undefined) {
             session = {};
         }
-
+        this.movieTheaterOrganization = (session.movieTheaterOrganization !== undefined) ? session.movieTheaterOrganization : null;
         this.order = (session.order !== undefined) ? session.order : null;
         this.login = (session.login !== undefined) ? session.login : null;
     }
@@ -83,6 +83,19 @@ export class InquiryModel {
     }
 
     /**
+     * 上映日取得（YYYYMMDD）
+     * @method getScreeningDateToString
+     * @returns {string}
+     */
+    public getScreeningDateToString(): string {
+        if (this.order === null) {
+            return '';
+        }
+
+        return moment(this.order.acceptedOffers[0].reservationFor.startDate).format('YYYYMMDD');
+    }
+
+    /**
      * 上映開始時間取得
      * @memberof PurchaseModel
      * @method getScreeningTime
@@ -99,8 +112,8 @@ export class InquiryModel {
         const endDiff = referenceDate.diff(screeningEndTime, 'minutes');
 
         return {
-            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${startDiff}`.slice(UtilModule.DIGITS_02)}`,
-            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${`00${endDiff}`.slice(UtilModule.DIGITS_02)}`
+            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningStatTime.format('mm')}`,
+            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningEndTime.format('mm')}`
         };
     }
 }

@@ -48,10 +48,10 @@ function showQRCode() {
  */
 function saveInquiry() {
     var inquiryInfo = {
-        transactionId: $('input[name=transactionId]').val(),
+        orderNumber: $('input[name=orderNumber]').val(),
         theaterCode: $('input[name=theaterCode]').val(),
         reserveNum: $('input[name=reserveNum]').val(),
-        telNum: $('input[name=telNum]').val(),
+        telephone: $('input[name=telephone]').val(),
         expire: $('input[name=expire]').val()
     };
     var data = localStorage.getItem('inquiryInfo');
@@ -83,7 +83,7 @@ function showComplete() {
     printDom.show();
     $(window).scrollTop(0);
     printTicket(0, function () {
-        var transactionId = $('input[name=transactionId]').val();
+        var orderNumber = $('input[name=orderNumber]').val();
         var theaterCode = $('input[name=theaterCode]').val();
         // 計測
         collection({
@@ -92,7 +92,7 @@ function showComplete() {
             action: 'print',
             category: 'inquiry',
             message: '発券完了',
-            transaction: transactionId
+            transaction: orderNumber
         });
         try {
             ga('send', {

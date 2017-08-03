@@ -170,13 +170,12 @@ function getParameter() {
  * @returns {string}
  */
 function timeFormat(referenceDate, screeningTime) {
-    const individualScreeningEvent = this.individualScreeningEvent;
-        var HOUR = 60;
-        var diff = referenceDate.diff(screeningTime, 'minutes');
-        var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
-        var minutes = ('00' + diff).slice(-2);
+    var HOUR = 60;
+    var diff = screeningTime.diff(referenceDate, 'minutes');
+    var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
+    var minutes = screeningTime.format('mm');
 
-        return hour + ':' + minutes;
+    return hour + ':' + minutes;
 }
 
 /**
@@ -191,14 +190,14 @@ function timeFormat(referenceDate, screeningTime) {
  * @returns {HTMLImageElement} QR画像
  */
 function createQRCode(url, options) {
-            options = options || {};
-        var width = (options.width !== undefined) ? options.width : 100;
+    options = options || {};
+    var width = (options.width !== undefined) ? options.width : 100;
     var height = (options.height !== undefined) ? options.height : 100;
     var alt = (options.alt !== undefined) ? options.alt : '';
     var ext = (options.ext !== undefined) ? options.ext : 'png';
     // QR
     var qr = new VanillaQR({
-            url: url,
+        url: url,
         width: width,
         height: height,
         colorLight: '#FFF',

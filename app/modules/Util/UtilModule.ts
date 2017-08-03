@@ -5,7 +5,6 @@
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 import * as MP from '../../../libs/MP/sskts-api';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
