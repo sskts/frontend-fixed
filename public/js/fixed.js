@@ -56,7 +56,7 @@ function navigationInit() {
  * @returns {void}
  */
 function changeViewport() {
-    var base = 1366;
+    var base = 1024;
     var ua = navigator.userAgent.toLowerCase();
     var isiOS = (ua.indexOf('iphone') > -1) || (ua.indexOf('ipod') > -1) || (ua.indexOf('ipad') > -1);
     var width = (isiOS) ? document.documentElement.clientWidth / base : window.outerWidth / base;

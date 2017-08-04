@@ -209,6 +209,14 @@ a {
     text-align: center;
 }
 
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
 .red-text {
     color: #C30D23;
 }
@@ -386,7 +394,7 @@ a {
 .gray-button {
     a, button, label {
         background-color: #333;
-        background: linear-gradient(45deg, rgba(0,0,0,1) 0%,rgba(102,102,102,1) 100%);
+        background: linear-gradient(rgba(60,60,60,1) 0%,rgba(0,0,0,1) 100%);
         border: none;
     }
 }
@@ -417,6 +425,7 @@ a {
 }
 
 .read {
+    font-size: 22px;
     margin-bottom: 60px; 
     text-align: center;
 }
@@ -468,8 +477,6 @@ a {
     background-position: 60px center;
     .contents-inner {
         padding: 80px 0 40px;
-        width: 1140px;
-        margin: 0 auto;
     }
 }
 

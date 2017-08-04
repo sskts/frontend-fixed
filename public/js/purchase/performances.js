@@ -17,14 +17,16 @@
             date: moment().format('YYYYMMDD'),
             selects: [],
             chronologicalOrder: [],
-            filmOrder: []
+            filmOrder: [],
+            sortType: 'chronological',
+            error: null,
+            timer: null
         },
 
         created: function () {
             this.getTheaterCode();
             this.createDate(3);
             this.fetchPerformancesData();
-
         },
 
         watch: {
@@ -32,14 +34,9 @@
         },
 
         filters: {
-            timeFormat: function (value) {
-                if (typeof value !== 'string') {
-                    return '';
-                }
-                const start = 2;
-                const end = 4;
-                return value.slice(0, start) + ':' + value.slice(start, end);
-            },
+            /**
+             * 時間フォーマット
+             */
             timeFormat: function (value) {
                 if (typeof value !== 'string') {
                     return '';
@@ -86,20 +83,16 @@
                     data: {
                         theater: this.theaterCode,
                         day: this.date
-                    },
-                    beforeSend: function () {
-                        loadingStart();
                     }
                 };
+                var _this = this;
                 $.ajax(options)
                     .done(this.successHandler)
                     .fail(function (jqxhr, textStatus, error) {
                         console.log(jqxhr, textStatus, error);
                     })
-                    .always(function () {
-                        loadingEnd();
-                    });
-                return []
+                    .always(this.afterHandler);
+                return;
             },
             /**
              * パフォーマンス取得成功
@@ -107,14 +100,27 @@
             successHandler: function (res) {
                 if (res.error !== null) {
                     // エラー
+                    this.error = 'スケジュールを取得できません。';
                     return;
                 }
                 if (res.result.length === 0) {
                     // パフォーマンスなし
+                    this.error = 'スケジュールがありません。';
                     return;
                 }
+                this.error = null;
                 this.chronologicalOrder = this.convertToChronologicalOrder(res.result);
                 this.filmOrder = this.convertToFilmOrder(res.result);
+            },
+            /**
+             * パフォーマンス取得後
+             */
+            afterHandler: function () {
+                var time = 1000 * 60 * 3;
+                if (this.timer !== null) {
+                    clearTimeout(this.timer);
+                }
+                this.timer = setTimeout(this.fetchPerformancesData, time);
             },
             /**
              * 作品別へ変換
@@ -157,6 +163,22 @@
                     }
                 });
                 return results;
+            },
+            /**
+             * パフォーマンス選択
+             */
+            onclickPerformance: function (id) {
+                return '/purchase/fixed.html?id=' + id;
+            },
+            /**
+             * ソート選択
+             */
+            onClickSort: function (type, event) {
+                event.preventDefault();
+                if (this.sortType === type) {
+                    return;
+                }
+                this.sortType = type
             }
         }
     })

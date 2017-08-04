@@ -379,6 +379,12 @@ a {
 .text-center {
   text-align: center; }
 
+.text-left {
+  text-align: left; }
+
+.text-right {
+  text-align: right; }
+
 .red-text {
   color: #C30D23; }
 
@@ -511,7 +517,7 @@ a {
 
 .gray-button a, .gray-button button, .gray-button label {
   background-color: #333;
-  background: linear-gradient(45deg, black 0%, #666666 100%);
+  background: linear-gradient(#3c3c3c 0%, black 100%);
   border: none; }
 
 .staff-button {
@@ -536,6 +542,7 @@ a {
   position: relative; }
 
 .read {
+  font-size: 22px;
   margin-bottom: 60px;
   text-align: center; }
 
@@ -575,9 +582,7 @@ a {
   background-attachment: fixed;
   background-position: 60px center; }
   .contents .contents-inner {
-    padding: 80px 0 40px;
-    width: 1140px;
-    margin: 0 auto; }
+    padding: 80px 0 40px; }
 
 .steps {
   position: absolute;
@@ -907,25 +912,93 @@ a {
   width: 100%;
   max-width: 300px; }
 
-.purchase-performances .performances {
-  width: 1100px;
+.purchase-performances .sort {
+  width: 964px;
+  margin: 0 auto;
+  display: flex;
+  border-radius: 5px;
+  border: 1px solid #FFF; }
+  .purchase-performances .sort div {
+    width: 50%;
+    border-right: 1px solid #FFF; }
+    .purchase-performances .sort div:last-child {
+      border: none; }
+    .purchase-performances .sort div a {
+      padding: 25px 0;
+      display: block; }
+      .purchase-performances .sort div a.active {
+        background-color: #CCCCCC;
+        color: #333; }
+
+.purchase-performances .film-order {
+  width: 964px;
   margin: 0 auto; }
-  .purchase-performances .performances li {
-    background-color: rgba(255, 255, 255, 0.85);
+  .purchase-performances .film-order li {
     border-radius: 5px;
-    color: #333; }
-    .purchase-performances .performances li dl dt {
-      padding: 20px;
-      border-bottom: 1px solid #ACACAC; }
-    .purchase-performances .performances li dl dd {
-      padding: 20px 0 0 20px; }
-      .purchase-performances .performances li dl dd ul {
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .film-order li dl dt {
+      background-color: #FFF;
+      padding: 20px 25px; }
+    .purchase-performances .film-order li dl dd {
+      background-color: #EAEAEA;
+      padding: 20px 0 0 25px; }
+      .purchase-performances .film-order li dl dd ul {
         display: flex;
         flex-wrap: wrap; }
-        .purchase-performances .performances li dl dd ul li {
-          margin: 0 20px 20px 0; }
-          .purchase-performances .performances li dl dd ul li.disabled {
+        .purchase-performances .film-order li dl dd ul li {
+          margin: 0 10px 20px 0;
+          width: 220px; }
+          .purchase-performances .film-order li dl dd ul li.disabled {
             opacity: 0.5; }
+          .purchase-performances .film-order li dl dd ul li dl dt {
+            background-color: transparent;
+            padding: 15px 30px;
+            border-bottom: 1px solid #777777; }
+          .purchase-performances .film-order li dl dd ul li dl dd {
+            position: relative;
+            background-color: transparent;
+            padding: 15px; }
+            .purchase-performances .film-order li dl dd ul li dl dd .screen-name {
+              display: inline-block;
+              border: 1px solid #FFF;
+              padding: 5px; }
+            .purchase-performances .film-order li dl dd ul li dl dd .status {
+              font-weight: bold;
+              font-size: 50px;
+              line-height: 1;
+              position: absolute;
+              top: 50%;
+              right: 15px;
+              margin-top: -25px; }
+
+.purchase-performances .chronological-order {
+  width: 964px;
+  margin: 0 auto; }
+  .purchase-performances .chronological-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .chronological-order li a {
+      border: 1px solid #777777; }
+      .purchase-performances .chronological-order li a dl dt {
+        width: 358px;
+        padding: 25px 30px 25px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center; }
+        .purchase-performances .chronological-order li a dl dt .status {
+          font-weight: bold;
+          font-size: 70px;
+          line-height: 1; }
+      .purchase-performances .chronological-order li a dl dd {
+        width: 606px;
+        padding: 10px 40px 25px 40px;
+        border-left: 1px solid #777777; }
+        .purchase-performances .chronological-order li a dl dd .screen-name {
+          display: inline-block;
+          border: 1px solid #FFF;
+          padding: 5px; }
 
 .purchase-mvtk-input .clone {
   display: none; }
