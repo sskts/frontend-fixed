@@ -1,9 +1,5 @@
 <nav class="navigation">
-    <div class="logo"><img src="/images/default/common/logo.svg" alt="<%- __('header.logo') %>"></div>
-    <ul class="buttons">
-        <% if (env !== 'production') { %>
-        <li class="prev-button"><a href="/setting" class="small-x-text text-center"><%- __('navigation.setting') %></a></li>
-        <% } %>
+    <ul class="buttons clearfix">
         <% if (defineContent('prev')) { %>
         <li class="prev-button"><a href="<%- defineContent('prev') %>" class="small-x-text text-center icon-prev"><%- __('navigation.prev') %></a></li>
         <% } %>

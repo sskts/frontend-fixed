@@ -87,46 +87,19 @@ img {
       background-color: #FFF;
       box-shadow: 0 1px 0 #A7A9AE;
       zoom: 1;
-      -webkit-user-select: none;
-         -moz-user-select: none;
-          -ms-user-select: none;
-              user-select: none; }
+      user-select: none; }
     .numkey ul .numerickey-button {
       background-color: #BAC1C8; }
 
-@-webkit-keyframes loading {
-  30% {
-    -webkit-transform: scaleY(2);
-            transform: scaleY(2); } }
-
 @keyframes loading {
   30% {
-    -webkit-transform: scaleY(2);
-            transform: scaleY(2); } }
-
-@-webkit-keyframes zoom {
-  0% {
-    -webkit-transform: scale(0.5);
-            transform: scale(0.5); }
-  100% {
-    -webkit-transform: scale(1);
-            transform: scale(1); } }
+    transform: scaleY(2); } }
 
 @keyframes zoom {
   0% {
-    -webkit-transform: scale(0.5);
-            transform: scale(0.5); }
+    transform: scale(0.5); }
   100% {
-    -webkit-transform: scale(1);
-            transform: scale(1); } }
-
-@-webkit-keyframes fadein {
-  0% {
-    visibility: hidden;
-    opacity: 0; }
-  100% {
-    visibility: visible;
-    opacity: 1; } }
+    transform: scale(1); } }
 
 @keyframes fadein {
   0% {
@@ -136,14 +109,6 @@ img {
     visibility: visible;
     opacity: 1; } }
 
-@-webkit-keyframes fadeout {
-  0% {
-    visibility: visible;
-    opacity: 1; }
-  100% {
-    visibility: hidden;
-    opacity: 0; } }
-
 @keyframes fadeout {
   0% {
     visibility: visible;
@@ -151,12 +116,6 @@ img {
   100% {
     visibility: hidden;
     opacity: 0; } }
-
-@-webkit-keyframes animationPtint {
-  0% {
-    background-position: 0 0; }
-  100% {
-    background-position: -3060px 0; } }
 
 @keyframes animationPtint {
   0% {
@@ -585,40 +544,32 @@ a {
   background-color: #ffe8eb !important; }
 
 .wrapper {
-  position: relative;
-  padding: 0 0 0 120px; }
+  position: relative; }
 
 .navigation {
-  transition: height 0.25s;
   position: fixed;
-  top: 0;
+  z-index: 10;
+  bottom: 0;
   left: 0;
-  width: 120px;
-  height: 100%;
+  width: 100%;
   background-color: #000;
-  background: linear-gradient(-112deg, #666666 0%, black 50%);
-  padding: 40px 0 0; }
-  .navigation .logo {
-    margin: 0 auto;
-    width: 68px; }
-  .navigation .buttons {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0; }
-    .navigation .buttons li {
-      border-top: 1px solid #00A0E9; }
-      .navigation .buttons li a {
-        position: relative;
-        height: 120px;
-        color: #00A0E9;
-        display: block;
-        padding: 80px 0 0;
-        font-size: 16px; }
+  background: linear-gradient(#505050 0%, black 100%); }
+  .navigation .buttons li {
+    float: left;
+    width: 33.3%; }
+    .navigation .buttons li a {
+      position: relative;
+      height: 120px;
+      color: #FFF;
+      display: block;
+      padding: 80px 0 0;
+      border-right: 1px solid #FFF;
+      font-size: 16px; }
+    .navigation .buttons li:last-child a {
+      border: none; }
 
 .contents {
   min-height: 100vh;
-  position: relative;
   background-color: #003d7f;
   background: radial-gradient(circle at center, #00a0e9 0%, #003d7f 30%);
   background-attachment: fixed;
@@ -728,18 +679,15 @@ a {
 .modal-cover.active,
 .modal.active {
   visibility: visible;
-  -webkit-animation: fadein 0.4s both;
-          animation: fadein 0.4s both; }
+  animation: fadein 0.4s both; }
 
 .modal-cover.disabled,
 .modal.disabled {
   visibility: visible;
-  -webkit-animation: fadeout 0.4s both;
-          animation: fadeout 0.4s both; }
+  animation: fadeout 0.4s both; }
 
 .blur {
-  -webkit-filter: blur(5px);
-          filter: blur(5px); }
+  filter: blur(5px); }
 
 .loading-cover {
   opacity: 0;
@@ -755,8 +703,7 @@ a {
 .loading-cover.active,
 .loading.active {
   visibility: visible;
-  -webkit-animation: fadein 0.4s both;
-          animation: fadein 0.4s both; }
+  animation: fadein 0.4s both; }
 
 .loading {
   opacity: 0;
@@ -776,50 +723,39 @@ a {
   background-color: #FFF;
   display: inline-block;
   margin-right: 13px;
-  -webkit-animation: loading 1s infinite;
-          animation: loading 1s infinite; }
+  animation: loading 1s infinite; }
   .loading div:last-child {
     margin-right: 0; }
 
 .loading .bar1 {
-  -webkit-animation-delay: 0.5s;
-          animation-delay: 0.5s; }
+  animation-delay: 0.5s; }
 
 .loading .bar2 {
-  -webkit-animation-delay: 0.6s;
-          animation-delay: 0.6s; }
+  animation-delay: 0.6s; }
 
 .loading .bar3 {
-  -webkit-animation-delay: 0.7s;
-          animation-delay: 0.7s; }
+  animation-delay: 0.7s; }
 
 .loading .bar4 {
-  -webkit-animation-delay: 0.8s;
-          animation-delay: 0.8s; }
+  animation-delay: 0.8s; }
 
 .loading .bar5 {
-  -webkit-animation-delay: 0.9s;
-          animation-delay: 0.9s; }
+  animation-delay: 0.9s; }
 
 .animation-ptint {
   width: 340px;
   height: 240px;
   background-size: 3400px 240px;
   background-image: url(/images/fixed/animation_print.png);
-  -webkit-animation: animationPtint 1s steps(9) 0s infinite;
-          animation: animationPtint 1s steps(9) 0s infinite; }
+  animation: animationPtint 1s steps(9) 0s infinite; }
 
 .index {
   width: 1050px;
   margin: 0 auto; }
   .index .buttons {
     margin: 0 0 40px;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-justify-content: space-between;
-        -ms-flex-pack: justify;
-            justify-content: space-between; }
+    justify-content: space-between; }
   .index .purchase-button a, .index .inquiry-button a {
     padding: 80px 0 0; }
   .index .qr-code {
@@ -863,20 +799,12 @@ a {
 .purchase-seat .seat-info {
   color: #333;
   padding: 20px 0;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-justify-content: center;
-      -ms-flex-pack: center;
-          justify-content: center; }
+  justify-content: center; }
 
 .purchase-ticket .seats {
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap; }
+  flex-wrap: wrap; }
   .purchase-ticket .seats li {
     margin: 0 20px 20px 0; }
     .purchase-ticket .seats li dl {
@@ -941,12 +869,8 @@ a {
   width: 600px; }
 
 .purchase-input .form-layout .expire {
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between; }
+  justify-content: space-between; }
   .purchase-input .form-layout .expire dl {
     width: 390px; }
     .purchase-input .form-layout .expire dl dd {
@@ -990,21 +914,14 @@ a {
     background-color: rgba(255, 255, 255, 0.85);
     border-radius: 5px;
     color: #333; }
-    .purchase-performances .performances li dl .film-ttl, .purchase-performances .performances li dl .date-ttl {
-      display: inline-block;
-      width: 100px; }
     .purchase-performances .performances li dl dt {
       padding: 20px;
       border-bottom: 1px solid #ACACAC; }
     .purchase-performances .performances li dl dd {
       padding: 20px 0 0 20px; }
       .purchase-performances .performances li dl dd ul {
-        display: -webkit-flex;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-flex-wrap: wrap;
-            -ms-flex-wrap: wrap;
-                flex-wrap: wrap; }
+        flex-wrap: wrap; }
         .purchase-performances .performances li dl dd ul li {
           margin: 0 20px 20px 0; }
           .purchase-performances .performances li dl dd ul li.disabled {
@@ -1137,9 +1054,7 @@ a {
 
 .zoom .screen-scroll {
   overflow: auto;
-  transition: -webkit-transform 0.2s;
-  transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s; }
+  transition: transform 0.2s; }
 
 .zoom .seat a span {
   display: block; }

@@ -1,31 +1,51 @@
 <%- contentFor('script') %>
+<script src="https://unpkg.com/vue"></script>
+<%- contentFor('afterScript') %>
 <script src="/js/purchase/performances.js"></script>
 <%- contentFor('prev') %>
 /
 <%- contentFor('body') %>
-<div class="purchase-performances">
+
+
+<div class="purchase-performances" id="performances">
     <h1 class="page-ttl"><%- __('purchase.performances.page_ttl') %></h1>
     <p class="read"><%- __('purchase.performances.read') %></p>
     <div class="form-layout center mb-middle">
         <dl>
             <dt><%- __('purchase.performances.date') %></dt>
-            <dd class="date">
-                <select>
-                    <% for (let i = 0; i < 3; i++) { %>
-                    <% 
-                    const date = moment().add(i, 'days');
-                    const dateText = (i === 0) ? __('today')
-                    : (i === 1) ? __('tomorrow')
-                    : (i === 2) ? __('day_after_tomorrow')
-                    : date.format('YYYY年MM月DD日');
-                    %>
-                    <option value="<%= date.format('YYYYMMDD') %>"><%= dateText %></option>
-                    <% } %>
+            <dd>
+                <select v-model="date">
+                    <template v-for="select in selects">
+                        <option :value="select.value">{{select.text}}</option>
+                    </template>
                 </select>
             </dd>
         </dl>
     </div>
     
-    <ul class="performances"></ul>
+    <ul class="performances">
+        <li v-for="order in filmOrder" :key="order.id" class="performance mb-small">
+            <dl>
+                <dt>
+                    <div class="mb-x-small"><strong>{{ order.films[0].attributes.film.name.ja }}</strong></div>
+                    <div class="small-text">{{ order.films[0].attributes.film.minutes }}分</div>
+                </dt>
+                <dd>
+                    <ul>
+                        <li v-for="film in order.films" :key="order.id" class="button gray-button">
+                            <a href="#" class="icon-triangle-02">
+                                <div class="mb-x-small"><strong>{{ film.attributes.time_start | timeFormat }}</strong><span class="small-text">～{{ film.attributes.time_end | timeFormat }}</span></div>
+                                <div class="small-text">{{ film.attributes.screen.name.ja }}</div>
+                                <div v-if="film.attributes.stock_status === 0">×</div>
+                                <div v-else-if="film.attributes.stock_status <= 10">△</div>
+                                <div v-else>○</div>
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+        </li>
+    </ul>
     <p class="no-performances text-center"><%= __('purchase.performances.no_performances') %></p>
 </div>
+

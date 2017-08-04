@@ -43,7 +43,7 @@ $(function () {
  */
 function navigationInit() {
     if ($('.purchase-seat, .purchase-ticket, .purchase-input, .purchase-confirm').length > 0) {
-        $('.navigation .restart-button a').attr({
+        $('.navigation .top-button a').attr({
             href: '#',
             'data-modal': 'backToTop'
         });

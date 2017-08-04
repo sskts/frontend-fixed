@@ -148,7 +148,7 @@ function showError(message) {
     }
     $('.purchase-confirm').remove();
     $('.header .steps').remove();
-    $('.navigation .restart-button a').attr({
+    $('.navigation .top-button a').attr({
         href: '/',
         'data-modal': ''
     });
@@ -196,7 +196,7 @@ function showComplete(result) {
             navigationDom.show();
             //コンテンツ切り替え
             printDom.remove();
-            $('.navigation .restart-button a').attr({
+            $('.navigation .top-button a').attr({
                 href: '/',
                 'data-modal': ''
             });

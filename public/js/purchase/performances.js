@@ -1,23 +1,189 @@
-$(function () {
-    getPerformances();
-    
-    // 照会クリック
-    $(document).on('click', '.inquiry-button a', function (event) {
-        event.preventDefault();
-        var theater = $('.inquiry-theater select').val();
-        var url = $(this).attr('href') + '?theater=' + theater;
-        location.href = url;
-    });
-    // 検索クリック
-    $(document).on('click', '.search a', function (event) {
-        event.preventDefault();
-        getPerformances();
-    });
-    // 検索セレクト
-    $(document).on('change', '.date select', function (event) {
-        getPerformances();
-    });
-});
+(function () {
+    /**
+     * 販売終了時間 30分前
+     */
+    var END_TIME_DEFAULT = 30;
+    /**
+     * 販売終了時間(券売機) 10分後
+     */
+    var END_TIME_FIXED = -10;
+
+    var app = new Vue({
+
+        el: '#performances',
+
+        data: {
+            theaterCode: '',
+            date: moment().format('YYYYMMDD'),
+            selects: [],
+            chronologicalOrder: [],
+            filmOrder: []
+        },
+
+        created: function () {
+            this.getTheaterCode();
+            this.createDate(3);
+            this.fetchPerformancesData();
+
+        },
+
+        watch: {
+            date: 'fetchPerformancesData'
+        },
+
+        filters: {
+            timeFormat: function (value) {
+                if (typeof value !== 'string') {
+                    return '';
+                }
+                const start = 2;
+                const end = 4;
+                return value.slice(0, start) + ':' + value.slice(start, end);
+            },
+            timeFormat: function (value) {
+                if (typeof value !== 'string') {
+                    return '';
+                }
+                const start = 2;
+                const end = 4;
+                return value.slice(0, start) + ':' + value.slice(start, end);
+            }
+        },
+
+        methods: {
+            /**
+             * 劇場コード取得
+             */
+            getTheaterCode: function () {
+                this.theaterCode = (isFixed()) ? config.theater : $('.theater select').val();
+            },
+            /**
+             * 選択日生成
+             */
+            createDate: function (period) {
+                var results = [];
+                for (var i = 0; i < period; i++) {
+                    results.push({
+                        value: moment().add(i, 'days').format('YYYYMMDD'),
+                        text: (i === 0) ? '本日'
+                            : (i === 1) ? '明日'
+                                : (i === 2) ? '明後日'
+                                    : date.format('YYYY年MM月DD日')
+                    });
+                }
+                console.log(this)
+                this.selects = results;
+            },
+            /**
+             * パフォーマンス取得
+             */
+            fetchPerformancesData: function () {
+                var options = {
+                    dataType: 'json',
+                    url: '/purchase/performances',
+                    type: 'POST',
+                    timeout: 10000,
+                    data: {
+                        theater: this.theaterCode,
+                        day: this.date
+                    },
+                    beforeSend: function () {
+                        loadingStart();
+                    }
+                };
+                $.ajax(options)
+                    .done(this.successHandler)
+                    .fail(function (jqxhr, textStatus, error) {
+                        console.log(jqxhr, textStatus, error);
+                    })
+                    .always(function () {
+                        loadingEnd();
+                    });
+                return []
+            },
+            /**
+             * パフォーマンス取得成功
+             */
+            successHandler: function (res) {
+                if (res.error !== null) {
+                    // エラー
+                    return;
+                }
+                if (res.result.length === 0) {
+                    // パフォーマンスなし
+                    return;
+                }
+                this.chronologicalOrder = this.convertToChronologicalOrder(res.result);
+                this.filmOrder = this.convertToFilmOrder(res.result);
+            },
+            /**
+             * 作品別へ変換
+             */
+            convertToChronologicalOrder: function (data) {
+                var results = [];
+                data.forEach(function (performance) {
+                    // 販売可能時間判定
+                    var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
+                    var limitTime = moment().add(limit, 'minutes');
+                    if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+                        return;
+                    }
+                    results.push(performance);
+                });
+                return results;
+            },
+            /**
+             * 作品別へ変換
+             */
+            convertToFilmOrder: function (data) {
+                var results = [];
+                data.forEach(function (performance) {
+                    // 販売可能時間判定
+                    var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
+                    var limitTime = moment().add(limit, 'minutes');
+                    if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+                        return;
+                    }
+                    var film = results.find(function (film) {
+                        return (film.id === performance.attributes.film.id)
+                    });
+                    if (film === undefined) {
+                        results.push({
+                            id: performance.attributes.film.id,
+                            films: [performance]
+                        });
+                    } else {
+                        film.films.push(performance);
+                    }
+                });
+                return results;
+            }
+        }
+    })
+})();
+
+
+
+// $(function () {
+//     getPerformances();
+
+//     // 照会クリック
+//     $(document).on('click', '.inquiry-button a', function (event) {
+//         event.preventDefault();
+//         var theater = $('.inquiry-theater select').val();
+//         var url = $(this).attr('href') + '?theater=' + theater;
+//         location.href = url;
+//     });
+//     // 検索クリック
+//     $(document).on('click', '.search a', function (event) {
+//         event.preventDefault();
+//         getPerformances();
+//     });
+//     // 検索セレクト
+//     $(document).on('change', '.date select', function (event) {
+//         getPerformances();
+//     });
+// });
 
 /**
  * パフォーマンスリスト取得
@@ -125,30 +291,32 @@ function createScheduleDom(data) {
             link = '/purchase/fixed.html?id=' + performance.id;
         }
         // 販売ステータス設定
-        var status = (performance.attributes.stock_status === 0) ? ' ×' 
-        : (performance.attributes.stock_status <= 10) ? ' △'
-        : '';
+        var status = (performance.attributes.stock_status === 0) ? ' ×'
+            : (performance.attributes.stock_status <= 10) ? ' △'
+                : '';
         var disabled = (performance.attributes.stock_status === 0) ? 'disabled' : '';
-        performances.push('<li class="button small-button gray-button ' + disabled + '">'+
-            '<a href="'+ link +'" class="icon-triangle-02">'+ 
-            '<div class="mb-x-small">' + timeFormat(performance.attributes.time_start) + '</div>' + 
-            '<div class="small-text mb-x-small">～' + timeFormat(performance.attributes.time_end) + '</div>' + 
-            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' + 
+        performances.push('<li class="button small-button gray-button ' + disabled + '">' +
+            '<a href="' + link + '" class="icon-triangle-02">' +
+            '<div class="mb-x-small"><strong>' + timeFormat(performance.attributes.time_start) + '</strong><span class="small-text">～' + timeFormat(performance.attributes.time_end) + '</span></div>' +
+            '<div class="small-text">' + performance.attributes.screen.name.ja + status + '</div>' +
             '</a>' +
-        '</li>');
+            '</li>');
     });
 
     if (performances.length === 0) return '';
 
     return ('<li class="performance mb-small">' +
         '<dl>' +
-            '<dt class="small-text"><span class="film-ttl">作品名</span><strong>' + data.performances[0].attributes.film.name.ja + '</strong></dt>' +
-            '<dd>'+
-                '<div class="mb-small small-text"><span class="date-ttl">上映時間</span><strong>' + data.performances[0].attributes.film.minutes + '分</strong></div>'+
-                '<ul>'+
-                    performances.join('\n') +
-                '</ul>'+
-            '</dd>' +
+        '<dt>' +
+        '<div class="mb-x-small"><strong>' + data.performances[0].attributes.film.name.ja + '</strong></div>' +
+        '<div class="small-text">' + data.performances[0].attributes.film.minutes + '分</div>' +
+        '</dt>' +
+        '<dd>' +
+
+        '<ul>' +
+        performances.join('\n') +
+        '</ul>' +
+        '</dd>' +
         '</dl>' +
-    '</li>');
+        '</li>');
 }

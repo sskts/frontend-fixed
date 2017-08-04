@@ -428,37 +428,33 @@ a {
 
 .wrapper {
     position: relative;
-    padding: 0 0 0 120px;
 }
 
 .navigation {
-    transition: height 0.25s;
     position: fixed;
-    top: 0;
+    z-index: 10;
+    bottom: 0;
     left: 0;
-    width: 120px;
-    height: 100%;
+    width: 100%;
     background-color: #000;
-    background: linear-gradient(-112deg, rgba(102,102,102,1) 0%, rgba(0,0,0,1) 50%);
-    padding: 40px 0 0;
-    .logo {
-        margin: 0 auto;
-        width: 68px;
-    }
+    background: linear-gradient(rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
     .buttons {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
         li {
-            border-top: 1px solid #00A0E9;
+            float: left;
+            width: 33.3%;
             a {
                 position: relative;
                 height: 120px;
-                color: #00A0E9;
+                color: #FFF;
                 display: block;
                 padding: 80px 0 0;
+                border-right: 1px solid #FFF; 
                 font-size: 16px;
+            }
+            &:last-child {
+                a {
+                    border: none;
+                }
             }
         }
     }
@@ -466,7 +462,6 @@ a {
 
 .contents {
     min-height: 100vh;
-    position: relative;
     background-color: rgb(0, 61, 127);
     background: radial-gradient(circle at center, rgba(0,160,233,1) 0%,rgba(0,61,127,1) 30%);
     background-attachment: fixed;
