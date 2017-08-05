@@ -34,6 +34,7 @@
         <div><a v-bind:class="{active: (sortType === 'film')}" v-on:click="onClickSort('film', $event)" href="#"><%- __('purchase.performances.sort.film') %></a></div>
     </div>
 
+    <template v-if="error === null">
     <ul v-if="sortType === 'chronological'" class="chronological-order">
         <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button gray-button mb-x-small">
             <a v-bind:href="onclickPerformance(order.id)" class="icon-triangle-02">
@@ -92,7 +93,7 @@
             </dl>
         </li>
     </ul>
-    
+    </template>
     <p v-if="error !== null" class="text-center">{{ error }}</p>
 </div>
 
