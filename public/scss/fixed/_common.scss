@@ -425,7 +425,6 @@ a {
 }
 
 .read {
-    font-size: 22px;
     margin-bottom: 60px; 
     text-align: center;
 }
@@ -453,10 +452,10 @@ a {
             width: 33.3%;
             a {
                 position: relative;
-                height: 120px;
+                height: 90px;
                 color: #FFF;
                 display: block;
-                padding: 80px 0 0;
+                padding: 55px 0 0;
                 border-right: 1px solid #FFF; 
                 font-size: 16px;
             }
@@ -476,7 +475,7 @@ a {
     background-attachment: fixed;
     background-position: 60px center;
     .contents-inner {
-        padding: 80px 0 40px;
+        padding: 80px 0 120px;
     }
 }
 

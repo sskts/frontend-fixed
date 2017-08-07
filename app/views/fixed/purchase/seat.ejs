@@ -9,6 +9,12 @@
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
 
+    <h2 class="film-ttl mb-small text-center"><%= performance.attributes.film.name[__('lang')] %></h2>
+    <div class="film-info center mb-small text-center">
+        <div><span class="small-text"><%- __('common.screen') %>:</span> <strong class="large-text"><%= performance.attributes.screen.name[__('lang')] %></strong></div>
+        <div><span class="small-text"><%- __('common.screening_time') %>:</span> <strong class="large-text"><%= timeFormat(performance.attributes.time_start) %></strong> - <%= timeFormat(performance.attributes.time_end) %></div>
+    </div>
+
     <div class="screen-cover mb-middle" 
     data-limit="<%= performance.attributes.coa_available_num %>" 
     data-theater="<%= performance.attributes.theater.id %>" 
@@ -17,17 +23,19 @@
     data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
     data-time-start="<%= performance.attributes.time_start %>"
     data-screen-code="<%= performanceCOA.screenCode %>">
+        <div class="seat-info">
+            <div class="seat"><%- __('purchase.seat.seats.default') %></div>
+            <div class="seat active"><%- __('purchase.seat.seats.active') %></div>
+            <div class="seat disabled"><%- __('purchase.seat.seats.disabled') %></div>
+        </div>
         <div class="screen">
             <div class="zoom-btn"><a class="icon-zoom-out text-center" href="#"><%- __('purchase.seat.zoom.out') %></a></div>
             <div class="screen-scroll">
             </div>
             <div class="device-type-pc"></div>
         </div>
-        <div class="seat-info">
-            <div class="seat"><%- __('purchase.seat.seats.default') %></div>
-            <div class="seat active"><%- __('purchase.seat.seats.active') %></div>
-            <div class="seat disabled"><%- __('purchase.seat.seats.disabled') %></div>
-        </div>
+        <div class="arrow prev-arrow small-x-text"><div class="mb-x-small"><%- __('purchase.seat.arrow.prev') %></div><a class="center" href="#"></a></div>
+        <div class="arrow next-arrow small-x-text"><div class="mb-x-small"><%- __('purchase.seat.arrow.next') %></div><a class="center" href="#"></a></div>
     </div>
     
     <form method="post">
@@ -38,6 +46,8 @@
     </form>
     <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
 </div>
+
+<input type="hidden" name="performanceId" value="<%= performance.id %>">
 
 <%- include('../locales/validation') %>
 

@@ -158,23 +158,25 @@ img {
 .icon-prev:before {
   content: '';
   position: absolute;
-  top: 30px;
+  top: 20px;
   left: 50%;
   margin-left: -15.5px;
   display: block;
-  width: 31px;
-  height: 29px;
+  width: 28px;
+  height: 26px;
+  background-size: 28px 26px;
   background-image: url(/images/fixed/icon/icon_prev.svg); }
 
 .icon-top:before {
   content: '';
   position: absolute;
-  top: 30px;
+  top: 20px;
   left: 50%;
   margin-left: -15.5px;
   display: block;
-  width: 31px;
-  height: 31px;
+  width: 28px;
+  height: 27px;
+  background-size: 28px 27px;
   background-image: url(/images/fixed/icon/icon_top.svg); }
 
 .icon-add-white:before {
@@ -542,7 +544,6 @@ a {
   position: relative; }
 
 .read {
-  font-size: 22px;
   margin-bottom: 60px;
   text-align: center; }
 
@@ -566,10 +567,10 @@ a {
     width: 33.3%; }
     .navigation .buttons li a {
       position: relative;
-      height: 120px;
+      height: 90px;
       color: #FFF;
       display: block;
-      padding: 80px 0 0;
+      padding: 55px 0 0;
       border-right: 1px solid #FFF;
       font-size: 16px; }
     .navigation .buttons li:last-child a {
@@ -582,7 +583,7 @@ a {
   background-attachment: fixed;
   background-position: 60px center; }
   .contents .contents-inner {
-    padding: 80px 0 40px; }
+    padding: 80px 0 120px; }
 
 .steps {
   position: absolute;
@@ -776,8 +777,29 @@ a {
   .index .box {
     padding: 25px 160px 25px 30px; }
 
+.purchase-seat .film-ttl {
+  padding: 15px 0;
+  background-color: #CECECE;
+  color: #333; }
+
+.purchase-seat .film-info {
+  width: 750px;
+  display: flex;
+  border-radius: 5px;
+  border: 1px solid #FFF; }
+  .purchase-seat .film-info div {
+    padding: 25px 0;
+    width: 50%;
+    border-right: 1px solid #FFF; }
+    .purchase-seat .film-info div:last-child {
+      border: none; }
+    .purchase-seat .film-info div strong {
+      vertical-align: middle; }
+
 .purchase-seat .screen-cover {
-  margin: 0 80px;
+  position: relative;
+  width: 750px;
+  margin: 0 auto;
   background-color: rgba(255, 255, 255, 0.85);
   border-radius: 5px; }
 
@@ -806,6 +828,28 @@ a {
   padding: 20px 0;
   display: flex;
   justify-content: center; }
+
+.purchase-seat .arrow {
+  position: absolute;
+  top: 50%;
+  margin-top: -60px; }
+  .purchase-seat .arrow a {
+    margin-top: -30x;
+    display: block;
+    width: 35px;
+    height: 60px;
+    background-size: 35px 60px;
+    background-color: #CCC; }
+
+.purchase-seat .prev-arrow {
+  left: -115px; }
+  .purchase-seat .prev-arrow a {
+    background-image: url(/images/fixed/icon/icon_prev.svg); }
+
+.purchase-seat .next-arrow {
+  right: -115px; }
+  .purchase-seat .next-arrow a {
+    background-image: url(/images/fixed/icon/icon_prev.svg); }
 
 .purchase-ticket .seats {
   display: flex;
@@ -981,24 +1025,27 @@ a {
     overflow: hidden; }
     .purchase-performances .chronological-order li a {
       border: 1px solid #777777; }
-      .purchase-performances .chronological-order li a dl dt {
-        width: 358px;
-        padding: 25px 30px 25px 50px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center; }
-        .purchase-performances .chronological-order li a dl dt .status {
-          font-weight: bold;
-          font-size: 70px;
-          line-height: 1; }
-      .purchase-performances .chronological-order li a dl dd {
-        width: 606px;
-        padding: 10px 40px 25px 40px;
-        border-left: 1px solid #777777; }
-        .purchase-performances .chronological-order li a dl dd .screen-name {
-          display: inline-block;
-          border: 1px solid #FFF;
-          padding: 5px; }
+      .purchase-performances .chronological-order li a dl {
+        display: flex; }
+        .purchase-performances .chronological-order li a dl dt {
+          width: 358px;
+          padding: 25px 30px 25px 50px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center; }
+          .purchase-performances .chronological-order li a dl dt .status {
+            font-weight: bold;
+            font-size: 70px;
+            line-height: 1; }
+        .purchase-performances .chronological-order li a dl dd {
+          min-height: 160px;
+          width: 606px;
+          padding: 10px 40px 25px 40px;
+          border-left: 1px solid #777777; }
+          .purchase-performances .chronological-order li a dl dd .screen-name {
+            display: inline-block;
+            border: 1px solid #FFF;
+            padding: 5px; }
 
 .purchase-mvtk-input .clone {
   display: none; }

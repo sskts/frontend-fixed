@@ -72,6 +72,52 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 }
 
 /**
+ * パフォーマンス変更
+ * @memberof Purchase.SeatModule
+ * @function performanceChange
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<void>}
+ */
+export async function performanceChange(req: Request, res: Response): Promise<void> {
+    try {
+        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
+
+        purchaseModel.performance = await MP.getPerformance(req.body.performanceId);
+        log('パフォーマンス取得');
+
+        purchaseModel.performanceCOA = await MP.getPerformanceCOA(
+            purchaseModel.performance.attributes.theater.id,
+            purchaseModel.performance.attributes.screen.id,
+            purchaseModel.performance.attributes.film.id
+        );
+        log('COAパフォーマンス取得');
+        //セッション更新
+        req.session.purchase = purchaseModel.toSession();
+        res.json({
+            err: null,
+            result: {
+                performance: purchaseModel.performance,
+                performanceCOA: purchaseModel.performanceCOA
+            }
+        });
+
+    } catch (err) {
+        const error = (err instanceof Error)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            : new ErrorUtilModule.CustomError(err, undefined);
+        res.json({
+            err: error.message,
+            result: null
+        });
+    }
+}
+
+/**
  * 選択座席
  * @interface ReserveSeats
  */

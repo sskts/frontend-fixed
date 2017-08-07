@@ -13,7 +13,7 @@
         el: '#performances',
 
         data: {
-            theaterCode: '',
+            theaterCode: '118',
             date: moment().format('YYYYMMDD'),
             selects: [],
             chronologicalOrder: [],
@@ -30,6 +30,7 @@
         },
 
         watch: {
+            theaterCode: 'fetchPerformancesData',
             date: 'fetchPerformancesData'
         },
 
@@ -52,7 +53,7 @@
              * 劇場コード取得
              */
             getTheaterCode: function () {
-                this.theaterCode = (isFixed()) ? config.theater : $('.theater select').val();
+                this.theaterCode = (isFixed()) ? config.theater : this.theaterCode;
             },
             /**
              * 選択日生成
@@ -68,7 +69,6 @@
                                     : date.format('YYYY年MM月DD日')
                     });
                 }
-                console.log(this)
                 this.selects = results;
             },
             /**
@@ -162,13 +162,28 @@
                         film.films.push(performance);
                     }
                 });
+
                 return results;
             },
             /**
              * パフォーマンス選択
              */
-            onclickPerformance: function (id) {
-                return '/purchase/fixed.html?id=' + id;
+            onclickPerformance: function (event, id, filmId) {
+                event.preventDefault();
+                if (filmId !== undefined) {
+                    var film = this.filmOrder.find(function (value) {
+                        return (value.id === filmId);
+                    });
+                    if (film !== undefined) {
+                        var performances = film.films.map(function (value) {
+                            return value.id;
+                        });
+                        var json = JSON.stringify(performances);
+                        sessionStorage.setItem('performances', json);
+                    }
+                }
+
+                location.href = '/purchase/fixed.html?id=' + id;
             },
             /**
              * ソート選択

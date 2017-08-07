@@ -43,12 +43,13 @@
     &:before {
         content: '';
         position: absolute;
-        top: 30px;
+        top: 20px;
         left: 50%;
         margin-left: -15.5px;
         display: block;
-        width: 31px;
-        height: 29px;
+        width: 28px;
+        height: 26px;
+        background-size: 28px 26px;
         background-image: url(/images/fixed/icon/icon_prev.svg);
     }
 }
@@ -57,12 +58,13 @@
     &:before {
         content: '';
         position: absolute;
-        top: 30px;
+        top: 20px;
         left: 50%;
         margin-left: -15.5px;
         display: block;
-        width: 31px;
-        height: 31px;
+        width: 28px;
+        height: 27px;
+        background-size: 28px 27px;
         background-image: url(/images/fixed/icon/icon_top.svg);
     }
 }

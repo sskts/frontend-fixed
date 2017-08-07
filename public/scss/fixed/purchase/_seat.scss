@@ -1,6 +1,30 @@
 .purchase-seat {
+    .film-ttl {
+        padding: 15px 0;
+        background-color: #CECECE;
+        color: #333;
+    }
+    .film-info {
+        width: 750px;
+        display: flex;
+        border-radius: 5px;
+        border: 1px solid #FFF;
+        div {
+            padding: 25px 0;
+            width: 50%;
+            border-right: 1px solid #FFF;
+            &:last-child {
+                border: none;
+            }
+            strong {
+                vertical-align: middle;
+            }
+        }
+    }
     .screen-cover {
-        margin: 0 80px;
+        position: relative;
+        width: 750px;
+        margin: 0 auto;
         background-color: rgba(255, 255, 255, 0.85);
         border-radius: 5px;
     }
@@ -31,5 +55,32 @@
         padding: 20px 0;
         display: flex;
         justify-content: center;
+    }
+
+    .arrow {
+        position: absolute;
+        top: 50%;
+        margin-top: -60px;
+        a {
+            margin-top: -30x;
+            display: block;
+            width: 35px;
+            height: 60px;
+            background-size: 35px 60px;
+            background-color: #CCC;
+        }
+    }
+
+    .prev-arrow {
+        left: -115px;
+        a {
+            background-image: url(/images/fixed/icon/icon_prev.svg);
+        }
+    }
+    .next-arrow {
+        right: -115px;
+        a {
+            background-image: url(/images/fixed/icon/icon_prev.svg);
+        }
     }
 }

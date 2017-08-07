@@ -1,13 +1,8 @@
 var screenSeatStatusesMap;
 
 $(function () {
-    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
-    saveSalesTickets();
-    loadingStart();
-    screenStateUpdate(function () {
-        loadingEnd();
-    });
-    
+    pageInit();
+
 
     // 座席クリックイベント
     $(document).on('click', '.zoom-btn a', function (event) {
@@ -79,6 +74,20 @@ $(function () {
 });
 
 /**
+ * 初期化
+ * @function pageInit
+ */
+function pageInit() {
+    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
+    saveSalesTickets();
+    loadingStart();
+    setArrows();
+    screenStateUpdate(function () {
+        loadingEnd();
+    });
+}
+
+/**
  * ズームボタンスクロール
  * @function zoomButtonScroll
  * @returns {void}
@@ -139,7 +148,7 @@ function getScreenStateReserve(count, cb) {
     }).fail(function (jqxhr, textStatus, error) {
         retry(count, cb)
     }).always(function () {
-        
+
     });
 }
 
@@ -444,5 +453,78 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
+    });
+}
+
+/**
+ * 時間変更ボタン初期化
+ * @function setArrows
+ * @returns {void}
+ */
+function setArrows() {
+    $('.arrow').hide();
+    var performanceId = $('input[name=performanceId]').val();
+    var json = sessionStorage.getItem('performances');
+    if (json === null) {
+        return;
+    }
+    var performances = JSON.parse(json);
+    if (performances.length < 2) {
+        return;
+    }
+    var current = performances.indexOf(performanceId);
+    var prev = $('.prev-arrow');
+    var next = $('.next-arrow');
+    if (current === 0) {
+        prev.hide();
+        next.attr('data-performanceId', performances[current + 1]);
+        next.show();
+    } else if (current === performances.length - 1) {
+        next.hide();
+        prev.attr('data-performanceId', performances[current - 1]);
+        prev.show();
+    } else {
+        prev.attr('data-performanceId', performances[current - 1]);
+        prev.show();
+        next.attr('data-performanceId', performances[current + 1]);
+        next.show();
+    }
+}
+
+/**
+ * 作品変更クリック
+ * @function arrowClick
+ * @param {string} performanceId 
+ */
+function arrowClick(performanceId) {
+    loadingStart();
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/getScreenStateReserve',
+        type: 'POST',
+        timeout: 10000,
+        data: {
+            tran
+            performanceId: performanceId
+        },
+        beforeSend: function () { }
+    }).done(function (res) {
+        if (!res.result) return;
+        var target = $('.screen-cover');
+        target.attr({
+            'data-theater': '',
+            'data-day': '',
+            'data-coa-title-code': '',
+            'data-coa-title-branch-num': '',
+            'data-time-start': '',
+            'data-screen-code': '',
+            'data-limit': ''
+        });
+        $('input[name=performanceId]').val();
+        pageInit();
+    }).fail(function (jqxhr, textStatus, error) {
+
+    }).always(function () {
+        loadingEnd();
     });
 }
