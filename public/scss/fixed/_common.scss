@@ -29,7 +29,7 @@ body {
     -webkit-user-select: none;
     width: 100%;
     font-family: $font-family;
-    font-size: 30px;
+    font-size: 25px;
     color: #FFF;
     background-color: #000;
 }
@@ -182,6 +182,12 @@ a {
     width: 100%;
 }
 
+.d-table-fixed {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
 .d-tr {
     display: table-row-group;
 }
@@ -246,7 +252,7 @@ a {
 }
 
 .mb-middle {
-    margin-bottom: 40px !important;
+    margin-bottom: 30px !important;
 }
 
 .mb-small {
@@ -364,8 +370,7 @@ a {
         width: 100%;
         border-radius: 5px;
         position: relative;
-        background-color: rgba(255, 255, 255, 0.15);
-        border: 1px solid #00A0E9;
+        background-color: #00A0EA;
         color: #FFF;
     }
 }
@@ -380,7 +385,7 @@ a {
 .middle-button {
     a, button, label {
         width: 460px;
-        padding: 42px 0;
+        padding: 20px 0;
     }
 }
 
@@ -447,9 +452,9 @@ a {
     background-color: #000;
     background: linear-gradient(rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
     .buttons {
+        display: flex;
         li {
-            float: left;
-            width: 33.3%;
+            flex-grow: 1;
             a {
                 position: relative;
                 height: 90px;
@@ -475,11 +480,13 @@ a {
     background-attachment: fixed;
     background-position: 60px center;
     .contents-inner {
-        padding: 80px 0 120px;
+        margin: 0 auto;
+        padding: 50px 30px 120px;
     }
 }
 
 .steps {
+    display: none;
     position: absolute;
     left: 40px;
     top: 40px;

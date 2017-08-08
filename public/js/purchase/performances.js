@@ -194,7 +194,14 @@
                     return;
                 }
                 this.sortType = type
-            }
+            },
+            /**
+             * 照会ボタンクリック
+             */
+            onclickInquiry: function (event) {
+                event.preventDefault();
+                location.href = 'inquiry/login?theater=' + this.theaterCode;
+            },
         }
     })
 })();

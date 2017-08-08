@@ -67,6 +67,13 @@ $(function () {
         });
     });
 
+    // パフォーマンス切り替え
+    $(document).on('click', '.arrow a', function (event) {
+        event.preventDefault();
+        var performanceId = $(this).attr('data-performanceId');
+        arrowClick(performanceId);
+    });
+
     // スクロール
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
@@ -477,16 +484,16 @@ function setArrows() {
     var next = $('.next-arrow');
     if (current === 0) {
         prev.hide();
-        next.attr('data-performanceId', performances[current + 1]);
+        next.find('a').attr('data-performanceId', performances[current + 1]);
         next.show();
     } else if (current === performances.length - 1) {
         next.hide();
-        prev.attr('data-performanceId', performances[current - 1]);
+        prev.find('a').attr('data-performanceId', performances[current - 1]);
         prev.show();
     } else {
-        prev.attr('data-performanceId', performances[current - 1]);
+        prev.find('a').attr('data-performanceId', performances[current - 1]);
         prev.show();
-        next.attr('data-performanceId', performances[current + 1]);
+        next.find('a').attr('data-performanceId', performances[current + 1]);
         next.show();
     }
 }
@@ -500,31 +507,37 @@ function arrowClick(performanceId) {
     loadingStart();
     $.ajax({
         dataType: 'json',
-        url: '/purchase/getScreenStateReserve',
+        url: '/purchase/performanceChange',
         type: 'POST',
         timeout: 10000,
         data: {
-            tran
             performanceId: performanceId
         },
         beforeSend: function () { }
     }).done(function (res) {
         if (!res.result) return;
+        $('input[name=seats]').val('');
+        $('.screen-inner').remove();
         var target = $('.screen-cover');
+        var performance = res.result.performance;
+        var performanceCOA = res.result.performanceCOA;
         target.attr({
-            'data-theater': '',
-            'data-day': '',
-            'data-coa-title-code': '',
-            'data-coa-title-branch-num': '',
-            'data-time-start': '',
-            'data-screen-code': '',
-            'data-limit': ''
+            'data-theater': performance.attributes.theater.id,
+            'data-day': performance.attributes.day,
+            'data-coa-title-code': performanceCOA.titleCode,
+            'data-coa-title-branch-num': performanceCOA.titleBranchNum,
+            'data-time-start': performance.attributes.time_start,
+            'data-screen-code': performanceCOA.screenCode,
+            'data-limit': performance.attributes.coa_available_num
         });
-        $('input[name=performanceId]').val();
+        $('input[name=performanceId]').val(performance.id);
+        $('.screen-name').text(performance.attributes.screen.name.ja);
+        $('.time-start').text(timeFormat(performance.attributes.time_start));
+        $('.time-end').text(timeFormat(performance.attributes.time_end));
         pageInit();
     }).fail(function (jqxhr, textStatus, error) {
-
-    }).always(function () {
         loadingEnd();
+    }).always(function () {
+        
     });
 }

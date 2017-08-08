@@ -76,4 +76,7 @@ purchaseRouter.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 //券種情報をセションへ保存
 purchaseRouter.post('/saveSalesTickets', SeatModule.saveSalesTickets);
 
+// パフォーマンス変更
+purchaseRouter.post('/performanceChange', SeatModule.performanceChange);
+
 export default purchaseRouter;

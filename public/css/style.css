@@ -1140,6 +1140,9 @@ p a {
     .purchase-seat .agree {
       height: 100px; } }
 
+.purchase-seat .arrow {
+  display: none; }
+
 .purchase-ticket .seats .validation {
   background-color: transparent !important; }
   .purchase-ticket .seats .validation .ghost-button a {

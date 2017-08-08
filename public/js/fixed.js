@@ -34,6 +34,10 @@ $(function () {
     navigationInit();
     // 自動TOP遷移
     autoTop();
+    $(document).on('click', '.ticketing-button a', function (event) {
+        event.preventDefault();
+        location.href = '/inquiry/login?theater=' + window.config.theater;
+    })
 });
 
 /**
@@ -89,7 +93,7 @@ function fixedInit() {
  * @return {void}
  */
 function autoTop() {
-    if ($('.index').length === 1) {
+    if ($('.purchase-performances').length === 1) {
         return;
     }
     var controlTime = 1000 * 60 * 5;
