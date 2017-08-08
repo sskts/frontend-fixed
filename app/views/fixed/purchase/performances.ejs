@@ -80,7 +80,10 @@
                         <li v-for="film in order.films" v-bind:key="film.id" class="button gray-button">
                             <a v-on:click="onclickPerformance($event, film.id, film.attributes.film.id)" class="icon-triangle-02">
                                 <dl>
-                                    <dt class="small-text"><strong>{{ film.attributes.time_start | timeFormat }}</strong><span class="small-x-text">～{{ film.attributes.time_end | timeFormat }}</span></dt>
+                                    <dt>
+                                        <div><strong>{{ film.attributes.time_start | timeFormat }}</strong></div>
+                                        <div><span class="small-x-text">～{{ film.attributes.time_end | timeFormat }}</span></div>
+                                    </dt>
                                     <dd class="small-x-text text-left">
                                         <div class="screen-name mb-x-small">{{ film.attributes.screen.name.ja }}</div>
                                         <div v-if="film.attributes.stock_status === 0">満席</div>

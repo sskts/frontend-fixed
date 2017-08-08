@@ -228,19 +228,19 @@ a {
 }
 
 .small-x-text {
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .small-text {
-    font-size: 22px;
+    font-size: 20px;
 }
 
 .large-text {
-    font-size: 40px;
+    font-size: 35px;
 }
 
 .large-x-text {
-    font-size: 50px;
+    font-size: 40px;
 }
 
 .mb-x-large {
@@ -385,7 +385,7 @@ a {
 .middle-button {
     a, button, label {
         width: 460px;
-        padding: 20px 0;
+        padding: 30px 0;
     }
 }
 
@@ -423,14 +423,14 @@ a {
 .page-ttl {
     line-height: 1;
     font-weight: bold;
-    font-size: 40px;
+    font-size: 35px;
     margin-bottom: 40px; 
     text-align: center;
     position: relative;
 }
 
 .read {
-    margin-bottom: 60px; 
+    margin-bottom: 40px; 
     text-align: center;
 }
 
@@ -478,7 +478,6 @@ a {
     background-color: rgb(0, 61, 127);
     background: radial-gradient(circle at center, rgba(0,160,233,1) 0%,rgba(0,61,127,1) 30%);
     background-attachment: fixed;
-    background-position: 60px center;
     .contents-inner {
         margin: 0 auto;
         padding: 50px 30px 120px;

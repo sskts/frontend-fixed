@@ -429,16 +429,16 @@ a {
   color: #C30D23; }
 
 .small-x-text {
-  font-size: 18px; }
+  font-size: 16px; }
 
 .small-text {
-  font-size: 22px; }
+  font-size: 20px; }
 
 .large-text {
-  font-size: 40px; }
+  font-size: 35px; }
 
 .large-x-text {
-  font-size: 50px; }
+  font-size: 40px; }
 
 .mb-x-large {
   margin-bottom: 100px !important; }
@@ -548,7 +548,7 @@ a {
 
 .middle-button a, .middle-button button, .middle-button label {
   width: 460px;
-  padding: 20px 0; }
+  padding: 30px 0; }
 
 .small-button a, .small-button button, .small-button label {
   width: 160px;
@@ -575,13 +575,13 @@ a {
 .page-ttl {
   line-height: 1;
   font-weight: bold;
-  font-size: 40px;
+  font-size: 35px;
   margin-bottom: 40px;
   text-align: center;
   position: relative; }
 
 .read {
-  margin-bottom: 60px;
+  margin-bottom: 40px;
   text-align: center; }
 
 .validation {
@@ -618,8 +618,7 @@ a {
   min-height: 100vh;
   background-color: #003d7f;
   background: radial-gradient(circle at center, #00a0e9 0%, #003d7f 30%);
-  background-attachment: fixed;
-  background-position: 60px center; }
+  background-attachment: fixed; }
   .contents .contents-inner {
     margin: 0 auto;
     padding: 50px 30px 120px; }
@@ -830,7 +829,7 @@ a {
   border-radius: 5px;
   border: 1px solid #FFF; }
   .purchase-seat .film-info div {
-    padding: 25px 0;
+    padding: 20px 0;
     width: 50%;
     border-right: 1px solid #FFF; }
     .purchase-seat .film-info div:last-child {
