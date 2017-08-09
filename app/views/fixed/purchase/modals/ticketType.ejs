@@ -3,25 +3,23 @@
         <ul>
             <% for (let ticket of tickets) { %>
             <li>
-                <dl class="d-table">
-                    <dt class="d-td">
-                        <div class="mb-small"><%= ticket.ticket_name %> <strong>￥<%= formatPrice(ticket.sale_price) %></strong></div>
-                        <% if (ticket.ticket_note) { %>
-                        <p class="small-text"><%= ticket.ticket_note %></p>
-                        <% } %>
-                    </dt>
-                    <dd class="d-td">
-                        <div class="button small-button gray-button ticket-type-select">
-                            <a href="#" class="icon-triangle-02" 
-                            data-ticket-code="<%= ticket.ticket_code %>"
-                            data-ticket-name="<%= ticket.ticket_name %>"
-                            data-sale-price="<%= ticket.sale_price %>"
-                            data-glasses="<%= ticket.glasses %>"
-                            data-add-price-glasses="<%= ticket.add_price_glasses %>"
-                            data-mvtk-num="<%= ticket.mvtk_num %>">選択</a>
-                        </div>
-                    </dd>
-                </dl>
+                <a href="#" class="icon-triangle-01" 
+                data-ticket-code="<%= ticket.ticket_code %>"
+                data-ticket-name="<%= ticket.ticket_name %>"
+                data-sale-price="<%= ticket.sale_price %>"
+                data-glasses="<%= ticket.glasses %>"
+                data-add-price-glasses="<%= ticket.add_price_glasses %>"
+                data-mvtk-num="<%= ticket.mvtk_num %>">
+                    <dl class="d-table">
+                        <dt class="d-td">
+                            <div class="mb-small"><%= ticket.ticket_name %> <strong>￥<%= formatPrice(ticket.sale_price) %></strong></div>
+                            <% if (ticket.ticket_note) { %>
+                            <p class="small-text"><%= ticket.ticket_note %></p>
+                            <% } %>
+                        </dt>
+                        <dd class="d-td text-center">選択</dd>
+                    </dl>
+                </a>
             </li>
             <% } %>
         </ul>

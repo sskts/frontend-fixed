@@ -50,12 +50,12 @@
                         <span class="small-text">～{{ order.attributes.time_end | timeFormat }}</span>
                     </div>
                     <div class="small-text text-center">
-                        <div v-if="order.attributes.stock_status === 0" class="mb-x-small">満席</div>
-                        <div v-else-if="order.attributes.stock_status <= 10" class="mb-x-small">空席わずか</div>
-                        <div v-else class="mb-x-small">空席あり</div>
-                        <div v-if="order.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg" width="70"></div>
-                        <div v-else-if="order.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg" width="70"></div>
-                        <div v-else class="status"><img src="/images/fixed/status_01.svg" width="70"></div>
+                        <div v-if="order.attributes.stock_status === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
+                        <div v-else-if="order.attributes.stock_status <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
+                        <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
+                        <div v-if="order.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                        <div v-else-if="order.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
                     </div>
                 </dt>
                 <dd class="text-left">
@@ -86,12 +86,12 @@
                                     </dt>
                                     <dd class="small-x-text text-left">
                                         <div class="screen-name mb-x-small">{{ film.attributes.screen.name.ja }}</div>
-                                        <div v-if="film.attributes.stock_status === 0">満席</div>
-                                        <div v-else-if="film.attributes.stock_status <= 10">空席わずか</div>
-                                        <div v-else >空席あり</div>
-                                        <div v-if="film.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg" width="50"></div>
-                                        <div v-else-if="film.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg" width="50"></div>
-                                        <div v-else class="status"><img src="/images/fixed/status_01.svg" width="50"></div>
+                                        <div v-if="film.attributes.stock_status === 0"><%- __('purchase.performances.status.full') %></div>
+                                        <div v-else-if="film.attributes.stock_status <= 10"><%- __('purchase.performances.status.few') %></div>
+                                        <div v-else ><%- __('purchase.performances.status.many') %></div>
+                                        <div v-if="film.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                                        <div v-else-if="film.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
                                     </dd>
                                 </dl>
                             </a>

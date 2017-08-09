@@ -11,7 +11,7 @@
     <p class="read"><%- __('purchase.input.read') %></p>
     <form id="purchaseform" method="post">
         <div class="form-layout center">
-            <dl class="mb-middle">
+            <dl class="mb-large">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
                     <input type="tel" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>" class="numerickeybord" readonly="readonly">
@@ -22,17 +22,17 @@
             <input type="hidden" name="mail_addr" placeholder="<%- __('common.placeholder.mail') %>" value="">
             <input type="hidden" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="">
             <% if (price > 0) { %>
-            <h2 class="payment-ttl mb-small">
+            <h2 class="payment-ttl mb-middle">
                 <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
             </h2>
             
-            <dl class="mb-small">
+            <dl class="mb-middle">
                 <dt><%- __('common.cardno') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" maxlength="16" placeholder="<%- __('common.placeholder.cardno') %>">
+                    <input type="text" pattern="\d*" name="cardno" id="cardNumber" autocomplete="off" value="" maxlength="16" placeholder="<%- __('common.placeholder.cardno') %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
-            <div class="mb-small expire">
+            <div class="mb-middle expire">
                 <dl>
                     <dt><%- __('common.expire') %> / <%- __('common.month') %></dt>
                     <dd>

@@ -1416,13 +1416,12 @@ p a {
                 border: 1px solid #FFF;
                 padding: 5px; }
               .purchase-performances .film-order li dl dd ul li a dl dd .status {
-                font-weight: bold;
-                font-size: 30px;
-                line-height: 1;
                 position: absolute;
                 top: 50%;
                 right: 15px;
                 margin-top: -15px; }
+                .purchase-performances .film-order li dl dd ul li a dl dd .status img {
+                  width: 30px; }
 
 .purchase-performances .chronological-order {
   margin: 0 auto; }
@@ -1446,10 +1445,8 @@ p a {
               display: block;
               padding: 10px;
               text-align: center; } }
-          .purchase-performances .chronological-order li a dl dt .status {
-            font-weight: bold;
-            font-size: 40px;
-            line-height: 1; }
+          .purchase-performances .chronological-order li a dl dt .status img {
+            width: 50px; }
         .purchase-performances .chronological-order li a dl dd {
           min-height: 100px;
           width: 606px;

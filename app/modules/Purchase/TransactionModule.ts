@@ -30,7 +30,7 @@ const VALID_TIME_DEFAULT = 15;
  * 取引有効時間(券売機) 5分間
  * @const {number} END_TIME_DEFAULT
  */
-const VALID_TIME_FIXED = 500;
+const VALID_TIME_FIXED = 5;
 
 /**
  * 取引開始

@@ -449,8 +449,8 @@ a {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #000;
-    background: linear-gradient(rgba(80,80,80,1) 0%, rgba(0,0,0,1) 100%);
+    background-color: #191919;
+    // background: linear-gradient(rgba(60,60,60,1) 0%,rgba(0,0,0,1) 100%);
     .buttons {
         display: flex;
         li {
@@ -574,6 +574,7 @@ a {
         overflow: hidden;
         border-radius: 5px;
         background-color: rgba(255, 255, 255, 0.85);
+        background-color: #FFF;
         color: #333;
         padding: 40px;
     }

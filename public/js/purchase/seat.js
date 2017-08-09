@@ -1,7 +1,13 @@
 var screenSeatStatusesMap;
 
 $(function () {
-    pageInit();
+    pageInit(function() {
+        var howTo = $('.how-to');
+        howTo.show();
+        setTimeout(function(){
+            howTo.fadeOut();
+        }, 3000);
+    });
 
 
     // 座席クリックイベント
@@ -83,14 +89,18 @@ $(function () {
 /**
  * 初期化
  * @function pageInit
+ * @param {function} cb
  */
-function pageInit() {
+function pageInit(cb) {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     saveSalesTickets();
     loadingStart();
     setArrows();
     screenStateUpdate(function () {
         loadingEnd();
+        if (cb !== undefined) {
+            cb();
+        }
     });
 }
 

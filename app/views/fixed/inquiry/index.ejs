@@ -4,6 +4,14 @@
 <script src="/js/print/star/starprint.js"></script>
 <script src="/js/print/star/print.js"></script>
 <script src="/js/inquiry/index.js"></script>
+<%- contentFor('style') %>
+<style>
+.navigation .buttons .ticketing-button {
+    display: none;
+}
+</style>
+<%- contentFor('prev') %>
+/inquiry/login?theater=<%= login.theater_code %>
 <%- contentFor('body') %>
 <%- include('../layouts/inquiry/steps', {step: 1}) %>
 <div class="inquiry-confirm">

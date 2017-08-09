@@ -21,6 +21,9 @@
             strong {
                 vertical-align: middle;
             }
+            span {
+                vertical-align: middle;
+            }
         }
     }
     .screen-cover {
@@ -85,6 +88,21 @@
         right: -115px;
         a {
             background-image: url(/images/fixed/arrow_next.svg);
+        }
+    }
+    .how-to {
+        display: none;
+        width: 648px;
+        height: 220px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -110px 0 0 -324px;
+        padding: 30px;
+        background-color: rgba(0, 0, 0, 0.85);
+        img {
+            width: 124px;
+            height: 82px;
         }
     }
 }

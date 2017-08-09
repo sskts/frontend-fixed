@@ -29,6 +29,11 @@
 			"sort": {
 				"chronological": "時間から選ぶ",
 				"film": "作品から選ぶ"
+			},
+			"status": {
+				"full": "満席",
+				"few": "空席わずか",
+				"many": "空席あり"
 			}
 		},
 		"seat": {
