@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP/sskts-api");
 const logger_1 = require("../../middlewares/logger");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
@@ -229,8 +230,8 @@ function purchase(req, res) {
                 yield reserveMvtk(purchaseModel);
                 log('ムビチケ決済');
             }
-            const order = yield MP.service.transaction.placeOrder.confirm({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            const order = yield ssktsApi.service.transaction.placeOrder.confirm({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id
             });
             log('注文確定', order);
@@ -291,7 +292,7 @@ function purchase(req, res) {
                     domain: req.headers.host
                 });
                 const sendEmailNotificationArgs = {
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {
                         from: 'noreply@ticket-cinemasunshine.com',
@@ -300,7 +301,7 @@ function purchase(req, res) {
                         content: content
                     }
                 };
-                yield MP.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
+                yield ssktsApi.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
                 log('メール通知');
             }
             // 購入セッション削除

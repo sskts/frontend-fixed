@@ -3,14 +3,14 @@
  * @namespace Fixed.FixedModule
  */
 import * as COA from '@motionpicture/coa-service';
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
 import inquiryLoginForm from '../../forms/Inquiry/LoginForm';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { InquiryModel } from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Fixed.FixedModule');
 
 /**
@@ -38,8 +38,8 @@ export async function index(_: Request, res: Response): Promise<void> {
 export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const movieTheaters = await MP.service.organization.searchMovieTheaters({
-            auth: await UtilModule.createAuth(req.session.auth)
+        const movieTheaters = await ssktsApi.service.organization.searchMovieTheaters({
+            auth: new AuthModel(req.session.auth).create()
         });
         log('movieTheaters: ', movieTheaters);
         res.locals.movieTheaters = movieTheaters;
@@ -75,8 +75,8 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-                auth: await UtilModule.createAuth(req.session.auth),
+            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
+                auth: new AuthModel(req.session.auth).create(),
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -85,8 +85,8 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await MP.service.order.findByOrderInquiryKey({
-                auth: await UtilModule.createAuth(req.session.auth),
+            inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
+                auth: new AuthModel(req.session.auth).create(),
                 orderInquiryKey: {
                     telephone: inquiryModel.login.telephone,
                     orderNumber: Number(inquiryModel.login.reserveNum),
@@ -100,8 +100,8 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 if (req.session.fixed.updateReserveIn === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
-                inquiryModel.order = await MP.service.order.findByOrderInquiryKey({
-                    auth: await UtilModule.createAuth(req.session.auth),
+                inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
+                    auth: new AuthModel(req.session.auth).create(),
                     orderInquiryKey: {
                         telephone: inquiryModel.login.telephone,
                         orderNumber: Number(inquiryModel.login.reserveNum),

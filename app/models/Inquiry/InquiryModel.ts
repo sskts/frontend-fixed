@@ -37,7 +37,7 @@ export interface IInquirySession {
 }
 
 /**
- * 照会セッション
+ * 照会モデル
  * @class InquiryModel
  */
 export class InquiryModel {
@@ -99,7 +99,7 @@ export class InquiryModel {
      * 上映開始時間取得
      * @memberof PurchaseModel
      * @method getScreeningTime
-     * @returns {any}
+     * @returns { start: string, end: string }
      */
     // tslint:disable-next-line:prefer-function-over-method
     public getScreeningTime(offer: sskts.factory.order.IOffer): { start: string, end: string } {

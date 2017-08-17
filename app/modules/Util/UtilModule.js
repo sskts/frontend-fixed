@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
-const MP = require("../../../libs/MP/sskts-api");
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
@@ -26,7 +25,7 @@ function setLocals(req, res, next) {
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
-    res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
+    res.locals.webhookApiEndPoint = process.env.SSKTS_WEBHOOK_ENDPOINT;
     // クッキーからアプリ判定
     res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();
@@ -158,31 +157,6 @@ function getEmailTemplate(res, file, locals) {
     });
 }
 exports.getEmailTemplate = getEmailTemplate;
-/**
- * 認証作成
- * @memberof Util.UtilModule
- * @function createAuth
- * @param {Reqest} req
- * @returns {Promise<MP.auth.ClientCredentials>}
- */
-function createAuth(auth) {
-    return __awaiter(this, void 0, void 0, function* () {
-        let result;
-        if (auth === undefined) {
-            result = new MP.auth.ClientCredentials('motionpicture', 'motionpicture', 'teststate', [
-                'transactions',
-                'events.read-only',
-                'organizations.read-only',
-                'orders.read-only'
-            ]);
-        }
-        else {
-            result = new MP.auth.ClientCredentials(auth.clientId, auth.clientSecret, auth.state, auth.scopes);
-        }
-        return result;
-    });
-}
-exports.createAuth = createAuth;
 /**
  * 2桁
  * @memberof Util.UtilModule

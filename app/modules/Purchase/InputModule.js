@@ -13,13 +13,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
-const MP = require("../../../libs/MP/sskts-api");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
@@ -140,12 +140,12 @@ function submit(req, res, next) {
             };
             if (purchaseModel.creditCardAuthorization !== null) {
                 const cancelCreditCardAuthorizationArgs = {
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.creditCardAuthorization.id
                 };
                 try {
-                    yield MP.service.transaction.placeOrder.cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+                    yield ssktsApi.service.transaction.placeOrder.cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
@@ -160,7 +160,7 @@ function submit(req, res, next) {
                 purchaseModel.createOrderId();
                 purchaseModel.save(req.session);
                 const createCreditCardAuthorizationArgs = {
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     orderId: purchaseModel.orderId,
                     amount: purchaseModel.getReserveAmount(),
@@ -170,7 +170,7 @@ function submit(req, res, next) {
                     }
                 };
                 try {
-                    yield MP.service.transaction.placeOrder.createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                    yield ssktsApi.service.transaction.placeOrder.createCreditCardAuthorization(createCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     log(createCreditCardAuthorizationArgs);
@@ -179,8 +179,8 @@ function submit(req, res, next) {
                 }
                 log('CMOオーソリ追加');
             }
-            yield MP.service.transaction.placeOrder.setAgentProfile({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            yield ssktsApi.service.transaction.placeOrder.setAgentProfile({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 profile: {
                     familyName: purchaseModel.profile.familyName,
@@ -189,7 +189,7 @@ function submit(req, res, next) {
                     telephone: purchaseModel.profile.telephone
                 }
             });
-            log('MP購入者情報登録');
+            log('SSKTS購入者情報登録');
             // セッション更新
             purchaseModel.save(req.session);
             // 購入者内容確認へ

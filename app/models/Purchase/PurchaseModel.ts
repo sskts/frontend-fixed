@@ -308,7 +308,7 @@ export interface IPurchaseSession {
 }
 
 /**
- * 購入セッション
+ * 購入モデル
  * @class PurchaseModel
  */
 export class PurchaseModel {

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 const UtilModule = require("../../modules/Util/UtilModule");
 /**
- * 照会セッション
+ * 照会モデル
  * @class InquiryModel
  */
 class InquiryModel {
@@ -48,7 +48,7 @@ class InquiryModel {
      * 上映開始時間取得
      * @memberof PurchaseModel
      * @method getScreeningTime
-     * @returns {any}
+     * @returns { start: string, end: string }
      */
     // tslint:disable-next-line:prefer-function-over-method
     getScreeningTime(offer) {

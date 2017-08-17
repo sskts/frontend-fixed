@@ -3,14 +3,14 @@
  * @namespace Purchase.TicketModule
  */
 import * as MVTK from '@motionpicture/mvtk-service';
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
 import TicketForm from '../../forms/Purchase/TicketForm';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { IReserveTicket, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
 const log = debug('SSKTS:Purchase.TicketModule');
 
@@ -127,15 +127,15 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, selectTickets);
             log('券種検証');
             // COAオーソリ削除
-            await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: await UtilModule.createAuth(req.session.auth),
+            await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: new AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
-            log('MPCOAオーソリ削除');
+            log('SSKTSCOAオーソリ削除');
             //COAオーソリ追加
             const createSeatReservationAuthorizationArgs = {
-                auth: await UtilModule.createAuth(req.session.auth),
+                auth: new AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                 offers: (<IReserveTicket[]>purchaseModel.reserveTickets).map((reserveTicket) => {
@@ -165,17 +165,17 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     };
                 })
             };
-            log('MPCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
-            purchaseModel.seatReservationAuthorization = await MP.service.transaction.placeOrder
+            log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
+            purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder
                 .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
-            log('MPCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
+            log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
             if (purchaseModel.mvtkAuthorization !== null) {
-                await MP.service.transaction.placeOrder.cancelMvtkAuthorization({
-                    auth: await UtilModule.createAuth(req.session.auth),
+                await ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
+                    auth: new AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.mvtkAuthorization.id
                 });
-                log('MPムビチケオーソリ削除');
+                log('SSKTSムビチケオーソリ削除');
             }
             if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
                 // 購入管理番号情報
@@ -193,7 +193,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     time: `${purchaseModel.getScreeningTime().start}:00`
                 };
                 const createMvtkAuthorizationArgs = {
-                    auth: await UtilModule.createAuth(req.session.auth),
+                    auth: new AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id, // 取引情報
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(), // 合計金額
@@ -226,10 +226,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     }
 
                 };
-                log('MPムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
+                log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                 // tslint:disable-next-line:max-line-length
-                purchaseModel.mvtkAuthorization = await MP.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
-                log('MPムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
+                purchaseModel.mvtkAuthorization = await ssktsApi.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
+                log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
             }
             purchaseModel.save(req.session);
             log('セッション更新');

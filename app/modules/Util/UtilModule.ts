@@ -4,7 +4,6 @@
  */
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
 /**
  * テンプレート変数へ渡す
  * @memberof Util.UtilModule
@@ -21,7 +20,7 @@ export function setLocals(req: Request, res: Response, next: NextFunction): void
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
-    res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
+    res.locals.webhookApiEndPoint = process.env.SSKTS_WEBHOOK_ENDPOINT;
     // クッキーからアプリ判定
     res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();
@@ -161,39 +160,6 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
             resolve(html);
         });
     });
-}
-
-/**
- * 認証作成
- * @memberof Util.UtilModule
- * @function createAuth
- * @param {Reqest} req
- * @returns {Promise<MP.auth.ClientCredentials>}
- */
-export async function createAuth(auth: any): Promise<MP.auth.ClientCredentials> {
-    let result: MP.auth.ClientCredentials;
-    if (auth === undefined) {
-        result = new MP.auth.ClientCredentials(
-            'motionpicture',
-            'motionpicture',
-            'teststate',
-            [
-                'transactions',
-                'events.read-only',
-                'organizations.read-only',
-                'orders.read-only'
-            ]
-        );
-    } else {
-        result = new MP.auth.ClientCredentials(
-            auth.clientId,
-            auth.clientSecret,
-            auth.state,
-            auth.scopes
-        );
-    }
-
-    return result;
 }
 
 /**

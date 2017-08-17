@@ -2,13 +2,13 @@
  * 照会
  * @namespace InquiryModule
  */
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP/sskts-api';
 import LoginForm from '../../forms/Inquiry/LoginForm';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { InquiryModel } from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:InquiryModule');
 
 /**
@@ -32,8 +32,8 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
-        inquiryModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-            auth: await UtilModule.createAuth(req.session.auth),
+        inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
+            auth: new AuthModel(req.session.auth).create(),
             branchCode: theaterCode
         });
         log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -72,8 +72,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-                auth: await UtilModule.createAuth(req.session.auth),
+            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
+                auth: new AuthModel(req.session.auth).create(),
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -82,8 +82,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await MP.service.order.findByOrderInquiryKey({
-                auth: await UtilModule.createAuth(req.session.auth),
+            inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
+                auth: new AuthModel(req.session.auth).create(),
                 orderInquiryKey: {
                     telephone: inquiryModel.login.telephone,
                     orderNumber: Number(inquiryModel.login.reserveNum),
@@ -107,8 +107,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             return;
         } else {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-                auth: await UtilModule.createAuth(req.session.auth),
+            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
+                auth: new AuthModel(req.session.auth).create(),
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);

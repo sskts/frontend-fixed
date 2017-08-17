@@ -3,13 +3,13 @@
  * @namespace Purchase.TransactionModule
  */
 
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
@@ -53,8 +53,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
 
         // イベント情報取得
-        const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req.session.auth),
+        const individualScreeningEvent = await ssktsApi.service.event.findIndividualScreeningEvent({
+            auth: new AuthModel(req.session.auth).create(),
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -92,13 +92,13 @@ export async function start(req: Request, res: Response): Promise<void> {
 
         // authセッションへ
         req.session.auth = {
-            clientId: 'motionpicture',
-            clientSecret: 'motionpicture',
+            clientId: process.env.TEST_CLIENT_ID,
+            clientSecret: process.env.TEST_CLIENT_SECRET,
             state: 'teststate',
             scopes: [
-                'transactions',
-                'events.read-only',
-                'organizations.read-only'
+                'https://sskts-api-development.azurewebsites.net/transactions',
+                'https://sskts-api-development.azurewebsites.net/events.read-only',
+                'https://sskts-api-development.azurewebsites.net/organizations.read-only'
             ]
         };
         log('authセッションへ');
@@ -108,8 +108,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         });
 
         // 劇場のショップを検索
-        purchaseModel.movieTheaterOrganization = await MP.service.organization.findMovieTheaterByBranchCode({
-            auth: await UtilModule.createAuth(req.session.auth),
+        purchaseModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
+            auth: new AuthModel(req.session.auth).create(),
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -118,12 +118,12 @@ export async function start(req: Request, res: Response): Promise<void> {
         // 取引開始
         const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-        purchaseModel.transaction = await MP.service.transaction.placeOrder.start({
-            auth: await UtilModule.createAuth(req.session.auth),
+        purchaseModel.transaction = await ssktsApi.service.transaction.placeOrder.start({
+            auth: new AuthModel(req.session.auth).create(),
             expires: purchaseModel.expired,
             sellerId: purchaseModel.movieTheaterOrganization.id
         });
-        log('MP取引開始', purchaseModel.transaction);
+        log('SSKTS取引開始', purchaseModel.transaction);
 
         //セッション更新
         purchaseModel.save(req.session);

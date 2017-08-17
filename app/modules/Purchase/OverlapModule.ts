@@ -2,12 +2,12 @@
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP/sskts-api';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.OverlapModule');
 
 /**
@@ -27,8 +27,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         // イベント情報取得
-        const individualScreeningEvent = await MP.service.event.findIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req.session.auth),
+        const individualScreeningEvent = await ssktsApi.service.event.findIndividualScreeningEvent({
+            auth: new AuthModel(req.session.auth).create(),
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -68,8 +68,8 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         // COA仮予約削除
-        await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: await UtilModule.createAuth(req.session.auth),
+        await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+            auth: new AuthModel(req.session.auth).create(),
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });

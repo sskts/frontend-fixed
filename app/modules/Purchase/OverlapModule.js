@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
-const MP = require("../../../libs/MP/sskts-api");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
@@ -38,8 +38,8 @@ function index(req, res, next) {
             if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // イベント情報取得
-            const individualScreeningEvent = yield MP.service.event.findIndividualScreeningEvent({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            const individualScreeningEvent = yield ssktsApi.service.event.findIndividualScreeningEvent({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -82,8 +82,8 @@ function newReserve(req, res, next) {
             if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // COA仮予約削除
-            yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });

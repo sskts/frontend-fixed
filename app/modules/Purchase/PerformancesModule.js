@@ -12,12 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP/sskts-api");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.PerformancesModule');
 /**
  * パフォーマンス一覧表示
@@ -36,8 +36,8 @@ function index(req, res, next) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null) {
-                yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
@@ -49,8 +49,8 @@ function index(req, res, next) {
             delete req.session.complete;
             delete req.session.auth;
             if (process.env.VIEW_TYPE === undefined) {
-                res.locals.movieTheaters = yield MP.service.organization.searchMovieTheaters({
-                    auth: yield UtilModule.createAuth(req.session.auth)
+                res.locals.movieTheaters = yield ssktsApi.service.organization.searchMovieTheaters({
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create()
                 });
                 log(res.locals.movieTheaters);
             }
@@ -81,8 +81,8 @@ function getPerformances(req, res) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // 上映イベント検索
-            const individualScreeningEvents = yield MP.service.event.searchIndividualScreeningEvent({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            const individualScreeningEvents = yield ssktsApi.service.event.searchIndividualScreeningEvent({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 searchConditions: {
                     theater: req.body.theater,
                     day: moment(req.body.day).format('YYYYMMDD')

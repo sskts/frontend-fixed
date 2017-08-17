@@ -24,6 +24,7 @@
     "@motionpicture/gmo-service": "^4.0.0",
     "@motionpicture/mvtk-service": "^2.0.2",
     "@motionpicture/sskts-domain": "git+https://hata:1q2w3e4r5t@m-p.backlog.jp/git/SSKTS/domain.git#feature/SSKTS-533",
+    "@motionpicture/sskts-api": "git+https://hata:1q2w3e4r5t@m-p.backlog.jp/git/SSKTS/api-nodejs-client.git#feature/SSKTS-561",
     "basic-auth": "^1.1.0",
     "body-parser": "^1.17.1",
     "connect-redis": "^3.2.0",

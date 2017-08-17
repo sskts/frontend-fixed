@@ -4,11 +4,12 @@
  */
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
 import logger from '../../middlewares/logger';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { IMvtk, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -213,8 +214,8 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             log('ムビチケ決済');
         }
 
-        const order = await MP.service.transaction.placeOrder.confirm({
-            auth: await UtilModule.createAuth(req.session.auth),
+        const order = await ssktsApi.service.transaction.placeOrder.confirm({
+            auth: new AuthModel(req.session.auth).create(),
             transactionId: purchaseModel.transaction.id
         });
         log('注文確定', order);
@@ -281,7 +282,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 }
             );
             const sendEmailNotificationArgs = {
-                auth: await UtilModule.createAuth(req.session.auth),
+                auth: new AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {
                     from: 'noreply@ticket-cinemasunshine.com',
@@ -290,7 +291,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     content: content
                 }
             };
-            await MP.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
+            await ssktsApi.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
             log('メール通知');
         }
         // 購入セッション削除

@@ -2,13 +2,13 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP/sskts-api';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.PerformancesModule');
 
 /**
@@ -27,8 +27,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         if (purchaseModel.seatReservationAuthorization !== null
             && purchaseModel.transaction !== null) {
-            await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: await UtilModule.createAuth(req.session.auth),
+            await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: new AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -42,8 +42,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         delete req.session.auth;
 
         if (process.env.VIEW_TYPE === undefined) {
-            res.locals.movieTheaters = await MP.service.organization.searchMovieTheaters({
-                auth: await UtilModule.createAuth(req.session.auth)
+            res.locals.movieTheaters = await ssktsApi.service.organization.searchMovieTheaters({
+                auth: new AuthModel(req.session.auth).create()
             });
             log(res.locals.movieTheaters);
         }
@@ -72,8 +72,8 @@ export async function getPerformances(req: Request, res: Response): Promise<void
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         // 上映イベント検索
-        const individualScreeningEvents = await MP.service.event.searchIndividualScreeningEvent({
-            auth: await UtilModule.createAuth(req.session.auth),
+        const individualScreeningEvents = await ssktsApi.service.event.searchIndividualScreeningEvent({
+            auth: new AuthModel(req.session.auth).create(),
             searchConditions: {
                 theater: req.body.theater,
                 day: moment(req.body.day).format('YYYYMMDD')

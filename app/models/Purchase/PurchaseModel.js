@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 const UtilModule = require("../../modules/Util/UtilModule");
 /**
- * 購入セッション
+ * 購入モデル
  * @class PurchaseModel
  */
 class PurchaseModel {

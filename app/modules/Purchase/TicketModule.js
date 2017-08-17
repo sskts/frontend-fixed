@@ -13,13 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @namespace Purchase.TicketModule
  */
 const MVTK = require("@motionpicture/mvtk-service");
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP/sskts-api");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS:Purchase.TicketModule');
 /**
@@ -106,15 +106,15 @@ function select(req, res, next) {
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, selectTickets);
                 log('券種検証');
                 // COAオーソリ削除
-                yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
-                log('MPCOAオーソリ削除');
+                log('SSKTSCOAオーソリ削除');
                 //COAオーソリ追加
                 const createSeatReservationAuthorizationArgs = {
-                    auth: yield UtilModule.createAuth(req.session.auth),
+                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                     transactionId: purchaseModel.transaction.id,
                     eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                     offers: purchaseModel.reserveTickets.map((reserveTicket) => {
@@ -144,17 +144,17 @@ function select(req, res, next) {
                         };
                     })
                 };
-                log('MPCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
-                purchaseModel.seatReservationAuthorization = yield MP.service.transaction.placeOrder
+                log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
+                purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
-                log('MPCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
+                log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
-                    yield MP.service.transaction.placeOrder.cancelMvtkAuthorization({
-                        auth: yield UtilModule.createAuth(req.session.auth),
+                    yield ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
+                        auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                         transactionId: purchaseModel.transaction.id,
                         authorizationId: purchaseModel.mvtkAuthorization.id
                     });
-                    log('MPムビチケオーソリ削除');
+                    log('SSKTSムビチケオーソリ削除');
                 }
                 if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
                     // 購入管理番号情報
@@ -169,7 +169,7 @@ function select(req, res, next) {
                         time: `${purchaseModel.getScreeningTime().start}:00`
                     };
                     const createMvtkAuthorizationArgs = {
-                        auth: yield UtilModule.createAuth(req.session.auth),
+                        auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                         transactionId: purchaseModel.transaction.id,
                         mvtk: {
                             price: purchaseModel.getMvtkPrice(),
@@ -201,10 +201,10 @@ function select(req, res, next) {
                             skhnCd: mvtkFilmCode // 作品コード
                         }
                     };
-                    log('MPムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
+                    log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                     // tslint:disable-next-line:max-line-length
-                    purchaseModel.mvtkAuthorization = yield MP.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
-                    log('MPムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
+                    purchaseModel.mvtkAuthorization = yield ssktsApi.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
+                    log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
                 }
                 purchaseModel.save(req.session);
                 log('セッション更新');

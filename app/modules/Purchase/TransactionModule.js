@@ -12,12 +12,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
 const moment = require("moment");
-const MP = require("../../../libs/MP/sskts-api");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
@@ -59,8 +59,8 @@ function start(req, res) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
             // イベント情報取得
-            const individualScreeningEvent = yield MP.service.event.findIndividualScreeningEvent({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            const individualScreeningEvent = yield ssktsApi.service.event.findIndividualScreeningEvent({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -93,13 +93,13 @@ function start(req, res) {
             log('セッション削除');
             // authセッションへ
             req.session.auth = {
-                clientId: 'motionpicture',
-                clientSecret: 'motionpicture',
+                clientId: process.env.TEST_CLIENT_ID,
+                clientSecret: process.env.TEST_CLIENT_SECRET,
                 state: 'teststate',
                 scopes: [
-                    'transactions',
-                    'events.read-only',
-                    'organizations.read-only'
+                    'https://sskts-api-development.azurewebsites.net/transactions',
+                    'https://sskts-api-development.azurewebsites.net/events.read-only',
+                    'https://sskts-api-development.azurewebsites.net/organizations.read-only'
                 ]
             };
             log('authセッションへ');
@@ -107,8 +107,8 @@ function start(req, res) {
                 individualScreeningEvent: individualScreeningEvent
             });
             // 劇場のショップを検索
-            purchaseModel.movieTheaterOrganization = yield MP.service.organization.findMovieTheaterByBranchCode({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            purchaseModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -117,12 +117,12 @@ function start(req, res) {
             // 取引開始
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-            purchaseModel.transaction = yield MP.service.transaction.placeOrder.start({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            purchaseModel.transaction = yield ssktsApi.service.transaction.placeOrder.start({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });
-            log('MP取引開始', purchaseModel.transaction);
+            log('SSKTS取引開始', purchaseModel.transaction);
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ

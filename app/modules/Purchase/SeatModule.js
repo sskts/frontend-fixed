@@ -13,10 +13,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
+const ssktsApi = require("@motionpicture/sskts-api");
 const debug = require("debug");
 const fs = require("fs-extra");
-const MP = require("../../../libs/MP/sskts-api");
 const seatForm = require("../../forms/Purchase/SeatForm");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
@@ -141,8 +142,8 @@ function reserve(req, selectSeats, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
-            yield MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: yield UtilModule.createAuth(req.session.auth),
+            yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -160,8 +161,8 @@ function reserve(req, selectSeats, purchaseModel) {
             purchaseModel.salesTickets = salesTicketResult;
             log('コアAPI券種取得', purchaseModel.salesTickets);
         }
-        purchaseModel.seatReservationAuthorization = yield MP.service.transaction.placeOrder.createSeatReservationAuthorization({
-            auth: yield UtilModule.createAuth(req.session.auth),
+        purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder.createSeatReservationAuthorization({
+            auth: new AuthModel_1.AuthModel(req.session.auth).create(),
             transactionId: purchaseModel.transaction.id,
             eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
             offers: selectSeats.map((seat) => {
@@ -192,7 +193,7 @@ function reserve(req, selectSeats, purchaseModel) {
                 };
             })
         });
-        log('MPオーソリ追加', purchaseModel.seatReservationAuthorization);
+        log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
         purchaseModel.orderCount = 0;
         log('GMOオーソリカウント初期化');
     });

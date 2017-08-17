@@ -4,11 +4,12 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
+import * as ssktsApi from '@motionpicture/sskts-api';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
-import * as MP from '../../../libs/MP/sskts-api';
 import * as seatForm from '../../forms/Purchase/SeatForm';
+import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -128,8 +129,8 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
 
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
-        await MP.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: await UtilModule.createAuth(req.session.auth),
+        await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
+            auth: new AuthModel(req.session.auth).create(),
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });
@@ -149,8 +150,8 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
         log('コアAPI券種取得', purchaseModel.salesTickets);
     }
 
-    purchaseModel.seatReservationAuthorization = await MP.service.transaction.placeOrder.createSeatReservationAuthorization({
-        auth: await UtilModule.createAuth(req.session.auth),
+    purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder.createSeatReservationAuthorization({
+        auth: new AuthModel(req.session.auth).create(),
         transactionId: purchaseModel.transaction.id,
         eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
         offers: selectSeats.map((seat) => {
@@ -182,7 +183,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
             };
         })
     });
-    log('MPオーソリ追加', purchaseModel.seatReservationAuthorization);
+    log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
     purchaseModel.orderCount = 0;
     log('GMOオーソリカウント初期化');
 }
