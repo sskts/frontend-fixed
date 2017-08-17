@@ -22,13 +22,15 @@ const log = debug('SSKTS:Purchase.OverlapModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         // イベント情報取得
         const individualScreeningEvent = await ssktsApi.service.event.findIndividualScreeningEvent({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -61,6 +63,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 export async function newReserve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -69,7 +73,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         // COA仮予約削除
         await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });

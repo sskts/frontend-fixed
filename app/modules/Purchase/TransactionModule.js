@@ -58,9 +58,11 @@ function start(req, res) {
             if (req.session === undefined || req.body.performanceId === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
+            let authModel = new AuthModel_1.AuthModel(req.session.auth);
+            let auth = authModel.create();
             // イベント情報取得
             const individualScreeningEvent = yield ssktsApi.service.event.findIndividualScreeningEvent({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -91,24 +93,26 @@ function start(req, res) {
             delete req.session.complete;
             delete req.session.auth;
             log('セッション削除');
-            // authセッションへ
-            req.session.auth = {
+            authModel = new AuthModel_1.AuthModel({
                 clientId: process.env.TEST_CLIENT_ID,
                 clientSecret: process.env.TEST_CLIENT_SECRET,
                 state: 'teststate',
                 scopes: [
                     'https://sskts-api-development.azurewebsites.net/transactions',
                     'https://sskts-api-development.azurewebsites.net/events.read-only',
-                    'https://sskts-api-development.azurewebsites.net/organizations.read-only'
+                    'https://sskts-api-development.azurewebsites.net/organizations.read-only',
+                    'https://sskts-api-development.azurewebsites.net/orders.read-only'
                 ]
-            };
+            });
+            authModel.save(req.session);
             log('authセッションへ');
+            auth = authModel.create();
             purchaseModel = new PurchaseModel_1.PurchaseModel({
                 individualScreeningEvent: individualScreeningEvent
             });
             // 劇場のショップを検索
             purchaseModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -118,7 +122,7 @@ function start(req, res) {
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
             purchaseModel.transaction = yield ssktsApi.service.transaction.placeOrder.start({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });

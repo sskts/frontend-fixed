@@ -11,7 +11,7 @@ const inquiryRouter = express.Router();
 inquiryRouter.get('/login', InquiryModule.login);
 
 //チケット照会ログイン（認証）
-inquiryRouter.post('/login', InquiryModule.auth);
+inquiryRouter.post('/login', InquiryModule.inquiryAuth);
 
 //チケット照会
 inquiryRouter.get('/:orderNumber/', InquiryModule.index);

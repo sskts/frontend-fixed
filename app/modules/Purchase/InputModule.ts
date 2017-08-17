@@ -93,6 +93,8 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         return;
     }
     try {
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -126,7 +128,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         };
         if (purchaseModel.creditCardAuthorization !== null) {
             const cancelCreditCardAuthorizationArgs = {
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.creditCardAuthorization.id
             };
@@ -149,11 +151,11 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             purchaseModel.createOrderId();
             purchaseModel.save(req.session);
             const createCreditCardAuthorizationArgs = {
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 orderId: (<string>purchaseModel.orderId),
                 amount: purchaseModel.getReserveAmount(),
-                method: GMO.utils.util.Method.Lump,
+                method: GMO.utils.utils.util.Method.Lump,
                 creditCard: {
                     token: (<IGMO>purchaseModel.gmo).token
                 }
@@ -173,7 +175,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
         }
 
         await ssktsApi.service.transaction.placeOrder.setAgentProfile({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             transactionId: purchaseModel.transaction.id,
             profile: {
                 familyName: purchaseModel.profile.familyName,

@@ -126,11 +126,12 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
+    const authModel = new AuthModel(req.session.auth);
+    const auth = authModel.create();
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
         await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });
@@ -151,7 +152,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     }
 
     purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder.createSeatReservationAuthorization({
-        auth: new AuthModel(req.session.auth).create(),
+        auth: auth,
         transactionId: purchaseModel.transaction.id,
         eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
         offers: selectSeats.map((seat) => {

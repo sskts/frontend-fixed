@@ -110,6 +110,8 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         return;
     }
     try {
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -128,14 +130,14 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('券種検証');
             // COAオーソリ削除
             await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
             log('SSKTSCOAオーソリ削除');
             //COAオーソリ追加
             const createSeatReservationAuthorizationArgs = {
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                 offers: (<IReserveTicket[]>purchaseModel.reserveTickets).map((reserveTicket) => {
@@ -171,7 +173,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
             if (purchaseModel.mvtkAuthorization !== null) {
                 await ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
-                    auth: new AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.mvtkAuthorization.id
                 });
@@ -193,7 +195,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     time: `${purchaseModel.getScreeningTime().start}:00`
                 };
                 const createMvtkAuthorizationArgs = {
-                    auth: new AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id, // 取引情報
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(), // 合計金額

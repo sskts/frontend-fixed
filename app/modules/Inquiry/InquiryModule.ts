@@ -30,10 +30,12 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
     }
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
         inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             branchCode: theaterCode
         });
         log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -65,15 +67,17 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function auth(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function inquiryAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
             inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -83,7 +87,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 telephone: req.body.telephone
             };
             inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 orderInquiryKey: {
                     telephone: inquiryModel.login.telephone,
                     orderNumber: Number(inquiryModel.login.reserveNum),
@@ -108,7 +112,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         } else {
             const inquiryModel = new InquiryModel();
             inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);

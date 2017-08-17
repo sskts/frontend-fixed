@@ -202,6 +202,8 @@ function purchase(req, res) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -231,7 +233,7 @@ function purchase(req, res) {
                 log('ムビチケ決済');
             }
             const order = yield ssktsApi.service.transaction.placeOrder.confirm({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id
             });
             log('注文確定', order);
@@ -292,7 +294,7 @@ function purchase(req, res) {
                     domain: req.headers.host
                 });
                 const sendEmailNotificationArgs = {
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {
                         from: 'noreply@ticket-cinemasunshine.com',

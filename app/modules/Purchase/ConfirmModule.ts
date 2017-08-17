@@ -190,6 +190,8 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
 export async function purchase(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -215,7 +217,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         }
 
         const order = await ssktsApi.service.transaction.placeOrder.confirm({
-            auth: new AuthModel(req.session.auth).create(),
+            auth: auth,
             transactionId: purchaseModel.transaction.id
         });
         log('注文確定', order);
@@ -282,7 +284,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 }
             );
             const sendEmailNotificationArgs = {
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {
                     from: 'noreply@ticket-cinemasunshine.com',

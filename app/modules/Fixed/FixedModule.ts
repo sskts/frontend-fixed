@@ -38,8 +38,10 @@ export async function index(_: Request, res: Response): Promise<void> {
 export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel();
+        const auth = authModel.create();
         const movieTheaters = await ssktsApi.service.organization.searchMovieTheaters({
-            auth: new AuthModel(req.session.auth).create()
+            auth: auth
         });
         log('movieTheaters: ', movieTheaters);
         res.locals.movieTheaters = movieTheaters;
@@ -71,12 +73,14 @@ export function stop(_: Request, res: Response): void {
 export async function getInquiryData(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
+        const auth = authModel.create();
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
             inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -86,7 +90,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 telephone: req.body.telephone
             };
             inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
-                auth: new AuthModel(req.session.auth).create(),
+                auth: auth,
                 orderInquiryKey: {
                     telephone: inquiryModel.login.telephone,
                     orderNumber: Number(inquiryModel.login.reserveNum),
@@ -101,7 +105,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
                 inquiryModel.order = await ssktsApi.service.order.findByOrderInquiryKey({
-                    auth: new AuthModel(req.session.auth).create(),
+                    auth: auth,
                     orderInquiryKey: {
                         telephone: inquiryModel.login.telephone,
                         orderNumber: Number(inquiryModel.login.reserveNum),

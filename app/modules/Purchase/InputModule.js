@@ -104,6 +104,8 @@ function submit(req, res, next) {
             return;
         }
         try {
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -140,7 +142,7 @@ function submit(req, res, next) {
             };
             if (purchaseModel.creditCardAuthorization !== null) {
                 const cancelCreditCardAuthorizationArgs = {
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.creditCardAuthorization.id
                 };
@@ -160,11 +162,11 @@ function submit(req, res, next) {
                 purchaseModel.createOrderId();
                 purchaseModel.save(req.session);
                 const createCreditCardAuthorizationArgs = {
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     orderId: purchaseModel.orderId,
                     amount: purchaseModel.getReserveAmount(),
-                    method: GMO.utils.util.Method.Lump,
+                    method: GMO.utils.utils.util.Method.Lump,
                     creditCard: {
                         token: purchaseModel.gmo.token
                     }
@@ -180,7 +182,7 @@ function submit(req, res, next) {
                 log('CMOオーソリ追加');
             }
             yield ssktsApi.service.transaction.placeOrder.setAgentProfile({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 profile: {
                     familyName: purchaseModel.profile.familyName,

@@ -140,10 +140,12 @@ function reserve(req, selectSeats, purchaseModel) {
             throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel_1.AuthModel(req.session.auth);
+        const auth = authModel.create();
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
             yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -162,7 +164,7 @@ function reserve(req, selectSeats, purchaseModel) {
             log('コアAPI券種取得', purchaseModel.salesTickets);
         }
         purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder.createSeatReservationAuthorization({
-            auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+            auth: auth,
             transactionId: purchaseModel.transaction.id,
             eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
             offers: selectSeats.map((seat) => {

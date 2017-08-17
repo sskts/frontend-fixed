@@ -33,11 +33,13 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null) {
                 yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
@@ -50,7 +52,7 @@ function index(req, res, next) {
             delete req.session.auth;
             if (process.env.VIEW_TYPE === undefined) {
                 res.locals.movieTheaters = yield ssktsApi.service.organization.searchMovieTheaters({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create()
+                    auth: auth
                 });
                 log(res.locals.movieTheaters);
             }
@@ -80,9 +82,11 @@ function getPerformances(req, res) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             // 上映イベント検索
             const individualScreeningEvents = yield ssktsApi.service.event.searchIndividualScreeningEvent({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 searchConditions: {
                     theater: req.body.theater,
                     day: moment(req.body.day).format('YYYYMMDD')

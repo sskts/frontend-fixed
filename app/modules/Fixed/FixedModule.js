@@ -50,8 +50,10 @@ function setting(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel();
+            const auth = authModel.create();
             const movieTheaters = yield ssktsApi.service.organization.searchMovieTheaters({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create()
+                auth: auth
             });
             log('movieTheaters: ', movieTheaters);
             res.locals.movieTheaters = movieTheaters;
@@ -87,12 +89,14 @@ function getInquiryData(req, res) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
                 inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -103,7 +107,7 @@ function getInquiryData(req, res) {
                     telephone: req.body.telephone
                 };
                 inquiryModel.order = yield ssktsApi.service.order.findByOrderInquiryKey({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     orderInquiryKey: {
                         telephone: inquiryModel.login.telephone,
                         orderNumber: Number(inquiryModel.login.reserveNum),
@@ -119,7 +123,7 @@ function getInquiryData(req, res) {
                     const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                     log('COA本予約', updReserve);
                     inquiryModel.order = yield ssktsApi.service.order.findByOrderInquiryKey({
-                        auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                        auth: auth,
                         orderInquiryKey: {
                             telephone: inquiryModel.login.telephone,
                             orderNumber: Number(inquiryModel.login.reserveNum),

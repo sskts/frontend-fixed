@@ -39,10 +39,12 @@ function login(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             const inquiryModel = new InquiryModel_1.InquiryModel();
             // 劇場のショップを検索
             inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                auth: auth,
                 branchCode: theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -74,17 +76,19 @@ exports.login = login;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function auth(req, res, next) {
+function inquiryAuth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
                 inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -95,7 +99,7 @@ function auth(req, res, next) {
                     telephone: req.body.telephone
                 };
                 inquiryModel.order = yield ssktsApi.service.order.findByOrderInquiryKey({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     orderInquiryKey: {
                         telephone: inquiryModel.login.telephone,
                         orderNumber: Number(inquiryModel.login.reserveNum),
@@ -117,7 +121,7 @@ function auth(req, res, next) {
             else {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
                 inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -142,7 +146,7 @@ function auth(req, res, next) {
         }
     });
 }
-exports.auth = auth;
+exports.inquiryAuth = inquiryAuth;
 /**
  * 照会エラー取得
  * @memberof InquiryModule

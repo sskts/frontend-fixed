@@ -84,6 +84,8 @@ function select(req, res, next) {
             return;
         }
         try {
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const auth = authModel.create();
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -107,14 +109,14 @@ function select(req, res, next) {
                 log('券種検証');
                 // COAオーソリ削除
                 yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
                 log('SSKTSCOAオーソリ削除');
                 //COAオーソリ追加
                 const createSeatReservationAuthorizationArgs = {
-                    auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                     offers: purchaseModel.reserveTickets.map((reserveTicket) => {
@@ -150,7 +152,7 @@ function select(req, res, next) {
                 log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
                     yield ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
-                        auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                        auth: auth,
                         transactionId: purchaseModel.transaction.id,
                         authorizationId: purchaseModel.mvtkAuthorization.id
                     });
@@ -169,7 +171,7 @@ function select(req, res, next) {
                         time: `${purchaseModel.getScreeningTime().start}:00`
                     };
                     const createMvtkAuthorizationArgs = {
-                        auth: new AuthModel_1.AuthModel(req.session.auth).create(),
+                        auth: auth,
                         transactionId: purchaseModel.transaction.id,
                         mvtk: {
                             price: purchaseModel.getMvtkPrice(),
