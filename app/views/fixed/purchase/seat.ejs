@@ -50,9 +50,9 @@
     </form>
     <div style="display: none"><a data-modal="seat_close" href="#"></a></div>
 </div>
-
+<%- include('../error/static') %>
 <input type="hidden" name="performanceId" value="<%= performance.id %>">
-
+<div class="how-to-cover"></div>
 <%- include('../locales/validation') %>
 
 <%- contentFor('modals') %>

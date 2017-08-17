@@ -1,12 +1,16 @@
 var screenSeatStatusesMap;
 
 $(function () {
-    pageInit(function() {
+    pageInit(function () {
         var howTo = $('.how-to');
         howTo.show();
-        setTimeout(function(){
-            howTo.fadeOut();
-        }, 3000);
+    });
+
+    var eventName = (window.ontouchend === null) ? 'touchend' : 'click';
+
+    $(document).on(eventName, '.how-to-cover', function (event) {
+        $('.how-to').hide();;
+        $(this).hide();
     });
 
 
@@ -525,29 +529,36 @@ function arrowClick(performanceId) {
         },
         beforeSend: function () { }
     }).done(function (res) {
-        if (!res.result) return;
-        $('input[name=seats]').val('');
-        $('.screen-inner').remove();
-        var target = $('.screen-cover');
-        var performance = res.result.performance;
-        var performanceCOA = res.result.performanceCOA;
-        target.attr({
-            'data-theater': performance.attributes.theater.id,
-            'data-day': performance.attributes.day,
-            'data-coa-title-code': performanceCOA.titleCode,
-            'data-coa-title-branch-num': performanceCOA.titleBranchNum,
-            'data-time-start': performance.attributes.time_start,
-            'data-screen-code': performanceCOA.screenCode,
-            'data-limit': performance.attributes.coa_available_num
-        });
-        $('input[name=performanceId]').val(performance.id);
-        $('.screen-name').text(performance.attributes.screen.name.ja);
-        $('.time-start').text(timeFormat(performance.attributes.time_start));
-        $('.time-end').text(timeFormat(performance.attributes.time_end));
-        pageInit();
+        if (res.result && res.error !== null) {
+            $('input[name=seats]').val('');
+            $('.screen-inner').remove();
+            var target = $('.screen-cover');
+            var performance = res.result.performance;
+            var performanceCOA = res.result.performanceCOA;
+            target.attr({
+                'data-theater': performance.attributes.theater.id,
+                'data-day': performance.attributes.day,
+                'data-coa-title-code': performanceCOA.titleCode,
+                'data-coa-title-branch-num': performanceCOA.titleBranchNum,
+                'data-time-start': performance.attributes.time_start,
+                'data-screen-code': performanceCOA.screenCode,
+                'data-limit': performance.attributes.coa_available_num
+            });
+            $('input[name=performanceId]').val(performance.id);
+            $('.screen-name').text(performance.attributes.screen.name.ja);
+            $('.time-start').text(timeFormat(performance.attributes.time_start));
+            $('.time-end').text(timeFormat(performance.attributes.time_end));
+            pageInit();
+        } else {
+            $('.purchase-seat').remove();
+            $('.error').find('.access').hide();
+            $('.error').find('.expire').show();
+            $('.error').show();
+            loadingEnd();
+        }
     }).fail(function (jqxhr, textStatus, error) {
         loadingEnd();
     }).always(function () {
-        
+
     });
 }
