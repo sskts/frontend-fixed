@@ -14,67 +14,17 @@
                 padding: 25px 0;
                 display: block;
                 &.active {
-                    background-color: #CCCCCC;
-                    color: #333;
+                    background-color: #2d2d2d;
                 }
             }
         }
     }
-    .film-order {
-        li {
-            border-radius: 5px;
-            color: #333;
-            overflow: hidden;
-            dl {
-                dt {
-                    background-color: #FFF;
-                    padding: 20px 25px;
-                }
-                dd {
-                    background-color: #EAEAEA;
-                    padding: 20px 0 0 25px;
-                    ul {
-                        display: flex;
-                        flex-wrap:wrap;
-                        li {
-                            margin: 0 10px 20px 0;
-                            width: 220px;
-                            &.disabled {
-                                opacity: 0.5;
-                            }
-                            dl {
-                                dt {
-                                    background-color: transparent;
-                                    padding: 15px 30px;
-                                    border-bottom: 1px solid #777777;
-                                }   
-                                dd {
-                                    position: relative;
-                                    background-color: transparent;
-                                    padding: 15px;
-                                    .screen-name {
-                                        display: inline-block;
-                                        border: 1px solid #FFF;
-                                        padding: 5px;
-                                    }
-                                    .status {
-                                        position: absolute;
-                                        top: 50%;
-                                        right: 15px;
-                                        margin-top: -25px;
-                                        img {
-                                            width: 50px;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    
     .chronological-order {
+        display: none;
+        &.active {
+            display: block;
+        }
         li {
             border-radius: 5px;
             color: #333;
@@ -103,7 +53,7 @@
                         border-left: 1px solid #777777;
                         .screen-name {
                             display: inline-block;
-                            border: 1px solid #FFF;
+                            border: 1px solid #333;
                             padding: 5px;
                         }
                     }
@@ -111,21 +61,81 @@
             }
         }
     }
+
+    .film-order {
+        display: none;
+        &.active {
+            display: block;
+        }
+        li {
+            border-radius: 5px;
+            color: #333;
+            overflow: hidden;
+            >dl {
+                >dt {
+                    color: #FFF;
+                    background-color: #515151;
+                    padding: 20px 25px;
+                }
+                >dd {
+                    background-color: #2d2d2d;
+                    padding: 20px 0 0 25px;
+                    ul {
+                        display: flex;
+                        flex-wrap:wrap;
+                        li {
+                            margin: 0 10px 20px 0;
+                            width: 220px;
+                            &.disabled {
+                                opacity: 0.5;
+                            }
+                            dl {
+                                dt {
+                                    padding: 15px 30px;
+                                    border-bottom: 1px solid #777777;
+                                }   
+                                dd {
+                                    position: relative;
+                                    padding: 15px;
+                                    .screen-name {
+                                        display: inline-block;
+                                        border: 1px solid #333;
+                                        padding: 5px;
+                                    }
+                                    .status {
+                                        position: absolute;
+                                        top: 50%;
+                                        right: 15px;
+                                        margin-top: -25px;
+                                        img {
+                                            width: 50px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     .inquiry {
         position: fixed;
         bottom: 0;
         width: 100%;
         left: 0;
-        background-color: #191919;
+        background-color: #00a0e9;
         padding: 30px 0;
         .inquiry-button {
             width: 600px;
             a {
                 padding: 30px 0;
                 background-color: transparent;
-                border: 1px solid #00A0EA;
-                color: #00A0EA;
+                border: 1px solid #FFF;
+                color: #FFF;
             }
         }
+        
     }
 }

@@ -42,7 +42,7 @@
     }
 }
 
-.icon-prev {
+.icon-prev-blue {
     &:before {
         content: '';
         position: absolute;
@@ -53,12 +53,12 @@
         width: 25px;
         height: 24px;
         background-size: 25px 24px;
-        background-image: url(/images/fixed/icon/icon_prev.svg);
+        background-image: url(/images/fixed/icon/icon_prev_blue.svg);
         background-repeat: no-repeat;
     }
 }
 
-.icon-top {
+.icon-top-blue {
     &:before {
         content: '';
         position: absolute;
@@ -69,7 +69,7 @@
         width: 25px;
         height: 24px;
         background-size: 25px 24px;
-        background-image: url(/images/fixed/icon/icon_top.svg);
+        background-image: url(/images/fixed/icon/icon_top_blue.svg);
         background-repeat: no-repeat;
     }
 }
@@ -78,9 +78,9 @@
     &:before {
         content: '';
         position: absolute;
-        top: 20px;
-        left: 50%;
-        margin-left: -12.5px;
+        top: 50%;
+        right: 30px;
+        margin-top: -12px;
         display: block;
         width: 25px;
         height: 24px;
@@ -94,9 +94,9 @@
     &:before {
         content: '';
         position: absolute;
-        top: 50%;
-        right: 30px;
-        margin-top: -12px;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
         display: block;
         width: 25px;
         height: 24px;

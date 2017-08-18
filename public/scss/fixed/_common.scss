@@ -404,6 +404,15 @@ a {
     }
 }
 
+.white-button {
+    a, button, label {
+        background-color: #333;
+        background: linear-gradient(#FFF 0%,#c8c8c8 100%);
+        border: none;
+        color: #333;
+    }
+}
+
 .staff-button {
     position: fixed;
     top: 0;
@@ -424,13 +433,13 @@ a {
     line-height: 1;
     font-weight: bold;
     font-size: 35px;
-    margin-bottom: 40px; 
+    margin-bottom: 20px; 
     text-align: center;
     position: relative;
 }
 
 .read {
-    margin-bottom: 40px; 
+    margin-bottom: 20px; 
     text-align: center;
 }
 
@@ -449,7 +458,7 @@ a {
     bottom: 0;
     left: 0;
     width: 100%;
-    background-color: #191919;
+    background-color: #FFF;
     // background: linear-gradient(rgba(60,60,60,1) 0%,rgba(0,0,0,1) 100%);
     .buttons {
         display: flex;
@@ -458,16 +467,10 @@ a {
             a {
                 position: relative;
                 height: 90px;
-                color: #FFF;
+                color: #00A0E9;
                 display: block;
                 padding: 55px 0 0;
-                border-right: 1px solid #FFF; 
                 font-size: 16px;
-            }
-            &:last-child {
-                a {
-                    border: none;
-                }
             }
         }
     }
@@ -476,7 +479,7 @@ a {
 .contents {
     min-height: 100vh;
     background-color: rgb(0, 61, 127);
-    background: radial-gradient(circle at center, rgba(0,160,233,1) 0%,rgba(0,61,127,1) 30%);
+    background: radial-gradient(circle at center, #005ba5 0%,#00376d 50%);
     background-attachment: fixed;
     .contents-inner {
         margin: 0 auto;

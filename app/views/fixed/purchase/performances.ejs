@@ -40,14 +40,14 @@
     </div>
 
     <template v-if="error === null">
-    <ul v-if="sortType === 'chronological'" class="chronological-order">
-        <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button gray-button mb-x-small">
+    <ul v-bind:class="{ active: sortType === 'chronological' }" class="chronological-order">
+        <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button white-button mb-x-small">
             <a v-on:click="onclickPerformance($event, order.id, order.attributes.film.id)" class="icon-triangle-02">
             <dl>
                 <dt class="text-left">
-                    <div class="large-text">
-                        <strong>{{ order.attributes.time_start | timeFormat }}</strong><br>
-                        <span class="small-text">～{{ order.attributes.time_end | timeFormat }}</span>
+                    <div>
+                        <div class="mb-x-small"><strong class="large-x-text">{{ order.attributes.time_start | timeFormat }}</strong></div>
+                        <div>～{{ order.attributes.time_end | timeFormat }}</div>
                     </div>
                     <div class="small-text text-center">
                         <div v-if="order.attributes.stock_status === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
@@ -61,14 +61,14 @@
                 <dd class="text-left">
                     <div class="screen-name mb-x-small small-text d-ib">{{ order.attributes.screen.name.ja }}</div>
                     <div class="small-text mb-x-small d-ib">{{ order.attributes.film.minutes }}分</div>
-                    <p>{{ order.attributes.film.name.ja }}</p>
+                    <p><strong>{{ order.attributes.film.name.ja }}</strong></p>
                 </dd>
             </dl>
             </a>
         </li>
     </ul>
     
-    <ul v-if="sortType === 'film'" class="film-order">
+    <ul v-bind:class="{ active: sortType === 'film' }" class="film-order">
         <li v-for="order in filmOrder" v-bind:key="order.id" class="performance mb-x-small">
             <dl>
                 <dt>
@@ -77,12 +77,11 @@
                 </dt>
                 <dd>
                     <ul>
-                        <li v-for="film in order.films" v-bind:key="film.id" class="button gray-button">
+                        <li v-for="film in order.films" v-bind:key="film.id" class="button white-button">
                             <a v-on:click="onclickPerformance($event, film.id, film.attributes.film.id)" class="icon-triangle-02">
                                 <dl>
                                     <dt>
-                                        <div><strong>{{ film.attributes.time_start | timeFormat }}</strong></div>
-                                        <div><span class="small-x-text">～{{ film.attributes.time_end | timeFormat }}</span></div>
+                                        <strong>{{ film.attributes.time_start | timeFormat }}</strong><span class="small-text">～{{ film.attributes.time_end | timeFormat }}</span>
                                     </dt>
                                     <dd class="small-x-text text-left">
                                         <div class="screen-name mb-x-small">{{ film.attributes.screen.name.ja }}</div>
@@ -107,7 +106,7 @@
     <div class="inquiry text-center">
         <div class="mb-middle"><%- __('purchase.performances.inquiry.read') %></div>
         <div class="button center inquiry-button">
-            <a class="icon-ticketing-blue" href="#" v-on:click="onclickInquiry($event)"><%- __('purchase.performances.inquiry.button') %></a>
+            <a class="icon-ticketing-white" href="#" v-on:click="onclickInquiry($event)"><%- __('purchase.performances.inquiry.button') %></a>
         </div>
     </div>
 </div>
