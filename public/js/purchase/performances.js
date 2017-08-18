@@ -176,7 +176,10 @@
                     });
                     if (film !== undefined) {
                         var performances = film.films.map(function (value) {
-                            return value.id;
+                            return {
+                                id: value.id,
+                                startTime: timeFormat(value.attributes.time_start)
+                            };
                         });
                         var json = JSON.stringify(performances);
                         sessionStorage.setItem('performances', json);

@@ -493,21 +493,31 @@ function setArrows() {
     if (performances.length < 2) {
         return;
     }
-    var current = performances.indexOf(performanceId);
+    var current;
+    performances.forEach(function(value, index){
+        if (value.id === performanceId) {
+            current = index;
+            return;
+        }
+    });
     var prev = $('.prev-arrow');
     var next = $('.next-arrow');
     if (current === 0) {
         prev.hide();
-        next.find('a').attr('data-performanceId', performances[current + 1]);
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
         next.show();
     } else if (current === performances.length - 1) {
         next.hide();
-        prev.find('a').attr('data-performanceId', performances[current - 1]);
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
         prev.show();
     } else {
-        prev.find('a').attr('data-performanceId', performances[current - 1]);
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
         prev.show();
-        next.find('a').attr('data-performanceId', performances[current + 1]);
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
         next.show();
     }
 }
