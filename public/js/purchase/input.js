@@ -1,4 +1,3 @@
-var modal;
 $(function () {
     pageInit();
     /**
