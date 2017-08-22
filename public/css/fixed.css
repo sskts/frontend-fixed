@@ -126,15 +126,21 @@ img {
   100% {
     background-position: -3060px 0; } }
 
+@keyframes flash {
+  from, 50%, to {
+    opacity: 1; }
+  25%, 75% {
+    opacity: 0; } }
+
 .icon-triangle-white:before {
   content: '';
   position: absolute;
   bottom: 10px;
   right: 10px;
   display: block;
-  width: 20px;
-  height: 20px;
-  background-size: 20px 20px;
+  width: 16px;
+  height: 16px;
+  background-size: 16px 16px;
   background-image: url(/images/fixed/icon/icon_triangle_white.svg);
   background-repeat: no-repeat; }
 
@@ -144,9 +150,9 @@ img {
   bottom: 10px;
   right: 10px;
   display: block;
-  width: 20px;
-  height: 20px;
-  background-size: 20px 20px;
+  width: 16px;
+  height: 16px;
+  background-size: 16px 16px;
   background-image: url(/images/fixed/icon/icon_triangle_glay.svg);
   background-repeat: no-repeat; }
 
@@ -618,7 +624,10 @@ a {
   .navigation .buttons {
     display: flex; }
     .navigation .buttons li {
-      flex-grow: 1; }
+      flex-grow: 1;
+      border-right: 1px solid #444; }
+      .navigation .buttons li:last-child {
+        border: none; }
       .navigation .buttons li a {
         position: relative;
         height: 90px;
@@ -854,8 +863,13 @@ a {
       border: 1px solid #FFF;
       padding: 10px;
       margin-right: 20px; }
-    .purchase-seat .film-info div .time-start, .purchase-seat .film-info div .time-end {
+    .purchase-seat .film-info div .d-ib {
       color: #ffe600; }
+    .purchase-seat .film-info div .change-animation {
+      animation-duration: .75s;
+      animation-duration: 1s;
+      animation-fill-mode: both;
+      animation-name: flash; }
 
 .purchase-seat .screen-cover {
   position: relative;
@@ -912,7 +926,8 @@ a {
     background-image: url(/images/fixed/arrow_next.svg); }
 
 .modal[data-modal=seat_select_announce] .inner {
-  background-color: transparent; }
+  background-color: transparent;
+  border: 1px solid #FFF; }
 
 .modal[data-modal=seat_select_announce] img {
   width: 224px;
@@ -951,21 +966,17 @@ a {
 
 .purchase-ticket .mvtk {
   width: 800px;
-  padding: 60px 290px 60px 20px; }
-  .purchase-ticket .mvtk .mvtk-button {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    margin-top: -52.5px; }
-    .purchase-ticket .mvtk .mvtk-button label, .purchase-ticket .mvtk .mvtk-button a {
-      border-color: #929292;
-      width: 320px;
-      height: 105px;
-      background-color: #FFF;
-      background-image: url(/images/default/common/mvtk_logo.svg);
-      background-repeat: no-repeat;
-      background-size: 214px 46px;
-      background-position: center; }
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; }
+  .purchase-ticket .mvtk .mvtk-button label, .purchase-ticket .mvtk .mvtk-button a {
+    border: 2px solid #AFAFAF;
+    width: 320px;
+    padding: 30px; }
+    .purchase-ticket .mvtk .mvtk-button label img, .purchase-ticket .mvtk .mvtk-button a img {
+      width: 214px;
+      height: 46px; }
 
 .modal[data-modal="ticket_type"] .inner {
   padding: 0; }

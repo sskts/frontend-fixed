@@ -35,21 +35,19 @@
     }
     .mvtk {
         width: 800px;
-        padding: 60px 290px 60px 20px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         .mvtk-button {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            margin-top: -52.5px;
             label, a {
-                border-color: #929292;
+                border: 2px solid #AFAFAF;
                 width: 320px;
-                height: 105px;
-                background-color: #FFF;
-                background-image: url(/images/default/common/mvtk_logo.svg);
-                background-repeat: no-repeat;
-                background-size: 214px 46px;
-                background-position: center;
+                padding: 30px;
+                img {
+                    width: 214px;
+                    height: 46px;
+                }
             }
         }
     }

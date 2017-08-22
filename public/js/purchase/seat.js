@@ -5,6 +5,9 @@ $(function () {
         if (isFixed()) {
             setTimeout(function() {
                 modal.open('seat_select_announce');
+                setTimeout(function() {
+                    modal.close('seat_select_announce');
+                }, 5000);
             }, 0);
         }
     });
@@ -553,7 +556,10 @@ function arrowClick(performanceId) {
             $('.screen-name').text(performance.attributes.screen.name.ja);
             $('.time-start').text(timeFormat(performance.attributes.time_start));
             $('.time-end').text(timeFormat(performance.attributes.time_end));
-            pageInit();
+            $('.performance-date').removeClass('change-animation');
+            pageInit(function() {
+                $('.performance-date').addClass('change-animation');
+            });
         } else {
             $('.purchase-seat').remove();
             $('.error').find('.access').hide();

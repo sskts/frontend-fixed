@@ -27,8 +27,14 @@
                 padding: 10px;
                 margin-right: 20px;
             }
-            .time-start, .time-end {
+            .d-ib {
                 color: #ffe600;
+            }
+            .change-animation {
+                animation-duration: .75s;
+                animation-duration: 1s;
+                animation-fill-mode: both;
+                animation-name: flash;
             }
         }
     }
@@ -101,6 +107,7 @@
 .modal[data-modal=seat_select_announce] {
     .inner {
         background-color: transparent;
+        border: 1px solid #FFF;
     }
     img {
         width: 224px;

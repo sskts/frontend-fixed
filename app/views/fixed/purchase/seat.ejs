@@ -12,7 +12,7 @@
     <h2 class="film-ttl mb-middle text-center"><%= performance.attributes.film.name[__('lang')] %></h2>
     <div class="film-info center mb-middle text-center">
         <div><span class="small-text square"><%- __('common.screen') %></span><strong class="large-text screen-name"><%= performance.attributes.screen.name[__('lang')] %></strong></div>
-        <div><span class="small-text square"><%- __('common.screening_time') %></span><strong class="large-x-text time-start"><%= timeFormat(performance.attributes.time_start) %></strong> - <span class="time-end"><%= timeFormat(performance.attributes.time_end) %></span></div>
+        <div><span class="small-text square"><%- __('common.screening_time') %></span><div class="d-ib performance-date"><strong class="large-x-text time-start"><%= timeFormat(performance.attributes.time_start) %></strong> - <span class="time-end"><%= timeFormat(performance.attributes.time_end) %></span></div></div>
     </div>
 
     <div class="screen-cover mb-middle" 

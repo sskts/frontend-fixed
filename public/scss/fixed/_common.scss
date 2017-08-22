@@ -473,6 +473,10 @@ a {
         display: flex;
         li {
             flex-grow: 1;
+            border-right: 1px solid #444;
+            &:last-child {
+                border: none;
+            }
             a {
                 position: relative;
                 height: 90px;
