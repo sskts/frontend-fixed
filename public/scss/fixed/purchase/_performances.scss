@@ -30,7 +30,7 @@
             color: #333;
             overflow: hidden;
             a {
-                border: 1px solid #777777;
+                border: 2px solid #AFAFAF;
                 dl {
                     display: flex;
                     dt {
@@ -89,27 +89,23 @@
                             &.disabled {
                                 opacity: 0.5;
                             }
-                            dl {
-                                dt {
-                                    padding: 15px 30px;
-                                    border-bottom: 1px solid #777777;
-                                }   
-                                dd {
-                                    position: relative;
-                                    padding: 15px;
-                                    .screen-name {
-                                        display: inline-block;
-                                        border: 1px solid #333;
-                                        padding: 5px;
-                                    }
-                                    .status {
-                                        position: absolute;
-                                        top: 50%;
-                                        right: 15px;
-                                        margin-top: -25px;
-                                        img {
-                                            width: 50px;
+                            a {
+                                border: 2px solid #AFAFAF;
+                                dl {
+                                    dt {
+                                        padding: 10px 15px 10px 30px;
+                                        border-bottom: 1px solid #777777;
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        .status {
+                                            img {
+                                                width: 50px;
+                                            }
                                         }
+                                    }   
+                                    dd {
+                                        padding: 10px 0;
                                     }
                                 }
                             }
@@ -125,15 +121,19 @@
         bottom: 0;
         width: 100%;
         left: 0;
-        background-color: #00a0e9;
+        background-color: #FFF;
         padding: 30px 0;
+        color: #333;
+        box-shadow: 0px -1px 20px 0px rgba(0, 0, 0, 0.3);
         .inquiry-button {
-            width: 600px;
+            width: 800px;
             a {
                 padding: 30px 0;
-                background-color: transparent;
-                border: 2px solid #FFF;
-                color: #FFF;
+                span {
+                    display: inline-block;
+                    position: relative;
+                    padding-right: 35px;
+                }
             }
         }
         

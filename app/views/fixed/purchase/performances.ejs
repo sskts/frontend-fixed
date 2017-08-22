@@ -41,8 +41,8 @@
 
     <template v-if="error === null">
     <ul v-bind:class="{ active: sortType === 'chronological' }" class="chronological-order">
-        <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button white-button mb-x-small">
-            <a v-on:click="onclickPerformance($event, order.id, order.attributes.film.id)" class="icon-triangle-02">
+        <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button white-button mb-middle">
+            <a v-on:click="onclickPerformance($event, order.id, order.attributes.film.id)" class="icon-triangle-gray">
             <dl>
                 <dt class="text-left">
                     <div>
@@ -78,19 +78,24 @@
                 <dd>
                     <ul>
                         <li v-for="film in order.films" v-bind:key="film.id" class="button white-button">
-                            <a v-on:click="onclickPerformance($event, film.id, film.attributes.film.id)" class="icon-triangle-02">
+                            <a v-on:click="onclickPerformance($event, film.id, film.attributes.film.id)" class="icon-triangle-gray">
                                 <dl>
                                     <dt>
-                                        <strong>{{ film.attributes.time_start | timeFormat }}</strong><span class="small-text">～{{ film.attributes.time_end | timeFormat }}</span>
+                                        <div class="text-left">
+                                            <div class="large-text mb-x-small"><strong>{{ film.attributes.time_start | timeFormat }}</strong></div>
+                                            <div>～{{ film.attributes.time_end | timeFormat }}</div>
+                                        </div>
+                                        <div class="text-cente small-x-text">
+                                            <div v-if="film.attributes.stock_status === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
+                                            <div v-else-if="film.attributes.stock_status <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
+                                            <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
+                                            <div v-if="film.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                                            <div v-else-if="film.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                                            <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                                        </div>
                                     </dt>
-                                    <dd class="small-x-text text-left">
-                                        <div class="screen-name mb-x-small">{{ film.attributes.screen.name.ja }}</div>
-                                        <div v-if="film.attributes.stock_status === 0"><%- __('purchase.performances.status.full') %></div>
-                                        <div v-else-if="film.attributes.stock_status <= 10"><%- __('purchase.performances.status.few') %></div>
-                                        <div v-else ><%- __('purchase.performances.status.many') %></div>
-                                        <div v-if="film.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
-                                        <div v-else-if="film.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
-                                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                                    <dd class="small-text text-center">
+                                        <div class="screen-name">{{ film.attributes.screen.name.ja }}</div>
                                     </dd>
                                 </dl>
                             </a>
@@ -105,8 +110,8 @@
 
     <div class="inquiry text-center">
         <div class="mb-middle"><%- __('purchase.performances.inquiry.read') %></div>
-        <div class="button center inquiry-button">
-            <a class="icon-ticketing-white" href="#" v-on:click="onclickInquiry($event)"><%- __('purchase.performances.inquiry.button') %></a>
+        <div class="button center inquiry-button blue-button">
+            <a class="icon-triangle-white" href="#" v-on:click="onclickInquiry($event)"><span class="icon-ticketing-white"><%- __('purchase.performances.inquiry.button') %></span></a>
         </div>
     </div>
 </div>

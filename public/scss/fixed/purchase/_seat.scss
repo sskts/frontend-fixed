@@ -9,20 +9,26 @@
     .film-info {
         width: 750px;
         display: flex;
-        border-radius: 5px;
-        border: 1px solid #FFF;
+        justify-content: center;
         div {
-            padding: 20px 0;
-            width: 50%;
-            border-right: 1px solid #FFF;
+            margin-right: 40px;
             &:last-child {
-                border: none;
+                margin-right: 0;
             }
             strong {
                 vertical-align: middle;
             }
             span {
                 vertical-align: middle;
+            }
+            .square {
+                display: inline-block;
+                border: 1px solid #FFF;
+                padding: 10px;
+                margin-right: 20px;
+            }
+            .time-start, .time-end {
+                color: #ffe600;
             }
         }
     }
@@ -90,26 +96,17 @@
             background-image: url(/images/fixed/arrow_next.svg);
         }
     }
-    .how-to {
-        display: none;
-        width: 648px;
-        height: 440px;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin: -220px 0 0 -324px;
-        padding: 30px;
-        background-color: rgba(0, 0, 0, 0.85);
-        img {
-            width: 224px;
-            height: 300px;
-        }
-    }
 }
-.how-to-cover {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+
+.modal[data-modal=seat_select_announce] {
+    .inner {
+        background-color: transparent;
+    }
+    img {
+        width: 224px;
+        height: 300px;
+    }
+    p {
+        color: #FFF;
+    }
 }

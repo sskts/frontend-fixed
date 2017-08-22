@@ -9,10 +9,10 @@
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
 
-    <h2 class="film-ttl mb-small text-center"><%= performance.attributes.film.name[__('lang')] %></h2>
-    <div class="film-info center mb-small text-center">
-        <div><span class="small-text"><%- __('common.screen') %>:</span> <strong class="large-text screen-name"><%= performance.attributes.screen.name[__('lang')] %></strong></div>
-        <div><span class="small-text"><%- __('common.screening_time') %>:</span> <strong class="large-text time-start"><%= timeFormat(performance.attributes.time_start) %></strong> - <span class="time-end"><%= timeFormat(performance.attributes.time_end) %></span></div>
+    <h2 class="film-ttl mb-middle text-center"><%= performance.attributes.film.name[__('lang')] %></h2>
+    <div class="film-info center mb-middle text-center">
+        <div><span class="small-text square"><%- __('common.screen') %></span><strong class="large-text screen-name"><%= performance.attributes.screen.name[__('lang')] %></strong></div>
+        <div><span class="small-text square"><%- __('common.screening_time') %></span><strong class="large-x-text time-start"><%= timeFormat(performance.attributes.time_start) %></strong> - <span class="time-end"><%= timeFormat(performance.attributes.time_end) %></span></div>
     </div>
 
     <div class="screen-cover mb-middle" 
@@ -46,14 +46,10 @@
             </div>
             <a class="center" href="#"></a>
         </div>
-        <div class="how-to radius text-center">
-            <div class="mb-small"><img src="/images/fixed/how_to_screen.svg" alt=""></div>
-            <p class="small-text">左右の矢印を押すと、<br>同じ作品の違う時間帯の空席状況が確認できます。</p>
-        </div>
     </div>
     
     <form method="post">
-        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.seat.next') %></button></div>
+        <div class="button middle-button next-button blue-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.seat.next') %></button></div>
         <input type="hidden" name="agree" value="true" id="agree">  
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transaction_id" value="<%= transactionId %>">
@@ -62,9 +58,10 @@
 </div>
 <%- include('../error/static') %>
 <input type="hidden" name="performanceId" value="<%= performance.id %>">
-<div class="how-to-cover"></div>
+
 <%- include('../locales/validation') %>
 
 <%- contentFor('modals') %>
 <%- include('modals/seatNotSelect') %>
 <%- include('modals/seatUpperLimit') %>
+<%- include('modals/seatSelectAnnounce') %>

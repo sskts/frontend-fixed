@@ -2,17 +2,12 @@ var screenSeatStatusesMap;
 
 $(function () {
     pageInit(function () {
-        var howTo = $('.how-to');
-        howTo.show();
+        if (isFixed()) {
+            setTimeout(function() {
+                modal.open('seat_select_announce');
+            }, 0);
+        }
     });
-
-    var eventName = (window.ontouchend === null) ? 'touchend' : 'click';
-
-    $(document).on(eventName, '.how-to-cover', function (event) {
-        $('.how-to').hide();;
-        $(this).hide();
-    });
-
 
     // 座席クリックイベント
     $(document).on('click', '.zoom-btn a', function (event) {

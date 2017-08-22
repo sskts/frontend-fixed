@@ -126,26 +126,28 @@ img {
   100% {
     background-position: -3060px 0; } }
 
-.icon-triangle-01:before {
-  content: '';
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  display: block;
-  width: 12px;
-  height: 12px;
-  background-image: url(/images/fixed/icon/icon_triangle_01.svg);
-  background-repeat: no-repeat; }
-
-.icon-triangle-02:before {
+.icon-triangle-white:before {
   content: '';
   position: absolute;
   bottom: 10px;
   right: 10px;
   display: block;
-  width: 12px;
-  height: 12px;
-  background-image: url(/images/fixed/icon/icon_triangle_02.svg);
+  width: 20px;
+  height: 20px;
+  background-size: 20px 20px;
+  background-image: url(/images/fixed/icon/icon_triangle_white.svg);
+  background-repeat: no-repeat; }
+
+.icon-triangle-gray:before {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-size: 20px 20px;
+  background-image: url(/images/fixed/icon/icon_triangle_glay.svg);
   background-repeat: no-repeat; }
 
 .icon-select:before {
@@ -191,7 +193,7 @@ img {
   content: '';
   position: absolute;
   top: 50%;
-  right: 30px;
+  right: 0;
   margin-top: -12px;
   display: block;
   width: 25px;
@@ -557,10 +559,15 @@ a {
   width: 160px;
   padding: 22px 0; }
 
+.blue-button a, .blue-button button, .blue-button label {
+  background-color: #333;
+  background: linear-gradient(#00a0e9 0%, #0067a0 100%);
+  border: 2px solid #00a0e9; }
+
 .gray-button a, .gray-button button, .gray-button label {
   background-color: #333;
   background: linear-gradient(#3c3c3c 0%, black 100%);
-  border: none; }
+  border: 2px solid #7c7c7c; }
 
 .white-button a, .white-button button, .white-button label {
   background-color: #333;
@@ -591,7 +598,8 @@ a {
 
 .read {
   margin-bottom: 20px;
-  text-align: center; }
+  text-align: center;
+  line-height: 1.3; }
 
 .validation {
   border-color: #C30D23 !important;
@@ -832,18 +840,22 @@ a {
 .purchase-seat .film-info {
   width: 750px;
   display: flex;
-  border-radius: 5px;
-  border: 1px solid #FFF; }
+  justify-content: center; }
   .purchase-seat .film-info div {
-    padding: 20px 0;
-    width: 50%;
-    border-right: 1px solid #FFF; }
+    margin-right: 40px; }
     .purchase-seat .film-info div:last-child {
-      border: none; }
+      margin-right: 0; }
     .purchase-seat .film-info div strong {
       vertical-align: middle; }
     .purchase-seat .film-info div span {
       vertical-align: middle; }
+    .purchase-seat .film-info div .square {
+      display: inline-block;
+      border: 1px solid #FFF;
+      padding: 10px;
+      margin-right: 20px; }
+    .purchase-seat .film-info div .time-start, .purchase-seat .film-info div .time-end {
+      color: #ffe600; }
 
 .purchase-seat .screen-cover {
   position: relative;
@@ -899,26 +911,15 @@ a {
   .purchase-seat .next-arrow a {
     background-image: url(/images/fixed/arrow_next.svg); }
 
-.purchase-seat .how-to {
-  display: none;
-  width: 648px;
-  height: 440px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin: -220px 0 0 -324px;
-  padding: 30px;
-  background-color: rgba(0, 0, 0, 0.85); }
-  .purchase-seat .how-to img {
-    width: 224px;
-    height: 300px; }
+.modal[data-modal=seat_select_announce] .inner {
+  background-color: transparent; }
 
-.how-to-cover {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0; }
+.modal[data-modal=seat_select_announce] img {
+  width: 224px;
+  height: 300px; }
+
+.modal[data-modal=seat_select_announce] p {
+  color: #FFF; }
 
 .purchase-ticket .seats {
   display: flex;
@@ -1067,7 +1068,7 @@ a {
       color: #333;
       overflow: hidden; }
       .purchase-performances .chronological-order li a {
-        border: 1px solid #777777; }
+        border: 2px solid #AFAFAF; }
         .purchase-performances .chronological-order li a dl {
           display: flex; }
           .purchase-performances .chronological-order li a dl dt {
@@ -1110,37 +1111,35 @@ a {
             width: 220px; }
             .purchase-performances .film-order li > dl > dd ul li.disabled {
               opacity: 0.5; }
-            .purchase-performances .film-order li > dl > dd ul li dl dt {
-              padding: 15px 30px;
-              border-bottom: 1px solid #777777; }
-            .purchase-performances .film-order li > dl > dd ul li dl dd {
-              position: relative;
-              padding: 15px; }
-              .purchase-performances .film-order li > dl > dd ul li dl dd .screen-name {
-                display: inline-block;
-                border: 1px solid #333;
-                padding: 5px; }
-              .purchase-performances .film-order li > dl > dd ul li dl dd .status {
-                position: absolute;
-                top: 50%;
-                right: 15px;
-                margin-top: -25px; }
-                .purchase-performances .film-order li > dl > dd ul li dl dd .status img {
+            .purchase-performances .film-order li > dl > dd ul li a {
+              border: 2px solid #AFAFAF; }
+              .purchase-performances .film-order li > dl > dd ul li a dl dt {
+                padding: 10px 15px 10px 30px;
+                border-bottom: 1px solid #777777;
+                display: flex;
+                justify-content: space-between;
+                align-items: center; }
+                .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
                   width: 50px; }
+              .purchase-performances .film-order li > dl > dd ul li a dl dd {
+                padding: 10px 0; }
   .purchase-performances .inquiry {
     position: fixed;
     bottom: 0;
     width: 100%;
     left: 0;
-    background-color: #00a0e9;
-    padding: 30px 0; }
+    background-color: #FFF;
+    padding: 30px 0;
+    color: #333;
+    box-shadow: 0px -1px 20px 0px rgba(0, 0, 0, 0.3); }
     .purchase-performances .inquiry .inquiry-button {
-      width: 600px; }
+      width: 800px; }
       .purchase-performances .inquiry .inquiry-button a {
-        padding: 30px 0;
-        background-color: transparent;
-        border: 2px solid #FFF;
-        color: #FFF; }
+        padding: 30px 0; }
+        .purchase-performances .inquiry .inquiry-button a span {
+          display: inline-block;
+          position: relative;
+          padding-right: 35px; }
 
 .purchase-mvtk-input .clone {
   display: none; }
