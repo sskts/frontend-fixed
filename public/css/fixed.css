@@ -87,22 +87,49 @@ img {
       background-color: #FFF;
       box-shadow: 0 2px 0 #A7A9AE;
       zoom: 1;
-      user-select: none; }
+      -webkit-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none; }
     .numkey ul .numerickey-button {
       background-color: #BAC1C8; }
     .numkey ul #done {
       color: #FFF;
       background-color: #00A0EA; }
 
+@-webkit-keyframes loading {
+  30% {
+    -webkit-transform: scaleY(2);
+            transform: scaleY(2); } }
+
 @keyframes loading {
   30% {
-    transform: scaleY(2); } }
+    -webkit-transform: scaleY(2);
+            transform: scaleY(2); } }
+
+@-webkit-keyframes zoom {
+  0% {
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5); }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
 
 @keyframes zoom {
   0% {
-    transform: scale(0.5); }
+    -webkit-transform: scale(0.5);
+            transform: scale(0.5); }
   100% {
-    transform: scale(1); } }
+    -webkit-transform: scale(1);
+            transform: scale(1); } }
+
+@-webkit-keyframes fadein {
+  0% {
+    visibility: hidden;
+    opacity: 0; }
+  100% {
+    visibility: visible;
+    opacity: 1; } }
 
 @keyframes fadein {
   0% {
@@ -112,6 +139,14 @@ img {
     visibility: visible;
     opacity: 1; } }
 
+@-webkit-keyframes fadeout {
+  0% {
+    visibility: visible;
+    opacity: 1; }
+  100% {
+    visibility: hidden;
+    opacity: 0; } }
+
 @keyframes fadeout {
   0% {
     visibility: visible;
@@ -120,11 +155,23 @@ img {
     visibility: hidden;
     opacity: 0; } }
 
+@-webkit-keyframes animationPtint {
+  0% {
+    background-position: 0 0; }
+  100% {
+    background-position: -3060px 0; } }
+
 @keyframes animationPtint {
   0% {
     background-position: 0 0; }
   100% {
     background-position: -3060px 0; } }
+
+@-webkit-keyframes flash {
+  from, 50%, to {
+    opacity: 1; }
+  25%, 75% {
+    opacity: 0; } }
 
 @keyframes flash {
   from, 50%, to {
@@ -622,9 +669,13 @@ a {
   width: 100%;
   background-color: #FFF; }
   .navigation .buttons {
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex; }
     .navigation .buttons li {
-      flex-grow: 1;
+      -webkit-flex-grow: 1;
+          -ms-flex-positive: 1;
+              flex-grow: 1;
       border-right: 1px solid #444; }
       .navigation .buttons li:last-child {
         border: none; }
@@ -747,15 +798,18 @@ a {
 .modal-cover.active,
 .modal.active {
   visibility: visible;
-  animation: fadein 0.4s both; }
+  -webkit-animation: fadein 0.4s both;
+          animation: fadein 0.4s both; }
 
 .modal-cover.disabled,
 .modal.disabled {
   visibility: visible;
-  animation: fadeout 0.4s both; }
+  -webkit-animation: fadeout 0.4s both;
+          animation: fadeout 0.4s both; }
 
 .blur {
-  filter: blur(5px); }
+  -webkit-filter: blur(5px);
+          filter: blur(5px); }
 
 .loading-cover {
   opacity: 0;
@@ -771,7 +825,8 @@ a {
 .loading-cover.active,
 .loading.active {
   visibility: visible;
-  animation: fadein 0.4s both; }
+  -webkit-animation: fadein 0.4s both;
+          animation: fadein 0.4s both; }
 
 .loading {
   opacity: 0;
@@ -791,39 +846,50 @@ a {
   background-color: #FFF;
   display: inline-block;
   margin-right: 13px;
-  animation: loading 1s infinite; }
+  -webkit-animation: loading 1s infinite;
+          animation: loading 1s infinite; }
   .loading div:last-child {
     margin-right: 0; }
 
 .loading .bar1 {
-  animation-delay: 0.5s; }
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s; }
 
 .loading .bar2 {
-  animation-delay: 0.6s; }
+  -webkit-animation-delay: 0.6s;
+          animation-delay: 0.6s; }
 
 .loading .bar3 {
-  animation-delay: 0.7s; }
+  -webkit-animation-delay: 0.7s;
+          animation-delay: 0.7s; }
 
 .loading .bar4 {
-  animation-delay: 0.8s; }
+  -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s; }
 
 .loading .bar5 {
-  animation-delay: 0.9s; }
+  -webkit-animation-delay: 0.9s;
+          animation-delay: 0.9s; }
 
 .animation-ptint {
   width: 340px;
   height: 240px;
   background-size: 3400px 240px;
   background-image: url(/images/fixed/animation_print.png);
-  animation: animationPtint 1s steps(9) 0s infinite; }
+  -webkit-animation: animationPtint 1s steps(9) 0s infinite;
+          animation: animationPtint 1s steps(9) 0s infinite; }
 
 .index {
   width: 1050px;
   margin: 0 auto; }
   .index .buttons {
     margin: 0 0 40px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: space-between; }
+    -webkit-justify-content: space-between;
+        -ms-flex-pack: justify;
+            justify-content: space-between; }
   .index .purchase-button a, .index .inquiry-button a {
     padding: 80px 0 0; }
   .index .qr-code {
@@ -848,8 +914,12 @@ a {
 
 .purchase-seat .film-info {
   width: 750px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center; }
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
   .purchase-seat .film-info div {
     margin-right: 40px; }
     .purchase-seat .film-info div:last-child {
@@ -866,10 +936,14 @@ a {
     .purchase-seat .film-info div .d-ib {
       color: #ffe600; }
     .purchase-seat .film-info div .change-animation {
-      animation-duration: .75s;
-      animation-duration: 1s;
-      animation-fill-mode: both;
-      animation-name: flash; }
+      -webkit-animation-duration: .75s;
+              animation-duration: .75s;
+      -webkit-animation-duration: 1s;
+              animation-duration: 1s;
+      -webkit-animation-fill-mode: both;
+              animation-fill-mode: both;
+      -webkit-animation-name: flash;
+              animation-name: flash; }
 
 .purchase-seat .screen-cover {
   position: relative;
@@ -898,8 +972,12 @@ a {
 .purchase-seat .seat-info {
   color: #333;
   padding: 20px 0;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -webkit-justify-content: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   border-bottom: 1px solid #ACACAC; }
 
 .purchase-seat .arrow {
@@ -937,9 +1015,15 @@ a {
   color: #FFF; }
 
 .purchase-ticket .seats {
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between; }
+  -webkit-flex-wrap: wrap;
+      -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
   .purchase-ticket .seats li {
     margin: 0 0 20px 0; }
     .purchase-ticket .seats li dl {
@@ -967,9 +1051,15 @@ a {
 .purchase-ticket .mvtk {
   width: 800px;
   padding: 20px;
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  align-items: center; }
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-align-items: center;
+      -ms-flex-align: center;
+          align-items: center; }
   .purchase-ticket .mvtk .mvtk-button label, .purchase-ticket .mvtk .mvtk-button a {
     border: 2px solid #AFAFAF;
     width: 320px;
@@ -1008,8 +1098,12 @@ a {
   width: 600px; }
 
 .purchase-input .form-layout .expire {
+  display: -webkit-flex;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between; }
+  -webkit-justify-content: space-between;
+      -ms-flex-pack: justify;
+          justify-content: space-between; }
   .purchase-input .form-layout .expire dl {
     width: 390px; }
     .purchase-input .form-layout .expire dl dd {
@@ -1057,6 +1151,8 @@ a {
 .purchase-performances {
   margin-bottom: 100px; }
   .purchase-performances .sort {
+    display: -webkit-flex;
+    display: -ms-flexbox;
     display: flex;
     border-radius: 5px;
     border: 1px solid #FFF; }
@@ -1081,13 +1177,21 @@ a {
       .purchase-performances .chronological-order li a {
         border: 2px solid #AFAFAF; }
         .purchase-performances .chronological-order li a dl {
+          display: -webkit-flex;
+          display: -ms-flexbox;
           display: flex; }
           .purchase-performances .chronological-order li a dl dt {
             width: 358px;
             padding: 25px 30px 25px 50px;
+            display: -webkit-flex;
+            display: -ms-flexbox;
             display: flex;
-            justify-content: space-between;
-            align-items: center; }
+            -webkit-justify-content: space-between;
+                -ms-flex-pack: justify;
+                    justify-content: space-between;
+            -webkit-align-items: center;
+                -ms-flex-align: center;
+                    align-items: center; }
             .purchase-performances .chronological-order li a dl dt .status img {
               width: 70px; }
           .purchase-performances .chronological-order li a dl dd {
@@ -1115,8 +1219,12 @@ a {
         background-color: #2d2d2d;
         padding: 20px 0 0 25px; }
         .purchase-performances .film-order li > dl > dd ul {
+          display: -webkit-flex;
+          display: -ms-flexbox;
           display: flex;
-          flex-wrap: wrap; }
+          -webkit-flex-wrap: wrap;
+              -ms-flex-wrap: wrap;
+                  flex-wrap: wrap; }
           .purchase-performances .film-order li > dl > dd ul li {
             margin: 0 10px 20px 0;
             width: 220px; }
@@ -1127,9 +1235,15 @@ a {
               .purchase-performances .film-order li > dl > dd ul li a dl dt {
                 padding: 10px 15px 10px 30px;
                 border-bottom: 1px solid #777777;
+                display: -webkit-flex;
+                display: -ms-flexbox;
                 display: flex;
-                justify-content: space-between;
-                align-items: center; }
+                -webkit-justify-content: space-between;
+                    -ms-flex-pack: justify;
+                        justify-content: space-between;
+                -webkit-align-items: center;
+                    -ms-flex-align: center;
+                        align-items: center; }
                 .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
                   width: 50px; }
               .purchase-performances .film-order li > dl > dd ul li a dl dd {
@@ -1286,7 +1400,9 @@ a {
 
 .zoom .screen-scroll {
   overflow: auto;
-  transition: transform 0.2s; }
+  transition: -webkit-transform 0.2s;
+  transition: transform 0.2s;
+  transition: transform 0.2s, -webkit-transform 0.2s; }
 
 .zoom .seat a span {
   display: block; }
