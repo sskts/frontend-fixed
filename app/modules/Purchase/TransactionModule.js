@@ -52,6 +52,7 @@ const VALID_TIME_FIXED = 5;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -59,10 +60,12 @@ function start(req, res) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
             let authModel = new AuthModel_1.AuthModel(req.session.auth);
-            let auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             // イベント情報取得
-            const individualScreeningEvent = yield ssktsApi.service.event.findIndividualScreeningEvent({
-                auth: auth,
+            const individualScreeningEvent = yield ssktsApi.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -106,13 +109,12 @@ function start(req, res) {
             });
             authModel.save(req.session);
             log('authセッションへ');
-            auth = authModel.create();
+            options.auth = authModel.create();
             purchaseModel = new PurchaseModel_1.PurchaseModel({
                 individualScreeningEvent: individualScreeningEvent
             });
             // 劇場のショップを検索
-            purchaseModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                auth: auth,
+            purchaseModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
@@ -121,8 +123,7 @@ function start(req, res) {
             // 取引開始
             const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-            purchaseModel.transaction = yield ssktsApi.service.transaction.placeOrder.start({
-                auth: auth,
+            purchaseModel.transaction = yield ssktsApi.service.transaction.placeOrder(options).start({
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });

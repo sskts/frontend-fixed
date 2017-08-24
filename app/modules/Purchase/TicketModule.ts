@@ -111,7 +111,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
     }
     try {
         const authModel = new AuthModel(req.session.auth);
-        const auth = authModel.create();
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -129,15 +132,13 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             purchaseModel.reserveTickets = await ticketValidation(req, res, purchaseModel, selectTickets);
             log('券種検証');
             // COAオーソリ削除
-            await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: auth,
+            await ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
             log('SSKTSCOAオーソリ削除');
             //COAオーソリ追加
             const createSeatReservationAuthorizationArgs = {
-                auth: auth,
                 transactionId: purchaseModel.transaction.id,
                 eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                 offers: (<IReserveTicket[]>purchaseModel.reserveTickets).map((reserveTicket) => {
@@ -168,12 +169,12 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 })
             };
             log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
-            purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder
+            purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder(options)
                 .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
+            if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
             log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
             if (purchaseModel.mvtkAuthorization !== null) {
-                await ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
-                    auth: auth,
+                await ssktsApi.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.mvtkAuthorization.id
                 });
@@ -195,7 +196,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     time: `${purchaseModel.getScreeningTime().start}:00`
                 };
                 const createMvtkAuthorizationArgs = {
-                    auth: auth,
                     transactionId: purchaseModel.transaction.id, // 取引情報
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(), // 合計金額
@@ -230,7 +230,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                 };
                 log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                 // tslint:disable-next-line:max-line-length
-                purchaseModel.mvtkAuthorization = await ssktsApi.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
+                purchaseModel.mvtkAuthorization = await ssktsApi.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
                 log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
             }
             purchaseModel.save(req.session);

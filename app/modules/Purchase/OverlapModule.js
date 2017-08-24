@@ -33,15 +33,17 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
                 throw ErrorUtilModule.ERROR_ACCESS;
             if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // イベント情報取得
-            const individualScreeningEvent = yield ssktsApi.service.event.findIndividualScreeningEvent({
-                auth: auth,
+            const individualScreeningEvent = yield ssktsApi.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -77,7 +79,10 @@ function newReserve(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
@@ -86,8 +91,7 @@ function newReserve(req, res, next) {
             if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // COA仮予約削除
-            yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: auth,
+            yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });

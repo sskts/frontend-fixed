@@ -80,22 +80,23 @@ function performanceChange(req, res) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            // tslint:disable-next-line:no-console
-            console.log(req.body.performanceId);
-            purchaseModel.performance = yield MP.getPerformance(req.body.performanceId);
-            log('パフォーマンス取得');
-            purchaseModel.performanceCOA = yield MP.getPerformanceCOA(purchaseModel.performance.attributes.theater.id, purchaseModel.performance.attributes.screen.id, purchaseModel.performance.attributes.film.id);
-            log('COAパフォーマンス取得');
-            //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            // イベント情報取得
+            purchaseModel.individualScreeningEvent = yield ssktsApi.service.event(options).findIndividualScreeningEvent({
+                identifier: req.body.performanceId
+            });
+            purchaseModel.save(req.session);
             res.json({
                 err: null,
                 result: {
-                    performance: purchaseModel.performance,
-                    performanceCOA: purchaseModel.performanceCOA
+                    individualScreeningEvent: purchaseModel.individualScreeningEvent
                 }
             });
         }
@@ -151,6 +152,7 @@ function select(req, res, next) {
             }
             const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
             yield reserve(req, selectSeats, purchaseModel);
+            //セッション更新
             purchaseModel.save(req.session);
             // ムビチケセッション削除
             delete req.session.mvtk;
@@ -169,7 +171,6 @@ function select(req, res, next) {
 }
 exports.select = select;
 /**
-<<<<<<< HEAD
  * 座席仮予約
  * @memberof Purchase.SeatModule
  * @function reserve
@@ -188,11 +189,13 @@ function reserve(req, selectSeats, purchaseModel) {
         if (purchaseModel.transaction === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
-        const auth = authModel.create();
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
-            yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                auth: auth,
+            yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -210,8 +213,7 @@ function reserve(req, selectSeats, purchaseModel) {
             purchaseModel.salesTickets = salesTicketResult;
             log('コアAPI券種取得', purchaseModel.salesTickets);
         }
-        purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder.createSeatReservationAuthorization({
-            auth: auth,
+        purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder(options).createSeatReservationAuthorization({
             transactionId: purchaseModel.transaction.id,
             eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
             offers: selectSeats.map((seat) => {
@@ -219,7 +221,7 @@ function reserve(req, selectSeats, purchaseModel) {
                 return {
                     seatSection: seat.seatSection,
                     seatNumber: seat.seatNum,
-                    ticket: {
+                    ticketInfo: {
                         ticketCode: salesTicket.ticketCode,
                         ticketName: salesTicket.ticketName,
                         ticketNameEng: salesTicket.ticketNameEng,
@@ -248,8 +250,6 @@ function reserve(req, selectSeats, purchaseModel) {
     });
 }
 /**
-=======
->>>>>>> feature/SSKTS-543
  * スクリーン状態取得
  * @memberof Purchase.SeatModule
  * @function getScreenStateReserve
@@ -315,23 +315,18 @@ function saveSalesTickets(req, res) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.salesTickets === null) {
-                //コアAPI券種取得
-                purchaseModel.salesTickets = yield COA.services.reserve.salesTicket({
-                    theaterCode: req.body.theaterCode,
-                    dateJouei: req.body.dateJouei,
-                    titleCode: req.body.titleCode,
-                    titleBranchNum: req.body.titleBranchNum,
-                    timeBegin: req.body.timeBegin
-                    // flgMember: coa.services.reserve.FlgMember.NonMember
-                });
-                log('コアAPI券種取得', purchaseModel.salesTickets);
-                purchaseModel.save(req.session);
-                res.json({ err: null });
-            }
-            else {
-                res.json({ err: null });
-            }
+            //コアAPI券種取得
+            purchaseModel.salesTickets = yield COA.services.reserve.salesTicket({
+                theaterCode: req.body.theaterCode,
+                dateJouei: req.body.dateJouei,
+                titleCode: req.body.titleCode,
+                titleBranchNum: req.body.titleBranchNum,
+                timeBegin: req.body.timeBegin
+                // flgMember: coa.services.reserve.FlgMember.NonMember
+            });
+            log('コアAPI券種取得', purchaseModel.salesTickets);
+            purchaseModel.save(req.session);
+            res.json({ err: null });
         }
         catch (err) {
             res.json({ err: err });

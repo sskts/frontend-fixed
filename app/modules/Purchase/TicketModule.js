@@ -85,7 +85,10 @@ function select(req, res, next) {
         }
         try {
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -108,15 +111,13 @@ function select(req, res, next) {
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, selectTickets);
                 log('券種検証');
                 // COAオーソリ削除
-                yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: auth,
+                yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
                 log('SSKTSCOAオーソリ削除');
                 //COAオーソリ追加
                 const createSeatReservationAuthorizationArgs = {
-                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                     offers: purchaseModel.reserveTickets.map((reserveTicket) => {
@@ -147,12 +148,13 @@ function select(req, res, next) {
                     })
                 };
                 log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
-                purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder
+                purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder(options)
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
+                if (purchaseModel.seatReservationAuthorization === null)
+                    throw ErrorUtilModule.ERROR_PROPERTY;
                 log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
-                    yield ssktsApi.service.transaction.placeOrder.cancelMvtkAuthorization({
-                        auth: auth,
+                    yield ssktsApi.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                         transactionId: purchaseModel.transaction.id,
                         authorizationId: purchaseModel.mvtkAuthorization.id
                     });
@@ -171,7 +173,6 @@ function select(req, res, next) {
                         time: `${purchaseModel.getScreeningTime().start}:00`
                     };
                     const createMvtkAuthorizationArgs = {
-                        auth: auth,
                         transactionId: purchaseModel.transaction.id,
                         mvtk: {
                             price: purchaseModel.getMvtkPrice(),
@@ -205,7 +206,7 @@ function select(req, res, next) {
                     };
                     log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                     // tslint:disable-next-line:max-line-length
-                    purchaseModel.mvtkAuthorization = yield ssktsApi.service.transaction.placeOrder.createMvtkAuthorization(createMvtkAuthorizationArgs);
+                    purchaseModel.mvtkAuthorization = yield ssktsApi.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
                     log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
                 }
                 purchaseModel.save(req.session);

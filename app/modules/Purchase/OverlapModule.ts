@@ -23,14 +23,16 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const authModel = new AuthModel(req.session.auth);
-        const auth = authModel.create();
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
         // イベント情報取得
-        const individualScreeningEvent = await ssktsApi.service.event.findIndividualScreeningEvent({
-            auth: auth,
+        const individualScreeningEvent = await ssktsApi.service.event(options).findIndividualScreeningEvent({
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
@@ -64,7 +66,10 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const authModel = new AuthModel(req.session.auth);
-        const auth = authModel.create();
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -72,8 +77,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         // COA仮予約削除
-        await ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-            auth: auth,
+        await ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });
