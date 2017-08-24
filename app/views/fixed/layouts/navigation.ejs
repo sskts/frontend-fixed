@@ -1,12 +1,9 @@
 <nav class="navigation">
-    <div class="logo"><img src="/images/default/common/logo.svg" alt="<%- __('header.logo') %>"></div>
-    <ul class="buttons">
-        <% if (env !== 'production') { %>
-        <li class="prev-button"><a href="/setting" class="small-x-text text-center"><%- __('navigation.setting') %></a></li>
-        <% } %>
+    <ul class="buttons clearfix">
         <% if (defineContent('prev')) { %>
-        <li class="prev-button"><a href="<%- defineContent('prev') %>" class="small-x-text text-center icon-prev"><%- __('navigation.prev') %></a></li>
+        <li class="prev-button white-button"><a href="<%- defineContent('prev') %>" class="small-x-text text-center icon-triangle-gray"><i class="icon-prev-blue"></i><%- __('navigation.prev') %></a></li>
         <% } %>
-        <li class="restart-button"><a href="/" class="small-x-text text-center icon-top"><%- __('navigation.top') %></a></li>
+        <li class="restart-button white-button"><a href="/" class="small-x-text text-center icon-triangle-gray"><i class="icon-top-blue"></i><%- __('navigation.top') %></a></li>
+        <li class="ticketing-button white-button"><a href="#" class="small-x-text text-center icon-triangle-gray"><i class="icon-ticketing-blue"></i><%- __('navigation.ticketing') %></a></li>
     </ul>
 </nav>

@@ -6,21 +6,25 @@
 <%- include ../tags/body %>
 <div class="wrapper">
 
-<%- include ../navigation %>
+    <%- include ../navigation %>
 
-<div class="contents">
-    <div class="contents-inner">
-        <%- include steps %>
-        <%- body %>
+    <div class="contents">
+        <div class="contents-inner">
+            <%- include steps %>
+            <%- body %>
+        </div>
     </div>
-</div>
 
 </div>
+
 <div class="modal-cover" onclick=""></div>
-
 <%- defineContent('modals') %>
+<%- include('../modals/backToTop') %>
 
 <%- include ../loading %>
+
+<%- defineContent('afterScript') %>
+
 <%- include ../tags/env %>
 </body>
 </html>

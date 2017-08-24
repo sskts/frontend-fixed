@@ -20,6 +20,22 @@
 		"step03": "情報入力",
 		"step04": "確認",
 		"step05": "購入完了",
+		"performances": {
+			"page_ttl": "スケジュール選択",
+			"read": "こちらからチケットの購入をする事が出来ます。<br>ご希望の鑑賞作品、鑑賞日時を選択してください。",
+			"theater": "劇場",
+			"date": "鑑賞日",
+			"no_performances": "スケジュールを取得できません。",
+			"sort": {
+				"chronological": "時間から選ぶ",
+				"film": "作品から選ぶ"
+			},
+			"status": {
+				"full": "満席",
+				"few": "空席わずか",
+				"many": "空席あり"
+			}
+		},
 		"seat": {
 			"page_ttl": "座席選択",
 			"read": "ご希望の座席を選択して「次へ」ボタンを押してください。<br>選択できる座席数は最大<span class=\"seat-limit-text\"></span>席までとなります。<br><span class=\"sp-text\">画面をタッチすると画面がズームしますので座席を選択してください。<br></span><span class=\"small-x-text\">※車椅子席をご希望の方は、お手数ですが通常のお席をご購入の上、対象の劇場にご連絡ください。</span>",

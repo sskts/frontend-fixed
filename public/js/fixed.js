@@ -7,7 +7,7 @@
         if (event.touches.length > 1) {
             event.preventDefault();
         }
-    }, true);
+    });
 
     // ダブルタップ禁止
     var lastTouch = 0;
@@ -17,7 +17,7 @@
             event.preventDefault();
         }
         lastTouch = now;
-    }, true);
+    });
 
     // 戻るボタン禁止
     history.pushState(null, null, null);
@@ -29,13 +29,38 @@
     fixedInit();
 })();
 
+$(function () {
+    // ナビゲーション
+    navigationInit();
+    // 自動TOP遷移
+    autoTop();
+    $(document).on('click', '.ticketing-button a', function (event) {
+        event.preventDefault();
+        location.href = '/inquiry/login?theater=' + window.config.theater;
+    })
+});
+
+/**
+ * ナビゲーション設定
+ * @function navigationInit
+ * @returns {void}
+ */
+function navigationInit() {
+    if ($('.purchase-seat, .purchase-ticket, .purchase-input, .purchase-confirm').length > 0) {
+        $('.navigation .top-button a').attr({
+            href: '#',
+            'data-modal': 'backToTop'
+        });
+    }
+}
+
 /**
  * viewport変更
  * @function changeViewport
  * @returns {void}
  */
 function changeViewport() {
-    var base = 1366;
+    var base = 1024;
     var ua = navigator.userAgent.toLowerCase();
     var isiOS = (ua.indexOf('iphone') > -1) || (ua.indexOf('ipod') > -1) || (ua.indexOf('ipad') > -1);
     var width = (isiOS) ? document.documentElement.clientWidth / base : window.outerWidth / base;
@@ -60,4 +85,31 @@ function fixedInit() {
         }
         window.config = JSON.parse(data);
     }
+}
+
+/**
+ * 自動TOP遷移
+ * @function autoTop
+ * @return {void}
+ */
+function autoTop() {
+    if ($('.purchase-performances').length === 1) {
+        return;
+    }
+    var controlTime = 1000 * 60 * 5;
+    var timeFunction = function () {
+        window.timer = setTimeout(function () {
+            location.href = '/';
+        }, controlTime);
+    }
+    timeFunction();
+    // 自動TOP遷移
+    $(document).on('touchstart', function (event) {
+        clearTimeout(window.timer);
+        timeFunction();
+    });
+    $(document).on('touchend', function (event) {
+        clearTimeout(window.timer);
+        timeFunction();
+    });
 }

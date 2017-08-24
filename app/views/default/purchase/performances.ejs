@@ -1,6 +1,22 @@
 <%- contentFor('script') %>
+<% if (env === 'development') { %>
+<script src="https://unpkg.com/vue"></script>
+<% } else { %>
+<script src="/js/common/vue.min.js"></script>
+<% } %>
+
+<%- contentFor('afterScript') %>
 <script src="/js/purchase/performances.js"></script>
+<%- contentFor('style') %>
+<style>
+    .navigation {
+        display: none;
+    }
+</style>
+<%- contentFor('prev') %>
+/
 <%- contentFor('body') %>
+<<<<<<< HEAD
 <div class="purchase-performances">
     <h1 class="page-ttl">performance</h1>
     <p class="read">選択してください</p>
@@ -27,3 +43,107 @@
         <ul class="box radius bg-light-gray performances"></ul>
     </div>
 </div>
+=======
+
+
+<div class="purchase-performances" id="performances">
+    <h1 class="page-ttl"><%- __('purchase.performances.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.performances.read') %></p>
+    <% for (const theater of theaters) { %>
+    <div class="mb-medium button blue-button center-button inquiry-button">
+        <a href="/inquiry/login?theater=<%= theater.id %>" target="_blank"><%= theater.attributes.name.ja %>照会ページ</a>
+    </div>
+    <% } %>
+    
+    <div class="center mb-medium d-table">
+        <dl class="d-tr">
+            <dt class="d-td"><%- __('purchase.performances.theater') %></dt>
+            <dd class="d-td">
+                <select v-model="theaterCode">
+                    <% for (const theater of theaters) { %>
+                    <option v-bind:value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
+                    <% } %>
+                </select>
+            </dd>
+        </dl>
+        <dl class="d-tr">
+            <dt class="d-td"><%- __('purchase.performances.date') %></dt>
+            <dd class="d-td">
+                <select v-model="date">
+                    <template v-for="select in selects">
+                        <option v-bind:value="select.value">{{select.text}}</option>
+                    </template>
+                </select>
+            </dd>
+        </dl>
+    </div>
+
+    <div class="sort mb-medium text-center">
+        <div><a v-bind:class="{active: (sortType === 'chronological')}" v-on:click="onClickSort('chronological', $event)" href="#"><%- __('purchase.performances.sort.chronological') %></a></div>
+        <div><a v-bind:class="{active: (sortType === 'film')}" v-on:click="onClickSort('film', $event)" href="#"><%- __('purchase.performances.sort.film') %></a></div>
+    </div>
+
+    <template v-if="error === null">
+    <ul v-if="sortType === 'chronological'" class="chronological-order">
+        <li v-for="order in chronologicalOrder" v-bind:key="order.id" class="button gray-button mb-x-small">
+            <a v-on:click="onclickPerformance($event, order.id)" class="icon-triangle-02">
+            <dl>
+                <dt class="text-left">
+                    <div class="large-text">
+                        {{ order.attributes.time_start | timeFormat }}<br>
+                        <span class="small-text">～{{ order.attributes.time_end | timeFormat }}</span>
+                    </div>
+                    <div class="small-text text-center">
+                        <div v-if="order.attributes.stock_status === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
+                        <div v-else-if="order.attributes.stock_status <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
+                        <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
+                        <div v-if="order.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                        <div v-else-if="order.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                    </div>
+                </dt>
+                <dd class="text-left">
+                    <div class="screen-name mb-x-small small-text d-ib">{{ order.attributes.screen.name.ja }}</div>
+                    <div class="small-text mb-x-small d-ib">{{ order.attributes.film.minutes }}分</div>
+                    <p>{{ order.attributes.film.name.ja }}</p>
+                </dd>
+            </dl>
+            </a>
+        </li>
+    </ul>
+    
+    <ul v-if="sortType === 'film'" class="film-order">
+        <li v-for="order in filmOrder" v-bind:key="order.id" class="performance mb-small">
+            <dl>
+                <dt>
+                    <div class="mb-x-small"><strong>{{ order.films[0].attributes.film.name.ja }}</strong></div>
+                    <div class="small-text">{{ order.films[0].attributes.film.minutes }}分</div>
+                </dt>
+                <dd>
+                    <ul>
+                        <li v-for="film in order.films" v-bind:key="film.id" class="button gray-button">
+                            <a v-on:click="onclickPerformance($event, film.id)" class="icon-triangle-02">
+                                <dl>
+                                    <dt class="small-text">{{ film.attributes.time_start | timeFormat }}<span class="small-x-text">～{{ film.attributes.time_end | timeFormat }}</span></dt>
+                                    <dd class="small-x-text text-left">
+                                        <div class="screen-name mb-x-small">{{ film.attributes.screen.name.ja }}</div>
+                                        <div v-if="film.attributes.stock_status === 0"><%- __('purchase.performances.status.full') %></div>
+                                        <div v-else-if="film.attributes.stock_status <= 10"><%- __('purchase.performances.status.few') %></div>
+                                        <div v-else ><%- __('purchase.performances.status.many') %></div>
+                                        <div v-if="film.attributes.stock_status === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                                        <div v-else-if="film.attributes.stock_status <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                                    </dd>
+                                </dl>
+                            </a>
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+        </li>
+    </ul>
+    </template>
+    <p v-if="error !== null" class="text-center">{{ error }}</p>
+</div>
+
+>>>>>>> feature/SSKTS-543

@@ -39,8 +39,13 @@
         </div>
         <input type="hidden" name="notes_agree" value="true">
        
+<<<<<<< HEAD
         <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.confirm.next') %></button></div>
         <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
+=======
+        <div class="button next-button blue-button middle-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.confirm.next') %></button></div>
+        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+>>>>>>> feature/SSKTS-543
     </form>
 </div>
 <input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">

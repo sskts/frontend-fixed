@@ -1,6 +1,4 @@
-var modal;
 $(function () {
-    modal = new SASAKI.Modal();
     validation();
     if (!isFixed()) {
         toInquiry();

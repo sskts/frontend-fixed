@@ -1,34 +1,141 @@
 .purchase-performances {
-    .performances {
-        width: 1100px;
-        margin: 0 auto;
+    margin-bottom: 100px;
+    .sort {
+        display: flex;
+        border-radius: 5px;
+        border: 1px solid #FFF;
+        div {
+            width: 50%;
+            border-right: 1px solid #FFF;
+            &:last-child {
+                border: none;
+            }
+            a {
+                padding: 25px 0;
+                display: block;
+                &.active {
+                    background-color: #2d2d2d;
+                }
+            }
+        }
+    }
+    
+    .chronological-order {
+        display: none;
+        &.active {
+            display: block;
+        }
         li {
-            background-color: rgba(255, 255, 255, 0.85);
             border-radius: 5px;
             color: #333;
-            dl {
-                .film-ttl, .date-ttl {
-                    display: inline-block;
-                    width: 100px;
+            overflow: hidden;
+            a {
+                border: 2px solid #AFAFAF;
+                dl {
+                    display: flex;
+                    dt {
+                        width: 358px;
+                        padding: 25px 30px 25px 50px;
+                        // border-right: 1px solid #777777;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        .status {
+                            img {
+                                width: 70px;
+                            }
+                        }
+                    }
+                    dd {
+                        min-height: 160px;
+                        width: 606px;
+                        padding: 10px 40px 25px 40px;
+                        border-left: 1px solid #777777;
+                        .screen-name {
+                            display: inline-block;
+                            border: 1px solid #333;
+                            padding: 5px;
+                        }
+                    }
                 }
-                dt {
-                    padding: 20px;
-                    border-bottom: 1px solid #ACACAC;
+            }
+        }
+    }
+
+    .film-order {
+        display: none;
+        &.active {
+            display: block;
+        }
+        li {
+            border-radius: 5px;
+            color: #333;
+            overflow: hidden;
+            >dl {
+                >dt {
+                    color: #FFF;
+                    background-color: #515151;
+                    padding: 20px 25px;
                 }
-                dd {
-                    padding: 20px 0 0 20px;
+                >dd {
+                    background-color: #2d2d2d;
+                    padding: 20px 0 0 25px;
                     ul {
                         display: flex;
                         flex-wrap:wrap;
                         li {
-                            margin: 0 20px 20px 0;
+                            margin: 0 10px 20px 0;
+                            width: 220px;
                             &.disabled {
                                 opacity: 0.5;
+                            }
+                            a {
+                                border: 2px solid #AFAFAF;
+                                dl {
+                                    dt {
+                                        padding: 10px 15px 10px 30px;
+                                        border-bottom: 1px solid #777777;
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        .status {
+                                            img {
+                                                width: 50px;
+                                            }
+                                        }
+                                    }   
+                                    dd {
+                                        padding: 10px 0;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    .inquiry {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        left: 0;
+        background-color: #FFF;
+        padding: 30px 0;
+        color: #333;
+        box-shadow: 0px -1px 20px 0px rgba(0, 0, 0, 0.3);
+        .inquiry-button {
+            width: 800px;
+            a {
+                padding: 30px 0;
+                span {
+                    display: inline-block;
+                    position: relative;
+                    padding-right: 35px;
+                }
+            }
+        }
+        
     }
 }

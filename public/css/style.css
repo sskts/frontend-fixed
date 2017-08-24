@@ -285,6 +285,9 @@ p a {
   .device-type-pc {
     display: none; } }
 
+.text-left {
+  text-align: left; }
+
 .text-right {
   text-align: right; }
 
@@ -1187,6 +1190,9 @@ p a {
     .purchase-seat .agree {
       height: 100px; } }
 
+.purchase-seat .arrow {
+  display: none; }
+
 .purchase-ticket .seats .validation {
   background-color: transparent !important; }
   .purchase-ticket .seats .validation .ghost-button a {
@@ -1408,38 +1414,121 @@ p a {
   .purchase-complete .print-button {
     display: none; } }
 
-.purchase-performances .performances li {
-  background-color: rgba(255, 255, 255, 0.85);
+.purchase-performances .sort {
+  margin: 0 auto;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   border-radius: 5px;
-  color: #333;
-  padding-bottom: 10px; }
-  .purchase-performances .performances li:after {
-    display: none; }
-  .purchase-performances .performances li dl .film-ttl, .purchase-performances .performances li dl .date-ttl {
-    display: inline-block;
-    width: 100px; }
-  .purchase-performances .performances li dl dt {
-    padding: 20px;
-    border-bottom: 1px solid #ACACAC; }
-  .purchase-performances .performances li dl dd {
-    padding: 20px 0 0 20px; }
-    .purchase-performances .performances li dl dd ul {
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-flex-wrap: wrap;
-          -ms-flex-wrap: wrap;
-              flex-wrap: wrap; }
-      .purchase-performances .performances li dl dd ul li {
-        width: 20%;
-        margin: 0 10px 10px 0;
-        padding-bottom: 0; }
-        @media screen and (max-width: 767px) {
-          .purchase-performances .performances li dl dd ul li {
-            width: 30%; } }
-        .purchase-performances .performances li dl dd ul li:after {
-          display: none;
-          background-image: none; }
+  border: 1px solid #FFF; }
+  .purchase-performances .sort div {
+    width: 50%;
+    border-right: 1px solid #FFF; }
+    .purchase-performances .sort div:last-child {
+      border: none; }
+    .purchase-performances .sort div a {
+      padding: 25px 0;
+      display: block;
+      background-color: #EEE; }
+      .purchase-performances .sort div a.active {
+        background-color: #CCCCCC;
+        color: #333; }
+
+.purchase-performances .film-order {
+  margin: 0 auto; }
+  .purchase-performances .film-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .film-order li dl dt {
+      background-color: #EEE;
+      padding: 20px 25px; }
+    .purchase-performances .film-order li dl dd {
+      background-color: #EAEAEA;
+      padding: 20px 0 0 10px; }
+      .purchase-performances .film-order li dl dd ul {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap; }
+        .purchase-performances .film-order li dl dd ul li {
+          margin: 0 0 10px 0;
+          padding-right: 10px;
+          width: 33.3%; }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .film-order li dl dd ul li {
+              width: 100%; } }
+          .purchase-performances .film-order li dl dd ul li.disabled {
+            opacity: 0.5; }
+          .purchase-performances .film-order li dl dd ul li a {
+            margin: 0 20px 0 0;
+            padding: 0; }
+            .purchase-performances .film-order li dl dd ul li a dl dt {
+              background-color: transparent;
+              padding: 15px 30px;
+              border-bottom: 1px solid #777777; }
+            .purchase-performances .film-order li dl dd ul li a dl dd {
+              position: relative;
+              background-color: transparent;
+              padding: 15px; }
+              .purchase-performances .film-order li dl dd ul li a dl dd .screen-name {
+                display: inline-block;
+                border: 1px solid #FFF;
+                padding: 5px; }
+              .purchase-performances .film-order li dl dd ul li a dl dd .status {
+                position: absolute;
+                top: 50%;
+                right: 15px;
+                margin-top: -15px; }
+                .purchase-performances .film-order li dl dd ul li a dl dd .status img {
+                  width: 30px; }
+
+.purchase-performances .chronological-order {
+  margin: 0 auto; }
+  .purchase-performances .chronological-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .chronological-order li a {
+      border: 1px solid #777777;
+      padding: 0; }
+      .purchase-performances .chronological-order li a dl {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+        .purchase-performances .chronological-order li a dl dt {
+          width: 248px;
+          padding: 25px;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-justify-content: space-between;
+              -ms-flex-pack: justify;
+                  justify-content: space-between;
+          -webkit-align-items: center;
+              -ms-flex-align: center;
+                  align-items: center; }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .chronological-order li a dl dt {
+              display: block;
+              padding: 10px;
+              text-align: center; } }
+          .purchase-performances .chronological-order li a dl dt .status img {
+            width: 50px; }
+        .purchase-performances .chronological-order li a dl dd {
+          min-height: 100px;
+          width: 606px;
+          padding: 10px 40px 25px 40px;
+          border-left: 1px solid #777777; }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .chronological-order li a dl dd {
+              padding: 10px; } }
+          .purchase-performances .chronological-order li a dl dd .screen-name {
+            display: inline-block;
+            border: 1px solid #FFF;
+            padding: 5px; }
 
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],

@@ -15,25 +15,29 @@
 	z-index: 2;
     padding: 8px;
     ul {
-        width: 300px;
+        width: 420px;
         li {
             color: #080404;
             float: left;
             list-style: none;
-            width: 90px;
+            width: 130px;
             height: 90px;
             line-height:90px;
             margin: 5px;
             text-align:center;
             cursor:pointer;
-            border-radius: 3px;     
+            border-radius: 5px;     
             background-color: #FFF;
-            box-shadow: 0 1px 0 #A7A9AE;
+            box-shadow: 0 2px 0 #A7A9AE;
             zoom: 1;
             user-select: none;
         }
         .numerickey-button {
             background-color: #BAC1C8;
+        }
+        #done {
+            color: #FFF;
+            background-color: #00A0EA;
         }
     }
 }

@@ -1,14 +1,16 @@
 var screenSeatStatusesMap;
 
 $(function () {
-    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
-    var modal = new SASAKI.Modal();
-    saveSalesTickets();
-    loadingStart();
-    screenStateUpdate(function () {
-        loadingEnd();
+    pageInit(function () {
+        if (isFixed()) {
+            setTimeout(function() {
+                modal.open('seat_select_announce');
+                setTimeout(function() {
+                    modal.close('seat_select_announce');
+                }, 5000);
+            }, 0);
+        }
     });
-    
 
     // 座席クリックイベント
     $(document).on('click', '.zoom-btn a', function (event) {
@@ -73,11 +75,36 @@ $(function () {
         });
     });
 
+    // パフォーマンス切り替え
+    $(document).on('click', '.arrow a', function (event) {
+        event.preventDefault();
+        var performanceId = $(this).attr('data-performanceId');
+        arrowClick(performanceId);
+    });
+
     // スクロール
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
     });
 });
+
+/**
+ * 初期化
+ * @function pageInit
+ * @param {function} cb
+ */
+function pageInit(cb) {
+    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
+    saveSalesTickets();
+    loadingStart();
+    setArrows();
+    screenStateUpdate(function () {
+        loadingEnd();
+        if (cb !== undefined) {
+            cb();
+        }
+    });
+}
 
 /**
  * ズームボタンスクロール
@@ -140,7 +167,7 @@ function getScreenStateReserve(count, cb) {
     }).fail(function (jqxhr, textStatus, error) {
         retry(count, cb)
     }).always(function () {
-        
+
     });
 }
 
@@ -445,5 +472,104 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
+    });
+}
+
+/**
+ * 時間変更ボタン初期化
+ * @function setArrows
+ * @returns {void}
+ */
+function setArrows() {
+    $('.arrow').hide();
+    var performanceId = $('input[name=performanceId]').val();
+    var json = sessionStorage.getItem('performances');
+    if (json === null) {
+        return;
+    }
+    var performances = JSON.parse(json);
+    if (performances.length < 2) {
+        return;
+    }
+    var current;
+    performances.forEach(function(value, index){
+        if (value.id === performanceId) {
+            current = index;
+            return;
+        }
+    });
+    var prev = $('.prev-arrow');
+    var next = $('.next-arrow');
+    if (current === 0) {
+        prev.hide();
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
+        next.show();
+    } else if (current === performances.length - 1) {
+        next.hide();
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
+        prev.show();
+    } else {
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
+        prev.show();
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
+        next.show();
+    }
+}
+
+/**
+ * 作品変更クリック
+ * @function arrowClick
+ * @param {string} performanceId 
+ */
+function arrowClick(performanceId) {
+    loadingStart();
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/performanceChange',
+        type: 'POST',
+        timeout: 10000,
+        data: {
+            performanceId: performanceId
+        },
+        beforeSend: function () { }
+    }).done(function (res) {
+        if (res.result && res.error !== null) {
+            $('input[name=seats]').val('');
+            $('.screen-inner').remove();
+            var target = $('.screen-cover');
+            var performance = res.result.performance;
+            var performanceCOA = res.result.performanceCOA;
+            target.attr({
+                'data-theater': performance.attributes.theater.id,
+                'data-day': performance.attributes.day,
+                'data-coa-title-code': performanceCOA.titleCode,
+                'data-coa-title-branch-num': performanceCOA.titleBranchNum,
+                'data-time-start': performance.attributes.time_start,
+                'data-screen-code': performanceCOA.screenCode,
+                'data-limit': performance.attributes.coa_available_num
+            });
+            $('input[name=performanceId]').val(performance.id);
+            $('.screen-name').text(performance.attributes.screen.name.ja);
+            $('.time-start').text(timeFormat(performance.attributes.time_start));
+            $('.time-end').text(timeFormat(performance.attributes.time_end));
+            $('.performance-date').removeClass('change-animation');
+            pageInit(function() {
+                $('.performance-date').addClass('change-animation');
+            });
+        } else {
+            $('.purchase-seat').remove();
+            $('.error').find('.access').hide();
+            $('.error').find('.expire').show();
+            $('.error').show();
+            loadingEnd();
+        }
+    }).fail(function (jqxhr, textStatus, error) {
+        loadingEnd();
+    }).always(function () {
+
     });
 }

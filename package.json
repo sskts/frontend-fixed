@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend",
-  "version": "1.6.1",
+  "version": "1.8.0",
   "private": true,
   "scripts": {
     "check": "npm run tslint && nsp check",
@@ -64,7 +64,7 @@
     "@types/request": "0.0.45",
     "@types/request-promise-native": "^1.0.6",
     "@types/selenium-webdriver": "^2.53.39",
-    "@types/supertest": "^2.0.1",
+    "@types/supertest": "^2.0.2",
     "@types/winston": "^2.3.3",
     "autoprefixer": "^6.7.2",
     "cssnano": "^3.10.0",
@@ -83,7 +83,11 @@
     "supertest": "^3.0.0",
     "tslint": "^5.5.0",
     "tslint-microsoft-contrib": "^5.0.1",
+<<<<<<< HEAD
     "typescript": "^2.4.1"
+=======
+    "typescript": "^2.4.2"
+>>>>>>> feature/SSKTS-543
   },
   "repository": {},
   "author": {

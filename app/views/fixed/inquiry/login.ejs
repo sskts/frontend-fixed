@@ -1,6 +1,14 @@
 <%- contentFor('script') %>
 <script src="/js/common/numerickey.js"></script>
 <script src="/js/inquiry/login.js"></script>
+<%- contentFor('style') %>
+<style>
+.navigation .buttons .ticketing-button {
+    display: none;
+}
+</style>
+<%- contentFor('prev') %>
+/
 <%- contentFor('body') %>
 <%- include('../layouts/inquiry/steps', {step: 0}) %>
 <div class="inquiry-confirm">
@@ -27,7 +35,7 @@
             <input type="hidden" name="theaterCode" value="<%= theaterCode %>">
         <% } %>
         
-        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('inquiry.login.next') %></button></div>
+        <div class="button middle-button next-button blue-button"><button class="center icon-triangle-white" type="submit"><%- __('inquiry.login.next') %></button></div>
     </form>
     <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
 </div>

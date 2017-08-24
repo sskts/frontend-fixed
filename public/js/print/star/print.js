@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
     // console.log('machineProperties', machineProperties);
-    
+
     // IPを指定して接続(Promiseが返ってくる。失敗してもそのままもう一度実行可能)
     window.starThermalPrint.init({
         ipAddress: machineProperties.printer,
@@ -74,6 +74,10 @@ function printerSend(reservations, cb) {
     window.starThermalPrint.printReservationArray(reservations).then(function () {
         loadingEnd();
         cb();
+        var timer = 10000;
+        setTimeout(function () {
+            location.href = '/';
+        }, timer);
     }).catch(function (errMsg) {
         printAlert('印刷に失敗しました<br>劇場係員をお呼びください。<br>' + '<div class="small-text">' + errMsg.replace(/\n/g, '<br>') + '</div>');
         $('body').append('<div class="staff-button"><a href="#"></a></div>');
@@ -94,6 +98,9 @@ function printerSend(reservations, cb) {
  * @returns {void}
  */
 function printAlert(msg) {
+    if (window.timer !== undefined) {
+        clearTimeout(window.timer);
+    }
     window.modal = window.modal || new SASAKI.Modal();
     var modalBody = $('.modal[data-modal=print] .modal-body');
     modalBody.html(msg);
