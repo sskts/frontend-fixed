@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace InquiryModule
  */
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");

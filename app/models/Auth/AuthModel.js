@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 /**
  * 認証モデル
  * @class AuthModel

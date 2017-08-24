@@ -1,4 +1,4 @@
-import * as ssktsApi from '@motionpicture/sskts-api';
+import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
 
 /**
  * 認証セッション

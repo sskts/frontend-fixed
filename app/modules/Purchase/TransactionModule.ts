@@ -3,7 +3,7 @@
  * @namespace Purchase.TransactionModule
  */
 
-import * as ssktsApi from '@motionpicture/sskts-api';
+import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { Request, Response } from 'express';
 import * as moment from 'moment';

@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @namespace Fixed.FixedModule
  */
 const COA = require("@motionpicture/coa-service");
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");

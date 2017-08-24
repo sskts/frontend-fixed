@@ -4,7 +4,7 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
-import * as ssktsApi from '@motionpicture/sskts-api';
+import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';

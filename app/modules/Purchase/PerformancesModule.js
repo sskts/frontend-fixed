@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const AuthModel_1 = require("../../models/Auth/AuthModel");

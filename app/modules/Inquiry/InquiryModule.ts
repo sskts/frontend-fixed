@@ -2,7 +2,7 @@
  * 照会
  * @namespace InquiryModule
  */
-import * as ssktsApi from '@motionpicture/sskts-api';
+import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import LoginForm from '../../forms/Inquiry/LoginForm';

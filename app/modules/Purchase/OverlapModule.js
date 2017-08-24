@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");

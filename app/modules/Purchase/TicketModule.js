@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @namespace Purchase.TicketModule
  */
 const MVTK = require("@motionpicture/mvtk-service");
-const ssktsApi = require("@motionpicture/sskts-api");
+const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
