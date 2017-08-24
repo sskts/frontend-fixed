@@ -112,6 +112,11 @@ function createScheduleDom(data) {
 
     var performances = [];
     data.performances.forEach(function (performance) {
+
+        if (performance.id === '01220170826174100501800' || performance.id === '01220170826174161201750') {
+            return;
+        }
+
         // 販売可能時間判定
         var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
         var limitTime = moment().add(limit, 'minutes');
