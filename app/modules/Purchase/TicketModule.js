@@ -124,7 +124,7 @@ function select(req, res, next) {
                         return {
                             seatSection: reserveTicket.section,
                             seatNumber: reserveTicket.seatCode,
-                            ticket: {
+                            ticketInfo: {
                                 ticketCode: reserveTicket.ticketCode,
                                 ticketName: reserveTicket.ticketName,
                                 ticketNameEng: reserveTicket.ticketNameEng,

@@ -43,17 +43,17 @@ export function isApp(req: Request): boolean {
  * 時間フォーマット
  * @memberof Util.UtilModule
  * @function timeFormat
- * @param {string} str
+ * @param {string} referenceDate 基準日
+ * @param {string} screeningTime 時間
  * @returns {string}
  */
-export function timeFormat(str: string): string {
-    if (typeof str !== 'string') {
-        return '';
-    }
-    const start = 2;
-    const end = 4;
+function timeFormat(screeningTime: string, referenceDate: string) {
+    const HOUR = 60;
+    const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS_02);
+    const minutes = moment(screeningTime).format('mm');
 
-    return `${str.slice(0, start)}:${str.slice(start, end)}`;
+    return `${hour}:${minutes}`;
 }
 
 /**

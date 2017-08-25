@@ -105,7 +105,10 @@ function submit(req, res, next) {
         }
         try {
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -142,12 +145,11 @@ function submit(req, res, next) {
             };
             if (purchaseModel.creditCardAuthorization !== null) {
                 const cancelCreditCardAuthorizationArgs = {
-                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.creditCardAuthorization.id
                 };
                 try {
-                    yield ssktsApi.service.transaction.placeOrder.cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+                    yield ssktsApi.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
@@ -162,17 +164,16 @@ function submit(req, res, next) {
                 purchaseModel.createOrderId();
                 purchaseModel.save(req.session);
                 const createCreditCardAuthorizationArgs = {
-                    auth: auth,
                     transactionId: purchaseModel.transaction.id,
                     orderId: purchaseModel.orderId,
                     amount: purchaseModel.getReserveAmount(),
-                    method: GMO.utils.utils.util.Method.Lump,
+                    method: GMO.utils.util.Method.Lump,
                     creditCard: {
                         token: purchaseModel.gmo.token
                     }
                 };
                 try {
-                    yield ssktsApi.service.transaction.placeOrder.createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                    yield ssktsApi.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     log(createCreditCardAuthorizationArgs);
@@ -181,10 +182,9 @@ function submit(req, res, next) {
                 }
                 log('CMOオーソリ追加');
             }
-            yield ssktsApi.service.transaction.placeOrder.setAgentProfile({
-                auth: auth,
+            yield ssktsApi.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
-                profile: {
+                contact: {
                     familyName: purchaseModel.profile.familyName,
                     givenName: purchaseModel.profile.givenName,
                     email: purchaseModel.profile.email,

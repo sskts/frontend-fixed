@@ -38,14 +38,27 @@
         filters: {
             /**
              * 時間フォーマット
+             * @function timeFormat
+             * @param {string} referenceDate 基準日
+             * @param {string} screeningTime 時間
+             * @returns {string}
              */
-            timeFormat: function (value) {
-                if (typeof value !== 'string') {
-                    return '';
-                }
-                const start = 2;
-                const end = 4;
-                return value.slice(0, start) + ':' + value.slice(start, end);
+            timeFormat: function (screeningTime, referenceDate) {
+                var HOUR = 60;
+                var diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
+                var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
+                var minutes = moment(screeningTime).format('mm');
+            
+                return hour + ':' + minutes;
+            },
+            /**
+             * ISO 8601変換
+             * @function duration
+             * @param {string} value
+             * @returns {number}
+             */
+            duration: function(value) {
+                return moment.duration(value).minutes();
             }
         },
 
@@ -124,7 +137,7 @@
                 this.timer = setTimeout(this.fetchPerformancesData, time);
             },
             /**
-             * 作品別へ変換
+             * 時間別へ変換
              */
             convertToChronologicalOrder: function (data) {
                 var results = [];
@@ -132,7 +145,7 @@
                     // 販売可能時間判定
                     var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
                     var limitTime = moment().add(limit, 'minutes');
-                    if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+                    if (limitTime.unix() > moment(`${performance.startDate}`).unix()) {
                         return;
                     }
                     results.push(performance);
@@ -148,15 +161,15 @@
                     // 販売可能時間判定
                     var limit = (isFixed()) ? END_TIME_FIXED : END_TIME_DEFAULT;
                     var limitTime = moment().add(limit, 'minutes');
-                    if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
+                    if (limitTime.unix() > moment(`${performance.startDate}`).unix()) {
                         return;
                     }
                     var film = results.find(function (film) {
-                        return (film.id === performance.attributes.film.id)
+                        return (film.id === performance.workPerformed.identifier);
                     });
                     if (film === undefined) {
                         results.push({
-                            id: performance.attributes.film.id,
+                            id: performance.workPerformed.identifier,
                             films: [performance]
                         });
                     } else {
@@ -178,8 +191,8 @@
                     if (film !== undefined) {
                         var performances = film.films.map(function (value) {
                             return {
-                                id: value.id,
-                                startTime: timeFormat(value.attributes.time_start)
+                                id: value.identifier,
+                                startTime: timeFormat(value.startDate, value.coaInfo.dateJouei)
                             };
                         });
                         var json = JSON.stringify(performances);

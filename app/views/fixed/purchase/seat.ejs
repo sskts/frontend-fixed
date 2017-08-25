@@ -3,26 +3,31 @@
 <script src="/js/purchase/seat.js"></script>
 <script src="/js/ScreenSeatStatusesMap.js"></script>
 <%- contentFor('prev') %>
-/purchase/performances
+/
 <%- contentFor('body') %>
 <div class="purchase-seat">
     <h1 class="page-ttl"><%- __('purchase.seat.page_ttl') %></h1>
     <p class="read"><%- __('purchase.seat.read') %></p>
 
-    <h2 class="film-ttl mb-middle text-center"><%= performance.attributes.film.name[__('lang')] %></h2>
+    <h2 class="film-ttl mb-middle text-center"><%= purchaseModel.individualScreeningEvent.workPerformed.name %></h2>
     <div class="film-info center mb-middle text-center">
-        <div><span class="small-text square"><%- __('common.screen') %></span><strong class="large-text screen-name"><%= performance.attributes.screen.name[__('lang')] %></strong></div>
-        <div><span class="small-text square"><%- __('common.screening_time') %></span><div class="d-ib performance-date"><strong class="large-x-text time-start"><%= timeFormat(performance.attributes.time_start) %></strong> - <span class="time-end"><%= timeFormat(performance.attributes.time_end) %></span></div></div>
+        <div><span class="small-text square"><%- __('common.screen') %></span><strong class="large-text screen-name"><%= purchaseModel.individualScreeningEvent.location.name.ja %></strong></div>
+        <div>
+            <span class="small-text square"><%- __('common.screening_time') %></span>
+            <div class="d-ib performance-date">
+                <strong class="large-x-text time-start"><%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %></strong> - <span class="time-end"><%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %></span>
+            </div>
+        </div>
     </div>
 
     <div class="screen-cover mb-middle" 
-    data-limit="<%= performance.attributes.coaAvailableNum %>" 
-    data-theater="<%= performance.attributes.theater.id %>" 
-    data-day="<%= performance.attributes.day %>" 
-    data-coa-title-code="<%= performanceCOA.titleCode %>"
-    data-coa-title-branch-num="<%= performanceCOA.titleBranchNum %>"
-    data-time-start="<%= performance.attributes.timeStart %>"
-    data-screen-code="<%= performanceCOA.screenCode %>">
+    data-limit="<%= purchaseModel.individualScreeningEvent.coaInfo.availableNum %>" 
+    data-theater="<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>" 
+    data-day="<%= purchaseModel.individualScreeningEvent.coaInfo.dateJouei %>" 
+    data-coa-title-code="<%= purchaseModel.individualScreeningEvent.coaInfo.titleCode %>"
+    data-coa-title-branch-num="<%= purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum %>"
+    data-time-start="<%= purchaseModel.individualScreeningEvent.coaInfo.timeBegin %>"
+    data-screen-code="<%= purchaseModel.individualScreeningEvent.coaInfo.screenCode %>">
         <div class="seat-info">
             <div class="seat"><%- __('purchase.seat.seats.default') %></div>
             <div class="seat active"><%- __('purchase.seat.seats.active') %></div>
@@ -57,7 +62,7 @@
     <div style="display: none"><a data-modal="seatClose" href="#"></a></div>
 </div>
 <%- include('../error/static') %>
-<input type="hidden" name="performanceId" value="<%= performance.id %>">
+<input type="hidden" name="performanceId" value="<%= purchaseModel.individualScreeningEvent.identifier %>">
 
 <%- include('../locales/validation') %>
 

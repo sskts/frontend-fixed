@@ -83,7 +83,22 @@ function fixedInit() {
             location.href = '/stop';
             return;
         }
-        window.config = JSON.parse(data);
+        var parseData = JSON.parse(data);
+        if (parseData.device_id) {
+            // 一時対応
+            var changeData = {
+                deviceId: parseData.device_id,
+                givenName: parseData.first_name_hira,
+                familyName: parseData.last_name_hira,
+                email: parseData.mail_addr,
+                printer: parseData.printer,
+                theater: parseData.theater
+            }
+            localStorage.setItem('config', JSON.stringify(changeData));
+            window.config = changeData;
+        } else {
+            window.config = JSON.parse(data);
+        }
     }
 }
 

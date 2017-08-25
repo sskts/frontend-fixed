@@ -51,10 +51,11 @@ function setting(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel();
-            const auth = authModel.create();
-            const movieTheaters = yield ssktsApi.service.organization.searchMovieTheaters({
-                auth: auth
-            });
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const movieTheaters = yield ssktsApi.service.organization(options).searchMovieTheaters();
             log('movieTheaters: ', movieTheaters);
             res.locals.movieTheaters = movieTheaters;
             res.render('setting/index');
@@ -90,13 +91,15 @@ function getInquiryData(req, res) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
-                inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization.findMovieTheaterByBranchCode({
-                    auth: auth,
+                inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -106,13 +109,10 @@ function getInquiryData(req, res) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield ssktsApi.service.order.findByOrderInquiryKey({
-                    auth: auth,
-                    orderInquiryKey: {
-                        telephone: inquiryModel.login.telephone,
-                        orderNumber: Number(inquiryModel.login.reserveNum),
-                        theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
-                    }
+                inquiryModel.order = yield ssktsApi.service.order(options).findByOrderInquiryKey({
+                    telephone: inquiryModel.login.telephone,
+                    orderNumber: Number(inquiryModel.login.reserveNum),
+                    theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
                 if (inquiryModel.order === null) {
                     // 本予約して照会情報取得
@@ -122,13 +122,10 @@ function getInquiryData(req, res) {
                         throw ErrorUtilModule.ERROR_PROPERTY;
                     const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                     log('COA本予約', updReserve);
-                    inquiryModel.order = yield ssktsApi.service.order.findByOrderInquiryKey({
-                        auth: auth,
-                        orderInquiryKey: {
-                            telephone: inquiryModel.login.telephone,
-                            orderNumber: Number(inquiryModel.login.reserveNum),
-                            theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
-                        }
+                    inquiryModel.order = yield ssktsApi.service.order(options).findByOrderInquiryKey({
+                        telephone: inquiryModel.login.telephone,
+                        orderNumber: Number(inquiryModel.login.reserveNum),
+                        theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                     });
                     log('COA照会情報取得', inquiryModel.order);
                     if (inquiryModel.order === null)

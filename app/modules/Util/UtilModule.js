@@ -47,18 +47,17 @@ exports.isApp = isApp;
  * 時間フォーマット
  * @memberof Util.UtilModule
  * @function timeFormat
- * @param {string} str
+ * @param {string} referenceDate 基準日
+ * @param {string} screeningTime 時間
  * @returns {string}
  */
-function timeFormat(str) {
-    if (typeof str !== 'string') {
-        return '';
-    }
-    const start = 2;
-    const end = 4;
-    return `${str.slice(0, start)}:${str.slice(start, end)}`;
+function timeFormat(screeningTime, referenceDate) {
+    const HOUR = 60;
+    const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(exports.DIGITS_02);
+    const minutes = moment(screeningTime).format('mm');
+    return `${hour}:${minutes}`;
 }
-exports.timeFormat = timeFormat;
 /**
  * HTMLエスケープ
  * @memberof Util.UtilModule

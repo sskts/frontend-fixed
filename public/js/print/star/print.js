@@ -45,7 +45,7 @@ function printTicket(count, cb) {
             theaterCode: $('input[name=theaterCode]').val(),
             reserveNum: $('input[name=reserveNum]').val(
             ),
-            telNum: $('input[name=telNum]').val()
+            telephone: $('input[name=telephone]').val()
         },
     }).done(function (res) {
         var reservations = res.result;

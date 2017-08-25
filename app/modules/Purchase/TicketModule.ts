@@ -145,7 +145,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     return {
                         seatSection: reserveTicket.section,
                         seatNumber: reserveTicket.seatCode,
-                        ticket: {
+                        ticketInfo: {
                             ticketCode: reserveTicket.ticketCode,
                             ticketName: reserveTicket.ticketName,
                             ticketNameEng: reserveTicket.ticketNameEng,

@@ -1,8 +1,8 @@
 <%- contentFor('script') %>
 <script src="/js/common/numerickey.js"></script>
 <script src="/js/purchase/input.js"></script>
-<script src="<%= gmoModuleUrl %>"></script>
-<script>Multipayment.init('<%= gmoShopId %>');</script>
+<script src="<%= GMO_ENDPOINT %>/ext/js/token.js"></script>
+<script>Multipayment.init('<%= purchaseModel.movieTheaterOrganization.gmoInfo.shopId %>');</script>
 <%- contentFor('prev') %>
 /purchase/ticket
 <%- contentFor('body') %>
@@ -14,14 +14,14 @@
             <dl class="mb-large">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="tel" name="telephone" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.telephone %>" class="numerickeybord" readonly="readonly">
+                    <input type="tel" name="telephone" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= purchaseModel.profile.telephone %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
             <input type="hidden" name="familyName" placeholder="<%- __('common.placeholder.familyName') %>" value="">
             <input type="hidden" name="givenName" placeholder="<%- __('common.placeholder.givenName') %>" value="">
             <input type="hidden" name="email" placeholder="<%- __('common.placeholder.mail') %>" value="">
             <input type="hidden" name="emailConfirm" placeholder="<%- __('common.placeholder.emailConfirm') %>" value="">
-            <% if (price > 0) { %>
+            <% if (purchaseModel.getReserveAmount() > 0) { %>
             <h2 class="payment-ttl mb-middle">
                 <%- __('common.payment') %><span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
             </h2>
@@ -79,17 +79,12 @@
             <input type="hidden" name="gmoErrorMessage" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
             <% } %>
         </div>
-<<<<<<< HEAD
-        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.input.next') %></button></div>
-        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
-=======
         <div class="button middle-button next-button blue-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.input.next') %></button></div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
->>>>>>> feature/SSKTS-543
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
-    <input type="hidden" name="price" value="<%= price %>">
+    <input type="hidden" name="price" value="<%= purchaseModel.getReserveAmount() %>">
     <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
-    <input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
+    <input type="hidden" name="theaterCode" value="<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>">
 </div>
 
 <%- include('../locales/validation') %>

@@ -44,10 +44,10 @@ function pageInit() {
         // 券売機
         var data = localStorage.getItem('config');
         var json = JSON.parse(data);
-        $('input[name=lastNameHira]').val(json.lastNameHira);
-        $('input[name=firstNameHira]').val(json.firstNameHira);
-        $('input[name=mailAddr]').val(json.mailAddr);
-        $('input[name=mailConfirm]').val(json.mailAddr);
+        $('input[name=familyName]').val(json.familyName);
+        $('input[name=givenName]').val(json.givenName);
+        $('input[name=email]').val(json.email);
+        $('input[name=emailConfirm]').val(json.email);
 
         var str = $('input[name=validation]').val();
         var errors = JSON.parse(str);
@@ -165,21 +165,21 @@ function validation() {
     if (isFixed()) {
         // 券売機
         var validationList = [
-            { name: 'lastNameHira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'firstNameHira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'mailAddr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
-            { name: 'mailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mailAddr' },
-            { name: 'telNum', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+            { name: 'familyName', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'givenName', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'email', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+            { name: 'emailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'email' },
+            { name: 'telephone', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
             { name: 'cardno', label: locales.label.cardno, required: true },
             { name: 'securitycode', label: locales.label.securitycode, required: true }
         ];
     } else {
         var validationList = [
-            { name: 'lastNameHira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'firstNameHira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-            { name: 'mailAddr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
-            { name: 'mailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'mailAddr' },
-            { name: 'telNum', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
+            { name: 'familyName', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'givenName', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+            { name: 'email', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+            { name: 'emailConfirm', label: locales.label.mail_confirm, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email], equals: 'email' },
+            { name: 'telephone', label: locales.label.tel_num, required: true, maxLength: TEL_MAX_LENGTH, minLength: TEL_MIN_LENGTH, regex: [/^[0-9]+$/, locales.validation.is_tel] },
             { name: 'cardno', label: locales.label.cardno, required: true },
             { name: 'securitycode', label: locales.label.securitycode, required: true },
             { name: 'holdername', label: locales.label.holdername, required: true },

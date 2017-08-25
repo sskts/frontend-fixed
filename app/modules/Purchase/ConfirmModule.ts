@@ -191,7 +191,10 @@ export async function purchase(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const authModel = new AuthModel(req.session.auth);
-        const auth = authModel.create();
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
@@ -216,8 +219,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             log('ムビチケ決済');
         }
 
-        const order = await ssktsApi.service.transaction.placeOrder.confirm({
-            auth: auth,
+        const order = await ssktsApi.service.transaction.placeOrder(options).confirm({
             transactionId: purchaseModel.transaction.id
         });
         log('注文確定', order);
@@ -283,8 +285,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     domain: req.headers.host
                 }
             );
-            const sendEmailNotificationArgs = {
-                auth: auth,
+            await ssktsApi.service.transaction.placeOrder(options).sendEmailNotification({
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {
                     from: 'noreply@ticket-cinemasunshine.com',
@@ -292,8 +293,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
                     content: content
                 }
-            };
-            await ssktsApi.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
+            });
             log('メール通知');
         }
         // 購入セッション削除

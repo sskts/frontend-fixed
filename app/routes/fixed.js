@@ -9,7 +9,6 @@ const PerformancesModule = require("../modules/Purchase/PerformancesModule");
 const fixedRouter = express.Router();
 // TOP
 fixedRouter.get('/', PerformancesModule.index);
-fixedRouter.post('/', PerformancesModule.getPerformances);
 // 設定
 fixedRouter.get('/setting', FixedModule.setting);
 // 利用停止

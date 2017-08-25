@@ -166,15 +166,15 @@ function getParameter() {
 /**
  * 時間フォーマット
  * @function timeFormat
- * @param {moment.Moment} referenceDate
- * @param {moment.Moment} screeningTime
+ * @param {string} referenceDate 基準日
+ * @param {string} screeningTime 時間
  * @returns {string}
  */
-function timeFormat(referenceDate, screeningTime) {
+function timeFormat(screeningTime, referenceDate) {
     var HOUR = 60;
-    var diff = screeningTime.diff(referenceDate, 'minutes');
+    var diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
     var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
-    var minutes = screeningTime.format('mm');
+    var minutes = moment(screeningTime).format('mm');
 
     return hour + ':' + minutes;
 }

@@ -34,12 +34,14 @@ function index(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null) {
-                yield ssktsApi.service.transaction.placeOrder.cancelSeatReservationAuthorization({
-                    auth: auth,
+                yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
@@ -51,9 +53,7 @@ function index(req, res, next) {
             delete req.session.complete;
             delete req.session.auth;
             if (process.env.VIEW_TYPE === undefined) {
-                res.locals.movieTheaters = yield ssktsApi.service.organization.searchMovieTheaters({
-                    auth: auth
-                });
+                res.locals.movieTheaters = yield ssktsApi.service.organization(options).searchMovieTheaters();
                 log(res.locals.movieTheaters);
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
@@ -83,14 +83,14 @@ function getPerformances(req, res) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             // 上映イベント検索
-            const individualScreeningEvents = yield ssktsApi.service.event.searchIndividualScreeningEvent({
-                auth: auth,
-                searchConditions: {
-                    theater: req.body.theater,
-                    day: moment(req.body.day).format('YYYYMMDD')
-                }
+            const individualScreeningEvents = yield ssktsApi.service.event(options).searchIndividualScreeningEvent({
+                theater: req.body.theater,
+                day: moment(req.body.day).format('YYYYMMDD')
             });
             log('上映イベント検索');
             res.json({ error: null, result: individualScreeningEvents });

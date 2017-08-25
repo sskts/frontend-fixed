@@ -9,7 +9,7 @@
     <div class="text-center mb-large"><img src="/images/fixed/print.svg" width="400" height="259" alt=""></div>
     <div class="button middle-button blue-button"><a class="center icon-triangle-white" href="/"><%- __('purchase.complete.next') %></a></div>
 </div>
-<input type="hidden" name="ticketLength" value="<%= reserveSeats.listTmpReserve.length %>">
-<input type="hidden" name="theaterCode" value="<%= performance.attributes.theater.id %>">
-<input type="hidden" name="reserveNum" value="<%= reserveSeats.tmpReserveNum %>">
-<input type="hidden" name="telephone" value="<%= input.telephone %>">
+<input type="hidden" name="ticketLength" value="<%= purchaseModel.reserveTickets.length %>">
+<input type="hidden" name="theaterCode" value="<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>">
+<input type="hidden" name="reserveNum" value="<%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %>">
+<input type="hidden" name="telephone" value="<%= purchaseModel.profile.telephone %>">

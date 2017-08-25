@@ -260,7 +260,7 @@ export interface IPurchaseSession {
     /**
      * 取引
      */
-    transaction: sskts.factory.transaction.ITransaction | null;
+    transaction: sskts.factory.transaction.placeOrder.ITransaction | null;
     /**
      * 販売可能チケット情報
      */
@@ -330,7 +330,7 @@ export class PurchaseModel {
     /**
      * 取引
      */
-    public transaction: sskts.factory.transaction.ITransaction | null;
+    public transaction: sskts.factory.transaction.placeOrder.ITransaction | null;
     /**
      * 販売可能チケット情報
      */

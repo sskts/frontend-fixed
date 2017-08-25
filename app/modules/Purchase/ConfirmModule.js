@@ -203,7 +203,10 @@ function purchase(req, res) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const auth = authModel.create();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -232,8 +235,7 @@ function purchase(req, res) {
                 yield reserveMvtk(purchaseModel);
                 log('ムビチケ決済');
             }
-            const order = yield ssktsApi.service.transaction.placeOrder.confirm({
-                auth: auth,
+            const order = yield ssktsApi.service.transaction.placeOrder(options).confirm({
                 transactionId: purchaseModel.transaction.id
             });
             log('注文確定', order);
@@ -293,8 +295,7 @@ function purchase(req, res) {
                     purchaseModel: purchaseModel,
                     domain: req.headers.host
                 });
-                const sendEmailNotificationArgs = {
-                    auth: auth,
+                yield ssktsApi.service.transaction.placeOrder(options).sendEmailNotification({
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {
                         from: 'noreply@ticket-cinemasunshine.com',
@@ -302,8 +303,7 @@ function purchase(req, res) {
                         subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
                         content: content
                     }
-                };
-                yield ssktsApi.service.transaction.placeOrder.sendEmailNotification(sendEmailNotificationArgs);
+                });
                 log('メール通知');
             }
             // 購入セッション削除

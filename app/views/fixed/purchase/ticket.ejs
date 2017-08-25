@@ -1,7 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/ticket.js"></script>
 <%- contentFor('prev') %>
-/purchase/seat/<%= performance.id %>/
+/purchase/seat/<%= purchaseModel.individualScreeningEvent.identifier %>/
 <%- contentFor('body') %>
 <div class="purchase-ticket">
     <form method="post">
@@ -9,7 +9,7 @@
         <p class="read"><%- __('purchase.ticket.read') %></p>
 
         <% if (purchaseModel.isUsedMvtk()) { %>
-        <% if (mvtkLength === 0) { %>
+        <% if (purchaseModel.mvtk.length === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
         <div class="box mb-middle mvtk center">
             <div class="mvtk-text small-text"><%- __('purchase.ticket.mvtk.read') %></div>
@@ -19,8 +19,8 @@
         <% } %>
 
         <ul class="mb-small seats">
-            <% if (reserveTickets.length > 0) { %>
-            <% for (let ticket of reserveTickets) { %>
+            <% if (purchaseModel.reserveTickets.length > 0) { %>
+            <% for (let ticket of purchaseModel.reserveTickets) { %>
             <li data-section="<%= ticket.section %>"
                 data-seat-code="<%= ticket.seatCode %>"
                 data-ticket-code="<%= ticket.ticketCode %>"
@@ -41,7 +41,7 @@
             </li>
             <% } %>
             <% } else { %>
-            <% for (let seat of reserveSeats.listTmpReserve) { %>
+                <% for (let seat of purchaseModel.seatReservationAuthorization.result.listTmpReserve) { %>
             <li data-section="<%= seat.seatSection %>"
                 data-seat-code="<%= seat.seatNum %>"
                 data-ticket-code=""
@@ -63,7 +63,7 @@
 
         <div class="mb-large">
             <div class="border-bottom-dot mb-small"></div>
-            <% if (kbnJoueihousiki === '002') { %>
+            <% if (purchaseModel.individualScreeningEvent.superEvent.coaInfo.kbnJoueihousiki === '002') { %>
             <!-- 4DX -->
             <p class="small-text mb-small"><%- __('purchase.ticket.note_4dx') %></p>
             <% } %>

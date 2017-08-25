@@ -35,7 +35,7 @@
                     <dd>
                         <div class="mb-xx-small">
                             <strong class="red-text">
-                                <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= purchaseModel.getScreeningTime().start %>-<%= purchaseModel.getScreeningTime().end %>
+                                <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %> - <%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %>
                             </strong>
                         </div>
                         <p class="small-x-text red-text"><%- __('purchase.confirm.date_note') %></p>
@@ -51,7 +51,7 @@
                         <% } %>
                         <div style="display: none" class="right">
                             <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
-                            --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%- purchaseModel.individualScreeningEvent.identifier %>/"><%- __('common.change') %></a></div>
+                            --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%= purchaseModel.individualScreeningEvent.identifier %>/"><%- __('common.change') %></a></div>
                         </div>
                     </dd>
                 </dl>

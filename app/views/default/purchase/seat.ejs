@@ -38,9 +38,13 @@
             <p class="mb-small"><%- __('purchase.seat.film_info.read') %></p>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                <dd class="border-bottom-dot"><%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %> / <%= purchaseModel.individualScreeningEvent.location.name.ja %></dd>
+                <dd class="border-bottom-dot">
+                    <%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %> / <%= purchaseModel.individualScreeningEvent.location.name.ja %>
+                </dd>
                 <dt><%- __('common.appreciation_date') %></dt>
-                <dd class="border-bottom-dot"><%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= purchaseModel.getScreeningTime().start %>-<%= purchaseModel.getScreeningTime().end %></dd>
+                <dd class="border-bottom-dot">
+                    <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %> - <%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %>
+                </dd>
                 <dt><%- __('common.film_title') %></dt>
                 <dd><%= purchaseModel.individualScreeningEvent.workPerformed.name %></dd>
             </dl>
@@ -71,6 +75,7 @@
     </form>
     <div style="display: none"><a data-modal="seatClose" href="#"></a></div>
 </div>
+<input type="hidden" name="performanceId" value="<%= purchaseModel.individualScreeningEvent.identifier %>">
 
 <%- include('../locales/validation') %>
 
