@@ -5,7 +5,7 @@
     <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
         
-    <div class="ticket-list mb-medium">
+    <div class="ticket-list mb-middle">
         <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.listTmpReserve.length; i++) { %>
         <% if (mvtkInfo[i] !== undefined) { %>
         <div class="mvtk-box active">
@@ -59,7 +59,7 @@
         <% } %>
     </div>   
     <% if (purchaseModel.seatReservationAuthorization.result.listTmpReserve.length > 1) { %>
-    <div class="button dark-blue-button add-button mb-medium center-button">
+    <div class="button dark-blue-button add-button mb-middle center-button">
         <a class="icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
     <% } %>

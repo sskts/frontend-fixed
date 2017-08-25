@@ -9,7 +9,7 @@
         <% if (purchaseModel.isUsedMvtk()) { %>
         <% if (purchaseModel.mvtk.length === 0) { %>
         <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
-        <div class="box radius bg-ultra-light-gray mb-medium mvtk">
+        <div class="box radius bg-ultra-light-gray mb-middle mvtk">
             <dl class="d-table">
                 <dt class="d-td"><%- __('purchase.ticket.mvtk.read') %></dt>
                 <dd class="d-td width-medium">                                
@@ -22,7 +22,7 @@
         <% } %>
         <% } %>
 
-        <ul class="box radius bg-light-gray mb-medium seats">
+        <ul class="box radius bg-light-gray mb-middle seats">
             <% if (purchaseModel.reserveTickets.length > 0) { %>
             <% for (let ticket of purchaseModel.reserveTickets) { %>
             <li data-section="<%= ticket.section %>"

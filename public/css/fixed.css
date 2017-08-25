@@ -1113,13 +1113,15 @@ a {
         padding: 20px 25px; }
       .purchase-performances .film-order li > dl > dd {
         background-color: #2d2d2d;
-        padding: 20px 0 0 25px; }
+        padding: 20px 25px 0; }
         .purchase-performances .film-order li > dl > dd ul {
           display: flex;
-          flex-wrap: wrap; }
+          flex-wrap: wrap;
+          margin: 0 0 0 -12.5px; }
           .purchase-performances .film-order li > dl > dd ul li {
-            margin: 0 10px 20px 0;
-            width: 220px; }
+            width: 25%;
+            padding: 0 0 0 10px;
+            margin: 0 0 20px; }
             .purchase-performances .film-order li > dl > dd ul li.disabled {
               opacity: 0.5; }
             .purchase-performances .film-order li > dl > dd ul li a {

@@ -12,7 +12,7 @@
             <%- __('common.film_info') %>
             <div class="right">
                 <div class="button light-gray-button change-button">
-                    <a href="<%= purchaseModel.movieTheaterOrganization.sameAs %>"><%- __('common.change') %></a>
+                    <a href="<%= purchaseModel.movieTheaterOrganization.url %>"><%- __('common.change') %></a>
                 </div>
             </div>
         </h2>
@@ -97,7 +97,7 @@
 
         <h2 class="section-ttl"><%- __('common.notes') %>(<%- __('common.strong') %>)</h2>
         <p class="mb-small"><%- __('common.notes_read') %></p>
-        <div class="box radius bg-ultra-light-gray small-x-text notes mb-medium">
+        <div class="box radius bg-ultra-light-gray small-x-text notes mb-middle">
             <%- include('notes/ja/' + purchaseModel.individualScreeningEvent.coaInfo.theaterCode.slice(-2), {}) %>
         </div>
 

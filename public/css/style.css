@@ -327,7 +327,7 @@ p a {
 .mb-large {
   margin-bottom: 30px !important; }
 
-.mb-medium {
+.mb-middle {
   margin-bottom: 20px !important; }
 
 .mb-small {
@@ -1376,89 +1376,87 @@ p a {
         background-color: #CCCCCC;
         color: #333; }
 
-.purchase-performances .film-order {
-  margin: 0 auto; }
-  .purchase-performances .film-order li {
-    border-radius: 5px;
-    color: #333;
-    overflow: hidden; }
-    .purchase-performances .film-order li dl dt {
-      background-color: #EEE;
-      padding: 20px 25px; }
-    .purchase-performances .film-order li dl dd {
-      background-color: #EAEAEA;
-      padding: 20px 0 0 10px; }
-      .purchase-performances .film-order li dl dd ul {
-        display: flex;
-        flex-wrap: wrap; }
-        .purchase-performances .film-order li dl dd ul li {
-          margin: 0 0 10px 0;
-          padding-right: 10px;
-          width: 33.3%; }
-          @media screen and (max-width: 767px) {
-            .purchase-performances .film-order li dl dd ul li {
-              width: 100%; } }
-          .purchase-performances .film-order li dl dd ul li.disabled {
-            opacity: 0.5; }
-          .purchase-performances .film-order li dl dd ul li a {
-            margin: 0 20px 0 0;
-            padding: 0; }
-            .purchase-performances .film-order li dl dd ul li a dl dt {
-              background-color: transparent;
-              padding: 15px 30px;
-              border-bottom: 1px solid #777777; }
-            .purchase-performances .film-order li dl dd ul li a dl dd {
-              position: relative;
-              background-color: transparent;
-              padding: 15px; }
-              .purchase-performances .film-order li dl dd ul li a dl dd .screen-name {
-                display: inline-block;
-                border: 1px solid #FFF;
-                padding: 5px; }
-              .purchase-performances .film-order li dl dd ul li a dl dd .status {
-                position: absolute;
-                top: 50%;
-                right: 15px;
-                margin-top: -15px; }
-                .purchase-performances .film-order li dl dd ul li a dl dd .status img {
-                  width: 30px; }
-
 .purchase-performances .chronological-order {
-  margin: 0 auto; }
+  display: none; }
+  .purchase-performances .chronological-order.active {
+    display: block; }
   .purchase-performances .chronological-order li {
     border-radius: 5px;
     color: #333;
     overflow: hidden; }
     .purchase-performances .chronological-order li a {
-      border: 1px solid #777777;
-      padding: 0; }
+      border: 2px solid #AFAFAF; }
       .purchase-performances .chronological-order li a dl {
         display: flex; }
         .purchase-performances .chronological-order li a dl dt {
-          width: 248px;
-          padding: 25px;
+          width: 180px;
+          padding: 10px 10px 10px 20px;
           display: flex;
           justify-content: space-between;
           align-items: center; }
           @media screen and (max-width: 767px) {
             .purchase-performances .chronological-order li a dl dt {
-              display: block;
-              padding: 10px;
-              text-align: center; } }
+              width: 50%;
+              padding: 10px; } }
           .purchase-performances .chronological-order li a dl dt .status img {
-            width: 50px; }
+            width: 30px; }
         .purchase-performances .chronological-order li a dl dd {
-          min-height: 100px;
-          width: 606px;
+          width: 520px;
           padding: 10px 40px 25px 40px;
           border-left: 1px solid #777777; }
           @media screen and (max-width: 767px) {
             .purchase-performances .chronological-order li a dl dd {
-              padding: 10px; } }
+              width: 50%;
+              padding: 10px 10px 25px 10px; } }
           .purchase-performances .chronological-order li a dl dd .screen-name {
             display: inline-block;
-            border: 1px solid #FFF;
+            border: 1px solid #333;
             padding: 5px; }
+
+.purchase-performances .film-order {
+  display: none; }
+  .purchase-performances .film-order.active {
+    display: block; }
+  .purchase-performances .film-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .film-order li > dl > dt {
+      color: #FFF;
+      background-color: #515151;
+      padding: 20px 25px; }
+    .purchase-performances .film-order li > dl > dd {
+      background-color: #2d2d2d;
+      padding: 20px 20px 0; }
+      .purchase-performances .film-order li > dl > dd ul {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 0 -10px; }
+        .purchase-performances .film-order li > dl > dd ul li {
+          width: 25%;
+          padding: 0 0 0 10px;
+          margin: 0 0 20px; }
+          @media screen and (max-width: 1024px) {
+            .purchase-performances .film-order li > dl > dd ul li {
+              width: 33.3%; } }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .film-order li > dl > dd ul li {
+              width: 50%; } }
+          .purchase-performances .film-order li > dl > dd ul li.disabled {
+            opacity: 0.5; }
+          .purchase-performances .film-order li > dl > dd ul li a {
+            padding: 0;
+            border: 2px solid #AFAFAF; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dt {
+              padding: 10px 15px;
+              border-bottom: 1px solid #777777;
+              display: flex;
+              justify-content: space-between;
+              align-items: center; }
+              .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
+                width: 30px; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dd {
+              padding: 10px 0; }
 
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],

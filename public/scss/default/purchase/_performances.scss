@@ -21,110 +21,111 @@
             }
         }
     }
-    .film-order {
-        margin: 0 auto;
+    .chronological-order {
+        display: none;
+        &.active {
+            display: block;
+        }
         li {
             border-radius: 5px;
             color: #333;
             overflow: hidden;
-            dl {
-                dt {
-                    background-color: #EEE;
-                    padding: 20px 25px;
-                }
-                dd {
-                    background-color: #EAEAEA;
-                    padding: 20px 0 0 10px;
-                    ul {
+            a {
+                border: 2px solid #AFAFAF;
+                dl {
+                    display: flex;
+                    dt {
+                        width: 180px;
+                        padding: 10px 10px 10px 20px;
+                        // border-right: 1px solid #777777;
                         display: flex;
-                        flex-wrap:wrap;
-                        li {
-                            margin: 0 0 10px 0;
-                            padding-right: 10px;
-                            width: 33.3%;
-                            @media screen and (max-width: $mobile) {
-                                width: 100%;
+                        justify-content: space-between;
+                        align-items: center;
+                        @media screen and (max-width: $mobile){
+                            width: 50%;
+                            padding: 10px;
+                        }
+                        .status {
+                            img {
+                                width: 30px;
                             }
-                            &.disabled {
-                                opacity: 0.5;
-                            }
-                            a {
-                                margin: 0 20px 0 0;
-                                padding: 0;
-                                dl {
-                                    dt {
-                                        background-color: transparent;
-                                        padding: 15px 30px;
-                                        border-bottom: 1px solid #777777;
-                                    }   
-                                    dd {
-                                        position: relative;
-                                        background-color: transparent;
-                                        padding: 15px;
-                                        .screen-name {
-                                            display: inline-block;
-                                            border: 1px solid #FFF;
-                                            padding: 5px;
-                                        }
-                                        .status {
-                                            position: absolute;
-                                            top: 50%;
-                                            right: 15px;
-                                            margin-top: -15px;
-                                            img {
-                                                width: 30px;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        }
+                    }
+                    dd {
+                        width: 520px;
+                        padding: 10px 40px 25px 40px;
+                        border-left: 1px solid #777777;
+                        @media screen and (max-width: $mobile){
+                            width: 50%;
+                            padding: 10px 10px 25px 10px;
+                        }
+                        .screen-name {
+                            display: inline-block;
+                            border: 1px solid #333;
+                            padding: 5px;
                         }
                     }
                 }
             }
         }
     }
-    .chronological-order {
-        margin: 0 auto;
+
+    .film-order {
+        display: none;
+        &.active {
+            display: block;
+        }
         li {
             border-radius: 5px;
             color: #333;
             overflow: hidden;
-            a {
-                border: 1px solid #777777;
-                padding: 0;
-                dl {
-                    display: flex;
-                    dt {
-                        width: 248px;
-                        padding: 25px;
-                        // border-right: 1px solid #777777;
+            >dl {
+                >dt {
+                    color: #FFF;
+                    background-color: #515151;
+                    padding: 20px 25px;
+                }
+                >dd {
+                    background-color: #2d2d2d;
+                    padding: 20px 20px 0;
+                    ul {
                         display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        @media screen and (max-width: $mobile) {
-                            display: block;
-                            padding: 10px;
-                            text-align: center;
-                        }
-                        .status {
-                            img {
-                                width: 50px;
+                        flex-wrap:wrap;
+                        margin: 0 0 0 -10px;
+                        li {
+                            width: 25%;
+                            padding: 0 0 0 10px;
+                            margin: 0 0 20px;
+                            @media screen and (max-width: $tablet){
+                                width: 33.3%;
                             }
-                        }
-                    }
-                    dd {
-                        min-height: 100px;
-                        width: 606px;
-                        padding: 10px 40px 25px 40px;
-                        border-left: 1px solid #777777;
-                        @media screen and (max-width: $mobile) {
-                            padding: 10px;
-                        }
-                        .screen-name {
-                            display: inline-block;
-                            border: 1px solid #FFF;
-                            padding: 5px;
+                            @media screen and (max-width: $mobile){
+                                width: 50%;
+                            }
+                            &.disabled {
+                                opacity: 0.5;
+                            }
+                            a {
+                                padding: 0;
+                                border: 2px solid #AFAFAF;
+                                dl {
+                                    dt {
+                                        padding: 10px 15px;
+                                        border-bottom: 1px solid #777777;
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: center;
+                                        .status {
+                                            img {
+                                                width: 30px;
+                                            }
+                                        }
+                                    }   
+                                    dd {
+                                        padding: 10px 0;
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -19,18 +19,18 @@
 <div class="purchase-performances" id="performances">
     <h1 class="page-ttl"><%- __('purchase.performances.page_ttl') %></h1>
     <p class="read"><%- __('purchase.performances.read') %></p>
-    <% for (const theater of theaters) { %>
-    <div class="mb-medium button blue-button center-button inquiry-button">
+    <% for (const theater of movieTheaters) { %>
+    <div class="mb-middle button blue-button center-button inquiry-button">
         <a href="/inquiry/login?theater=<%= theater.location.branchCode %>" target="_blank"><%= theater.location.name.ja %>照会ページ</a>
     </div>
     <% } %>
     
-    <div class="center mb-medium d-table">
+    <div class="center mb-middle d-table">
         <dl class="d-tr">
             <dt class="d-td"><%- __('purchase.performances.theater') %></dt>
             <dd class="d-td">
                 <select v-model="theaterCode">
-                    <% for (const theater of theaters) { %>
+                    <% for (const theater of movieTheaters) { %>
                     <option v-bind:value="<%= theater.location.branchCode %>"><%= theater.location.name.ja %></option>
                     <% } %>
                 </select>
@@ -123,4 +123,3 @@
     <p v-if="error !== null" class="text-center">{{ error }}</p>
 </div>
 
->>>>>>> feature/SSKTS-543
