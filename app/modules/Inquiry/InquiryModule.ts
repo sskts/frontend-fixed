@@ -92,7 +92,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             };
             inquiryModel.order = await ssktsApi.service.order(options).findByOrderInquiryKey({
                 telephone: inquiryModel.login.telephone,
-                orderNumber: Number(inquiryModel.login.reserveNum),
+                confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
             });
             log('照会情報', inquiryModel.order);
@@ -173,6 +173,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 
             return;
         }
+
         const inquiryModel = new InquiryModel(req.session.inquiry);
         res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;

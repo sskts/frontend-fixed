@@ -35,37 +35,39 @@
                     <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
                     <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${inquiryModel.order.acceptedOffers.length}` %><%- __('common.ticket_number') %></div>
                     <div class="mb-xx-small">
-                        <strong class="large-text"><%= offer.reservedTicket.coaTicketInfo.seatNum %></strong>
+                        <strong class="large-text"><%= offer.itemOffered.reservedTicket.ticketedSeat.seatNumber %></strong>
                     </div>
                     <div>
-                        <% if (offer.reservedTicket.coaTicketInfo.addGlasses > 0) { %>
-                        [<%= offer.reservedTicket.coaTicketInfo.ticketName %><%= __('common.glasses') %>]
+                        <% if (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0) { %>
+                        [<%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %><%= __('common.glasses') %>]
                         <% } else { %>
-                        [<%= offer.reservedTicket.coaTicketInfo.ticketName %>]
+                        [<%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %>]
                         <% } %>
                     </div>
                 </div>
-                <% if (moment(offer.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
-                <div class="box radius border-bottom-dot not-qr-code bg-white">
-                    <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
-                </div>
-                <% } else if (moment(offer.reservationFor.endDate).add(1, 'months').unix() < moment().unix()) { %>
+                
+                <% if (moment(offer.itemOffered.reservationFor.endDate).add(1, 'months').unix() < moment().unix()) { %>
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_after') %></p>
                 </div>
+                <% } else if (moment(offer.itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
+                    <div class="box radius border-bottom-dot not-qr-code bg-white">
+                        <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
+                    </div>
                 <% } else { %>
-                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- offer.reservedTicket.ticketToken %>"></div>
+                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- offer.itemOffered.reservedTicket.ticketToken %>"></div>
                 <% } %>
                 <div class="box">
                     <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>
-                    <% const date = moment(offer.reservationFor.startDate).format('YYYYMMDD') %>
-                    <div class="mb-x-small"><%= moment(date).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(date).format('ddd') + ']') %>) <%= inquiryModel.getScreeningTime(offer).start %>-<%= inquiryModel.getScreeningTime(offer).end %></div>
+                    <div class="mb-x-small">
+                        <%= moment(offer.itemOffered.reservationFor.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(offer.itemOffered.reservationFor.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei) %> - <%= timeFormat(offer.itemOffered.reservationFor.endDate, offer.itemOffered.reservationFor.coaInfo.dateJouei) %>
+                    </div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.theater') %></strong></div>
                     <div class="mb-x-small"><%= inquiryModel.movieTheaterOrganization.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.screen') %></strong></div>
-                    <div class="mb-x-small"><%= offer.reservationFor.location.name.ja %></div>
+                    <div class="mb-x-small"><%= offer.itemOffered.reservationFor.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.film_title') %></strong></div>
-                    <div><%= offer.reservationFor.workPerformed.name %></div>
+                    <div><%= offer.itemOffered.reservationFor.workPerformed.name %></div>
                 </div>
             </div>
         </li>

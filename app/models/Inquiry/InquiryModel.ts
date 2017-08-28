@@ -1,3 +1,4 @@
+// TODO
 import * as sskts from '@motionpicture/sskts-domain';
 import * as moment from 'moment';
 import * as UtilModule from '../../modules/Util/UtilModule';
@@ -92,7 +93,7 @@ export class InquiryModel {
             return '';
         }
 
-        return moment(this.order.acceptedOffers[0].reservationFor.startDate).format('YYYYMMDD');
+        return moment(this.order.acceptedOffers[0].itemOffered.reservationFor.startDate).format('YYYYMMDD');
     }
 
     /**
@@ -103,10 +104,10 @@ export class InquiryModel {
      */
     // tslint:disable-next-line:prefer-function-over-method
     public getScreeningTime(offer: sskts.factory.order.IOffer): { start: string, end: string } {
-        const referenceDateStr = moment(offer.reservationFor.startDate).format('YYYYMMDD');
+        const referenceDateStr = moment(offer.itemOffered.reservationFor.startDate).format('YYYYMMDD');
         const referenceDate = moment(referenceDateStr);
-        const screeningStatTime = moment(offer.reservationFor.startDate);
-        const screeningEndTime = moment(offer.reservationFor.endDate);
+        const screeningStatTime = moment(offer.itemOffered.reservationFor.startDate);
+        const screeningEndTime = moment(offer.itemOffered.reservationFor.endDate);
         const HOUR = 60;
         const startDiff = referenceDate.diff(screeningStatTime, 'minutes');
         const endDiff = referenceDate.diff(screeningEndTime, 'minutes');

@@ -104,7 +104,7 @@ function inquiryAuth(req, res, next) {
                 };
                 inquiryModel.order = yield ssktsApi.service.order(options).findByOrderInquiryKey({
                     telephone: inquiryModel.login.telephone,
-                    orderNumber: Number(inquiryModel.login.reserveNum),
+                    confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
                 log('照会情報', inquiryModel.order);
