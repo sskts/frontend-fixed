@@ -59,7 +59,7 @@
 <input type="hidden" name="theaterCode" value="<%= inquiryModel.movieTheaterOrganization.location.branchCode %>">
 <input type="hidden" name="reserveNum" value="<%= inquiryModel.login.reserveNum %>">
 <input type="hidden" name="telephone" value="<%= inquiryModel.login.telephone %>">
-<input type="hidden" name="expire" value="<%= moment(inquiryModel.getScreeningDateToString()).add(10, 'day').format('x') %>">
+<input type="hidden" name="expire" value="<%= moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).add(10, 'day').format('x') %>">
 <%- include('completeContents') %>
 
 <%- contentFor('modals') %>

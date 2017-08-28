@@ -48,16 +48,17 @@ exports.isApp = isApp;
  * @memberof Util.UtilModule
  * @function timeFormat
  * @param {string} referenceDate 基準日
- * @param {string} screeningTime 時間
+ * @param {Date} screeningTime 時間
  * @returns {string}
  */
 function timeFormat(screeningTime, referenceDate) {
     const HOUR = 60;
     const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
-    const hour = (`00${Math.floor(diff / HOUR)}`).slice(exports.DIGITS_02);
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS['02']);
     const minutes = moment(screeningTime).format('mm');
     return `${hour}:${minutes}`;
 }
+exports.timeFormat = timeFormat;
 /**
  * HTMLエスケープ
  * @memberof Util.UtilModule
@@ -157,23 +158,50 @@ function getEmailTemplate(res, file, locals) {
 }
 exports.getEmailTemplate = getEmailTemplate;
 /**
- * 2桁
  * @memberof Util.UtilModule
- * @const DIGITS_02
+ * @enum DIGITS
  * @type number
  */
-exports.DIGITS_02 = -2;
+var DIGITS;
+(function (DIGITS) {
+    DIGITS[DIGITS["02"] = -2] = "02";
+    DIGITS[DIGITS["03"] = -3] = "03";
+    DIGITS[DIGITS["08"] = -8] = "08";
+})(DIGITS = exports.DIGITS || (exports.DIGITS = {}));
 /**
- * 3桁
+ * 表示
  * @memberof Util.UtilModule
- * @const DIGITS_03
- * @type number
+ * @enum VIEW
  */
-exports.DIGITS_03 = -3;
+var VIEW;
+(function (VIEW) {
+    /**
+     * Default
+     */
+    VIEW["Default"] = "default";
+    /**
+     * 券売機
+     */
+    VIEW["Fixed"] = "fixed";
+})(VIEW = exports.VIEW || (exports.VIEW = {}));
 /**
- * 8桁
+ * 環境
  * @memberof Util.UtilModule
- * @const DIGITS_08
- * @type number
+ * @enum ENV
+ * @type string
  */
-exports.DIGITS_08 = -8;
+var ENV;
+(function (ENV) {
+    /**
+     * 開発
+     */
+    ENV["Development"] = "development";
+    /**
+     * テスト
+     */
+    ENV["Test"] = "test";
+    /**
+     * 本番
+     */
+    ENV["Production"] = "production";
+})(ENV = exports.ENV || (exports.ENV = {}));

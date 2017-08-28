@@ -4,7 +4,7 @@
  */
 
 import * as GMO from '@motionpicture/gmo-service';
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import InputForm from '../../forms/Purchase/InputForm';
@@ -26,6 +26,7 @@ const log = debug('SSKTS:Purchase.InputModule');
 export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        const authModel = new AuthModel(req.session.auth);
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
@@ -35,7 +36,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
         //購入者情報入力表示
-        if (purchaseModel.isMember()) {
+        if (authModel.isMember()) {
             log('会員情報取得');
             purchaseModel.profile = {
                 familyName: '',
@@ -135,7 +136,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 authorizationId: purchaseModel.creditCardAuthorization.id
             };
             try {
-                await ssktsApi.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+                await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
             } catch (err) {
                 logger.error(
                     'SSKTS-APP:InputModule.submit cancelCreditCardAuthorization',
@@ -162,7 +163,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
                 }
             };
             try {
-                await ssktsApi.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                await sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
             } catch (err) {
                 log (createCreditCardAuthorizationArgs);
                 logger.error(
@@ -175,7 +176,7 @@ export async function submit(req: Request, res: Response, next: NextFunction): P
             log('CMOオーソリ追加');
         }
 
-        await ssktsApi.service.transaction.placeOrder(options).setCustomerContact({
+        await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
             contact: {
                 familyName: purchaseModel.profile.familyName,

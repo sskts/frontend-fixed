@@ -12,12 +12,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
@@ -59,13 +60,15 @@ function start(req, res) {
             if (req.session === undefined || req.body.performanceId === undefined) {
                 throw ErrorUtilModule.ERROR_PROPERTY;
             }
-            let authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
                 auth: authModel.create()
             };
+            authModel.save(req.session);
+            log('会員判定', authModel.isMember());
             // イベント情報取得
-            const individualScreeningEvent = yield ssktsApi.service.event(options).findIndividualScreeningEvent({
+            const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -77,53 +80,42 @@ function start(req, res) {
             }
             log('開始可能日判定');
             // 終了可能日判定
-            const limit = (process.env.VIEW_TYPE === 'fixed') ? END_TIME_FIXED : END_TIME_DEFAULT;
+            const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
             const limitTime = moment().add(limit, 'minutes');
             if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
                 throw ErrorUtilModule.ERROR_ACCESS;
             }
             log('終了可能日判定');
-            let purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
-                // 重複確認へ
-                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });
-                log('重複確認へ');
-                return;
+            let purchaseModel;
+            if (!authModel.isMember()) {
+                // 非会員なら重複確認
+                purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+                    // 重複確認へ
+                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });
+                    log('重複確認へ');
+                    return;
+                }
             }
             // セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
             delete req.session.complete;
-            delete req.session.auth;
             log('セッション削除');
-            authModel = new AuthModel_1.AuthModel({
-                clientId: process.env.TEST_CLIENT_ID,
-                clientSecret: process.env.TEST_CLIENT_SECRET,
-                state: 'teststate',
-                scopes: [
-                    'https://sskts-api-development.azurewebsites.net/transactions',
-                    'https://sskts-api-development.azurewebsites.net/events.read-only',
-                    'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-                    'https://sskts-api-development.azurewebsites.net/orders.read-only'
-                ]
-            });
-            authModel.save(req.session);
-            log('authセッションへ');
-            options.auth = authModel.create();
             purchaseModel = new PurchaseModel_1.PurchaseModel({
                 individualScreeningEvent: individualScreeningEvent
             });
             // 劇場のショップを検索
-            purchaseModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+            purchaseModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
             if (purchaseModel.movieTheaterOrganization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // 取引開始
-            const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
+            const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-            purchaseModel.transaction = yield ssktsApi.service.transaction.placeOrder(options).start({
+            purchaseModel.transaction = yield sasaki.service.transaction.placeOrder(options).start({
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });

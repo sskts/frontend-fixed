@@ -14,9 +14,10 @@ const PerformancesModule = require("../modules/Purchase/PerformancesModule");
 const SeatModule = require("../modules/Purchase/SeatModule");
 const TicketModule = require("../modules/Purchase/TicketModule");
 const TransactionModule = require("../modules/Purchase/TransactionModule");
+const UtilModule = require("../modules/Util/UtilModule");
 const purchaseRouter = express.Router();
-if (process.env.VIEW_TYPE === 'fixed'
-    || (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed
+    || (process.env.NODE_ENV === UtilModule.ENV.Development || process.env.NODE_ENV === UtilModule.ENV.Test)) {
     // パフォーマンス一覧
     purchaseRouter.get('/performances', PerformancesModule.index);
     purchaseRouter.post('/performances', PerformancesModule.getPerformances);

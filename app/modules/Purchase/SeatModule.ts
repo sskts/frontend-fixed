@@ -4,7 +4,7 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
@@ -72,7 +72,7 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
         // イベント情報取得
-        purchaseModel.individualScreeningEvent = await ssktsApi.service.event(options).findIndividualScreeningEvent({
+        purchaseModel.individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
             identifier: req.body.performanceId
         });
         purchaseModel.save(req.session);
@@ -123,7 +123,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
-                //バリデーション
+        //バリデーション
         seatForm.seatSelect(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) {
@@ -177,7 +177,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     };
     //予約中
     if (purchaseModel.seatReservationAuthorization !== null) {
-        await ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+        await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
             transactionId: purchaseModel.transaction.id,
             authorizationId: purchaseModel.seatReservationAuthorization.id
         });
@@ -196,8 +196,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
         purchaseModel.salesTickets = salesTicketResult;
         log('コアAPI券種取得', purchaseModel.salesTickets);
     }
-
-    purchaseModel.seatReservationAuthorization = await ssktsApi.service.transaction.placeOrder(options).createSeatReservationAuthorization({
+    const createSeatReservationAuthorizationArgs = {
         transactionId: purchaseModel.transaction.id,
         eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
         offers: selectSeats.map((seat) => {
@@ -228,7 +227,9 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
                 }
             };
         })
-    });
+    };
+    purchaseModel.seatReservationAuthorization = await sasaki.service.transaction.placeOrder(options)
+        .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
     log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
     purchaseModel.orderCount = 0;
     log('GMOオーソリカウント初期化');
@@ -249,8 +250,8 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
         seatForm.screenStateReserve(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_VALIDATION;
-        const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS_02);
-        const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS_03);
+        const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS['03']);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
         const state = await COA.services.reserve.stateReserveSeat({

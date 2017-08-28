@@ -46,6 +46,16 @@
                 </select>
             </dd>
         </dl>
+        <dl class="d-tr">
+                <dt class="d-td"><%- __('purchase.performances.view') %></dt>
+                <dd class="d-td">
+                    <select v-model="viewType">
+                        <template v-for="view in views">
+                            <option v-bind:value="view.value">{{view.text}}</option>
+                        </template>
+                    </select>
+                </dd>
+            </dl>
     </div>
 
     <div class="sort mb-middle text-center">

@@ -44,13 +44,13 @@ export function isApp(req: Request): boolean {
  * @memberof Util.UtilModule
  * @function timeFormat
  * @param {string} referenceDate 基準日
- * @param {string} screeningTime 時間
+ * @param {Date} screeningTime 時間
  * @returns {string}
  */
-function timeFormat(screeningTime: string, referenceDate: string) {
+export function timeFormat(screeningTime: Date, referenceDate: string) {
     const HOUR = 60;
     const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
-    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS_02);
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS['02']);
     const minutes = moment(screeningTime).format('mm');
 
     return `${hour}:${minutes}`;
@@ -163,25 +163,49 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
 }
 
 /**
- * 2桁
  * @memberof Util.UtilModule
- * @const DIGITS_02
+ * @enum DIGITS
  * @type number
  */
-export const DIGITS_02 = -2;
+export enum DIGITS {
+    '02' = -2,
+    '03' = -3,
+    '08' = -8
+}
 
 /**
- * 3桁
+ * 表示
  * @memberof Util.UtilModule
- * @const DIGITS_03
- * @type number
+ * @enum VIEW
  */
-export const DIGITS_03 = -3;
+export enum VIEW {
+    /**
+     * Default
+     */
+    Default = 'default',
+    /**
+     * 券売機
+     */
+    Fixed = 'fixed'
+}
 
 /**
- * 8桁
+ * 環境
  * @memberof Util.UtilModule
- * @const DIGITS_08
- * @type number
+ * @enum ENV
+ * @type string
  */
-export const DIGITS_08 = -8;
+export enum ENV {
+    /**
+     * 開発
+     */
+    Development = 'development',
+    /**
+     * テスト
+     */
+    Test = 'test',
+    /**
+     * 本番
+     */
+    Production = 'production'
+}

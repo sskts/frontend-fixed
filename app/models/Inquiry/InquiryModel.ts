@@ -1,7 +1,5 @@
 // TODO
 import * as sskts from '@motionpicture/sskts-domain';
-import * as moment from 'moment';
-import * as UtilModule from '../../modules/Util/UtilModule';
 
 /**
  * ログイン情報
@@ -26,7 +24,7 @@ export interface IInquirySession {
     /**
      * 劇場ショップ
      */
-    movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
+    movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 照会情報
      */
@@ -45,7 +43,7 @@ export class InquiryModel {
     /**
      * 劇場ショップ
      */
-    public movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
+    public movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 照会情報
      */
@@ -81,40 +79,5 @@ export class InquiryModel {
             login: this.login
         };
         session.inquiry = inquirySession;
-    }
-
-    /**
-     * 上映日取得（YYYYMMDD）
-     * @method getScreeningDateToString
-     * @returns {string}
-     */
-    public getScreeningDateToString(): string {
-        if (this.order === null) {
-            return '';
-        }
-
-        return moment(this.order.acceptedOffers[0].itemOffered.reservationFor.startDate).format('YYYYMMDD');
-    }
-
-    /**
-     * 上映開始時間取得
-     * @memberof PurchaseModel
-     * @method getScreeningTime
-     * @returns { start: string, end: string }
-     */
-    // tslint:disable-next-line:prefer-function-over-method
-    public getScreeningTime(offer: sskts.factory.order.IOffer): { start: string, end: string } {
-        const referenceDateStr = moment(offer.itemOffered.reservationFor.startDate).format('YYYYMMDD');
-        const referenceDate = moment(referenceDateStr);
-        const screeningStatTime = moment(offer.itemOffered.reservationFor.startDate);
-        const screeningEndTime = moment(offer.itemOffered.reservationFor.endDate);
-        const HOUR = 60;
-        const startDiff = referenceDate.diff(screeningStatTime, 'minutes');
-        const endDiff = referenceDate.diff(screeningEndTime, 'minutes');
-
-        return {
-            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningStatTime.format('mm')}`,
-            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningEndTime.format('mm')}`
-        };
     }
 }

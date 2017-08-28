@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const logger_1 = require("../../middlewares/logger");
@@ -89,7 +89,7 @@ function reserveMvtk(purchaseModel) {
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${purchaseModel.getScreeningTime().start}:00`
+            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
@@ -101,7 +101,7 @@ function reserveMvtk(purchaseModel) {
             kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
-            stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
+            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
             screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
             knyknrNoInfo: mvtkInfo.purchaseNoInfo,
             zskInfo: mvtkInfo.seat,
@@ -150,7 +150,7 @@ function cancelMvtk(req, res) {
         // 興行会社ユーザー座席予約番号(予約番号)
         const startDate = {
             day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${purchaseModel.getScreeningTime().start}:00`
+            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
         };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
@@ -162,7 +162,7 @@ function cancelMvtk(req, res) {
             kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
             jeiDt: `${startDate.day} ${startDate.time}`,
             kijYmd: startDate.day,
-            stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
+            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
             screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
             knyknrNoInfo: mvtkInfo.purchaseNoInfo,
             zskInfo: mvtkInfo.seat,
@@ -235,7 +235,7 @@ function purchase(req, res) {
                 yield reserveMvtk(purchaseModel);
                 log('ムビチケ決済');
             }
-            const order = yield ssktsApi.service.transaction.placeOrder(options).confirm({
+            const order = yield sasaki.service.transaction.placeOrder(options).confirm({
                 transactionId: purchaseModel.transaction.id
             });
             log('注文確定', order);
@@ -246,7 +246,7 @@ function purchase(req, res) {
                 seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
                 reserveTickets: purchaseModel.reserveTickets
             };
-            if (process.env.VIEW_TYPE === 'fixed') {
+            if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
                 // 本予約に必要な情報を印刷セッションへ
                 const updateReserveIn = {
                     theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
@@ -295,7 +295,7 @@ function purchase(req, res) {
                     purchaseModel: purchaseModel,
                     domain: req.headers.host
                 });
-                yield ssktsApi.service.transaction.placeOrder(options).sendEmailNotification({
+                yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {
                         from: 'noreply@ticket-cinemasunshine.com',

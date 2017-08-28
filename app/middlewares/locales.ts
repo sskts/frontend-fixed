@@ -4,10 +4,11 @@
 
 import { NextFunction, Request, Response } from 'express';
 import * as i18n from 'i18n';
+import * as UtilModule from '../modules/Util/UtilModule';
 
 let directory = `${__dirname}/../locales/default`;
 
-if (process.env.VIEW_TYPE === 'fixed') {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
     directory = `${__dirname}/../locales/fixed`;
 }
 

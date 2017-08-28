@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace InquiryModule
  */
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
@@ -46,7 +46,7 @@ function login(req, res, next) {
             };
             const inquiryModel = new InquiryModel_1.InquiryModel();
             // 劇場のショップを検索
-            inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+            inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -92,7 +92,7 @@ function inquiryAuth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
-                inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+                inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -102,7 +102,7 @@ function inquiryAuth(req, res, next) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield ssktsApi.service.order(options).findByOrderInquiryKey({
+                inquiryModel.order = yield sasaki.service.order(options).findByOrderInquiryKey({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
@@ -121,7 +121,7 @@ function inquiryAuth(req, res, next) {
             }
             else {
                 const inquiryModel = new InquiryModel_1.InquiryModel();
-                inquiryModel.movieTheaterOrganization = yield ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+                inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                     branchCode: req.body.theaterCode
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);

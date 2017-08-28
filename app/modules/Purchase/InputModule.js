@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");
@@ -35,6 +35,7 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -46,7 +47,7 @@ function index(req, res, next) {
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //購入者情報入力表示
-            if (purchaseModel.isMember()) {
+            if (authModel.isMember()) {
                 log('会員情報取得');
                 purchaseModel.profile = {
                     familyName: '',
@@ -149,7 +150,7 @@ function submit(req, res, next) {
                     authorizationId: purchaseModel.creditCardAuthorization.id
                 };
                 try {
-                    yield ssktsApi.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+                    yield sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
@@ -173,7 +174,7 @@ function submit(req, res, next) {
                     }
                 };
                 try {
-                    yield ssktsApi.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                    yield sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
                 }
                 catch (err) {
                     log(createCreditCardAuthorizationArgs);
@@ -182,7 +183,7 @@ function submit(req, res, next) {
                 }
                 log('CMOオーソリ追加');
             }
-            yield ssktsApi.service.transaction.placeOrder(options).setCustomerContact({
+            yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
                 contact: {
                     familyName: purchaseModel.profile.familyName,

@@ -17,7 +17,10 @@ const assert = require("assert");
 const UtilModule = require("../../../app/modules/Util/UtilModule");
 describe('UtilModule.timeFormat', () => {
     it('正常', () => __awaiter(this, void 0, void 0, function* () {
-        const str = UtilModule.timeFormat('0101');
+        const date = new Date();
+        date.setHours(1);
+        date.setMinutes(1);
+        const str = UtilModule.timeFormat(date, '20170101');
         assert.equal(str, '01:01');
     }));
 });

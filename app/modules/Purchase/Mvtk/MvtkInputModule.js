@@ -106,7 +106,7 @@ function select(req, res, next) {
                     };
                 }),
                 skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum),
-                stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
+                stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
                 jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
             };
             let purchaseNumberAuthResults;

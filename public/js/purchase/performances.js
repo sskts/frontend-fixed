@@ -1,3 +1,5 @@
+var dt = new Date('1999-12-31T23:59:59Z'); // 過去の日付をGMT形式に変換
+document.cookie = 'applicationData=; max-age=0; path=/;';
 
 (function () {
     /**
@@ -21,12 +23,15 @@
             filmOrder: [],
             sortType: 'chronological',
             error: null,
-            timer: null
+            timer: null,
+            viewType: null,
+            views: []
         },
 
         created: function () {
             this.getTheaterCode();
             this.createDate(3);
+            this.createviewType();
             this.fetchPerformancesData();
         },
 
@@ -48,7 +53,7 @@
                 var diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
                 var hour = ('00' + Math.floor(diff / HOUR)).slice(-2);
                 var minutes = moment(screeningTime).format('mm');
-            
+
                 return hour + ':' + minutes;
             },
             /**
@@ -57,12 +62,21 @@
              * @param {string} value
              * @returns {number}
              */
-            duration: function(value) {
+            duration: function (value) {
                 return moment.duration(value).minutes();
             }
         },
 
         methods: {
+            /**
+             * 表示形式生成
+             */
+            createviewType: function () {
+                this.views = [
+                    { value: '0', text: 'WEB'},
+                    { value: '1', text: 'APP'}
+                ]
+            },
             /**
              * 劇場コード取得
              */
@@ -199,8 +213,15 @@
                         sessionStorage.setItem('performances', json);
                     }
                 }
-
-                location.href = '/purchase/fixed.html?id=' + id;
+                
+                if (this.viewType === '0') {
+                    location.href = '/purchase?id=' + id;
+                } else if (this.viewType === '1') {
+                    location.href = '/signIn?id=' + id;
+                } else {
+                    location.href = '/purchase/fixed.html?id=' + id;
+                }
+                
             },
             /**
              * ソート選択

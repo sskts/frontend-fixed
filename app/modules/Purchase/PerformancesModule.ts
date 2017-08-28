@@ -2,7 +2,7 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
@@ -32,7 +32,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
         if (purchaseModel.seatReservationAuthorization !== null
             && purchaseModel.transaction !== null) {
-            await ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+            await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });
@@ -46,7 +46,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         delete req.session.auth;
 
         if (process.env.VIEW_TYPE === undefined) {
-            res.locals.movieTheaters = await ssktsApi.service.organization(options).searchMovieTheaters();
+            res.locals.movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
             log(res.locals.movieTheaters);
         }
         res.locals.step = PurchaseModel.PERFORMANCE_STATE;
@@ -79,7 +79,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
             auth: authModel.create()
         };
         // 上映イベント検索
-        const individualScreeningEvents = await ssktsApi.service.event(options).searchIndividualScreeningEvent({
+        const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
             theater: req.body.theater,
             day: moment(req.body.day).format('YYYYMMDD')
         });

@@ -40,8 +40,8 @@ exports.index = index;
 function getScreenStateReserve(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS_02);
-            const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
+            const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS['02']);
+            const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS['03']);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
             res.json({

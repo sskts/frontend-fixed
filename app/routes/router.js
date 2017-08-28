@@ -5,6 +5,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const ErrorModule = require("../modules/Error/ErrorModule");
+const UtilModule = require("../modules/Util/UtilModule");
 const fixed_1 = require("./fixed");
 const inquiry_1 = require("./inquiry");
 const method_1 = require("./method");
@@ -16,7 +17,7 @@ exports.default = (app) => {
     app.use('/purchase', purchase_1.default); // 購入
     app.use('/inquiry', inquiry_1.default); // 照会
     app.use('/method', method_1.default); // 方法
-    if (process.env.VIEW_TYPE === 'fixed') {
+    if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
         app.use('', fixed_1.default); // 券売機
     }
     //エラー

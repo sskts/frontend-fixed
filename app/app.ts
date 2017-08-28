@@ -29,7 +29,7 @@ app.use(helmet()); //セキュリティー対策
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-if (process.env.VIEW_TYPE === 'fixed') {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
     app.set('views', `${__dirname}/views/fixed`);
 } else {
     app.set('views', `${__dirname}/views/default`);
@@ -57,7 +57,7 @@ MVTK.initialize(
     process.env.MVTK_ENDPOINT_RESERVE_SERVICE
 );
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === UtilModule.ENV.Development) {
     app.use(SupertestRequest.supertestSession); // テスト用
 }
 

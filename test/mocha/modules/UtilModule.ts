@@ -8,7 +8,10 @@ import * as UtilModule from '../../../app/modules/Util/UtilModule';
 
 describe('UtilModule.timeFormat', () => {
     it('正常', async () => {
-        const str = UtilModule.timeFormat('0101');
+        const date = new Date();
+        date.setHours(1);
+        date.setMinutes(1);
+        const str = UtilModule.timeFormat(date, '20170101');
         assert.equal(str, '01:01');
     });
 });

@@ -16,21 +16,10 @@ exports.COMPANY_CODE = 'SSK000';
  * @returns {string}
  */
 function getfilmCode(titleCode, titleBranchNum) {
-    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS_02);
+    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS['02']);
     return `${titleCode}${branch}`;
 }
 exports.getfilmCode = getfilmCode;
-/**
- * サイトコード取得
- * @memberof Purchase.Mvtk.MvtkUtilModule
- * @function getSiteCode
- * @param {string} id 劇場コード
- * @returns {string}
- */
-function getSiteCode(id) {
-    return `00${id}`.slice(UtilModule.DIGITS_02);
-}
-exports.getSiteCode = getSiteCode;
 /**
  * ムビチケ情報生成
  * @memberof Purchase.Mvtk.MvtkUtilModule

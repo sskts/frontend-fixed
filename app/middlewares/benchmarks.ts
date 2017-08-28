@@ -4,10 +4,11 @@
 
 import * as debug from 'debug';
 import * as express from 'express';
+import * as UtilModule from '../modules/Util/UtilModule';
 const log = debug('SSKTS:benchmark');
 
 export default (req: express.Request, _: express.Response, next: express.NextFunction) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === UtilModule.ENV.Development) {
         const startMemory = process.memoryUsage();
         const startTime = process.hrtime();
 

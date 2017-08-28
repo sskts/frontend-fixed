@@ -256,7 +256,7 @@ export interface IPurchaseSession {
     /**
      * 劇場ショップ
      */
-    movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
+    movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 取引
      */
@@ -326,7 +326,7 @@ export class PurchaseModel {
     /**
      * 劇場ショップ
      */
-    public movieTheaterOrganization: sskts.service.organization.IMovieTheater | null;
+    public movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 取引
      */
@@ -549,17 +549,6 @@ export class PurchaseModel {
     }
 
     /**
-     * 会員判定
-     * @memberof PurchaseModel
-     * @returns {boolean}
-     */
-    public isMember(): boolean {
-        // TODO
-
-        return false;
-    }
-
-    /**
      * 券種リスト取得
      * @memberof PurchaseModel
      * @method getSalesTickets
@@ -662,31 +651,11 @@ export class PurchaseModel {
             return;
         }
         // GMOオーソリ取得
-        const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS_03);
-        const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS_08);
+        const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['03']);
+        const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS['08']);
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
-        this.orderId = `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS_02)}`;
+        this.orderId =
+            `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS['02'])}`;
         this.orderCount += 1;
-    }
-
-    /**
-     * 上映開始時間取得
-     * @memberof PurchaseModel
-     * @method getScreeningTime
-     * @returns {any}
-     */
-    public getScreeningTime(): { start: string, end: string } {
-        const individualScreeningEvent = (<sskts.factory.event.individualScreeningEvent.IEvent>this.individualScreeningEvent);
-        const referenceDate = moment(individualScreeningEvent.coaInfo.dateJouei);
-        const screeningStatTime = moment(individualScreeningEvent.startDate);
-        const screeningEndTime = moment(individualScreeningEvent.endDate);
-        const HOUR = 60;
-        const startDiff = referenceDate.diff(screeningStatTime, 'minutes');
-        const endDiff = referenceDate.diff(screeningEndTime, 'minutes');
-
-        return {
-            start: `${`00${Math.floor(startDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningStatTime.format('mm')}`,
-            end: `${`00${Math.floor(endDiff / HOUR)}`.slice(UtilModule.DIGITS_02)}:${screeningEndTime.format('mm')}`
-        };
     }
 }

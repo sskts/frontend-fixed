@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
@@ -41,7 +41,7 @@ function index(req, res, next) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null) {
-                yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
@@ -53,7 +53,7 @@ function index(req, res, next) {
             delete req.session.complete;
             delete req.session.auth;
             if (process.env.VIEW_TYPE === undefined) {
-                res.locals.movieTheaters = yield ssktsApi.service.organization(options).searchMovieTheaters();
+                res.locals.movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
                 log(res.locals.movieTheaters);
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
@@ -88,7 +88,7 @@ function getPerformances(req, res) {
                 auth: authModel.create()
             };
             // 上映イベント検索
-            const individualScreeningEvents = yield ssktsApi.service.event(options).searchIndividualScreeningEvent({
+            const individualScreeningEvents = yield sasaki.service.event(options).searchIndividualScreeningEvent({
                 theater: req.body.theater,
                 day: moment(req.body.day).format('YYYYMMDD')
             });

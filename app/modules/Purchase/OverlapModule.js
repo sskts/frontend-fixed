@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
@@ -43,7 +43,7 @@ function index(req, res, next) {
             if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // イベント情報取得
-            const individualScreeningEvent = yield ssktsApi.service.event(options).findIndividualScreeningEvent({
+            const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
             });
             log('イベント情報取得', individualScreeningEvent);
@@ -91,7 +91,7 @@ function newReserve(req, res, next) {
             if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             // COA仮予約削除
-            yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+            yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
                 authorizationId: purchaseModel.seatReservationAuthorization.id
             });

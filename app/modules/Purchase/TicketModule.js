@@ -13,13 +13,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @namespace Purchase.TicketModule
  */
 const MVTK = require("@motionpicture/mvtk-service");
-const ssktsApi = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
 const moment = require("moment");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const UtilModule = require("../Util/UtilModule");
 const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS:Purchase.TicketModule');
 /**
@@ -111,7 +112,7 @@ function select(req, res, next) {
                 purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, selectTickets);
                 log('券種検証');
                 // COAオーソリ削除
-                yield ssktsApi.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                     transactionId: purchaseModel.transaction.id,
                     authorizationId: purchaseModel.seatReservationAuthorization.id
                 });
@@ -148,13 +149,13 @@ function select(req, res, next) {
                     })
                 };
                 log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
-                purchaseModel.seatReservationAuthorization = yield ssktsApi.service.transaction.placeOrder(options)
+                purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
                 if (purchaseModel.seatReservationAuthorization === null)
                     throw ErrorUtilModule.ERROR_PROPERTY;
                 log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
-                    yield ssktsApi.service.transaction.placeOrder(options).cancelMvtkAuthorization({
+                    yield sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                         transactionId: purchaseModel.transaction.id,
                         authorizationId: purchaseModel.mvtkAuthorization.id
                     });
@@ -170,7 +171,7 @@ function select(req, res, next) {
                     // 興行会社ユーザー座席予約番号(予約番号)
                     const startDate = {
                         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-                        time: `${purchaseModel.getScreeningTime().start}:00`
+                        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
                     };
                     const createMvtkAuthorizationArgs = {
                         transactionId: purchaseModel.transaction.id,
@@ -184,7 +185,7 @@ function select(req, res, next) {
                             kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
                             jeiDt: `${startDate.day} ${startDate.time}`,
                             kijYmd: startDate.day,
-                            stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode),
+                            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
                             screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
                             knyknrNoInfo: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
                                 return {
@@ -193,7 +194,7 @@ function select(req, res, next) {
                                     knshInfo: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
                                         return {
                                             knshTyp: knshInfo.KNSH_TYP,
-                                            miNum: knshInfo.MI_NUM
+                                            miNum: Number(knshInfo.MI_NUM)
                                         };
                                     })
                                 };
@@ -206,7 +207,7 @@ function select(req, res, next) {
                     };
                     log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                     // tslint:disable-next-line:max-line-length
-                    purchaseModel.mvtkAuthorization = yield ssktsApi.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
+                    purchaseModel.mvtkAuthorization = yield sasaki.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
                     log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
                 }
                 purchaseModel.save(req.session);

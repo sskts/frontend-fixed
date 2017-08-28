@@ -3,7 +3,7 @@
  * @namespace Fixed.FixedModule
  */
 import * as COA from '@motionpicture/coa-service';
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
@@ -11,6 +11,7 @@ import inquiryLoginForm from '../../forms/Inquiry/LoginForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { InquiryModel } from '../../models/Inquiry/InquiryModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Fixed.FixedModule');
 
 /**
@@ -43,7 +44,7 @@ export async function setting(req: Request, res: Response, next: NextFunction): 
             endpoint: process.env.SSKTS_API_ENDPOINT,
             auth: authModel.create()
         };
-        const movieTheaters = await ssktsApi.service.organization(options).searchMovieTheaters();
+        const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
         log('movieTheaters: ', movieTheaters);
         res.locals.movieTheaters = movieTheaters;
         res.render('setting/index');
@@ -83,7 +84,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+            inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -92,9 +93,9 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await ssktsApi.service.order(options).findByOrderInquiryKey({
+            inquiryModel.order = await sasaki.service.order(options).findByOrderInquiryKey({
                 telephone: inquiryModel.login.telephone,
-                orderNumber: Number(inquiryModel.login.reserveNum),
+                confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
             });
 
@@ -104,9 +105,9 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 if (req.session.fixed.updateReserveIn === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
-                inquiryModel.order = await ssktsApi.service.order(options).findByOrderInquiryKey({
+                inquiryModel.order = await sasaki.service.order(options).findByOrderInquiryKey({
                     telephone: inquiryModel.login.telephone,
-                    orderNumber: Number(inquiryModel.login.reserveNum),
+                    confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
                 log('COA照会情報取得', inquiryModel.order);
@@ -116,25 +117,28 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             // 印刷用
             const order = inquiryModel.order;
             const reservations = inquiryModel.order.acceptedOffers.map((offer) => {
-                if (offer.reservationFor.workPerformed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (offer.reservationFor.location === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (offer.reservationFor.location.name === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (offer.itemOffered.reservationFor.workPerformed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (offer.itemOffered.reservationFor.location === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (offer.itemOffered.reservationFor.location.name === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
                 if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
                 return {
-                    reserveNo: order.orderInquiryKey.orderNumber,
-                    filmNameJa: offer.reservationFor.workPerformed.name,
+                    reserveNo: order.orderInquiryKey.confirmationNumber,
+                    filmNameJa: offer.itemOffered.reservationFor.workPerformed.name,
                     filmNameEn: '',
                     theaterName: inquiryModel.movieTheaterOrganization.location.name.ja,
-                    screenName: offer.reservationFor.location.name.ja,
-                    performanceDay: moment(offer.reservationFor.startDate).format('YYYY/MM/DD'),
-                    performanceStartTime: inquiryModel.getScreeningTime(offer).start,
-                    seatCode: offer.reservedTicket.coaTicketInfo.seatNum,
-                    ticketName: (offer.reservedTicket.coaTicketInfo.addGlasses > 0)
-                        ? `${offer.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
-                        : offer.reservedTicket.coaTicketInfo.ticketName,
-                    ticketSalePrice: offer.reservedTicket.coaTicketInfo.salePrice,
-                    qrStr: offer.reservedTicket.ticketToken
+                    screenName: offer.itemOffered.reservationFor.location.name.ja,
+                    performanceDay: moment(offer.itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
+                    performanceStartTime:  UtilModule.timeFormat(
+                        (<Date>offer.itemOffered.reservationFor.startDate),
+                        offer.itemOffered.reservationFor.coaInfo.dateJouei
+                    ),
+                    seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
+                    ticketName: (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0)
+                        ? `${offer.itemOffered.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
+                        : offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
+                    ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
+                    qrStr: offer.itemOffered.reservedTicket.ticketToken
                 };
             });
             delete req.session.fixed;

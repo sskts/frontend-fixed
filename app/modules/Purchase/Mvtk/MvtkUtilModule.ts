@@ -20,20 +20,9 @@ export const COMPANY_CODE = 'SSK000';
  * @returns {string}
  */
 export function getfilmCode(titleCode: string, titleBranchNum: string): string {
-    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS_02);
+    const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS['02']);
 
     return `${titleCode}${branch}`;
-}
-
-/**
- * サイトコード取得
- * @memberof Purchase.Mvtk.MvtkUtilModule
- * @function getSiteCode
- * @param {string} id 劇場コード
- * @returns {string}
- */
-export function getSiteCode(id: string): string {
-    return `00${id}`.slice(UtilModule.DIGITS_02);
 }
 
 /**

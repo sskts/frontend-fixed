@@ -4,7 +4,7 @@
  */
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
@@ -79,7 +79,10 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-        time: `${purchaseModel.getScreeningTime().start}:00`
+        time: `${ UtilModule.timeFormat(
+            (<Date>purchaseModel.individualScreeningEvent.startDate),
+            purchaseModel.individualScreeningEvent.coaInfo.dateJouei
+        )}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
@@ -91,7 +94,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
         kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+        stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
         screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkInfo.purchaseNoInfo, // 購入管理番号情報
         zskInfo: mvtkInfo.seat, // 座席情報（itemArray）
@@ -139,7 +142,10 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     // 興行会社ユーザー座席予約番号(予約番号)
     const startDate = {
         day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-        time: `${purchaseModel.getScreeningTime().start}:00`
+        time: `${ UtilModule.timeFormat(
+            (<Date>purchaseModel.individualScreeningEvent.startDate),
+            purchaseModel.individualScreeningEvent.coaInfo.dateJouei
+        )}:00`
     };
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
@@ -151,7 +157,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
         jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
         kijYmd: startDate.day, // 計上年月日
-        stCd: MvtkUtilModule.getSiteCode(purchaseModel.individualScreeningEvent.coaInfo.theaterCode), // サイトコード
+        stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
         screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
         knyknrNoInfo: mvtkInfo.purchaseNoInfo, // 購入管理番号情報
         zskInfo: mvtkInfo.seat, // 座席情報（itemArray）
@@ -219,7 +225,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             log('ムビチケ決済');
         }
 
-        const order = await ssktsApi.service.transaction.placeOrder(options).confirm({
+        const order = await sasaki.service.transaction.placeOrder(options).confirm({
             transactionId: purchaseModel.transaction.id
         });
         log('注文確定', order);
@@ -231,7 +237,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
             reserveTickets: purchaseModel.reserveTickets
         };
-        if (process.env.VIEW_TYPE === 'fixed') {
+        if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
             // 本予約に必要な情報を印刷セッションへ
             const updateReserveIn: COA.services.reserve.IUpdReserveArgs = {
                 theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
@@ -285,7 +291,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     domain: req.headers.host
                 }
             );
-            await ssktsApi.service.transaction.placeOrder(options).sendEmailNotification({
+            await sasaki.service.transaction.placeOrder(options).sendEmailNotification({
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {
                     from: 'noreply@ticket-cinemasunshine.com',

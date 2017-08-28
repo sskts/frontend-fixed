@@ -1,22 +1,10 @@
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 
 /**
  * 認証セッション
  * @interface IAuthSession
  */
 export interface IAuthSession {
-    /**
-     * ドメイン
-     */
-    domain: string;
-    /**
-     * クライアントID
-     */
-    clientId: string;
-    /**
-     * クライアント鍵
-     */
-    clientSecret: string;
     /**
      * 状態
      */
@@ -25,6 +13,18 @@ export interface IAuthSession {
      * スコープ
      */
     scopes: string[];
+    /**
+     * 会員タイプ
+     */
+    memberType: number;
+    /**
+     * 資格情報
+     */
+    credentials: any;
+    /**
+     * コード検証
+     */
+    codeVerifier: string | null;
 }
 
 /**
@@ -33,18 +33,6 @@ export interface IAuthSession {
  */
 export class AuthModel {
     /**
-     * ドメイン
-     */
-    public domain: string;
-    /**
-     * クライアントID
-     */
-    public clientId: string;
-    /**
-     * クライアント鍵
-     */
-    public clientSecret: string;
-    /**
      * 状態
      */
     public state: string;
@@ -52,6 +40,18 @@ export class AuthModel {
      * スコープ
      */
     public scopes: string[];
+    /**
+     * 会員タイプ
+     */
+    public memberType: number;
+    /**
+     * 資格情報
+     */
+    public credentials: any | null;
+    /**
+     * コード検証
+     */
+    public codeVerifier: string | null;
 
     /**
      * @constructor
@@ -61,9 +61,6 @@ export class AuthModel {
         if (session === undefined) {
             session = {};
         }
-        this.domain = (session.domain !== undefined) ? session.domain : 'sskts-development.auth.ap-northeast-1.amazoncognito.com';
-        this.clientId = (session.clientId !== undefined) ? session.clientId : process.env.TEST_CLIENT_ID;
-        this.clientSecret = (session.clientSecret !== undefined) ? session.clientSecret : process.env.TEST_CLIENT_SECRET;
         this.state = (session.state !== undefined) ? session.state : 'teststate';
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
             'https://sskts-api-development.azurewebsites.net/transactions',
@@ -71,22 +68,41 @@ export class AuthModel {
             'https://sskts-api-development.azurewebsites.net/organizations.read-only',
             'https://sskts-api-development.azurewebsites.net/orders.read-only'
         ];
+        this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
+        this.credentials = (session.credentials !== undefined) ? session.credentials : null;
+        this.codeVerifier = (session.codeVerifier !== undefined) ? session.codeVerifier : null;
     }
 
     /**
      * 認証クラス作成
      * @memberof AuthModel
      * @method create
-     * @returns {ssktsApi.auth.ClientCredentials}
+     * @returns {sasaki.auth.ClientCredentials}
      */
-    public create(): ssktsApi.auth.ClientCredentials {
-        return new ssktsApi.auth.ClientCredentials({
-            domain: this.domain,
-            clientId: this.clientId,
-            clientSecret: this.clientSecret,
-            state: this.state,
-            scopes: this.scopes
-        });
+    public create(): sasaki.auth.ClientCredentials | sasaki.auth.OAuth2 {
+        if (this.isMember()) {
+            const auth = new sasaki.auth.OAuth2({
+                domain: process.env.AUTH_DOMAIN,
+                clientId: process.env.TEST_CLIENT_ID_OAUTH2,
+                clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
+                redirectUri: process.env.AUTH_REDIRECT_URI,
+                logoutUri: process.env.AUTH_LOGUOT_URI,
+                state: ''
+            });
+            if (this.credentials !== null) {
+                auth.setCredentials(this.credentials);
+            }
+
+            return auth;
+        } else {
+            return new sasaki.auth.ClientCredentials({
+                domain: process.env.AUTH_DOMAIN,
+                clientId: process.env.TEST_CLIENT_ID,
+                clientSecret: process.env.TEST_CLIENT_SECRET,
+                state: this.state,
+                scopes: this.scopes
+            });
+        }
     }
 
     /**
@@ -97,12 +113,36 @@ export class AuthModel {
      */
     public save(session: any): void {
         const authSession: IAuthSession = {
-            domain: this.domain,
-            clientId: this.clientId,
-            clientSecret: this.clientSecret,
             state: this.state,
-            scopes: this.scopes
+            scopes: this.scopes,
+            memberType: this.memberType,
+            credentials: this.credentials,
+            codeVerifier: this.codeVerifier
         };
         session.auth = authSession;
     }
+
+    /**
+     * 会員判定
+     * @memberof AuthModel
+     * @returns {boolean}
+     */
+    public isMember(): boolean {
+        return (this.memberType !== MemberType.NonMember);
+    }
+}
+
+/**
+ * 会員種類
+ * @enum MemberType
+ */
+export enum MemberType {
+    /**
+     * 非会員
+     */
+    NonMember = 0,
+    /**
+     * 会員
+     */
+    Member = 1
 }

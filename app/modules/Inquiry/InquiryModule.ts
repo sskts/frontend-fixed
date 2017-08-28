@@ -2,7 +2,7 @@
  * 照会
  * @namespace InquiryModule
  */
-import * as ssktsApi from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import LoginForm from '../../forms/Inquiry/LoginForm';
@@ -37,7 +37,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         };
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
-        inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+        inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
             branchCode: theaterCode
         });
         log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -81,7 +81,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+            inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
@@ -90,7 +90,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await ssktsApi.service.order(options).findByOrderInquiryKey({
+            inquiryModel.order = await sasaki.service.order(options).findByOrderInquiryKey({
                 telephone: inquiryModel.login.telephone,
                 confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
@@ -112,7 +112,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             return;
         } else {
             const inquiryModel = new InquiryModel();
-            inquiryModel.movieTheaterOrganization = await ssktsApi.service.organization(options).findMovieTheaterByBranchCode({
+            inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);

@@ -26,7 +26,7 @@ app.use(basicAuth_1.default); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.use(session_1.default); // セッション
-if (process.env.VIEW_TYPE === 'fixed') {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
     app.set('views', `${__dirname}/views/fixed`);
 }
 else {
@@ -46,7 +46,7 @@ app.use(UtilModule.setLocals); // viewSet
 app.use(expressValidator()); // バリデーション
 // ムビチケサービス初期化
 MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === UtilModule.ENV.Development) {
     app.use(SupertestRequest.supertestSession); // テスト用
 }
 router_1.default(app); // ルーティング
