@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Changed
+ - [Webアプリ] 購入完了メールのチケット照会リンク先を購入番号自動入力へ変更
 
 ### Fixed
 
