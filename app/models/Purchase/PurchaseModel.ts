@@ -2,7 +2,7 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
-import * as sskts from '@motionpicture/sskts-domain';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import { Request } from 'express';
 import * as moment from 'moment';
 import * as UtilModule from '../../modules/Util/UtilModule';
@@ -252,15 +252,15 @@ export interface IPurchaseSession {
     /**
      * 上映イベント
      */
-    individualScreeningEvent: sskts.factory.event.individualScreeningEvent.IEvent | null;
+    individualScreeningEvent: sasaki.factory.event.individualScreeningEvent.IEvent | null;
     /**
      * 劇場ショップ
      */
-    movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
+    movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 取引
      */
-    transaction: sskts.factory.transaction.placeOrder.ITransaction | null;
+    transaction: sasaki.factory.transaction.placeOrder.ITransaction | null;
     /**
      * 販売可能チケット情報
      */
@@ -272,7 +272,7 @@ export interface IPurchaseSession {
     /**
      * 予約座席
      */
-    seatReservationAuthorization: sskts.factory.authorization.seatReservation.IAuthorization | null;
+    seatReservationAuthorization: sasaki.factory.authorization.seatReservation.IAuthorization | null;
     /**
      * GMOオーダーID
      */
@@ -284,11 +284,15 @@ export interface IPurchaseSession {
     /**
      * GMOオーソリ
      */
-    creditCardAuthorization: sskts.factory.authorization.gmo.IAuthorization | null;
+    creditCardAuthorization: sasaki.factory.authorization.gmo.IAuthorization | null;
     /**
-     * 入力情報
+     * プロフィール
      */
     profile: IProfile | null;
+    /**
+     * クレジットカード情報
+     */
+    creditCards: sasaki.factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
     /**
      * GMO情報
      */
@@ -300,7 +304,10 @@ export interface IPurchaseSession {
     /**
      * ムビチケオーソリ
      */
-    mvtkAuthorization: sskts.factory.authorization.mvtk.IAuthorization | null;
+    mvtkAuthorization: {
+        id: string;
+        price: number;
+    } | null;
     /**
      * 有効期限
      */
@@ -322,15 +329,15 @@ export class PurchaseModel {
     /**
      * 上映イベント
      */
-    public individualScreeningEvent: sskts.factory.event.individualScreeningEvent.IEvent | null;
+    public individualScreeningEvent: sasaki.factory.event.individualScreeningEvent.IEvent | null;
     /**
      * 劇場ショップ
      */
-    public movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
+    public movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 取引
      */
-    public transaction: sskts.factory.transaction.placeOrder.ITransaction | null;
+    public transaction: sasaki.factory.transaction.placeOrder.ITransaction | null;
     /**
      * 販売可能チケット情報
      */
@@ -342,7 +349,7 @@ export class PurchaseModel {
     /**
      * 予約座席
      */
-    public seatReservationAuthorization: sskts.factory.authorization.seatReservation.IAuthorization | null;
+    public seatReservationAuthorization: sasaki.factory.authorization.seatReservation.IAuthorization | null;
     /**
      * GMOオーダーID
      */
@@ -354,11 +361,15 @@ export class PurchaseModel {
     /**
      * GMOオーソリ
      */
-    public creditCardAuthorization: sskts.factory.authorization.gmo.IAuthorization | null;
+    public creditCardAuthorization: sasaki.factory.authorization.gmo.IAuthorization | null;
     /**
-     * 入力情報
+     * プロフィール
      */
     public profile: IProfile | null;
+    /**
+     * クレジットカード情報
+     */
+    public creditCards: sasaki.factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
     /**
      * GMO情報
      */
@@ -370,7 +381,10 @@ export class PurchaseModel {
     /**
      * ムビチケオーソリ
      */
-    public mvtkAuthorization: sskts.factory.authorization.mvtk.IAuthorization | null;
+    public mvtkAuthorization: {
+        id: string;
+        price: number;
+    } | null;
     /**
      * 有効期限
      */
@@ -397,6 +411,7 @@ export class PurchaseModel {
         this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
         this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
         this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
         this.gmo = (session.gmo !== undefined) ? session.gmo : null;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
         this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
@@ -421,6 +436,7 @@ export class PurchaseModel {
             orderCount: this.orderCount,
             creditCardAuthorization: this.creditCardAuthorization,
             profile: this.profile,
+            creditCards: this.creditCards,
             gmo: this.gmo,
             mvtk: this.mvtk,
             mvtkAuthorization: this.mvtkAuthorization,

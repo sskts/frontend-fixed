@@ -1276,6 +1276,16 @@ p a {
     .purchase-input label[for=agree] {
       font-size: 14px; } }
 
+.purchase-input .payment {
+  display: none; }
+  .purchase-input .payment.active {
+    display: block; }
+
+.purchase-input .change-button, .purchase-input .remove-button {
+  display: none; }
+  .purchase-input .change-button.active, .purchase-input .remove-button.active {
+    display: block; }
+
 .modal[data-modal=securitycode] dl dd img {
   display: block;
   margin: 0 auto;

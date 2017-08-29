@@ -35,10 +35,10 @@ function index(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ERROR_PROPERTY;
-            const authModel = new AuthModel_1.AuthModel(req.session.auth);
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.INPUT_STATE)) {
@@ -47,24 +47,6 @@ function index(req, res, next) {
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             //購入者情報入力表示
-            if (authModel.isMember()) {
-                log('会員情報取得');
-                const options = {
-                    endpoint: process.env.SSKTS_API_ENDPOINT,
-                    auth: authModel.create()
-                };
-                const contacts = yield sasaki.service.person(options).getContacts({
-                    personId: 'me'
-                });
-                log('contacts:', contacts);
-                purchaseModel.profile = {
-                    familyName: contacts.familyName,
-                    givenName: contacts.givenName,
-                    email: contacts.email,
-                    emailConfirm: contacts.email,
-                    telephone: contacts.telephone
-                };
-            }
             if (purchaseModel.profile !== null) {
                 res.locals.input = purchaseModel.profile;
             }
@@ -77,21 +59,24 @@ function index(req, res, next) {
                     telephone: ''
                 };
             }
+            purchaseModel.save(req.session);
             res.locals.error = null;
             res.locals.gmoError = null;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-            res.locals.isMember = authModel.isMember();
-            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-            return;
+            if (authModel.isMember()) {
+                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+            }
+            else {
+                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            }
         }
         catch (err) {
             const error = (err instanceof Error)
                 ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
-            return;
         }
     });
 }
@@ -99,15 +84,14 @@ exports.index = index;
 /**
  * 購入者情報入力完了
  * @memberof Purchase.InputModule
- * @function submit
+ * @function purchaserInformationRegistration
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-// tslint:disable-next-line:cyclomatic-complexity
-function submit(req, res, next) {
+function purchaserInformationRegistration(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
             next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -118,10 +102,10 @@ function submit(req, res, next) {
             endpoint: process.env.SSKTS_API_ENDPOINT,
             auth: authModel.create()
         };
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         try {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (purchaseModel.transaction === null)
@@ -142,7 +126,6 @@ function submit(req, res, next) {
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.locals.isMember = authModel.isMember();
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
@@ -191,7 +174,7 @@ function submit(req, res, next) {
                     logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
                     throw ErrorUtilModule.ERROR_VALIDATION;
                 }
-                log('CMOオーソリ追加');
+                log('GMOオーソリ追加');
             }
             yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
@@ -210,7 +193,6 @@ function submit(req, res, next) {
         }
         catch (err) {
             if (err === ErrorUtilModule.ERROR_VALIDATION) {
-                const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 purchaseModel.profile = {
                     familyName: req.body.familyName,
                     givenName: req.body.givenName,
@@ -222,7 +204,6 @@ function submit(req, res, next) {
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.locals.isMember = authModel.isMember();
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
@@ -233,4 +214,152 @@ function submit(req, res, next) {
         }
     });
 }
-exports.submit = submit;
+exports.purchaserInformationRegistration = purchaserInformationRegistration;
+/**
+ * 購入者情報入力完了(会員)
+ * @memberof Purchase.InputModule
+ * @function purchaserInformationRegistrationOfMember
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {Promise<void>}
+ */
+// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
+function purchaserInformationRegistrationOfMember(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined) {
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            return;
+        }
+        const authModel = new AuthModel_1.AuthModel(req.session.auth);
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
+        const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+        try {
+            if (!authModel.isMember())
+                throw ErrorUtilModule.ERROR_ACCESS;
+            if (req.session.purchase === undefined)
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            if (purchaseModel.isExpired())
+                throw ErrorUtilModule.ERROR_EXPIRE;
+            if (purchaseModel.transaction === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.reserveTickets === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            if (purchaseModel.profile === null)
+                throw ErrorUtilModule.ERROR_PROPERTY;
+            //取引id確認
+            if (req.body.transactionId !== purchaseModel.transaction.id) {
+                throw ErrorUtilModule.ERROR_ACCESS;
+            }
+            //バリデーション
+            InputForm_1.default(req);
+            const validationResult = yield req.getValidationResult();
+            if (!validationResult.isEmpty()) {
+                res.locals.error = validationResult.mapped();
+                res.locals.gmoError = null;
+                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+                return;
+            }
+            if (req.body.creditCardRegistration) {
+                purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
+                // クレジットカード登録
+                const card = yield sasaki.service.person(options).addCreditCard({
+                    personId: 'me',
+                    creditCard: {
+                        token: purchaseModel.gmo.token
+                    }
+                });
+                purchaseModel.creditCards.push(card);
+                log('クレジットカード登録');
+            }
+            if (purchaseModel.creditCardAuthorization !== null) {
+                const cancelCreditCardAuthorizationArgs = {
+                    transactionId: purchaseModel.transaction.id,
+                    authorizationId: purchaseModel.creditCardAuthorization.id
+                };
+                try {
+                    yield sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+                }
+                catch (err) {
+                    logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
+                    throw ErrorUtilModule.ERROR_VALIDATION;
+                }
+                log('GMOオーソリ削除');
+            }
+            if (purchaseModel.getReserveAmount() > 0) {
+                // クレジット決済
+                res.locals.gmoError = null;
+                purchaseModel.createOrderId();
+                purchaseModel.save(req.session);
+                let creditCard;
+                if (purchaseModel.creditCards.length > 0) {
+                    // 登録されたクレジットカード
+                    if (purchaseModel.creditCards.length === 0)
+                        throw ErrorUtilModule.ERROR_PROPERTY;
+                    creditCard = {
+                        memberId: 'me',
+                        cardSeq: Number(purchaseModel.creditCards[0].cardSeq)
+                    };
+                }
+                else {
+                    // 入力されたクレジットカード
+                    purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
+                    creditCard = {
+                        token: purchaseModel.gmo.token
+                    };
+                }
+                const createCreditCardAuthorizationArgs = {
+                    transactionId: purchaseModel.transaction.id,
+                    orderId: purchaseModel.orderId,
+                    amount: purchaseModel.getReserveAmount(),
+                    method: GMO.utils.util.Method.Lump,
+                    creditCard: creditCard
+                };
+                try {
+                    yield sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                }
+                catch (err) {
+                    log(createCreditCardAuthorizationArgs);
+                    logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
+                    throw ErrorUtilModule.ERROR_VALIDATION;
+                }
+                log('GMOオーソリ追加');
+            }
+            yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
+                transactionId: purchaseModel.transaction.id,
+                contact: {
+                    familyName: purchaseModel.profile.familyName,
+                    givenName: purchaseModel.profile.givenName,
+                    email: purchaseModel.profile.email,
+                    telephone: purchaseModel.profile.telephone
+                }
+            });
+            log('SSKTS購入者情報登録');
+            // セッション更新
+            purchaseModel.save(req.session);
+            // 購入者内容確認へ
+            res.redirect('/purchase/confirm');
+        }
+        catch (err) {
+            if (err === ErrorUtilModule.ERROR_VALIDATION) {
+                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
+                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+                return;
+            }
+            const error = (err instanceof Error)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                : new ErrorUtilModule.CustomError(err, undefined);
+            next(error);
+        }
+    });
+}
+exports.purchaserInformationRegistrationOfMember = purchaserInformationRegistrationOfMember;

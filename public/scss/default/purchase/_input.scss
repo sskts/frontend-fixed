@@ -113,6 +113,18 @@
             font-size: 14px;
         }
     }
+    .payment {
+        display: none;
+        &.active {
+            display: block;
+        }
+    }
+    .change-button, .remove-button {
+        display: none;
+        &.active {
+            display: block;
+        }
+    }
     
 }
 

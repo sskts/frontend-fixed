@@ -27,6 +27,7 @@ class PurchaseModel {
         this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
         this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
         this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
         this.gmo = (session.gmo !== undefined) ? session.gmo : null;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
         this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
@@ -50,6 +51,7 @@ class PurchaseModel {
             orderCount: this.orderCount,
             creditCardAuthorization: this.creditCardAuthorization,
             profile: this.profile,
+            creditCards: this.creditCards,
             gmo: this.gmo,
             mvtk: this.mvtk,
             mvtkAuthorization: this.mvtkAuthorization,

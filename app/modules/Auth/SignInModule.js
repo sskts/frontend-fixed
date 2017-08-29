@@ -42,7 +42,7 @@ function index(req, res, next) {
                     clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
                     scopes: scopes,
                     state: `${req.query.id}-${uuid.v1().replace(/\-/g, '')}`,
-                    codeVerifier: '12345',
+                    codeVerifier: uuid.v4().replace(/\-/g, ''),
                     memberType: AuthModel_1.MemberType.Member
                 });
                 const auth = authModel.create();

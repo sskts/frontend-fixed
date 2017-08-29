@@ -28,31 +28,25 @@ purchaseRouter.post('/transaction', TransactionModule.start);
 
 //仮予約重複
 purchaseRouter.get('/:id/overlap', OverlapModule.index);
-
 purchaseRouter.post('/overlap/new', OverlapModule.newReserve);
-
 purchaseRouter.post('/overlap/prev', OverlapModule.prevReserve);
 
 //座席選択
 purchaseRouter.get('/seat/:id/', SeatModule.index);
-
 purchaseRouter.post('/seat/:id/', SeatModule.select);
 
 //券種選択
 purchaseRouter.get('/ticket', TicketModule.index);
-
 purchaseRouter.post('/ticket', TicketModule.select);
 
 //購入者情報入力
 purchaseRouter.get('/input', InputModule.index);
-
-purchaseRouter.post('/input', InputModule.submit);
+purchaseRouter.post('/input', InputModule.purchaserInformationRegistration);
+purchaseRouter.post('/input/member', InputModule.purchaserInformationRegistrationOfMember);
 
 //購入内容確認
 purchaseRouter.get('/confirm', ConfirmModule.index);
-
 purchaseRouter.post('/confirm', ConfirmModule.purchase);
-
 purchaseRouter.get('/getComplete', ConfirmModule.getCompleteData);
 
 //ムビチケ着券取り消し
@@ -63,12 +57,10 @@ purchaseRouter.get('/complete', CompleteModule.index);
 
 //ムビチケ券入力
 purchaseRouter.get('/mvtk', MvtkInputModule.index);
-
 purchaseRouter.post('/mvtk', MvtkInputModule.select);
 
 //ムビチケ券適用確認
 purchaseRouter.get('/mvtk/confirm', MvtkConfirmModule.index);
-
 purchaseRouter.post('/mvtk/confirm', MvtkConfirmModule.submit);
 
 //座席状態取得

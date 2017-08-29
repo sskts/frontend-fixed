@@ -40,12 +40,38 @@ function index(req, res, next) {
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             if (purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ERROR_PROPERTY;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ERROR_EXPIRE;
             if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.TICKET_STATE))
                 throw ErrorUtilModule.ERROR_ACCESS;
+            if (authModel.isMember()) {
+                if (purchaseModel.profile === null) {
+                    const contacts = yield sasaki.service.person(options).getContacts({
+                        personId: 'me'
+                    });
+                    log('会員情報取得', contacts);
+                    purchaseModel.profile = {
+                        familyName: contacts.familyName,
+                        givenName: contacts.givenName,
+                        email: contacts.email,
+                        emailConfirm: contacts.email,
+                        telephone: contacts.telephone.replace(/\-/g, '')
+                    };
+                }
+                if (purchaseModel.creditCards.length === 0) {
+                    purchaseModel.creditCards = yield sasaki.service.person(options).findCreditCards({
+                        personId: 'me'
+                    });
+                    log('会員クレジット情報取得', purchaseModel.creditCards);
+                }
+            }
             //券種取得
             res.locals.error = '';
             res.locals.salesTickets = purchaseModel.getSalesTickets(req);

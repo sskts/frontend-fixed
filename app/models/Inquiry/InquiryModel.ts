@@ -1,5 +1,4 @@
-// TODO
-import * as sskts from '@motionpicture/sskts-domain';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 
 /**
  * ログイン情報
@@ -24,11 +23,11 @@ export interface IInquirySession {
     /**
      * 劇場ショップ
      */
-    movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
+    movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 照会情報
      */
-    order: sskts.factory.order.IOrder | null;
+    order: sasaki.factory.order.IOrder | null;
     /**
      * login情報
      */
@@ -43,11 +42,11 @@ export class InquiryModel {
     /**
      * 劇場ショップ
      */
-    public movieTheaterOrganization: sskts.factory.organization.movieTheater.IPublicFields | null;
+    public movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
     /**
      * 照会情報
      */
-    public order: sskts.factory.order.IOrder | null;
+    public order: sasaki.factory.order.IOrder | null;
     /**
      * login情報
      */

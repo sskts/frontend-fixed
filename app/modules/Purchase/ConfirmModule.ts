@@ -297,7 +297,10 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     from: 'noreply@ticket-cinemasunshine.com',
                     to: purchaseModel.profile.email,
                     subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                    content: content
+                    content: content,
+                    send_at: new Date(),
+                    id: '',
+                    group: ''
                 }
             });
             log('メール通知');
