@@ -39,9 +39,9 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
                 clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
                 scopes: scopes,
                 state: `${req.query.id}-${uuid.v1().replace(/\-/g, '')}`,
-                codeVerifier: '12345'
+                codeVerifier: '12345',
+                memberType: MemberType.Member
             });
-            authModel.memberType = MemberType.Member;
             const auth = authModel.create();
             const authUrl = auth.generateAuthUrl({
                 scopes: authModel.scopes,

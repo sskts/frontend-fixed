@@ -49,12 +49,20 @@ function index(req, res, next) {
             //購入者情報入力表示
             if (authModel.isMember()) {
                 log('会員情報取得');
+                const options = {
+                    endpoint: process.env.SSKTS_API_ENDPOINT,
+                    auth: authModel.create()
+                };
+                const contacts = yield sasaki.service.person(options).getContacts({
+                    personId: 'me'
+                });
+                log('contacts:', contacts);
                 purchaseModel.profile = {
-                    familyName: '',
-                    givenName: '',
-                    email: '',
-                    emailConfirm: '',
-                    telephone: ''
+                    familyName: contacts.familyName,
+                    givenName: contacts.givenName,
+                    email: contacts.email,
+                    emailConfirm: contacts.email,
+                    telephone: contacts.telephone
                 };
             }
             if (purchaseModel.profile !== null) {
@@ -74,6 +82,7 @@ function index(req, res, next) {
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+            res.locals.isMember = authModel.isMember();
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
             return;
         }
@@ -104,12 +113,12 @@ function submit(req, res, next) {
             next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
             return;
         }
+        const authModel = new AuthModel_1.AuthModel(req.session.auth);
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
         try {
-            const authModel = new AuthModel_1.AuthModel(req.session.auth);
-            const options = {
-                endpoint: process.env.SSKTS_API_ENDPOINT,
-                auth: authModel.create()
-            };
             if (req.session.purchase === undefined)
                 throw ErrorUtilModule.ERROR_EXPIRE;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
@@ -133,6 +142,7 @@ function submit(req, res, next) {
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.locals.isMember = authModel.isMember();
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
@@ -212,6 +222,7 @@ function submit(req, res, next) {
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.locals.isMember = authModel.isMember();
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }

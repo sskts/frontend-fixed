@@ -34,7 +34,7 @@ class AuthModel {
     create() {
         if (this.isMember()) {
             const auth = new sasaki.auth.OAuth2({
-                domain: process.env.AUTH_DOMAIN,
+                domain: process.env.TEST_AUTHORIZE_SERVER_DOMAIN,
                 clientId: process.env.TEST_CLIENT_ID_OAUTH2,
                 clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
                 redirectUri: process.env.AUTH_REDIRECT_URI,
@@ -48,7 +48,7 @@ class AuthModel {
         }
         else {
             return new sasaki.auth.ClientCredentials({
-                domain: process.env.AUTH_DOMAIN,
+                domain: process.env.TEST_AUTHORIZE_SERVER_DOMAIN,
                 clientId: process.env.TEST_CLIENT_ID,
                 clientSecret: process.env.TEST_CLIENT_SECRET,
                 state: this.state,
