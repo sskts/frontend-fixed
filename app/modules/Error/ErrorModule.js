@@ -6,12 +6,12 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * Not Found
  * @memberof ErrorModule
- * @function notFound
+ * @function notFoundRender
  * @param {Request} req
  * @param {Response} res
  * @returns {void}
  */
-function notFound(req, res) {
+function notFoundRender(req, res) {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -21,41 +21,41 @@ function notFound(req, res) {
     }
     return;
 }
-exports.notFound = notFound;
+exports.notFoundRender = notFoundRender;
 /**
  * エラーページ
  * @memberof ErrorModule
- * @function index
+ * @function errorRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(err, req, res, _) {
+function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {
         switch (err.code) {
-            case ErrorUtilModule.ERROR_PROPERTY:
+            case ErrorUtilModule.ErrorType.Property:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.property');
-                err.message = 'ERROR_PROPERTY';
+                err.message = 'Error Property';
                 break;
-            case ErrorUtilModule.ERROR_ACCESS:
+            case ErrorUtilModule.ErrorType.Access:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.access');
-                err.message = 'ERROR_ACCESS';
+                err.message = 'Error Access';
                 break;
-            case ErrorUtilModule.ERROR_VALIDATION:
+            case ErrorUtilModule.ErrorType.Validation:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.validation');
-                err.message = 'ERROR_VALIDATION';
+                err.message = 'Error Validation';
                 break;
-            case ErrorUtilModule.ERROR_EXPIRE:
+            case ErrorUtilModule.ErrorType.Expire:
                 // 期限切れのときもstatusが400になっている。200に変更するべき？
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.expire');
-                err.message = 'ERROR_EXPIRE';
+                err.message = 'Error Expire';
                 break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
@@ -72,11 +72,11 @@ function index(err, req, res, _) {
     }
     /**
      * エラーメッセージ
-     * ERROR_PROPERTY: プロパティが無い
-     * ERROR_ACCESS: 不正なアクセス
-     * ERROR_VALIDATION: 不正な値のPOST
-     * ERROR_EXPIRE: 有効期限切れ
-     * etc: 外部モジュールエラー
+     * Property: プロパティが無い
+     * Access: 不正なアクセス
+     * Validation: 不正な値のPOST
+     * Expire: 有効期限切れ
+     * ExternalModule: 外部モジュールエラー
      */
     logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
@@ -89,4 +89,4 @@ function index(err, req, res, _) {
     }
     return;
 }
-exports.index = index;
+exports.errorRender = errorRender;

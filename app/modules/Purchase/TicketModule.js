@@ -23,19 +23,19 @@ const log = debug('SSKTS:Purchase.TicketModule');
 /**
  * 券種選択
  * @memberof Purchase.TicketModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
@@ -43,11 +43,11 @@ function index(req, res, next) {
                 auth: authModel.create()
             };
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.TICKET_STATE))
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             if (authModel.isMember()) {
                 if (purchaseModel.profile === null) {
                     const contacts = yield sasaki.service.person(options).getContacts({
@@ -63,10 +63,13 @@ function index(req, res, next) {
                     };
                 }
                 if (purchaseModel.creditCards.length === 0) {
-                    purchaseModel.creditCards = yield sasaki.service.person(options).findCreditCards({
+                    const creditCards = yield sasaki.service.person(options).findCreditCards({
                         personId: 'me'
                     });
                     log('会員クレジット情報取得', purchaseModel.creditCards);
+                    purchaseModel.creditCards = creditCards.filter((creditCard) => {
+                        return (!creditCard.deleteFlag);
+                    });
                 }
             }
             //券種取得
@@ -82,14 +85,14 @@ function index(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
         }
     });
 }
-exports.index = index;
+exports.render = render;
 /**
  * 券種決定
  * @memberof Purchase.TicketModule
@@ -104,7 +107,7 @@ exports.index = index;
 function ticketSelect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
             return;
         }
         try {
@@ -114,19 +117,19 @@ function ticketSelect(req, res, next) {
                 auth: authModel.create()
             };
             if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.seatReservationAuthorization === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             //バリデーション
             TicketForm_1.default(req);
             const validationResult = yield req.getValidationResult();
@@ -175,7 +178,7 @@ function ticketSelect(req, res, next) {
                 purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
                 if (purchaseModel.seatReservationAuthorization === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
                     yield sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
@@ -189,7 +192,7 @@ function ticketSelect(req, res, next) {
                     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                     log('購入管理番号情報', mvtkSeatInfoSync);
                     if (mvtkSeatInfoSync === null)
-                        throw ErrorUtilModule.ERROR_ACCESS;
+                        throw ErrorUtilModule.ErrorType.Access;
                     const createMvtkAuthorizationArgs = {
                         transactionId: purchaseModel.transaction.id,
                         mvtk: mvtkSeatInfoSync
@@ -211,16 +214,16 @@ function ticketSelect(req, res, next) {
                 return;
             }
             else {
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             }
         }
         catch (err) {
-            if (err === ErrorUtilModule.ERROR_VALIDATION) {
+            if (err === ErrorUtilModule.ErrorType.Validation) {
                 if (req.session.purchase === undefined)
-                    throw ErrorUtilModule.ERROR_EXPIRE;
+                    throw ErrorUtilModule.ErrorType.Expire;
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 if (purchaseModel.individualScreeningEvent === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 res.locals.error = '';
                 res.locals.salesTickets = purchaseModel.getSalesTickets(req);
                 res.locals.purchaseModel = purchaseModel;
@@ -229,7 +232,7 @@ function ticketSelect(req, res, next) {
                 return;
             }
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
@@ -251,7 +254,7 @@ exports.ticketSelect = ticketSelect;
 function ticketValidation(req, res, purchaseModel, selectTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.salesTickets === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         const result = [];
         //コアAPI券種取得
         const salesTickets = purchaseModel.salesTickets;
@@ -259,12 +262,12 @@ function ticketValidation(req, res, purchaseModel, selectTickets) {
             if (ticket.mvtkNum !== '') {
                 // ムビチケ
                 if (purchaseModel.mvtk === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 const mvtkTicket = purchaseModel.mvtk.find((value) => {
                     return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
                 });
                 if (mvtkTicket === undefined)
-                    throw ErrorUtilModule.ERROR_ACCESS;
+                    throw ErrorUtilModule.ErrorType.Access;
                 const reserveTicket = {
                     section: ticket.section,
                     seatCode: ticket.seatCode,
@@ -301,14 +304,14 @@ function ticketValidation(req, res, purchaseModel, selectTickets) {
                     return (value.ticketCode === ticket.ticketCode);
                 });
                 if (salesTicket === undefined)
-                    throw ErrorUtilModule.ERROR_ACCESS;
+                    throw ErrorUtilModule.ErrorType.Access;
                 // 制限単位、人数制限判定
                 const mismatchTickets = [];
                 const sameTickets = selectTickets.filter((value) => {
                     return (value.ticketCode === salesTicket.ticketCode);
                 });
                 if (sameTickets.length === 0)
-                    throw ErrorUtilModule.ERROR_ACCESS;
+                    throw ErrorUtilModule.ErrorType.Access;
                 if (salesTicket.limitUnit === '001') {
                     if (sameTickets.length % salesTicket.limitCount !== 0) {
                         if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
@@ -325,7 +328,7 @@ function ticketValidation(req, res, purchaseModel, selectTickets) {
                 }
                 if (mismatchTickets.length > 0) {
                     res.locals.error = JSON.stringify(mismatchTickets);
-                    throw ErrorUtilModule.ERROR_VALIDATION;
+                    throw ErrorUtilModule.ErrorType.Validation;
                 }
                 result.push({
                     section: ticket.section,

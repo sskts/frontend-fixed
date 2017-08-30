@@ -14,15 +14,15 @@ const log = debug('SSKTS:Purchase.PerformancesModule');
 /**
  * パフォーマンス一覧表示
  * @memberof Purchase.PerformancesModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -54,7 +54,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
 
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -72,7 +72,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,

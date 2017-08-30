@@ -20,24 +20,24 @@ const log = debug('SSKTS:Purchase.ConfirmModule');
 /**
  * 購入者内容確認
  * @memberof Purchase.ConfirmModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.CONFIRM_STATE)) {
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             }
             //購入者内容確認表示
             res.locals.updateReserve = null;
@@ -51,14 +51,14 @@ function index(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
         }
     });
 }
-exports.index = index;
+exports.render = render;
 /**
  * ムビチケ決済
  * @memberof Purchase.ConfirmModule
@@ -72,7 +72,7 @@ function reserveMvtk(purchaseModel) {
         const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
         log('購入管理番号情報', mvtkSeatInfoSync);
         if (mvtkSeatInfoSync === null)
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
             kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -106,7 +106,7 @@ function reserveMvtk(purchaseModel) {
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
             if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
         }
         catch (err) {
             logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `err: ${err}`);
@@ -129,15 +129,15 @@ function reserveMvtk(purchaseModel) {
 function cancelMvtk(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         // 購入管理番号情報
         const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
         log('購入管理番号情報', mvtkSeatInfoSync);
         if (mvtkSeatInfoSync === null)
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
             kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -172,7 +172,7 @@ function cancelMvtk(req, res) {
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
             if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
         }
         catch (err) {
             result = false;
@@ -201,30 +201,30 @@ function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
                 auth: authModel.create()
             };
             if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.profile === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.seatReservationAuthorization === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             //購入期限切れ
             if (purchaseModel.isExpired()) {
                 delete req.session.purchase;
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             }
             const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
                 return (ticket.mvtkNum !== '');
@@ -314,9 +314,9 @@ function purchase(req, res) {
         }
         catch (err) {
             log('ERROR', err);
-            const msg = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
-                : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
-                    : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+            const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
+                : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+                    : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                         : err.message;
             res.json({ err: msg, result: null });
         }
@@ -334,15 +334,15 @@ exports.purchase = purchase;
 function getCompleteData(req, res) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.complete === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         res.json({ err: null, result: req.session.complete });
     }
     catch (err) {
-        const msg = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
-            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
-                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+        const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                     : err.message;
         res.json({ err: msg, result: null });
     }

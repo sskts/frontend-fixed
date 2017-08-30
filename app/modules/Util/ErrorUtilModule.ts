@@ -3,47 +3,32 @@
  * @namespace Util.ErrorUtilModule
  */
 
-/**
- * エラー番号（propertyなし）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_PROPERTY
- */
-export const ERROR_PROPERTY = '000';
-
-/**
- * エラー番号（アクセス）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_ACCESS
- */
-export const ERROR_ACCESS = '001';
-
-/**
- * エラー番号（時間切れ）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_TIMEOUT
- */
-export const ERROR_TIMEOUT = '002';
-
-/**
- * エラー番号（バリデーション）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_VALIDATION
- */
-export const ERROR_VALIDATION = '003';
-
-/**
- * エラー番号（期限切れ）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_EXPIRE
- */
-export const ERROR_EXPIRE = '004';
-
-/**
- * エラー（外部モジュール）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_EXTERNAL_MODULE
- */
-export const ERROR_EXTERNAL_MODULE = '999';
+export enum ErrorType {
+    /**
+     * プロパティなし
+     */
+    Property = '000',
+    /**
+     * アクセス
+     */
+    Access = '001',
+    /**
+     * 時間切れ
+     */
+    Timeout = '002',
+    /**
+     * バリデーション
+     */
+    Validation = '003',
+    /**
+     * 期限切れ
+     */
+    Expire = '004',
+    /**
+     * 外部モジュール
+     */
+    ExternalModule = '999'
+}
 
 /**
  * カスタムエラー
@@ -52,8 +37,8 @@ export const ERROR_EXTERNAL_MODULE = '999';
  * @class CustomError
  */
 export class CustomError extends Error {
-    public code: string;
-    constructor(code: string, message: string | undefined) {
+    public code: ErrorType;
+    constructor(code: ErrorType, message: string | undefined) {
         super(message);
         this.code = code;
     }

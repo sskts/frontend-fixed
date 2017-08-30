@@ -63,13 +63,15 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              * @returns {number}
              */
             duration: function (value) {
-                return moment.duration(value).minutes();
+                return moment.duration(value).asMinutes();
             }
         },
 
         methods: {
             /**
              * 表示形式生成
+             * @function createviewType
+             * @returns {void}
              */
             createviewType: function () {
                 this.views = [
@@ -79,12 +81,16 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * 劇場コード取得
+             * @function getTheaterCode
+             * @returns {void}
              */
             getTheaterCode: function () {
                 this.theaterCode = (isFixed()) ? config.theater : this.theaterCode;
             },
             /**
              * 選択日生成
+             * @function getTheaterCode
+             * @returns {void}
              */
             createDate: function (period) {
                 var results = [];
@@ -101,6 +107,8 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * パフォーマンス取得
+             * @function getTheaterCode
+             * @returns {void}
              */
             fetchPerformancesData: function () {
                 var options = {
@@ -124,6 +132,9 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * パフォーマンス取得成功
+             * @function getTheaterCode
+             * @param {any} res
+             * @returns {void}
              */
             successHandler: function (res) {
                 if (res.error !== null) {
@@ -141,6 +152,8 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * パフォーマンス取得後
+             * @function getTheaterCode
+             * @returns {void}
              */
             afterHandler: function () {
                 // 定期的にパフォーマンス更新
@@ -152,6 +165,9 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * 時間別へ変換
+             * @function getTheaterCode
+             * @param {any[]} data
+             * @returns {any[]}
              */
             convertToChronologicalOrder: function (data) {
                 var results = [];
@@ -168,6 +184,9 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * 作品別へ変換
+             * @function getTheaterCode
+             * @param {any[]} data
+             * @returns {any[]}
              */
             convertToFilmOrder: function (data) {
                 var results = [];
@@ -195,6 +214,11 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * パフォーマンス選択
+             * @function getTheaterCode
+             * @param {Event} event
+             * @param {string} filmId
+             * @param {string} id
+             * @returns {void}
              */
             onclickPerformance: function (event, id, filmId) {
                 event.preventDefault();
@@ -225,6 +249,10 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * ソート選択
+             * @function getTheaterCode
+             * @param {string} type
+             * @param {Event} event
+             * @returns {void}
              */
             onClickSort: function (type, event) {
                 event.preventDefault();
@@ -235,6 +263,9 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             },
             /**
              * 照会ボタンクリック
+             * @function onclickInquiry
+             * @param {Event} event
+             * @returns {void}
              */
             onclickInquiry: function (event) {
                 event.preventDefault();

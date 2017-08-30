@@ -19,6 +19,18 @@
             }
         }
     }
+
+    .service {
+        img {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        span {
+            margin-right: 20px;
+        }
+    }
     
     .chronological-order {
         display: none;
@@ -31,6 +43,15 @@
             overflow: hidden;
             a {
                 border: 2px solid #AFAFAF;
+                .icon-morning-black, .icon-late-black {
+                    &:before {
+                        top: 10px;
+                        left: 10px;
+                        background-size: 24px 24px;
+                        width: 24px;
+                        height: 24px;
+                    }
+                }
                 dl {
                     display: flex;
                     dt {
@@ -93,6 +114,12 @@
                             }
                             a {
                                 border: 2px solid #AFAFAF;
+                                .icon-morning-black, .icon-late-black {
+                                    &:before {
+                                        top: 5px;
+                                        left: 5px;
+                                    }
+                                }
                                 dl {
                                     dt {
                                         padding: 10px 15px 10px 30px;

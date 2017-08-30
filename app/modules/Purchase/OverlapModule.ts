@@ -13,15 +13,15 @@ const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
  * @memberof Purchase.OverlapModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -29,8 +29,8 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (req.params.id === undefined) throw ErrorUtilModule.ERROR_ACCESS;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.params.id === undefined) throw ErrorUtilModule.ErrorType.Access;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
         // イベント情報取得
         const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
             identifier: req.body.performanceId
@@ -45,7 +45,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -64,7 +64,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function newReserve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -72,9 +72,9 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
 
         // COA仮予約削除
         await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
@@ -91,7 +91,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -110,7 +110,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
  */
 export function prevReserve(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }

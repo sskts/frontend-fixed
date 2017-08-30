@@ -21,17 +21,17 @@ const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
  * @memberof Purchase.OverlapModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -39,9 +39,9 @@ function index(req, res, next) {
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             // イベント情報取得
             const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
@@ -56,14 +56,14 @@ function index(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
         }
     });
 }
-exports.index = index;
+exports.render = render;
 /**
  * 新規予約へ
  * @memberof Purchase.OverlapModule
@@ -77,7 +77,7 @@ function newReserve(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -85,11 +85,11 @@ function newReserve(req, res, next) {
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.seatReservationAuthorization === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             // COA仮予約削除
             yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
@@ -103,7 +103,7 @@ function newReserve(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
@@ -122,7 +122,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
         return;
     }
     //座席選択へ

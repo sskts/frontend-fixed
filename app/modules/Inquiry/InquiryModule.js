@@ -22,13 +22,13 @@ const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
  * @memberof InquiryModule
- * @function login
+ * @function loginRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function login(req, res, next) {
+function loginRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
         if (theaterCode === undefined) {
@@ -38,7 +38,7 @@ function login(req, res, next) {
         }
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -61,14 +61,14 @@ function login(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
         }
     });
 }
-exports.login = login;
+exports.loginRender = loginRender;
 /**
  * 照会認証
  * @memberof InquiryModule
@@ -82,7 +82,7 @@ function inquiryAuth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -97,7 +97,7 @@ function inquiryAuth(req, res, next) {
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
                 if (inquiryModel.movieTheaterOrganization === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
@@ -126,7 +126,7 @@ function inquiryAuth(req, res, next) {
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
                 if (inquiryModel.movieTheaterOrganization === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
@@ -139,7 +139,7 @@ function inquiryAuth(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;
@@ -167,18 +167,18 @@ function getInquiryError(req) {
 /**
  * 照会確認ページ表示
  * @memberof InquiryModule
- * @function index
+ * @function confirmRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(req, res, next) {
+function confirmRender(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.query.theater === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.inquiry === undefined) {
             res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
             return;
@@ -191,9 +191,9 @@ function index(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }
 }
-exports.index = index;
+exports.confirmRender = confirmRender;

@@ -9,16 +9,16 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 /**
  * 購入完了表示
  * @memberof Purchase.CompleteModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export function render(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session.complete === undefined) throw ErrorUtilModule.ErrorType.Access;
         //購入者内容確認表示
         const purchaseModel = new PurchaseModel(req.session.complete);
         res.locals.purchaseModel = purchaseModel;
@@ -28,7 +28,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 

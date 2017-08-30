@@ -58,7 +58,7 @@ function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined || req.body.performanceId === undefined) {
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             }
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
@@ -73,17 +73,17 @@ function start(req, res) {
             });
             log('イベント情報取得', individualScreeningEvent);
             if (individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             // 開始可能日判定
             if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             }
             log('開始可能日判定');
             // 終了可能日判定
             const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
             const limitTime = moment().add(limit, 'minutes');
             if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             }
             log('終了可能日判定');
             let purchaseModel;
@@ -111,7 +111,7 @@ function start(req, res) {
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
             if (purchaseModel.movieTheaterOrganization === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             // 取引開始
             const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
@@ -126,8 +126,8 @@ function start(req, res) {
             res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
         }
         catch (err) {
-            if (err === ErrorUtilModule.ERROR_ACCESS
-                || err === ErrorUtilModule.ERROR_PROPERTY) {
+            if (err === ErrorUtilModule.ErrorType.Access
+                || err === ErrorUtilModule.ErrorType.Property) {
                 res.json({ redirect: null, contents: 'access-error' });
                 return;
             }

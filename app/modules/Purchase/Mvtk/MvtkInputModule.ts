@@ -19,19 +19,19 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 /**
  * ムビチケ券入力ページ表示
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export function render(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
         // ムビチケセッション削除
         delete req.session.mvtk;
 
@@ -43,7 +43,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }
@@ -62,21 +62,21 @@ export function index(req: Request, res: Response, next: NextFunction): void {
 // tslint:disable-next-line:cyclomatic-complexity
 export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }
     try {
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
         MvtkInputForm(req);
         const validationResult = await req.getValidationResult();
-        if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_ACCESS;
+        if (!validationResult.isEmpty()) throw ErrorUtilModule.ErrorType.Access;
         const mvtkService = MVTK.createPurchaseNumberAuthService();
         const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
         const purchaseNumberAuthIn = {
@@ -104,7 +104,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             );
             throw err;
         }
-        if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ErrorType.Property;
         const validationList: string[] = [];
         // ムビチケセッション作成
         const mvtkList: IMvtk[] = [];
@@ -153,12 +153,12 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             log('認証エラー');
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
-            throw ErrorUtilModule.ERROR_VALIDATION;
+            throw ErrorUtilModule.ErrorType.Validation;
         }
         req.session.mvtk = mvtkList;
         res.redirect('/purchase/mvtk/confirm');
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_VALIDATION) {
+        if (err === ErrorUtilModule.ErrorType.Validation) {
             const purchaseModel = new PurchaseModel(req.session.purchase);
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.purchaseModel = purchaseModel;
@@ -168,7 +168,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             return;
         }
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }

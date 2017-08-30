@@ -9,18 +9,18 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**
  * 購入完了表示
  * @memberof Purchase.CompleteModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.complete === undefined)
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         //購入者内容確認表示
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.complete);
         res.locals.purchaseModel = purchaseModel;
@@ -30,10 +30,10 @@ function index(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
         return;
     }
 }
-exports.index = index;
+exports.render = render;

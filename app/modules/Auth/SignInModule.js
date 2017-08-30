@@ -58,10 +58,10 @@ function index(req, res, next) {
             else {
                 // 購入ページへ
                 if (req.session === undefined)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
+                    throw ErrorUtilModule.ErrorType.Property;
                 const authModel = new AuthModel_1.AuthModel(req.session.auth);
                 if (req.query.state !== authModel.state)
-                    throw ErrorUtilModule.ERROR_ACCESS;
+                    throw ErrorUtilModule.ErrorType.Access;
                 const auth = authModel.create();
                 authModel.credentials = yield auth.getToken(req.query.code, authModel.codeVerifier);
                 authModel.save(req.session);
@@ -70,7 +70,7 @@ function index(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
             return;

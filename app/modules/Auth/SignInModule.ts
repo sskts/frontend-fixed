@@ -55,9 +55,9 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             res.redirect(authUrl);
         } else {
             // 購入ページへ
-            if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+            if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel(req.session.auth);
-            if (req.query.state !== authModel.state) throw ErrorUtilModule.ERROR_ACCESS;
+            if (req.query.state !== authModel.state) throw ErrorUtilModule.ErrorType.Access;
             const auth: sasaki.auth.OAuth2 = authModel.create();
             authModel.credentials = await auth.getToken(req.query.code, (<string>authModel.codeVerifier));
             authModel.save(req.session);
@@ -66,7 +66,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         }
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 

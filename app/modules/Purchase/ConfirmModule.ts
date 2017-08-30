@@ -17,20 +17,20 @@ const log = debug('SSKTS:Purchase.ConfirmModule');
 /**
  * 購入者内容確認
  * @memberof Purchase.ConfirmModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) {
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         }
 
         //購入者内容確認表示
@@ -45,7 +45,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -64,7 +64,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     // 購入管理番号情報
     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
     log('購入管理番号情報', mvtkSeatInfoSync);
-    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ERROR_ACCESS;
+    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
         kgygishCd: mvtkSeatInfoSync.kgygishCd, // 興行会社コード
@@ -97,7 +97,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     };
     try {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
+        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ErrorType.Access;
     } catch (err) {
         logger.error(
             'SSKTS-APP:ConfirmModule reserveMvtk',
@@ -121,13 +121,13 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function cancelMvtk(req: Request, res: Response): Promise<void> {
-    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-    if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+    if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+    if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
     const purchaseModel = new PurchaseModel(req.session.purchase);
     // 購入管理番号情報
     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
     log('購入管理番号情報', mvtkSeatInfoSync);
-    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ERROR_ACCESS;
+    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
         kgygishCd: mvtkSeatInfoSync.kgygishCd, // 興行会社コード
@@ -161,7 +161,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     let result = true;
     try {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) throw ErrorUtilModule.ERROR_ACCESS;
+        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) throw ErrorUtilModule.ErrorType.Access;
     } catch (err) {
         result = false;
         logger.error(
@@ -190,25 +190,25 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
 // tslint:disable-next-line:max-func-body-length
 export async function purchase(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
             auth: authModel.create()
         };
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.profile === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.profile === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ERROR_ACCESS;
+        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
 
         //購入期限切れ
         if (purchaseModel.isExpired()) {
             delete req.session.purchase;
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         }
         const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
             return (ticket.mvtkNum !== '');
@@ -304,9 +304,9 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
         log('ERROR', err);
-        const msg: string = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
-            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
-                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+        const msg: string = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                     : err.message;
         res.json({ err: msg, result: null });
     }
@@ -322,13 +322,13 @@ export async function purchase(req: Request, res: Response): Promise<void> {
  */
 export function getCompleteData(req: Request, res: Response): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.complete === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session.complete === undefined) throw ErrorUtilModule.ErrorType.Expire;
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
-        const msg: string = (err === ErrorUtilModule.ERROR_PROPERTY) ? req.__('common.error.property')
-            : (err === ErrorUtilModule.ERROR_ACCESS) ? req.__('common.error.access')
-                : (err === ErrorUtilModule.ERROR_EXPIRE) ? req.__('common.error.expire')
+        const msg: string = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
+            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                     : err.message;
         res.json({ err: msg, result: null });
     }

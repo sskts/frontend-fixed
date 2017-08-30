@@ -237,6 +237,8 @@
 		"prev": "戻る"
 	},
 	"common": {
+		"morning": "モーニングショー",
+		"late": "レイトショー",
 		"ticket_number": "枚",
 		"recommend": "おすすめ",
 		"price": "円",

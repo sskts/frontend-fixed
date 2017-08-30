@@ -17,13 +17,13 @@ const log = debug('SSKTS:Fixed.FixedModule');
 /**
  * 券売機TOPページ表示
  * @memberof Fixed.FixedModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function index(_: Request, res: Response): Promise<void> {
+export async function render(_: Request, res: Response): Promise<void> {
     res.locals.ticketingSite = process.env.TICKETING_SITE_URL;
     res.render('index/index');
     log('券売機TOPページ表示');
@@ -32,13 +32,13 @@ export async function index(_: Request, res: Response): Promise<void> {
 /**
  * 券売機設定ページ表示
  * @memberof Fixed.FixedModule
- * @function setting
+ * @function settingRender
  * @param {Response} res
  * @returns {Promise<void>}
  */
-export async function setting(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function settingRender(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel();
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -49,18 +49,18 @@ export async function setting(req: Request, res: Response, next: NextFunction): 
         res.locals.movieTheaters = movieTheaters;
         res.render('setting/index');
     } catch (err) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
+        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
     }
 }
 
 /**
  * 利用停止ページ表示
  * @memberof Fixed.FixedModule
- * @function stop
+ * @function stopRender
  * @param {Response} res
  * @returns {void}
  */
-export function stop(_: Request, res: Response): void {
+export function stopRender(_: Request, res: Response): void {
     res.render('stop/index');
 }
 
@@ -74,7 +74,7 @@ export function stop(_: Request, res: Response): void {
  */
 export async function getInquiryData(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -88,7 +88,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -101,8 +101,8 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
 
             if (inquiryModel.order === null) {
                 // 本予約して照会情報取得
-                if (req.session.fixed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (req.session.fixed.updateReserveIn === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (req.session.fixed === undefined) throw ErrorUtilModule.ErrorType.Property;
+                if (req.session.fixed.updateReserveIn === undefined) throw ErrorUtilModule.ErrorType.Property;
                 const updReserve = await COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                 log('COA本予約', updReserve);
                 inquiryModel.order = await sasaki.service.order(options).findByOrderInquiryKey({
@@ -111,16 +111,16 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
                 log('COA照会情報取得', inquiryModel.order);
-                if (inquiryModel.order === null) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (inquiryModel.order === null) throw ErrorUtilModule.ErrorType.Property;
             }
 
             // 印刷用
             const order = inquiryModel.order;
             const reservations = inquiryModel.order.acceptedOffers.map((offer) => {
-                if (offer.itemOffered.reservationFor.workPerformed === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (offer.itemOffered.reservationFor.location === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (offer.itemOffered.reservationFor.location.name === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-                if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+                if (offer.itemOffered.reservationFor.workPerformed === undefined) throw ErrorUtilModule.ErrorType.Property;
+                if (offer.itemOffered.reservationFor.location === undefined) throw ErrorUtilModule.ErrorType.Property;
+                if (offer.itemOffered.reservationFor.location.name === undefined) throw ErrorUtilModule.ErrorType.Property;
+                if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
 
                 return {
                     reserveNo: order.orderInquiryKey.confirmationNumber,

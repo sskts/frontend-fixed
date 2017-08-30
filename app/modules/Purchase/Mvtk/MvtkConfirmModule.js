@@ -12,21 +12,21 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 /**
  * ムビチケ券適用確認ページ表示
  * @memberof Purchase.Mvtk.MvtkConfirmModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
             return;
@@ -42,12 +42,12 @@ function index(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }
 }
-exports.index = index;
+exports.render = render;
 /**
  * 購入番号リスト生成
  * @memberof Purchase.Mvtk.MvtkConfirmModule
@@ -78,17 +78,17 @@ function creatPurchaseNoList(mvtk) {
 function submit(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         }
         // ムビチケ情報を購入セッションへ保存
         log('ムビチケ情報を購入セッションへ保存');
@@ -100,7 +100,7 @@ function submit(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }

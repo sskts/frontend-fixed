@@ -8,11 +8,11 @@ const FixedModule = require("../modules/Fixed/FixedModule");
 const PerformancesModule = require("../modules/Purchase/PerformancesModule");
 const fixedRouter = express.Router();
 // TOP
-fixedRouter.get('/', PerformancesModule.index);
+fixedRouter.get('/', PerformancesModule.render);
 // 設定
-fixedRouter.get('/setting', FixedModule.setting);
+fixedRouter.get('/setting', FixedModule.settingRender);
 // 利用停止
-fixedRouter.get('/stop', FixedModule.stop);
+fixedRouter.get('/stop', FixedModule.stopRender);
 // 照会情報取得
 fixedRouter.post('/fixed/getInquiryData', FixedModule.getInquiryData);
 exports.default = fixedRouter;

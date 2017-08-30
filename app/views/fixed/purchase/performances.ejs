@@ -39,31 +39,38 @@
         <div><a v-bind:class="{active: (sortType === 'film')}" v-on:click="onClickSort('film', $event)" href="#"><%- __('purchase.performances.sort.film') %></a></div>
     </div>
 
+    <div class="mb-small service">
+        <span><img src="/images/fixed/icon/icon_late_white.svg" alt="">… <%- __('common.late') %></span>
+        <span><img src="/images/fixed/icon/icon_morning_white.svg" alt="">… <%- __('common.morning') %></span>
+    </div>
+
     <template v-if="error === null">
     <ul v-bind:class="{ active: sortType === 'chronological' }" class="chronological-order">
         <li v-for="order in chronologicalOrder" v-bind:key="order.identifier" class="button white-button mb-middle">
             <a v-on:click="onclickPerformance($event, order.identifier, order.coaInfo.titleCode)" class="icon-triangle-gray">
-            <dl>
-                <dt class="text-left">
-                    <div>
-                        <div class="mb-x-small"><strong class="large-x-text">{{ order.startDate | timeFormat(order.coaInfo.dateJouei) }}</strong></div>
-                        <div>～{{ order.endDate | timeFormat(order.coaInfo.dateJouei) }}</div>
-                    </div>
-                    <div class="small-text text-center">
-                        <div v-if="order.stockStatus === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
-                        <div v-else-if="order.stockStatus <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
-                        <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                        <div v-if="order.stockStatus === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
-                        <div v-else-if="order.stockStatus <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
-                        <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
-                    </div>
-                </dt>
-                <dd class="text-left">
-                    <div class="screen-name mb-x-small small-text d-ib">{{ order.location.name.ja }}</div>
-                    <div class="small-text mb-x-small d-ib">{{ order.workPerformed.duration | duration }}分</div>
-                    <p><strong>{{ order.workPerformed.name }}</strong></p>
-                </dd>
-            </dl>
+                <div v-if="order.coaInfo.kbnService.kubunCode === '001'" class="icon-morning-black"></div>
+                <div v-if="order.coaInfo.kbnService.kubunCode === '002'" class="icon-late-black"></div>
+                <dl>
+                    <dt class="text-left">
+                        <div>
+                            <div class="mb-x-small"><strong class="large-x-text">{{ order.startDate | timeFormat(order.coaInfo.dateJouei) }}</strong></div>
+                            <div>～{{ order.endDate | timeFormat(order.coaInfo.dateJouei) }}</div>
+                        </div>
+                        <div class="small-text text-center">
+                            <div v-if="order.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
+                            <div v-else-if="order.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
+                            <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
+                            <div v-if="order.offer.availability === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                            <div v-else-if="order.offer.availability <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                            <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                        </div>
+                    </dt>
+                    <dd class="text-left">
+                        <div class="screen-name mb-x-small small-text d-ib">{{ order.location.name.ja }}</div>
+                        <div class="small-text mb-x-small d-ib">{{ order.workPerformed.duration | duration }}分</div>
+                        <p><strong>{{ order.workPerformed.name }}</strong></p>
+                    </dd>
+                </dl>
             </a>
         </li>
     </ul>
@@ -79,6 +86,8 @@
                     <ul>
                         <li v-for="film in order.films" v-bind:key="film.identifier" class="button white-button">
                             <a v-on:click="onclickPerformance($event, film.identifier, film.coaInfo.titleCode)" class="icon-triangle-gray">
+                                <div v-if="film.coaInfo.kbnService.kubunCode === '001'" class="icon-morning-black"></div>
+                                <div v-if="film.coaInfo.kbnService.kubunCode === '002'" class="icon-late-black"></div>
                                 <dl>
                                     <dt>
                                         <div class="text-left">
@@ -86,11 +95,11 @@
                                             <div>～{{ film.endDate | timeFormat(film.coaInfo.dateJouei) }}</div>
                                         </div>
                                         <div class="text-cente small-x-text">
-                                            <div v-if="film.stockStatus === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
-                                            <div v-else-if="film.stockStatus <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
+                                            <div v-if="film.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
+                                            <div v-else-if="film.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
                                             <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                                            <div v-if="film.stockStatus === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
-                                            <div v-else-if="film.stockStatus <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
+                                            <div v-if="film.offer.availability === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
+                                            <div v-else-if="film.offer.availability <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
                                             <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
                                         </div>
                                     </dt>

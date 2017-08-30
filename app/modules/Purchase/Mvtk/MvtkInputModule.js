@@ -26,23 +26,23 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 /**
  * ムビチケ券入力ページ表示
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
-            throw ErrorUtilModule.ERROR_EXPIRE;
+            throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         // ムビチケセッション削除
         delete req.session.mvtk;
         // 購入者情報入力表示
@@ -54,12 +54,12 @@ function index(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }
 }
-exports.index = index;
+exports.render = render;
 /**
  * 券種選択
  * @memberof Purchase.Mvtk.MvtkInputModule
@@ -74,26 +74,26 @@ exports.index = index;
 function select(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
             return;
         }
         try {
             if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
+                throw ErrorUtilModule.ErrorType.Expire;
             if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             MvtkInputForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw ErrorUtilModule.ErrorType.Access;
             const mvtkService = MVTK.createPurchaseNumberAuthService();
             const inputInfo = JSON.parse(req.body.mvtk);
             const purchaseNumberAuthIn = {
@@ -119,7 +119,7 @@ function select(req, res, next) {
                 throw err;
             }
             if (purchaseNumberAuthResults === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw ErrorUtilModule.ErrorType.Property;
             const validationList = [];
             // ムビチケセッション作成
             const mvtkList = [];
@@ -169,13 +169,13 @@ function select(req, res, next) {
                 log('認証エラー');
                 logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
                 logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
-                throw ErrorUtilModule.ERROR_VALIDATION;
+                throw ErrorUtilModule.ErrorType.Validation;
             }
             req.session.mvtk = mvtkList;
             res.redirect('/purchase/mvtk/confirm');
         }
         catch (err) {
-            if (err === ErrorUtilModule.ERROR_VALIDATION) {
+            if (err === ErrorUtilModule.ErrorType.Validation) {
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
                 res.locals.purchaseModel = purchaseModel;
@@ -184,7 +184,7 @@ function select(req, res, next) {
                 return;
             }
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
         }

@@ -14,13 +14,13 @@ const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
  * @memberof InquiryModule
- * @function login
+ * @function loginRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function loginRender(req: Request, res: Response, next: NextFunction): Promise<void> {
     const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
     if (theaterCode === undefined) {
         const status = 404;
@@ -29,7 +29,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         return;
     }
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -52,7 +52,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -71,7 +71,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
  */
 export async function inquiryAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -85,7 +85,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -116,7 +116,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -129,7 +129,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         }
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
 
@@ -158,16 +158,16 @@ function getInquiryError(req: Request) {
 /**
  * 照会確認ページ表示
  * @memberof InquiryModule
- * @function index
+ * @function confirmRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export function confirmRender(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.query.theater === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.query.theater === undefined) throw ErrorUtilModule.ErrorType.Property;
         if (req.session.inquiry === undefined) {
             res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
 
@@ -182,7 +182,7 @@ export function index(req: Request, res: Response, next: NextFunction): void {
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
+            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
     }

@@ -51,7 +51,7 @@ const VALID_TIME_FIXED = 5;
 export async function start(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined || req.body.performanceId === undefined) {
-            throw ErrorUtilModule.ERROR_PROPERTY;
+            throw ErrorUtilModule.ErrorType.Property;
         }
         const authModel = new AuthModel(req.session.auth);
         const options = {
@@ -66,11 +66,11 @@ export async function start(req: Request, res: Response): Promise<void> {
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
-        if (individualScreeningEvent === null) throw ErrorUtilModule.ERROR_ACCESS;
+        if (individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Access;
 
         // 開始可能日判定
         if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         }
         log('開始可能日判定');
 
@@ -78,7 +78,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
         const limitTime = moment().add(limit, 'minutes');
         if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
-            throw ErrorUtilModule.ERROR_ACCESS;
+            throw ErrorUtilModule.ErrorType.Access;
         }
         log('終了可能日判定');
 
@@ -111,7 +111,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
-        if (purchaseModel.movieTheaterOrganization === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        if (purchaseModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
@@ -127,8 +127,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         //座席選択へ
         res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_ACCESS
-            || err === ErrorUtilModule.ERROR_PROPERTY) {
+        if (err === ErrorUtilModule.ErrorType.Access
+            || err === ErrorUtilModule.ErrorType.Property) {
             res.json({ redirect: null, contents: 'access-error' });
 
             return;
