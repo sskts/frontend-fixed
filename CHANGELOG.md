@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 1.8.1 - 2017-08-29
+### Fixed
+ - [Webアプリ] 購入完了メールのチケット照会リンク先を購入番号自動入力へ修正
+
 ## 1.8.0 - 2017-07-24
 ### Added
  - [券売機] 一定時間操作しないと勝手に画面TOPに戻る機能
