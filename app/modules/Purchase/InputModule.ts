@@ -77,7 +77,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistration(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -121,51 +120,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             emailConfirm: req.body.emailConfirm,
             telephone: req.body.telephone
         };
-        if (purchaseModel.creditCardAuthorization !== null) {
-            const cancelCreditCardAuthorizationArgs = {
-                transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.creditCardAuthorization.id
-            };
-            try {
-                await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
-            } catch (err) {
-                logger.error(
-                    'SSKTS-APP:InputModule.submit cancelCreditCardAuthorization',
-                    `in: ${cancelCreditCardAuthorizationArgs}`,
-                    `err: ${err}`
-                );
-                throw ErrorUtilModule.ERROR_VALIDATION;
-            }
-            log('GMOオーソリ削除');
-        }
-        if (purchaseModel.getReserveAmount() > 0) {
-            // クレジット決済
-            res.locals.gmoError = null;
-            purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
-            purchaseModel.createOrderId();
-            purchaseModel.save(req.session);
-            const createCreditCardAuthorizationArgs = {
-                transactionId: purchaseModel.transaction.id,
-                orderId: (<string>purchaseModel.orderId),
-                amount: purchaseModel.getReserveAmount(),
-                method: GMO.utils.util.Method.Lump,
-                creditCard: {
-                    token: (<IGMO>purchaseModel.gmo).token
-                }
-            };
-            try {
-                await sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
-            } catch (err) {
-                log(createCreditCardAuthorizationArgs);
-                logger.error(
-                    'SSKTS-APP:InputModule.submit createCreditCardAuthorization',
-                    `in: ${createCreditCardAuthorizationArgs}`,
-                    `err: ${err}`
-                );
-                throw ErrorUtilModule.ERROR_VALIDATION;
-            }
-            log('GMOオーソリ追加');
-        }
+        // クレジットカード処理
+        await creditCardProsess(req, purchaseModel);
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -215,7 +171,6 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
 export async function purchaserInformationRegistrationOfMember(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -253,8 +208,8 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
 
             return;
         }
-
-        if (req.body.creditCardRegistration) {
+        const creditCardRegistration = (<boolean | undefined>req.body.creditCardRegistration);
+        if (creditCardRegistration !== undefined && creditCardRegistration) {
             purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
             // クレジットカード登録
             const card = await sasaki.service.person(options).addCreditCard({
@@ -267,64 +222,8 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
             log('クレジットカード登録');
         }
 
-        if (purchaseModel.creditCardAuthorization !== null) {
-            const cancelCreditCardAuthorizationArgs = {
-                transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.creditCardAuthorization.id
-            };
-            try {
-                await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
-            } catch (err) {
-                logger.error(
-                    'SSKTS-APP:InputModule.submit cancelCreditCardAuthorization',
-                    `in: ${cancelCreditCardAuthorizationArgs}`,
-                    `err: ${err}`
-                );
-                throw ErrorUtilModule.ERROR_VALIDATION;
-            }
-            log('GMOオーソリ削除');
-        }
-        if (purchaseModel.getReserveAmount() > 0) {
-            // クレジット決済
-            res.locals.gmoError = null;
-            purchaseModel.createOrderId();
-            purchaseModel.save(req.session);
-            let creditCard: sasaki.factory.paymentMethod.paymentCard.creditCard.IUncheckedCardTokenized
-                | sasaki.factory.paymentMethod.paymentCard.creditCard.IUnauthorizedCardOfMember;
-            if (purchaseModel.creditCards.length > 0) {
-                // 登録されたクレジットカード
-                if (purchaseModel.creditCards.length === 0) throw ErrorUtilModule.ERROR_PROPERTY;
-                creditCard = {
-                    memberId: 'me',
-                    cardSeq: Number(purchaseModel.creditCards[0].cardSeq)
-                };
-            } else {
-                // 入力されたクレジットカード
-                purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
-                creditCard = {
-                    token: (<IGMO>purchaseModel.gmo).token
-                };
-            }
-            const createCreditCardAuthorizationArgs = {
-                transactionId: purchaseModel.transaction.id,
-                orderId: (<string>purchaseModel.orderId),
-                amount: purchaseModel.getReserveAmount(),
-                method: GMO.utils.util.Method.Lump,
-                creditCard: creditCard
-            };
-            try {
-                await sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
-            } catch (err) {
-                log(createCreditCardAuthorizationArgs);
-                logger.error(
-                    'SSKTS-APP:InputModule.submit createCreditCardAuthorization',
-                    `in: ${createCreditCardAuthorizationArgs}`,
-                    `err: ${err}`
-                );
-                throw ErrorUtilModule.ERROR_VALIDATION;
-            }
-            log('GMOオーソリ追加');
-        }
+        // クレジットカード処理
+        await creditCardProsess(req, purchaseModel);
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -355,5 +254,78 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
+    }
+}
+
+/**
+ * クレジットカード処理
+ * @function creditCardProsess
+ * @param {Request} req
+ * @param {PurchaseModel} purchaseModel
+ */
+async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Promise<void> {
+    if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
+    const authModel = new AuthModel(req.session.auth);
+    const options = {
+        endpoint: process.env.SSKTS_API_ENDPOINT,
+        auth: authModel.create()
+    };
+    if (purchaseModel.transaction === null) throw ErrorUtilModule.ERROR_PROPERTY;
+    if (purchaseModel.creditCardAuthorization !== null) {
+        const cancelCreditCardAuthorizationArgs = {
+            transactionId: purchaseModel.transaction.id,
+            authorizationId: purchaseModel.creditCardAuthorization.id
+        };
+        try {
+            await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
+        } catch (err) {
+            logger.error(
+                'SSKTS-APP:InputModule.submit cancelCreditCardAuthorization',
+                `in: ${cancelCreditCardAuthorizationArgs}`,
+                `err: ${err}`
+            );
+            throw ErrorUtilModule.ERROR_VALIDATION;
+        }
+        log('GMOオーソリ削除');
+    }
+    if (purchaseModel.getReserveAmount() > 0) {
+        // クレジット決済
+        purchaseModel.createOrderId();
+        purchaseModel.save(req.session);
+        let creditCard: sasaki.factory.paymentMethod.paymentCard.creditCard.IUncheckedCardTokenized
+            | sasaki.factory.paymentMethod.paymentCard.creditCard.IUnauthorizedCardOfMember;
+        if (purchaseModel.creditCards.length > 0) {
+            // 登録されたクレジットカード
+            if (purchaseModel.creditCards.length === 0) throw ErrorUtilModule.ERROR_PROPERTY;
+            creditCard = {
+                memberId: 'me',
+                cardSeq: Number(purchaseModel.creditCards[0].cardSeq)
+            };
+        } else {
+            // 入力されたクレジットカード
+            purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
+            creditCard = {
+                token: (<IGMO>purchaseModel.gmo).token
+            };
+        }
+        const createCreditCardAuthorizationArgs = {
+            transactionId: purchaseModel.transaction.id,
+            orderId: (<string>purchaseModel.orderId),
+            amount: purchaseModel.getReserveAmount(),
+            method: GMO.utils.util.Method.Lump,
+            creditCard: creditCard
+        };
+        try {
+            await sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+        } catch (err) {
+            log(createCreditCardAuthorizationArgs);
+            logger.error(
+                'SSKTS-APP:InputModule.submit createCreditCardAuthorization',
+                `in: ${createCreditCardAuthorizationArgs}`,
+                `err: ${err}`
+            );
+            throw ErrorUtilModule.ERROR_VALIDATION;
+        }
+        log('GMOオーソリ追加');
     }
 }

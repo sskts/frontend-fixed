@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const MVTK = require("@motionpicture/mvtk-service");
 const moment = require("moment");
+const MvtkUtilModule = require("../../modules/Purchase/Mvtk/MvtkUtilModule");
 const UtilModule = require("../../modules/Util/UtilModule");
 /**
  * 購入モデル
@@ -275,6 +277,93 @@ class PurchaseModel {
         this.orderId =
             `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS['02'])}`;
         this.orderCount += 1;
+    }
+    /**
+     * ムビチケ作品コード取得
+     * @memberof PurchaseModel
+     * @function getMvtkfilmCode
+     * @returns {string}
+     */
+    getMvtkfilmCode() {
+        if (this.individualScreeningEvent === null)
+            return '';
+        const titleCode = this.individualScreeningEvent.coaInfo.titleCode;
+        const titleBranchNum = this.individualScreeningEvent.coaInfo.titleBranchNum;
+        const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS['02']);
+        return `${titleCode}${branch}`;
+    }
+    /**
+     * ムビチケ着券情報取得
+     * @method getMvtkSeatInfoSync
+     */
+    getMvtkSeatInfoSync() {
+        if (this.individualScreeningEvent === null) {
+            return null;
+        }
+        if (this.seatReservationAuthorization === null) {
+            return null;
+        }
+        const mvtkPurchaseNoInfo = [];
+        const mvtkseat = [];
+        for (const reserveTicket of this.reserveTickets) {
+            const mvtk = this.mvtk.find((value) => {
+                return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
+            });
+            if (mvtk === undefined)
+                continue;
+            const mvtkTicket = mvtkPurchaseNoInfo.find((value) => (value.knyknrNo === mvtk.code));
+            if (mvtkTicket !== undefined) {
+                // 券種追加
+                const tcket = mvtkTicket.knshInfo.find((value) => (value.knshTyp === mvtk.ykknInfo.ykknshTyp));
+                if (tcket !== undefined) {
+                    // 枚数追加
+                    tcket.miNum = tcket.miNum + 1;
+                }
+                else {
+                    // 新規券種作成
+                    mvtkTicket.knshInfo.push({
+                        knshTyp: mvtk.ykknInfo.ykknshTyp,
+                        miNum: 1 //枚数
+                    });
+                }
+            }
+            else {
+                // 新規購入番号作成
+                mvtkPurchaseNoInfo.push({
+                    knyknrNo: mvtk.code,
+                    pinCd: UtilModule.base64Decode(mvtk.password),
+                    knshInfo: [
+                        {
+                            knshTyp: mvtk.ykknInfo.ykknshTyp,
+                            miNum: 1 //枚数
+                        }
+                    ]
+                });
+            }
+            mvtkseat.push({ zskCd: reserveTicket.seatCode });
+        }
+        if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
+            return null;
+        }
+        const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
+        const time = `${UtilModule.timeFormat(this.individualScreeningEvent.startDate, this.individualScreeningEvent.coaInfo.dateJouei)}:00`;
+        const systemReservationNumber = `${this.individualScreeningEvent.coaInfo.dateJouei}${this.seatReservationAuthorization.result.tmpReserveNum}`;
+        const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        return {
+            price: this.getMvtkPrice(),
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
+            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
+            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
+            kgygishSstmZskyykNo: systemReservationNumber,
+            kgygishUsrZskyykNo: String(this.seatReservationAuthorization.result.tmpReserveNum),
+            jeiDt: `${day} ${time}`,
+            kijYmd: day,
+            stCd: siteCode,
+            screnCd: this.individualScreeningEvent.coaInfo.screenCode,
+            knyknrNoInfo: mvtkPurchaseNoInfo,
+            zskInfo: mvtkseat,
+            skhnCd: this.getMvtkfilmCode() // 作品コード
+        };
     }
 }
 PurchaseModel.PERFORMANCE_STATE = 0;

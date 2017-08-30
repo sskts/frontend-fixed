@@ -30,10 +30,10 @@ purchaseRouter.post('/overlap/new', OverlapModule.newReserve);
 purchaseRouter.post('/overlap/prev', OverlapModule.prevReserve);
 //座席選択
 purchaseRouter.get('/seat/:id/', SeatModule.index);
-purchaseRouter.post('/seat/:id/', SeatModule.select);
+purchaseRouter.post('/seat/:id/', SeatModule.seatSelect);
 //券種選択
 purchaseRouter.get('/ticket', TicketModule.index);
-purchaseRouter.post('/ticket', TicketModule.select);
+purchaseRouter.post('/ticket', TicketModule.ticketSelect);
 //購入者情報入力
 purchaseRouter.get('/input', InputModule.index);
 purchaseRouter.post('/input', InputModule.purchaserInformationRegistration);

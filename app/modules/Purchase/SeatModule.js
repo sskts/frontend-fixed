@@ -115,14 +115,14 @@ exports.performanceChange = performanceChange;
 /**
  * 座席決定
  * @memberof Purchase.SeatModule
- * @function select
+ * @function seatSelect
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-function select(req, res, next) {
+function seatSelect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
@@ -169,7 +169,7 @@ function select(req, res, next) {
         }
     });
 }
-exports.select = select;
+exports.seatSelect = seatSelect;
 /**
  * 座席仮予約
  * @memberof Purchase.SeatModule

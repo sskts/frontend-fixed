@@ -88,10 +88,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
                     PIN_CD: value.password // PINコード
                 };
             }),
-            skhnCd: MvtkUtilModule.getfilmCode(
-                purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
-            ), // 作品コード
+            skhnCd: purchaseModel.getMvtkfilmCode(), // 作品コード
             stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
             jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
         };

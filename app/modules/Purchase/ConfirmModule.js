@@ -11,13 +11,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
-const moment = require("moment");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
-const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
 const log = debug('SSKTS:Purchase.ConfirmModule');
 /**
  * 購入者内容確認
@@ -70,42 +68,40 @@ exports.index = index;
  */
 function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (purchaseModel.reserveTickets === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.seatReservationAuthorization === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.individualScreeningEvent === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.mvtk === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
-        log('購入管理番号情報', mvtkInfo);
-        if (mvtkInfo === null)
+        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+        log('購入管理番号情報', mvtkSeatInfoSync);
+        if (mvtkSeatInfoSync === null)
             throw ErrorUtilModule.ERROR_ACCESS;
-        const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
-        // 興行会社ユーザー座席予約番号(予約番号)
-        const startDate = {
-            day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
-        };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
-            kgygishCd: MvtkUtilModule.COMPANY_CODE,
-            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
-            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-            // tslint:disable-next-line:max-line-length
-            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
-            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
-            jeiDt: `${startDate.day} ${startDate.time}`,
-            kijYmd: startDate.day,
-            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
-            screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-            knyknrNoInfo: mvtkInfo.purchaseNoInfo,
-            zskInfo: mvtkInfo.seat,
-            skhnCd: mvtkFilmCode // 作品コード
+            kgygishCd: mvtkSeatInfoSync.kgygishCd,
+            yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
+            trkshFlg: mvtkSeatInfoSync.trkshFlg,
+            kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
+            kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
+            jeiDt: mvtkSeatInfoSync.jeiDt,
+            kijYmd: mvtkSeatInfoSync.kijYmd,
+            stCd: mvtkSeatInfoSync.stCd,
+            screnCd: mvtkSeatInfoSync.screnCd,
+            knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
+                return {
+                    KNYKNR_NO: knyknrNoInfo.knyknrNo,
+                    PIN_CD: knyknrNoInfo.pinCd,
+                    KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
+                        return {
+                            KNSH_TYP: knshInfo.knshTyp,
+                            MI_NUM: String(knshInfo.miNum)
+                        };
+                    })
+                };
+            }),
+            zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
+                return {
+                    ZSK_CD: zskInfo.zskCd
+                };
+            }),
+            skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
         };
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
@@ -137,36 +133,40 @@ function cancelMvtk(req, res) {
         if (req.session.purchase === undefined)
             throw ErrorUtilModule.ERROR_EXPIRE;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-        if (purchaseModel.individualScreeningEvent === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.seatReservationAuthorization === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
         // 購入管理番号情報
-        const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
-        log('購入管理番号情報', mvtkInfo);
-        if (mvtkInfo === null)
+        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+        log('購入管理番号情報', mvtkSeatInfoSync);
+        if (mvtkSeatInfoSync === null)
             throw ErrorUtilModule.ERROR_ACCESS;
-        const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
-        // 興行会社ユーザー座席予約番号(予約番号)
-        const startDate = {
-            day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-            time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
-        };
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
-            kgygishCd: MvtkUtilModule.COMPANY_CODE,
-            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
-            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE,
-            // tslint:disable-next-line:max-line-length
-            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
-            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
-            jeiDt: `${startDate.day} ${startDate.time}`,
-            kijYmd: startDate.day,
-            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
-            screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-            knyknrNoInfo: mvtkInfo.purchaseNoInfo,
-            zskInfo: mvtkInfo.seat,
-            skhnCd: mvtkFilmCode // 作品コード
+            kgygishCd: mvtkSeatInfoSync.kgygishCd,
+            yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
+            trkshFlg: mvtkSeatInfoSync.trkshFlg,
+            kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
+            kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
+            jeiDt: mvtkSeatInfoSync.jeiDt,
+            kijYmd: mvtkSeatInfoSync.kijYmd,
+            stCd: mvtkSeatInfoSync.stCd,
+            screnCd: mvtkSeatInfoSync.screnCd,
+            knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
+                return {
+                    KNYKNR_NO: knyknrNoInfo.knyknrNo,
+                    PIN_CD: knyknrNoInfo.pinCd,
+                    KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
+                        return {
+                            KNSH_TYP: knshInfo.knshTyp,
+                            MI_NUM: String(knshInfo.miNum)
+                        };
+                    })
+                };
+            }),
+            zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
+                return {
+                    ZSK_CD: zskInfo.zskCd
+                };
+            }),
+            skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
         };
         let result = true;
         try {
@@ -302,9 +302,7 @@ function purchase(req, res) {
                         to: purchaseModel.profile.email,
                         subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
                         content: content,
-                        send_at: new Date(),
-                        id: '',
-                        group: ''
+                        send_at: new Date()
                     }
                 });
                 log('メール通知');

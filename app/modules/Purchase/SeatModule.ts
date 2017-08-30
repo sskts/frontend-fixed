@@ -106,14 +106,14 @@ interface ISelectSeats {
 /**
  * 座席決定
  * @memberof Purchase.SeatModule
- * @function select
+ * @function seatSelect
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function seatSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;

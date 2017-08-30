@@ -105,7 +105,7 @@ function select(req, res, next) {
                         PIN_CD: value.password // PINコード
                     };
                 }),
-                skhnCd: MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum),
+                skhnCd: purchaseModel.getMvtkfilmCode(),
                 stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
                 jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
             };

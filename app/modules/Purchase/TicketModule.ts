@@ -2,17 +2,14 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-import * as MVTK from '@motionpicture/mvtk-service';
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as moment from 'moment';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IReserveTicket, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
-import * as MvtkUtilModule from './Mvtk/MvtkUtilModule';
+import * as InputModule from './InputModule';
 const log = debug('SSKTS:Purchase.TicketModule');
 
 /**
@@ -123,7 +120,7 @@ export interface ISelectTicket {
 /**
  * 券種決定
  * @memberof Purchase.TicketModule
- * @function select
+ * @function ticketSelect
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
@@ -131,7 +128,7 @@ export interface ISelectTicket {
  */
 // tslint:disable-next-line:cyclomatic-complexity
 // tslint:disable-next-line:max-func-body-length
-export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function ticketSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
 
@@ -210,54 +207,12 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             }
             if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
                 // 購入管理番号情報
-                const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
-                log('購入管理番号情報', mvtkInfo);
-                if (mvtkInfo === null) throw ErrorUtilModule.ERROR_ACCESS;
-
-                const mvtkFilmCode = MvtkUtilModule.getfilmCode(
-                    purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                    purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
-                );
-                // 興行会社ユーザー座席予約番号(予約番号)
-                const startDate = {
-                    day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-                    time: `${ UtilModule.timeFormat(
-                        (<Date>purchaseModel.individualScreeningEvent.startDate),
-                        purchaseModel.individualScreeningEvent.coaInfo.dateJouei
-                    )}:00`
-                };
+                const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+                log('購入管理番号情報', mvtkSeatInfoSync);
+                if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ERROR_ACCESS;
                 const createMvtkAuthorizationArgs = {
                     transactionId: purchaseModel.transaction.id, // 取引情報
-                    mvtk: {
-                        price: purchaseModel.getMvtkPrice(), // 合計金額
-                        kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
-                        yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
-                        trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-                        // tslint:disable-next-line:max-line-length
-                        kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`, // 興行会社システム座席予約番号
-                        kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
-                        jeiDt: `${startDate.day} ${startDate.time}`, // 上映日時
-                        kijYmd: startDate.day, // 計上年月日
-                        stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
-                        screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
-                        knyknrNoInfo: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
-                            return {
-                                knyknrNo: purchaseNoInfo.KNYKNR_NO,
-                                pinCd: purchaseNoInfo.PIN_CD,
-                                knshInfo: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
-                                    return {
-                                        knshTyp: knshInfo.KNSH_TYP,
-                                        miNum: Number(knshInfo.MI_NUM)
-                                    };
-                                })
-                            };
-                        }), // 購入管理番号情報
-                        zskInfo: mvtkInfo.seat.map((seat) => {
-                            return { zskCd: seat.ZSK_CD };
-                        }), // 座席情報（itemArray）
-                        skhnCd: mvtkFilmCode // 作品コード
-                    }
-
+                    mvtk: mvtkSeatInfoSync
                 };
                 log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                 // tslint:disable-next-line:max-line-length
@@ -266,7 +221,13 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             }
             purchaseModel.save(req.session);
             log('セッション更新');
-            res.redirect('/purchase/input');
+
+            if (authModel.isMember() && purchaseModel.getReserveAmount() === 0) {
+                // 情報入力スキップ
+                InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+            } else {
+                res.redirect('/purchase/input');
+            }
 
             return;
         } else {
@@ -311,7 +272,6 @@ async function ticketValidation(
     purchaseModel: PurchaseModel,
     selectTickets: ISelectTicket[]
 ): Promise<IReserveTicket[]> {
-    if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ERROR_PROPERTY;
     if (purchaseModel.salesTickets === null) throw ErrorUtilModule.ERROR_PROPERTY;
 
     const result: IReserveTicket[] = [];

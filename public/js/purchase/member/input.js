@@ -20,7 +20,7 @@ $(function () {
      */
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
-        var isInputCreditCard = true;
+        var isInputCreditCard = ($('.payment').hasClass('active'));
 
         if (!isInputCreditCard) {
             loadingStart();

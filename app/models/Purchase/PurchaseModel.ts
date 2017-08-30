@@ -2,9 +2,11 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
+import * as MVTK from '@motionpicture/mvtk-service';
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import { Request } from 'express';
 import * as moment from 'moment';
+import * as MvtkUtilModule from '../../modules/Purchase/Mvtk/MvtkUtilModule';
 import * as UtilModule from '../../modules/Util/UtilModule';
 /**
  * 購入者情報
@@ -49,7 +51,7 @@ export interface IGMO {
 }
 
 /**
- * ムビチケ情報
+ * ムビチケ
  * @interface IMvtk
  */
 export interface IMvtk {
@@ -673,5 +675,108 @@ export class PurchaseModel {
         this.orderId =
             `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS['02'])}`;
         this.orderCount += 1;
+    }
+
+    /**
+     * ムビチケ作品コード取得
+     * @memberof PurchaseModel
+     * @function getMvtkfilmCode
+     * @returns {string}
+     */
+    public getMvtkfilmCode(): string {
+        if (this.individualScreeningEvent === null) return '';
+        const titleCode = this.individualScreeningEvent.coaInfo.titleCode;
+        const titleBranchNum = this.individualScreeningEvent.coaInfo.titleBranchNum;
+        const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS['02']);
+
+        return `${titleCode}${branch}`;
+    }
+
+    /**
+     * ムビチケ着券情報取得
+     * @method getMvtkSeatInfoSync
+     */
+    public getMvtkSeatInfoSync() {
+        if (this.individualScreeningEvent === null) {
+            return null;
+        }
+        if (this.seatReservationAuthorization === null) {
+            return null;
+        }
+
+        const mvtkPurchaseNoInfo: {
+            knyknrNo: string; // 購入管理番号（ムビチケ購入番号）
+            pinCd: string; // PINコード（ムビチケ暗証番号）
+            knshInfo: {
+                knshTyp: string; // 券種区分
+                miNum: number; // 枚数
+            }[];
+        }[] = [];
+        const mvtkseat: {
+            zskCd: string; // 座席コード
+        }[] = [];
+
+        for (const reserveTicket of this.reserveTickets) {
+            const mvtk = this.mvtk.find((value) => {
+                return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
+            });
+            if (mvtk === undefined) continue;
+            const mvtkTicket = mvtkPurchaseNoInfo.find((value) => (value.knyknrNo === mvtk.code));
+            if (mvtkTicket !== undefined) {
+                // 券種追加
+                const tcket = mvtkTicket.knshInfo.find((value) => (value.knshTyp === mvtk.ykknInfo.ykknshTyp));
+                if (tcket !== undefined) {
+                    // 枚数追加
+                    tcket.miNum = tcket.miNum + 1;
+                } else {
+                    // 新規券種作成
+                    mvtkTicket.knshInfo.push({
+                        knshTyp: mvtk.ykknInfo.ykknshTyp, //券種区分
+                        miNum: 1 //枚数
+                    });
+                }
+            } else {
+                // 新規購入番号作成
+                mvtkPurchaseNoInfo.push({
+                    knyknrNo: mvtk.code, //購入管理番号（ムビチケ購入番号）
+                    pinCd: UtilModule.base64Decode(mvtk.password), //PINコード（ムビチケ暗証番号）
+                    knshInfo: [
+                        {
+                            knshTyp: mvtk.ykknInfo.ykknshTyp, //券種区分
+                            miNum: 1 //枚数
+                        }
+                    ]
+                });
+            }
+            mvtkseat.push({ zskCd: reserveTicket.seatCode });
+        }
+        if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
+            return null;
+        }
+
+        const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
+        const time = `${UtilModule.timeFormat(
+            this.individualScreeningEvent.startDate,
+            this.individualScreeningEvent.coaInfo.dateJouei
+        )}:00`;
+        const systemReservationNumber =
+            `${this.individualScreeningEvent.coaInfo.dateJouei}${this.seatReservationAuthorization.result.tmpReserveNum}`;
+        const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
+
+        return {
+            price: this.getMvtkPrice(),
+            kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
+            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
+            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
+            kgygishSstmZskyykNo: systemReservationNumber, // 興行会社システム座席予約番号
+            kgygishUsrZskyykNo: String(this.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
+            jeiDt: `${day} ${time}`, // 上映日時
+            kijYmd: day, // 計上年月日
+            stCd: siteCode, // サイトコード
+            screnCd: this.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
+            knyknrNoInfo: mvtkPurchaseNoInfo, // 購入管理番号情報
+            zskInfo: mvtkseat, // 座席情報（itemArray）
+            skhnCd: this.getMvtkfilmCode()// 作品コード
+        };
     }
 }

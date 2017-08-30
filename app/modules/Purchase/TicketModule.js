@@ -12,16 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-const MVTK = require("@motionpicture/mvtk-service");
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
-const moment = require("moment");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
-const MvtkUtilModule = require("./Mvtk/MvtkUtilModule");
+const InputModule = require("./InputModule");
 const log = debug('SSKTS:Purchase.TicketModule');
 /**
  * 券種選択
@@ -96,7 +93,7 @@ exports.index = index;
 /**
  * 券種決定
  * @memberof Purchase.TicketModule
- * @function select
+ * @function ticketSelect
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
@@ -104,7 +101,7 @@ exports.index = index;
  */
 // tslint:disable-next-line:cyclomatic-complexity
 // tslint:disable-next-line:max-func-body-length
-function select(req, res, next) {
+function ticketSelect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
             next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
@@ -189,47 +186,13 @@ function select(req, res, next) {
                 }
                 if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
                     // 購入管理番号情報
-                    const mvtkInfo = MvtkUtilModule.createMvtkInfo(purchaseModel);
-                    log('購入管理番号情報', mvtkInfo);
-                    if (mvtkInfo === null)
+                    const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+                    log('購入管理番号情報', mvtkSeatInfoSync);
+                    if (mvtkSeatInfoSync === null)
                         throw ErrorUtilModule.ERROR_ACCESS;
-                    const mvtkFilmCode = MvtkUtilModule.getfilmCode(purchaseModel.individualScreeningEvent.coaInfo.titleCode, purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum);
-                    // 興行会社ユーザー座席予約番号(予約番号)
-                    const startDate = {
-                        day: `${moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD')}`,
-                        time: `${UtilModule.timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei)}:00`
-                    };
                     const createMvtkAuthorizationArgs = {
                         transactionId: purchaseModel.transaction.id,
-                        mvtk: {
-                            price: purchaseModel.getMvtkPrice(),
-                            kgygishCd: MvtkUtilModule.COMPANY_CODE,
-                            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC,
-                            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE,
-                            // tslint:disable-next-line:max-line-length
-                            kgygishSstmZskyykNo: `${purchaseModel.individualScreeningEvent.coaInfo.dateJouei}${purchaseModel.seatReservationAuthorization.result.tmpReserveNum}`,
-                            kgygishUsrZskyykNo: String(purchaseModel.seatReservationAuthorization.result.tmpReserveNum),
-                            jeiDt: `${startDate.day} ${startDate.time}`,
-                            kijYmd: startDate.day,
-                            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
-                            screnCd: purchaseModel.individualScreeningEvent.coaInfo.screenCode,
-                            knyknrNoInfo: mvtkInfo.purchaseNoInfo.map((purchaseNoInfo) => {
-                                return {
-                                    knyknrNo: purchaseNoInfo.KNYKNR_NO,
-                                    pinCd: purchaseNoInfo.PIN_CD,
-                                    knshInfo: purchaseNoInfo.KNSH_INFO.map((knshInfo) => {
-                                        return {
-                                            knshTyp: knshInfo.KNSH_TYP,
-                                            miNum: Number(knshInfo.MI_NUM)
-                                        };
-                                    })
-                                };
-                            }),
-                            zskInfo: mvtkInfo.seat.map((seat) => {
-                                return { zskCd: seat.ZSK_CD };
-                            }),
-                            skhnCd: mvtkFilmCode // 作品コード
-                        }
+                        mvtk: mvtkSeatInfoSync
                     };
                     log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                     // tslint:disable-next-line:max-line-length
@@ -238,7 +201,13 @@ function select(req, res, next) {
                 }
                 purchaseModel.save(req.session);
                 log('セッション更新');
-                res.redirect('/purchase/input');
+                if (authModel.isMember() && purchaseModel.getReserveAmount() === 0) {
+                    // 情報入力スキップ
+                    InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+                }
+                else {
+                    res.redirect('/purchase/input');
+                }
                 return;
             }
             else {
@@ -267,7 +236,7 @@ function select(req, res, next) {
         }
     });
 }
-exports.select = select;
+exports.ticketSelect = ticketSelect;
 /**
  * 券種検証
  * @memberof Purchase.TicketModule
@@ -281,8 +250,6 @@ exports.select = select;
 // tslint:disable-next-line:max-func-body-length
 function ticketValidation(req, res, purchaseModel, selectTickets) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (purchaseModel.individualScreeningEvent === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
         if (purchaseModel.salesTickets === null)
             throw ErrorUtilModule.ERROR_PROPERTY;
         const result = [];
