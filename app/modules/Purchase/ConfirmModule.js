@@ -101,7 +101,7 @@ function reserveMvtk(purchaseModel) {
                     ZSK_CD: zskInfo.zskCd
                 };
             }),
-            skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
+            skhnCd: mvtkSeatInfoSync.skhnCd
         };
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
@@ -134,7 +134,9 @@ function cancelMvtk(req, res) {
             throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         // 購入管理番号情報
-        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
+            deleteFlag: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE
+        });
         log('購入管理番号情報', mvtkSeatInfoSync);
         if (mvtkSeatInfoSync === null)
             throw ErrorUtilModule.ErrorType.Access;
@@ -166,13 +168,14 @@ function cancelMvtk(req, res) {
                     ZSK_CD: zskInfo.zskCd
                 };
             }),
-            skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
+            skhnCd: mvtkSeatInfoSync.skhnCd
         };
         let result = true;
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS)
+            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
                 throw ErrorUtilModule.ErrorType.Access;
+            }
         }
         catch (err) {
             result = false;
@@ -291,8 +294,12 @@ function purchase(req, res) {
                 };
             }
             else {
+                const theater = yield sasaki.service.place(options).findMovieTheater({
+                    branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
+                });
                 const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
                     purchaseModel: purchaseModel,
+                    theater: theater,
                     domain: req.headers.host
                 });
                 yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
@@ -301,8 +308,7 @@ function purchase(req, res) {
                         from: 'noreply@ticket-cinemasunshine.com',
                         to: purchaseModel.profile.email,
                         subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                        content: content,
-                        send_at: new Date()
+                        content: content
                     }
                 });
                 log('メール通知');

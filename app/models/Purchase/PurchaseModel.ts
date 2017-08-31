@@ -696,7 +696,11 @@ export class PurchaseModel {
      * ムビチケ着券情報取得
      * @method getMvtkSeatInfoSync
      */
-    public getMvtkSeatInfoSync() {
+    // tslint:disable-next-line:max-func-body-length
+    public getMvtkSeatInfoSync(options?: {
+        deleteFlag?: string
+        reservedDeviceType?: string
+    }) {
         if (this.individualScreeningEvent === null) {
             return null;
         }
@@ -762,21 +766,66 @@ export class PurchaseModel {
         const systemReservationNumber =
             `${this.individualScreeningEvent.coaInfo.dateJouei}${this.seatReservationAuthorization.result.tmpReserveNum}`;
         const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const deleteFlag = (options === undefined || !options.deleteFlag)
+            ? MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE
+            : options.deleteFlag;
+        const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
+            ? MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC
+            : options.reservedDeviceType;
 
         return {
+            /**
+             * ムビチケ合計金額
+             */
             price: this.getMvtkPrice(),
-            kgygishCd: MvtkUtilModule.COMPANY_CODE, // 興行会社コード
-            yykDvcTyp: MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC, // 予約デバイス区分
-            trkshFlg: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE, // 取消フラグ
-            kgygishSstmZskyykNo: systemReservationNumber, // 興行会社システム座席予約番号
-            kgygishUsrZskyykNo: String(this.seatReservationAuthorization.result.tmpReserveNum), // 興行会社ユーザー座席予約番号
-            jeiDt: `${day} ${time}`, // 上映日時
-            kijYmd: day, // 計上年月日
-            stCd: siteCode, // サイトコード
-            screnCd: this.individualScreeningEvent.coaInfo.screenCode, // スクリーンコード
-            knyknrNoInfo: mvtkPurchaseNoInfo, // 購入管理番号情報
-            zskInfo: mvtkseat, // 座席情報（itemArray）
-            skhnCd: this.getMvtkfilmCode()// 作品コード
+            /**
+             * 興行会社コード
+             */
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
+            /**
+             * 予約デバイス区分
+             */
+            yykDvcTyp: reservedDeviceType,
+            /**
+             * 取消フラグ
+             */
+            trkshFlg: deleteFlag,
+            /**
+             * 興行会社システム座席予約番号
+             */
+            kgygishSstmZskyykNo: systemReservationNumber,
+            /**
+             * 興行会社ユーザー座席予約番号
+             */
+            kgygishUsrZskyykNo: String(this.seatReservationAuthorization.result.tmpReserveNum),
+            /**
+             * 上映日時
+             */
+            jeiDt: `${day} ${time}`,
+            /**
+             * 計上年月日
+             */
+            kijYmd: day,
+            /**
+             * サイトコード
+             */
+            stCd: siteCode,
+            /**
+             * スクリーンコード
+             */
+            screnCd: this.individualScreeningEvent.coaInfo.screenCode,
+            /**
+             * 購入管理番号情報
+             */
+            knyknrNoInfo: mvtkPurchaseNoInfo,
+            /**
+             * 座席情報（itemArray）
+             */
+            zskInfo: mvtkseat,
+            /**
+             * 作品コード
+             */
+            skhnCd: this.getMvtkfilmCode()
         };
     }
 }

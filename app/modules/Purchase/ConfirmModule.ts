@@ -67,15 +67,15 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
-        kgygishCd: mvtkSeatInfoSync.kgygishCd, // 興行会社コード
-        yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp, // 予約デバイス区分
-        trkshFlg: mvtkSeatInfoSync.trkshFlg, // 取消フラグ
-        kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo, // 興行会社システム座席予約番号
-        kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo, // 興行会社ユーザー座席予約番号
-        jeiDt: mvtkSeatInfoSync.jeiDt, // 上映日時
-        kijYmd: mvtkSeatInfoSync.kijYmd, // 計上年月日
-        stCd: mvtkSeatInfoSync.stCd, // サイトコード
-        screnCd: mvtkSeatInfoSync.screnCd, // スクリーンコード
+        kgygishCd: mvtkSeatInfoSync.kgygishCd,
+        yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
+        trkshFlg: mvtkSeatInfoSync.trkshFlg,
+        kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
+        kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
+        jeiDt: mvtkSeatInfoSync.jeiDt,
+        kijYmd: mvtkSeatInfoSync.kijYmd,
+        stCd: mvtkSeatInfoSync.stCd,
+        screnCd: mvtkSeatInfoSync.screnCd,
         knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
             return {
                 KNYKNR_NO: knyknrNoInfo.knyknrNo,
@@ -87,13 +87,13 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
                     };
                 })
             };
-        }), // 購入管理番号情報
+        }),
         zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
             return {
                 ZSK_CD: zskInfo.zskCd
             };
-        }), // 座席情報（itemArray）
-        skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
+        }),
+        skhnCd: mvtkSeatInfoSync.skhnCd
     };
     try {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
@@ -125,20 +125,22 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
     const purchaseModel = new PurchaseModel(req.session.purchase);
     // 購入管理番号情報
-    const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
+    const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
+        deleteFlag: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE
+    });
     log('購入管理番号情報', mvtkSeatInfoSync);
     if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
-        kgygishCd: mvtkSeatInfoSync.kgygishCd, // 興行会社コード
-        yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp, // 予約デバイス区分
-        trkshFlg: mvtkSeatInfoSync.trkshFlg, // 取消フラグ
-        kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo, // 興行会社システム座席予約番号
-        kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo, // 興行会社ユーザー座席予約番号
-        jeiDt: mvtkSeatInfoSync.jeiDt, // 上映日時
-        kijYmd: mvtkSeatInfoSync.kijYmd, // 計上年月日
-        stCd: mvtkSeatInfoSync.stCd, // サイトコード
-        screnCd: mvtkSeatInfoSync.screnCd, // スクリーンコード
+        kgygishCd: mvtkSeatInfoSync.kgygishCd,
+        yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
+        trkshFlg: mvtkSeatInfoSync.trkshFlg,
+        kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
+        kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
+        jeiDt: mvtkSeatInfoSync.jeiDt,
+        kijYmd: mvtkSeatInfoSync.kijYmd,
+        stCd: mvtkSeatInfoSync.stCd,
+        screnCd: mvtkSeatInfoSync.screnCd,
         knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
             return {
                 KNYKNR_NO: knyknrNoInfo.knyknrNo,
@@ -150,18 +152,20 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
                     };
                 })
             };
-        }), // 購入管理番号情報
+        }),
         zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
             return {
                 ZSK_CD: zskInfo.zskCd
             };
-        }), // 座席情報（itemArray）
-        skhnCd: mvtkSeatInfoSync.skhnCd // 作品コード
+        }),
+        skhnCd: mvtkSeatInfoSync.skhnCd
     };
     let result = true;
     try {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) throw ErrorUtilModule.ErrorType.Access;
+        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
+            throw ErrorUtilModule.ErrorType.Access;
+        }
     } catch (err) {
         result = false;
         logger.error(
@@ -278,11 +282,15 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 updateReserveIn: updateReserveIn
             };
         } else {
+            const theater = await sasaki.service.place(options).findMovieTheater({
+                branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
+            });
             const content = await UtilModule.getEmailTemplate(
                 res,
                 `email/complete/${req.__('lang')}`,
                 {
                     purchaseModel: purchaseModel,
+                    theater: theater,
                     domain: req.headers.host
                 }
             );
@@ -292,8 +300,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     from: 'noreply@ticket-cinemasunshine.com',
                     to: purchaseModel.profile.email,
                     subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                    content: content,
-                    send_at: new Date()
+                    content: content
                 }
             });
             log('メール通知');

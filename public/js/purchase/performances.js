@@ -24,7 +24,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             sortType: 'chronological',
             error: null,
             timer: null,
-            viewType: null,
+            viewType: 0,
             views: []
         },
 
@@ -75,8 +75,8 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              */
             createviewType: function () {
                 this.views = [
-                    { value: '0', text: 'WEB'},
-                    { value: '1', text: 'APP'}
+                    { value: 0, text: 'WEB'},
+                    { value: 1, text: 'APP'}
                 ]
             },
             /**
@@ -237,15 +237,15 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                         sessionStorage.setItem('performances', json);
                     }
                 }
-                
-                if (this.viewType === '0') {
-                    location.href = '/purchase?id=' + id;
-                } else if (this.viewType === '1') {
-                    location.href = '/signIn?id=' + id;
-                } else {
+                if (isFixed()) {
                     location.href = '/purchase/fixed.html?id=' + id;
-                }
-                
+                } else {
+                    if (this.viewType === 0) {
+                        location.href = '/purchase?id=' + id;
+                    } else if (this.viewType === 1) {
+                        location.href = '/signIn?id=' + id;
+                    }
+                }               
             },
             /**
              * ソート選択
