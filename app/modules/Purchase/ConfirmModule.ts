@@ -285,6 +285,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             const theater = await sasaki.service.place(options).findMovieTheater({
                 branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
             });
+            log('劇場', theater);
             const content = await UtilModule.getEmailTemplate(
                 res,
                 `email/complete/${req.__('lang')}`,
@@ -294,6 +295,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     domain: req.headers.host
                 }
             );
+            log('メールテンプレート取得');
             await sasaki.service.transaction.placeOrder(options).sendEmailNotification({
                 transactionId: purchaseModel.transaction.id,
                 emailNotification: {

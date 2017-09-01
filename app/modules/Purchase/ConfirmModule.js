@@ -297,11 +297,13 @@ function purchase(req, res) {
                 const theater = yield sasaki.service.place(options).findMovieTheater({
                     branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
                 });
+                log('劇場', theater);
                 const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
                     purchaseModel: purchaseModel,
                     theater: theater,
                     domain: req.headers.host
                 });
+                log('メールテンプレート取得');
                 yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
                     transactionId: purchaseModel.transaction.id,
                     emailNotification: {

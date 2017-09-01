@@ -19,7 +19,8 @@ class AuthModel {
             'https://sskts-api-development.azurewebsites.net/transactions',
             'https://sskts-api-development.azurewebsites.net/events.read-only',
             'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-            'https://sskts-api-development.azurewebsites.net/orders.read-only'
+            'https://sskts-api-development.azurewebsites.net/orders.read-only',
+            'https://sskts-api-development.azurewebsites.net/places.read-only'
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;
@@ -39,7 +40,8 @@ class AuthModel {
                 clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
                 redirectUri: process.env.AUTH_REDIRECT_URI,
                 logoutUri: process.env.AUTH_LOGUOT_URI,
-                state: ''
+                state: this.state,
+                scopes: this.scopes
             });
             if (this.credentials !== null) {
                 auth.setCredentials(this.credentials);

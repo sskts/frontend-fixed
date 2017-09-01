@@ -34,12 +34,10 @@ function index(req, res, next) {
                     'https://sskts-api-development.azurewebsites.net/organizations.read-only',
                     'https://sskts-api-development.azurewebsites.net/people.contacts',
                     'https://sskts-api-development.azurewebsites.net/people.creditCards',
-                    'https://sskts-api-development.azurewebsites.net/people.ownershipInfos.read-only'
+                    'https://sskts-api-development.azurewebsites.net/people.ownershipInfos.read-only',
+                    'https://sskts-api-development.azurewebsites.net/places.read-only'
                 ];
                 const authModel = new AuthModel_1.AuthModel({
-                    domain: process.env.AUTH_DOMAIN,
-                    clientId: process.env.TEST_CLIENT_ID_OAUTH2,
-                    clientSecret: process.env.TEST_CLIENT_SECRET_OAUTH2,
                     scopes: scopes,
                     state: `${req.query.id}-${uuid.v1().replace(/\-/g, '')}`,
                     codeVerifier: uuid.v4().replace(/\-/g, ''),

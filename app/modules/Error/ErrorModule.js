@@ -64,11 +64,10 @@ function errorRender(err, req, res, _) {
         }
     }
     if (req.session !== undefined) {
-        // TODO
-        // delete req.session.purchase;
-        // delete req.session.mvtk;
-        // delete req.session.complete;
-        // delete req.session.auth;
+        delete req.session.purchase;
+        delete req.session.mvtk;
+        delete req.session.complete;
+        delete req.session.auth;
     }
     /**
      * エラーメッセージ

@@ -69,11 +69,10 @@ export function errorRender(err: Error | ErrorUtilModule.CustomError, req: Reque
     }
 
     if (req.session !== undefined) {
-        // TODO
-        // delete req.session.purchase;
-        // delete req.session.mvtk;
-        // delete req.session.complete;
-        // delete req.session.auth;
+        delete req.session.purchase;
+        delete req.session.mvtk;
+        delete req.session.complete;
+        delete req.session.auth;
     }
     /**
      * エラーメッセージ
