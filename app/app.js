@@ -12,7 +12,6 @@ const ipFilter_1 = require("./middlewares/ipFilter");
 const locales = require("./middlewares/locales");
 const maintenance_1 = require("./middlewares/maintenance");
 const session_1 = require("./middlewares/session");
-const SupertestRequest = require("./middlewares/supertestRequest");
 const UtilModule = require("./modules/Util/UtilModule");
 const router_1 = require("./routes/router");
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -46,8 +45,5 @@ app.use(UtilModule.setLocals); // viewSet
 app.use(expressValidator()); // バリデーション
 // ムビチケサービス初期化
 MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
-if (process.env.NODE_ENV === UtilModule.ENV.Development) {
-    app.use(SupertestRequest.supertestSession); // テスト用
-}
 router_1.default(app); // ルーティング
 module.exports = app;

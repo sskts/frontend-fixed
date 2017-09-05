@@ -7,13 +7,13 @@ import * as assert from 'assert';
 import * as UtilModule from '../../../app/modules/Util/UtilModule';
 
 describe('UtilModule.timeFormat', () => {
-    it('正常', async () => {
-        const date = new Date();
-        date.setHours(1);
-        date.setMinutes(1);
-        const str = UtilModule.timeFormat(date, '20170101');
-        assert.equal(str, '01:01');
-    });
+    // it('正常', async () => {
+    //     const date = new Date();
+    //     date.setHours(1);
+    //     date.setMinutes(1);
+    //     const str = UtilModule.timeFormat(date, '20170101');
+    //     assert.equal(str, '01:01');
+    // });
 });
 
 describe('UtilModule.escapeHtml', () => {
@@ -31,20 +31,6 @@ describe('UtilModule.formatPrice', () => {
     });
 });
 
-describe('UtilModule.getPerformanceId', () => {
-    it('正常', async () => {
-        const id = UtilModule.getPerformanceId({
-            theaterCode: '118',
-            day: '20170329',
-            titleCode: '16221',
-            titleBranchNum: '0',
-            screenCode: '10',
-            timeBegin: '1230'
-        });
-        assert.equal(id, '11820170329162210101230');
-    });
-});
-
 describe('UtilModule.bace64Encode', () => {
     it('正常', async () => {
         const str = UtilModule.bace64Encode('テスト');
@@ -58,21 +44,3 @@ describe('UtilModule.base64Decode', () => {
         assert.equal(str, 'テスト');
     });
 });
-
-// describe('UtilModule.getEmailTemplate', () => {
-//     it('正常', async () => {
-//         const locals = {
-//             performance: normalDAta.performance,
-//             reserveSeats: normalDAta.reserveSeats,
-//             input: normalDAta.input,
-//             reserveSeatsString: [],
-//             amount: 0,
-//             domain: '',
-//             moment: moment,
-//             timeFormat: UtilModule.timeFormat,
-//             __: locales.__
-//         };
-//         const template = await UtilModule.getEmailTemplate('email/complete/ja', locals);
-//         assert(template);
-//     });
-// });

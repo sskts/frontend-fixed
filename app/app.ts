@@ -11,7 +11,6 @@ import ipFilter from './middlewares/ipFilter';
 import * as locales from './middlewares/locales';
 import maintenance from './middlewares/maintenance';
 import session from './middlewares/session';
-import * as SupertestRequest from './middlewares/supertestRequest';
 import * as UtilModule from './modules/Util/UtilModule';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -56,10 +55,6 @@ MVTK.initialize(
     process.env.MVTK_ENDPOINT_SERVICE_02,
     process.env.MVTK_ENDPOINT_RESERVE_SERVICE
 );
-
-if (process.env.NODE_ENV === UtilModule.ENV.Development) {
-    app.use(SupertestRequest.supertestSession); // テスト用
-}
 
 router(app); // ルーティング
 

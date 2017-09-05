@@ -14,665 +14,154 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @ignore
  */
 // tslint:disable:no-backbone-get-set-outside-model
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const assert = require("assert");
 const httpStatus = require("http-status");
+const sinon = require("sinon");
 const supertest = require("supertest");
 const app = require("../../../app/app");
-const normalDAta = require("../data/normalData");
-describe('POST /transaction', () => {
-    it('start id なし', () => __awaiter(this, void 0, void 0, function* () {
+describe('スケジュール選択', () => {
+    let placeOrder;
+    beforeEach(() => {
+        placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
+            cancelSeatReservationAuthorization: () => {
+                return;
+            }
+        });
+    });
+    afterEach(() => {
+        placeOrder.restore();
+    });
+    it('render', () => __awaiter(this, void 0, void 0, function* () {
+        yield supertest(app)
+            .get('/purchase/performances')
+            .expect(httpStatus.OK)
+            .then((response) => {
+            assert(response);
+        });
+    }));
+    it('getPerformances', () => __awaiter(this, void 0, void 0, function* () {
+        yield supertest(app)
+            .post('/purchase/performances')
+            .send({
+            theater: '118',
+            day: '20170321'
+        })
+            .expect(httpStatus.OK)
+            .then((response) => {
+            assert(!response.body.error);
+            assert(Array.isArray(response.body.result));
+        });
+    }));
+});
+describe('取引作成', () => {
+    let place;
+    let organization;
+    beforeEach(() => {
+        place = sinon.stub(sasaki.service, 'place').returns({
+            findMovieTheater: () => {
+                return;
+            }
+        });
+        organization = sinon.stub(sasaki.service, 'organization').returns({
+            findMovieTheaterByBranchCode: () => {
+                return { id: '1111111111' };
+            }
+        });
+    });
+    afterEach(() => {
+        place.restore();
+        organization.restore();
+    });
+    it('start', () => __awaiter(this, void 0, void 0, function* () {
         yield supertest(app)
             .post('/purchase/transaction')
-            .expect(httpStatus.OK);
-    }));
-});
-describe('POST /:id/overlap', () => {
-    it('index 適切でないid', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/00000000000000000000000/overlap')
-            .expect(httpStatus.NOT_FOUND);
-    }));
-});
-describe('POST /overlap/new', () => {
-    it('newReserve 適切でないsession', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/overlap/new')
             .send({
-            session: {
-                expired: 9999999999,
-                transactionMP: null,
-                reserveSeats: null,
-                authorizationCOA: null,
-                performanceCOA: null
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('POST /overlap/prev', () => {
-    it('newReserve 正常', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/overlap/prev')
-            .expect(httpStatus.FOUND);
-    }));
-});
-describe('GET /seat/:id/', () => {
-    it('index 取引Id なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/seat/00000000000000000000000')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('POST /seat/:id/', () => {
-    it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/seat/00000000000000000000000')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select 取引Id なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/seat/00000000000000000000000')
-            .send({
-            session: {
-                purchase: {}
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/seat/00000000000000000000000')
-            .send({
-            session: {
-                purchase: {
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('GET /ticket', () => {
-    it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/ticket')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/ticket')
-            .query({
-            session: {
-                purchase: {
-                    expired: 9999999999,
-                    reserveSeats: normalDAta.reserveSeats,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/ticket')
-            .query({
-            session: {
-                purchase: {
-                    expired: 9999999999,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/ticket')
-            .query({
-            session: {
-                purchase: {
-                    expired: 9999999999,
-                    performance: normalDAta.performance,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('POST /ticket/', () => {
-    it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/ticket')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/ticket')
-            .send({
-            session: {
-                purchase: {
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/ticket')
-            .send({
-            session: {
-                purchase: {
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/ticket')
-            .send({
-            session: {
-                purchase: {
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/ticket')
-            .send({
-            session: {
-                purchase: {
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('GET /input', () => {
-    it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/input')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/input')
-            .query({
-            session: {
-                purchase: {
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/input')
-            .query({
-            session: {
-                purchase: {
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/input')
-            .query({
-            session: {
-                purchase: {
-                    reserveTickets: normalDAta.reserveTickets,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.reserveTickets', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/input')
-            .query({
-            session: {
-                purchase: {
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('POST /input/', () => {
-    it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.theater なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    performance: normalDAta.performance,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select session.purchase.reserveTickets なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('select 未入力', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    performanceCOA: normalDAta.performanceCOA,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '12345678',
-            lastNameHira: '',
-            firstNameHira: '',
-            mailAddr: '',
-            mailConfirm: '',
-            telNum: ''
-        })
-            .expect(httpStatus.OK);
-    }));
-    it('select 数字入力', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    performanceCOA: normalDAta.performanceCOA,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '12345678',
-            lastNameHira: 11111111111,
-            firstNameHira: 11111111111,
-            mailAddr: 11111111111,
-            mailConfirm: 11111111111,
-            telNum: 11111111111
-        })
-            .expect(httpStatus.OK);
-    }));
-    it('select アドレス違い', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .post('/purchase/input')
-            .send({
-            session: {
-                purchase: {
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    performanceCOA: normalDAta.performanceCOA,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '12345678',
-            lastNameHira: 'てすと',
-            firstNameHira: 'てすと',
-            mailAddr: 'test@test.jp',
-            mailConfirm: 'test2@test.jp',
-            telNum: '09012345678'
+            performanceId: '111111111'
         })
             .expect(httpStatus.OK);
     }));
 });
-describe('GET /confirm', () => {
-    it('index session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.performance なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .query({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .query({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.reserveSeats なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .query({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    reserveTickets: normalDAta.reserveTickets,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.reserveTickets なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .query({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.purchase.input なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/confirm')
-            .query({
-            session: {
-                purchase: {
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: normalDAta.transaction
-                }
-            }
-        })
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
-describe('POST /confirm/', () => {
-    it('select session.purchase なし', () => __awaiter(this, void 0, void 0, function* () {
-        const response = yield supertest(app)
-            .post('/purchase/confirm')
-            .expect(httpStatus.OK);
-        assert(!response.body.result);
-    }));
-    it('select 取引Id認証失敗', () => __awaiter(this, void 0, void 0, function* () {
-        const response = yield supertest(app)
-            .post('/purchase/confirm')
-            .send({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.OK);
-        assert(!response.body.result);
-    }));
-    it('select session.purchase.transactionMP なし', () => __awaiter(this, void 0, void 0, function* () {
-        const response = yield supertest(app)
-            .post('/purchase/confirm')
-            .send({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    expired: 9999999999,
-                    performance: normalDAta.performance
-                }
-            },
-            transactionId: '02345678'
-        })
-            .expect(httpStatus.OK);
-        assert(!response.body.result);
-    }));
-    it('select session.purchase.expired なし', () => __awaiter(this, void 0, void 0, function* () {
-        const response = yield supertest(app)
-            .post('/purchase/confirm')
-            .send({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '12345678'
-        })
-            .expect(httpStatus.OK);
-        assert(!response.body.result);
-    }));
-    it('select 有効期限切れ', () => __awaiter(this, void 0, void 0, function* () {
-        const response = yield supertest(app)
-            .post('/purchase/confirm')
-            .send({
-            session: {
-                purchase: {
-                    input: normalDAta.input,
-                    theater: normalDAta.theater,
-                    reserveTickets: normalDAta.reserveTickets,
-                    reserveSeats: normalDAta.reserveSeats,
-                    performance: normalDAta.performance,
-                    expired: 9999999999,
-                    transactionMP: {
-                        id: '12345678'
-                    }
-                }
-            },
-            transactionId: '12345678'
-        })
-            .expect(httpStatus.OK);
-        assert(!response.body.result);
-    }));
-});
-describe('GET /complete/', () => {
-    it('index session.complete なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/complete')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-    it('index session.complete なし', () => __awaiter(this, void 0, void 0, function* () {
-        yield supertest(app)
-            .get('/purchase/complete')
-            .expect(httpStatus.BAD_REQUEST);
-    }));
-});
+// describe('POST /:id/overlap', () => {
+//     it('index 適切でないid', async () => {
+//         await supertest(app)
+//             .post('/purchase/00000000000000000000000/overlap')
+//             .expect(httpStatus.NOT_FOUND);
+//     });
+// });
+// describe('POST /overlap/prev', () => {
+//     it('newReserve 正常', async () => {
+//         await supertest(app)
+//             .post('/purchase/overlap/prev')
+//             .expect(httpStatus.FOUND);
+//     });
+// });
+// describe('GET /seat/:id/', () => {
+//     it('index 取引Id なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/seat/00000000000000000000000')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('POST /seat/:id/', () => {
+//     it('select session.purchase なし', async () => {
+//         await supertest(app)
+//             .post('/purchase/seat/00000000000000000000000')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('GET /ticket', () => {
+//     it('index session.purchase なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/ticket')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('POST /ticket/', () => {
+//     it('select session.purchase なし', async () => {
+//         await supertest(app)
+//             .post('/purchase/ticket')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('GET /input', () => {
+//     it('index session.purchase なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/input')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('POST /input/', () => {
+//     it('select session.purchase なし', async () => {
+//         await supertest(app)
+//             .post('/purchase/input')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('GET /confirm', () => {
+//     it('index session.purchase なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/confirm')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });
+// describe('POST /confirm/', () => {
+//     it('select session.purchase なし', async () => {
+//         const response = await supertest(app)
+//             .post('/purchase/confirm')
+//             .expect(httpStatus.OK);
+//         assert(!response.body.result);
+//     });
+// });
+// describe('GET /complete/', () => {
+//     it('index session.complete なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/complete')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+//     it('index session.complete なし', async () => {
+//         await supertest(app)
+//             .get('/purchase/complete')
+//             .expect(httpStatus.BAD_REQUEST);
+//     });
+// });

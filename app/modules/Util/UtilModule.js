@@ -97,23 +97,6 @@ function formatPrice(price) {
 }
 exports.formatPrice = formatPrice;
 /**
- * パフォーマンスID取得
- * @memberof Util.UtilModule
- * @function getPerformanceId
- * @param {Object} args
- * @param {string} args.theaterCode
- * @param {string} args.day
- * @param {string} args.titleCode
- * @param {string} args.titleBranchNum
- * @param {string} args.screenCode
- * @param {string} args.timeBegin
- * @returns {string}
- */
-function getPerformanceId(args) {
-    return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
-}
-exports.getPerformanceId = getPerformanceId;
-/**
  * ベース64エンコード
  * @memberof Util.UtilModule
  * @function bace64Encode
