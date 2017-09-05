@@ -2,7 +2,7 @@
 この度は、<%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %>のオンライン先売りチケットサービスにてご購入頂き、誠にありがとうございます。お客様がご購入されましたチケットの情報は下記の通りです。
 
 [予約番号]
-<%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %>
+<%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %>
 
 [鑑賞日時]
 <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %> - <%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %>

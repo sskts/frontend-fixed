@@ -80,7 +80,7 @@ class AuthModel {
      * @returns {boolean}
      */
     isMember() {
-        return (this.memberType !== MemberType.NonMember);
+        return (this.memberType === MemberType.Member);
     }
 }
 exports.AuthModel = AuthModel;

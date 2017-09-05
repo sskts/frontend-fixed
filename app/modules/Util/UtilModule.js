@@ -26,6 +26,7 @@ function setLocals(req, res, next) {
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
     res.locals.webhookApiEndPoint = process.env.SSKTS_WEBHOOK_ENDPOINT;
+    res.locals.appSiteUrl = process.env.APP_SITE_URL;
     // クッキーからアプリ判定
     res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();

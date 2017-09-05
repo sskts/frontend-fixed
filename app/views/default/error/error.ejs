@@ -3,6 +3,10 @@
     <h1 class="page-ttl"><%- __('error.page_ttl') %></h1>
     <p class="read"><%- (message) ? message : __('common.error.access') %></p>
     <div class="button-area clearfix">
-        <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('error.prev') %></a></div>
+        <% if (viewType === 'app') { %>
+            <div class="prev-link"><a class="icon-prev-black"href="<%- appSiteUrl %>/purchase"><%- __('error.prev') %></a></div>
+        <% } else { %>
+            <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('error.prev') %></a></div>
+        <% } %>
     </div>
 </div>

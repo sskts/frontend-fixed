@@ -41,7 +41,7 @@
             </li>
             <% } %>
             <% } else { %>
-                <% for (let seat of purchaseModel.seatReservationAuthorization.result.listTmpReserve) { %>
+                <% for (let seat of purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve) { %>
             <li data-section="<%= seat.seatSection %>"
                 data-seat-code="<%= seat.seatNum %>"
                 data-ticket-code=""

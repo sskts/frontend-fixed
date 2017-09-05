@@ -7,7 +7,7 @@
             <dl>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <strong class="red-text large-x-text"><%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %></strong>
+                    <strong class="red-text large-x-text"><%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %></strong>
                     <p class="small-x-text"><%- __('purchase.complete.reserve_read') %></p>
                 </dd>
             </dl>
@@ -56,6 +56,20 @@
         </li>
     </ul>
 
+    <% if (viewType === 'app') { %>    
+    <dl class="box radius bg-light-gray">
+        <dt class="mb-small text-center">
+            <strong><%- __('purchase.complete.ticket_holder.title') %></strong>
+        </dt>
+        <dd>
+            <div class="image mb-x-small bg-white"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
+            <p class="mb-small"><%- __('purchase.complete.ticket_holder.read') %></p>
+            <div class="button blue-button center-button">
+                <a href="<%- appSiteUrl %>/ticket-holder"><%= __('common.close') %></a>
+            </div>
+        </dd>
+    </dl>
+    <% } else { %>
     <div class="mb-x-large">
         <p class="mb-middle small-x-text"><%- __('purchase.complete.print_read') %></p>
         <div class="button dark-blue-button print-button center-button not-print">
@@ -69,14 +83,14 @@
         <ul class="entry-method">
             <li>
                 <dl class="box radius bg-light-gray">
-                    <dt class="mb-x-small text-center mb-x-small">
+                    <dt class="mb-x-small text-center">
                         <strong><%- __('purchase.complete.entry_title') %></strong>
                     </dt>
                     <dd>
                         <p class="mb-small"><%- __('purchase.complete.entry_read_01') %></p>
                         <div class="image mb-x-small"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
                         <div class="button blue-button inquiry-button mb-small center-button">
-                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>&reserve=<%= purchaseModel.seatReservationAuthorization.result.tmpReserveNum %>" target="_blank"><%- __('purchase.complete.entry_button') %></a>
+                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>&reserve=<%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %>" target="_blank"><%- __('purchase.complete.entry_button') %></a>
                         </div>
                         <p><%- __('purchase.complete.entry_read_02') %></p>
                     </dd>
@@ -88,4 +102,5 @@
             <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('purchase.complete.prev') %></a></div>
         </div>
     </div>
+    <% } %>    
 </div>

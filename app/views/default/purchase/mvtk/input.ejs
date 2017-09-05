@@ -6,7 +6,7 @@
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
         
     <div class="ticket-list mb-middle">
-        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.listTmpReserve.length; i++) { %>
+        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length; i++) { %>
         <% if (mvtkInfo[i] !== undefined) { %>
         <div class="mvtk-box active">
             <div class="button light-gray-button remove-button">
@@ -58,7 +58,7 @@
         <% } %>
         <% } %>
     </div>   
-    <% if (purchaseModel.seatReservationAuthorization.result.listTmpReserve.length > 1) { %>
+    <% if (purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length > 1) { %>
     <div class="button dark-blue-button add-button mb-middle center-button">
         <a class="icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
@@ -67,7 +67,7 @@
     
     <div class="box radius bg-light-gray mb-small">
         <div class="box-ttl"><%- __('purchase.mvtk.input.select_seat') %></div>
-        <div class="text-right large-text"><strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.result.listTmpReserve.length) %></strong></div>
+        <div class="text-right large-text"><strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length) %></strong></div>
     </div>
 
     <p class="small-x-text"><%- __('purchase.mvtk.input.note') %></p>

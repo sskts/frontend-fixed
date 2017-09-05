@@ -130,7 +130,7 @@ export class AuthModel {
      * @returns {boolean}
      */
     public isMember(): boolean {
-        return (this.memberType !== MemberType.NonMember);
+        return (this.memberType === MemberType.Member);
     }
 }
 

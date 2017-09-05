@@ -446,8 +446,6 @@ p a {
 
 .form-layout dl {
   margin-bottom: 0;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex; }
   @media screen and (max-width: 767px) {
     .form-layout dl {
@@ -802,18 +800,15 @@ p a {
 .modal-cover.active,
 .modal.active {
   visibility: visible;
-  -webkit-animation: fadein 0.4s both;
-          animation: fadein 0.4s both; }
+  animation: fadein 0.4s both; }
 
 .modal-cover.disabled,
 .modal.disabled {
   visibility: visible;
-  -webkit-animation: fadeout 0.4s both;
-          animation: fadeout 0.4s both; }
+  animation: fadeout 0.4s both; }
 
 .blur {
-  -webkit-filter: blur(5px);
-          filter: blur(5px); }
+  filter: blur(5px); }
 
 .loading-cover {
   opacity: 0;
@@ -829,8 +824,7 @@ p a {
 .loading-cover.active,
 .loading.active {
   visibility: visible;
-  -webkit-animation: fadein 0.4s both;
-          animation: fadein 0.4s both; }
+  animation: fadein 0.4s both; }
 
 .loading {
   opacity: 0;
@@ -850,30 +844,24 @@ p a {
   background-color: #FFF;
   display: inline-block;
   margin-right: 13px;
-  -webkit-animation: loading 1s infinite;
-          animation: loading 1s infinite; }
+  animation: loading 1s infinite; }
   .loading div:last-child {
     margin-right: 0; }
 
 .loading .bar1 {
-  -webkit-animation-delay: 0.5s;
-          animation-delay: 0.5s; }
+  animation-delay: 0.5s; }
 
 .loading .bar2 {
-  -webkit-animation-delay: 0.6s;
-          animation-delay: 0.6s; }
+  animation-delay: 0.6s; }
 
 .loading .bar3 {
-  -webkit-animation-delay: 0.7s;
-          animation-delay: 0.7s; }
+  animation-delay: 0.7s; }
 
 .loading .bar4 {
-  -webkit-animation-delay: 0.8s;
-          animation-delay: 0.8s; }
+  animation-delay: 0.8s; }
 
 .loading .bar5 {
-  -webkit-animation-delay: 0.9s;
-          animation-delay: 0.9s; }
+  animation-delay: 0.9s; }
 
 .site-seal {
   margin-top: 60px; }
@@ -883,39 +871,15 @@ p a {
   .site-seal p {
     color: #737373; }
 
-@-webkit-keyframes loading {
-  30% {
-    -webkit-transform: scaleY(2);
-            transform: scaleY(2); } }
-
 @keyframes loading {
   30% {
-    -webkit-transform: scaleY(2);
-            transform: scaleY(2); } }
-
-@-webkit-keyframes zoom {
-  0% {
-    -webkit-transform: scale(0.5);
-            transform: scale(0.5); }
-  100% {
-    -webkit-transform: scale(1);
-            transform: scale(1); } }
+    transform: scaleY(2); } }
 
 @keyframes zoom {
   0% {
-    -webkit-transform: scale(0.5);
-            transform: scale(0.5); }
+    transform: scale(0.5); }
   100% {
-    -webkit-transform: scale(1);
-            transform: scale(1); } }
-
-@-webkit-keyframes fadein {
-  0% {
-    visibility: hidden;
-    opacity: 0; }
-  100% {
-    visibility: visible;
-    opacity: 1; } }
+    transform: scale(1); } }
 
 @keyframes fadein {
   0% {
@@ -924,14 +888,6 @@ p a {
   100% {
     visibility: visible;
     opacity: 1; } }
-
-@-webkit-keyframes fadeout {
-  0% {
-    visibility: visible;
-    opacity: 1; }
-  100% {
-    visibility: hidden;
-    opacity: 0; } }
 
 @keyframes fadeout {
   0% {
@@ -995,9 +951,7 @@ p a {
   width: 15px;
   height: 15px;
   margin-top: -7.5px;
-  -webkit-transform: rotate(-180deg);
-      -ms-transform: rotate(-180deg);
-          transform: rotate(-180deg); }
+  transform: rotate(-180deg); }
 
 .icon-prev-black:before {
   content: '';
@@ -1156,12 +1110,8 @@ p a {
     .purchase-seat .seat-info {
       padding: 0 20px 10px; } }
   .purchase-seat .seat-info .box {
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-justify-content: center;
-        -ms-flex-pack: center;
-            justify-content: center; }
+    justify-content: center; }
 
 .purchase-seat .film-info {
   background-color: #3e3a39;
@@ -1267,20 +1217,14 @@ p a {
 
 .purchase-input .column-02 {
   overflow: hidden;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
   max-width: 706px;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between; }
+  justify-content: space-between; }
   @media screen and (max-width: 767px) {
     .purchase-input .column-02 {
       display: block; } }
   .purchase-input .column-02 dl {
     margin-bottom: 0;
-    display: -webkit-flex;
-    display: -ms-flexbox;
     display: flex;
     width: 318px; }
     @media screen and (max-width: 1024px) {
@@ -1426,8 +1370,6 @@ p a {
 
 .purchase-performances .sort {
   margin: 0 auto;
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
   border-radius: 5px;
   border: 1px solid #FFF; }
@@ -1455,21 +1397,13 @@ p a {
     .purchase-performances .chronological-order li a {
       border: 2px solid #AFAFAF; }
       .purchase-performances .chronological-order li a dl {
-        display: -webkit-flex;
-        display: -ms-flexbox;
         display: flex; }
         .purchase-performances .chronological-order li a dl dt {
           width: 180px;
           padding: 10px 10px 10px 20px;
-          display: -webkit-flex;
-          display: -ms-flexbox;
           display: flex;
-          -webkit-justify-content: space-between;
-              -ms-flex-pack: justify;
-                  justify-content: space-between;
-          -webkit-align-items: center;
-              -ms-flex-align: center;
-                  align-items: center; }
+          justify-content: space-between;
+          align-items: center; }
           @media screen and (max-width: 767px) {
             .purchase-performances .chronological-order li a dl dt {
               width: 50%;
@@ -1505,12 +1439,8 @@ p a {
       background-color: #2d2d2d;
       padding: 20px 20px 0; }
       .purchase-performances .film-order li > dl > dd ul {
-        display: -webkit-flex;
-        display: -ms-flexbox;
         display: flex;
-        -webkit-flex-wrap: wrap;
-            -ms-flex-wrap: wrap;
-                flex-wrap: wrap;
+        flex-wrap: wrap;
         margin: 0 0 0 -10px; }
         .purchase-performances .film-order li > dl > dd ul li {
           width: 25%;
@@ -1530,15 +1460,9 @@ p a {
             .purchase-performances .film-order li > dl > dd ul li a dl dt {
               padding: 10px 15px;
               border-bottom: 1px solid #777777;
-              display: -webkit-flex;
-              display: -ms-flexbox;
               display: flex;
-              -webkit-justify-content: space-between;
-                  -ms-flex-pack: justify;
-                      justify-content: space-between;
-              -webkit-align-items: center;
-                  -ms-flex-align: center;
-                      align-items: center; }
+              justify-content: space-between;
+              align-items: center; }
               .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
                 width: 30px; }
             .purchase-performances .film-order li > dl > dd ul li a dl dd {
@@ -1725,9 +1649,7 @@ p a {
 
 .zoom .screen-scroll {
   overflow: auto;
-  transition: -webkit-transform 0.2s;
-  transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s; }
+  transition: transform 0.2s; }
 
 .zoom .seat a span {
   display: block; }
@@ -1757,18 +1679,10 @@ p a {
     max-width: 360px; }
 
 .inquiry-confirm .tickets {
-  display: -webkit-flex;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-justify-content: space-between;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-align-items: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
-  -webkit-flex-wrap: wrap;
-      -ms-flex-wrap: wrap;
-          flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: wrap;
   margin: 0 -10px; }
 
 .inquiry-confirm .ticket {
@@ -1820,3 +1734,31 @@ p a {
 @media print {
   .not-print {
     display: none; } }
+
+.app {
+  background-color: #000;
+  padding-top: 44px; }
+  .app .wrapper {
+    margin-top: 0; }
+  .app .header {
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1B1464;
+    border-radius: 0;
+    border: none;
+    padding: 0; }
+    .app .header .close a {
+      display: inline-block;
+      padding: 15px;
+      color: #FFF; }
+  .app .footer {
+    display: none; }
+  .app .site-seal {
+    display: none; }
+  .app .next-button button, .app .next-button a {
+    border-radius: 32px; }
+  .app .next-button .icon-next-white:before {
+    display: none; }
