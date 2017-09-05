@@ -323,7 +323,8 @@ async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Pr
             creditCard: creditCard
         };
         try {
-            await sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+            purchaseModel.creditCardAuthorization = await sasaki.service.transaction.placeOrder(options)
+                .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
         } catch (err) {
             log(createCreditCardAuthorizationArgs);
             logger.error(

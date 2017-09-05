@@ -218,8 +218,8 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                     mvtk: mvtkSeatInfoSync
                 };
                 log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
-                // tslint:disable-next-line:max-line-length
-                purchaseModel.mvtkAuthorization = await sasaki.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
+                purchaseModel.mvtkAuthorization = await sasaki.service.transaction.placeOrder(options)
+                    .createMvtkAuthorization(createMvtkAuthorizationArgs);
                 log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
             }
             purchaseModel.save(req.session);

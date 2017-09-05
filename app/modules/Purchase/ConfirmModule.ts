@@ -244,7 +244,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
                 titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
                 timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin,
-                tmpReserveNum: purchaseModel.seatReservationAuthorization.result.tmpReserveNum,
+                tmpReserveNum: purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum,
                 reserveName: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
                 reserveNameJkana: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
                 telNum: purchaseModel.profile.telephone,
