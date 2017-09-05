@@ -774,7 +774,7 @@ export class PurchaseModel {
         const systemReservationNumber =
             `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
         const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
-        const deleteFlag = (options === undefined || !options.deleteFlag)
+        const deleteFlag = (options === undefined || options.deleteFlag === undefined)
             ? MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE
             : options.deleteFlag;
         const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
@@ -782,10 +782,6 @@ export class PurchaseModel {
             : options.reservedDeviceType;
 
         return {
-            /**
-             * ムビチケ合計金額
-             */
-            price: this.getMvtkPrice(),
             /**
              * 興行会社コード
              */

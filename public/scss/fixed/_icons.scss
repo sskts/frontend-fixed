@@ -60,6 +60,22 @@
     }
 }
 
+.icon-prev-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_prev_gray.svg);
+        background-repeat: no-repeat;
+    }
+}
+
 .icon-top-blue {
     &:before {
         content: '';
@@ -72,6 +88,21 @@
         height: 24px;
         background-size: 25px 24px;
         background-image: url(/images/fixed/icon/icon_top_blue.svg);
+        background-repeat: no-repeat;
+    }
+}
+.icon-top-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_top_gray.svg);
         background-repeat: no-repeat;
     }
 }
@@ -104,6 +135,22 @@
         height: 24px;
         background-size: 25px 24px;
         background-image: url(/images/fixed/icon/icon_ticketing_blue.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-ticketing-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_ticketing_gray.svg);
         background-repeat: no-repeat;
     }
 }

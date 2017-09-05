@@ -68,7 +68,8 @@ function render(req, res, next) {
                     });
                     log('会員クレジット情報取得', purchaseModel.creditCards);
                     purchaseModel.creditCards = creditCards.filter((creditCard) => {
-                        return (!creditCard.deleteFlag);
+                        // GMO定数へ変更
+                        return (creditCard.deleteFlag === '0');
                     });
                 }
             }
@@ -195,23 +196,25 @@ function ticketSelect(req, res, next) {
                         throw ErrorUtilModule.ErrorType.Access;
                     const createMvtkAuthorizationArgs = {
                         transactionId: purchaseModel.transaction.id,
-                        mvtk: mvtkSeatInfoSync
+                        mvtk: {
+                            price: purchaseModel.getMvtkPrice(),
+                            seatInfoSyncIn: mvtkSeatInfoSync
+                        }
                     };
                     log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
-                    // tslint:disable-next-line:max-line-length
-                    purchaseModel.mvtkAuthorization = yield sasaki.service.transaction.placeOrder(options).createMvtkAuthorization(createMvtkAuthorizationArgs);
+                    purchaseModel.mvtkAuthorization = yield sasaki.service.transaction.placeOrder(options)
+                        .createMvtkAuthorization(createMvtkAuthorizationArgs);
                     log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
                 }
                 purchaseModel.save(req.session);
                 log('セッション更新');
                 if (authModel.isMember() && purchaseModel.getReserveAmount() === 0) {
                     // 情報入力スキップ
-                    InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+                    yield InputModule.purchaserInformationRegistrationOfMember(req, res, next);
                 }
                 else {
                     res.redirect('/purchase/input');
                 }
-                return;
             }
             else {
                 throw ErrorUtilModule.ErrorType.Access;
@@ -235,7 +238,6 @@ function ticketSelect(req, res, next) {
                 ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
-            return;
         }
     });
 }

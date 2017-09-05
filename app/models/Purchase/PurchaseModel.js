@@ -272,7 +272,7 @@ class PurchaseModel {
         }
         // GMOオーソリ取得
         const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['03']);
-        const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.tmpReserveNum}`.slice(UtilModule.DIGITS['08']);
+        const tmpReserveNum = `00000000${this.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum}`.slice(UtilModule.DIGITS['08']);
         // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
         this.orderId =
             `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS['02'])}`;
@@ -348,19 +348,16 @@ class PurchaseModel {
         }
         const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
         const time = `${UtilModule.timeFormat(this.individualScreeningEvent.startDate, this.individualScreeningEvent.coaInfo.dateJouei)}:00`;
-        const systemReservationNumber = `${this.individualScreeningEvent.coaInfo.dateJouei}${this.seatReservationAuthorization.result.tmpReserveNum}`;
+        const tmpReserveNum = this.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum;
+        const systemReservationNumber = `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
         const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
-        const deleteFlag = (options === undefined || !options.deleteFlag)
+        const deleteFlag = (options === undefined || options.deleteFlag === undefined)
             ? MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE
             : options.deleteFlag;
         const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
             ? MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC
             : options.reservedDeviceType;
         return {
-            /**
-             * ムビチケ合計金額
-             */
-            price: this.getMvtkPrice(),
             /**
              * 興行会社コード
              */
@@ -380,7 +377,7 @@ class PurchaseModel {
             /**
              * 興行会社ユーザー座席予約番号
              */
-            kgygishUsrZskyykNo: String(this.seatReservationAuthorization.result.tmpReserveNum),
+            kgygishUsrZskyykNo: String(tmpReserveNum),
             /**
              * 上映日時
              */

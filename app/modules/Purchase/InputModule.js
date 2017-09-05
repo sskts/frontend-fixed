@@ -341,7 +341,8 @@ function creditCardProsess(req, purchaseModel) {
                 creditCard: creditCard
             };
             try {
-                yield sasaki.service.transaction.placeOrder(options).createCreditCardAuthorization(createCreditCardAuthorizationArgs);
+                purchaseModel.creditCardAuthorization = yield sasaki.service.transaction.placeOrder(options)
+                    .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
             }
             catch (err) {
                 log(createCreditCardAuthorizationArgs);

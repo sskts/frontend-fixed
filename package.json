@@ -19,7 +19,7 @@
     "preversion": "npm run clean && npm run build && npm run css && npm test",
     "version": "git add -A",
     "postversion": "git push origin --tags",
-    "nyc": "nyc mocha"
+    "nyc": "nyc mocha --no-timeouts --recursive"
   },
   "dependencies": {
     "@motionpicture/coa-service": "^4.0.1",

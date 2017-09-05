@@ -55,7 +55,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
                 });
                 log('会員クレジット情報取得', purchaseModel.creditCards);
                 purchaseModel.creditCards = creditCards.filter((creditCard) => {
-                    return (!creditCard.deleteFlag);
+                    // GMO定数へ変更
+                    return (creditCard.deleteFlag === '0');
                 });
             }
         }
@@ -215,7 +216,10 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
                 const createMvtkAuthorizationArgs = {
                     transactionId: purchaseModel.transaction.id, // 取引情報
-                    mvtk: mvtkSeatInfoSync
+                    mvtk: {
+                        price: purchaseModel.getMvtkPrice(),
+                        seatInfoSyncIn: mvtkSeatInfoSync
+                    }
                 };
                 log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
                 purchaseModel.mvtkAuthorization = await sasaki.service.transaction.placeOrder(options)
@@ -227,12 +231,10 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
 
             if (authModel.isMember() && purchaseModel.getReserveAmount() === 0) {
                 // 情報入力スキップ
-                InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+                await InputModule.purchaserInformationRegistrationOfMember(req, res, next);
             } else {
                 res.redirect('/purchase/input');
             }
-
-            return;
         } else {
             throw ErrorUtilModule.ErrorType.Access;
         }
@@ -253,8 +255,6 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-
-        return;
     }
 }
 
