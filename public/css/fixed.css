@@ -168,15 +168,15 @@ img {
     background-position: -3060px 0; } }
 
 @-webkit-keyframes flash {
-  from, 50%, to {
+  from, 25%, 50%, 75%, to {
     opacity: 1; }
-  25%, 75% {
+  12.5%, 37.5%, 62.5%, 87.5% {
     opacity: 0; } }
 
 @keyframes flash {
-  from, 50%, to {
+  from, 25%, 50%, 75%, to {
     opacity: 1; }
-  25%, 75% {
+  12.5%, 37.5%, 62.5%, 87.5% {
     opacity: 0; } }
 
 .icon-triangle-white:before {
@@ -229,6 +229,19 @@ img {
   background-image: url(/images/fixed/icon/icon_prev_blue.svg);
   background-repeat: no-repeat; }
 
+.icon-prev-gray:before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -12.5px;
+  display: block;
+  width: 25px;
+  height: 24px;
+  background-size: 25px 24px;
+  background-image: url(/images/fixed/icon/icon_prev_gray.svg);
+  background-repeat: no-repeat; }
+
 .icon-top-blue:before {
   content: '';
   position: absolute;
@@ -240,6 +253,19 @@ img {
   height: 24px;
   background-size: 25px 24px;
   background-image: url(/images/fixed/icon/icon_top_blue.svg);
+  background-repeat: no-repeat; }
+
+.icon-top-gray:before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -12.5px;
+  display: block;
+  width: 25px;
+  height: 24px;
+  background-size: 25px 24px;
+  background-image: url(/images/fixed/icon/icon_top_gray.svg);
   background-repeat: no-repeat; }
 
 .icon-ticketing-white:before {
@@ -266,6 +292,19 @@ img {
   height: 24px;
   background-size: 25px 24px;
   background-image: url(/images/fixed/icon/icon_ticketing_blue.svg);
+  background-repeat: no-repeat; }
+
+.icon-ticketing-gray:before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  margin-left: -12.5px;
+  display: block;
+  width: 25px;
+  height: 24px;
+  background-size: 25px 24px;
+  background-image: url(/images/fixed/icon/icon_ticketing_gray.svg);
   background-repeat: no-repeat; }
 
 .icon-add-white:before {
@@ -682,7 +721,7 @@ a {
       .navigation .buttons li a {
         position: relative;
         height: 90px;
-        color: #00A0E9;
+        color: #333;
         display: block;
         padding: 55px 0 0;
         font-size: 16px; }
@@ -936,10 +975,8 @@ a {
     .purchase-seat .film-info div .d-ib {
       color: #ffe600; }
     .purchase-seat .film-info div .change-animation {
-      -webkit-animation-duration: .75s;
-              animation-duration: .75s;
-      -webkit-animation-duration: 1s;
-              animation-duration: 1s;
+      -webkit-animation-duration: 2s;
+              animation-duration: 2s;
       -webkit-animation-fill-mode: both;
               animation-fill-mode: both;
       -webkit-animation-name: flash;
@@ -1089,7 +1126,7 @@ a {
         margin-bottom: 0 !important; }
       .modal[data-modal="ticket_type"] li a dl dd {
         width: 150px;
-        color: #00A0EA; }
+        color: #333; }
 
 .purchase-input .form-layout dl dt {
   width: 200px; }
