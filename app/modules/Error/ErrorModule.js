@@ -31,7 +31,7 @@ exports.notFoundRender = notFoundRender;
  * @param {NextFunction} next
  * @returns {void}
  */
-function errorRender(err, req, res, _) {
+function errorRender(err, req, res) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {

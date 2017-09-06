@@ -46,7 +46,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
                 state: authModel.state,
                 codeVerifier: (<string>authModel.codeVerifier)
             });
-            log('authUrl', authUrl);
+            log('authUrl');
 
             authModel.save(req.session);
 

@@ -49,7 +49,7 @@ function index(req, res, next) {
                     state: authModel.state,
                     codeVerifier: authModel.codeVerifier
                 });
-                log('authUrl', authUrl);
+                log('authUrl');
                 authModel.save(req.session);
                 res.redirect(authUrl);
             }

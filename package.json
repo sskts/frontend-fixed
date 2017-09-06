@@ -116,6 +116,9 @@
     "include": [
       "app/**/*.js"
     ],
+    "exclude": [
+      "app/forms/**/*.js"
+    ],
     "reporter": [
       "lcov",
       "text-summary"

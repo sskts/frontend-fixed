@@ -15,36 +15,28 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const assert = require("assert");
 const UtilModule = require("../../../app/modules/Util/UtilModule");
-describe('UtilModule.timeFormat', () => {
-    // it('正常', async () => {
+describe('UtilModule', () => {
+    // it('timeFormat 正常', async () => {
     //     const date = new Date();
     //     date.setHours(1);
     //     date.setMinutes(1);
     //     const str = UtilModule.timeFormat(date, '20170101');
     //     assert.equal(str, '01:01');
     // });
-});
-describe('UtilModule.escapeHtml', () => {
-    it('正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('escapeHtml 正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.escapeHtml('<script>alert(123)</script>');
         assert.equal(str, '&lt;script&gt;alert(123)&lt;/script&gt;');
     }));
-});
-describe('UtilModule.formatPrice', () => {
-    it('正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('formatPrice 正常', () => __awaiter(this, void 0, void 0, function* () {
         const num = 10000;
         const price = UtilModule.formatPrice(num);
         assert.equal(price, '10,000');
     }));
-});
-describe('UtilModule.bace64Encode', () => {
-    it('正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('bace64Encode 正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.bace64Encode('テスト');
         assert.equal(str, '44OG44K544OI');
     }));
-});
-describe('UtilModule.base64Decode', () => {
-    it('正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('base64Decode 正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.base64Decode('44OG44K544OI');
         assert.equal(str, 'テスト');
     }));
