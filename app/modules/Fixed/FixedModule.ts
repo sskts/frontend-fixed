@@ -41,7 +41,7 @@ export async function settingRender(req: Request, res: Response, next: NextFunct
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel();
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
@@ -77,7 +77,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         inquiryLoginForm(req);

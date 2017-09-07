@@ -1,8 +1,7 @@
-"use strict";
 /**
  * ルーティング
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const express = require("express");
 const ErrorModule = require("../modules/Error/ErrorModule");
 const UtilModule = require("../modules/Util/UtilModule");
@@ -12,6 +11,7 @@ const method_1 = require("./method");
 const purchase_1 = require("./purchase");
 const root_1 = require("./root");
 const router = express.Router();
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (app) => {
     app.use('', root_1.default); // ROOT
     app.use('/purchase', purchase_1.default); // 購入

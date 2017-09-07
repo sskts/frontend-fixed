@@ -28,7 +28,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseModel(req.session.purchase);
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
@@ -141,7 +141,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
     try {
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;

@@ -32,7 +32,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         const inquiryModel = new InquiryModel();
@@ -74,7 +74,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         LoginForm(req);

@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const moment = require("moment");
 /**
  * テンプレート変数へ渡す
@@ -162,11 +161,11 @@ var VIEW;
     /**
      * Default
      */
-    VIEW["Default"] = "default";
+    VIEW[VIEW["Default"] = 'default'] = "Default";
     /**
      * 券売機
      */
-    VIEW["Fixed"] = "fixed";
+    VIEW[VIEW["Fixed"] = 'fixed'] = "Fixed";
 })(VIEW = exports.VIEW || (exports.VIEW = {}));
 /**
  * 環境
@@ -179,13 +178,13 @@ var ENV;
     /**
      * 開発
      */
-    ENV["Development"] = "development";
+    ENV[ENV["Development"] = 'development'] = "Development";
     /**
      * テスト
      */
-    ENV["Test"] = "test";
+    ENV[ENV["Test"] = 'test'] = "Test";
     /**
      * 本番
      */
-    ENV["Production"] = "production";
+    ENV[ENV["Production"] = 'production'] = "Production";
 })(ENV = exports.ENV || (exports.ENV = {}));

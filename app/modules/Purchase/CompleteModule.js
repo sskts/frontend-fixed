@@ -1,9 +1,8 @@
-"use strict";
 /**
  * 購入完了
  * @namespace Purchase.CompleteModule
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 /**

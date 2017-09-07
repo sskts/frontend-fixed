@@ -55,7 +55,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         }
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         authModel.save(req.session);

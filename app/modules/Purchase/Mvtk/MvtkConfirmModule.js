@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ムビチケ確認
  * @namespace Purchase.Mvtk.MvtkConfirmModule

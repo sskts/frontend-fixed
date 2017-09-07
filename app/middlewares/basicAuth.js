@@ -1,9 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const basicAuth = require("basic-auth");
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const debug = createDebug('sskts-frontend:middlewares:basicAuth');
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ベーシック認証ミドルウェア
  *

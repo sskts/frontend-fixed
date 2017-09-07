@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 /**
  * 認証モデル

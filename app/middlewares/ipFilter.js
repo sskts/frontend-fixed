@@ -1,8 +1,8 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const debug = createDebug('sskts-frontend:middlewares:ipFilter');
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * IP制限ミドルウェア
  */

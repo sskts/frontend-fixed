@@ -85,7 +85,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     }
     const authModel = new AuthModel(req.session.auth);
     const options = {
-        endpoint: process.env.SSKTS_API_ENDPOINT,
+        endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
         auth: authModel.create()
     };
     const purchaseModel = new PurchaseModel(req.session.purchase);
@@ -179,7 +179,7 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
     }
     const authModel = new AuthModel(req.session.auth);
     const options = {
-        endpoint: process.env.SSKTS_API_ENDPOINT,
+        endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
         auth: authModel.create()
     };
     const purchaseModel = new PurchaseModel(req.session.purchase);
@@ -274,7 +274,7 @@ async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Pr
     if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
     const authModel = new AuthModel(req.session.auth);
     const options = {
-        endpoint: process.env.SSKTS_API_ENDPOINT,
+        endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
         auth: authModel.create()
     };
     if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;

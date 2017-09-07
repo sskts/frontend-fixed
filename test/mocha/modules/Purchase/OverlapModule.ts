@@ -3,10 +3,8 @@
  */
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as assert from 'assert';
-import * as moment from 'moment';
 import * as sinon from 'sinon';
 
-import * as InputForm from '../../../../app/forms/Purchase/InputForm';
 import * as OverlapModule from '../../../../app/modules/Purchase/OverlapModule';
 
 describe('Purchase.OverlapModule', () => {

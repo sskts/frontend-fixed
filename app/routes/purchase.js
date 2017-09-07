@@ -1,8 +1,7 @@
-"use strict";
 /**
  * ルーティング購入
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const express = require("express");
 const CompleteModule = require("../modules/Purchase/CompleteModule");
 const ConfirmModule = require("../modules/Purchase/ConfirmModule");
@@ -58,4 +57,5 @@ purchaseRouter.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 purchaseRouter.post('/saveSalesTickets', SeatModule.saveSalesTickets);
 // パフォーマンス変更
 purchaseRouter.post('/performanceChange', SeatModule.performanceChange);
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = purchaseRouter;

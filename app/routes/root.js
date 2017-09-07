@@ -1,8 +1,7 @@
-"use strict";
 /**
  * ルーティングRoot
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const express = require("express");
 const SignInModule = require("../modules/Auth/SignInModule");
 const ScreenModule = require("../modules/Screen/ScreenModule");
@@ -21,4 +20,5 @@ if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed
     rootRouter.get('/screen', ScreenModule.index);
     rootRouter.post('/screen', ScreenModule.getScreenStateReserve);
 }
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = rootRouter;

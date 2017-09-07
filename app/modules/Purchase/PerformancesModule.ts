@@ -25,7 +25,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>(<string>process.env.SSKTS_API_ENDPOINT)),
             auth: authModel.create()
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
@@ -75,7 +75,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         // 上映イベント検索

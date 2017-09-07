@@ -1,6 +1,6 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const http_status_1 = require("http-status");
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (__, res, next) => {
     // メンテナンステキストの環境変数設定なければスルー
     if (process.env.SSKTS_MAINTENANCE_TEXT === undefined) {

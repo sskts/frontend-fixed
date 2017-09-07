@@ -197,7 +197,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;

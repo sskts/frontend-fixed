@@ -1,9 +1,8 @@
-"use strict";
 /**
  * 方法
  * @namespace MethodModule
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 /**
  * 発券方法ページ表示
  * @memberof MethodModule
