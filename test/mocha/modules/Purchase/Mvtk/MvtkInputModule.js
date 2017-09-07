@@ -19,27 +19,6 @@ const sinon = require("sinon");
 const MvtkInputForm = require("../../../../../app/forms/Purchase/Mvtk/MvtkInputForm");
 const MvtkInputModule = require("../../../../../app/modules/Purchase/Mvtk/MvtkInputModule");
 describe('MvtkInputModule', () => {
-    let mvtkInputForm;
-    let purchaseNumberAuth;
-    let mvtkTicketcode;
-    // tslint:disable-next-line:max-func-body-length
-    beforeEach(() => {
-        mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
-            purchaseNumberAuth: () => {
-                return Promise.resolve([{
-                        knyknrNo: '',
-                        ykknInfo: [{}]
-                    }]);
-            }
-        });
-        mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(Promise.resolve({}));
-    });
-    afterEach(() => {
-        mvtkInputForm.restore();
-        purchaseNumberAuth.restore();
-        mvtkTicketcode.restore();
-    });
     it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {
@@ -70,6 +49,16 @@ describe('MvtkInputModule', () => {
         assert(next.calledOnce);
     }));
     it('select 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
+        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
+            purchaseNumberAuth: () => {
+                return Promise.resolve([{
+                        knyknrNo: '',
+                        ykknInfo: [{}]
+                    }]);
+            }
+        });
+        const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(Promise.resolve({}));
         const req = {
             session: {
                 purchase: {
@@ -107,6 +96,9 @@ describe('MvtkInputModule', () => {
         };
         yield MvtkInputModule.select(req, res, next);
         assert(res.redirect.calledOnce);
+        mvtkInputForm.restore();
+        purchaseNumberAuth.restore();
+        mvtkTicketcode.restore();
     }));
     it('select エラー1', () => __awaiter(this, void 0, void 0, function* () {
         const req = {

@@ -2,6 +2,7 @@
  * Purchase.ConfirmModuleテスト
  */
 import * as MVTK from '@motionpicture/mvtk-service';
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as assert from 'assert';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
@@ -10,27 +11,6 @@ import { PurchaseModel } from '../../../../app/models/Purchase/PurchaseModel';
 import * as ConfirmModule from '../../../../app/modules/Purchase/ConfirmModule';
 
 describe('Purchase.ConfirmModule', () => {
-    let createSeatInfoSyncService: sinon.SinonStub;
-    let getMvtkSeatInfoSync: sinon.SinonStub;
-    beforeEach(() => {
-        createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
-            seatInfoSync: () => {
-                return Promise.resolve({
-                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS
-                });
-            }
-        });
-        getMvtkSeatInfoSync = sinon.stub(PurchaseModel.prototype, 'getMvtkSeatInfoSync').returns({
-            knyknrNoInfo: [
-                { knshInfo: [] }
-            ],
-            zskInfo: []
-        });
-    });
-    afterEach(() => {
-        createSeatInfoSyncService.restore();
-        getMvtkSeatInfoSync.restore();
-    });
 
     it('render 正常', async () => {
         const req: any = {
@@ -66,7 +46,20 @@ describe('Purchase.ConfirmModule', () => {
         assert(next.calledOnce);
     });
 
-    it('reserveMvtk 正常', async () => {
+    it('cancelMvtk 正常', async () => {
+        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
+            seatInfoSync: () => {
+                return Promise.resolve({
+                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS
+                });
+            }
+        });
+        const getMvtkSeatInfoSync = sinon.stub(PurchaseModel.prototype, 'getMvtkSeatInfoSync').returns({
+            knyknrNoInfo: [
+                { knshInfo: [] }
+            ],
+            zskInfo: []
+        });
         const req: any = {
             session: {
                 purchase: {}
@@ -78,6 +71,101 @@ describe('Purchase.ConfirmModule', () => {
         };
         await ConfirmModule.cancelMvtk(req, res);
         assert.strictEqual(res.json.args[0][0].isSuccess, true);
+        createSeatInfoSyncService.restore();
+        getMvtkSeatInfoSync.restore();
+    });
+
+    it('purchase 正常', async () => {
+        const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
+            confirm: () => {
+                return Promise.resolve({});
+            },
+            sendEmailNotification: () => {
+                return Promise.resolve({});
+            }
+        });
+        const place = sinon.stub(sasaki.service, 'place').returns({
+            findMovieTheater: () => {
+                return Promise.resolve({});
+            }
+        });
+
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: ''
+                        },
+                        superEvent: {
+                            location: {
+                                name: {
+                                    ja: ''
+                                }
+                            }
+                        }
+                    },
+                    profile: {},
+                    seatReservationAuthorization: {},
+                    reserveTickets: [
+                        {
+                            mvtkNum: ''
+                        }
+                    ]
+                }
+            },
+            body: {
+                transactionId: ''
+            },
+            __: () => {
+                return '';
+            },
+            headers: {
+                host: ''
+            }
+        };
+        const res: any = {
+            locals: {},
+            render: (file: any, locals: any, cb: any) => {
+                file = '';
+                locals = '';
+                cb(null, '');
+            },
+            json: sinon.spy()
+        };
+        await ConfirmModule.purchase(req, res);
+        assert(res.json.calledOnce);
+        assert.notStrictEqual(res.json.args[0][0].result, null);
+        assert.strictEqual(res.json.args[0][0].err, null);
+        placeOrder.restore();
+        place.restore();
+    });
+
+    it('purchase エラー', async () => {
+        const req: any = {
+            session: undefined,
+            body: {
+                transactionId: ''
+            },
+            __: () => {
+                return '';
+            },
+            headers: {
+                host: ''
+            }
+        };
+        const res: any = {
+            locals: {},
+            render: () => '',
+            json: sinon.spy()
+        };
+        await ConfirmModule.purchase(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
     });
 
 });

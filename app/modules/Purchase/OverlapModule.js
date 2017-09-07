@@ -52,14 +52,12 @@ function render(req, res, next) {
                 before: purchaseModel.individualScreeningEvent
             };
             res.render('purchase/overlap');
-            return;
         }
         catch (err) {
             const error = (err instanceof Error)
                 ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
                 : new ErrorUtilModule.CustomError(err, undefined);
             next(error);
-            return;
         }
     });
 }

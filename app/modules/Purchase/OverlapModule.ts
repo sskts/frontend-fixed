@@ -41,15 +41,11 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             before: purchaseModel.individualScreeningEvent
         };
         res.render('purchase/overlap');
-
-        return;
     } catch (err) {
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);
         next(error);
-
-        return;
     }
 }
 

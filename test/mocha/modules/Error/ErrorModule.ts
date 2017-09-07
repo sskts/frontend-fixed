@@ -4,6 +4,7 @@
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
+import logger from '../../../../app/middlewares/logger';
 import * as ErrorModule from '../../../../app/modules/Error/ErrorModule';
 import * as ErrorUtilModule from '../../../../app/modules/Util/ErrorUtilModule';
 
@@ -38,6 +39,7 @@ describe('ErrorModule', () => {
     });
 
     it('errorRender 正常', async () => {
+        const error = sinon.stub(logger, 'error').returns({});
         const req: any = {
             session: {},
             __: () => {
@@ -54,9 +56,11 @@ describe('ErrorModule', () => {
         const errorType = ErrorUtilModule.ErrorType.Access;
         await ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
         assert(res.render.calledOnce);
+        error.restore();
     });
 
     it('errorRender xhr 正常', async () => {
+        const error = sinon.stub(logger, 'error').returns({});
         const req: any = {
             session: {},
             xhr: true,
@@ -74,5 +78,6 @@ describe('ErrorModule', () => {
         const errorType = ErrorUtilModule.ErrorType.Access;
         await ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
         assert(res.send.calledOnce);
+        error.restore();
     });
 });

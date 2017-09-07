@@ -12,30 +12,6 @@ import * as MvtkInputModule from '../../../../../app/modules/Purchase/Mvtk/MvtkI
 
 describe('MvtkInputModule', () => {
 
-    let mvtkInputForm: sinon.SinonStub;
-    let purchaseNumberAuth: sinon.SinonStub;
-    let mvtkTicketcode: sinon.SinonStub;
-    // tslint:disable-next-line:max-func-body-length
-    beforeEach(() => {
-        mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
-            purchaseNumberAuth: () => {
-                return Promise.resolve([{
-                    knyknrNo: '',
-                    ykknInfo: [{}]
-                }]);
-            }
-        });
-        mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
-            Promise.resolve({})
-        );
-    });
-    afterEach(() => {
-        mvtkInputForm.restore();
-        purchaseNumberAuth.restore();
-        mvtkTicketcode.restore();
-    });
-
     it('render 正常', async () => {
         const req: any = {
             session: {
@@ -68,6 +44,19 @@ describe('MvtkInputModule', () => {
     });
 
     it('select 正常', async () => {
+        const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
+        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
+            purchaseNumberAuth: () => {
+                return Promise.resolve([{
+                    knyknrNo: '',
+                    ykknInfo: [{}]
+                }]);
+            }
+        });
+        const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
+            Promise.resolve({})
+        );
+
         const req: any = {
             session: {
                 purchase: {
@@ -86,7 +75,7 @@ describe('MvtkInputModule', () => {
             },
             body: {
                 transactionId: '',
-                mvtk: JSON.stringify([{code: '', password: ''}])
+                mvtk: JSON.stringify([{ code: '', password: '' }])
             },
             getValidationResult: () => {
                 return Promise.resolve({
@@ -105,13 +94,16 @@ describe('MvtkInputModule', () => {
         };
         await MvtkInputModule.select(req, res, next);
         assert(res.redirect.calledOnce);
+        mvtkInputForm.restore();
+        purchaseNumberAuth.restore();
+        mvtkTicketcode.restore();
     });
 
     it('select エラー1', async () => {
         const req: any = {
             session: {
                 purchase: undefined,
-                mvtk: JSON.stringify([{code: '1', password: '1'}])
+                mvtk: JSON.stringify([{ code: '1', password: '1' }])
             }
         };
         const res: any = {};

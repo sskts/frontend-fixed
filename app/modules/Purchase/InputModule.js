@@ -319,8 +319,6 @@ function creditCardProsess(req, purchaseModel) {
             let creditCard;
             if (purchaseModel.creditCards.length > 0) {
                 // 登録されたクレジットカード
-                if (purchaseModel.creditCards.length === 0)
-                    throw ErrorUtilModule.ErrorType.Property;
                 creditCard = {
                     memberId: 'me',
                     cardSeq: Number(purchaseModel.creditCards[0].cardSeq)

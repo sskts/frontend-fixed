@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const assert = require("assert");
 const sinon = require("sinon");
+const logger_1 = require("../../../../app/middlewares/logger");
 const ErrorModule = require("../../../../app/modules/Error/ErrorModule");
 const ErrorUtilModule = require("../../../../app/modules/Util/ErrorUtilModule");
 describe('ErrorModule', () => {
@@ -43,6 +44,7 @@ describe('ErrorModule', () => {
         assert(res.send.calledOnce);
     }));
     it('errorRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
         const req = {
             session: {},
             __: () => {
@@ -59,8 +61,10 @@ describe('ErrorModule', () => {
         const errorType = ErrorUtilModule.ErrorType.Access;
         yield ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
         assert(res.render.calledOnce);
+        error.restore();
     }));
     it('errorRender xhr 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
         const req = {
             session: {},
             xhr: true,
@@ -78,5 +82,6 @@ describe('ErrorModule', () => {
         const errorType = ErrorUtilModule.ErrorType.Access;
         yield ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
         assert(res.send.calledOnce);
+        error.restore();
     }));
 });
