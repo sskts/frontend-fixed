@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");

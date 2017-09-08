@@ -7,11 +7,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Auth.SignInModuleテスト
  */
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const assert = require("assert");
 const sinon = require("sinon");
+const AuthModel_1 = require("../../../../app/models/Auth/AuthModel");
 const SignInModule = require("../../../../app/modules/Auth/SignInModule");
 describe('Auth.SignInModule', () => {
     it('index サインイン 正常', () => __awaiter(this, void 0, void 0, function* () {
@@ -31,14 +34,17 @@ describe('Auth.SignInModule', () => {
         assert(res.redirect.calledOnce);
     }));
     it('index 購入ページへ 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const auth = sinon.stub(sasaki.auth.OAuth2.prototype, 'getToken').returns(Promise.resolve({}));
         const req = {
             query: {
-                code: '12345678',
-                state: '12345678'
+                code: '',
+                state: ''
             },
             session: {
                 auth: {
-                    state: '12345678'
+                    state: '',
+                    codeVerifier: '',
+                    memberType: AuthModel_1.MemberType.Member
                 }
             }
         };
@@ -50,6 +56,7 @@ describe('Auth.SignInModule', () => {
         };
         yield SignInModule.index(req, res, next);
         assert(res.redirect.calledOnce);
+        auth.restore();
     }));
     it('index エラー', () => __awaiter(this, void 0, void 0, function* () {
         const req = {

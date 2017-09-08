@@ -1,7 +1,8 @@
+"use strict";
 /**
  * セッション
  */
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const connectRedis = require("connect-redis");
 const session = require("express-session");
 const redis = require("redis");
@@ -12,7 +13,6 @@ const redisClient = redis.createClient(Number(process.env.REDIS_PORT), process.e
     },
     return_buffers: true
 });
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = session({
     secret: 'FrontendSecret',
     resave: false,

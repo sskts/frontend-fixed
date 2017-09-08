@@ -1,8 +1,8 @@
+"use strict";
 /**
  * 購入座席選択
  * @namespace Purchase.SeatModule
  */
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
@@ -323,6 +324,7 @@ function saveSalesTickets(req, res) {
                 titleCode: req.body.titleCode,
                 titleBranchNum: req.body.titleBranchNum,
                 timeBegin: req.body.timeBegin
+                // flgMember: coa.services.reserve.FlgMember.NonMember
             });
             log('コアAPI券種取得', purchaseModel.salesTickets);
             purchaseModel.save(req.session);

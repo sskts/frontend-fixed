@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 /**
  * 認証モデル
@@ -15,11 +16,16 @@ class AuthModel {
         }
         this.state = (session.state !== undefined) ? session.state : 'teststate';
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
-            'https://sskts-api-development.azurewebsites.net/transactions',
-            'https://sskts-api-development.azurewebsites.net/events.read-only',
-            'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-            'https://sskts-api-development.azurewebsites.net/orders.read-only',
-            'https://sskts-api-development.azurewebsites.net/places.read-only'
+            // 'https://sskts-api-development.azurewebsites.net/transactions',
+            // 'https://sskts-api-development.azurewebsites.net/events.read-only',
+            // 'https://sskts-api-development.azurewebsites.net/organizations.read-only',
+            // 'https://sskts-api-development.azurewebsites.net/orders.read-only',
+            // 'https://sskts-api-development.azurewebsites.net/places.read-only'
+            `${process.env.SSKTS_API_ENDPOINT}/transactions`,
+            `${process.env.SSKTS_API_ENDPOINT}/events.read-only`,
+            `${process.env.SSKTS_API_ENDPOINT}/organizations.read-only`,
+            `${process.env.SSKTS_API_ENDPOINT}/orders.read-only`,
+            `${process.env.SSKTS_API_ENDPOINT}/places.read-only`
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;

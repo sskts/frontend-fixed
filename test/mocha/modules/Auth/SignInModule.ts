@@ -1,9 +1,11 @@
 /**
  * Auth.SignInModuleテスト
  */
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
+import { MemberType } from '../../../../app/models/Auth/AuthModel';
 import * as SignInModule from '../../../../app/modules/Auth/SignInModule';
 
 describe('Auth.SignInModule', () => {
@@ -26,14 +28,19 @@ describe('Auth.SignInModule', () => {
     });
 
     it('index 購入ページへ 正常', async () => {
+        const auth = sinon.stub(sasaki.auth.OAuth2.prototype, 'getToken').returns(
+            Promise.resolve({})
+        );
         const req: any = {
             query: {
-                code: '12345678',
-                state: '12345678'
+                code: '',
+                state: ''
             },
             session: {
                 auth: {
-                    state: '12345678'
+                    state: '',
+                    codeVerifier: '',
+                    memberType: MemberType.Member
                 }
             }
         };
@@ -45,6 +52,7 @@ describe('Auth.SignInModule', () => {
         };
         await SignInModule.index(req, res, next);
         assert(res.redirect.calledOnce);
+        auth.restore();
     });
 
     it('index エラー', async () => {

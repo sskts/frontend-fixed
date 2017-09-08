@@ -7,19 +7,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Util.UtilModuleテスト
  *
  * @ignore
  */
 const assert = require("assert");
+const moment = require("moment");
 const UtilModule = require("../../../../app/modules/Util/UtilModule");
 describe('Util.UtilModule', () => {
     it('timeFormat 正常', () => {
         const date = new Date();
         date.setHours(1);
         date.setMinutes(1);
-        const str = UtilModule.timeFormat(date, '20170101');
+        const str = UtilModule.timeFormat(date, moment().format('YYYYMMDD'));
         assert.equal(str, '01:01');
     });
     it('escapeHtml 正常', () => __awaiter(this, void 0, void 0, function* () {

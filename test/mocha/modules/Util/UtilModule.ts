@@ -14,7 +14,7 @@ describe('Util.UtilModule', () => {
         const date = new Date();
         date.setHours(1);
         date.setMinutes(1);
-        const str = UtilModule.timeFormat(date, '20170101');
+        const str = UtilModule.timeFormat(date, moment().format('YYYYMMDD'));
         assert.equal(str, '01:01');
     });
 

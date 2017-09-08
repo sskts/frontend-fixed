@@ -1,8 +1,9 @@
+"use strict";
 /**
  * ムビチケ共通
  * @namespace Purchase.Mvtk.MvtkUtilModule
  */
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 興行会社コード
  * @memberof Purchase.Mvtk.MvtkUtilModule
