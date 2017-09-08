@@ -1,5 +1,5 @@
 /**
- * MvtkInputModuleテスト
+ * Purchase.Mvtk.MvtkInputModuleテスト
  */
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
@@ -10,7 +10,7 @@ import * as sinon from 'sinon';
 import * as MvtkInputForm from '../../../../../app/forms/Purchase/Mvtk/MvtkInputForm';
 import * as MvtkInputModule from '../../../../../app/modules/Purchase/Mvtk/MvtkInputModule';
 
-describe('MvtkInputModule', () => {
+describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('render 正常', async () => {
         const req: any = {

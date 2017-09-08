@@ -1,5 +1,5 @@
 /**
- * MvtkConfirmModuleテスト
+ * Purchase.Mvtk.MvtkConfirmModuleテスト
  */
 import * as assert from 'assert';
 import * as moment from 'moment';
@@ -7,7 +7,7 @@ import * as sinon from 'sinon';
 
 import * as MvtkConfirmModule from '../../../../../app/modules/Purchase/Mvtk/MvtkConfirmModule';
 
-describe('MvtkConfirmModule', () => {
+describe('Purchase.Mvtk.MvtkConfirmModule', () => {
 
     it('render 正常', async () => {
         const req: any = {

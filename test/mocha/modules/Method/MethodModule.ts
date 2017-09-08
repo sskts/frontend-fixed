@@ -1,12 +1,12 @@
 /**
- * MethodModuleテスト
+ * Method.MethodModuleテスト
  */
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
 import * as MethodModule from '../../../../app/modules/Method/MethodModule';
 
-describe('MethodModule', () => {
+describe('Method.MethodModule', () => {
 
     it('ticketing 正常', async () => {
         const req: any = {};

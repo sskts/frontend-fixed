@@ -1,5 +1,5 @@
 /**
- * FixedModuleテスト
+ * Fixed.FixedModuleテスト
  */
 import * as COA from '@motionpicture/coa-service';
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
@@ -9,7 +9,7 @@ import * as sinon from 'sinon';
 import * as InquiryLoginForm from '../../../../app/forms/Inquiry/LoginForm';
 import * as FixedModule from '../../../../app/modules/Fixed/FixedModule';
 
-describe('FixedModule', () => {
+describe('Fixed.FixedModule', () => {
     let organization: sinon.SinonStub;
     let order: sinon.SinonStub;
     let updReserve: sinon.SinonStub;

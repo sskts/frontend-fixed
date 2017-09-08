@@ -8,12 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * MethodModuleテスト
+ * Method.MethodModuleテスト
  */
 const assert = require("assert");
 const sinon = require("sinon");
 const MethodModule = require("../../../../app/modules/Method/MethodModule");
-describe('MethodModule', () => {
+describe('Method.MethodModule', () => {
     it('ticketing 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {};
         const res = {

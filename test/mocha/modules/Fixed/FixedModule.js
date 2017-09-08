@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * FixedModuleテスト
+ * Fixed.FixedModuleテスト
  */
 const COA = require("@motionpicture/coa-service");
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
@@ -16,7 +16,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const InquiryLoginForm = require("../../../../app/forms/Inquiry/LoginForm");
 const FixedModule = require("../../../../app/modules/Fixed/FixedModule");
-describe('FixedModule', () => {
+describe('Fixed.FixedModule', () => {
     let organization;
     let order;
     let updReserve;

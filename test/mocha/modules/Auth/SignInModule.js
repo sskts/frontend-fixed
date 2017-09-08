@@ -8,13 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * 認証
- * @namespace SignInModule
+ * Auth.SignInModuleテスト
  */
 const assert = require("assert");
 const sinon = require("sinon");
 const SignInModule = require("../../../../app/modules/Auth/SignInModule");
-describe('SignInModule', () => {
+describe('Auth.SignInModule', () => {
     it('index サインイン 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             query: {

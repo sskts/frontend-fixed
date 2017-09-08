@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * MvtkInputModuleテスト
+ * Purchase.Mvtk.MvtkInputModuleテスト
  */
 const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
@@ -17,7 +17,7 @@ const moment = require("moment");
 const sinon = require("sinon");
 const MvtkInputForm = require("../../../../../app/forms/Purchase/Mvtk/MvtkInputForm");
 const MvtkInputModule = require("../../../../../app/modules/Purchase/Mvtk/MvtkInputModule");
-describe('MvtkInputModule', () => {
+describe('Purchase.Mvtk.MvtkInputModule', () => {
     it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {

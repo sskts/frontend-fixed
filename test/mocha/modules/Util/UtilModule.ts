@@ -1,19 +1,22 @@
 /**
- * UtilModuleテスト
+ * Util.UtilModuleテスト
  *
  * @ignore
  */
 import * as assert from 'assert';
-import * as UtilModule from '../../../app/modules/Util/UtilModule';
+import * as moment from 'moment';
 
-describe('UtilModule', () => {
-    // it('timeFormat 正常', async () => {
-    //     const date = new Date();
-    //     date.setHours(1);
-    //     date.setMinutes(1);
-    //     const str = UtilModule.timeFormat(date, '20170101');
-    //     assert.equal(str, '01:01');
-    // });
+import * as UtilModule from '../../../../app/modules/Util/UtilModule';
+
+describe('Util.UtilModule', () => {
+
+    it('timeFormat 正常', () => {
+        const date = new Date();
+        date.setHours(1);
+        date.setMinutes(1);
+        const str = UtilModule.timeFormat(date, '20170101');
+        assert.equal(str, '01:01');
+    });
 
     it('escapeHtml 正常', async () => {
         const str = UtilModule.escapeHtml('<script>alert(123)</script>');

@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * InquiryModuleテスト
+ * Inquiry.InquiryModuleテスト
  */
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const assert = require("assert");
 const sinon = require("sinon");
 const InquiryLoginForm = require("../../../../app/forms/Inquiry/LoginForm");
 const InquiryModule = require("../../../../app/modules/Inquiry/InquiryModule");
-describe('InquiryModule', () => {
+describe('Inquiry.InquiryModule', () => {
     let organization;
     let order;
     let inquiryLoginForm;

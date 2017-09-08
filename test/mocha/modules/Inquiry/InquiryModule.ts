@@ -1,5 +1,5 @@
 /**
- * InquiryModuleテスト
+ * Inquiry.InquiryModuleテスト
  */
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import * as assert from 'assert';
@@ -8,7 +8,7 @@ import * as sinon from 'sinon';
 import * as InquiryLoginForm from '../../../../app/forms/Inquiry/LoginForm';
 import * as InquiryModule from '../../../../app/modules/Inquiry/InquiryModule';
 
-describe('InquiryModule', () => {
+describe('Inquiry.InquiryModule', () => {
     let organization: sinon.SinonStub;
     let order: sinon.SinonStub;
     let inquiryLoginForm: sinon.SinonStub;

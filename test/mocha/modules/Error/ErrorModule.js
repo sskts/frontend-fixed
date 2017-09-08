@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * ErrorModuleテスト
+ * Error.ErrorModuleテスト
  */
 const assert = require("assert");
 const sinon = require("sinon");
 const logger_1 = require("../../../../app/middlewares/logger");
 const ErrorModule = require("../../../../app/modules/Error/ErrorModule");
 const ErrorUtilModule = require("../../../../app/modules/Util/ErrorUtilModule");
-describe('ErrorModule', () => {
+describe('Error.ErrorModule', () => {
     it('notFoundRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {};
         const res = {

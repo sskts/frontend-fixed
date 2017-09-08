@@ -8,13 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * MvtkConfirmModuleテスト
+ * Purchase.Mvtk.MvtkConfirmModuleテスト
  */
 const assert = require("assert");
 const moment = require("moment");
 const sinon = require("sinon");
 const MvtkConfirmModule = require("../../../../../app/modules/Purchase/Mvtk/MvtkConfirmModule");
-describe('MvtkConfirmModule', () => {
+describe('Purchase.Mvtk.MvtkConfirmModule', () => {
     it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {

@@ -51,9 +51,9 @@ app.use(expressValidator()); // バリデーション
 
 // ムビチケサービス初期化
 MVTK.initialize(
-    process.env.MVTK_ENDPOINT_SERVICE_01,
-    process.env.MVTK_ENDPOINT_SERVICE_02,
-    process.env.MVTK_ENDPOINT_RESERVE_SERVICE
+    (<string>process.env.MVTK_ENDPOINT_SERVICE_01),
+    (<string>process.env.MVTK_ENDPOINT_SERVICE_02),
+    (<string>process.env.MVTK_ENDPOINT_RESERVE_SERVICE)
 );
 
 router(app); // ルーティング

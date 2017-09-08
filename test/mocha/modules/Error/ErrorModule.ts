@@ -1,5 +1,5 @@
 /**
- * ErrorModuleテスト
+ * Error.ErrorModuleテスト
  */
 import * as assert from 'assert';
 import * as sinon from 'sinon';
@@ -8,7 +8,7 @@ import logger from '../../../../app/middlewares/logger';
 import * as ErrorModule from '../../../../app/modules/Error/ErrorModule';
 import * as ErrorUtilModule from '../../../../app/modules/Util/ErrorUtilModule';
 
-describe('ErrorModule', () => {
+describe('Error.ErrorModule', () => {
 
     it('notFoundRender 正常', async () => {
         const req: any = {};

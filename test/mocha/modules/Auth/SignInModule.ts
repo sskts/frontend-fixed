@@ -1,13 +1,12 @@
 /**
- * 認証
- * @namespace SignInModule
+ * Auth.SignInModuleテスト
  */
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
 import * as SignInModule from '../../../../app/modules/Auth/SignInModule';
 
-describe('SignInModule', () => {
+describe('Auth.SignInModule', () => {
 
     it('index サインイン 正常', async () => {
         const req: any = {

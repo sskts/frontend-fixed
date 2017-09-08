@@ -8,20 +8,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 /**
- * UtilModuleテスト
+ * Util.UtilModuleテスト
  *
  * @ignore
  */
 const assert = require("assert");
-const UtilModule = require("../../../app/modules/Util/UtilModule");
-describe('UtilModule', () => {
-    // it('timeFormat 正常', async () => {
-    //     const date = new Date();
-    //     date.setHours(1);
-    //     date.setMinutes(1);
-    //     const str = UtilModule.timeFormat(date, '20170101');
-    //     assert.equal(str, '01:01');
-    // });
+const UtilModule = require("../../../../app/modules/Util/UtilModule");
+describe('Util.UtilModule', () => {
+    it('timeFormat 正常', () => {
+        const date = new Date();
+        date.setHours(1);
+        date.setMinutes(1);
+        const str = UtilModule.timeFormat(date, '20170101');
+        assert.equal(str, '01:01');
+    });
     it('escapeHtml 正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.escapeHtml('<script>alert(123)</script>');
         assert.equal(str, '&lt;script&gt;alert(123)&lt;/script&gt;');

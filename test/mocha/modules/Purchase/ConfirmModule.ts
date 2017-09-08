@@ -168,4 +168,37 @@ describe('Purchase.ConfirmModule', () => {
         assert.notStrictEqual(res.json.args[0][0].err, null);
     });
 
+    it('getCompleteData 正常', async () => {
+        const req: any = {
+            session: {
+                complete: {}
+            }
+        };
+        const res: any = {
+            json: sinon.spy()
+        };
+        await ConfirmModule.getCompleteData(req, res);
+        assert(res.json.calledOnce);
+        assert.notStrictEqual(res.json.args[0][0].result, null);
+        assert.strictEqual(res.json.args[0][0].err, null);
+    });
+
+    it('getCompleteData エラー', async () => {
+        const req: any = {
+            session: {
+                complete: undefined
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res: any = {
+            json: sinon.spy()
+        };
+        await ConfirmModule.getCompleteData(req, res);
+        assert(res.json.calledOnce);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+    });
+
 });
