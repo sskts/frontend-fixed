@@ -4,7 +4,7 @@
     <p class="read"><%- (message) ? message : __('common.error.access') %></p>
     <div class="button-area clearfix">
         <% if (viewType === 'app') { %>
-            <div class="prev-link"><a class="icon-prev-black"href="<%- appSiteUrl %>/purchase"><%- __('error.prev') %></a></div>
+            <div class="prev-link"><a class="icon-prev-black"href="<%- appSiteUrl %>/#/purchase"><%- __('error.prev') %></a></div>
         <% } else { %>
             <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('error.prev') %></a></div>
         <% } %>
