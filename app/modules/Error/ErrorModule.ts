@@ -82,7 +82,7 @@ export function errorRender(err: Error | ErrorUtilModule.CustomError, req: Reque
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger.error('SSKTS-APP:ErrorModule.index', status, err);
+    logger.error('SSKTS-APP:ErrorModule.index', status, err.message);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     } else {

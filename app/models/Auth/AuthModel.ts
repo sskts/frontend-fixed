@@ -63,16 +63,16 @@ export class AuthModel {
         }
         this.state = (session.state !== undefined) ? session.state : 'teststate';
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
-            // 'https://sskts-api-development.azurewebsites.net/transactions',
-            // 'https://sskts-api-development.azurewebsites.net/events.read-only',
-            // 'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-            // 'https://sskts-api-development.azurewebsites.net/orders.read-only',
-            // 'https://sskts-api-development.azurewebsites.net/places.read-only'
-            `${(<string>process.env.SSKTS_API_ENDPOINT)}/transactions`,
-            `${(<string>process.env.SSKTS_API_ENDPOINT)}/events.read-only`,
-            `${(<string>process.env.SSKTS_API_ENDPOINT)}/organizations.read-only`,
-            `${(<string>process.env.SSKTS_API_ENDPOINT)}/orders.read-only`,
-            `${(<string>process.env.SSKTS_API_ENDPOINT)}/places.read-only`
+            'https://sskts-api-development.azurewebsites.net/transactions',
+            'https://sskts-api-development.azurewebsites.net/events.read-only',
+            'https://sskts-api-development.azurewebsites.net/organizations.read-only',
+            'https://sskts-api-development.azurewebsites.net/orders.read-only',
+            'https://sskts-api-development.azurewebsites.net/places.read-only'
+            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/transactions`,
+            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/events.read-only`,
+            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/organizations.read-only`,
+            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/orders.read-only`,
+            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/places.read-only`
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;

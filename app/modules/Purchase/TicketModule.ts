@@ -215,9 +215,10 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 log('購入管理番号情報', mvtkSeatInfoSync);
                 if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
                 const createMvtkAuthorizationArgs = {
-                    transactionId: purchaseModel.transaction.id, // 取引情報
+                    transactionId: purchaseModel.transaction.id,
                     mvtk: {
                         price: purchaseModel.getMvtkPrice(),
+                        transactionId: purchaseModel.transaction.id,
                         seatInfoSyncIn: mvtkSeatInfoSync
                     }
                 };

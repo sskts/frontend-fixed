@@ -221,6 +221,8 @@ function purchase(req, res) {
                 throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ErrorType.Property;
+            if (purchaseModel.seatReservationAuthorization.result === undefined)
+                throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
                 throw ErrorUtilModule.ErrorType.Access;

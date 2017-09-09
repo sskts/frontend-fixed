@@ -77,7 +77,7 @@ function errorRender(err, req, res) {
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err);
+    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err.message);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     }

@@ -198,6 +198,7 @@ function ticketSelect(req, res, next) {
                         transactionId: purchaseModel.transaction.id,
                         mvtk: {
                             price: purchaseModel.getMvtkPrice(),
+                            transactionId: purchaseModel.transaction.id,
                             seatInfoSyncIn: mvtkSeatInfoSync
                         }
                     };

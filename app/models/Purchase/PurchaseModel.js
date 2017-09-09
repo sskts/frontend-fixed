@@ -267,7 +267,8 @@ class PurchaseModel {
      */
     createOrderId() {
         if (this.individualScreeningEvent === null
-            || this.seatReservationAuthorization === null) {
+            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization.result === undefined) {
             return;
         }
         // GMOオーソリ取得
@@ -344,6 +345,9 @@ class PurchaseModel {
             mvtkseat.push({ zskCd: reserveTicket.seatCode });
         }
         if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
+            return null;
+        }
+        if (this.seatReservationAuthorization.result === undefined) {
             return null;
         }
         const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
