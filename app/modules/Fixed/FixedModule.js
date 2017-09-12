@@ -22,23 +22,6 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
 /**
- * 券売機TOPページ表示
- * @memberof Fixed.FixedModule
- * @function render
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise<void>}
- */
-function render(_, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        res.locals.ticketingSite = process.env.TICKETING_SITE_URL;
-        res.render('index/index');
-        log('券売機TOPページ表示');
-    });
-}
-exports.render = render;
-/**
  * 券売機設定ページ表示
  * @memberof Fixed.FixedModule
  * @function settingRender

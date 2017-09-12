@@ -58,7 +58,6 @@ set SSKTS_MAINTENANCE_TEXT=**********適当な文字列**********
 
 ```shell
 set VIEW_TYPE=fixed
-set TICKETING_SITE_URL=**********チケッティングサイトURL**********
 ```
 
 スマホアプリ内表示
