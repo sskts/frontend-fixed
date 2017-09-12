@@ -56,13 +56,13 @@
                             <div class="mb-x-small"><strong class="large-x-text">{{ order.startDate | timeFormat(order.coaInfo.dateJouei) }}</strong></div>
                             <div>～{{ order.endDate | timeFormat(order.coaInfo.dateJouei) }}</div>
                         </div>
-                        <div class="small-text text-center">
+                        <div class="small-text text-center status">
                             <div v-if="order.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
                             <div v-else-if="order.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
                             <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                            <div v-if="order.offer.availability === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
-                            <div v-else-if="order.offer.availability <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
-                            <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                            <div v-if="order.offer.availability === 0"><img src="/images/fixed/status_03.svg"></div>
+                            <div v-else-if="order.offer.availability <= 10"><img src="/images/fixed/status_02.svg"></div>
+                            <div v-else><img src="/images/fixed/status_01.svg"></div>
                         </div>
                     </dt>
                     <dd class="text-left">
@@ -94,13 +94,13 @@
                                             <div class="large-text mb-x-small"><strong>{{ film.startDate | timeFormat(film.coaInfo.dateJouei) }}</strong></div>
                                             <div>～{{ film.endDate | timeFormat(film.coaInfo.dateJouei) }}</div>
                                         </div>
-                                        <div class="text-cente small-x-text">
+                                        <div class="text-cente small-x-text status">
                                             <div v-if="film.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
                                             <div v-else-if="film.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
                                             <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                                            <div v-if="film.offer.availability === 0" class="status"><img src="/images/fixed/status_03.svg"></div>
-                                            <div v-else-if="film.offer.availability <= 10" class="status"><img src="/images/fixed/status_02.svg"></div>
-                                            <div v-else class="status"><img src="/images/fixed/status_01.svg"></div>
+                                            <div v-if="film.offer.availability === 0"><img src="/images/fixed/status_03.svg"></div>
+                                            <div v-else-if="film.offer.availability <= 10"><img src="/images/fixed/status_02.svg"></div>
+                                            <div v-else><img src="/images/fixed/status_01.svg"></div>
                                         </div>
                                     </dt>
                                     <dd class="small-text text-center">
