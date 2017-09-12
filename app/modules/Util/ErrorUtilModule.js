@@ -1,35 +1,34 @@
-"use strict";
 /**
  * エラー共通
  * @namespace Util.ErrorUtilModule
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 var ErrorType;
 (function (ErrorType) {
     /**
      * プロパティなし
      */
-    ErrorType["Property"] = "000";
+    ErrorType[ErrorType["Property"] = '000'] = "Property";
     /**
      * アクセス
      */
-    ErrorType["Access"] = "001";
+    ErrorType[ErrorType["Access"] = '001'] = "Access";
     /**
      * 時間切れ
      */
-    ErrorType["Timeout"] = "002";
+    ErrorType[ErrorType["Timeout"] = '002'] = "Timeout";
     /**
      * バリデーション
      */
-    ErrorType["Validation"] = "003";
+    ErrorType[ErrorType["Validation"] = '003'] = "Validation";
     /**
      * 期限切れ
      */
-    ErrorType["Expire"] = "004";
+    ErrorType[ErrorType["Expire"] = '004'] = "Expire";
     /**
      * 外部モジュール
      */
-    ErrorType["ExternalModule"] = "999";
+    ErrorType[ErrorType["ExternalModule"] = '999'] = "ExternalModule";
 })(ErrorType = exports.ErrorType || (exports.ErrorType = {}));
 /**
  * カスタムエラー

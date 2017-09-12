@@ -25,20 +25,13 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             // サインイン
             const scopes = [
                 'phone', 'openid', 'email', 'aws.cognito.signin.user.admin', 'profile',
-                'https://sskts-api-development.azurewebsites.net/transactions',
-                'https://sskts-api-development.azurewebsites.net/events.read-only',
-                'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-                'https://sskts-api-development.azurewebsites.net/people.contacts',
-                'https://sskts-api-development.azurewebsites.net/people.creditCards',
-                'https://sskts-api-development.azurewebsites.net/people.ownershipInfos.read-only',
-                'https://sskts-api-development.azurewebsites.net/places.read-only'
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/transactions`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/events.read-only`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/organizations.read-only`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/people.contacts`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/people.creditCards`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/people.ownershipInfos.read-only`,
-                // `${(<string>process.env.SSKTS_API_ENDPOINT)}/places.read-only`
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/transactions`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/events.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/organizations.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.contacts`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.creditCards`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.ownershipInfos.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/places.read-only`
             ];
 
             const authModel = new AuthModel({
@@ -70,7 +63,6 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             res.redirect(`/purchase/app.html?id=${authModel.state.split('-')[0]}`);
         }
     } catch (err) {
-        console.log(err);
         const error = (err instanceof Error)
             ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
             : new ErrorUtilModule.CustomError(err, undefined);

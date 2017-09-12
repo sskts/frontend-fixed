@@ -96,9 +96,9 @@ function saveConfig() {
     var data = {
         theater: $('select[name=theater]').val(),
         deviceId: $('input[name=deviceId]').val(),
-        lastNameHira: $('input[name=lastNameHira]').val(),
-        firstNameHira: $('input[name=firstNameHira]').val(),
-        mailAddr: $('input[name=mailAddr]').val(),
+        givenName: $('input[name=givenName]').val(),
+        familyName: $('input[name=familyName]').val(),
+        email: $('input[name=email]').val(),
         printer: $('input[name=printer]').val(),
     }
     localStorage.setItem('config', JSON.stringify(data));

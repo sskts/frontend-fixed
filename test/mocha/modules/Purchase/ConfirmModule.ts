@@ -110,7 +110,9 @@ describe('Purchase.ConfirmModule', () => {
                         }
                     },
                     profile: {},
-                    seatReservationAuthorization: {},
+                    seatReservationAuthorization: {
+                        result: {}
+                    },
                     reserveTickets: [
                         {
                             mvtkNum: ''

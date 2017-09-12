@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
 const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const debug = require("debug");
@@ -299,7 +298,7 @@ function purchase(req, res) {
                 const theater = yield sasaki.service.place(options).findMovieTheater({
                     branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
                 });
-                log('劇場', theater);
+                log('劇場', theater.telephone);
                 const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
                     purchaseModel: purchaseModel,
                     theater: theater,

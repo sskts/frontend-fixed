@@ -1,8 +1,7 @@
-"use strict";
 /**
  * ルーティング照会
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const express = require("express");
 const InquiryModule = require("../modules/Inquiry/InquiryModule");
 const inquiryRouter = express.Router();
@@ -12,4 +11,5 @@ inquiryRouter.get('/login', InquiryModule.loginRender);
 inquiryRouter.post('/login', InquiryModule.inquiryAuth);
 //チケット照会
 inquiryRouter.get('/:orderNumber/', InquiryModule.confirmRender);
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = inquiryRouter;

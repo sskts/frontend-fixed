@@ -1,8 +1,7 @@
-"use strict";
 /**
  * 多言語
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+"use strict";
 const i18n = require("i18n");
 const UtilModule = require("../modules/Util/UtilModule");
 let directory = `${__dirname}/../locales/default`;

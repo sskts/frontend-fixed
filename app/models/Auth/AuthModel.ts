@@ -1,4 +1,5 @@
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as uuid from 'uuid';
 
 /**
  * 認証セッション
@@ -61,18 +62,13 @@ export class AuthModel {
         if (session === undefined) {
             session = {};
         }
-        this.state = (session.state !== undefined) ? session.state : 'teststate';
+        this.state = (session.state !== undefined) ? session.state : uuid.v1();
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
-            'https://sskts-api-development.azurewebsites.net/transactions',
-            'https://sskts-api-development.azurewebsites.net/events.read-only',
-            'https://sskts-api-development.azurewebsites.net/organizations.read-only',
-            'https://sskts-api-development.azurewebsites.net/orders.read-only',
-            'https://sskts-api-development.azurewebsites.net/places.read-only'
-            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/transactions`,
-            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/events.read-only`,
-            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/organizations.read-only`,
-            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/orders.read-only`,
-            // `${(<string>process.env.SSKTS_API_ENDPOINT)}/places.read-only`
+            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/transactions`,
+            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/events.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/organizations.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/orders.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/places.read-only`
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;

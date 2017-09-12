@@ -25,6 +25,7 @@ set PORTAL_SITE_URL=**********ポータルサイトURL**********
 set CLIENT_ID=**********クライアントID**********
 set CLIENT_SECRET=**********クライアント鍵**********
 set AUTHORIZE_SERVER_DOMAIN=**********認証サーバードメイン**********
+set RESOURCE_SERVER_DOMAIN=**********リソースサーバードメイン**********
 ```
 
 only on Aure WebApps
