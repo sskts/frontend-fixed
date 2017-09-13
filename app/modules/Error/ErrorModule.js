@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
@@ -10,7 +11,7 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
  * @param {Response} res
  * @returns {void}
  */
-function notFoundRender(req, res) {
+function notFoundRender(req, res, _) {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -30,7 +31,7 @@ exports.notFoundRender = notFoundRender;
  * @param {NextFunction} next
  * @returns {void}
  */
-function errorRender(err, req, res) {
+function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.CustomError) {
