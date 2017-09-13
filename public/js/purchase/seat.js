@@ -3,12 +3,7 @@ var screenSeatStatusesMap;
 $(function () {
     pageInit(function () {
         if (isFixed()) {
-            setTimeout(function() {
-                modal.open('seat_select_announce');
-                setTimeout(function() {
-                    modal.close('seat_select_announce');
-                }, 5000);
-            }, 0);
+            showSeatSelectAnnounce();
         }
     });
 
@@ -104,6 +99,28 @@ function pageInit(cb) {
             cb();
         }
     });
+}
+
+/**
+ * 次の時間帯へ説明表示
+ * @function showSeatSelectAnnounce
+ * @returns {void}
+ */
+function showSeatSelectAnnounce() {
+    setTimeout(function() {
+        var json = sessionStorage.getItem('performances');
+        if (json === null) {
+            return;
+        }
+        var performances = JSON.parse(json);
+        if (performances.length === 1) {
+            return;
+        }
+        modal.open('seatSelectAnnounce');
+        setTimeout(function() {
+            modal.close('seatSelectAnnounce');
+        }, 5000);
+    }, 0);
 }
 
 /**
