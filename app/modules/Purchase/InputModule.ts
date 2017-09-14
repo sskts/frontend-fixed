@@ -61,9 +61,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         }
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -155,9 +153,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
 
             return;
         }
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -257,9 +253,7 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
 
             return;
         }
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

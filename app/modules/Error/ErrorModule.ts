@@ -3,11 +3,14 @@
  * @namespace ErrorModule
  */
 import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 
 import logger from '../../middlewares/logger';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+
+const log = debug('SSKTS:Error.ErrorModule');
 
 /**
  * Not Found
@@ -46,6 +49,7 @@ export function errorRender(
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.AppError) {
+        log('APPエラー', err);
         switch (err.code) {
             case ErrorUtilModule.ErrorType.Property:
                 status = HTTPStatus.BAD_REQUEST;
@@ -73,9 +77,9 @@ export function errorRender(
                 msg = err.message;
                 break;
         }
-    } else if (err instanceof sasaki.transporters.RequestError) {
-        // APIエラー
-        switch (err.code) {
+    } else if (err.hasOwnProperty('errors')) {
+        log('APIエラー', err);
+        switch ((<sasaki.transporters.RequestError>err).code) {
             case HTTPStatus.BAD_REQUEST:
                 status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.badRequest');
@@ -92,11 +96,7 @@ export function errorRender(
                 status = HTTPStatus.NOT_FOUND;
                 msg = req.__('common.error.notFound');
                 break;
-            case HTTPStatus.INTERNAL_SERVER_ERROR:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
-                msg = req.__('common.error.internalServerError');
-                break;
-            case httpStatus.SERVICE_UNAVAILABLE:
+            case HTTPStatus.SERVICE_UNAVAILABLE:
                 status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
                 break;
@@ -105,6 +105,10 @@ export function errorRender(
                 msg = req.__('common.error.internalServerError');
                 break;
         }
+    } else {
+        log('defaultエラー');
+        status = HTTPStatus.INTERNAL_SERVER_ERROR;
+        msg = req.__('common.error.internalServerError');
     }
 
     if (req.session !== undefined) {

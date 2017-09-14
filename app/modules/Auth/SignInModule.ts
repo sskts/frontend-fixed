@@ -63,9 +63,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             res.redirect(`/purchase/app.html?id=${authModel.state.split('-')[0]}`);
         }
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;

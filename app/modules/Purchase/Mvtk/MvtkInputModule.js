@@ -52,9 +52,7 @@ function render(req, res, next) {
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     }
     catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -182,9 +180,7 @@ function select(req, res, next) {
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });

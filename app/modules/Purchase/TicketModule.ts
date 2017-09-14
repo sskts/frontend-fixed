@@ -73,9 +73,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 
         return;
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -252,9 +250,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
 
             return;
         }
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

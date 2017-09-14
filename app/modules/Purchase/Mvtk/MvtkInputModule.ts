@@ -42,9 +42,7 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -167,9 +165,7 @@ export async function select(req: Request, res: Response, next: NextFunction): P
 
             return;
         }
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

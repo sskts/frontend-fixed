@@ -49,9 +49,7 @@ function render(req, res, next) {
             return;
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
@@ -302,7 +300,8 @@ function purchase(req, res) {
                 const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
                     purchaseModel: purchaseModel,
                     theater: theater,
-                    domain: req.headers.host
+                    domain: req.headers.host,
+                    layout: false
                 });
                 log('メールテンプレート取得');
                 yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({

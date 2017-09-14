@@ -44,9 +44,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 
         return;
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -293,7 +291,8 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 {
                     purchaseModel: purchaseModel,
                     theater: theater,
-                    domain: req.headers.host
+                    domain: req.headers.host,
+                    layout: false
                 }
             );
             log('メールテンプレート取得');

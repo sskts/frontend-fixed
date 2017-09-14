@@ -72,9 +72,7 @@ function render(req, res, next) {
             }
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -168,9 +166,7 @@ function purchaserInformationRegistration(req, res, next) {
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -272,9 +268,7 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
                 res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });

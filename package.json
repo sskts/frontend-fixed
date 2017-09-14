@@ -115,8 +115,8 @@
     "check-coverage": true,
     "statements": 50,
     "branches": 50,
-    "lines": 75,
-    "functions": 75,
+    "lines": 70,
+    "functions": 80,
     "include": [
       "app/**/*.js"
     ],

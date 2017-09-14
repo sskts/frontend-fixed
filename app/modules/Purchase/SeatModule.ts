@@ -45,9 +45,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         purchaseModel.save(req.session);
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -84,9 +82,7 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
         });
 
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         res.json({
             err: error.message,
             result: null
@@ -147,9 +143,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
 
         return;
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.AppError(err, undefined);
+        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;

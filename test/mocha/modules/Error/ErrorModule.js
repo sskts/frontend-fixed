@@ -10,7 +10,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /**
  * Error.ErrorModuleテスト
  */
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const assert = require("assert");
+const HTTPStatus = require("http-status");
 const sinon = require("sinon");
 const logger_1 = require("../../../../app/middlewares/logger");
 const ErrorModule = require("../../../../app/modules/Error/ErrorModule");
@@ -48,7 +50,30 @@ describe('Error.ErrorModule', () => {
         yield ErrorModule.notFoundRender(req, res, next);
         assert(res.send.calledOnce);
     }));
-    it('errorRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+    it('errorRender APPエラー Property', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const errorType = ErrorUtilModule.ErrorType.Property;
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APPエラー Access', () => __awaiter(this, void 0, void 0, function* () {
         const error = sinon.stub(logger_1.default, 'error').returns({});
         const req = {
             session: {},
@@ -68,6 +93,247 @@ describe('Error.ErrorModule', () => {
         };
         const errorType = ErrorUtilModule.ErrorType.Access;
         yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APPエラー Validation', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const errorType = ErrorUtilModule.ErrorType.Validation;
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APPエラー Expire', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const errorType = ErrorUtilModule.ErrorType.Expire;
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APPエラー ExternalModule', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const errorType = ErrorUtilModule.ErrorType.ExternalModule;
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー BAD_REQUEST', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.BAD_REQUEST;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー UNAUTHORIZED', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.UNAUTHORIZED;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー FORBIDDEN', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.FORBIDDEN;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー NOT_FOUND', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.NOT_FOUND;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー INTERNAL_SERVER_ERROR', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.INTERNAL_SERVER_ERROR;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender APIエラー SERVICE_UNAVAILABLE', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        const requestError = new sasaki.transporters.RequestError();
+        requestError.errors = [];
+        requestError.code = HTTPStatus.SERVICE_UNAVAILABLE;
+        yield ErrorModule.errorRender(requestError, req, res, next);
+        assert(res.render.calledOnce);
+        error.restore();
+    }));
+    it('errorRender defaultエラー', () => __awaiter(this, void 0, void 0, function* () {
+        const error = sinon.stub(logger_1.default, 'error').returns({});
+        const req = {
+            session: {},
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield ErrorModule.errorRender(new Error(), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));

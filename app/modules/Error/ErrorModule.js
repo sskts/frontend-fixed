@@ -1,12 +1,9 @@
 "use strict";
-/**
- * エラー
- * @namespace ErrorModule
- */
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const log = debug('SSKTS:Error.ErrorModule');
 /**
  * Not Found
  * @memberof ErrorModule
@@ -39,6 +36,7 @@ function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err instanceof ErrorUtilModule.AppError) {
+        log('APPエラー', err);
         switch (err.code) {
             case ErrorUtilModule.ErrorType.Property:
                 status = HTTPStatus.BAD_REQUEST;
@@ -67,8 +65,8 @@ function errorRender(err, req, res, _) {
                 break;
         }
     }
-    else if (err instanceof sasaki.transporters.RequestError) {
-        // APIエラー
+    else if (err.hasOwnProperty('errors')) {
+        log('APIエラー', err);
         switch (err.code) {
             case HTTPStatus.BAD_REQUEST:
                 status = HTTPStatus.BAD_REQUEST;
@@ -86,11 +84,7 @@ function errorRender(err, req, res, _) {
                 status = HTTPStatus.NOT_FOUND;
                 msg = req.__('common.error.notFound');
                 break;
-            case HTTPStatus.INTERNAL_SERVER_ERROR:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
-                msg = req.__('common.error.internalServerError');
-                break;
-            case httpStatus.SERVICE_UNAVAILABLE:
+            case HTTPStatus.SERVICE_UNAVAILABLE:
                 status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
                 break;
@@ -99,6 +93,11 @@ function errorRender(err, req, res, _) {
                 msg = req.__('common.error.internalServerError');
                 break;
         }
+    }
+    else {
+        log('defaultエラー');
+        status = HTTPStatus.INTERNAL_SERVER_ERROR;
+        msg = req.__('common.error.internalServerError');
     }
     if (req.session !== undefined) {
         delete req.session.purchase;

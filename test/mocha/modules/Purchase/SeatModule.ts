@@ -316,7 +316,7 @@ describe('Purchase.SeatModule', () => {
                 dateJouei: '',
                 titleCode: '',
                 titleBranchNum: '',
-                timeBegin: '',
+                timeBegin: ''
             },
             getValidationResult: () => {
                 return Promise.resolve({

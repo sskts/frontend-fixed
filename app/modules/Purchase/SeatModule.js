@@ -56,9 +56,7 @@ function render(req, res, next) {
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -100,9 +98,7 @@ function performanceChange(req, res) {
             });
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             res.json({
                 err: error.message,
                 result: null
@@ -160,9 +156,7 @@ function seatSelect(req, res, next) {
             return;
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.AppError(err, undefined);
+            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
