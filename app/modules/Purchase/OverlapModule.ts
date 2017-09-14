@@ -43,8 +43,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.render('purchase/overlap');
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -87,8 +87,8 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -106,7 +106,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
  */
 export function prevReserve(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }

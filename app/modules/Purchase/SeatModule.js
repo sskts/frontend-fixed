@@ -57,8 +57,8 @@ function render(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -101,8 +101,8 @@ function performanceChange(req, res) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             res.json({
                 err: error.message,
                 result: null
@@ -161,8 +161,8 @@ function seatSelect(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }

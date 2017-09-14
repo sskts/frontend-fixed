@@ -1474,8 +1474,13 @@ p a {
             .purchase-performances .chronological-order li a dl dt {
               width: 50%;
               padding: 10px; } }
-          .purchase-performances .chronological-order li a dl dt .status img {
-            width: 30px; }
+          .purchase-performances .chronological-order li a dl dt .status {
+            width: 80px; }
+            @media screen and (max-width: 767px) {
+              .purchase-performances .chronological-order li a dl dt .status {
+                width: 50px; } }
+            .purchase-performances .chronological-order li a dl dt .status img {
+              width: 30px; }
         .purchase-performances .chronological-order li a dl dd {
           width: 520px;
           padding: 10px 40px 25px 40px;
@@ -1539,8 +1544,13 @@ p a {
               -webkit-align-items: center;
                   -ms-flex-align: center;
                       align-items: center; }
-              .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
-                width: 30px; }
+              @media screen and (max-width: 767px) {
+                .purchase-performances .film-order li > dl > dd ul li a dl dt {
+                  padding: 10px; } }
+              .purchase-performances .film-order li > dl > dd ul li a dl dt .status {
+                width: 60px; }
+                .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
+                  width: 30px; }
             .purchase-performances .film-order li > dl > dd ul li a dl dd {
               padding: 10px 0; }
 

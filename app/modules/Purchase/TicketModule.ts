@@ -74,8 +74,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -134,7 +134,7 @@ export interface ISelectTicket {
 // tslint:disable-next-line:max-func-body-length
 export async function ticketSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }
@@ -253,8 +253,8 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             return;
         }
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

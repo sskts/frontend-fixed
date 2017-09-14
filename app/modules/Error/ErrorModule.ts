@@ -2,8 +2,10 @@
  * エラー
  * @namespace ErrorModule
  */
+import * as sasaki from '@motionpicture/sasaki-api-nodejs';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
+
 import logger from '../../middlewares/logger';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 
@@ -35,24 +37,29 @@ export function notFoundRender(req: Request, res: Response, _: NextFunction): vo
  * @param {NextFunction} next
  * @returns {void}
  */
-export function errorRender(err: Error | ErrorUtilModule.CustomError, req: Request, res: Response, _: NextFunction): void {
+export function errorRender(
+    err: Error | ErrorUtilModule.AppError | sasaki.transporters.RequestError,
+    req: Request,
+    res: Response,
+    _: NextFunction
+): void {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
-    if (err instanceof ErrorUtilModule.CustomError) {
+    if (err instanceof ErrorUtilModule.AppError) {
         switch (err.code) {
             case ErrorUtilModule.ErrorType.Property:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.property');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Property';
                 break;
             case ErrorUtilModule.ErrorType.Access:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.access');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Access';
                 break;
             case ErrorUtilModule.ErrorType.Validation:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.validation');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Validation';
                 break;
             case ErrorUtilModule.ErrorType.Expire:
@@ -64,6 +71,38 @@ export function errorRender(err: Error | ErrorUtilModule.CustomError, req: Reque
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
+                break;
+        }
+    } else if (err instanceof sasaki.transporters.RequestError) {
+        // APIエラー
+        switch (err.code) {
+            case HTTPStatus.BAD_REQUEST:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.badRequest');
+                break;
+            case HTTPStatus.UNAUTHORIZED:
+                status = HTTPStatus.UNAUTHORIZED;
+                msg = req.__('common.error.unauthorized');
+                break;
+            case HTTPStatus.FORBIDDEN:
+                status = HTTPStatus.FORBIDDEN;
+                msg = req.__('common.error.forbidden');
+                break;
+            case HTTPStatus.NOT_FOUND:
+                status = HTTPStatus.NOT_FOUND;
+                msg = req.__('common.error.notFound');
+                break;
+            case HTTPStatus.INTERNAL_SERVER_ERROR:
+                status = HTTPStatus.INTERNAL_SERVER_ERROR;
+                msg = req.__('common.error.internalServerError');
+                break;
+            case httpStatus.SERVICE_UNAVAILABLE:
+                status = HTTPStatus.SERVICE_UNAVAILABLE;
+                msg = req.__('common.error.serviceUnavailable');
+                break;
+            default:
+                status = HTTPStatus.INTERNAL_SERVER_ERROR;
+                msg = req.__('common.error.internalServerError');
                 break;
         }
     }
@@ -82,7 +121,7 @@ export function errorRender(err: Error | ErrorUtilModule.CustomError, req: Reque
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger.error('SSKTS-APP:ErrorModule.index', status, err.message);
+    logger.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     } else {

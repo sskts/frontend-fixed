@@ -83,15 +83,6 @@ describe('Fixed.FixedModule', () => {
         updReserve.restore();
         inquiryLoginForm.restore();
     });
-    it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
-        const req = {};
-        const res = {
-            locals: {},
-            render: sinon.spy()
-        };
-        yield FixedModule.render(req, res);
-        assert(res.render.calledOnce);
-    }));
     it('settingRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {}

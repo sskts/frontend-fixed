@@ -24,8 +24,8 @@ export default (app: express.Application) => {
     }
 
     //エラー
-    router.get('/error', (req, res) => {
-        ErrorModule.errorRender(new Error(), req, res);
+    router.get('/error', (req, res, next) => {
+        ErrorModule.errorRender(new Error(), req, res, next);
     });
     app.use(ErrorModule.notFoundRender); // 404
     app.use(ErrorModule.errorRender); // error handlers

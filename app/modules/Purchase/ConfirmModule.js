@@ -50,8 +50,8 @@ function render(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
@@ -323,8 +323,8 @@ function purchase(req, res) {
         }
         catch (err) {
             log('ERROR', err);
-            const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
-                : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+            const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
+                : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
                     : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                         : err.message;
             res.json({ err: msg, result: null });
@@ -349,8 +349,8 @@ function getCompleteData(req, res) {
         res.json({ err: null, result: req.session.complete });
     }
     catch (err) {
-        const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.property')
-            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.access')
+        const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
+            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
                 : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
                     : err.message;
         res.json({ err: msg, result: null });

@@ -79,16 +79,6 @@ describe('Fixed.FixedModule', () => {
         inquiryLoginForm.restore();
     });
 
-    it('render 正常', async () => {
-        const req: any = {};
-        const res: any = {
-            locals: {},
-            render: sinon.spy()
-        };
-        await FixedModule.render(req, res);
-        assert(res.render.calledOnce);
-    });
-
     it('settingRender 正常', async () => {
         const req: any = {
             session: {}

@@ -25,7 +25,10 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
-        yield ErrorModule.notFoundRender(req, res);
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield ErrorModule.notFoundRender(req, res, next);
         assert(res.render.calledOnce);
     }));
     it('notFoundRender xhr 正常', () => __awaiter(this, void 0, void 0, function* () {
@@ -39,7 +42,10 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
-        yield ErrorModule.notFoundRender(req, res);
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield ErrorModule.notFoundRender(req, res, next);
         assert(res.send.calledOnce);
     }));
     it('errorRender 正常', () => __awaiter(this, void 0, void 0, function* () {
@@ -57,8 +63,11 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
+        const next = (err) => {
+            throw err.massage;
+        };
         const errorType = ErrorUtilModule.ErrorType.Access;
-        yield ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -78,8 +87,11 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
+        const next = (err) => {
+            throw err.massage;
+        };
         const errorType = ErrorUtilModule.ErrorType.Access;
-        yield ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
+        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
         assert(res.send.calledOnce);
         error.restore();
     }));

@@ -19,7 +19,10 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
-        await ErrorModule.notFoundRender(req, res);
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
+        await ErrorModule.notFoundRender(req, res, next);
         assert(res.render.calledOnce);
     });
 
@@ -34,7 +37,10 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
-        await ErrorModule.notFoundRender(req, res);
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
+        await ErrorModule.notFoundRender(req, res, next);
         assert(res.send.calledOnce);
     });
 
@@ -53,8 +59,11 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
         const errorType = ErrorUtilModule.ErrorType.Access;
-        await ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
+        await ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     });
@@ -75,8 +84,11 @@ describe('Error.ErrorModule', () => {
                 return res;
             }
         };
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
         const errorType = ErrorUtilModule.ErrorType.Access;
-        await ErrorModule.errorRender(new ErrorUtilModule.CustomError(errorType, ''), req, res);
+        await ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
         assert(res.send.calledOnce);
         error.restore();
     });

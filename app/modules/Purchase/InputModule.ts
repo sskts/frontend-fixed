@@ -62,8 +62,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         }
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -79,7 +79,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  */
 export async function purchaserInformationRegistration(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }
@@ -156,8 +156,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             return;
         }
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -173,7 +173,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
  */
 export async function purchaserInformationRegistrationOfMember(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
 
         return;
     }
@@ -258,8 +258,8 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
             return;
         }
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

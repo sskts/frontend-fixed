@@ -46,6 +46,10 @@
                             padding: 10px;
                         }
                         .status {
+                            width: 80px;
+                            @media screen and (max-width: $mobile){
+                                width: 50px;
+                            }
                             img {
                                 width: 30px;
                             }
@@ -115,7 +119,11 @@
                                         display: flex;
                                         justify-content: space-between;
                                         align-items: center;
+                                        @media screen and (max-width: $mobile){
+                                            padding: 10px;
+                                        }
                                         .status {
+                                            width: 60px;
                                             img {
                                                 width: 30px;
                                             }

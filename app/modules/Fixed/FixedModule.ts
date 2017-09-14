@@ -34,7 +34,7 @@ export async function settingRender(req: Request, res: Response, next: NextFunct
         res.locals.movieTheaters = movieTheaters;
         res.render('setting/index');
     } catch (err) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
     }
 }
 

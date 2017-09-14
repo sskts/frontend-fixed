@@ -44,7 +44,7 @@ function settingRender(req, res, next) {
             res.render('setting/index');
         }
         catch (err) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
+            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
         }
     });
 }

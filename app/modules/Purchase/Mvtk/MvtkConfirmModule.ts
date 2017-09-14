@@ -40,8 +40,8 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }
@@ -95,8 +95,8 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
         res.redirect('/purchase/ticket');
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

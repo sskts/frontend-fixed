@@ -52,8 +52,8 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -129,8 +129,8 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         }
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 
         return;
@@ -182,8 +182,8 @@ export function confirmRender(req: Request, res: Response, next: NextFunction): 
         return;
     } catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

@@ -60,8 +60,8 @@ function loginRender(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
@@ -138,8 +138,8 @@ function inquiryAuth(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
@@ -190,8 +190,8 @@ function confirmRender(req, res, next) {
     }
     catch (err) {
         const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
+            ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+            : new ErrorUtilModule.AppError(err, undefined);
         next(error);
     }
 }

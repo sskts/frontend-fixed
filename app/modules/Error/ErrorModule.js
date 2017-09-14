@@ -1,5 +1,9 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * エラー
+ * @namespace ErrorModule
+ */
+const sasaki = require("@motionpicture/sasaki-api-nodejs");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
@@ -34,21 +38,21 @@ exports.notFoundRender = notFoundRender;
 function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
-    if (err instanceof ErrorUtilModule.CustomError) {
+    if (err instanceof ErrorUtilModule.AppError) {
         switch (err.code) {
             case ErrorUtilModule.ErrorType.Property:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.property');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Property';
                 break;
             case ErrorUtilModule.ErrorType.Access:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.access');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Access';
                 break;
             case ErrorUtilModule.ErrorType.Validation:
                 status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.validation');
+                msg = req.__('common.error.badRequest');
                 err.message = 'Error Validation';
                 break;
             case ErrorUtilModule.ErrorType.Expire:
@@ -60,6 +64,39 @@ function errorRender(err, req, res, _) {
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
+                break;
+        }
+    }
+    else if (err instanceof sasaki.transporters.RequestError) {
+        // APIエラー
+        switch (err.code) {
+            case HTTPStatus.BAD_REQUEST:
+                status = HTTPStatus.BAD_REQUEST;
+                msg = req.__('common.error.badRequest');
+                break;
+            case HTTPStatus.UNAUTHORIZED:
+                status = HTTPStatus.UNAUTHORIZED;
+                msg = req.__('common.error.unauthorized');
+                break;
+            case HTTPStatus.FORBIDDEN:
+                status = HTTPStatus.FORBIDDEN;
+                msg = req.__('common.error.forbidden');
+                break;
+            case HTTPStatus.NOT_FOUND:
+                status = HTTPStatus.NOT_FOUND;
+                msg = req.__('common.error.notFound');
+                break;
+            case HTTPStatus.INTERNAL_SERVER_ERROR:
+                status = HTTPStatus.INTERNAL_SERVER_ERROR;
+                msg = req.__('common.error.internalServerError');
+                break;
+            case httpStatus.SERVICE_UNAVAILABLE:
+                status = HTTPStatus.SERVICE_UNAVAILABLE;
+                msg = req.__('common.error.serviceUnavailable');
+                break;
+            default:
+                status = HTTPStatus.INTERNAL_SERVER_ERROR;
+                msg = req.__('common.error.internalServerError');
                 break;
         }
     }
@@ -77,7 +114,7 @@ function errorRender(err, req, res, _) {
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err.message);
+    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     }

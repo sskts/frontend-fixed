@@ -34,12 +34,12 @@ var ErrorType;
  * カスタムエラー
  * @memberof Util.ErrorUtilModule
  * @extends Error
- * @class CustomError
+ * @class AppError
  */
-class CustomError extends Error {
+class AppError extends Error {
     constructor(code, message) {
         super(message);
         this.code = code;
     }
 }
-exports.CustomError = CustomError;
+exports.AppError = AppError;

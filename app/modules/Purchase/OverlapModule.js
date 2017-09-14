@@ -54,8 +54,8 @@ function render(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -100,8 +100,8 @@ function newReserve(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;
         }
@@ -119,7 +119,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
         return;
     }
     //座席選択へ

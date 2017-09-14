@@ -34,9 +34,9 @@ export enum ErrorType {
  * カスタムエラー
  * @memberof Util.ErrorUtilModule
  * @extends Error
- * @class CustomError
+ * @class AppError
  */
-export class CustomError extends Error {
+export class AppError extends Error {
     public code: ErrorType;
     constructor(code: ErrorType, message: string | undefined) {
         super(message);

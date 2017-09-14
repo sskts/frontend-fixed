@@ -73,8 +73,8 @@ function render(req, res, next) {
         }
         catch (err) {
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -92,7 +92,7 @@ exports.render = render;
 function purchaserInformationRegistration(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
             return;
         }
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
@@ -169,8 +169,8 @@ function purchaserInformationRegistration(req, res, next) {
                 return;
             }
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
@@ -188,7 +188,7 @@ exports.purchaserInformationRegistration = purchaserInformationRegistration;
 function purchaserInformationRegistrationOfMember(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.Property, undefined));
+            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
             return;
         }
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
@@ -273,8 +273,8 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
                 return;
             }
             const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
+                ? new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message)
+                : new ErrorUtilModule.AppError(err, undefined);
             next(error);
         }
     });
