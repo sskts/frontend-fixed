@@ -57,18 +57,18 @@
     </ul>
 
     <% if (viewType === 'app') { %>    
-    <dl class="box radius bg-light-gray">
+    <dl class="box radius bg-light-gray mb-middle">
         <dt class="mb-small text-center">
             <strong><%- __('purchase.complete.ticket_holder.title') %></strong>
         </dt>
         <dd>
             <div class="image mb-x-small bg-white"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
-            <p class="mb-small"><%- __('purchase.complete.ticket_holder.read') %></p>
-            <div class="button blue-button center-button">
-                <a href="<%- appSiteUrl %>/#/ticket-holder"><%= __('common.close') %></a>
-            </div>
+            <p><%- __('purchase.complete.ticket_holder.read') %></p>
         </dd>
     </dl>
+    <div class="button blue-button center-button">
+        <a href="<%- appSiteUrl %>/#/ticket-holder"><%= __('common.close') %></a>
+    </div>
     <% } else { %>
     <div class="mb-x-large">
         <p class="mb-middle small-x-text"><%- __('purchase.complete.print_read') %></p>
