@@ -293,27 +293,39 @@ function purchase(req, res) {
                 };
             }
             else {
-                const theater = yield sasaki.service.place(options).findMovieTheater({
-                    branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
-                });
-                log('劇場', theater.telephone);
-                const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
-                    purchaseModel: purchaseModel,
-                    theater: theater,
-                    domain: req.headers.host,
-                    layout: false
-                });
-                log('メールテンプレート取得');
-                yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
-                    transactionId: purchaseModel.transaction.id,
-                    emailNotification: {
-                        from: 'noreply@ticket-cinemasunshine.com',
-                        to: purchaseModel.profile.email,
-                        subject: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                        content: content
-                    }
-                });
-                log('メール通知');
+                try {
+                    const theater = yield sasaki.service.place(options).findMovieTheater({
+                        branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
+                    });
+                    log('劇場', theater.telephone);
+                    const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
+                        purchaseModel: purchaseModel,
+                        theater: theater,
+                        domain: req.headers.host,
+                        layout: false
+                    });
+                    log('メールテンプレート取得');
+                    const sender = 'noreply@ticket-cinemasunshine.com';
+                    yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
+                        transactionId: purchaseModel.transaction.id,
+                        emailMessageAttributes: {
+                            sender: {
+                                name: purchaseModel.transaction.seller.name,
+                                email: sender
+                            },
+                            toRecipient: {
+                                name: `${purchaseModel.profile.emailConfirm} ${purchaseModel.profile.givenName}`,
+                                email: purchaseModel.profile.email
+                            },
+                            about: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
+                            text: content
+                        }
+                    });
+                    log('メール通知');
+                }
+                catch (err) {
+                    log('メール登録失敗', err);
+                }
             }
             // 購入セッション削除
             delete req.session.purchase;
