@@ -2,7 +2,7 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import TicketForm from '../../forms/Purchase/TicketForm';

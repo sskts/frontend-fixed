@@ -4,7 +4,7 @@
  */
 
 import * as GMO from '@motionpicture/gmo-service';
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import InputForm from '../../forms/Purchase/InputForm';

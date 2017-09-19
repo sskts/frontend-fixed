@@ -2,7 +2,7 @@
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { AuthModel } from '../../models/Auth/AuthModel';

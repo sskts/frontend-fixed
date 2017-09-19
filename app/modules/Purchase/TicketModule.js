@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const TicketForm_1 = require("../../forms/Purchase/TicketForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");

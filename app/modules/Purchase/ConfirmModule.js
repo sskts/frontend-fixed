@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const MVTK = require("@motionpicture/mvtk-service");
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");

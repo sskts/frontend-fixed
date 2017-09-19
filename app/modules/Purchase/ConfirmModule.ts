@@ -4,7 +4,7 @@
  */
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import logger from '../../middlewares/logger';

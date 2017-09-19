@@ -1,5 +1,5 @@
 "use strict";
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const uuid = require("uuid");
 /**
  * 認証モデル

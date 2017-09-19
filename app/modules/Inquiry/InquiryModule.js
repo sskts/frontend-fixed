@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
  * 照会
  * @namespace InquiryModule
  */
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");

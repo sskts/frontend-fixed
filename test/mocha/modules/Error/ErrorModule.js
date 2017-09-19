@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /**
  * Error.ErrorModuleテスト
  */
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
 const HTTPStatus = require("http-status");
 const sinon = require("sinon");

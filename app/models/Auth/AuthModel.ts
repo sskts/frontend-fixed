@@ -1,4 +1,4 @@
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as uuid from 'uuid';
 
 /**

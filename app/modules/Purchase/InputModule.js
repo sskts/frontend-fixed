@@ -12,7 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const GMO = require("@motionpicture/gmo-service");
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");

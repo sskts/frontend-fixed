@@ -12,7 +12,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
  * @namespace Fixed.FixedModule
  */
 const COA = require("@motionpicture/coa-service");
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const moment = require("moment");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");

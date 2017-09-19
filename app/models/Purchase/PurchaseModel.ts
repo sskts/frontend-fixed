@@ -3,7 +3,7 @@
  */
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import { Request } from 'express';
 import * as moment from 'moment';
 import * as MvtkUtilModule from '../../modules/Purchase/Mvtk/MvtkUtilModule';

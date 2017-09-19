@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 /**
  * Auth.SignInModuleテスト
  */
-const sasaki = require("@motionpicture/sasaki-api-nodejs");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
 const sinon = require("sinon");
 const AuthModel_1 = require("../../../../app/models/Auth/AuthModel");

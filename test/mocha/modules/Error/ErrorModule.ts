@@ -1,7 +1,7 @@
 /**
  * Error.ErrorModuleテスト
  */
-import * as sasaki from '@motionpicture/sasaki-api-nodejs';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
 import * as HTTPStatus from 'http-status';
 import * as sinon from 'sinon';
