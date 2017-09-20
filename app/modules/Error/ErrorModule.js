@@ -63,7 +63,7 @@ function errorRender(err, req, res, _) {
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
-                logger_1.default.error('SSKTS-APP:ErrorModule', 'ErrorUtilModule.AppError', status, err);
+                logger_1.default.error('SSKTS-APP:ErrorModule ErrorUtilModule.AppError', status, err);
                 break;
         }
     }

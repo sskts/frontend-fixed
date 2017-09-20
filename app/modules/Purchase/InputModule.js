@@ -135,7 +135,7 @@ function purchaserInformationRegistration(req, res, next) {
                 telephone: req.body.telephone
             };
             // クレジットカード処理
-            yield creditCardProsess(req, purchaseModel);
+            yield creditCardProsess(req, res, purchaseModel);
             yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
                 contact: {
@@ -244,7 +244,7 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
                 log('クレジットカード登録');
             }
             // クレジットカード処理
-            yield creditCardProsess(req, purchaseModel);
+            yield creditCardProsess(req, res, purchaseModel);
             yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
                 contact: {
@@ -279,9 +279,10 @@ exports.purchaserInformationRegistrationOfMember = purchaserInformationRegistrat
  * クレジットカード処理
  * @function creditCardProsess
  * @param {Request} req
+ * @param {Response} res
  * @param {PurchaseModel} purchaseModel
  */
-function creditCardProsess(req, purchaseModel) {
+function creditCardProsess(req, res, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
@@ -302,6 +303,7 @@ function creditCardProsess(req, purchaseModel) {
             }
             catch (err) {
                 logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
+                res.locals.gmoError = err.message;
                 throw ErrorUtilModule.ErrorType.Validation;
             }
             log('GMOオーソリ削除');
@@ -339,6 +341,7 @@ function creditCardProsess(req, purchaseModel) {
             catch (err) {
                 log(createCreditCardAuthorizationArgs);
                 logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
+                res.locals.gmoError = err.message;
                 throw ErrorUtilModule.ErrorType.Validation;
             }
             log('GMOオーソリ追加');

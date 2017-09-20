@@ -119,7 +119,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             telephone: req.body.telephone
         };
         // クレジットカード処理
-        await creditCardProsess(req, purchaseModel);
+        await creditCardProsess(req, res, purchaseModel);
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -226,7 +226,7 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
         }
 
         // クレジットカード処理
-        await creditCardProsess(req, purchaseModel);
+        await creditCardProsess(req, res, purchaseModel);
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -262,9 +262,10 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
  * クレジットカード処理
  * @function creditCardProsess
  * @param {Request} req
+ * @param {Response} res
  * @param {PurchaseModel} purchaseModel
  */
-async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Promise<void> {
+async function creditCardProsess(req: Request, res: Response, purchaseModel: PurchaseModel): Promise<void> {
     if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
     const authModel = new AuthModel(req.session.auth);
     const options = {
@@ -285,6 +286,7 @@ async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Pr
                 `in: ${cancelCreditCardAuthorizationArgs}`,
                 `err: ${err}`
             );
+            res.locals.gmoError = err.message;
             throw ErrorUtilModule.ErrorType.Validation;
         }
         log('GMOオーソリ削除');
@@ -325,6 +327,7 @@ async function creditCardProsess(req: Request, purchaseModel: PurchaseModel): Pr
                 `in: ${createCreditCardAuthorizationArgs}`,
                 `err: ${err}`
             );
+            res.locals.gmoError = err.message;
             throw ErrorUtilModule.ErrorType.Validation;
         }
         log('GMOオーソリ追加');
