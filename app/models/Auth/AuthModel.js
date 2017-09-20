@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const uuid = require("uuid");
 /**

@@ -1,9 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const NAME_MAX_LENGTH = 12;
 const MAIL_MAX_LENGTH = 50;
 const TEL_MAX_LENGTH = 11;
 const TEL_MIN_LENGTH = 9;
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 購入情報入力フォーム
  */

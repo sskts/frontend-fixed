@@ -1,11 +1,11 @@
+"use strict";
 /**
  * ベンチマーク
  */
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const UtilModule = require("../modules/Util/UtilModule");
 const log = debug('SSKTS:benchmark');
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = (req, _, next) => {
     if (process.env.NODE_ENV === UtilModule.ENV.Development) {
         const startMemory = process.memoryUsage();

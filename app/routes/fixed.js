@@ -1,7 +1,8 @@
+"use strict";
 /**
  * ルーティング券売機
  */
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const FixedModule = require("../modules/Fixed/FixedModule");
 const PerformancesModule = require("../modules/Purchase/PerformancesModule");
@@ -14,5 +15,4 @@ fixedRouter.get('/setting', FixedModule.settingRender);
 fixedRouter.get('/stop', FixedModule.stopRender);
 // 照会情報取得
 fixedRouter.post('/fixed/getInquiryData', FixedModule.getInquiryData);
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = fixedRouter;

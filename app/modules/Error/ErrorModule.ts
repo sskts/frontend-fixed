@@ -75,6 +75,7 @@ export function errorRender(
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
+                logger.error('SSKTS-APP:ErrorModule ErrorUtilModule.AppError', status, err);
                 break;
         }
     } else if (err.hasOwnProperty('errors')) {
@@ -99,16 +100,19 @@ export function errorRender(
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
+                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
                 break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = req.__('common.error.internalServerError');
+                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
                 break;
         }
     } else {
-        log('defaultエラー');
+        log('Error');
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
+        logger.error('SSKTS-APP:ErrorModule', 'Error', status, err);
     }
 
     if (req.session !== undefined) {
@@ -125,7 +129,6 @@ export function errorRender(
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     } else {

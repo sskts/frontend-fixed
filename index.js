@@ -1,7 +1,8 @@
+"use strict";
 /**
  * Module dependencies.
  */
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const http = require("http");
 const app = require("./app/app");
 /**

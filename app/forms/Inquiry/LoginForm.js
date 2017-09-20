@@ -1,6 +1,6 @@
 "use strict";
-const minLength = 9;
 Object.defineProperty(exports, "__esModule", { value: true });
+const minLength = 9;
 /**
  * 購入者情報入力フォーム
  */

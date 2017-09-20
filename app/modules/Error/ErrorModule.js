@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
@@ -62,6 +63,7 @@ function errorRender(err, req, res, _) {
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
+                logger_1.default.error('SSKTS-APP:ErrorModule', 'ErrorUtilModule.AppError', status, err);
                 break;
         }
     }
@@ -87,17 +89,20 @@ function errorRender(err, req, res, _) {
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
+                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
                 break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = req.__('common.error.internalServerError');
+                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
                 break;
         }
     }
     else {
-        log('defaultエラー');
+        log('Error');
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
+        logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err);
     }
     if (req.session !== undefined) {
         delete req.session.purchase;
@@ -113,7 +118,6 @@ function errorRender(err, req, res, _) {
      * Expire: 有効期限切れ
      * ExternalModule: 外部モジュールエラー
      */
-    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     }

@@ -9,11 +9,11 @@
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
 
     <div class="mb-small white-box center">
-        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', reserveSeatLength) %></strong>
+        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length) %></strong>
     </div>
 
     <div class="ticket-list mb-small">
-        <% for (let i = 0; i < reserveSeatLength; i++) { %>
+        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length; i++) { %>
         <% if (mvtkInfo[i] !== undefined) { %>
         <div class="mvtk-box active">
             <div class="button small-button gray-button remove-button">
@@ -24,7 +24,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_code') %></dt>
                         <dd>
-                            <input type="text" name="mvtkCode" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
+                            <input type="text" name="mvtkCode" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
@@ -32,7 +32,7 @@
                     <dl>
                         <dt><%- __('common.mvtk_password') %></dt>
                         <dd>
-                            <input type="password" name="mvtkPassword" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
+                            <input type="password" name="mvtkPassword" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord" readonly="readonly">
                         </dd>
                     </dl>
                 </li>
@@ -65,7 +65,7 @@
         <% } %>
         <% } %>
     </div>   
-    <% if (reserveSeatLength > 1) { %>
+    <% if (purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length > 1) { %>
     <div class="button middle-button gray-button add-button mb-large">
         <a class="center icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
