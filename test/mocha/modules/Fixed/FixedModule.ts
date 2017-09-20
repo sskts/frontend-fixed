@@ -10,12 +10,9 @@ import * as InquiryLoginForm from '../../../../app/forms/Inquiry/LoginForm';
 import * as FixedModule from '../../../../app/modules/Fixed/FixedModule';
 
 describe('Fixed.FixedModule', () => {
-    let organization: sinon.SinonStub;
-    let order: sinon.SinonStub;
-    let updReserve: sinon.SinonStub;
-    let inquiryLoginForm: sinon.SinonStub;
-    beforeEach(() => {
-        organization = sinon.stub(sasaki.service, 'organization').returns({
+
+    it('settingRender 正常', async () => {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
             searchMovieTheaters: () => {
                 return {};
             },
@@ -30,7 +27,60 @@ describe('Fixed.FixedModule', () => {
                 };
             }
         });
-        order = sinon.stub(sasaki.service, 'order').returns({
+
+        const req: any = {
+            session: {}
+        };
+        const res: any = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
+        await FixedModule.settingRender(req, res, next);
+        assert(res.render.calledOnce);
+
+        organization.restore();
+    });
+
+    it('settingRender エラー', async () => {
+        const req: any = {
+            session: undefined
+        };
+        const res: any = {};
+        const next: any = sinon.spy();
+        await FixedModule.settingRender(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('stopRender 正常', async () => {
+        const req: any = {};
+        const res: any = {
+            locals: {},
+            render: sinon.spy()
+        };
+        await FixedModule.stopRender(req, res);
+        assert(res.render.calledOnce);
+    });
+
+    it('getInquiryData 正常', async () => {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return {
+                    location: {
+                        name: {
+                            ja: '',
+                            en: ''
+                        }
+                    }
+                };
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
             findByOrderInquiryKey: () => {
                 return {
                     orderInquiryKey: {
@@ -67,54 +117,10 @@ describe('Fixed.FixedModule', () => {
                 };
             }
         });
-        updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(
+        const updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(
             Promise.resolve({})
         );
-        inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
-    });
-    afterEach(() => {
-        organization.restore();
-        order.restore();
-        updReserve.restore();
-        inquiryLoginForm.restore();
-    });
-
-    it('settingRender 正常', async () => {
-        const req: any = {
-            session: {}
-        };
-        const res: any = {
-            locals: {},
-            render: sinon.spy()
-        };
-        const next: any = (err: any) => {
-            throw err.massage;
-        };
-        await FixedModule.settingRender(req, res, next);
-        assert(res.render.calledOnce);
-    });
-
-    it('settingRender エラー', async () => {
-        const req: any = {
-            session: undefined
-        };
-        const res: any = {};
-        const next: any = sinon.spy();
-        await FixedModule.settingRender(req, res, next);
-        assert(next.calledOnce);
-    });
-
-    it('stopRender 正常', async () => {
-        const req: any = {};
-        const res: any = {
-            locals: {},
-            render: sinon.spy()
-        };
-        await FixedModule.stopRender(req, res);
-        assert(res.render.calledOnce);
-    });
-
-    it('stopRender 正常', async () => {
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req: any = {
             session: {},
             body: {},
@@ -132,9 +138,14 @@ describe('Fixed.FixedModule', () => {
         };
         await FixedModule.getInquiryData(req, res);
         assert.notStrictEqual(res.json.args[0][0].result, null);
+
+        organization.restore();
+        order.restore();
+        updReserve.restore();
+        inquiryLoginForm.restore();
     });
 
-    it('stopRender エラー', async () => {
+    it('getInquiryData エラー セッションなし', async () => {
         const req: any = {
             session: undefined,
             body: {}
@@ -147,7 +158,31 @@ describe('Fixed.FixedModule', () => {
         assert.strictEqual(res.json.args[0][0].result, null);
     });
 
-    it('stopRender バリデーション', async () => {
+    it('getInquiryData エラー findMovieTheaterByBranchCodeなし', async () => {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return null;
+            }
+        });
+
+        const req: any = {
+            session: undefined,
+            body: {}
+        };
+        const res: any = {
+            locals: {},
+            json: sinon.spy()
+        };
+        await FixedModule.getInquiryData(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+
+        organization.restore();
+    });
+
+    it('getInquiryData バリデーション', async () => {
         const req: any = {
             session: {},
             body: {},

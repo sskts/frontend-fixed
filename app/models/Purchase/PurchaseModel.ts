@@ -621,7 +621,7 @@ export class PurchaseModel {
             }
         }
 
-        if (this.mvtk === null) {
+        if (this.mvtk.length === 0) {
             return result;
         }
         // ムビチケ情報からチケット情報へ変換
@@ -709,10 +709,9 @@ export class PurchaseModel {
         deleteFlag?: string
         reservedDeviceType?: string
     }) {
-        if (this.individualScreeningEvent === null) {
-            return null;
-        }
-        if (this.seatReservationAuthorization === null) {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization.result === undefined) {
             return null;
         }
 
@@ -763,10 +762,6 @@ export class PurchaseModel {
             mvtkseat.push({ zskCd: reserveTicket.seatCode });
         }
         if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
-            return null;
-        }
-
-        if (this.seatReservationAuthorization.result === undefined) {
             return null;
         }
 

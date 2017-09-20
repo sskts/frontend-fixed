@@ -18,12 +18,8 @@ const sinon = require("sinon");
 const InquiryLoginForm = require("../../../../app/forms/Inquiry/LoginForm");
 const FixedModule = require("../../../../app/modules/Fixed/FixedModule");
 describe('Fixed.FixedModule', () => {
-    let organization;
-    let order;
-    let updReserve;
-    let inquiryLoginForm;
-    beforeEach(() => {
-        organization = sinon.stub(sasaki.service, 'organization').returns({
+    it('settingRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
             searchMovieTheaters: () => {
                 return {};
             },
@@ -38,7 +34,55 @@ describe('Fixed.FixedModule', () => {
                 };
             }
         });
-        order = sinon.stub(sasaki.service, 'order').returns({
+        const req = {
+            session: {}
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield FixedModule.settingRender(req, res, next);
+        assert(res.render.calledOnce);
+        organization.restore();
+    }));
+    it('settingRender エラー', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: undefined
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield FixedModule.settingRender(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('stopRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {};
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        yield FixedModule.stopRender(req, res);
+        assert(res.render.calledOnce);
+    }));
+    it('getInquiryData 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return {
+                    location: {
+                        name: {
+                            ja: '',
+                            en: ''
+                        }
+                    }
+                };
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
             findByOrderInquiryKey: () => {
                 return {
                     orderInquiryKey: {
@@ -75,48 +119,8 @@ describe('Fixed.FixedModule', () => {
                 };
             }
         });
-        updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(Promise.resolve({}));
-        inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
-    });
-    afterEach(() => {
-        organization.restore();
-        order.restore();
-        updReserve.restore();
-        inquiryLoginForm.restore();
-    });
-    it('settingRender 正常', () => __awaiter(this, void 0, void 0, function* () {
-        const req = {
-            session: {}
-        };
-        const res = {
-            locals: {},
-            render: sinon.spy()
-        };
-        const next = (err) => {
-            throw err.massage;
-        };
-        yield FixedModule.settingRender(req, res, next);
-        assert(res.render.calledOnce);
-    }));
-    it('settingRender エラー', () => __awaiter(this, void 0, void 0, function* () {
-        const req = {
-            session: undefined
-        };
-        const res = {};
-        const next = sinon.spy();
-        yield FixedModule.settingRender(req, res, next);
-        assert(next.calledOnce);
-    }));
-    it('stopRender 正常', () => __awaiter(this, void 0, void 0, function* () {
-        const req = {};
-        const res = {
-            locals: {},
-            render: sinon.spy()
-        };
-        yield FixedModule.stopRender(req, res);
-        assert(res.render.calledOnce);
-    }));
-    it('stopRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(Promise.resolve({}));
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req = {
             session: {},
             body: {},
@@ -134,8 +138,12 @@ describe('Fixed.FixedModule', () => {
         };
         yield FixedModule.getInquiryData(req, res);
         assert.notStrictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+        order.restore();
+        updReserve.restore();
+        inquiryLoginForm.restore();
     }));
-    it('stopRender エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('getInquiryData エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined,
             body: {}
@@ -147,7 +155,28 @@ describe('Fixed.FixedModule', () => {
         yield FixedModule.getInquiryData(req, res);
         assert.strictEqual(res.json.args[0][0].result, null);
     }));
-    it('stopRender バリデーション', () => __awaiter(this, void 0, void 0, function* () {
+    it('getInquiryData エラー findMovieTheaterByBranchCodeなし', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return null;
+            }
+        });
+        const req = {
+            session: undefined,
+            body: {}
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield FixedModule.getInquiryData(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+    }));
+    it('getInquiryData バリデーション', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {},
             body: {},

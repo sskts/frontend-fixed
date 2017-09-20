@@ -220,7 +220,7 @@ class PurchaseModel {
                 });
             }
         }
-        if (this.mvtk === null) {
+        if (this.mvtk.length === 0) {
             return result;
         }
         // ムビチケ情報からチケット情報へ変換
@@ -299,10 +299,9 @@ class PurchaseModel {
      */
     // tslint:disable-next-line:max-func-body-length
     getMvtkSeatInfoSync(options) {
-        if (this.individualScreeningEvent === null) {
-            return null;
-        }
-        if (this.seatReservationAuthorization === null) {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization.result === undefined) {
             return null;
         }
         const mvtkPurchaseNoInfo = [];
@@ -345,9 +344,6 @@ class PurchaseModel {
             mvtkseat.push({ zskCd: reserveTicket.seatCode });
         }
         if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
-            return null;
-        }
-        if (this.seatReservationAuthorization.result === undefined) {
             return null;
         }
         const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
