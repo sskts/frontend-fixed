@@ -28,9 +28,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) {
-            throw ErrorUtilModule.ErrorType.Expire;
-        }
+        if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) throw ErrorUtilModule.ErrorType.Access;
 
         //購入者内容確認表示
         res.locals.updateReserve = null;
@@ -104,9 +102,9 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
         throw err;
     }
     log('MVTKムビチケ着券');
-    log('GMO', purchaseModel.getReserveAmount());
-    log('MVTK', purchaseModel.getMvtkPrice());
-    log('FULL', purchaseModel.getPrice());
+    // log('GMO', purchaseModel.getReserveAmount());
+    // log('MVTK', purchaseModel.getMvtkPrice());
+    // log('FULL', purchaseModel.getPrice());
 }
 
 /**
@@ -118,64 +116,62 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
  * @returns {Promise<void>}
  */
 export async function cancelMvtk(req: Request, res: Response): Promise<void> {
-    if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-    const purchaseModel = new PurchaseModel(req.session.purchase);
-    // 購入管理番号情報
-    const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
-        deleteFlag: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE
-    });
-    log('購入管理番号情報', mvtkSeatInfoSync);
-    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
-    const seatInfoSyncService = MVTK.createSeatInfoSyncService();
-    const seatInfoSyncIn = {
-        kgygishCd: mvtkSeatInfoSync.kgygishCd,
-        yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
-        trkshFlg: mvtkSeatInfoSync.trkshFlg,
-        kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
-        kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
-        jeiDt: mvtkSeatInfoSync.jeiDt,
-        kijYmd: mvtkSeatInfoSync.kijYmd,
-        stCd: mvtkSeatInfoSync.stCd,
-        screnCd: mvtkSeatInfoSync.screnCd,
-        knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
-            return {
-                KNYKNR_NO: knyknrNoInfo.knyknrNo,
-                PIN_CD: knyknrNoInfo.pinCd,
-                KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
-                    return {
-                        KNSH_TYP: knshInfo.knshTyp,
-                        MI_NUM: String(knshInfo.miNum)
-                    };
-                })
-            };
-        }),
-        zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
-            return {
-                ZSK_CD: zskInfo.zskCd
-            };
-        }),
-        skhnCd: mvtkSeatInfoSync.skhnCd
-    };
-    let result = true;
     try {
-        const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
-            throw ErrorUtilModule.ErrorType.Access;
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        const purchaseModel = new PurchaseModel(req.session.purchase);
+        // 購入管理番号情報
+        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
+            deleteFlag: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE
+        });
+        log('購入管理番号情報', mvtkSeatInfoSync);
+        //セッション削除
+        delete req.session.purchase;
+        delete req.session.mvtk;
+        if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
+        const seatInfoSyncService = MVTK.createSeatInfoSyncService();
+        const seatInfoSyncIn = {
+            kgygishCd: mvtkSeatInfoSync.kgygishCd,
+            yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
+            trkshFlg: mvtkSeatInfoSync.trkshFlg,
+            kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
+            kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
+            jeiDt: mvtkSeatInfoSync.jeiDt,
+            kijYmd: mvtkSeatInfoSync.kijYmd,
+            stCd: mvtkSeatInfoSync.stCd,
+            screnCd: mvtkSeatInfoSync.screnCd,
+            knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
+                return {
+                    KNYKNR_NO: knyknrNoInfo.knyknrNo,
+                    PIN_CD: knyknrNoInfo.pinCd,
+                    KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
+                        return {
+                            KNSH_TYP: knshInfo.knshTyp,
+                            MI_NUM: String(knshInfo.miNum)
+                        };
+                    })
+                };
+            }),
+            zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
+                return {
+                    ZSK_CD: zskInfo.zskCd
+                };
+            }),
+            skhnCd: mvtkSeatInfoSync.skhnCd
+        };
+        try {
+            const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
+            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
+                throw ErrorUtilModule.ErrorType.Access;
+            }
+            res.json({ isSuccess: true });
+            log('MVTKムビチケ着券削除');
+        } catch (err) {
+            logger.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
+            throw err;
         }
     } catch (err) {
-        result = false;
-        logger.error(
-            'SSKTS-APP:ConfirmModule reserveMvtk',
-            `in: ${seatInfoSyncIn}`,
-            `err: ${err}`
-        );
+        res.json({ isSuccess: false });
     }
-    //購入セッション削除
-    delete req.session.purchase;
-    //ムビチケセッション削除
-    delete req.session.mvtk;
-    log('MVTKムビチケ着券削除');
-    res.json({ isSuccess: result });
 }
 
 /**

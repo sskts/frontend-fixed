@@ -358,46 +358,10 @@ describe('Purchase.PurchaseModel', () => {
                 { mvtkNum: '', ticketCode: '200', seatCode: 'Ａー４' }
             ],
             mvtk: [
-                {
-                    code: '123',
-                    password: 'MTIzNDU2Nzg=',
-                    ticket: {
-                        ticketCode: '100'
-                    },
-                    ykknInfo: {
-                        ykknshTyp: '100'
-                    }
-                },
-                {
-                    code: '123',
-                    password: 'MTIzNDU2Nzg=',
-                    ticket: {
-                        ticketCode: '100'
-                    },
-                    ykknInfo: {
-                        ykknshTyp: '100'
-                    }
-                },
-                {
-                    code: '123',
-                    password: 'MTIzNDU2Nzg=',
-                    ticket: {
-                        ticketCode: '200'
-                    },
-                    ykknInfo: {
-                        ykknshTyp: '200'
-                    }
-                },
-                {
-                    code: '789',
-                    password: 'MTIzNDU2Nzg=',
-                    ticket: {
-                        ticketCode: '200'
-                    },
-                    ykknInfo: {
-                        ykknshTyp: '100'
-                    }
-                }
+                { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '200' } },
+                { code: '789', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '100' } }
             ]
         };
         const purchaseModel = new PurchaseModel(data);

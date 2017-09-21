@@ -3,4 +3,14 @@
     <h1 class="page-ttl"><%- __('error.page_ttl') %></h1>
     <p class="read"><%- (message) ? message : __('common.error.badRequest') %></p>
     <div class="button middle-button gray-button"><a class="center icon-triangle-white" href="/"><%- __('error.prev') %></a></div>
+    <% if (env !== 'production') { %>
+        <code style="
+        margin-top: 40px; 
+        display: block; 
+        background: #EEE; 
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.6;
+        word-wrap: break-word;"><%= JSON.stringify(error) %></code>
+    <% } %>
 </div>

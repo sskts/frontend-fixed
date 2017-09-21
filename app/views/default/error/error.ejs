@@ -9,4 +9,14 @@
             <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('error.prev') %></a></div>
         <% } %>
     </div>
+    <% if (env !== 'production') { %>
+    <code style="
+    margin-top: 40px; 
+    display: block; 
+    background: #EEE; 
+    padding: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+    word-wrap: break-word;"><%= JSON.stringify(error) %></code>
+    <% } %>
 </div>

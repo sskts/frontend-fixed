@@ -218,6 +218,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                     }
                 };
                 log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
+                log('seatInfoSyncIn.knyknrNoInfo', createMvtkAuthorizationArgs.mvtk.seatInfoSyncIn.knyknrNoInfo[0]);
                 purchaseModel.mvtkAuthorization = await sasaki.service.transaction.placeOrder(options)
                     .createMvtkAuthorization(createMvtkAuthorizationArgs);
                 log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);

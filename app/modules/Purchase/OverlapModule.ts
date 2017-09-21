@@ -33,13 +33,11 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
         // イベント情報取得
         const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
-            identifier: req.body.performanceId
+            identifier: req.params.id
         });
         log('イベント情報取得', individualScreeningEvent);
-        res.locals.individualScreeningEvent = {
-            after: individualScreeningEvent,
-            before: purchaseModel.individualScreeningEvent
-        };
+        res.locals.after = individualScreeningEvent;
+        res.locals.before = purchaseModel.individualScreeningEvent;
         res.render('purchase/overlap');
     } catch (err) {
         const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);

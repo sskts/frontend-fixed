@@ -44,13 +44,11 @@ function render(req, res, next) {
                 throw ErrorUtilModule.ErrorType.Property;
             // イベント情報取得
             const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
-                identifier: req.body.performanceId
+                identifier: req.params.id
             });
             log('イベント情報取得', individualScreeningEvent);
-            res.locals.individualScreeningEvent = {
-                after: individualScreeningEvent,
-                before: purchaseModel.individualScreeningEvent
-            };
+            res.locals.after = individualScreeningEvent;
+            res.locals.before = purchaseModel.individualScreeningEvent;
             res.render('purchase/overlap');
         }
         catch (err) {

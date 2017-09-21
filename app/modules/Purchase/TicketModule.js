@@ -194,6 +194,7 @@ function ticketSelect(req, res, next) {
                         }
                     };
                     log('SSKTSムビチケオーソリ追加IN', createMvtkAuthorizationArgs);
+                    log('seatInfoSyncIn.knyknrNoInfo', createMvtkAuthorizationArgs.mvtk.seatInfoSyncIn.knyknrNoInfo[0]);
                     purchaseModel.mvtkAuthorization = yield sasaki.service.transaction.placeOrder(options)
                         .createMvtkAuthorization(createMvtkAuthorizationArgs);
                     log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);

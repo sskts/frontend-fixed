@@ -75,7 +75,7 @@ export function errorRender(
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = err.message;
-                logger.error('SSKTS-APP:ErrorModule ErrorUtilModule.AppError', status, err);
+                logger.error('SSKTS-APP:ErrorModule ErrorUtilModule.AppError', status, err.message, err);
                 break;
         }
     } else if (err.hasOwnProperty('errors')) {
@@ -100,19 +100,19 @@ export function errorRender(
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
+                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
             default:
                 status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = req.__('common.error.internalServerError');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err);
+                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
         }
     } else {
         log('Error');
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
-        logger.error('SSKTS-APP:ErrorModule', 'Error', status, err);
+        logger.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
     }
 
     if (req.session !== undefined) {

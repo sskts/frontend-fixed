@@ -7,7 +7,6 @@ import * as moment from 'moment';
 import * as sinon from 'sinon';
 
 import * as TicketForm from '../../../../app/forms/Purchase/TicketForm';
-import { PurchaseModel } from '../../../../app/models/Purchase/PurchaseModel';
 import * as TicketModule from '../../../../app/modules/Purchase/TicketModule';
 
 describe('Purchase.TicketModule', () => {
@@ -37,7 +36,17 @@ describe('Purchase.TicketModule', () => {
         assert(res.render.calledOnce);
     });
 
-    it('render エラー', async () => {
+    it('render エラー セッションなし', async () => {
+        const req: any = {
+            session: undefined
+        };
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TicketModule.render(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('render エラー セッションなし', async () => {
         const req: any = {
             session: undefined
         };
@@ -49,16 +58,16 @@ describe('Purchase.TicketModule', () => {
 
     // tslint:disable-next-line:max-func-body-length
     it('ticketSelect 正常', async () => {
-        const getMvtkSeatInfoSync = sinon.stub(PurchaseModel.prototype, 'getMvtkSeatInfoSync').returns({
-            knyknrNoInfo: [
-                { knshInfo: [] }
-            ],
-            zskInfo: []
-        });
         const ticketForm = sinon.stub(TicketForm, 'default').returns({});
         const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
             createSeatReservationAuthorization: () => {
-                return Promise.resolve({});
+                return Promise.resolve({
+                    result: {
+                        updTmpReserveSeatResult: {
+                            tmpReserveNum: '123'
+                        }
+                    }
+                });
             },
             cancelSeatReservationAuthorization: () => {
                 return Promise.resolve({});
@@ -77,25 +86,35 @@ describe('Purchase.TicketModule', () => {
                     transaction: {
                         id: ''
                     },
-                    individualScreeningEvent: {},
-                    seatReservationAuthorization: {
-                        id: ''
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
+                        }
                     },
+                    seatReservationAuthorization: {},
                     mvtkAuthorization: {
                         id: ''
                     },
                     salesTickets: [
-                        {
-                            ticketCode: '',
-                            limitUnit: '001',
-                            limitCount: 1
-                        }
+                        { ticketCode: '100', limitUnit: '001', limitCount: 1, mvtkNum: '' },
+                        { ticketCode: '200', limitUnit: '001', limitCount: 1, mvtkNum: '200' }
                     ],
                     mvtk: [
                         {
-                            code: '1',
+                            code: '200',
+                            password: 'MTIzNDU2Nzg=',
                             ticket: {
-                                ticketCode: '',
+                                ticketCode: '200',
                                 ticketName: '',
                                 ticketNameEng: '',
                                 ticketNameKana: '',
@@ -104,7 +123,7 @@ describe('Purchase.TicketModule', () => {
                             },
                             ykknInfo: {
                                 kijUnip: '0',
-                                eishhshkTyp: '0',
+                                eishhshkTyp: '100',
                                 dnshKmTyp: '',
                                 znkkkytsknGkjknTyp: '',
                                 ykknshTyp: '',
@@ -117,20 +136,8 @@ describe('Purchase.TicketModule', () => {
             body: {
                 transactionId: '',
                 reserveTickets: JSON.stringify([
-                    {
-                        mvtkNum: '1',
-                        section: '',
-                        ticketCode: '',
-                        glasses: false,
-                        ticketName: ''
-                    },
-                    {
-                        mvtkNum: '',
-                        section: '',
-                        ticketCode: '',
-                        glasses: false,
-                        ticketName: ''
-                    }
+                    { mvtkNum: '', section: '', ticketCode: '100', glasses: false, ticketName: '', seatCode: 'Ａー１' },
+                    { mvtkNum: '200', section: '', ticketCode: '200', glasses: false, ticketName: '', seatCode: 'Ａー２' }
                 ])
             },
             getValidationResult: () => {
@@ -155,16 +162,9 @@ describe('Purchase.TicketModule', () => {
         assert(res.redirect.calledOnce);
         ticketForm.restore();
         placeOrder.restore();
-        getMvtkSeatInfoSync.restore();
     });
 
     it('ticketSelect 制限単位バリデーション', async () => {
-        const getMvtkSeatInfoSync = sinon.stub(PurchaseModel.prototype, 'getMvtkSeatInfoSync').returns({
-            knyknrNoInfo: [
-                { knshInfo: [] }
-            ],
-            zskInfo: []
-        });
         const ticketForm = sinon.stub(TicketForm, 'default').returns({});
         const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
             createSeatReservationAuthorization: () => {
@@ -181,32 +181,32 @@ describe('Purchase.TicketModule', () => {
                     transaction: {
                         id: ''
                     },
-                    individualScreeningEvent: {},
-                    seatReservationAuthorization: {
-                        id: ''
-                    },
-                    mvtkAuthorization: {
-                        id: ''
-                    },
-                    salesTickets: [
-                        {
-                            ticketCode: '',
-                            limitUnit: '001',
-                            limitCount: 2
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
                         }
+                    },
+                    seatReservationAuthorization: {},
+                    mvtkAuthorization: null,
+                    salesTickets: [
+                        { ticketCode: '100', limitUnit: '001', limitCount: 2, mvtkNum: '' }
                     ]
                 }
             },
             body: {
                 transactionId: '',
                 reserveTickets: JSON.stringify([
-                    {
-                        mvtkNum: '',
-                        section: '',
-                        ticketCode: '',
-                        glasses: false,
-                        ticketName: ''
-                    }
+                    { mvtkNum: '', section: '', ticketCode: '100', glasses: false, ticketName: '', seatCode: 'Ａー１' }
                 ])
             },
             getValidationResult: () => {
@@ -231,7 +231,6 @@ describe('Purchase.TicketModule', () => {
         assert(res.render.calledOnce);
         ticketForm.restore();
         placeOrder.restore();
-        getMvtkSeatInfoSync.restore();
     });
 
     it('ticketSelect エラー', async () => {

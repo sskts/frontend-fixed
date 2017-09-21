@@ -16,7 +16,6 @@ const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
 const moment = require("moment");
 const sinon = require("sinon");
-const PurchaseModel_1 = require("../../../../app/models/Purchase/PurchaseModel");
 const ConfirmModule = require("../../../../app/modules/Purchase/ConfirmModule");
 describe('Purchase.ConfirmModule', () => {
     it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
@@ -40,9 +39,54 @@ describe('Purchase.ConfirmModule', () => {
         yield ConfirmModule.render(req, res, next);
         assert(res.render.calledOnce);
     }));
-    it('render エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('render エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
+        };
+        const res = {
+            locals: {}
+        };
+        const next = sinon.spy();
+        yield ConfirmModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours')
+                }
+            }
+        };
+        const res = {
+            locals: {}
+        };
+        const next = sinon.spy();
+        yield ConfirmModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours')
+                }
+            }
+        };
+        const res = {
+            locals: {}
+        };
+        const next = sinon.spy();
+        yield ConfirmModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー アクセス', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours')
+                }
+            }
         };
         const res = {
             locals: {}
@@ -59,15 +103,44 @@ describe('Purchase.ConfirmModule', () => {
                 });
             }
         });
-        const getMvtkSeatInfoSync = sinon.stub(PurchaseModel_1.PurchaseModel.prototype, 'getMvtkSeatInfoSync').returns({
-            knyknrNoInfo: [
-                { knshInfo: [] }
-            ],
-            zskInfo: []
-        });
         const req = {
             session: {
-                purchase: {}
+                purchase: {
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: '123'
+                            }
+                        }
+                    },
+                    reserveTickets: [
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー１' },
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー２' },
+                        { mvtkNum: '123', ticketCode: '200', seatCode: 'Ａー３' },
+                        { mvtkNum: '', ticketCode: '200', seatCode: 'Ａー４' }
+                    ],
+                    mvtk: [
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '200' } },
+                        { code: '789', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '100' } }
+                    ]
+                }
             }
         };
         const res = {
@@ -77,7 +150,73 @@ describe('Purchase.ConfirmModule', () => {
         yield ConfirmModule.cancelMvtk(req, res);
         assert.strictEqual(res.json.args[0][0].isSuccess, true);
         createSeatInfoSyncService.restore();
-        getMvtkSeatInfoSync.restore();
+    }));
+    it('cancelMvtk エラー 取消失敗', () => __awaiter(this, void 0, void 0, function* () {
+        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
+            seatInfoSync: () => {
+                return Promise.resolve({
+                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_FAILURE
+                });
+            }
+        });
+        const req = {
+            session: {
+                purchase: {
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: '123'
+                            }
+                        }
+                    },
+                    reserveTickets: [
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー１' },
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー２' },
+                        { mvtkNum: '123', ticketCode: '200', seatCode: 'Ａー３' },
+                        { mvtkNum: '', ticketCode: '200', seatCode: 'Ａー４' }
+                    ],
+                    mvtk: [
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '200' } },
+                        { code: '789', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '100' } }
+                    ]
+                }
+            }
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield ConfirmModule.cancelMvtk(req, res);
+        assert.strictEqual(res.json.args[0][0].isSuccess, false);
+        createSeatInfoSyncService.restore();
+    }));
+    it('cancelMvtk エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: undefined
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield ConfirmModule.cancelMvtk(req, res);
+        assert.strictEqual(res.json.args[0][0].isSuccess, false);
     }));
     it('purchase 正常', () => __awaiter(this, void 0, void 0, function* () {
         const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
@@ -149,22 +288,258 @@ describe('Purchase.ConfirmModule', () => {
         placeOrder.restore();
         place.restore();
     }));
-    it('purchase エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('purchase 正常 ムビチケ', () => __awaiter(this, void 0, void 0, function* () {
+        const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
+            confirm: () => {
+                return Promise.resolve({});
+            },
+            sendEmailNotification: () => {
+                return Promise.resolve({});
+            }
+        });
+        const place = sinon.stub(sasaki.service, 'place').returns({
+            findMovieTheater: () => {
+                return Promise.resolve({});
+            }
+        });
+        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
+            seatInfoSync: () => {
+                return Promise.resolve({
+                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS
+                });
+            }
+        });
         const req = {
-            session: undefined,
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: { id: '' },
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: '123'
+                            }
+                        }
+                    },
+                    reserveTickets: [
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー１' },
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー２' },
+                        { mvtkNum: '123', ticketCode: '200', seatCode: 'Ａー３' },
+                        { mvtkNum: '', ticketCode: '200', seatCode: 'Ａー４' }
+                    ],
+                    mvtk: [
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '200' } },
+                        { code: '789', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '100' } }
+                    ],
+                    profile: {}
+                }
+            },
             body: {
                 transactionId: ''
             },
             __: () => {
                 return '';
             },
-            headers: {
-                host: ''
+            headers: { host: '' }
+        };
+        const res = {
+            locals: {},
+            render: (file, locals, cb) => {
+                file = '';
+                locals = '';
+                cb(null, '');
+            },
+            json: sinon.spy()
+        };
+        yield ConfirmModule.purchase(req, res);
+        assert(res.json.calledOnce);
+        assert.notStrictEqual(res.json.args[0][0].result, null);
+        assert.strictEqual(res.json.args[0][0].err, null);
+        placeOrder.restore();
+        place.restore();
+        createSeatInfoSyncService.restore();
+    }));
+    it('purchase エラー ムビチケ', () => __awaiter(this, void 0, void 0, function* () {
+        const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
+            confirm: () => {
+                return Promise.resolve({});
+            },
+            sendEmailNotification: () => {
+                return Promise.resolve({});
             }
+        });
+        const place = sinon.stub(sasaki.service, 'place').returns({
+            findMovieTheater: () => {
+                return Promise.resolve({});
+            }
+        });
+        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
+            seatInfoSync: () => {
+                return Promise.resolve({
+                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_FAILURE_OTHER
+                });
+            }
+        });
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: { id: '' },
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '123',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            dateJouei: moment().format('YYYYMMDD'),
+                            startDate: moment().toDate(),
+                            screenCode: '00'
+                        },
+                        superEvent: {
+                            location: {
+                                name: { ja: '' }
+                            }
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: '123'
+                            }
+                        }
+                    },
+                    reserveTickets: [
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー１' },
+                        { mvtkNum: '123', ticketCode: '100', seatCode: 'Ａー２' },
+                        { mvtkNum: '123', ticketCode: '200', seatCode: 'Ａー３' },
+                        { mvtkNum: '', ticketCode: '200', seatCode: 'Ａー４' }
+                    ],
+                    mvtk: [
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '100' }, ykknInfo: { ykknshTyp: '100' } },
+                        { code: '123', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '200' } },
+                        { code: '789', password: 'MTIzNDU2Nzg=', ticket: { ticketCode: '200' }, ykknInfo: { ykknshTyp: '100' } }
+                    ],
+                    profile: {}
+                }
+            },
+            body: {
+                transactionId: ''
+            },
+            __: () => {
+                return '';
+            },
+            headers: { host: '' }
         };
         const res = {
             locals: {},
             render: () => '',
+            json: sinon.spy()
+        };
+        yield ConfirmModule.purchase(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+        placeOrder.restore();
+        place.restore();
+        createSeatInfoSyncService.restore();
+    }));
+    it('purchase エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: undefined,
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            json: sinon.spy()
+        };
+        yield ConfirmModule.purchase(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+    }));
+    it('purchase エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {}
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            json: sinon.spy()
+        };
+        yield ConfirmModule.purchase(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+    }));
+    it('purchase エラー アクセス', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    transaction: {
+                        id: '123'
+                    },
+                    individualScreeningEvent: {},
+                    profile: {},
+                    seatReservationAuthorization: {
+                        result: {}
+                    }
+                }
+            },
+            body: {
+                transactionId: '456'
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            json: sinon.spy()
+        };
+        yield ConfirmModule.purchase(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+    }));
+    it('purchase エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    transaction: {
+                        id: ''
+                    },
+                    individualScreeningEvent: {},
+                    profile: {},
+                    seatReservationAuthorization: {
+                        result: {}
+                    },
+                    expired: moment().subtract(1, 'hours')
+                }
+            },
+            body: {
+                transactionId: ''
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
             json: sinon.spy()
         };
         yield ConfirmModule.purchase(req, res);
@@ -185,7 +560,22 @@ describe('Purchase.ConfirmModule', () => {
         assert.notStrictEqual(res.json.args[0][0].result, null);
         assert.strictEqual(res.json.args[0][0].err, null);
     }));
-    it('getCompleteData エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('getCompleteData エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: undefined,
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            json: sinon.spy()
+        };
+        yield ConfirmModule.getCompleteData(req, res);
+        assert(res.json.calledOnce);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].err, null);
+    }));
+    it('getCompleteData エラー completeセッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: {
                 complete: undefined

@@ -87,6 +87,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (!authModel.isMember()) {
             // 非会員なら重複確認
             purchaseModel = new PurchaseModel(req.session.purchase);
+            log('重複確認');
             if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                 // 重複確認へ
                 res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });

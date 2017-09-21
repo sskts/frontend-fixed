@@ -15,7 +15,7 @@
                     <dd class="d-td width-medium">
                         <% for (const mvtkTicket of mvtk) { %>
                         <% if (mvtkTicket.code === purchaseNo) { %>
-                        <p><strong><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
+                        <p><strong><%= mvtkTicket.ticket.ticketName %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
                         <% } %>
                         <% } %>
                     </dd>

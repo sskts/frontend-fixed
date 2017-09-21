@@ -31,7 +31,6 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) throw ErrorUtilModule.ErrorType.Access;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
 
         //購入者情報入力表示
         if (purchaseModel.profile !== null) {
@@ -115,7 +114,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             telephone: req.body.telephone
         };
         // クレジットカード処理
-        await creditCardProsess(req, res, purchaseModel);
+        await creditCardProsess(req, res, purchaseModel, authModel);
+        log('クレジットカード処理終了');
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -202,11 +202,11 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
         const creditCardRegistration = (<boolean | undefined>req.body.creditCardRegistration);
         if (creditCardRegistration !== undefined && creditCardRegistration) {
             if (purchaseModel.creditCards.length > 0) {
-                // クレジットカード削除
                 await sasaki.service.person(options).deleteCreditCard({
                     personId: 'me',
                     cardSeq: purchaseModel.creditCards[0].cardSeq
                 });
+                log('クレジットカード削除');
             }
             purchaseModel.gmo = JSON.parse(req.body.gmoTokenObject);
             // クレジットカード登録
@@ -217,11 +217,12 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
                 }
             });
             purchaseModel.creditCards.push(card);
-            log('クレジットカード登録');
+            log('クレジットカード登録', purchaseModel.creditCards);
         }
 
         // クレジットカード処理
-        await creditCardProsess(req, res, purchaseModel);
+        await creditCardProsess(req, res, purchaseModel, authModel);
+        log('クレジットカード処理終了');
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -260,9 +261,12 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
  * @param {Response} res
  * @param {PurchaseModel} purchaseModel
  */
-async function creditCardProsess(req: Request, res: Response, purchaseModel: PurchaseModel): Promise<void> {
-    if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-    const authModel = new AuthModel(req.session.auth);
+async function creditCardProsess(
+    req: Request,
+    res: Response,
+    purchaseModel: PurchaseModel,
+    authModel: AuthModel
+): Promise<void> {
     const options = {
         endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
         auth: authModel.create()

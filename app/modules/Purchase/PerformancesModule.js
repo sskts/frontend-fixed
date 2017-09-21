@@ -47,11 +47,13 @@ function render(req, res, next) {
                 });
                 log('仮予約削除');
             }
-            // セッション削除
-            delete req.session.purchase;
-            delete req.session.mvtk;
-            delete req.session.complete;
-            delete req.session.auth;
+            if (process.env.VIEW_TYPE === 'fixed') {
+                // セッション削除
+                delete req.session.purchase;
+                delete req.session.mvtk;
+                delete req.session.complete;
+                delete req.session.auth;
+            }
             if (process.env.VIEW_TYPE === undefined) {
                 res.locals.movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
                 log(res.locals.movieTheaters);
