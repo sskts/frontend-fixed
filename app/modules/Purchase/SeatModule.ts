@@ -27,13 +27,9 @@ const log = debug('SSKTS:Purchase.SeatModule');
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.SEAT_STATE)) {
-            throw ErrorUtilModule.ErrorType.Access;
-        }
-        if (req.params.id === undefined) throw ErrorUtilModule.ErrorType.Access;
+        if (!purchaseModel.accessAuth(PurchaseModel.SEAT_STATE)) throw ErrorUtilModule.ErrorType.Access;
 
         res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
             ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
@@ -61,7 +57,6 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 export async function performanceChange(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -112,11 +107,9 @@ interface ISelectSeats {
 export async function seatSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (req.params.id === undefined) throw ErrorUtilModule.ErrorType.Access;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
         //バリデーション
@@ -162,8 +155,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
 // tslint:disable-next-line:max-func-body-length
 async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel: PurchaseModel): Promise<void> {
     if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-    if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
-    if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+    if (purchaseModel.individualScreeningEvent === null
+        || purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
     const authModel = new AuthModel(req.session.auth);
     const options = {
         endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -285,7 +278,6 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) throw ErrorUtilModule.ErrorType.Validation;
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
 
         const purchaseModel = new PurchaseModel(req.session.purchase);
         //コアAPI券種取得

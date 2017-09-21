@@ -100,9 +100,8 @@ function getInquiryData(req, res) {
                 });
                 if (inquiryModel.order === null) {
                     // 本予約して照会情報取得
-                    if (req.session.fixed === undefined)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    if (req.session.fixed.updateReserveIn === undefined)
+                    if (req.session.fixed === undefined
+                        || req.session.fixed.updateReserveIn === undefined)
                         throw ErrorUtilModule.ErrorType.Property;
                     const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
                     log('COA本予約', updReserve);
@@ -116,32 +115,7 @@ function getInquiryData(req, res) {
                         throw ErrorUtilModule.ErrorType.Property;
                 }
                 // 印刷用
-                const order = inquiryModel.order;
-                const reservations = inquiryModel.order.acceptedOffers.map((offer) => {
-                    if (offer.itemOffered.reservationFor.workPerformed === undefined)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    if (offer.itemOffered.reservationFor.location === undefined)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    if (offer.itemOffered.reservationFor.location.name === undefined)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    if (inquiryModel.movieTheaterOrganization === null)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    return {
-                        reserveNo: order.orderInquiryKey.confirmationNumber,
-                        filmNameJa: offer.itemOffered.reservationFor.workPerformed.name,
-                        filmNameEn: '',
-                        theaterName: inquiryModel.movieTheaterOrganization.location.name.ja,
-                        screenName: offer.itemOffered.reservationFor.location.name.ja,
-                        performanceDay: moment(offer.itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
-                        performanceStartTime: UtilModule.timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei),
-                        seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
-                        ticketName: (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0)
-                            ? `${offer.itemOffered.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
-                            : offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
-                        ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
-                        qrStr: offer.itemOffered.reservedTicket.ticketToken
-                    };
-                });
+                const reservations = createPrintReservations(req, inquiryModel);
                 delete req.session.fixed;
                 res.json({ result: reservations });
                 return;
@@ -154,3 +128,39 @@ function getInquiryData(req, res) {
     });
 }
 exports.getInquiryData = getInquiryData;
+/**
+ * 印刷用予約情報生成
+ * @function createPrintReservations
+ * @param {Request} req
+ * @param {InquiryModel} inquiryModel
+ * @returns {IReservation[]}
+ */
+function createPrintReservations(req, inquiryModel) {
+    if (inquiryModel.order === null
+        || inquiryModel.movieTheaterOrganization === null)
+        throw ErrorUtilModule.ErrorType.Property;
+    const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
+    const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
+    return inquiryModel.order.acceptedOffers.map((offer) => {
+        if (offer.itemOffered.reservationFor.workPerformed === undefined
+            || offer.itemOffered.reservationFor.location === undefined
+            || offer.itemOffered.reservationFor.location.name === undefined)
+            throw ErrorUtilModule.ErrorType.Property;
+        return {
+            reserveNo: reserveNo,
+            filmNameJa: offer.itemOffered.reservationFor.workPerformed.name,
+            filmNameEn: '',
+            theaterName: theaterName,
+            screenName: offer.itemOffered.reservationFor.location.name.ja,
+            performanceDay: moment(offer.itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
+            performanceStartTime: UtilModule.timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei),
+            seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
+            ticketName: (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0)
+                ? `${offer.itemOffered.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
+                : offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
+            ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
+            qrStr: offer.itemOffered.reservedTicket.ticketToken
+        };
+    });
+}
+exports.createPrintReservations = createPrintReservations;

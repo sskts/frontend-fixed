@@ -28,7 +28,6 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 export function render(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
@@ -65,11 +64,10 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         return;
     }
     try {
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.transaction === null
+            || purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
         MvtkInputForm(req);

@@ -35,15 +35,12 @@ function render(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.INPUT_STATE)) {
-                throw ErrorUtilModule.ErrorType.Expire;
-            }
+            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.INPUT_STATE))
+                throw ErrorUtilModule.ErrorType.Access;
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ErrorType.Property;
             //購入者情報入力表示
@@ -101,13 +98,10 @@ function purchaserInformationRegistration(req, res, next) {
         };
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         try {
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.reserveTickets === null)
+            if (purchaseModel.transaction === null
+                || purchaseModel.reserveTickets === null)
                 throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {
@@ -197,15 +191,11 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
         try {
             if (!authModel.isMember())
                 throw ErrorUtilModule.ErrorType.Access;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.reserveTickets === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.profile === null)
+            if (purchaseModel.transaction === null
+                || purchaseModel.reserveTickets === null
+                || purchaseModel.profile === null)
                 throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {

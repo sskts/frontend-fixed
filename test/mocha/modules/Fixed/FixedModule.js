@@ -17,6 +17,7 @@ const assert = require("assert");
 const sinon = require("sinon");
 const InquiryLoginForm = require("../../../../app/forms/Inquiry/LoginForm");
 const FixedModule = require("../../../../app/modules/Fixed/FixedModule");
+const ErrorUtilModule = require("../../../../app/modules/Util/ErrorUtilModule");
 describe('Fixed.FixedModule', () => {
     it('settingRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const organization = sinon.stub(sasaki.service, 'organization').returns({
@@ -164,9 +165,17 @@ describe('Fixed.FixedModule', () => {
                 return null;
             }
         });
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req = {
-            session: undefined,
-            body: {}
+            session: {},
+            body: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
         };
         const res = {
             locals: {},
@@ -175,8 +184,151 @@ describe('Fixed.FixedModule', () => {
         yield FixedModule.getInquiryData(req, res);
         assert.strictEqual(res.json.args[0][0].result, null);
         organization.restore();
+        inquiryLoginForm.restore();
+    }));
+    it('getInquiryData エラー orderなし fixedセッションなし', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return {
+                    location: {
+                        name: {
+                            ja: '',
+                            en: ''
+                        }
+                    }
+                };
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
+            findByOrderInquiryKey: () => {
+                return null;
+            }
+        });
+        const updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(Promise.resolve({}));
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
+        const req = {
+            session: {},
+            body: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield FixedModule.getInquiryData(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+        order.restore();
+        updReserve.restore();
+        inquiryLoginForm.restore();
+    }));
+    it('getInquiryData エラー orderなし fixedセッションupdateReserveInなし', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return {
+                    location: {
+                        name: {
+                            ja: '',
+                            en: ''
+                        }
+                    }
+                };
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
+            findByOrderInquiryKey: () => {
+                return null;
+            }
+        });
+        const updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(Promise.resolve({}));
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
+        const req = {
+            session: {
+                fixed: {}
+            },
+            body: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield FixedModule.getInquiryData(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+        order.restore();
+        updReserve.restore();
+        inquiryLoginForm.restore();
+    }));
+    it('getInquiryData エラー orderなし fixedセッションupdateReserveInあり', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return {};
+            },
+            findMovieTheaterByBranchCode: () => {
+                return {
+                    location: {
+                        name: {
+                            ja: '',
+                            en: ''
+                        }
+                    }
+                };
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
+            findByOrderInquiryKey: () => {
+                return null;
+            }
+        });
+        const updReserve = sinon.stub(COA.services.reserve, 'updReserve').returns(Promise.resolve({}));
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
+        const req = {
+            session: {
+                fixed: {
+                    updateReserveIn: {}
+                }
+            },
+            body: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield FixedModule.getInquiryData(req, res);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+        order.restore();
+        updReserve.restore();
+        inquiryLoginForm.restore();
     }));
     it('getInquiryData バリデーション', () => __awaiter(this, void 0, void 0, function* () {
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req = {
             session: {},
             body: {},
@@ -194,5 +346,108 @@ describe('Fixed.FixedModule', () => {
         };
         yield FixedModule.getInquiryData(req, res);
         assert.strictEqual(res.json.args[0][0].result, null);
+        inquiryLoginForm.restore();
+    }));
+    it('createPrintReservations 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const inquiryModel = {
+            order: {
+                orderInquiryKey: {
+                    confirmationNumber: ''
+                },
+                acceptedOffers: [{
+                        itemOffered: {
+                            reservationFor: {
+                                workPerformed: {
+                                    name: ''
+                                },
+                                startDate: '',
+                                location: {
+                                    name: {
+                                        ja: '',
+                                        en: ''
+                                    }
+                                },
+                                coaInfo: {
+                                    dateJouei: ''
+                                }
+                            },
+                            reservedTicket: {
+                                coaTicketInfo: {
+                                    seatNum: '',
+                                    addGlasses: '',
+                                    ticketName: '',
+                                    salePrice: ''
+                                },
+                                ticketToken: ''
+                            }
+                        }
+                    }]
+            },
+            movieTheaterOrganization: {
+                location: {
+                    name: {
+                        ja: '',
+                        en: ''
+                    }
+                }
+            }
+        };
+        const req = {
+            __: () => {
+                return '';
+            }
+        };
+        const printReservations = yield FixedModule.createPrintReservations(req, inquiryModel);
+        assert(Array.isArray(printReservations));
+    }));
+    it('createPrintReservations エラー order,movieTheaterOrganizationなし', () => __awaiter(this, void 0, void 0, function* () {
+        const inquiryModel = {
+            movieTheaterOrganization: null,
+            order: null
+        };
+        const req = {
+            __: () => {
+                return '';
+            }
+        };
+        try {
+            yield FixedModule.createPrintReservations(req, inquiryModel);
+        }
+        catch (err) {
+            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+        }
+    }));
+    it('createPrintReservations エラー reservationForなし', () => __awaiter(this, void 0, void 0, function* () {
+        const inquiryModel = {
+            order: {
+                orderInquiryKey: {
+                    confirmationNumber: ''
+                },
+                acceptedOffers: [{
+                        itemOffered: {
+                            reservationFor: {}
+                        }
+                    }]
+            },
+            movieTheaterOrganization: {
+                location: {
+                    name: {
+                        ja: '',
+                        en: ''
+                    }
+                }
+            }
+        };
+        const req = {
+            __: () => {
+                return '';
+            }
+        };
+        try {
+            yield FixedModule.createPrintReservations(req, inquiryModel);
+        }
+        catch (err) {
+            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+        }
     }));
 });

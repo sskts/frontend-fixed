@@ -26,14 +26,11 @@ const log = debug('SSKTS:Purchase.InputModule');
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         const authModel = new AuthModel(req.session.auth);
 
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) {
-            throw ErrorUtilModule.ErrorType.Expire;
-        }
+        if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) throw ErrorUtilModule.ErrorType.Access;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
 
         //購入者情報入力表示
@@ -88,10 +85,9 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     };
     const purchaseModel = new PurchaseModel(req.session.purchase);
     try {
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.transaction === null
+            || purchaseModel.reserveTickets === null) throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw ErrorUtilModule.ErrorType.Access;
@@ -182,11 +178,10 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
 
     try {
         if (!authModel.isMember()) throw ErrorUtilModule.ErrorType.Access;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.reserveTickets === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.profile === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.transaction === null
+            || purchaseModel.reserveTickets === null
+            || purchaseModel.profile === null) throw ErrorUtilModule.ErrorType.Property;
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw ErrorUtilModule.ErrorType.Access;

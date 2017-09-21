@@ -36,8 +36,6 @@ function render(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ErrorType.Expire;
@@ -76,14 +74,11 @@ function select(req, res, next) {
             return;
         }
         try {
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.individualScreeningEvent === null)
+            if (purchaseModel.transaction === null
+                || purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)

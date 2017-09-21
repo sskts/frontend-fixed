@@ -22,8 +22,6 @@ function render(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ErrorType.Expire;
@@ -77,8 +75,6 @@ function submit(req, res, next) {
     try {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw ErrorUtilModule.ErrorType.Expire;

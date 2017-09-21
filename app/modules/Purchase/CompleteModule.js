@@ -17,10 +17,9 @@ const ErrorUtilModule = require("../Util/ErrorUtilModule");
  */
 function render(req, res, next) {
     try {
-        if (req.session === undefined)
+        if (req.session === undefined
+            || req.session.complete === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.complete === undefined)
-            throw ErrorUtilModule.ErrorType.Access;
         //購入者内容確認表示
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.complete);
         res.locals.purchaseModel = purchaseModel;

@@ -21,7 +21,6 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 export function render(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         if (req.session.mvtk === null) {
@@ -75,7 +74,6 @@ function creatPurchaseNoList(mvtk: IMvtk[]) {
 export function submit(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;

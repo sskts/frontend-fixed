@@ -17,8 +17,8 @@ import * as ErrorUtilModule from '../Util/ErrorUtilModule';
  */
 export function render(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.complete === undefined) throw ErrorUtilModule.ErrorType.Access;
+        if (req.session === undefined
+            || req.session.complete === undefined) throw ErrorUtilModule.ErrorType.Property;
         //購入者内容確認表示
         const purchaseModel = new PurchaseModel(req.session.complete);
         res.locals.purchaseModel = purchaseModel;

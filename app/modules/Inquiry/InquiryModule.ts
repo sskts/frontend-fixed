@@ -162,8 +162,8 @@ function getInquiryError(req: Request) {
  */
 export function confirmRender(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.query.theater === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined
+            || req.query.theater === undefined) throw ErrorUtilModule.ErrorType.Property;
         if (req.session.inquiry === undefined) {
             res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
 

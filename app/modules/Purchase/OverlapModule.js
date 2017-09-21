@@ -80,11 +80,9 @@ function newReserve(req, res, next) {
                 auth: authModel.create()
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.seatReservationAuthorization === null)
+            if (purchaseModel.individualScreeningEvent === null
+                || purchaseModel.transaction === null
+                || purchaseModel.seatReservationAuthorization === null)
                 throw ErrorUtilModule.ErrorType.Property;
             // COA仮予約削除
             yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({

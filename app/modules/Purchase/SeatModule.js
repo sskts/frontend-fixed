@@ -36,15 +36,10 @@ function render(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.SEAT_STATE)) {
-                throw ErrorUtilModule.ErrorType.Access;
-            }
-            if (req.params.id === undefined)
+            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.SEAT_STATE))
                 throw ErrorUtilModule.ErrorType.Access;
             res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
                 ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
@@ -76,8 +71,6 @@ function performanceChange(req, res) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -123,15 +116,11 @@ function seatSelect(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.transaction === null)
                 throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
-            if (req.params.id === undefined)
-                throw ErrorUtilModule.ErrorType.Access;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
                 throw ErrorUtilModule.ErrorType.Access;
@@ -178,9 +167,8 @@ function reserve(req, selectSeats, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.individualScreeningEvent === null)
-            throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.transaction === null)
+        if (purchaseModel.individualScreeningEvent === null
+            || purchaseModel.transaction === null)
             throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
         const options = {
@@ -308,8 +296,6 @@ function saveSalesTickets(req, res) {
                 throw ErrorUtilModule.ErrorType.Validation;
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             //コアAPI券種取得
             purchaseModel.salesTickets = yield COA.services.reserve.salesTicket({

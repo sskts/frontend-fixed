@@ -24,7 +24,6 @@ const log = debug('SSKTS:Purchase.TicketModule');
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         const authModel = new AuthModel(req.session.auth);
         const options = {
@@ -128,7 +127,6 @@ export interface ISelectTicket {
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:cyclomatic-complexity
 // tslint:disable-next-line:max-func-body-length
 export async function ticketSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
@@ -142,12 +140,11 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.transaction === null
+            || purchaseModel.individualScreeningEvent === null
+            || purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
 
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
@@ -239,7 +236,6 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
         }
     } catch (err) {
         if (err === ErrorUtilModule.ErrorType.Validation) {
-            if (req.session.purchase === undefined) throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel(req.session.purchase);
             if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
             res.locals.error = '';

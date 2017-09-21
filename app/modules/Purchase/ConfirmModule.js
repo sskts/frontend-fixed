@@ -31,8 +31,6 @@ function render(req, res, next) {
         try {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
@@ -128,8 +126,6 @@ function cancelMvtk(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined)
             throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.purchase === undefined)
-            throw ErrorUtilModule.ErrorType.Expire;
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         // 購入管理番号情報
         const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
@@ -208,18 +204,12 @@ function purchase(req, res) {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
                 auth: authModel.create()
             };
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ErrorType.Expire;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.profile === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.seatReservationAuthorization === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            if (purchaseModel.seatReservationAuthorization.result === undefined)
+            if (purchaseModel.transaction === null
+                || purchaseModel.individualScreeningEvent === null
+                || purchaseModel.profile === null
+                || purchaseModel.seatReservationAuthorization === null
+                || purchaseModel.seatReservationAuthorization.result === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
