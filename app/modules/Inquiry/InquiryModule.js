@@ -136,6 +136,7 @@ function inquiryAuth(req, res, next) {
             }
         }
         catch (err) {
+            console.log('111111111', err);
             const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
             next(error);
             return;

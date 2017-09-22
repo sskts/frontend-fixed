@@ -111,8 +111,6 @@ function select(req, res, next) {
                 logger_1.default.error('SSKTS-APP:MvtkInputModule.select', `in: ${purchaseNumberAuthIn}`, `err: ${err}`);
                 throw err;
             }
-            if (purchaseNumberAuthResults === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
             const validationList = [];
             // ムビチケセッション作成
             const mvtkList = [];

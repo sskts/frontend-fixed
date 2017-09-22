@@ -55,9 +55,31 @@ describe('Auth.SignInModule', () => {
         auth.restore();
     });
 
-    it('index エラー', async () => {
+    it('index エラー セッションなし', async () => {
         const req: any = {
-            session: undefined
+            session: undefined,
+            query: {
+                code: '',
+                state: ''
+            }
+        };
+        const res: any = {};
+        const next: any = sinon.spy();
+        await SignInModule.index(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('index エラー state不整合', async () => {
+        const req: any = {
+            session: {
+                auth: {
+                    state: '123'
+                }
+            },
+            query: {
+                code: '',
+                state: '456'
+            }
         };
         const res: any = {};
         const next: any = sinon.spy();

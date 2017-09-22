@@ -22,7 +22,11 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
                 purchase: {
                     expired: moment().add(1, 'hours').toDate()
                 },
-                mvtk: []
+                mvtk: [
+                    { code: '123' },
+                    { code: '123' },
+                    { code: '456' }
+                ]
             }
         };
         const res = {
@@ -54,9 +58,25 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
         yield MvtkConfirmModule.render(req, res, next);
         assert(res.redirect.calledOnce);
     }));
-    it('render エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('render エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
+        };
+        const res = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next = sinon.spy();
+        yield MvtkConfirmModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours').toDate()
+                }
+            }
         };
         const res = {
             locals: {},
@@ -91,7 +111,7 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
         yield MvtkConfirmModule.submit(req, res, next);
         assert(res.redirect.calledOnce);
     }));
-    it('submit エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('submit エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
         };
@@ -100,7 +120,61 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
             redirect: sinon.spy()
         };
         const next = sinon.spy();
-        yield MvtkConfirmModule.render(req, res, next);
+        yield MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('submit エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours').toDate()
+                }
+            }
+        };
+        const res = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next = sinon.spy();
+        yield MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('submit エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate()
+                }
+            }
+        };
+        const res = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next = sinon.spy();
+        yield MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('submit エラー 取引ID不整合', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: '123'
+                    }
+                }
+            },
+            body: {
+                transactionId: '456'
+            }
+        };
+        const res = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next = sinon.spy();
+        yield MvtkConfirmModule.submit(req, res, next);
         assert(next.calledOnce);
     }));
 });

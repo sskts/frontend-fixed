@@ -100,7 +100,6 @@ export async function select(req: Request, res: Response, next: NextFunction): P
             );
             throw err;
         }
-        if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ErrorType.Property;
         const validationList: string[] = [];
         // ムビチケセッション作成
         const mvtkList: IMvtk[] = [];

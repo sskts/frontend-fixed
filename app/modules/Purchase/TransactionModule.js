@@ -93,7 +93,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, err: null });
+                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
                     log('重複確認へ');
                     return;
                 }

@@ -15,7 +15,11 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
                 purchase: {
                     expired: moment().add(1, 'hours').toDate()
                 },
-                mvtk: []
+                mvtk: [
+                    { code: '123' },
+                    { code: '123' },
+                    { code: '456' }
+                ]
             }
         };
         const res: any = {
@@ -49,9 +53,26 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
         assert(res.redirect.calledOnce);
     });
 
-    it('render エラー', async () => {
+    it('render エラー セッションなし', async () => {
         const req: any = {
             session: undefined
+        };
+        const res: any = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next: any = sinon.spy();
+        await MvtkConfirmModule.render(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('render エラー 期限切れ', async () => {
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours').toDate()
+                }
+            }
         };
         const res: any = {
             locals: {},
@@ -88,7 +109,7 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
         assert(res.redirect.calledOnce);
     });
 
-    it('submit エラー', async () => {
+    it('submit エラー セッションなし', async () => {
         const req: any = {
             session: undefined
         };
@@ -97,7 +118,64 @@ describe('Purchase.Mvtk.MvtkConfirmModule', () => {
             redirect: sinon.spy()
         };
         const next: any = sinon.spy();
-        await MvtkConfirmModule.render(req, res, next);
+        await MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('submit エラー 期限切れ', async () => {
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours').toDate()
+                }
+            }
+        };
+        const res: any = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next: any = sinon.spy();
+        await MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('submit エラー プロパティ', async () => {
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate()
+                }
+            }
+        };
+        const res: any = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next: any = sinon.spy();
+        await MvtkConfirmModule.submit(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('submit エラー 取引ID不整合', async () => {
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: '123'
+                    }
+                }
+            },
+            body: {
+                transactionId: '456'
+            }
+        };
+        const res: any = {
+            locals: {},
+            redirect: sinon.spy()
+        };
+        const next: any = sinon.spy();
+        await MvtkConfirmModule.submit(req, res, next);
         assert(next.calledOnce);
     });
 });

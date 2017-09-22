@@ -65,9 +65,6 @@ export function timeFormat(screeningTime: Date, referenceDate: string) {
  * @returns {string}
  */
 export function escapeHtml(str: string): string {
-    if (typeof str !== 'string') {
-        return str;
-    }
     const change = (match: string): string => {
         const changeList: any = {
             '&': '&amp;',

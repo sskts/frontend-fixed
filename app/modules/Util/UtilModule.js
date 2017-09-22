@@ -68,9 +68,6 @@ exports.timeFormat = timeFormat;
  * @returns {string}
  */
 function escapeHtml(str) {
-    if (typeof str !== 'string') {
-        return str;
-    }
     const change = (match) => {
         const changeList = {
             '&': '&amp;',

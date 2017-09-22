@@ -17,34 +17,16 @@ const sinon = require("sinon");
 const InquiryLoginForm = require("../../../../app/forms/Inquiry/LoginForm");
 const InquiryModule = require("../../../../app/modules/Inquiry/InquiryModule");
 describe('Inquiry.InquiryModule', () => {
-    let organization;
-    let order;
-    let inquiryLoginForm;
-    beforeEach(() => {
-        organization = sinon.stub(sasaki.service, 'organization').returns({
+    it('loginRender 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
             findMovieTheaterByBranchCode: () => {
-                return {
+                return Promise.resolve({
                     location: {
                         name: { ja: '', en: '' }
                     }
-                };
+                });
             }
         });
-        order = sinon.stub(sasaki.service, 'order').returns({
-            findByOrderInquiryKey: () => {
-                return {
-                    orderNumber: ''
-                };
-            }
-        });
-        inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
-    });
-    afterEach(() => {
-        organization.restore();
-        order.restore();
-        inquiryLoginForm.restore();
-    });
-    it('loginRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             query: {
                 orderNumber: '118-'
@@ -60,8 +42,22 @@ describe('Inquiry.InquiryModule', () => {
         };
         yield InquiryModule.loginRender(req, res, next);
         assert(res.render.calledOnce);
+        organization.restore();
     }));
-    it('loginRender エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('loginRender エラー 劇場コードなし', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            query: {}
+        };
+        const res = {
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield InquiryModule.loginRender(req, res, next);
+        assert(res.render.calledOnce);
+    }));
+    it('loginRender エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             query: {
                 orderNumber: '118-'
@@ -76,6 +72,23 @@ describe('Inquiry.InquiryModule', () => {
         assert(next.calledOnce);
     }));
     it('inquiryAuth 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            findMovieTheaterByBranchCode: () => {
+                return Promise.resolve({
+                    location: {
+                        name: { ja: '', en: '' }
+                    }
+                });
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
+            findByOrderInquiryKey: () => {
+                return Promise.resolve({
+                    orderNumber: ''
+                });
+            }
+        });
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req = {
             body: {},
             session: {},
@@ -96,8 +109,64 @@ describe('Inquiry.InquiryModule', () => {
         };
         yield InquiryModule.inquiryAuth(req, res, next);
         assert(res.redirect.calledOnce);
+        organization.restore();
+        order.restore();
+        inquiryLoginForm.restore();
     }));
-    it('inquiryAuth バリデーション', () => __awaiter(this, void 0, void 0, function* () {
+    it('inquiryAuth 正常 オーダー情報なし', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            findMovieTheaterByBranchCode: () => {
+                return Promise.resolve({
+                    location: {
+                        name: { ja: '', en: '' }
+                    }
+                });
+            }
+        });
+        const order = sinon.stub(sasaki.service, 'order').returns({
+            findByOrderInquiryKey: () => {
+                return Promise.resolve(null);
+            }
+        });
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
+        const req = {
+            body: {},
+            session: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield InquiryModule.inquiryAuth(req, res, next);
+        assert(res.render.calledOnce);
+        organization.restore();
+        order.restore();
+        inquiryLoginForm.restore();
+    }));
+    it('inquiryAuth 正常 バリデーション', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            findMovieTheaterByBranchCode: () => {
+                return Promise.resolve({
+                    location: {
+                        name: { ja: '', en: '' }
+                    }
+                });
+            }
+        });
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
         const req = {
             body: {},
             session: {},
@@ -107,7 +176,7 @@ describe('Inquiry.InquiryModule', () => {
                         return false;
                     },
                     mapped: () => {
-                        return;
+                        return {};
                     }
                 });
             }
@@ -121,8 +190,10 @@ describe('Inquiry.InquiryModule', () => {
         };
         yield InquiryModule.inquiryAuth(req, res, next);
         assert(res.render.calledOnce);
+        organization.restore();
+        inquiryLoginForm.restore();
     }));
-    it('inquiryAuth エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('inquiryAuth エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             body: {},
             session: undefined
@@ -133,6 +204,33 @@ describe('Inquiry.InquiryModule', () => {
         const next = sinon.spy();
         yield InquiryModule.inquiryAuth(req, res, next);
         assert(next.calledOnce);
+    }));
+    it('inquiryAuth エラー 対象劇場なし', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            findMovieTheaterByBranchCode: () => {
+                return Promise.resolve(null);
+            }
+        });
+        const inquiryLoginForm = sinon.stub(InquiryLoginForm, 'default').returns({});
+        const req = {
+            body: {},
+            session: {},
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
+        };
+        const res = {
+            locals: {}
+        };
+        const next = sinon.spy();
+        yield InquiryModule.inquiryAuth(req, res, next);
+        assert(next.calledOnce);
+        organization.restore();
+        inquiryLoginForm.restore();
     }));
     it('confirmRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {

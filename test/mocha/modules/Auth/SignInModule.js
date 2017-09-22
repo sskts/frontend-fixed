@@ -58,9 +58,30 @@ describe('Auth.SignInModule', () => {
         assert(res.redirect.calledOnce);
         auth.restore();
     }));
-    it('index エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('index エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
-            session: undefined
+            session: undefined,
+            query: {
+                code: '',
+                state: ''
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield SignInModule.index(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('index エラー state不整合', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                auth: {
+                    state: '123'
+                }
+            },
+            query: {
+                code: '',
+                state: '456'
+            }
         };
         const res = {};
         const next = sinon.spy();

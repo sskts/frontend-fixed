@@ -15,8 +15,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const assert = require("assert");
 const moment = require("moment");
+const sinon = require("sinon");
 const UtilModule = require("../../../../app/modules/Util/UtilModule");
 describe('Util.UtilModule', () => {
+    it('setLocals 正常', () => {
+        const req = {
+            cookies: {}
+        };
+        const res = {
+            locals: {}
+        };
+        const next = sinon.spy();
+        UtilModule.setLocals(req, res, next);
+        assert(next.calledOnce);
+    });
+    it('isApp 正常 アプリ', () => {
+        const req = {
+            cookies: {
+                applicationData: JSON.stringify({ viewType: 'app' })
+            }
+        };
+        const isApp = UtilModule.isApp(req);
+        assert.strictEqual(isApp, true);
+    });
+    it('isApp 正常 アプリでない', () => {
+        const req = {
+            cookies: {}
+        };
+        const isApp = UtilModule.isApp(req);
+        assert.strictEqual(isApp, false);
+    });
     it('timeFormat 正常', () => {
         const date = new Date();
         date.setHours(1);
@@ -40,5 +68,14 @@ describe('Util.UtilModule', () => {
     it('base64Decode 正常', () => __awaiter(this, void 0, void 0, function* () {
         const str = UtilModule.base64Decode('44OG44K544OI');
         assert.equal(str, 'テスト');
+    }));
+    it('getEmailTemplate 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const res = {
+            render: sinon.spy()
+        };
+        const file = '';
+        const locals = {};
+        yield UtilModule.getEmailTemplate(res, file, locals);
+        assert(res.render.calledOnce);
     }));
 });

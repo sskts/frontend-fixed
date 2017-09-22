@@ -5,10 +5,41 @@
  */
 import * as assert from 'assert';
 import * as moment from 'moment';
+import * as sinon from 'sinon';
 
 import * as UtilModule from '../../../../app/modules/Util/UtilModule';
 
 describe('Util.UtilModule', () => {
+
+    it('setLocals 正常', () => {
+        const req: any = {
+            cookies: {}
+        };
+        const res: any = {
+            locals: {}
+        };
+        const next: any = sinon.spy();
+        UtilModule.setLocals(req, res, next);
+        assert(next.calledOnce);
+    });
+
+    it('isApp 正常 アプリ', () => {
+        const req: any = {
+            cookies: {
+                applicationData: JSON.stringify({ viewType: 'app' })
+            }
+        };
+        const isApp = UtilModule.isApp(req);
+        assert.strictEqual(isApp, true);
+    });
+
+    it('isApp 正常 アプリでない', () => {
+        const req: any = {
+            cookies: {}
+        };
+        const isApp = UtilModule.isApp(req);
+        assert.strictEqual(isApp, false);
+    });
 
     it('timeFormat 正常', () => {
         const date = new Date();
@@ -37,6 +68,16 @@ describe('Util.UtilModule', () => {
     it('base64Decode 正常', async () => {
         const str = UtilModule.base64Decode('44OG44K544OI');
         assert.equal(str, 'テスト');
+    });
+
+    it('getEmailTemplate 正常', async () => {
+        const res: any = {
+            render: sinon.spy()
+        };
+        const file = '';
+        const locals = {};
+        await UtilModule.getEmailTemplate(res, file, locals);
+        assert(res.render.calledOnce);
     });
 
 });

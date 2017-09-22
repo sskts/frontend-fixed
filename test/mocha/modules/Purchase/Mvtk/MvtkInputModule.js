@@ -39,9 +39,35 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         yield MvtkInputModule.render(req, res, next);
         assert(res.render.calledOnce);
     }));
-    it('render エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('render エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours')
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours')
+                }
+            }
         };
         const res = {};
         const next = sinon.spy();
@@ -100,19 +126,103 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         purchaseNumberAuth.restore();
         mvtkTicketcode.restore();
     }));
-    it('select エラー1', () => __awaiter(this, void 0, void 0, function* () {
+    it('select 正常 ムビチケ認証失敗', () => __awaiter(this, void 0, void 0, function* () {
+        const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
+        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
+            purchaseNumberAuth: () => {
+                return Promise.resolve([{
+                        knyknrNoMkujyuCd: {},
+                        ykknInfo: []
+                    }]);
+            }
+        });
+        const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(Promise.resolve({}));
         const req = {
             session: {
-                purchase: undefined,
-                mvtk: JSON.stringify([{ code: '1', password: '1' }])
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '',
+                            dateJouei: ''
+                        }
+                    }
+                },
+                mvtk: []
+            },
+            body: {
+                transactionId: '',
+                mvtk: JSON.stringify([{ code: '', password: '' }])
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield MvtkInputModule.select(req, res, next);
+        assert(res.render.calledOnce);
+        mvtkInputForm.restore();
+        purchaseNumberAuth.restore();
+        mvtkTicketcode.restore();
+    }));
+    it('select エラー ムビチケ認証失敗', () => __awaiter(this, void 0, void 0, function* () {
+        const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
+        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
+            purchaseNumberAuth: () => {
+                return Promise.reject({});
+            }
+        });
+        const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(Promise.resolve({}));
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: '',
+                            dateJouei: ''
+                        }
+                    }
+                },
+                mvtk: []
+            },
+            body: {
+                transactionId: '',
+                mvtk: JSON.stringify([{ code: '', password: '' }])
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    }
+                });
             }
         };
         const res = {};
         const next = sinon.spy();
         yield MvtkInputModule.select(req, res, next);
         assert(next.calledOnce);
+        mvtkInputForm.restore();
+        purchaseNumberAuth.restore();
+        mvtkTicketcode.restore();
     }));
-    it('select エラー2', () => __awaiter(this, void 0, void 0, function* () {
+    it('select エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
         };
@@ -120,5 +230,80 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         const next = sinon.spy();
         yield MvtkInputModule.select(req, res, next);
         assert(next.calledOnce);
+    }));
+    it('select エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours').toDate()
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.select(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('select エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate()
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.select(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('select エラー 取引ID不整合', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: '123'
+                    },
+                    individualScreeningEvent: {}
+                }
+            },
+            body: {
+                transactionId: '456'
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.select(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('select エラー バリデーション', () => __awaiter(this, void 0, void 0, function* () {
+        const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    individualScreeningEvent: {}
+                }
+            },
+            body: {
+                transactionId: ''
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return false;
+                    }
+                });
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield MvtkInputModule.select(req, res, next);
+        assert(next.calledOnce);
+        mvtkInputForm.restore();
     }));
 });
