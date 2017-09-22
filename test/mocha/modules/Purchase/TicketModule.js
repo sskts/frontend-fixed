@@ -16,6 +16,7 @@ const assert = require("assert");
 const moment = require("moment");
 const sinon = require("sinon");
 const TicketForm = require("../../../../app/forms/Purchase/TicketForm");
+const AuthModel_1 = require("../../../../app/models/Auth/AuthModel");
 const TicketModule = require("../../../../app/modules/Purchase/TicketModule");
 describe('Purchase.TicketModule', () => {
     it('render 正常', () => __awaiter(this, void 0, void 0, function* () {
@@ -42,6 +43,50 @@ describe('Purchase.TicketModule', () => {
         yield TicketModule.render(req, res, next);
         assert(res.render.calledOnce);
     }));
+    it('render 正常 会員', () => __awaiter(this, void 0, void 0, function* () {
+        const person = sinon.stub(sasaki.service, 'person').returns({
+            getContacts: () => {
+                return Promise.resolve({
+                    familyName: '',
+                    givenName: '',
+                    email: '',
+                    emailConfirm: '',
+                    telephone: ''
+                });
+            },
+            findCreditCards: () => {
+                return Promise.resolve([
+                    { deleteFlag: '0' }
+                ]);
+            }
+        });
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {},
+                    individualScreeningEvent: {},
+                    seatReservationAuthorization: {}
+                },
+                auth: {
+                    memberType: AuthModel_1.MemberType.Member
+                }
+            },
+            params: {
+                id: ''
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield TicketModule.render(req, res, next);
+        assert(res.render.calledOnce);
+        person.restore();
+    }));
     it('render エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
@@ -51,9 +96,37 @@ describe('Purchase.TicketModule', () => {
         yield TicketModule.render(req, res, next);
         assert(next.calledOnce);
     }));
-    it('render エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
+    it('render エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
-            session: undefined
+            session: {}
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield TicketModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    individualScreeningEvent: {},
+                    expired: moment().subtract(1, 'hours')
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield TicketModule.render(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('render エラー アクセス', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    individualScreeningEvent: {},
+                    expired: moment().add(1, 'hours')
+                }
+            }
         };
         const res = {};
         const next = sinon.spy();
@@ -235,9 +308,56 @@ describe('Purchase.TicketModule', () => {
         ticketForm.restore();
         placeOrder.restore();
     }));
-    it('ticketSelect エラー', () => __awaiter(this, void 0, void 0, function* () {
+    it('ticketSelect エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield TicketModule.ticketSelect(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('ticketSelect エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().subtract(1, 'hours')
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield TicketModule.ticketSelect(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('ticketSelect エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours')
+                }
+            }
+        };
+        const res = {};
+        const next = sinon.spy();
+        yield TicketModule.ticketSelect(req, res, next);
+        assert(next.calledOnce);
+    }));
+    it('ticketSelect エラー 取引ID不整合', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours'),
+                    transaction: {
+                        id: '123'
+                    },
+                    individualScreeningEvent: {},
+                    seatReservationAuthorization: {}
+                }
+            },
+            body: {
+                transactionId: '456'
+            }
         };
         const res = {};
         const next = sinon.spy();
