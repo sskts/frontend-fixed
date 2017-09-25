@@ -34,7 +34,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             && purchaseModel.transaction !== null) {
             await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.seatReservationAuthorization.id
+                actionId: purchaseModel.seatReservationAuthorization.id
             });
             log('仮予約削除');
         }

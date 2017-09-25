@@ -85,7 +85,7 @@ function newReserve(req, res, next) {
             // COA仮予約削除
             yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.seatReservationAuthorization.id
+                actionId: purchaseModel.seatReservationAuthorization.id
             });
             log('COA仮予約削除');
             //購入スタートへ

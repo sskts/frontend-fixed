@@ -283,7 +283,7 @@ function creditCardProsess(req, res, purchaseModel, authModel) {
         if (purchaseModel.creditCardAuthorization !== null) {
             const cancelCreditCardAuthorizationArgs = {
                 transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.creditCardAuthorization.id
+                actionId: purchaseModel.creditCardAuthorization.id
             };
             try {
                 yield sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);

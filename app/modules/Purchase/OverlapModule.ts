@@ -71,7 +71,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         // COA仮予約削除
         await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
             transactionId: purchaseModel.transaction.id,
-            authorizationId: purchaseModel.seatReservationAuthorization.id
+            actionId: purchaseModel.seatReservationAuthorization.id
         });
 
         log('COA仮予約削除');

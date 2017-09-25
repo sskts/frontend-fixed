@@ -158,7 +158,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             // COAオーソリ削除
             await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                 transactionId: purchaseModel.transaction.id,
-                authorizationId: purchaseModel.seatReservationAuthorization.id
+                actionId: purchaseModel.seatReservationAuthorization.id
             });
             log('SSKTSCOAオーソリ削除');
             //COAオーソリ追加
@@ -200,7 +200,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             if (purchaseModel.mvtkAuthorization !== null) {
                 await sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                     transactionId: purchaseModel.transaction.id,
-                    authorizationId: purchaseModel.mvtkAuthorization.id
+                    actionId: purchaseModel.mvtkAuthorization.id
                 });
                 log('SSKTSムビチケオーソリ削除');
             }

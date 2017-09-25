@@ -166,7 +166,7 @@ async function reserve(req: Request, selectSeats: ISelectSeats[], purchaseModel:
     if (purchaseModel.seatReservationAuthorization !== null) {
         await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
             transactionId: purchaseModel.transaction.id,
-            authorizationId: purchaseModel.seatReservationAuthorization.id
+            actionId: purchaseModel.seatReservationAuthorization.id
         });
         log('仮予約削除');
     }

@@ -132,7 +132,7 @@ function ticketSelect(req, res, next) {
                 // COAオーソリ削除
                 yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
                     transactionId: purchaseModel.transaction.id,
-                    authorizationId: purchaseModel.seatReservationAuthorization.id
+                    actionId: purchaseModel.seatReservationAuthorization.id
                 });
                 log('SSKTSCOAオーソリ削除');
                 //COAオーソリ追加
@@ -175,7 +175,7 @@ function ticketSelect(req, res, next) {
                 if (purchaseModel.mvtkAuthorization !== null) {
                     yield sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                         transactionId: purchaseModel.transaction.id,
-                        authorizationId: purchaseModel.mvtkAuthorization.id
+                        actionId: purchaseModel.mvtkAuthorization.id
                     });
                     log('SSKTSムビチケオーソリ削除');
                 }
