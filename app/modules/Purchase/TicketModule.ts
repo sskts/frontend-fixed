@@ -239,7 +239,6 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
         if (err === ErrorUtilModule.ErrorType.Validation) {
             const purchaseModel = new PurchaseModel(req.session.purchase);
             if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
-            res.locals.error = '';
             res.locals.salesTickets = purchaseModel.getSalesTickets(req);
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;

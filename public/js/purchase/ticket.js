@@ -85,7 +85,7 @@ function getSalseTicketData(target) {
  * @returns {void}
  */
 function pageInit() {
-    if ($('.ticket-validation').val()) {
+    if ($('input[name=ticketValidation]').val()) {
         modal.open('ticketValidation');
         var errorData = JSON.parse($('.ticket-validation').val());
         errorData.forEach(function(value){

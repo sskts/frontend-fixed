@@ -218,7 +218,6 @@ function ticketSelect(req, res, next) {
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 if (purchaseModel.individualScreeningEvent === null)
                     throw ErrorUtilModule.ErrorType.Property;
-                res.locals.error = '';
                 res.locals.salesTickets = purchaseModel.getSalesTickets(req);
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.TICKET_STATE;
