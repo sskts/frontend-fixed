@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace Fixed.FixedModule
  */
-const COA = require("@motionpicture/coa-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const moment = require("moment");
@@ -98,22 +97,8 @@ function getInquiryData(req, res) {
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
-                if (inquiryModel.order === null) {
-                    // 本予約して照会情報取得
-                    if (req.session.fixed === undefined
-                        || req.session.fixed.updateReserveIn === undefined)
-                        throw ErrorUtilModule.ErrorType.Property;
-                    const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
-                    log('COA本予約', updReserve);
-                    inquiryModel.order = yield sasaki.service.order(options).findByOrderInquiryKey({
-                        telephone: inquiryModel.login.telephone,
-                        confirmationNumber: Number(inquiryModel.login.reserveNum),
-                        theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
-                    });
-                    log('COA照会情報取得', inquiryModel.order);
-                    if (inquiryModel.order === null)
-                        throw ErrorUtilModule.ErrorType.Property;
-                }
+                if (inquiryModel.order === null)
+                    throw ErrorUtilModule.ErrorType.Property;
                 // 印刷用
                 const reservations = createPrintReservations(req, inquiryModel);
                 delete req.session.fixed;

@@ -42,7 +42,10 @@ describe('Inquiry.InquiryModule', () => {
             query: {}
         };
         const res: any = {
-            render: sinon.spy()
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
         };
         const next: any = (err: any) => {
             throw err.massage;

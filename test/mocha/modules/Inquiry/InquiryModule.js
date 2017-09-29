@@ -49,7 +49,10 @@ describe('Inquiry.InquiryModule', () => {
             query: {}
         };
         const res = {
-            render: sinon.spy()
+            render: sinon.spy(),
+            status: () => {
+                return res;
+            }
         };
         const next = (err) => {
             throw err.massage;
