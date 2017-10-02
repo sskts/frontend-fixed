@@ -8,7 +8,11 @@
 <%- contentFor('body') %>
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
+    <% if (purchaseModel.getReserveAmount() > 0) { %>
     <p class="read"><%- __('purchase.input.read') %></p>
+    <% } else { %>
+    <p class="read"><%- __('purchase.input.read_no_credit') %></p>
+    <% } %>
     <form id="purchaseform" method="post">
         <div class="form-layout center">
             <dl class="mb-large">

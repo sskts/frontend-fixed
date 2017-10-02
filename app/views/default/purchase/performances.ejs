@@ -66,7 +66,7 @@
     <template v-if="error === null">
     <ul v-bind:class="{ active: sortType === 'chronological' }" class="chronological-order">
         <li v-for="order in chronologicalOrder" v-bind:key="order.identifier" class="button white-button mb-middle">
-            <a v-on:click="onclickPerformance($event, order.identifier, order.coaInfo.titleCode)" class="icon-triangle-gray">
+            <a v-on:click="onclickPerformance($event, order)" class="icon-triangle-gray">
             <dl>
                 <dt class="text-left">
                     <div>
@@ -102,7 +102,7 @@
                 <dd>
                     <ul>
                         <li v-for="film in order.films" v-bind:key="film.identifier" class="button white-button">
-                            <a v-on:click="onclickPerformance($event, film.identifier, film.coaInfo.titleCode)" class="icon-triangle-gray">
+                            <a v-on:click="onclickPerformance($event, film)" class="icon-triangle-gray">
                                 <dl>
                                     <dt>
                                         <div class="text-left">
