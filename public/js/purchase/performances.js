@@ -42,6 +42,36 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
 
         filters: {
             /**
+             * ステータス変換
+             * @function availability
+             * @param {number} value 残席割合
+             * @returns {string}
+             */
+            availability: function (value, type) {
+                console.log(value, type)
+                const availability = [
+                    {
+                        symbol: '×',
+                        image: '/images/fixed/status_03.svg',
+                        string: 'availability-full'
+                    },
+                    {
+                        symbol: '△',
+                        image: '/images/fixed/status_02.svg',
+                        string: 'availability-little'
+                    },
+                    {
+                        symbol: '○',
+                        image: '/images/fixed/status_01.svg',
+                        string: 'availability-large'
+                    }
+                ];
+
+                return (value === 0)
+                    ? availability[0][type] : (value <= 10)
+                        ? availability[1][type] : availability[2][type];
+            },
+            /**
              * 時間フォーマット
              * @function timeFormat
              * @param {string} referenceDate 基準日
@@ -75,8 +105,8 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              */
             createviewType: function () {
                 this.views = [
-                    { value: 0, text: 'WEB'},
-                    { value: 1, text: 'APP'}
+                    { value: 0, text: 'WEB' },
+                    { value: 1, text: 'APP' }
                 ]
             },
             /**
@@ -220,8 +250,12 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              * @param {string} id
              * @returns {void}
              */
-            onclickPerformance: function (event, id, filmId) {
+            onclickPerformance: function (event, performance) {
                 event.preventDefault();
+                // 残席なしなら遷移しない
+                if (performance.offer.availability === 0) return;
+                var id = performance.identifier;
+                var filmId = performance.coaInfo.titleCode;
                 if (filmId !== undefined) {
                     var film = this.filmOrder.find(function (value) {
                         return (value.id === filmId);
@@ -245,7 +279,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                     } else if (this.viewType === 1) {
                         location.href = '/signIn?id=' + id;
                     }
-                }               
+                }
             },
             /**
              * ソート選択

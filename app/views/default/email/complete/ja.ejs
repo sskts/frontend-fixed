@@ -14,9 +14,7 @@
 <%= purchaseModel.individualScreeningEvent.location.name.ja %>
 
 [座席]
-<% for (ticket of purchaseModel.reserveTickets) { %>
-<%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %>
-<% } %>
+<% for (ticket of purchaseModel.reserveTickets) { `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` } %>
 
 [合計]
 ￥<%= formatPrice(purchaseModel.getReserveAmount()) %>
@@ -26,7 +24,7 @@
 
 <発券/入場方法1 入場用QRコードで入場>
 以下のURLよりチケット情報確認画面へアクセス頂き、「チケットを購入した劇場」「予約番号」「お電話番号」を入力してログインしてください。 ご鑑賞時間の24時間前から入場用QRコードが表示されますので、入場時にそちらのQRコードをご提示ください。
-https://<%= domain %>/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>
+https://<%= domain %>/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>&reserve=<%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %>
 
 <発券/入場方法2 劇場発券機で発券>
 劇場に設置されている発券機にて発券頂きます。予約番号をお控えの上ご来場ください。
