@@ -85,9 +85,10 @@ function getSalseTicketData(target) {
  * @returns {void}
  */
 function pageInit() {
-    if ($('input[name=ticketValidation]').val()) {
+    var ticketValidation = $('input[name=ticketValidation]').val();
+    if (ticketValidation) {
         modal.open('ticketValidation');
-        var errorData = JSON.parse($('.ticket-validation').val());
+        var errorData = JSON.parse(ticketValidation);
         errorData.forEach(function(value){
             var ticketCode = $('.seats li').attr('data-ticket-code');
             $('.seats li[data-ticket-code='+ value +']').addClass('validation');
