@@ -1102,11 +1102,12 @@ a {
       -ms-flex-pack: justify;
           justify-content: space-between; }
   .purchase-ticket .seats li {
-    margin: 0 0 20px 0; }
+    margin: 0 0 20px 0;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.85);
+    overflow: hidden; }
     .purchase-ticket .seats li dl {
-      display: table;
-      border-radius: 5px;
-      overflow: hidden; }
+      display: table; }
       .purchase-ticket .seats li dl dt {
         width: 110px;
         height: 110px;
@@ -1120,7 +1121,6 @@ a {
         width: 360px;
         height: 110px;
         display: table-cell;
-        background-color: rgba(255, 255, 255, 0.85);
         color: #333;
         text-align: center;
         vertical-align: middle; }
@@ -1232,7 +1232,8 @@ a {
     display: -ms-flexbox;
     display: flex;
     border-radius: 5px;
-    border: 1px solid #FFF; }
+    border: 1px solid #FFF;
+    overflow: hidden; }
     .purchase-performances .sort div {
       width: 50%;
       border-right: 1px solid #FFF; }
