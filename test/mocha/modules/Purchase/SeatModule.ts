@@ -177,6 +177,16 @@ describe('Purchase.SeatModule', () => {
                     expired: moment().add(1, 'hours').toDate(),
                     transaction: {
                         id: ''
+                    },
+                    individualScreeningEvent: {
+                        identifier: '',
+                        coaInfo: {
+                            theaterCode: '',
+                            dateJouei: '',
+                            titleCode: '',
+                            titleBranchNum: '',
+                            timeBegin: ''
+                        }
                     }
                 }
             },

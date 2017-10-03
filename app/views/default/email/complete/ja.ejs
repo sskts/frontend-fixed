@@ -14,8 +14,8 @@
 <%= purchaseModel.individualScreeningEvent.location.name.ja %>
 
 [座席]
-<% for (ticket of purchaseModel.reserveTickets) { `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` } %>
-
+<% for (ticket of purchaseModel.reserveTickets) { %><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}`%>
+<% } %>
 [合計]
 ￥<%= formatPrice(purchaseModel.getReserveAmount()) %>
 

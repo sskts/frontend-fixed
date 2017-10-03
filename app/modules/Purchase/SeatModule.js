@@ -117,13 +117,19 @@ function seatSelect(req, res, next) {
             if (req.session === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction === null)
+            if (purchaseModel.transaction === null
+                || purchaseModel.individualScreeningEvent === null)
                 throw ErrorUtilModule.ErrorType.Property;
             if (purchaseModel.isExpired())
                 throw ErrorUtilModule.ErrorType.Expire;
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
                 throw ErrorUtilModule.ErrorType.Access;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             //バリデーション
             seatForm.seatSelect(req);
             const validationResult = yield req.getValidationResult();
@@ -136,7 +142,64 @@ function seatSelect(req, res, next) {
                 return;
             }
             const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
-            yield reserve(req, selectSeats, purchaseModel);
+            //予約中
+            if (purchaseModel.seatReservationAuthorization !== null) {
+                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                    transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id
+                });
+                log('仮予約削除');
+            }
+            if (purchaseModel.salesTickets === null) {
+                //コアAPI券種取得
+                const salesTicketResult = yield COA.services.reserve.salesTicket({
+                    theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
+                    dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
+                    titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                    titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
+                    timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
+                });
+                purchaseModel.salesTickets = salesTicketResult;
+                log('コアAPI券種取得', purchaseModel.salesTickets);
+            }
+            if (purchaseModel.salesTickets.length === 0)
+                throw ErrorUtilModule.ErrorType.Access;
+            const createSeatReservationAuthorizationArgs = {
+                transactionId: purchaseModel.transaction.id,
+                eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
+                offers: selectSeats.map((seat) => {
+                    const salesTicket = purchaseModel.salesTickets[0];
+                    return {
+                        seatSection: seat.seatSection,
+                        seatNumber: seat.seatNum,
+                        ticketInfo: {
+                            ticketCode: salesTicket.ticketCode,
+                            ticketName: salesTicket.ticketName,
+                            ticketNameEng: salesTicket.ticketNameEng,
+                            ticketNameKana: salesTicket.ticketNameKana,
+                            stdPrice: salesTicket.stdPrice,
+                            addPrice: salesTicket.addPrice,
+                            disPrice: 0,
+                            salePrice: salesTicket.salePrice,
+                            mvtkAppPrice: 0,
+                            ticketCount: 1,
+                            seatNum: seat.seatNum,
+                            addGlasses: 0,
+                            kbnEisyahousiki: '00',
+                            mvtkNum: '',
+                            mvtkKbnDenshiken: '00',
+                            mvtkKbnMaeuriken: '00',
+                            mvtkKbnKensyu: '00',
+                            mvtkSalesPrice: 0
+                        }
+                    };
+                })
+            };
+            purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
+                .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
+            log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
+            purchaseModel.orderCount = 0;
+            log('GMOオーソリカウント初期化');
             //セッション更新
             purchaseModel.save(req.session);
             // ムビチケセッション削除
@@ -153,86 +216,6 @@ function seatSelect(req, res, next) {
     });
 }
 exports.seatSelect = seatSelect;
-/**
- * 座席仮予約
- * @memberof Purchase.SeatModule
- * @function reserve
- * @param {Request} req
- * @param {ReserveSeats[]} reserveSeats
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
- */
-// tslint:disable-next-line:max-func-body-length
-function reserve(req, selectSeats, purchaseModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (req.session === undefined)
-            throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.individualScreeningEvent === null
-            || purchaseModel.transaction === null)
-            throw ErrorUtilModule.ErrorType.Property;
-        const authModel = new AuthModel_1.AuthModel(req.session.auth);
-        const options = {
-            endpoint: process.env.SSKTS_API_ENDPOINT,
-            auth: authModel.create()
-        };
-        //予約中
-        if (purchaseModel.seatReservationAuthorization !== null) {
-            yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
-                transactionId: purchaseModel.transaction.id,
-                actionId: purchaseModel.seatReservationAuthorization.id
-            });
-            log('仮予約削除');
-        }
-        if (purchaseModel.salesTickets === null) {
-            //コアAPI券種取得
-            const salesTicketResult = yield COA.services.reserve.salesTicket({
-                theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
-                dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
-                titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
-                timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
-            });
-            purchaseModel.salesTickets = salesTicketResult;
-            log('コアAPI券種取得', purchaseModel.salesTickets);
-        }
-        const createSeatReservationAuthorizationArgs = {
-            transactionId: purchaseModel.transaction.id,
-            eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
-            offers: selectSeats.map((seat) => {
-                const salesTicket = purchaseModel.salesTickets[0];
-                return {
-                    seatSection: seat.seatSection,
-                    seatNumber: seat.seatNum,
-                    ticketInfo: {
-                        ticketCode: salesTicket.ticketCode,
-                        ticketName: salesTicket.ticketName,
-                        ticketNameEng: salesTicket.ticketNameEng,
-                        ticketNameKana: salesTicket.ticketNameKana,
-                        stdPrice: salesTicket.stdPrice,
-                        addPrice: salesTicket.addPrice,
-                        disPrice: 0,
-                        salePrice: salesTicket.salePrice,
-                        mvtkAppPrice: 0,
-                        ticketCount: 1,
-                        seatNum: seat.seatNum,
-                        addGlasses: 0,
-                        kbnEisyahousiki: '00',
-                        mvtkNum: '',
-                        mvtkKbnDenshiken: '00',
-                        mvtkKbnMaeuriken: '00',
-                        mvtkKbnKensyu: '00',
-                        mvtkSalesPrice: 0
-                    }
-                };
-            })
-        };
-        purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
-            .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
-        log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
-        purchaseModel.orderCount = 0;
-        log('GMOオーソリカウント初期化');
-    });
-}
 /**
  * スクリーン状態取得
  * @memberof Purchase.SeatModule
