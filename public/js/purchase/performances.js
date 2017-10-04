@@ -48,7 +48,6 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              * @returns {string}
              */
             availability: function (value, type) {
-                console.log(value, type)
                 const availability = [
                     {
                         symbol: '×',

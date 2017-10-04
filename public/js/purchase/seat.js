@@ -3,7 +3,6 @@ var screenSeatStatusesMap;
 $(function () {
     pageInit(function () {
         if (isFixed()) {
-            setArrows();
             showSeatSelectAnnounce();
         }
     });
@@ -93,6 +92,9 @@ function pageInit(cb) {
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     saveSalesTickets();
     loadingStart();
+    if (isFixed()) {
+        setArrows();
+    }
     screenStateUpdate(function () {
         loadingEnd();
         if (cb !== undefined) {
