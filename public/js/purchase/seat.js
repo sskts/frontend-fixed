@@ -7,81 +7,109 @@ $(function () {
         }
     });
 
-    // 座席クリックイベント
-    $(document).on('click', '.zoom-btn a', function (event) {
-        event.preventDefault();
-        if (screenSeatStatusesMap.isZoom()) {
-            screenSeatStatusesMap.scaleDown();
-        }
-    });
+    // 拡大クリックイベント
+    $(document).on('click', '.zoom-btn a', zoomButtonClick);
 
     // 座席クリックイベント
-    $('.screen').on('click', '.seat a', function (event) {
-        event.preventDefault();
-        //スマホで拡大操作
-        if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
-            return;
-        }
-        var limit = Number($('.screen-cover').attr('data-limit'));
-        if ($(this).hasClass('disabled')) {
-            return;
-        }
-        // 座席数上限チェック
-        if (!$(this).hasClass('active')) {
-            if ($('.screen .seat a.active').length > limit - 1) {
-                modal.open('seatUpperLimit');
-                return;
-            }
-        }
-
-        $(this).toggleClass('active');
-    });
+    $('.screen').on('click', '.seat a', seatClick);
 
     // 次へクリックイベント
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        // 座席コードリストを取得
-        var seats = {
-            listTmpReserve: []
-        };
-        $('.screen .seat a.active').each(function (index, elem) {
-            seats.listTmpReserve.push({
-                seatNum: $(this).attr('data-seat-code'),
-                seatSection: '0'
-            });
-        });
-
-        if (seats.listTmpReserve.length < 1) {
-            modal.open('seatNotSelect');
-            return;
-        }
-        validation();
-        if ($('.validation-text').length > 0) {
-            validationScroll();
-            return;
-        }
-
-        var reserveTickets = [];
-        var form = $('form');
-        $('input[name=seats]').val(JSON.stringify(seats));
-
-        loadingStart(function () {
-            form.submit();
-        });
-    });
+    $(document).on('click', '.next-button button', nextButtonClick);
 
     // パフォーマンス切り替え
-    $(document).on('click', '.arrow a', function (event) {
-        event.preventDefault();
-        var performanceId = $(this).attr('data-performanceId');
-        arrowClick(performanceId);
-    });
+    $(document).on('click', '.arrow a', performanceChangeClick);
 
     // スクロール
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
     });
 });
+
+/**
+ * 拡大クリックイベント
+ * @function zoomButtonClick
+ * @param {Event} event 
+ */
+function zoomButtonClick(event) {
+    event.preventDefault();
+    if (screenSeatStatusesMap.isZoom()) {
+        screenSeatStatusesMap.scaleDown();
+    }
+}
+
+/**
+ * 座席クリックイベント
+ * @function seatClick
+ * @param {Event} event 
+ */
+function seatClick(event) {
+    event.preventDefault();
+    //スマホで拡大操作
+    if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
+        return;
+    }
+    var limit = Number($('.screen-cover').attr('data-limit'));
+    if ($(this).hasClass('disabled')) {
+        return;
+    }
+    // 座席数上限チェック
+    if (!$(this).hasClass('active')) {
+        if ($('.screen .seat a.active').length > limit - 1) {
+            modal.open('seatUpperLimit');
+            return;
+        }
+    }
+
+    $(this).toggleClass('active');
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {*} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    // 座席コードリストを取得
+    var seats = {
+        listTmpReserve: []
+    };
+    $('.screen .seat a.active').each(function (index, elem) {
+        seats.listTmpReserve.push({
+            seatNum: $(this).attr('data-seat-code'),
+            seatSection: '0'
+        });
+    });
+
+    if (seats.listTmpReserve.length < 1) {
+        modal.open('seatNotSelect');
+        return;
+    }
+    validation();
+    if ($('.validation-text').length > 0) {
+        validationScroll();
+        return;
+    }
+
+    var reserveTickets = [];
+    var form = $('form');
+    $('input[name=seats]').val(JSON.stringify(seats));
+
+    loadingStart(function () {
+        form.submit();
+    });
+}
+
+/**
+ * パフォーマンス切り替えクリック
+ * @function performanceChangeClick
+ * @param {Event} event 
+ */
+function performanceChangeClick(event) {
+    event.preventDefault();
+    var performanceId = $(this).attr('data-performanceId');
+    arrowClick(performanceId);
+}
 
 /**
  * 初期化

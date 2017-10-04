@@ -3,36 +3,42 @@ $(function () {
     /**
      * 次へクリックイベント
      */
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        validation();
-        if ($('.validation').length > 0) {
-            validationScroll();
-            return;
-        }
-        var price = $('input[name=price]').val();
-        if (Number(price) === 0) {
-            loadingStart(function () {
-                $('#purchaseform').submit();
-            });
-        } else {
-            loadingStart(function () {
-                var cardno = $('input[name=cardno]').val();
-                var expire = $('select[name=creditYear]').val() + $('select[name=creditMonth]').val();
-                var securitycode = $('input[name=securitycode]').val();
-                var holdername = $('input[name=holdername]').val();
-                var sendParam = {
-                    cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
-                    expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
-                    securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
-                    holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
-                }
-
-                Multipayment.getToken(sendParam, someCallbackFunction);
-            });
-        }
-    });
+    $(document).on('click', '.next-button button', );
 });
+
+/**
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    validation();
+    if ($('.validation').length > 0) {
+        validationScroll();
+        return;
+    }
+    var price = $('input[name=price]').val();
+    if (Number(price) === 0) {
+        loadingStart(function () {
+            $('#purchaseform').submit();
+        });
+    } else {
+        loadingStart(function () {
+            var cardno = $('input[name=cardno]').val();
+            var expire = $('select[name=creditYear]').val() + $('select[name=creditMonth]').val();
+            var securitycode = $('input[name=securitycode]').val();
+            var holdername = $('input[name=holdername]').val();
+            var sendParam = {
+                cardno: cardno, // 加盟店様の購入フォームから取得したカード番号
+                expire: expire, // 加盟店様の購入フォームから取得したカード有効期限
+                securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
+                holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
+            }
+
+            Multipayment.getToken(sendParam, someCallbackFunction);
+        });
+    }
+}
 
 /**
  * 初期化

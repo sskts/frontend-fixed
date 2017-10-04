@@ -33,7 +33,7 @@ $(function () {
     // ナビゲーション
     navigationInit();
     // 自動TOP遷移
-    autoTop();
+    // autoTop();
     $(document).on('click', '.ticketing-button a', function (event) {
         event.preventDefault();
         location.href = '/inquiry/login?theater=' + window.config.theater;

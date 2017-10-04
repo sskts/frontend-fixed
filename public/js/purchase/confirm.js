@@ -5,15 +5,7 @@ $(function () {
     /**
      * 次へクリックイベント
      */
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        validation();
-        if ($('.validation-text').length > 0) {
-            validationScroll();
-            return;
-        }
-        purchase();
-    });
+    $(document).on('click', '.next-button button', nextButtonClick);
 
     var timer = false;
     $(window).on('resize', function () {
@@ -28,19 +20,41 @@ $(function () {
     /**
      * 確認クリックイベント
      */
-    $('.confirm-button a').on('click', function (event) {
-        event.preventDefault();
-        loadingStart(function () {
-            screenStateUpdate(function () {
-                modal.open('screen');
-                setTimeout(function () {
-                    screenSeatStatusesMap.init();
-                    modal.resize();
-                }, 0);
-            });
+    $('.confirm-button a').on('click', confirmButtonClick);
+});
+
+/**
+ * 確認クリックイベント
+ * @function confirmButtonClick
+ * @param {Event} event 
+ */
+function confirmButtonClick(event) {
+    event.preventDefault();
+    loadingStart(function () {
+        screenStateUpdate(function () {
+            modal.open('screen');
+            setTimeout(function () {
+                screenSeatStatusesMap.init();
+                modal.resize();
+            }, 0);
         });
     });
-});
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    validation();
+    if ($('.validation-text').length > 0) {
+        validationScroll();
+        return;
+    }
+    purchase();
+}
 
 /**
  * 購入完了

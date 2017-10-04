@@ -2,66 +2,100 @@ $(function () {
     // 初期化
     pageInit();
     // 追加クリックイベント
-    $(document).on('click', '.add-button a', function (event) {
-        event.preventDefault();
-        if ($('.mvtk-box:hidden').length > 0) {
-            $('.mvtk-box:hidden').eq(0).addClass('active');
-        }
-        if ($('.mvtk-box:hidden').length === 0) {
-            $('.add-button').hide();
-        }
-        if ($('.mvtk-box:visible').length > 1) {
-            $('.remove-button').show();
-        };
-    });
+    $(document).on('click', '.add-button a', addButtonClick);
     // 削除クリックイベント
-    $(document).on('click', '.remove-button a', function (event) {
-        event.preventDefault();
-        var target = $(this).parents('.mvtk-box');
-        target.find('input').val('');
-        target.removeClass('active');
-        target.find('.validation').removeClass('validation');
-        target.find('.validation-text').remove();
-        $('.ticket-list').append(target);
-        if ($('.mvtk-box:hidden').length > 0) {
-            $('.add-button').show();
-        }
-        if ($('.mvtk-box:visible').length === 1) {
-            $('.remove-button').hide();
-        };
-    });
+    $(document).on('click', '.remove-button a', removeButtonClick);
+    // QR読み込みクリックイベント
+    $(document).on('click', '.read-button a', qrReaderButtonClick);
     // 次へクリックイベント
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        var mvtkList = [];
-        var modalBody = $('.modal[data-modal=validation] .modal-body');
-        modalBody.html('');
-        $('.ticket-list .mvtk-box.active').each(function (index, elem) {
-            var target = $(elem);
-            var code = target.find('input[name=mvtkCode]').val();
-            var password = target.find('input[name=mvtkPassword]').val();
-            if (code && password) {
-                mvtkList.push({
-                    code: code,
-                    password: password
-                });
-            }
-            validation(target);
-        });
-
-        if ($('.validation').length > 0) {
-            validationScroll();
-            return;
-        }
-
-        loadingStart(function () {
-            var form = $('form');
-            var dom = $('input[name=mvtk]').val(JSON.stringify(mvtkList));
-            form.append(dom);
-            form.submit();
-        });
-    });
+    $(document).on('click', '.next-button button', nextButtonClick);
 });
+
+/**
+ * QR読み込みクリックイベント
+ * @function qrReaderButtonClick
+ * @param {Event} event 
+ */
+function qrReaderButtonClick(event) {
+    event.preventDefault();
+    modal.open('mvtkQrReader');
+    var target = $(this).parents('.mvtk-box');
+}
+
+/**
+ * 追加クリックイベント
+ * @function addButtonClick
+ * @param {Event} event 
+ */
+function addButtonClick(event) {
+    event.preventDefault();
+    if ($('.mvtk-box:hidden').length > 0) {
+        $('.mvtk-box:hidden').eq(0).addClass('active');
+    }
+    if ($('.mvtk-box:hidden').length === 0) {
+        $('.add-button').hide();
+    }
+    if ($('.mvtk-box:visible').length > 1) {
+        $('.remove-button').show();
+    };
+}
+
+/**
+ * 削除クリックイベント
+ * @function removeButtonClick
+ * @param {Event} event 
+ */
+function removeButtonClick(event) {
+    event.preventDefault();
+    var target = $(this).parents('.mvtk-box');
+    target.find('input').val('');
+    target.removeClass('active');
+    target.find('.validation').removeClass('validation');
+    target.find('.validation-text').remove();
+    $('.ticket-list').append(target);
+    if ($('.mvtk-box:hidden').length > 0) {
+        $('.add-button').show();
+    }
+    if ($('.mvtk-box:visible').length === 1) {
+        $('.remove-button').hide();
+    };
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    var mvtkList = [];
+    var modalBody = $('.modal[data-modal=validation] .modal-body');
+    modalBody.html('');
+    $('.ticket-list .mvtk-box.active').each(function (index, elem) {
+        var target = $(elem);
+        var code = target.find('input[name=mvtkCode]').val();
+        var password = target.find('input[name=mvtkPassword]').val();
+        if (code && password) {
+            mvtkList.push({
+                code: code,
+                password: password
+            });
+        }
+        validation(target);
+    });
+
+    if ($('.validation').length > 0) {
+        validationScroll();
+        return;
+    }
+
+    loadingStart(function () {
+        var form = $('form');
+        var dom = $('input[name=mvtk]').val(JSON.stringify(mvtkList));
+        form.append(dom);
+        form.submit();
+    });
+}
 
 /**
  * 初期化

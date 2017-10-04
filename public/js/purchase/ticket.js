@@ -2,46 +2,60 @@ $(function () {
     // 初期化
     pageInit();
     // 券種クリックイベント
-    $(document).on('click', '.modal[data-modal=ticketType] li a', function (event) {
-        event.preventDefault();
-        
-        var ticket = getSalseTicketData($(this));
-        if (!ticket) return;
-        var target = modal.getTrigger().parents('.seats li');
-        if (target.hasClass('validation')) {
-            target.removeClass('validation');
-        }
-        ticketSelect(target, ticket);
-        modal.close();
-        totalPrice();
-    });
+    $(document).on('click', '.modal[data-modal=ticketType] li a', ticketSelectClick);
 
     // 次へクリックイベント
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        var result = [];
-        var flag = true;
-        $('.seats li').each(function (index, elem) {
-            var ticket = getTicketData($(elem));
-            result.push(ticket);
-            if (!ticket.ticketCode) {
-                flag = false;
-            }
-        });
+    $(document).on('click', '.next-button button', nextButtonClick);
+});
 
-        if (!flag) {
-            modal.open('ticketNotSelect');
-        } else {
-            // location.hrefにpostする
-            var form = $('form');
-            var dom = $('<input type="hidden" name="reserveTickets">').val(JSON.stringify(result));
-            form.append(dom);
-            loadingStart(function () {
-                form.submit();
-            });
+/**
+ * 券種クリックイベント
+ * @function ticketSelectClick
+ * @param {Event} event 
+ */
+function ticketSelectClick(event) {
+    event.preventDefault();
+    
+    var ticket = getSalseTicketData($(this));
+    if (!ticket) return;
+    var target = modal.getTrigger().parents('.seats li');
+    if (target.hasClass('validation')) {
+        target.removeClass('validation');
+    }
+    ticketSelect(target, ticket);
+    modal.close();
+    totalPrice();
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    var result = [];
+    var flag = true;
+    $('.seats li').each(function (index, elem) {
+        var ticket = getTicketData($(elem));
+        result.push(ticket);
+        if (!ticket.ticketCode) {
+            flag = false;
         }
     });
-});
+
+    if (!flag) {
+        modal.open('ticketNotSelect');
+    } else {
+        // location.hrefにpostする
+        var form = $('form');
+        var dom = $('<input type="hidden" name="reserveTickets">').val(JSON.stringify(result));
+        form.append(dom);
+        loadingStart(function () {
+            form.submit();
+        });
+    }
+}
 
 /**
  * 券種情報取得
