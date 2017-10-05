@@ -6,7 +6,6 @@ import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
-import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
@@ -32,22 +31,14 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (purchaseModel.seatReservationAuthorization !== null
-            && purchaseModel.transaction !== null) {
-            const cancelSeatReservationAuthorizationIn = {
-                transactionId: purchaseModel.transaction.id,
-                actionId: purchaseModel.seatReservationAuthorization.id
-            };
-            try {
-                await sasaki.service.transaction.placeOrder(options)
-                    .cancelSeatReservationAuthorization(cancelSeatReservationAuthorizationIn);
-                log('仮予約削除');
-            } catch (err) {
-                logger.error(
-                    'SSKTS-APP:Purchase.PerformancesModule.render',
-                    `in: ${cancelSeatReservationAuthorizationIn}`,
-                    `err: ${err}`
-                );
-            }
+            && purchaseModel.transaction !== null
+            && !purchaseModel.isExpired()) {
+            await sasaki.service.transaction.placeOrder(options)
+                .cancelSeatReservationAuthorization({
+                    transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id
+                });
+            log('仮予約削除');
         }
 
         if (process.env.VIEW_TYPE === 'fixed') {
