@@ -9,7 +9,35 @@ $(function () {
     $(document).on('click', '.read-button a', qrReaderButtonClick);
     // 次へクリックイベント
     $(document).on('click', '.next-button button', nextButtonClick);
+    // QRリーダー入力
+    $(window).on('keypress', qrReaderInput);
 });
+
+/**
+ * QRリーダー入力
+ * @function qrReaderInput
+ * @param {Event} event 
+ */
+function qrReaderInput(event) {
+    var targetModal = $('.modal[data-modal=mvtkQrReader]');
+    if (!targetModal.hasClass('active')) {
+        return;
+    }
+    var qrReaderInput = $('input[name=qrReaderInput]');
+    var value = qrReaderInput.val();
+    if (event.keyCode === 13 && value.length > 0) {
+        var index = targetModal.attr('data-index');
+        var parent = $('.mvtk-box').eq(index);
+        var code = value.slice(0, 10);
+        var password = value.slice(10, value.length);
+        parent.find('input[name=mvtkCode]').val(code);
+        parent.find('input[name=mvtkPassword]').val(password);
+        modal.close();
+    } else {
+        value += String.fromCharCode(event.charCode);
+        qrReaderInput.val(value);
+    }
+}
 
 /**
  * QR読み込みクリックイベント
@@ -19,7 +47,11 @@ $(function () {
 function qrReaderButtonClick(event) {
     event.preventDefault();
     modal.open('mvtkQrReader');
+    var qrReaderInput = $('input[name=qrReaderInput]');
+    qrReaderInput.val('');
     var target = $(this).parents('.mvtk-box');
+    var index = $('.mvtk-box').index(target);
+    $('.modal[data-modal=mvtkQrReader]').attr('data-index', index);
 }
 
 /**
@@ -59,6 +91,9 @@ function removeButtonClick(event) {
     if ($('.mvtk-box:visible').length === 1) {
         $('.remove-button').hide();
     };
+    var first = $('.mvtk-box').eq(0);
+    first.find('input[name=mvtkCode]').removeClass('numerickeybord-top');
+    first.find('input[name=mvtkPassword]').removeClass('numerickeybord-top');
 }
 
 /**
@@ -147,6 +182,13 @@ function validation(parent) {
         { name: 'mvtkCode', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
         { name: 'mvtkPassword', label: locales.label.mvtk_password, required: true, maxLength: 4, minLength: 4, regex: [/^[0-9]+$/, locales.validation.is_number] }
     ];
+
+    if (isFixed()) {
+        validationList = [
+            { name: 'mvtkCode', label: locales.label.mvtk_code, required: true, maxLength: 10, minLength: 10, regex: [/^[0-9]+$/, locales.validation.is_number] },
+            { name: 'mvtkPassword', label: locales.label.mvtk_password, required: true }
+        ];
+    }
 
     var validations = [];
     var names = [];

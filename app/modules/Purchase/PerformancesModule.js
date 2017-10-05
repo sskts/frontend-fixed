@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const moment = require("moment");
+const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
@@ -41,11 +42,18 @@ function render(req, res, next) {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null) {
-                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                const cancelSeatReservationAuthorizationIn = {
                     transactionId: purchaseModel.transaction.id,
                     actionId: purchaseModel.seatReservationAuthorization.id
-                });
-                log('仮予約削除');
+                };
+                try {
+                    yield sasaki.service.transaction.placeOrder(options)
+                        .cancelSeatReservationAuthorization(cancelSeatReservationAuthorizationIn);
+                    log('仮予約削除');
+                }
+                catch (err) {
+                    logger_1.default.error('SSKTS-APP:Purchase.PerformancesModule.render', `in: ${cancelSeatReservationAuthorizationIn}`, `err: ${err}`);
+                }
             }
             if (process.env.VIEW_TYPE === 'fixed') {
                 // セッション削除
