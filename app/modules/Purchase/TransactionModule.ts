@@ -128,6 +128,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         //座席選択へ
         res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
     } catch (err) {
+        log('SSKTS取引開始エラー', err);
         if (err === ErrorUtilModule.ErrorType.Access
             || err === ErrorUtilModule.ErrorType.Property) {
             res.json({ redirect: null, contents: 'access-error' });

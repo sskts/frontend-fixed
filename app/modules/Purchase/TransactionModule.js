@@ -127,6 +127,7 @@ function start(req, res) {
             res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
         }
         catch (err) {
+            log('SSKTS取引開始エラー', err);
             if (err === ErrorUtilModule.ErrorType.Access
                 || err === ErrorUtilModule.ErrorType.Property) {
                 res.json({ redirect: null, contents: 'access-error' });
