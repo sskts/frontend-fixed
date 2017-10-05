@@ -78,16 +78,16 @@ function newReserve(req, res, next) {
                 auth: authModel.create()
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.individualScreeningEvent === null
-                || purchaseModel.transaction === null
-                || purchaseModel.seatReservationAuthorization === null)
-                throw ErrorUtilModule.ErrorType.Property;
-            // COA仮予約削除
-            yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
-                transactionId: purchaseModel.transaction.id,
-                actionId: purchaseModel.seatReservationAuthorization.id
-            });
-            log('COA仮予約削除');
+            if (purchaseModel.transaction !== null
+                && purchaseModel.seatReservationAuthorization !== null
+                && !purchaseModel.isExpired()) {
+                // COA仮予約削除
+                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                    transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id
+                });
+                log('COA仮予約削除');
+            }
             //購入スタートへ
             delete req.session.purchase;
             res.redirect(`/purchase?id=${req.body.performanceId}`);
