@@ -1,9 +1,7 @@
 $(function () {
     pageInit();
-    /**
-     * 次へクリックイベント
-     */
-    $(document).on('click', '.next-button button', );
+    // 次へクリックイベント
+    $(document).on('click', '.next-button button', nextButtonClick);
 });
 
 /**
