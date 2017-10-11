@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "private": true,
   "scripts": {
     "check": "npm run tslint && nsp check",
