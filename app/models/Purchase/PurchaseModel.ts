@@ -569,7 +569,7 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isExpired(): boolean {
-        return (this.expired < moment().toDate());
+        return (moment(this.expired).unix() < moment().unix());
     }
 
     /**

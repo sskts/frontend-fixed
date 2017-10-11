@@ -175,7 +175,7 @@ class PurchaseModel {
      * @returns {boolean}
      */
     isExpired() {
-        return (this.expired < moment().toDate());
+        return (moment(this.expired).unix() < moment().unix());
     }
     /**
      * 券種リスト取得
