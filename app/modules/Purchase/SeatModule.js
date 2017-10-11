@@ -200,6 +200,8 @@ function seatSelect(req, res, next) {
             log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
             purchaseModel.orderCount = 0;
             log('GMOオーソリカウント初期化');
+            purchaseModel.reserveTickets = [];
+            log('選択チケット初期化');
             //セッション更新
             purchaseModel.save(req.session);
             // ムビチケセッション削除
