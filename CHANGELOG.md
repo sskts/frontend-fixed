@@ -9,9 +9,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Fixed
- - [Webアプリ] メンテナンス文言画面
 
 ### Security
+
+## 1.8.2 - 2017-10-11
+### Fixed
+ - [Webアプリ] メンテナンス文言画面
 
 ## 1.8.1 - 2017-08-29
 ### Fixed
