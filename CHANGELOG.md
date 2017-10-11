@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 ### Fixed
+ - [Webアプリ] メンテナンス文言画面
 
 ### Security
 

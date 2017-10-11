@@ -18,3 +18,5 @@ npm-debug*
 !.elasticbeanstalk/*.global.yml
 
 bin/env/
+coverage/
+.nyc_output/
