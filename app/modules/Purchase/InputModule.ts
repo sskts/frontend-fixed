@@ -277,6 +277,9 @@ async function creditCardProsess(
             transactionId: purchaseModel.transaction.id,
             actionId: purchaseModel.creditCardAuthorization.id
         };
+        purchaseModel.creditCardAuthorization = null;
+        purchaseModel.gmo = null;
+        purchaseModel.save(req.session);
         try {
             await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
         } catch (err) {
