@@ -24,7 +24,7 @@ function qrReaderInput(event) {
         return;
     }
     var qrReaderInput = $('input[name=qrReaderInput]');
-    var value = qrReaderInput.val();
+    var value = qrReaderInput.val().trim();
     if (event.keyCode === 13 && value.length > 0) {
         var index = targetModal.attr('data-index');
         var parent = $('.mvtk-box').eq(index);
