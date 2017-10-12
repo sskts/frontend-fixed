@@ -34,7 +34,7 @@ $(function () {
             parent.find('input[name=mvtkPassword]').val(password);
             modal.close();
         } else {
-            qrReaderInputValue += String.fromCharCode(event.charCode);
+            qrReaderInputValue += String.fromCharCode(event.keyCode);
         }
     }
 
