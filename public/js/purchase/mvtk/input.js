@@ -30,6 +30,7 @@ function qrReaderInput(event) {
         var parent = $('.mvtk-box').eq(index);
         var code = value.slice(0, 10);
         var password = value.slice(10, value.length);
+        alert('code: ' + code + ' password: ' + password);
         parent.find('input[name=mvtkCode]').val(code);
         parent.find('input[name=mvtkPassword]').val(password);
         modal.close();

@@ -9,7 +9,6 @@
 set NODE_ENV=**********環境名**********
 set NPM_TOKEN=**********npm motionpicture トークン**********
 set SSKTS_API_ENDPOINT=**********mp apiのエンドポイント**********
-set MP_WEBHOOK_ENDPOINT==**********mp webhook apiのエンドポイント**********
 set REDIS_HOST=**********REDISホスト**********
 set REDIS_PORT=**********REDISポート**********
 set REDIS_KEY=**********REDISキー**********

@@ -8,6 +8,7 @@ import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
+import * as HTTPStatus from 'http-status';
 import * as seatForm from '../../forms/Purchase/SeatForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
@@ -35,10 +36,9 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
             : null;
         res.locals.error = null;
+        res.locals.reserveError = null;
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.SEAT_STATE;
-        //セッション更新
-        purchaseModel.save(req.session);
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
     } catch (err) {
         const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
@@ -124,6 +124,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         if (!validationResult.isEmpty()) {
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
+            res.locals.reserveError = null;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -133,10 +134,14 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).listTmpReserve;
         //予約中
         if (purchaseModel.seatReservationAuthorization !== null) {
-            await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+            const cancelSeatReservationAuthorizationIn = {
                 transactionId: purchaseModel.transaction.id,
                 actionId: purchaseModel.seatReservationAuthorization.id
-            });
+            };
+            purchaseModel.seatReservationAuthorization = null;
+            purchaseModel.save(req.session);
+            await sasaki.service.transaction.placeOrder(options)
+                .cancelSeatReservationAuthorization(cancelSeatReservationAuthorizationIn);
             log('仮予約削除');
         }
 
@@ -203,6 +208,18 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
 
         return;
     } catch (err) {
+        if (err.hasOwnProperty('errors')
+            && (Number(err.code) === HTTPStatus.CONFLICT || Number(err.code) === HTTPStatus.SERVICE_UNAVAILABLE)) {
+            const purchaseModel = new PurchaseModel((<Express.Session>req.session).purchase);
+            res.locals.reserveSeats = null;
+            res.locals.error = null;
+            res.locals.reserveError = err.code;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.SEAT_STATE;
+            res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
         const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
         next(error);
 

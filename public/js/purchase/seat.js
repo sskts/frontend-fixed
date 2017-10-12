@@ -1,7 +1,12 @@
 var screenSeatStatusesMap;
 
 $(function () {
+    var reserveError = $('input[name=reserveError]').val();
     pageInit(function () {
+        if (reserveError) {
+            modal.open('reserveError');
+            return;
+        }
         if (isFixed()) {
             showSeatSelectAnnounce();
         }

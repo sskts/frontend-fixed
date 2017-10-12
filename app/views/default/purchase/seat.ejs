@@ -76,9 +76,11 @@
     <div style="display: none"><a data-modal="seatClose" href="#"></a></div>
 </div>
 <input type="hidden" name="performanceId" value="<%= purchaseModel.individualScreeningEvent.identifier %>">
+<input type="hidden" name="reserveError" value="<%= reserveError %>">
 
 <%- include('../locales/validation') %>
 
 <%- contentFor('modals') %>
+<%- include('modals/reserveError') %>
 <%- include('modals/seatNotSelect') %>
 <%- include('modals/seatUpperLimit') %>

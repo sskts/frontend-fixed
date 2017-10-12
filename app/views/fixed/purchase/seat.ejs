@@ -63,10 +63,12 @@
 </div>
 <%- include('../error/static') %>
 <input type="hidden" name="performanceId" value="<%= purchaseModel.individualScreeningEvent.identifier %>">
+<input type="hidden" name="reserveError" value="<%= reserveError %>">
 
 <%- include('../locales/validation') %>
 
 <%- contentFor('modals') %>
+<%- include('modals/reserveError') %>
 <%- include('modals/seatNotSelect') %>
 <%- include('modals/seatUpperLimit') %>
 <%- include('modals/seatSelectAnnounce') %>
