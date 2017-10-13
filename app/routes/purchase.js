@@ -48,7 +48,7 @@ purchaseRouter.post('/mvtk/cancel', ConfirmModule.cancelMvtk);
 purchaseRouter.get('/complete', CompleteModule.render);
 //ムビチケ券入力
 purchaseRouter.get('/mvtk', MvtkInputModule.render);
-purchaseRouter.post('/mvtk', MvtkInputModule.select);
+purchaseRouter.post('/mvtk', MvtkInputModule.auth);
 //ムビチケ券適用確認
 purchaseRouter.get('/mvtk/confirm', MvtkConfirmModule.render);
 purchaseRouter.post('/mvtk/confirm', MvtkConfirmModule.submit);

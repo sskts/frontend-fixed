@@ -120,7 +120,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(res.redirect.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -172,7 +172,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(res.render.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -216,7 +216,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -228,7 +228,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     }));
     it('select エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
@@ -241,7 +241,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     }));
     it('select エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
@@ -254,7 +254,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     }));
     it('select エラー 取引ID不整合', () => __awaiter(this, void 0, void 0, function* () {
@@ -274,7 +274,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     }));
     it('select エラー バリデーション', () => __awaiter(this, void 0, void 0, function* () {
@@ -302,7 +302,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res = {};
         const next = sinon.spy();
-        yield MvtkInputModule.select(req, res, next);
+        yield MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
         mvtkInputForm.restore();
     }));

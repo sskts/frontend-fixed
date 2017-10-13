@@ -178,6 +178,11 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                     // パフォーマンスなし
                     this.error = 'スケジュールがありません。';
                 }
+                if (this.chronologicalOrder.length === 0
+                    && Number(this.selects[0].value) < Number(moment().format('YYYYMMDD'))) {
+                    // スケジュールなし、日付変更している場合
+                    location.reload();
+                }
             },
             /**
              * パフォーマンス取得後

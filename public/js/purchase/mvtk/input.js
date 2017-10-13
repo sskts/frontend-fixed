@@ -1,4 +1,6 @@
 $(function () {
+    var KEY_ENTER = 'Enter';
+    var KEY_ESCAPE = 'Escape';
     var qrReaderInputValue = '';
     // 初期化
     pageInit();
@@ -23,7 +25,7 @@ $(function () {
         if (!targetModal.hasClass('active')) {
             return;
         }
-        if (event.key === 'Enter' && qrReaderInputValue.length > 0) {
+        if (event.key === KEY_ENTER && qrReaderInputValue.length > 0) {
             var index = targetModal.attr('data-index');
             var parent = $('.mvtk-box').eq(index);
             var code = qrReaderInputValue.slice(0, 10);
@@ -31,7 +33,7 @@ $(function () {
             parent.find('input[name=mvtkCode]').val(code);
             parent.find('input[name=mvtkPassword]').val(password);
             modal.close();
-        } else if (event.key !== 'Escape') {
+        } else if (event.key !== KEY_ESCAPE) {
             qrReaderInputValue += event.key;
         }
     }
@@ -105,8 +107,8 @@ $(function () {
         modalBody.html('');
         $('.ticket-list .mvtk-box.active').each(function (index, elem) {
             var target = $(elem);
-            var code = target.find('input[name=mvtkCode]').val();
-            var password = target.find('input[name=mvtkPassword]').val();
+            var code = target.find('input').eq(0).val();
+            var password = target.find('input').eq(1).val();
             if (code && password) {
                 mvtkList.push({
                     code: code,

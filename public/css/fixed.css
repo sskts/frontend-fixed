@@ -1398,6 +1398,12 @@ a {
   bottom: 10px;
   right: 0; }
 
+.purchase-mvtk-confirm .mvtk-lists dl dt {
+  width: 340px; }
+
+.purchase-mvtk-confirm .mvtk-lists dl dd {
+  width: 460px; }
+
 .inquiry-print {
   border-radius: 5px;
   border: 1px solid #FFF;

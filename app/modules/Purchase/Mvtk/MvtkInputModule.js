@@ -57,9 +57,9 @@ function render(req, res, next) {
 }
 exports.render = render;
 /**
- * 券種選択
+ * ムビチケ認証
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function select
+ * @function auth
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
@@ -67,7 +67,7 @@ exports.render = render;
  */
 // tslint:disable-next-line:max-func-body-length
 // tslint:disable-next-line:cyclomatic-complexity
-function select(req, res, next) {
+function auth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
             next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
@@ -179,4 +179,4 @@ function select(req, res, next) {
         }
     });
 }
-exports.select = select;
+exports.auth = auth;

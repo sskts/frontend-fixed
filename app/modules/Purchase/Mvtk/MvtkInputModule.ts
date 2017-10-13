@@ -47,9 +47,9 @@ export function render(req: Request, res: Response, next: NextFunction): void {
 }
 
 /**
- * 券種選択
+ * ムビチケ認証
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function select
+ * @function auth
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
@@ -57,7 +57,7 @@ export function render(req: Request, res: Response, next: NextFunction): void {
  */
 // tslint:disable-next-line:max-func-body-length
 // tslint:disable-next-line:cyclomatic-complexity
-export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function auth(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
 

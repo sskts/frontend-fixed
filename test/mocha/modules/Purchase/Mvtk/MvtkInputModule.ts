@@ -120,7 +120,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         const next: any = (err: any) => {
             throw err.massage;
         };
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(res.redirect.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -176,7 +176,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         const next: any = (err: any) => {
             throw err.massage;
         };
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(res.render.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -224,7 +224,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
         mvtkInputForm.restore();
         purchaseNumberAuth.restore();
@@ -237,7 +237,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     });
 
@@ -251,7 +251,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     });
 
@@ -265,7 +265,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     });
 
@@ -286,7 +286,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
     });
 
@@ -315,7 +315,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
         };
         const res: any = {};
         const next: any = sinon.spy();
-        await MvtkInputModule.select(req, res, next);
+        await MvtkInputModule.auth(req, res, next);
         assert(next.calledOnce);
         mvtkInputForm.restore();
     });
