@@ -23,18 +23,16 @@ $(function () {
         if (!targetModal.hasClass('active')) {
             return;
         }
-        if (event.keyCode === 13 && qrReaderInputValue.length > 0) {
+        if (event.key === 'Enter' && qrReaderInputValue.length > 0) {
             var index = targetModal.attr('data-index');
             var parent = $('.mvtk-box').eq(index);
             var code = qrReaderInputValue.slice(0, 10);
             var password = qrReaderInputValue.slice(10, qrReaderInputValue.length);
-            alert('qrReaderInputValue: ' + qrReaderInputValue);
-            alert('code: ' + code + ', password: ' + password);
             parent.find('input[name=mvtkCode]').val(code);
             parent.find('input[name=mvtkPassword]').val(password);
             modal.close();
-        } else {
-            qrReaderInputValue += String.fromCharCode(event.keyCode);
+        } else if (event.key !== 'Escape') {
+            qrReaderInputValue += event.key;
         }
     }
 
