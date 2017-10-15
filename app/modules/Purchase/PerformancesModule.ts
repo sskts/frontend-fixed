@@ -74,13 +74,14 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  */
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined
+            || req.body.theater === undefined
+            || req.body.day === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        // 上映イベント検索
         const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
             theater: req.body.theater,
             day: moment(req.body.day).format('YYYYMMDD')
@@ -88,6 +89,31 @@ export async function getPerformances(req: Request, res: Response): Promise<void
         log('上映イベント検索');
 
         res.json({ error: null, result: individualScreeningEvents });
+    } catch (err) {
+        res.json({ error: err, result: null });
+    }
+}
+
+/**
+ * 劇場一覧検索
+ * @memberof Purchase.PerformancesModule
+ * @function getMovieTheaters
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function getMovieTheaters(req: Request, res: Response) {
+    try {
+        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
+        log('劇場検索');
+
+        res.json({ error: null, result: movieTheaters });
     } catch (err) {
         res.json({ error: err, result: null });
     }

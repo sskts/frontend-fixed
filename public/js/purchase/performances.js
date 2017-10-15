@@ -142,7 +142,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             fetchPerformancesData: function () {
                 var options = {
                     dataType: 'json',
-                    url: '/purchase/performances',
+                    url: '/purchase/getPerformances',
                     type: 'POST',
                     timeout: 10000,
                     data: {

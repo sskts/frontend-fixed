@@ -95,4 +95,35 @@ describe('Purchase.PerformancesModule', () => {
         assert.strictEqual(res.json.args[0][0].result, null);
         assert.notStrictEqual(res.json.args[0][0].error, null);
     }));
+    it('getMovieTheaters 正常', () => __awaiter(this, void 0, void 0, function* () {
+        const organization = sinon.stub(sasaki.service, 'organization').returns({
+            searchMovieTheaters: () => {
+                return Promise.resolve({});
+            }
+        });
+        const req = {
+            session: {}
+        };
+        const res = {
+            locals: {},
+            json: sinon.spy()
+        };
+        yield PerformancesModule.getMovieTheaters(req, res);
+        assert(res.json.calledOnce);
+        assert.strictEqual(res.json.args[0][0].error, null);
+        assert.notStrictEqual(res.json.args[0][0].result, null);
+        organization.restore();
+    }));
+    it('getMovieTheaters エラー', () => __awaiter(this, void 0, void 0, function* () {
+        const req = {
+            session: undefined
+        };
+        const res = {
+            json: sinon.spy()
+        };
+        yield PerformancesModule.getMovieTheaters(req, res);
+        assert(res.json.calledOnce);
+        assert.strictEqual(res.json.args[0][0].result, null);
+        assert.notStrictEqual(res.json.args[0][0].error, null);
+    }));
 });

@@ -82,14 +82,15 @@ exports.render = render;
 function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session === undefined)
+            if (req.session === undefined
+                || req.body.theater === undefined
+                || req.body.day === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
                 auth: authModel.create()
             };
-            // 上映イベント検索
             const individualScreeningEvents = yield sasaki.service.event(options).searchIndividualScreeningEvent({
                 theater: req.body.theater,
                 day: moment(req.body.day).format('YYYYMMDD')
@@ -103,3 +104,31 @@ function getPerformances(req, res) {
     });
 }
 exports.getPerformances = getPerformances;
+/**
+ * 劇場一覧検索
+ * @memberof Purchase.PerformancesModule
+ * @function getMovieTheaters
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+function getMovieTheaters(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session === undefined)
+                throw ErrorUtilModule.ErrorType.Property;
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
+            log('劇場検索');
+            res.json({ error: null, result: movieTheaters });
+        }
+        catch (err) {
+            res.json({ error: err, result: null });
+        }
+    });
+}
+exports.getMovieTheaters = getMovieTheaters;

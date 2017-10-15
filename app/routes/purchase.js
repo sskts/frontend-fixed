@@ -20,8 +20,10 @@ if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed
     || (process.env.NODE_ENV === UtilModule.ENV.Development || process.env.NODE_ENV === UtilModule.ENV.Test)) {
     // パフォーマンス一覧
     purchaseRouter.get('/performances', PerformancesModule.render);
-    purchaseRouter.post('/performances', PerformancesModule.getPerformances);
 }
+// パフォーマンス一覧
+purchaseRouter.post('/performances/getPerformances', PerformancesModule.getPerformances);
+purchaseRouter.post('/performances/getMovieTheaters', PerformancesModule.getMovieTheaters);
 //購入(取引開始)
 purchaseRouter.post('/transaction', TransactionModule.start);
 //仮予約重複
