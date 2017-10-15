@@ -14,6 +14,7 @@ const debug = require("debug");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
+const AwsCognitoService = require("../../service/AwsCognitoService");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.ConfirmModule');
@@ -318,6 +319,29 @@ function purchase(req, res) {
                 }
                 catch (err) {
                     log('メール登録失敗', err);
+                }
+            }
+            // Cognitoへ登録
+            const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+            if (awsCognitoIdentityId !== undefined) {
+                const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+                try {
+                    const reservationRecord = yield AwsCognitoService.getRecords({
+                        datasetName: 'reservation',
+                        credentials: cognitoCredentials
+                    });
+                    if (reservationRecord.orders === undefined) {
+                        reservationRecord.orders = [];
+                    }
+                    reservationRecord.orders.push(order);
+                    yield AwsCognitoService.updateRecords({
+                        datasetName: 'reservation',
+                        value: reservationRecord,
+                        credentials: cognitoCredentials
+                    });
+                }
+                catch (err) {
+                    log('AwsCognitoService.updateRecords', err);
                 }
             }
             // 購入セッション削除

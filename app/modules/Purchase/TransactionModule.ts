@@ -67,6 +67,13 @@ export async function start(req: Request, res: Response): Promise<void> {
         });
         log('イベント情報取得', individualScreeningEvent);
         if (individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Access;
+        // awsCognitoIdentityIdを保存
+        if (req.body.identityId === undefined) {
+            delete req.session.awsCognitoIdentityId;
+        } else {
+            log('awsCognitoIdentityIdを保存');
+            req.session.awsCognitoIdentityId = req.body.identityId;
+        }
 
         // 開始可能日判定
         if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {

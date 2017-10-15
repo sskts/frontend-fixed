@@ -8,6 +8,7 @@ declare global {
             mvtk: any;
             complete: any;
             inquiry: any;
+            awsCognitoIdentityId: string | undefined;
         }
     }
 }

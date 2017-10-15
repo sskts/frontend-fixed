@@ -19,6 +19,7 @@ const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
+const AwsCognitoService = require("../../service/AwsCognitoService");
 const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
 /**
@@ -46,13 +47,39 @@ function render(req, res, next) {
                 res.locals.input = purchaseModel.profile;
             }
             else {
-                purchaseModel.profile = {
+                const defaultProfile = {
                     familyName: '',
                     givenName: '',
                     email: '',
                     emailConfirm: '',
                     telephone: ''
                 };
+                // Cognitoから参照
+                const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+                log('Cognitoから参照', awsCognitoIdentityId);
+                if (awsCognitoIdentityId !== undefined) {
+                    const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+                    try {
+                        const profileRecord = yield AwsCognitoService.getRecords({
+                            datasetName: 'profile',
+                            credentials: cognitoCredentials
+                        });
+                        purchaseModel.profile = {
+                            familyName: (profileRecord.familyName !== undefined) ? profileRecord.familyName : '',
+                            givenName: (profileRecord.givenName !== undefined) ? profileRecord.givenName : '',
+                            email: (profileRecord.email !== undefined) ? profileRecord.email : '',
+                            emailConfirm: (profileRecord.email !== undefined) ? profileRecord.email : '',
+                            telephone: (profileRecord.telephone !== undefined) ? profileRecord.telephone : ''
+                        };
+                    }
+                    catch (err) {
+                        purchaseModel.profile = defaultProfile;
+                        log('AwsCognitoService.getRecords', err);
+                    }
+                }
+                else {
+                    purchaseModel.profile = defaultProfile;
+                }
             }
             purchaseModel.save(req.session);
             res.locals.error = null;
@@ -83,6 +110,7 @@ exports.render = render;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 function purchaserInformationRegistration(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -141,6 +169,26 @@ function purchaserInformationRegistration(req, res, next) {
             log('SSKTS購入者情報登録');
             // セッション更新
             purchaseModel.save(req.session);
+            // Cognitoへ登録
+            const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+            if (awsCognitoIdentityId !== undefined) {
+                const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+                try {
+                    yield AwsCognitoService.updateRecords({
+                        datasetName: 'profile',
+                        value: {
+                            familyName: purchaseModel.profile.familyName,
+                            givenName: purchaseModel.profile.givenName,
+                            email: purchaseModel.profile.email,
+                            telephone: purchaseModel.profile.telephone
+                        },
+                        credentials: cognitoCredentials
+                    });
+                }
+                catch (err) {
+                    log('AwsCognitoService.updateRecords', err);
+                }
+            }
             // 購入者内容確認へ
             res.redirect('/purchase/confirm');
         }

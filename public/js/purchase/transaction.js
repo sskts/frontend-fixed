@@ -12,8 +12,7 @@ $(function () {
     }
     getTransaction({
         performanceId: performanceId,
-        username: $('input[name=username]').val(),
-        password: $('input[name=password]').val()
+        identityId: getParameter()['identityId']
     });
 });
 
@@ -21,7 +20,7 @@ $(function () {
  * 取引取得
  * @param {Object} args
  * @param {string} args.performanceId
- * @param {string} args.username
+ * @param {string | undefined} args.identityId
  * @param {string} args.password
  * @returns {void}
  */

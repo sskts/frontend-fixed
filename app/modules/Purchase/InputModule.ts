@@ -11,6 +11,7 @@ import InputForm from '../../forms/Purchase/InputForm';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IGMO, PurchaseModel } from '../../models/Purchase/PurchaseModel';
+import * as AwsCognitoService from '../../service/AwsCognitoService';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.InputModule');
 
@@ -36,13 +37,37 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.profile !== null) {
             res.locals.input = purchaseModel.profile;
         } else {
-            purchaseModel.profile = {
+            const defaultProfile = {
                 familyName: '',
                 givenName: '',
                 email: '',
                 emailConfirm: '',
                 telephone: ''
             };
+            // Cognitoから参照
+            const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+            log('Cognitoから参照', awsCognitoIdentityId);
+            if (awsCognitoIdentityId !== undefined) {
+                const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+                try {
+                    const profileRecord = await AwsCognitoService.getRecords({
+                        datasetName: 'profile',
+                        credentials: cognitoCredentials
+                    });
+                    purchaseModel.profile = {
+                        familyName: (profileRecord.familyName !== undefined) ? profileRecord.familyName : '',
+                        givenName: (profileRecord.givenName !== undefined) ? profileRecord.givenName : '',
+                        email: (profileRecord.email !== undefined) ? profileRecord.email : '',
+                        emailConfirm: (profileRecord.email !== undefined) ? profileRecord.email : '',
+                        telephone: (profileRecord.telephone !== undefined) ? profileRecord.telephone : ''
+                    };
+                } catch (err) {
+                    purchaseModel.profile = defaultProfile;
+                    log('AwsCognitoService.getRecords', err);
+                }
+            } else {
+                purchaseModel.profile = defaultProfile;
+            }
         }
         purchaseModel.save(req.session);
 
@@ -71,6 +96,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistration(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
@@ -130,6 +156,26 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
 
         // セッション更新
         purchaseModel.save(req.session);
+        // Cognitoへ登録
+        const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+        if (awsCognitoIdentityId !== undefined) {
+            const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+            try {
+                await AwsCognitoService.updateRecords({
+                    datasetName: 'profile',
+                    value: {
+                        familyName: purchaseModel.profile.familyName,
+                        givenName: purchaseModel.profile.givenName,
+                        email: purchaseModel.profile.email,
+                        telephone: purchaseModel.profile.telephone
+                    },
+                    credentials: cognitoCredentials
+                });
+            } catch (err) {
+                log('AwsCognitoService.updateRecords', err);
+            }
+        }
+
         // 購入者内容確認へ
         res.redirect('/purchase/confirm');
     } catch (err) {

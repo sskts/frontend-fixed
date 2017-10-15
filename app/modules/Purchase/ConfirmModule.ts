@@ -10,6 +10,7 @@ import { NextFunction, Request, Response } from 'express';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IMvtk, PurchaseModel } from '../../models/Purchase/PurchaseModel';
+import * as AwsCognitoService from '../../service/AwsCognitoService';
 import * as ErrorUtilModule from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.ConfirmModule');
@@ -309,6 +310,28 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 log('メール通知');
             } catch (err) {
                 log('メール登録失敗', err);
+            }
+        }
+        // Cognitoへ登録
+        const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
+        if (awsCognitoIdentityId !== undefined) {
+            const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
+            try {
+                const reservationRecord = await AwsCognitoService.getRecords({
+                    datasetName: 'reservation',
+                    credentials: cognitoCredentials
+                });
+                if (reservationRecord.orders === undefined) {
+                    reservationRecord.orders = [];
+                }
+                reservationRecord.orders.push(order);
+                await AwsCognitoService.updateRecords({
+                    datasetName: 'reservation',
+                    value: reservationRecord,
+                    credentials: cognitoCredentials
+                });
+            } catch (err) {
+                log('AwsCognitoService.updateRecords', err);
             }
         }
         // 購入セッション削除
