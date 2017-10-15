@@ -7,6 +7,7 @@ import expressValidator = require('express-validator');
 import * as helmet from 'helmet';
 import basicAuth from './middlewares/basicAuth';
 import benchmarks from './middlewares/benchmarks';
+import { crossDomain } from './middlewares/crossDomain';
 import ipFilter from './middlewares/ipFilter';
 import * as locales from './middlewares/locales';
 import maintenance from './middlewares/maintenance';
@@ -22,6 +23,7 @@ const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 
+app.use(crossDomain);
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
