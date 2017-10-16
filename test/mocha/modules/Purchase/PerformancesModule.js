@@ -85,7 +85,8 @@ describe('Purchase.PerformancesModule', () => {
     }));
     it('getPerformances エラー', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
-            session: undefined
+            session: undefined,
+            query: {}
         };
         const res = {
             json: sinon.spy()
@@ -102,7 +103,8 @@ describe('Purchase.PerformancesModule', () => {
             }
         });
         const req = {
-            session: {}
+            session: {},
+            query: {}
         };
         const res = {
             locals: {},
@@ -116,7 +118,8 @@ describe('Purchase.PerformancesModule', () => {
     }));
     it('getMovieTheaters エラー', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
-            session: undefined
+            session: undefined,
+            query: {}
         };
         const res = {
             json: sinon.spy()

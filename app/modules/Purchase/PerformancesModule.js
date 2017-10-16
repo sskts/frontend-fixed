@@ -96,10 +96,20 @@ function getPerformances(req, res) {
                 day: moment(req.query.day).format('YYYYMMDD')
             });
             log('上映イベント検索');
-            res.json({ error: null, result: individualScreeningEvents });
+            if (req.query.callback === undefined) {
+                res.json({ error: null, result: individualScreeningEvents });
+            }
+            else {
+                res.jsonp({ error: null, result: individualScreeningEvents });
+            }
         }
         catch (err) {
-            res.json({ error: err, result: null });
+            if (req.query.callback === undefined) {
+                res.json({ error: err, result: null });
+            }
+            else {
+                res.jsonp({ error: err, result: null });
+            }
         }
     });
 }
@@ -124,10 +134,20 @@ function getMovieTheaters(req, res) {
             };
             const movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
             log('劇場検索');
-            res.json({ error: null, result: movieTheaters });
+            if (req.query.callback === undefined) {
+                res.json({ error: null, result: movieTheaters });
+            }
+            else {
+                res.jsonp({ error: null, result: movieTheaters });
+            }
         }
         catch (err) {
-            res.json({ error: err, result: null });
+            if (req.query.callback === undefined) {
+                res.json({ error: err, result: null });
+            }
+            else {
+                res.jsonp({ error: err, result: null });
+            }
         }
     });
 }

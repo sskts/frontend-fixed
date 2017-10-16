@@ -30,7 +30,7 @@ describe('Auth.AuthModel', () => {
         }));
         const authModel = new AuthModel_1.AuthModel({
             memberType: AuthModel_1.MemberType.Member,
-            credentials: {}
+            credentials: null
         });
         const result = authModel.create();
         assert(result);

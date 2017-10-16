@@ -81,7 +81,8 @@ describe('Purchase.PerformancesModule', () => {
 
     it('getPerformances エラー', async () => {
         const req: any = {
-            session: undefined
+            session: undefined,
+            query: {}
         };
         const res: any = {
             json: sinon.spy()
@@ -99,7 +100,8 @@ describe('Purchase.PerformancesModule', () => {
             }
         });
         const req: any = {
-            session: {}
+            session: {},
+            query: {}
         };
         const res: any = {
             locals: {},
@@ -114,7 +116,8 @@ describe('Purchase.PerformancesModule', () => {
 
     it('getMovieTheaters エラー', async () => {
         const req: any = {
-            session: undefined
+            session: undefined,
+            query: {}
         };
         const res: any = {
             json: sinon.spy()
