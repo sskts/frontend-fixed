@@ -74,8 +74,8 @@ function start(req, res) {
             log('イベント情報取得', individualScreeningEvent);
             if (individualScreeningEvent === null)
                 throw ErrorUtilModule.ErrorType.Access;
-            // awsCognitoIdentityIdを保存
-            if (req.body.identityId === undefined) {
+            // awsCognitoIdentityIdを保存(本番では使えない)
+            if (req.body.identityId === undefined || process.env.NODE_ENV === UtilModule.ENV.Production) {
                 delete req.session.awsCognitoIdentityId;
             }
             else {
