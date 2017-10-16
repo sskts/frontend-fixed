@@ -28,6 +28,14 @@
     .site-seal {
         display: none;
     }
+    .prev-button {
+        button, a {
+            border-radius: 32px;
+        }
+        .icon-prev-white:before {
+            display: none;
+        } 
+    }
     .next-button {
         button, a {
             border-radius: 32px;

@@ -71,8 +71,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         if (req.body.identityId === undefined) {
             delete req.session.awsCognitoIdentityId;
         } else {
-            log('awsCognitoIdentityIdを保存');
             req.session.awsCognitoIdentityId = req.body.identityId;
+            log('awsCognitoIdentityIdを保存', req.session.awsCognitoIdentityId);
         }
 
         // 開始可能日判定

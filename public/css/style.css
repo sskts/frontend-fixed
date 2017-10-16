@@ -1854,6 +1854,10 @@ p a {
     display: none; }
   .app .site-seal {
     display: none; }
+  .app .prev-button button, .app .prev-button a {
+    border-radius: 32px; }
+  .app .prev-button .icon-prev-white:before {
+    display: none; }
   .app .next-button button, .app .next-button a {
     border-radius: 32px; }
   .app .next-button .icon-next-white:before {
