@@ -75,16 +75,16 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 export async function getPerformances(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined
-            || req.body.theater === undefined
-            || req.body.day === undefined) throw ErrorUtilModule.ErrorType.Property;
+            || req.query.theater === undefined
+            || req.query.day === undefined) throw ErrorUtilModule.ErrorType.Property;
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
         const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
-            theater: req.body.theater,
-            day: moment(req.body.day).format('YYYYMMDD')
+            theater: req.query.theater,
+            day: moment(req.query.day).format('YYYYMMDD')
         });
         log('上映イベント検索');
 

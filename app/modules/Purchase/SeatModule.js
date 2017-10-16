@@ -81,7 +81,7 @@ function performanceChange(req, res) {
                 throw ErrorUtilModule.ErrorType.Expire;
             // イベント情報取得
             purchaseModel.individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
-                identifier: req.body.performanceId
+                identifier: req.query.performanceId
             });
             purchaseModel.save(req.session);
             res.json({

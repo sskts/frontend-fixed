@@ -143,7 +143,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                 var options = {
                     dataType: 'json',
                     url: '/purchase/performances/getPerformances',
-                    type: 'POST',
+                    type: 'GET',
                     timeout: 10000,
                     data: {
                         theater: this.theaterCode,

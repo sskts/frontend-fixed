@@ -63,7 +63,7 @@ describe('Purchase.PerformancesModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 theater: '',
                 day: ''
             }

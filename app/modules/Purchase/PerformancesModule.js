@@ -83,8 +83,8 @@ function getPerformances(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined
-                || req.body.theater === undefined
-                || req.body.day === undefined)
+                || req.query.theater === undefined
+                || req.query.day === undefined)
                 throw ErrorUtilModule.ErrorType.Property;
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
@@ -92,8 +92,8 @@ function getPerformances(req, res) {
                 auth: authModel.create()
             };
             const individualScreeningEvents = yield sasaki.service.event(options).searchIndividualScreeningEvent({
-                theater: req.body.theater,
-                day: moment(req.body.day).format('YYYYMMDD')
+                theater: req.query.theater,
+                day: moment(req.query.day).format('YYYYMMDD')
             });
             log('上映イベント検索');
             res.json({ error: null, result: individualScreeningEvents });

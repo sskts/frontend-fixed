@@ -582,7 +582,7 @@ function arrowClick(performanceId) {
     $.ajax({
         dataType: 'json',
         url: '/purchase/performanceChange',
-        type: 'POST',
+        type: 'GET',
         timeout: 10000,
         data: {
             performanceId: performanceId

@@ -60,7 +60,7 @@ describe('Purchase.SeatModule', () => {
                     seatReservationAuthorization: {}
                 }
             },
-            body: {
+            query: {
                 performanceId: ''
             },
             params: {

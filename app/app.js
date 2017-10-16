@@ -8,7 +8,6 @@ const expressValidator = require("express-validator");
 const helmet = require("helmet");
 const basicAuth_1 = require("./middlewares/basicAuth");
 const benchmarks_1 = require("./middlewares/benchmarks");
-const crossDomain_1 = require("./middlewares/crossDomain");
 const ipFilter_1 = require("./middlewares/ipFilter");
 const locales = require("./middlewares/locales");
 const maintenance_1 = require("./middlewares/maintenance");
@@ -21,7 +20,6 @@ const expressLayouts = require('express-ejs-layouts');
  * express設定
  */
 const app = express();
-app.use(crossDomain_1.crossDomain);
 app.use(ipFilter_1.default); // IP制限
 app.use(basicAuth_1.default); // ベーシック認証
 app.use(helmet()); //セキュリティー対策

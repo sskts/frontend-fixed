@@ -66,7 +66,7 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
         if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
         // イベント情報取得
         purchaseModel.individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
-            identifier: req.body.performanceId
+            identifier: req.query.performanceId
         });
         purchaseModel.save(req.session);
         res.json({

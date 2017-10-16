@@ -22,8 +22,8 @@ if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed
     purchaseRouter.get('/performances', PerformancesModule.render);
 }
 // パフォーマンス一覧
-purchaseRouter.post('/performances/getPerformances', PerformancesModule.getPerformances);
-purchaseRouter.post('/performances/getMovieTheaters', PerformancesModule.getMovieTheaters);
+purchaseRouter.get('/performances/getPerformances', PerformancesModule.getPerformances);
+purchaseRouter.get('/performances/getMovieTheaters', PerformancesModule.getMovieTheaters);
 //購入(取引開始)
 purchaseRouter.post('/transaction', TransactionModule.start);
 //仮予約重複
@@ -59,5 +59,5 @@ purchaseRouter.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 //券種情報をセションへ保存
 purchaseRouter.post('/saveSalesTickets', SeatModule.saveSalesTickets);
 // パフォーマンス変更
-purchaseRouter.post('/performanceChange', SeatModule.performanceChange);
+purchaseRouter.get('/performanceChange', SeatModule.performanceChange);
 exports.default = purchaseRouter;
