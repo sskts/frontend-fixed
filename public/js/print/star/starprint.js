@@ -124,7 +124,7 @@ window.starThermalPrint = (function (StarWebPrintBuilder, StarWebPrintTrader) {
             // 作品名
             ctx.font = "normal 30px sans-serif";
             var title = reservation.filmNameJa;
-            var titleLimit = 20;
+            var titleLimit = 18;
             if (title.length > titleLimit) {
                 ctx.fillText(title.slice(0, titleLimit), center, 120);
                 ctx.fillText(title.slice(titleLimit, title.length), center, 160);

@@ -155,7 +155,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
                 timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
             });
             purchaseModel.salesTickets = salesTicketResult;
-            log('コアAPI券種取得', purchaseModel.salesTickets);
+            log('コアAPI券種取得');
         }
         if (purchaseModel.salesTickets.length === 0) throw ErrorUtilModule.ErrorType.Access;
 

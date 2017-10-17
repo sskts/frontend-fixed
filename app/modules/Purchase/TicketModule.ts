@@ -192,7 +192,6 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                     };
                 })
             };
-            log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
             purchaseModel.seatReservationAuthorization = await sasaki.service.transaction.placeOrder(options)
                 .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
             if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
@@ -260,8 +259,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
  * @param {ISelectTicket[]} rselectTickets
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:cyclomatic-complexity
-// tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity max-func-body-length
 async function ticketValidation(
     req: Request,
     res: Response,

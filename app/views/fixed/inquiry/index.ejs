@@ -49,9 +49,9 @@
             </dd>
         </dl>
     </div>
-    <% if (moment(offer.itemOffered.reservationFor.endDate).add(10 ,'minutes').unix() < moment().unix()) { %>
+    <% if (moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.endDate).add(10 ,'minutes').unix() < moment().unix()) { %>
     <p class="text-center"><%- __('inquiry.confirm.after') %></p>
-    <% } else if (moment(offer.itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
+    <% } else if (moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
     <p class="text-center"><%- __('inquiry.confirm.before') %></p>
     <% } else { %>
     <div class="button middle-button print-button blue-button"><a class="center icon-triangle-white" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>

@@ -166,7 +166,6 @@ function ticketSelect(req, res, next) {
                         };
                     })
                 };
-                log('SSKTSCOAオーソリ追加IN', createSeatReservationAuthorizationArgs.offers[0]);
                 purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
                     .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
                 if (purchaseModel.seatReservationAuthorization === null)
@@ -238,8 +237,7 @@ exports.ticketSelect = ticketSelect;
  * @param {ISelectTicket[]} rselectTickets
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:cyclomatic-complexity
-// tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:cyclomatic-complexity max-func-body-length
 function ticketValidation(req, res, purchaseModel, selectTickets) {
     return __awaiter(this, void 0, void 0, function* () {
         if (purchaseModel.salesTickets === null)
