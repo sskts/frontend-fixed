@@ -162,7 +162,7 @@
 			"input": {
 				"page_ttl": "ムビチケ券認証",
 				"read": "ご利用になるムビチケ券の購入番号と、暗証番号を入力してください。<br><span class=\"small-text\">複数枚ご利用になる場合は「ムビチケ券を追加」ボタンを押して追加してください。</span><br><span class=\"small-text\">※不足金額が発生した場合は別途クレジットカードにてお支払いいただきます。</span>",
-				"read_button": "QR読み込み",
+				"read_button": "QRコード<br>読み込み",
 				"next": "認証する",
 				"prev": "戻る",
 				"add": "ムビチケ券を追加",

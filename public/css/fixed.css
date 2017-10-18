@@ -1376,27 +1376,47 @@ a {
   display: none; }
   .purchase-mvtk-input .ticket-list .mvtk-box.active {
     display: block; }
+  .purchase-mvtk-input .ticket-list .mvtk-box .mvtk-box-inner {
+    padding: 20px;
+    background-color: #CECECE;
+    position: relative; }
+    .purchase-mvtk-input .ticket-list .mvtk-box .mvtk-box-inner dl dt {
+      width: 240px; }
+    .purchase-mvtk-input .ticket-list .mvtk-box .mvtk-box-inner dl dd {
+      width: 340px; }
+  .purchase-mvtk-input .ticket-list .mvtk-box .read-button {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    margin-top: -80px; }
+    .purchase-mvtk-input .ticket-list .mvtk-box .read-button a {
+      width: 160px;
+      height: 160px; }
+      .purchase-mvtk-input .ticket-list .mvtk-box .read-button a img {
+        width: 50px;
+        height: 50px; }
+  .purchase-mvtk-input .ticket-list .mvtk-box .remove-button {
+    position: absolute;
+    top: -60px;
+    right: 10px; }
+    .purchase-mvtk-input .ticket-list .mvtk-box .remove-button a {
+      display: block;
+      width: 44px;
+      height: 44px; }
+      .purchase-mvtk-input .ticket-list .mvtk-box .remove-button a:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        background-image: url(/images/default/common/modal_close.svg);
+        background-size: contain;
+        width: 100%;
+        height: 100%;
+        margin-top: -50%; }
 
 .purchase-mvtk-input .ticket-list .zoom {
   -webkit-animation: zoom 0.2s;
   animation: zoom 0.2s; }
-
-.purchase-mvtk-input .ticket-list .form-layout li {
-  position: relative; }
-  .purchase-mvtk-input .ticket-list .form-layout li dl dt {
-    width: 250px; }
-  .purchase-mvtk-input .ticket-list .form-layout li dl dd {
-    width: 370px; }
-
-.purchase-mvtk-input .ticket-list .form-layout .read-button {
-  position: absolute;
-  top: 10px;
-  right: 0; }
-
-.purchase-mvtk-input .ticket-list .form-layout .remove-button {
-  position: absolute;
-  bottom: 10px;
-  right: 0; }
 
 .purchase-mvtk-confirm .mvtk-lists dl dt {
   width: 340px; }
