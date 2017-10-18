@@ -159,7 +159,7 @@ function ticketSelect(req, res, next) {
                                 kbnEisyahousiki: reserveTicket.kbnEisyahousiki,
                                 mvtkNum: reserveTicket.mvtkNum,
                                 mvtkKbnDenshiken: reserveTicket.mvtkKbnDenshiken,
-                                mvtkKbnMaeuriken: reserveTicket.mvtkKbnKensyu,
+                                mvtkKbnMaeuriken: reserveTicket.mvtkKbnMaeuriken,
                                 mvtkKbnKensyu: reserveTicket.mvtkKbnKensyu,
                                 mvtkSalesPrice: reserveTicket.mvtkSalesPrice
                             }
