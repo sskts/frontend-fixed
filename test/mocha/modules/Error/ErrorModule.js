@@ -17,7 +17,7 @@ const HTTPStatus = require("http-status");
 const sinon = require("sinon");
 const logger_1 = require("../../../../app/middlewares/logger");
 const ErrorModule = require("../../../../app/modules/Error/ErrorModule");
-const ErrorUtilModule = require("../../../../app/modules/Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../../../../app/modules/Util/ErrorUtilModule");
 describe('Error.ErrorModule', () => {
     it('notFoundRender 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {};
@@ -69,8 +69,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.Property;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.Property;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -92,8 +92,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.Access;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.Access;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -115,8 +115,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.Validation;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.Validation;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -138,8 +138,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.Expire;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.Expire;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -161,8 +161,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.ExternalModule;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.ExternalModule;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.render.calledOnce);
         error.restore();
     }));
@@ -357,8 +357,8 @@ describe('Error.ErrorModule', () => {
         const next = (err) => {
             throw err.massage;
         };
-        const errorType = ErrorUtilModule.ErrorType.Access;
-        yield ErrorModule.errorRender(new ErrorUtilModule.AppError(errorType, ''), req, res, next);
+        const errorType = ErrorUtilModule_1.ErrorType.Access;
+        yield ErrorModule.errorRender(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, errorType), req, res, next);
         assert(res.send.calledOnce);
         error.restore();
     }));

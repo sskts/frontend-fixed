@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
 const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
 const MvtkInputForm_1 = require("../../../forms/Purchase/Mvtk/MvtkInputForm");
 const logger_1 = require("../../../middlewares/logger");
 const PurchaseModel_1 = require("../../../models/Purchase/PurchaseModel");
 const MvtkUtilModule = require("../../Purchase/Mvtk/MvtkUtilModule");
-const ErrorUtilModule = require("../../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../../Util/ErrorUtilModule");
 const UtilModule = require("../../Util/UtilModule");
 const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 /**
@@ -35,12 +36,12 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 function render(req, res, next) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
-            throw ErrorUtilModule.ErrorType.Expire;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
         if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         // ムビチケセッション削除
         delete req.session.mvtk;
         // 購入者情報入力表示
@@ -51,8 +52,7 @@ function render(req, res, next) {
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     }
     catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 exports.render = render;
@@ -70,23 +70,23 @@ exports.render = render;
 function auth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+            next(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property));
             return;
         }
         try {
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ErrorType.Expire;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
             if (purchaseModel.transaction === null
                 || purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id)
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             MvtkInputForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const mvtkService = MVTK.createPurchaseNumberAuthService();
             const inputInfo = JSON.parse(req.body.mvtk);
             const purchaseNumberAuthIn = {
@@ -160,13 +160,13 @@ function auth(req, res, next) {
                 log('認証エラー');
                 logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
                 logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
-                throw ErrorUtilModule.ErrorType.Validation;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Validation);
             }
             req.session.mvtk = mvtkList;
             res.redirect('/purchase/mvtk/confirm');
         }
         catch (err) {
-            if (err === ErrorUtilModule.ErrorType.Validation) {
+            if (err.errorType === ErrorUtilModule_1.ErrorType.Validation) {
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
                 res.locals.purchaseModel = purchaseModel;
@@ -174,8 +174,7 @@ function auth(req, res, next) {
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }

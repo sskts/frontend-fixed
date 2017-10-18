@@ -5,8 +5,10 @@
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import { IMvtk, PurchaseModel } from '../../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../../Util/ErrorUtilModule';
+
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
 /**
@@ -20,9 +22,9 @@ const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
  */
 export function render(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         if (req.session.mvtk === null) {
             res.redirect('/purchase/mvtk');
 
@@ -38,8 +40,7 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -73,14 +74,14 @@ function creatPurchaseNoList(mvtk: IMvtk[]) {
  */
 export function submit(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         // ムビチケ情報を購入セッションへ保存
         log('ムビチケ情報を購入セッションへ保存');
@@ -90,7 +91,6 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
         delete req.session.mvtk;
         res.redirect('/purchase/ticket');
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }

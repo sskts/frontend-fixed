@@ -11,11 +11,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const MVTK = require("@motionpicture/mvtk-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const AwsCognitoService = require("../../service/AwsCognitoService");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.ConfirmModule');
 /**
@@ -31,12 +32,13 @@ function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ErrorType.Expire;
-            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.CONFIRM_STATE))
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
+            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.CONFIRM_STATE)) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Access);
+            }
             //購入者内容確認表示
             res.locals.updateReserve = null;
             res.locals.error = null;
@@ -45,12 +47,9 @@ function render(req, res, next) {
             //セッション更新
             purchaseModel.save(req.session);
             res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
-            return;
         }
         catch (err) {
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
@@ -68,7 +67,7 @@ function reserveMvtk(purchaseModel) {
         const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
         log('購入管理番号情報', mvtkSeatInfoSync);
         if (mvtkSeatInfoSync === null)
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
             kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -101,8 +100,9 @@ function reserveMvtk(purchaseModel) {
         };
         try {
             const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS)
-                throw ErrorUtilModule.ErrorType.Access;
+            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            }
         }
         catch (err) {
             logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `err: ${err}`);
@@ -126,7 +126,7 @@ function cancelMvtk(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             // 購入管理番号情報
             const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
@@ -137,7 +137,7 @@ function cancelMvtk(req, res) {
             delete req.session.purchase;
             delete req.session.mvtk;
             if (mvtkSeatInfoSync === null)
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const seatInfoSyncService = MVTK.createSeatInfoSyncService();
             const seatInfoSyncIn = {
                 kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -171,7 +171,7 @@ function cancelMvtk(req, res) {
             try {
                 const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
                 if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
-                    throw ErrorUtilModule.ErrorType.Access;
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 }
                 res.json({ isSuccess: true });
                 log('MVTKムビチケ着券削除');
@@ -201,7 +201,7 @@ function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -212,15 +212,14 @@ function purchase(req, res) {
                 || purchaseModel.individualScreeningEvent === null
                 || purchaseModel.profile === null
                 || purchaseModel.seatReservationAuthorization === null
-                || purchaseModel.seatReservationAuthorization.result === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
-            //取引id確認
-            if (req.body.transactionId !== purchaseModel.transaction.id)
-                throw ErrorUtilModule.ErrorType.Access;
+                || purchaseModel.seatReservationAuthorization.result === undefined
+                || req.body.transactionId !== purchaseModel.transaction.id) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            }
             //購入期限切れ
             if (purchaseModel.isExpired()) {
                 delete req.session.purchase;
-                throw ErrorUtilModule.ErrorType.Expire;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
             }
             const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
                 return (ticket.mvtkNum !== '');
@@ -351,10 +350,9 @@ function purchase(req, res) {
         }
         catch (err) {
             log('ERROR', err);
-            const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
-                : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
-                    : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
-                        : err.message;
+            const msg = (err.errorType === ErrorUtilModule_1.ErrorType.Expire) ? req.__('common.error.expire')
+                : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
+                    : err.message;
             res.json({ err: msg, result: null });
         }
     });
@@ -371,16 +369,15 @@ exports.purchase = purchase;
 function getCompleteData(req, res) {
     try {
         if (req.session === undefined)
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         if (req.session.complete === undefined)
-            throw ErrorUtilModule.ErrorType.Expire;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
         res.json({ err: null, result: req.session.complete });
     }
     catch (err) {
-        const msg = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
-            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
-                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
-                    : err.message;
+        const msg = (err.errorType === ErrorUtilModule_1.ErrorType.Expire) ? req.__('common.error.expire')
+            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
+                : err.message;
         res.json({ err: msg, result: null });
     }
 }

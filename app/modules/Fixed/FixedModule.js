@@ -14,11 +14,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const InquiryModel_1 = require("../../models/Inquiry/InquiryModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
 /**
@@ -32,7 +33,7 @@ function settingRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const authModel = new AuthModel_1.AuthModel();
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -44,7 +45,7 @@ function settingRender(req, res, next) {
             res.render('setting/index');
         }
         catch (err) {
-            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
+            next(err);
         }
     });
 }
@@ -72,7 +73,7 @@ function getInquiryData(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -87,7 +88,7 @@ function getInquiryData(req, res) {
                 });
                 log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
                 if (inquiryModel.movieTheaterOrganization === null)
-                    throw ErrorUtilModule.ErrorType.Property;
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
@@ -98,7 +99,7 @@ function getInquiryData(req, res) {
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
                 if (inquiryModel.order === null)
-                    throw ErrorUtilModule.ErrorType.Property;
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 // 印刷用
                 const reservations = createPrintReservations(req, inquiryModel);
                 delete req.session.fixed;
@@ -123,14 +124,14 @@ exports.getInquiryData = getInquiryData;
 function createPrintReservations(req, inquiryModel) {
     if (inquiryModel.order === null
         || inquiryModel.movieTheaterOrganization === null)
-        throw ErrorUtilModule.ErrorType.Property;
+        throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
     const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
     const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
     return inquiryModel.order.acceptedOffers.map((offer) => {
         if (offer.itemOffered.reservationFor.workPerformed === undefined
             || offer.itemOffered.reservationFor.location === undefined
             || offer.itemOffered.reservationFor.location.name === undefined)
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         return {
             reserveNo: reserveNo,
             filmNameJa: offer.itemOffered.reservationFor.workPerformed.name,

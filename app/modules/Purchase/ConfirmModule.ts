@@ -7,11 +7,12 @@ import * as MVTK from '@motionpicture/mvtk-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IMvtk, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as AwsCognitoService from '../../service/AwsCognitoService';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.ConfirmModule');
 
@@ -26,10 +27,12 @@ const log = debug('SSKTS:Purchase.ConfirmModule');
  */
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) throw ErrorUtilModule.ErrorType.Access;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (!purchaseModel.accessAuth(PurchaseModel.CONFIRM_STATE)) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
+        }
 
         //購入者内容確認表示
         res.locals.updateReserve = null;
@@ -39,13 +42,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         //セッション更新
         purchaseModel.save(req.session);
         res.render('purchase/confirm', { layout: 'layouts/purchase/layout' });
-
-        return;
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -60,7 +58,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     // 購入管理番号情報
     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
     log('購入管理番号情報', mvtkSeatInfoSync);
-    if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
+    if (mvtkSeatInfoSync === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     const seatInfoSyncService = MVTK.createSeatInfoSyncService();
     const seatInfoSyncIn = {
         kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -93,7 +91,9 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     };
     try {
         const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) throw ErrorUtilModule.ErrorType.Access;
+        if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
     } catch (err) {
         logger.error(
             'SSKTS-APP:ConfirmModule reserveMvtk',
@@ -118,7 +118,7 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
  */
 export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         // 購入管理番号情報
         const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
@@ -128,7 +128,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         //セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
-        if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
+        if (mvtkSeatInfoSync === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const seatInfoSyncService = MVTK.createSeatInfoSyncService();
         const seatInfoSyncIn = {
             kgygishCd: mvtkSeatInfoSync.kgygishCd,
@@ -162,7 +162,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         try {
             const seatInfoSyncInResult = await seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
             if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             }
             res.json({ isSuccess: true });
             log('MVTKムビチケ着券削除');
@@ -187,7 +187,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
 // tslint:disable-next-line:max-func-body-length
 export async function purchase(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -198,14 +198,15 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             || purchaseModel.individualScreeningEvent === null
             || purchaseModel.profile === null
             || purchaseModel.seatReservationAuthorization === null
-            || purchaseModel.seatReservationAuthorization.result === undefined) throw ErrorUtilModule.ErrorType.Property;
-        //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
+            || purchaseModel.seatReservationAuthorization.result === undefined
+            || req.body.transactionId !== purchaseModel.transaction.id) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
 
         //購入期限切れ
         if (purchaseModel.isExpired()) {
             delete req.session.purchase;
-            throw ErrorUtilModule.ErrorType.Expire;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         }
         const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
             return (ticket.mvtkNum !== '');
@@ -340,10 +341,9 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
         log('ERROR', err);
-        const msg: string = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
-            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
-                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
-                    : err.message;
+        const msg: string = (err.errorType === ErrorType.Expire) ? req.__('common.error.expire')
+            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
+                : err.message;
         res.json({ err: msg, result: null });
     }
 }
@@ -358,14 +358,13 @@ export async function purchase(req: Request, res: Response): Promise<void> {
  */
 export function getCompleteData(req: Request, res: Response): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
-        if (req.session.complete === undefined) throw ErrorUtilModule.ErrorType.Expire;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session.complete === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
-        const msg: string = (err === ErrorUtilModule.ErrorType.Property) ? req.__('common.error.badRequest')
-            : (err === ErrorUtilModule.ErrorType.Access) ? req.__('common.error.badRequest')
-                : (err === ErrorUtilModule.ErrorType.Expire) ? req.__('common.error.expire')
-                    : err.message;
+        const msg: string = (err.errorType === ErrorType.Expire) ? req.__('common.error.expire')
+        : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
+            : err.message;
         res.json({ err: msg, result: null });
     }
 }

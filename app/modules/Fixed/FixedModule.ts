@@ -5,11 +5,12 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import inquiryLoginForm from '../../forms/Inquiry/LoginForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { InquiryModel } from '../../models/Inquiry/InquiryModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Fixed.FixedModule');
 
@@ -22,7 +23,7 @@ const log = debug('SSKTS:Fixed.FixedModule');
  */
 export async function settingRender(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel();
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -33,7 +34,7 @@ export async function settingRender(req: Request, res: Response, next: NextFunct
         res.locals.movieTheaters = movieTheaters;
         res.render('setting/index');
     } catch (err) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.ExternalModule, err.message));
+        next(err);
     }
 }
 
@@ -58,7 +59,7 @@ export function stopRender(_: Request, res: Response): void {
  */
 export async function getInquiryData(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -72,7 +73,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
+            if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -83,7 +84,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
             });
 
-            if (inquiryModel.order === null) throw ErrorUtilModule.ErrorType.Property;
+            if (inquiryModel.order === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
             // 印刷用
             const reservations = createPrintReservations(req, inquiryModel);
@@ -121,7 +122,7 @@ interface IReservation {
  */
 export function createPrintReservations(req: Request, inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === null
-        || inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
+        || inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
     const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
 
@@ -129,7 +130,7 @@ export function createPrintReservations(req: Request, inquiryModel: InquiryModel
         if (offer.itemOffered.reservationFor.workPerformed === undefined
             || offer.itemOffered.reservationFor.location === undefined
             || offer.itemOffered.reservationFor.location.name === undefined
-        ) throw ErrorUtilModule.ErrorType.Property;
+        ) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         return {
             reserveNo: reserveNo,

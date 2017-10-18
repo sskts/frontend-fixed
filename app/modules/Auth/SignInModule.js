@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const uuid = require("uuid");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:SignInModule');
 /**
  * 認証ページ表示
@@ -56,10 +57,10 @@ function index(req, res, next) {
             else {
                 // 購入ページへ
                 if (req.session === undefined)
-                    throw ErrorUtilModule.ErrorType.Property;
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 const authModel = new AuthModel_1.AuthModel(req.session.auth);
                 if (req.query.state !== authModel.state)
-                    throw ErrorUtilModule.ErrorType.Access;
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 const auth = authModel.create();
                 authModel.credentials = yield auth.getToken(req.query.code, authModel.codeVerifier);
                 authModel.save(req.session);
@@ -67,8 +68,7 @@ function index(req, res, next) {
             }
         }
         catch (err) {
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
             return;
         }
     });

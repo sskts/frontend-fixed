@@ -414,7 +414,7 @@ describe('Fixed.FixedModule', () => {
             yield FixedModule.createPrintReservations(req, inquiryModel);
         }
         catch (err) {
-            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+            assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }
     }));
     it('createPrintReservations エラー reservationForなし', () => __awaiter(this, void 0, void 0, function* () {
@@ -447,7 +447,7 @@ describe('Fixed.FixedModule', () => {
             yield FixedModule.createPrintReservations(req, inquiryModel);
         }
         catch (err) {
-            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+            assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }
     }));
 });

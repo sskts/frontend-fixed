@@ -5,10 +5,11 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.PerformancesModule');
 
 /**
@@ -22,7 +23,7 @@ const log = debug('SSKTS:Purchase.PerformancesModule');
  */
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -57,10 +58,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
 
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -76,7 +74,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
     try {
         if (req.session === undefined
             || req.query.theater === undefined
-            || req.query.day === undefined) throw ErrorUtilModule.ErrorType.Property;
+            || req.query.day === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -112,7 +110,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
  */
 export async function getMovieTheaters(req: Request, res: Response) {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),

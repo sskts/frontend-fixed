@@ -5,10 +5,11 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import LoginForm from '../../forms/Inquiry/LoginForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { InquiryModel } from '../../models/Inquiry/InquiryModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:InquiryModule');
 
 /**
@@ -29,7 +30,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         return;
     }
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -51,10 +52,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
 
         return;
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -69,7 +67,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
  */
 export async function inquiryAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -83,7 +81,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
+            if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -114,7 +112,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 branchCode: req.body.theaterCode
             });
             log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
-            if (inquiryModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
+            if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
@@ -126,10 +124,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             return;
         }
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -163,7 +158,7 @@ function getInquiryError(req: Request) {
 export function confirmRender(req: Request, res: Response, next: NextFunction): void {
     try {
         if (req.session === undefined
-            || req.query.theater === undefined) throw ErrorUtilModule.ErrorType.Property;
+            || req.query.theater === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         if (req.session.inquiry === undefined) {
             res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
 
@@ -177,7 +172,6 @@ export function confirmRender(req: Request, res: Response, next: NextFunction): 
 
         return;
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }

@@ -14,9 +14,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
@@ -31,7 +32,7 @@ function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -39,9 +40,9 @@ function render(req, res, next) {
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             if (purchaseModel.individualScreeningEvent === null)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // イベント情報取得
             const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
                 identifier: req.params.id
@@ -52,8 +53,7 @@ function render(req, res, next) {
             res.render('purchase/overlap');
         }
         catch (err) {
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }
@@ -71,7 +71,7 @@ function newReserve(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
                 endpoint: process.env.SSKTS_API_ENDPOINT,
@@ -81,22 +81,24 @@ function newReserve(req, res, next) {
             if (purchaseModel.transaction !== null
                 && purchaseModel.seatReservationAuthorization !== null
                 && !purchaseModel.isExpired()) {
-                // COA仮予約削除
-                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
-                    transactionId: purchaseModel.transaction.id,
-                    actionId: purchaseModel.seatReservationAuthorization.id
-                });
-                log('COA仮予約削除');
+                try {
+                    // COA仮予約削除
+                    yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                        transactionId: purchaseModel.transaction.id,
+                        actionId: purchaseModel.seatReservationAuthorization.id
+                    });
+                    log('COA仮予約削除');
+                }
+                catch (err) {
+                    log('COA仮予約削除失敗', err);
+                }
             }
             //購入スタートへ
             delete req.session.purchase;
             res.redirect(`/purchase?id=${req.body.performanceId}`);
-            return;
         }
         catch (err) {
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
@@ -112,7 +114,7 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property));
         return;
     }
     //座席選択へ

@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const GMO = require("@motionpicture/gmo-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const AwsCognitoService = require("../../service/AwsCognitoService");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.InputModule');
 /**
  * 購入者情報入力
@@ -35,13 +36,14 @@ function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ErrorType.Expire;
-            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.INPUT_STATE))
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
+            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.INPUT_STATE)) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Access);
+            }
             //購入者情報入力表示
             if (purchaseModel.profile !== null) {
                 res.locals.input = purchaseModel.profile;
@@ -95,8 +97,7 @@ function render(req, res, next) {
             }
         }
         catch (err) {
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }
@@ -114,7 +115,7 @@ exports.render = render;
 function purchaserInformationRegistration(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+            next(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property));
             return;
         }
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
@@ -125,13 +126,13 @@ function purchaserInformationRegistration(req, res, next) {
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         try {
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ErrorType.Expire;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
             if (purchaseModel.transaction === null
                 || purchaseModel.reserveTickets === null)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             //バリデーション
             InputForm_1.default(req);
@@ -155,8 +156,27 @@ function purchaserInformationRegistration(req, res, next) {
                 telephone: req.body.telephone
             };
             // クレジットカード処理
-            yield creditCardProsess(req, res, purchaseModel, authModel);
-            log('クレジットカード処理終了');
+            try {
+                yield creditCardProsess(req, purchaseModel, authModel);
+                log('クレジットカード処理終了');
+            }
+            catch (err) {
+                purchaseModel.profile = {
+                    familyName: req.body.familyName,
+                    givenName: req.body.givenName,
+                    email: req.body.email,
+                    emailConfirm: req.body.emailConfirm,
+                    telephone: req.body.telephone
+                };
+                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
+                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.locals.gmoError = err.message;
+                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+                log('クレジットカード処理失敗', err);
+                return;
+            }
             yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
                 contact: {
@@ -193,23 +213,7 @@ function purchaserInformationRegistration(req, res, next) {
             res.redirect('/purchase/confirm');
         }
         catch (err) {
-            if (err === ErrorUtilModule.ErrorType.Validation) {
-                purchaseModel.profile = {
-                    familyName: req.body.familyName,
-                    givenName: req.body.givenName,
-                    email: req.body.email,
-                    emailConfirm: req.body.emailConfirm,
-                    telephone: req.body.telephone
-                };
-                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }
@@ -226,7 +230,7 @@ exports.purchaserInformationRegistration = purchaserInformationRegistration;
 function purchaserInformationRegistrationOfMember(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
-            next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+            next(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property));
             return;
         }
         const authModel = new AuthModel_1.AuthModel(req.session.auth);
@@ -237,16 +241,16 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
         const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
         try {
             if (!authModel.isMember())
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ErrorType.Expire;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
             if (purchaseModel.transaction === null
                 || purchaseModel.reserveTickets === null
                 || purchaseModel.profile === null)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             //バリデーション
             InputForm_1.default(req);
@@ -281,8 +285,20 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
                 log('クレジットカード登録', purchaseModel.creditCards);
             }
             // クレジットカード処理
-            yield creditCardProsess(req, res, purchaseModel, authModel);
-            log('クレジットカード処理終了');
+            try {
+                yield creditCardProsess(req, purchaseModel, authModel);
+                log('クレジットカード処理終了');
+            }
+            catch (err) {
+                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
+                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+                res.locals.gmoError = err.message;
+                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+                log('クレジットカード処理失敗', err);
+                return;
+            }
             yield sasaki.service.transaction.placeOrder(options).setCustomerContact({
                 transactionId: purchaseModel.transaction.id,
                 contact: {
@@ -299,16 +315,7 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
             res.redirect('/purchase/confirm');
         }
         catch (err) {
-            if (err === ErrorUtilModule.ErrorType.Validation) {
-                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }
@@ -320,14 +327,14 @@ exports.purchaserInformationRegistrationOfMember = purchaserInformationRegistrat
  * @param {Response} res
  * @param {PurchaseModel} purchaseModel
  */
-function creditCardProsess(req, res, purchaseModel, authModel) {
+function creditCardProsess(req, purchaseModel, authModel) {
     return __awaiter(this, void 0, void 0, function* () {
         const options = {
             endpoint: process.env.SSKTS_API_ENDPOINT,
             auth: authModel.create()
         };
         if (purchaseModel.transaction === null)
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         if (purchaseModel.creditCardAuthorization !== null) {
             const cancelCreditCardAuthorizationArgs = {
                 transactionId: purchaseModel.transaction.id,
@@ -341,8 +348,7 @@ function creditCardProsess(req, res, purchaseModel, authModel) {
             }
             catch (err) {
                 logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
-                res.locals.gmoError = err.message;
-                throw ErrorUtilModule.ErrorType.Validation;
+                throw err;
             }
             log('GMOオーソリ削除');
         }
@@ -379,8 +385,7 @@ function creditCardProsess(req, res, purchaseModel, authModel) {
             catch (err) {
                 log(createCreditCardAuthorizationArgs);
                 logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
-                res.locals.gmoError = err.message;
-                throw ErrorUtilModule.ErrorType.Validation;
+                throw err;
             }
             log('GMOオーソリ追加');
         }

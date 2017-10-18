@@ -6,10 +6,11 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
@@ -51,7 +52,7 @@ const VALID_TIME_FIXED = 5;
 export async function start(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined || req.body.performanceId === undefined) {
-            throw ErrorUtilModule.ErrorType.Property;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         const authModel = new AuthModel(req.session.auth);
         const options = {
@@ -66,7 +67,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             identifier: req.body.performanceId
         });
         log('イベント情報取得', individualScreeningEvent);
-        if (individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Access;
+        if (individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // awsCognitoIdentityIdを保存
         if (req.body.identityId === undefined) {
             delete req.session.awsCognitoIdentityId;
@@ -77,7 +78,7 @@ export async function start(req: Request, res: Response): Promise<void> {
 
         // 開始可能日判定
         if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         log('開始可能日判定');
 
@@ -85,7 +86,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
         const limitTime = moment().add(limit, 'minutes');
         if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         log('終了可能日判定');
 
@@ -119,7 +120,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
-        if (purchaseModel.movieTheaterOrganization === null) throw ErrorUtilModule.ErrorType.Property;
+        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
@@ -136,8 +137,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
     } catch (err) {
         log('SSKTS取引開始エラー', err);
-        if (err === ErrorUtilModule.ErrorType.Access
-            || err === ErrorUtilModule.ErrorType.Property) {
+        if (err.errorType === ErrorType.Access
+            || err.errorType === ErrorType.Property) {
             res.json({ redirect: null, contents: 'access-error' });
 
             return;

@@ -5,9 +5,10 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as uuid from 'uuid';
 import { AuthModel, MemberType } from '../../models/Auth/AuthModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:SignInModule');
 
 /**
@@ -53,9 +54,9 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             res.redirect(authUrl);
         } else {
             // 購入ページへ
-            if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+            if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             const authModel = new AuthModel(req.session.auth);
-            if (req.query.state !== authModel.state) throw ErrorUtilModule.ErrorType.Access;
+            if (req.query.state !== authModel.state) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             const auth: sasaki.auth.OAuth2 = authModel.create();
             authModel.credentials = await auth.getToken(req.query.code, (<string>authModel.codeVerifier));
             authModel.save(req.session);
@@ -63,8 +64,7 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             res.redirect(`/purchase/app.html?id=${authModel.state.split('-')[0]}`);
         }
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
 
         return;
     }

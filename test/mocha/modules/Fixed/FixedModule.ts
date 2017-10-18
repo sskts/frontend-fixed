@@ -433,7 +433,7 @@ describe('Fixed.FixedModule', () => {
         try {
             await FixedModule.createPrintReservations(req, inquiryModel);
         } catch (err) {
-            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+            assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }
     });
 
@@ -466,7 +466,7 @@ describe('Fixed.FixedModule', () => {
         try {
             await FixedModule.createPrintReservations(req, inquiryModel);
         } catch (err) {
-            assert.strictEqual(err, ErrorUtilModule.ErrorType.Property);
+            assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }
     });
 });

@@ -5,9 +5,10 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.OverlapModule');
 
 /**
@@ -21,7 +22,7 @@ const log = debug('SSKTS:Purchase.OverlapModule');
  */
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -29,8 +30,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (req.params.id === undefined) throw ErrorUtilModule.ErrorType.Access;
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
+        if (req.params.id === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // イベント情報取得
         const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
             identifier: req.params.id
@@ -40,8 +41,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.locals.before = purchaseModel.individualScreeningEvent;
         res.render('purchase/overlap');
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -56,7 +56,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  */
 export async function newReserve(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
@@ -67,24 +67,23 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         if (purchaseModel.transaction !== null
             && purchaseModel.seatReservationAuthorization !== null
             && !purchaseModel.isExpired()) {
-            // COA仮予約削除
-            await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
-                transactionId: purchaseModel.transaction.id,
-                actionId: purchaseModel.seatReservationAuthorization.id
-            });
-            log('COA仮予約削除');
+            try {
+                // COA仮予約削除
+                await sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                    transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id
+                });
+                log('COA仮予約削除');
+            } catch (err) {
+                log('COA仮予約削除失敗', err);
+            }
         }
 
         //購入スタートへ
         delete req.session.purchase;
         res.redirect(`/purchase?id=${req.body.performanceId}`);
-
-        return;
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -99,7 +98,7 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
  */
 export function prevReserve(req: Request, res: Response, next: NextFunction): void {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
 
         return;
     }

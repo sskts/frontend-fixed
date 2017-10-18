@@ -5,10 +5,12 @@
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import TicketForm from '../../forms/Purchase/TicketForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IReserveTicket, PurchaseModel } from '../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { deleteSession } from '../Error/ErrorModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as InputModule from './InputModule';
 const log = debug('SSKTS:Purchase.TicketModule');
 
@@ -23,16 +25,18 @@ const log = debug('SSKTS:Purchase.TicketModule');
  */
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        if (purchaseModel.individualScreeningEvent === null) throw ErrorUtilModule.ErrorType.Property;
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.TICKET_STATE)) throw ErrorUtilModule.ErrorType.Access;
+        if (purchaseModel.individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (!purchaseModel.accessAuth(PurchaseModel.TICKET_STATE)) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
+        }
 
         if (authModel.isMember()) {
             if (purchaseModel.profile === null) {
@@ -69,13 +73,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         purchaseModel.save(req.session);
         //券種選択表示
         res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
-
-        return;
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -130,7 +129,7 @@ export interface ISelectTicket {
 // tslint:disable-next-line:max-func-body-length
 export async function ticketSelect(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
 
         return;
     }
@@ -141,13 +140,13 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             auth: authModel.create()
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         if (purchaseModel.transaction === null
             || purchaseModel.individualScreeningEvent === null
-            || purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
-
-        //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw ErrorUtilModule.ErrorType.Access;
+            || purchaseModel.seatReservationAuthorization === null
+            || req.body.transactionId !== purchaseModel.transaction.id) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         //バリデーション
         TicketForm(req);
         const validationResult = await req.getValidationResult();
@@ -194,7 +193,9 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             };
             purchaseModel.seatReservationAuthorization = await sasaki.service.transaction.placeOrder(options)
                 .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
-            if (purchaseModel.seatReservationAuthorization === null) throw ErrorUtilModule.ErrorType.Property;
+            if (purchaseModel.seatReservationAuthorization === null) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
             log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
             if (purchaseModel.mvtkAuthorization !== null) {
                 await sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
@@ -207,7 +208,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 // 購入管理番号情報
                 const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                 log('購入管理番号情報', mvtkSeatInfoSync);
-                if (mvtkSeatInfoSync === null) throw ErrorUtilModule.ErrorType.Access;
+                if (mvtkSeatInfoSync === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
                 const createMvtkAuthorizationArgs = {
                     transactionId: purchaseModel.transaction.id,
                     mvtk: {
@@ -232,10 +233,10 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 res.redirect('/purchase/input');
             }
         } else {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
     } catch (err) {
-        if (err === ErrorUtilModule.ErrorType.Validation) {
+        if (err.errorType === ErrorType.Validation) {
             const purchaseModel = new PurchaseModel(req.session.purchase);
             purchaseModel.reserveTickets = JSON.parse(req.body.reserveTickets);
             res.locals.salesTickets = purchaseModel.getSalesTickets(req);
@@ -244,9 +245,18 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
 
             return;
+        } else if (err.code === HTTPStatus.NOT_FOUND
+            && err.errors
+            && err.errors.find((error: any) => error.entityName === 'offers')) {
+            deleteSession(req.session);
+            const status = err.code;
+            res.locals.message = req.__('purchase.ticket.notFound');
+            res.locals.error = err;
+            res.status(status).render('error/error');
+
+            return;
         }
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -266,7 +276,7 @@ async function ticketValidation(
     purchaseModel: PurchaseModel,
     selectTickets: ISelectTicket[]
 ): Promise<IReserveTicket[]> {
-    if (purchaseModel.salesTickets === null) throw ErrorUtilModule.ErrorType.Property;
+    if (purchaseModel.salesTickets === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
     const result: IReserveTicket[] = [];
     //コアAPI券種取得
@@ -275,11 +285,11 @@ async function ticketValidation(
     for (const ticket of selectTickets) {
         if (ticket.mvtkNum !== '') {
             // ムビチケ
-            if (purchaseModel.mvtk === null) throw ErrorUtilModule.ErrorType.Property;
+            if (purchaseModel.mvtk === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             const mvtkTicket = purchaseModel.mvtk.find((value) => {
                 return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
             });
-            if (mvtkTicket === undefined) throw ErrorUtilModule.ErrorType.Access;
+            if (mvtkTicket === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             const reserveTicket: IReserveTicket = {
                 section: ticket.section,
                 seatCode: ticket.seatCode,
@@ -314,13 +324,13 @@ async function ticketValidation(
             const salesTicket = salesTickets.find((value) => {
                 return (value.ticketCode === ticket.ticketCode);
             });
-            if (salesTicket === undefined) throw ErrorUtilModule.ErrorType.Access;
+            if (salesTicket === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             // 制限単位、人数制限判定
             const mismatchTickets: string[] = [];
             const sameTickets = selectTickets.filter((value) => {
                 return (value.ticketCode === salesTicket.ticketCode);
             });
-            if (sameTickets.length === 0) throw ErrorUtilModule.ErrorType.Access;
+            if (sameTickets.length === 0) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             if (salesTicket.limitUnit === '001') {
                 if (sameTickets.length % salesTicket.limitCount !== 0) {
                     if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
@@ -337,7 +347,7 @@ async function ticketValidation(
 
             if (mismatchTickets.length > 0) {
                 res.locals.error = JSON.stringify(mismatchTickets);
-                throw ErrorUtilModule.ErrorType.Validation;
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation);
             }
 
             result.push({

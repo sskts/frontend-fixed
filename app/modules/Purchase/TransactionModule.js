@@ -14,10 +14,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
@@ -58,7 +59,7 @@ function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined || req.body.performanceId === undefined) {
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
             const options = {
@@ -73,7 +74,7 @@ function start(req, res) {
             });
             log('イベント情報取得', individualScreeningEvent);
             if (individualScreeningEvent === null)
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // awsCognitoIdentityIdを保存
             if (req.body.identityId === undefined) {
                 delete req.session.awsCognitoIdentityId;
@@ -84,14 +85,14 @@ function start(req, res) {
             }
             // 開始可能日判定
             if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             log('開始可能日判定');
             // 終了可能日判定
             const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
             const limitTime = moment().add(limit, 'minutes');
             if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
-                throw ErrorUtilModule.ErrorType.Access;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             log('終了可能日判定');
             let purchaseModel;
@@ -120,7 +121,7 @@ function start(req, res) {
             });
             log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
             if (purchaseModel.movieTheaterOrganization === null)
-                throw ErrorUtilModule.ErrorType.Property;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // 取引開始
             const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
@@ -136,8 +137,8 @@ function start(req, res) {
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);
-            if (err === ErrorUtilModule.ErrorType.Access
-                || err === ErrorUtilModule.ErrorType.Property) {
+            if (err.errorType === ErrorUtilModule_1.ErrorType.Access
+                || err.errorType === ErrorUtilModule_1.ErrorType.Property) {
                 res.json({ redirect: null, contents: 'access-error' });
                 return;
             }

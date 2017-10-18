@@ -7,12 +7,13 @@ import * as GMO from '@motionpicture/gmo-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import InputForm from '../../forms/Purchase/InputForm';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IGMO, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as AwsCognitoService from '../../service/AwsCognitoService';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:Purchase.InputModule');
 
 /**
@@ -26,12 +27,14 @@ const log = debug('SSKTS:Purchase.InputModule');
  */
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ErrorType.Property;
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         const authModel = new AuthModel(req.session.auth);
 
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
-        if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) throw ErrorUtilModule.ErrorType.Access;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
+        }
 
         //購入者情報入力表示
         if (purchaseModel.profile !== null) {
@@ -82,8 +85,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         }
     } catch (err) {
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -99,7 +101,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 // tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistration(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
 
         return;
     }
@@ -110,12 +112,12 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     };
     const purchaseModel = new PurchaseModel(req.session.purchase);
     try {
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         if (purchaseModel.transaction === null
-            || purchaseModel.reserveTickets === null) throw ErrorUtilModule.ErrorType.Property;
+            || purchaseModel.reserveTickets === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         //バリデーション
         InputForm(req);
@@ -140,8 +142,27 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             telephone: req.body.telephone
         };
         // クレジットカード処理
-        await creditCardProsess(req, res, purchaseModel, authModel);
-        log('クレジットカード処理終了');
+        try {
+            await creditCardProsess(req, purchaseModel, authModel);
+            log('クレジットカード処理終了');
+        } catch (err) {
+            purchaseModel.profile = {
+                familyName: req.body.familyName,
+                givenName: req.body.givenName,
+                email: req.body.email,
+                emailConfirm: req.body.emailConfirm,
+                telephone: req.body.telephone
+            };
+            res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.locals.gmoError = err.message;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            log('クレジットカード処理失敗', err);
+
+            return;
+        }
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -179,24 +200,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
         // 購入者内容確認へ
         res.redirect('/purchase/confirm');
     } catch (err) {
-        if (err === ErrorUtilModule.ErrorType.Validation) {
-            purchaseModel.profile = {
-                familyName: req.body.familyName,
-                givenName: req.body.givenName,
-                email: req.body.email,
-                emailConfirm: req.body.emailConfirm,
-                telephone: req.body.telephone
-            };
-            res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
-            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.purchaseModel = purchaseModel;
-            res.locals.step = PurchaseModel.INPUT_STATE;
-            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-
-            return;
-        }
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -211,7 +215,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
  */
 export async function purchaserInformationRegistrationOfMember(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.AppError(ErrorUtilModule.ErrorType.Property, undefined));
+        next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
 
         return;
     }
@@ -223,14 +227,14 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
     const purchaseModel = new PurchaseModel(req.session.purchase);
 
     try {
-        if (!authModel.isMember()) throw ErrorUtilModule.ErrorType.Access;
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ErrorType.Expire;
+        if (!authModel.isMember()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         if (purchaseModel.transaction === null
             || purchaseModel.reserveTickets === null
-            || purchaseModel.profile === null) throw ErrorUtilModule.ErrorType.Property;
+            || purchaseModel.profile === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw ErrorUtilModule.ErrorType.Access;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         //バリデーション
         InputForm(req);
@@ -267,8 +271,20 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
         }
 
         // クレジットカード処理
-        await creditCardProsess(req, res, purchaseModel, authModel);
-        log('クレジットカード処理終了');
+        try {
+            await creditCardProsess(req, purchaseModel, authModel);
+            log('クレジットカード処理終了');
+        } catch (err) {
+            res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.locals.gmoError = err.message;
+            res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+            log('クレジットカード処理失敗', err);
+
+            return;
+        }
 
         await sasaki.service.transaction.placeOrder(options).setCustomerContact({
             transactionId: purchaseModel.transaction.id,
@@ -286,17 +302,7 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
         // 購入者内容確認へ
         res.redirect('/purchase/confirm');
     } catch (err) {
-        if (err === ErrorUtilModule.ErrorType.Validation) {
-            res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
-            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.purchaseModel = purchaseModel;
-            res.locals.step = PurchaseModel.INPUT_STATE;
-            res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-
-            return;
-        }
-        const error = (err instanceof Error) ? err : new ErrorUtilModule.AppError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
@@ -309,7 +315,6 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
  */
 async function creditCardProsess(
     req: Request,
-    res: Response,
     purchaseModel: PurchaseModel,
     authModel: AuthModel
 ): Promise<void> {
@@ -317,7 +322,7 @@ async function creditCardProsess(
         endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
         auth: authModel.create()
     };
-    if (purchaseModel.transaction === null) throw ErrorUtilModule.ErrorType.Property;
+    if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     if (purchaseModel.creditCardAuthorization !== null) {
         const cancelCreditCardAuthorizationArgs = {
             transactionId: purchaseModel.transaction.id,
@@ -334,8 +339,7 @@ async function creditCardProsess(
                 `in: ${cancelCreditCardAuthorizationArgs}`,
                 `err: ${err}`
             );
-            res.locals.gmoError = err.message;
-            throw ErrorUtilModule.ErrorType.Validation;
+            throw err;
         }
         log('GMOオーソリ削除');
     }
@@ -375,8 +379,7 @@ async function creditCardProsess(
                 `in: ${createCreditCardAuthorizationArgs}`,
                 `err: ${err}`
             );
-            res.locals.gmoError = err.message;
-            throw ErrorUtilModule.ErrorType.Validation;
+            throw err;
         }
         log('GMOオーソリ追加');
     }

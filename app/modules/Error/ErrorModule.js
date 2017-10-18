@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Error.ErrorModule');
 /**
  * Not Found
@@ -36,67 +35,30 @@ exports.notFoundRender = notFoundRender;
 function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
-    if (err instanceof ErrorUtilModule.AppError) {
-        log('APPエラー', err);
-        switch (err.code) {
-            case ErrorUtilModule.ErrorType.Property:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.badRequest');
-                err.message = 'Error Property';
-                break;
-            case ErrorUtilModule.ErrorType.Access:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.badRequest');
-                err.message = 'Error Access';
-                break;
-            case ErrorUtilModule.ErrorType.Validation:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.badRequest');
-                err.message = 'Error Validation';
-                break;
-            case ErrorUtilModule.ErrorType.Expire:
-                // 期限切れのときもstatusが400になっている。200に変更するべき？
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.expire');
-                err.message = 'Error Expire';
-                break;
-            default:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
-                msg = err.message;
-                logger_1.default.error('SSKTS-APP:ErrorModule ErrorUtilModule.AppError', status, err.message, err);
-                break;
-        }
-    }
-    else if (err.hasOwnProperty('errors')) {
-        log('APIエラー', err);
+    if (err.hasOwnProperty('errors')) {
         switch (err.code) {
             case HTTPStatus.BAD_REQUEST:
-                status = HTTPStatus.BAD_REQUEST;
                 msg = req.__('common.error.badRequest');
                 break;
             case HTTPStatus.UNAUTHORIZED:
-                status = HTTPStatus.UNAUTHORIZED;
                 msg = req.__('common.error.unauthorized');
                 break;
             case HTTPStatus.FORBIDDEN:
-                status = HTTPStatus.FORBIDDEN;
                 msg = req.__('common.error.forbidden');
                 break;
             case HTTPStatus.NOT_FOUND:
-                status = HTTPStatus.NOT_FOUND;
                 msg = req.__('common.error.notFound');
                 break;
             case HTTPStatus.SERVICE_UNAVAILABLE:
-                status = HTTPStatus.SERVICE_UNAVAILABLE;
                 msg = req.__('common.error.serviceUnavailable');
                 logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
             default:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
                 msg = req.__('common.error.internalServerError');
                 logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
         }
+        status = err.code;
     }
     else {
         log('Error');
@@ -104,12 +66,7 @@ function errorRender(err, req, res, _) {
         msg = req.__('common.error.internalServerError');
         logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
     }
-    if (req.session !== undefined) {
-        delete req.session.purchase;
-        delete req.session.mvtk;
-        delete req.session.complete;
-        delete req.session.auth;
-    }
+    deleteSession(req.session);
     /**
      * エラーメッセージ
      * Property: プロパティが無い
@@ -129,3 +86,17 @@ function errorRender(err, req, res, _) {
     return;
 }
 exports.errorRender = errorRender;
+/**
+ * セッション削除
+ * @function deleteSession
+ * @param {Express.Session | undefined} session
+ */
+function deleteSession(session) {
+    if (session !== undefined) {
+        delete session.purchase;
+        delete session.mvtk;
+        delete session.complete;
+        delete session.auth;
+    }
+}
+exports.deleteSession = deleteSession;

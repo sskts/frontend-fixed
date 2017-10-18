@@ -1,9 +1,10 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * エラー共通
  * @namespace Util.ErrorUtilModule
  */
-Object.defineProperty(exports, "__esModule", { value: true });
+const HTTPStatus = require("http-status");
 var ErrorType;
 (function (ErrorType) {
     /**
@@ -38,9 +39,20 @@ var ErrorType;
  * @class AppError
  */
 class AppError extends Error {
-    constructor(code, message) {
+    constructor(code, errorType) {
+        const message = (errorType === ErrorType.Property) ? 'Property Error'
+            : (errorType === ErrorType.Access) ? 'Access Error'
+                : (errorType === ErrorType.Timeout) ? 'Timeout Error'
+                    : (errorType === ErrorType.Validation) ? 'Validation Error'
+                        : (errorType === ErrorType.Expire) ? 'Expire Error'
+                            : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
+                                : undefined;
         super(message);
         this.code = code;
+        this.errorType = errorType;
+        this.errors = [
+            { name: 'SSKTSApplicationError', reason: HTTPStatus[code], message: message }
+        ];
     }
 }
 exports.AppError = AppError;
