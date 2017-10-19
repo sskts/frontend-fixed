@@ -99,7 +99,7 @@ exports.render = render;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
+// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
 function ticketSelect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -126,7 +126,9 @@ function ticketSelect(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const selectTickets = JSON.parse(req.body.reserveTickets);
-                purchaseModel.reserveTickets = yield ticketValidation(req, res, purchaseModel, selectTickets);
+                purchaseModel.reserveTickets = convertToReserveTickets(req, purchaseModel, selectTickets);
+                log('券種変換');
+                ticketValidation(purchaseModel);
                 log('券種検証');
                 // COAオーソリ削除
                 yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
@@ -213,9 +215,29 @@ function ticketSelect(req, res, next) {
             }
         }
         catch (err) {
-            if (err.errorType === ErrorUtilModule_1.ErrorType.Validation) {
+            if (err.code === HTTPStatus.BAD_REQUEST
+                && err.errorType === ErrorUtilModule_1.ErrorType.Validation) {
+                // 割引条件エラー
                 const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
                 purchaseModel.reserveTickets = JSON.parse(req.body.reserveTickets);
+                res.locals.error = err.message;
+                res.locals.salesTickets = purchaseModel.getSalesTickets(req);
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.TICKET_STATE;
+                res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
+                return;
+            }
+            else if (err.code === HTTPStatus.BAD_REQUEST
+                && err.errors
+                && err.errors.filter((error) => error.reason === 'Argument').length > 0) {
+                // 割引条件エラー
+                const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                purchaseModel.reserveTickets = JSON.parse(req.body.reserveTickets);
+                const errors = err.errors.map((error) => {
+                    const index = Number(error.argumentName.split('.')[1]);
+                    return purchaseModel.reserveTickets[index].ticketCode;
+                });
+                res.locals.error = JSON.stringify(errors);
                 res.locals.salesTickets = purchaseModel.getSalesTickets(req);
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.TICKET_STATE;
@@ -224,7 +246,8 @@ function ticketSelect(req, res, next) {
             }
             else if (err.code === HTTPStatus.NOT_FOUND
                 && err.errors
-                && err.errors.find((error) => error.entityName === 'offers')) {
+                && err.errors.find((error) => error.entityName.indexOf('offers') > -1) !== undefined) {
+                // 券種が存在しない
                 ErrorModule_1.deleteSession(req.session);
                 const status = err.code;
                 res.locals.message = req.__('purchase.ticket.notFound');
@@ -238,124 +261,124 @@ function ticketSelect(req, res, next) {
 }
 exports.ticketSelect = ticketSelect;
 /**
- * 券種検証
+ * 券種変換
  * @memberof Purchase.TicketModule
- * @function ticketValidation
+ * @function convertToReserveTickets
  * @param {Request} req
  * @param {PurchaseModel} purchaseModel
  * @param {ISelectTicket[]} rselectTickets
- * @returns {Promise<void>}
+ * @returns {void}
  */
-// tslint:disable-next-line:cyclomatic-complexity max-func-body-length
-function ticketValidation(req, res, purchaseModel, selectTickets) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (purchaseModel.salesTickets === null)
-            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-        const result = [];
-        //コアAPI券種取得
-        const salesTickets = purchaseModel.salesTickets;
-        for (const ticket of selectTickets) {
-            if (ticket.mvtkNum !== '') {
-                // ムビチケ
-                if (purchaseModel.mvtk === null)
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-                const mvtkTicket = purchaseModel.mvtk.find((value) => {
-                    return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
-                });
-                if (mvtkTicket === undefined)
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-                const reserveTicket = {
-                    section: ticket.section,
-                    seatCode: ticket.seatCode,
-                    ticketCode: mvtkTicket.ticket.ticketCode,
-                    ticketName: (ticket.glasses)
-                        ? `${mvtkTicket.ticket.ticketName}${req.__('common.glasses')}`
-                        : mvtkTicket.ticket.ticketName,
-                    ticketNameEng: mvtkTicket.ticket.ticketNameEng,
-                    ticketNameKana: mvtkTicket.ticket.ticketNameKana,
-                    stdPrice: 0,
-                    addPrice: mvtkTicket.ticket.addPrice,
-                    disPrice: 0,
-                    salePrice: (ticket.glasses)
-                        ? mvtkTicket.ticket.addPrice + mvtkTicket.ticket.addPriceGlasses
-                        : mvtkTicket.ticket.addPrice,
-                    ticketNote: '',
-                    addPriceGlasses: (ticket.glasses)
-                        ? mvtkTicket.ticket.addPriceGlasses
-                        : 0,
-                    glasses: ticket.glasses,
-                    mvtkAppPrice: Number(mvtkTicket.ykknInfo.kijUnip),
-                    kbnEisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp,
-                    mvtkNum: mvtkTicket.code,
-                    mvtkKbnDenshiken: mvtkTicket.ykknInfo.dnshKmTyp,
-                    mvtkKbnMaeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp,
-                    mvtkKbnKensyu: mvtkTicket.ykknInfo.ykknshTyp,
-                    mvtkSalesPrice: Number(mvtkTicket.ykknInfo.knshknhmbiUnip) // ムビチケ販売単価
-                };
-                result.push(reserveTicket);
-            }
-            else {
-                // 通常券種
-                const salesTicket = salesTickets.find((value) => {
-                    return (value.ticketCode === ticket.ticketCode);
-                });
-                if (salesTicket === undefined)
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-                // 制限単位、人数制限判定
-                const mismatchTickets = [];
-                const sameTickets = selectTickets.filter((value) => {
-                    return (value.ticketCode === salesTicket.ticketCode);
-                });
-                if (sameTickets.length === 0)
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-                if (salesTicket.limitUnit === '001') {
-                    if (sameTickets.length % salesTicket.limitCount !== 0) {
-                        if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
-                            mismatchTickets.push(ticket.ticketCode);
-                        }
-                    }
-                }
-                else if (salesTicket.limitUnit === '002') {
-                    if (sameTickets.length < salesTicket.limitCount) {
-                        if (mismatchTickets.indexOf(ticket.ticketCode) === -1) {
-                            mismatchTickets.push(ticket.ticketCode);
-                        }
-                    }
-                }
-                if (mismatchTickets.length > 0) {
-                    res.locals.error = JSON.stringify(mismatchTickets);
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Validation);
-                }
-                result.push({
-                    section: ticket.section,
-                    seatCode: ticket.seatCode,
-                    ticketCode: salesTicket.ticketCode,
-                    ticketName: (ticket.glasses)
-                        ? `${salesTicket.ticketName}${req.__('common.glasses')}`
-                        : salesTicket.ticketName,
-                    ticketNameEng: salesTicket.ticketNameEng,
-                    ticketNameKana: salesTicket.ticketNameKana,
-                    stdPrice: salesTicket.stdPrice,
-                    addPrice: salesTicket.addPrice,
-                    disPrice: 0,
-                    salePrice: (ticket.glasses)
-                        ? salesTicket.salePrice + salesTicket.addGlasses
-                        : salesTicket.salePrice,
-                    ticketNote: salesTicket.ticketNote,
-                    addPriceGlasses: (ticket.glasses)
-                        ? salesTicket.addGlasses
-                        : 0,
-                    glasses: ticket.glasses,
-                    mvtkAppPrice: 0,
-                    kbnEisyahousiki: '00',
-                    mvtkNum: '',
-                    mvtkKbnDenshiken: '00',
-                    mvtkKbnMaeuriken: '00',
-                    mvtkKbnKensyu: '00',
-                    mvtkSalesPrice: 0 // ムビチケ販売単価
-                });
+function convertToReserveTickets(req, purchaseModel, selectTickets) {
+    if (purchaseModel.salesTickets === null)
+        throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+    const result = [];
+    //コアAPI券種取得
+    const salesTickets = purchaseModel.salesTickets;
+    for (const ticket of selectTickets) {
+        if (ticket.mvtkNum !== '') {
+            // ムビチケ
+            if (purchaseModel.mvtk === null)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const mvtkTicket = purchaseModel.mvtk.find((value) => {
+                return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
+            });
+            if (mvtkTicket === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const reserveTicket = {
+                section: ticket.section,
+                seatCode: ticket.seatCode,
+                ticketCode: mvtkTicket.ticket.ticketCode,
+                ticketName: (ticket.glasses)
+                    ? `${mvtkTicket.ticket.ticketName}${req.__('common.glasses')}`
+                    : mvtkTicket.ticket.ticketName,
+                ticketNameEng: mvtkTicket.ticket.ticketNameEng,
+                ticketNameKana: mvtkTicket.ticket.ticketNameKana,
+                stdPrice: 0,
+                addPrice: mvtkTicket.ticket.addPrice,
+                disPrice: 0,
+                salePrice: (ticket.glasses)
+                    ? mvtkTicket.ticket.addPrice + mvtkTicket.ticket.addPriceGlasses
+                    : mvtkTicket.ticket.addPrice,
+                ticketNote: '',
+                addPriceGlasses: (ticket.glasses)
+                    ? mvtkTicket.ticket.addPriceGlasses
+                    : 0,
+                glasses: ticket.glasses,
+                mvtkAppPrice: Number(mvtkTicket.ykknInfo.kijUnip),
+                kbnEisyahousiki: mvtkTicket.ykknInfo.eishhshkTyp,
+                mvtkNum: mvtkTicket.code,
+                mvtkKbnDenshiken: mvtkTicket.ykknInfo.dnshKmTyp,
+                mvtkKbnMaeuriken: mvtkTicket.ykknInfo.znkkkytsknGkjknTyp,
+                mvtkKbnKensyu: mvtkTicket.ykknInfo.ykknshTyp,
+                mvtkSalesPrice: Number(mvtkTicket.ykknInfo.knshknhmbiUnip),
+                limitUnit: '001',
+                limitCount: 1
+            };
+            result.push(reserveTicket);
+        }
+        else {
+            // 通常券種
+            const salesTicket = salesTickets.find((value) => {
+                return (value.ticketCode === ticket.ticketCode);
+            });
+            if (salesTicket === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            result.push({
+                section: ticket.section,
+                seatCode: ticket.seatCode,
+                ticketCode: salesTicket.ticketCode,
+                ticketName: (ticket.glasses)
+                    ? `${salesTicket.ticketName}${req.__('common.glasses')}`
+                    : salesTicket.ticketName,
+                ticketNameEng: salesTicket.ticketNameEng,
+                ticketNameKana: salesTicket.ticketNameKana,
+                stdPrice: salesTicket.stdPrice,
+                addPrice: salesTicket.addPrice,
+                disPrice: 0,
+                salePrice: (ticket.glasses)
+                    ? salesTicket.salePrice + salesTicket.addGlasses
+                    : salesTicket.salePrice,
+                ticketNote: salesTicket.ticketNote,
+                addPriceGlasses: (ticket.glasses)
+                    ? salesTicket.addGlasses
+                    : 0,
+                glasses: ticket.glasses,
+                mvtkAppPrice: 0,
+                kbnEisyahousiki: '00',
+                mvtkNum: '',
+                mvtkKbnDenshiken: '00',
+                mvtkKbnMaeuriken: '00',
+                mvtkKbnKensyu: '00',
+                mvtkSalesPrice: 0,
+                limitUnit: salesTicket.limitUnit,
+                limitCount: salesTicket.limitCount
+            });
+        }
+    }
+    return result;
+}
+/**
+ * 券種検証
+ * @function ticketValidation
+ * @param {PurchaseModel} purchaseModel
+ */
+function ticketValidation(purchaseModel) {
+    // 制限単位、人数制限判定
+    const result = [];
+    if (purchaseModel.reserveTickets.length === 0)
+        throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+    purchaseModel.reserveTickets.forEach((reserveTicket) => {
+        if (reserveTicket.limitUnit === '001') {
+            const unitLimitTickets = purchaseModel.reserveTickets.filter((ticket) => {
+                return (ticket.limitUnit === '001' && ticket.limitCount === reserveTicket.limitCount);
+            });
+            if (unitLimitTickets.length % reserveTicket.limitCount !== 0) {
+                result.push(reserveTicket.ticketCode);
             }
         }
-        return result;
     });
+    if (result.length > 0) {
+        throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Validation, JSON.stringify(result));
+    }
 }

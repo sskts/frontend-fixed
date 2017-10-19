@@ -41,14 +41,16 @@ export class AppError extends Error {
     public code: number;
     public errorType: ErrorType;
     public errors: { name: string, reason: string, message: string | undefined }[];
-    constructor(code: number, errorType: ErrorType) {
-        const message = (errorType === ErrorType.Property) ? 'Property Error'
-            : (errorType === ErrorType.Access) ? 'Access Error'
-                : (errorType === ErrorType.Timeout) ? 'Timeout Error'
-                    : (errorType === ErrorType.Validation) ? 'Validation Error'
-                        : (errorType === ErrorType.Expire) ? 'Expire Error'
-                            : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
-                                : undefined;
+    constructor(code: number, errorType: ErrorType, message?: string) {
+        if (message === undefined) {
+            message = (errorType === ErrorType.Property) ? 'Property Error'
+                : (errorType === ErrorType.Access) ? 'Access Error'
+                    : (errorType === ErrorType.Timeout) ? 'Timeout Error'
+                        : (errorType === ErrorType.Validation) ? 'Validation Error'
+                            : (errorType === ErrorType.Expire) ? 'Expire Error'
+                                : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
+                                    : undefined;
+        }
         super(message);
         this.code = code;
         this.errorType = errorType;

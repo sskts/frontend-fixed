@@ -193,6 +193,14 @@ export interface IReserveTicket {
      * ムビチケ販売単価
      */
     mvtkSalesPrice: number;
+    /**
+     * 制限単位
+     */
+    limitUnit: string;
+    /**
+     * 人数制限
+     */
+    limitCount: number;
 }
 
 /**
