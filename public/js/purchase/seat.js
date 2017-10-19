@@ -82,7 +82,7 @@ function nextButtonClick(event) {
     $('.screen .seat a.active').each(function (index, elem) {
         seats.listTmpReserve.push({
             seatNum: $(this).attr('data-seat-code'),
-            seatSection: '0'
+            seatSection: $(this).attr('data-seat-section')
         });
     });
 
@@ -278,26 +278,38 @@ function screenStateChange(state) {
     $('.seat a').addClass('disabled');
 
     var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
+    
     if (purchaseSeats) {
         //予約している席設定
         for (var i = 0, len = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve.length; i < len; i++) {
             var purchaseSeat = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve[i];
             var seatNum = purchaseSeat.seatNum;
             var seat = $('.seat a[data-seat-code=' + seatNum + ']');
+            seat.attr({
+                'data-seat-code':  seatNum,
+                'data-seat-section': purchaseSeat.seatSection
+            })
             seat.removeClass('disabled');
             seat.addClass('active');
         }
     }
+
     if (state && state.cntReserveFree > 0) {
         //空いている座席設定
-        var freeSeats = state.listSeat[0].listFreeSeat;
-        for (var i = 0, len = freeSeats.length; i < len; i++) {
-            var freeSeat = freeSeats[i];
-            // var seatNum = replaceHalfSize(freeSeat.seatNum);
-            var seat = $('.seat a[data-seat-code=' + freeSeat.seatNum + ']');
-            if (seat && !seat.hasClass('active')) {
-                seat.removeClass('disabled');
-                seat.addClass('default');
+        for (var i = 0, len = state.listSeat.length; i < len; i++) {
+            var freeSeats = state.listSeat[i];
+            for (var j = 0, len2 = freeSeats.listFreeSeat.length; j < len2; j++) {
+                var freeSeat = freeSeats.listFreeSeat[j];
+                // var seatNum = replaceHalfSize(freeSeat.seatNum);
+                var seat = $('.seat a[data-seat-code=' + freeSeat.seatNum + ']');
+                seat.attr({
+                    'data-seat-code':  freeSeat.seatNum,
+                    'data-seat-section': freeSeats.seatSection
+                });
+                if (seat && !seat.hasClass('active')) {
+                    seat.removeClass('disabled');
+                    seat.addClass('default');
+                }
             }
         }
     }

@@ -130,15 +130,10 @@ function ticketSelect(req, res, next) {
                 log('券種変換');
                 ticketValidation(purchaseModel);
                 log('券種検証');
-                // COAオーソリ削除
-                yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
-                    transactionId: purchaseModel.transaction.id,
-                    actionId: purchaseModel.seatReservationAuthorization.id
-                });
-                log('SSKTSCOAオーソリ削除');
                 //COAオーソリ追加
-                const createSeatReservationAuthorizationArgs = {
+                const changeSeatReservationOffersArgs = {
                     transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id,
                     eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
                     offers: purchaseModel.reserveTickets.map((reserveTicket) => {
                         return {
@@ -168,11 +163,11 @@ function ticketSelect(req, res, next) {
                     })
                 };
                 purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
-                    .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
+                    .changeSeatReservationOffers(changeSeatReservationOffersArgs);
                 if (purchaseModel.seatReservationAuthorization === null) {
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 }
-                log('SSKTSCOAオーソリ追加', purchaseModel.seatReservationAuthorization);
+                log('SSKTSCOA仮予約更新', purchaseModel.seatReservationAuthorization);
                 if (purchaseModel.mvtkAuthorization !== null) {
                     yield sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                         transactionId: purchaseModel.transaction.id,
