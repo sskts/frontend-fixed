@@ -26,13 +26,13 @@ export async function index(req: Request, res: Response, next: NextFunction): Pr
             // サインイン
             const scopes = [
                 'phone', 'openid', 'email', 'aws.cognito.signin.user.admin', 'profile',
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/transactions`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/events.read-only`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/organizations.read-only`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.contacts`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.creditCards`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/people.ownershipInfos.read-only`,
-                `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/places.read-only`
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/events.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/organizations.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/people.contacts`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/people.creditCards`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/people.ownershipInfos.read-only`,
+                `${(<string>process.env.RESOURCE_SERVER_URL)}/places.read-only`
             ];
 
             const authModel = new AuthModel({

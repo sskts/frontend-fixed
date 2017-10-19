@@ -17,11 +17,11 @@ class AuthModel {
         }
         this.state = (session.state !== undefined) ? session.state : uuid.v1();
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
-            `${process.env.RESOURCE_SERVER_DOMAIN}/transactions`,
-            `${process.env.RESOURCE_SERVER_DOMAIN}/events.read-only`,
-            `${process.env.RESOURCE_SERVER_DOMAIN}/organizations.read-only`,
-            `${process.env.RESOURCE_SERVER_DOMAIN}/orders.read-only`,
-            `${process.env.RESOURCE_SERVER_DOMAIN}/places.read-only`
+            `${process.env.RESOURCE_SERVER_URL}/transactions`,
+            `${process.env.RESOURCE_SERVER_URL}/events.read-only`,
+            `${process.env.RESOURCE_SERVER_URL}/organizations.read-only`,
+            `${process.env.RESOURCE_SERVER_URL}/orders.read-only`,
+            `${process.env.RESOURCE_SERVER_URL}/places.read-only`
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;

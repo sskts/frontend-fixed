@@ -30,13 +30,13 @@ function index(req, res, next) {
                 // サインイン
                 const scopes = [
                     'phone', 'openid', 'email', 'aws.cognito.signin.user.admin', 'profile',
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/transactions`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/events.read-only`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/organizations.read-only`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/people.contacts`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/people.creditCards`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/people.ownershipInfos.read-only`,
-                    `${process.env.RESOURCE_SERVER_DOMAIN}/places.read-only`
+                    `${process.env.RESOURCE_SERVER_URL}/transactions`,
+                    `${process.env.RESOURCE_SERVER_URL}/events.read-only`,
+                    `${process.env.RESOURCE_SERVER_URL}/organizations.read-only`,
+                    `${process.env.RESOURCE_SERVER_URL}/people.contacts`,
+                    `${process.env.RESOURCE_SERVER_URL}/people.creditCards`,
+                    `${process.env.RESOURCE_SERVER_URL}/people.ownershipInfos.read-only`,
+                    `${process.env.RESOURCE_SERVER_URL}/places.read-only`
                 ];
                 const authModel = new AuthModel_1.AuthModel({
                     scopes: scopes,

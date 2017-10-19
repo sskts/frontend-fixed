@@ -24,7 +24,7 @@ set PORTAL_SITE_URL=**********ポータルサイトURL**********
 set CLIENT_ID=**********クライアントID**********
 set CLIENT_SECRET=**********クライアント鍵**********
 set AUTHORIZE_SERVER_DOMAIN=**********認証サーバードメイン**********
-set RESOURCE_SERVER_DOMAIN=**********リソースサーバードメイン**********
+set RESOURCE_SERVER_URL=**********リソースサーバーURL**********
 ```
 
 only on Aure WebApps
@@ -63,6 +63,8 @@ set VIEW_TYPE=fixed
 
 ```shell
 set APP_SITE_URL=**********アプリサイトURL**********
+set COGNITO_REGION=**********COGNITO REGION**********
+set COGNITO_IDENTITY_POOL_ID=**********COGNITO IDENTITY POOL ID**********
 ```
 
 会員フロー
@@ -72,6 +74,8 @@ set AUTH_LOGUOT_URI=**********認証ログアウトURL**********
 set SSKTS_OAUTH2_TOKEN_URL=**********認証トークンURL**********
 set CLIENT_ID_OAUTH2=**********会員クライアントID**********
 set CLIENT_SECRET_OAUTH2=**********会員クライアント鍵**********
+set COGNITO_USER_POOL_ID=**********COGNITO USER POOL ID**********
+set COGNITO_CLIENT_ID=**********COGNITO CLIENT ID**********
 ```
 
 # Build

@@ -64,11 +64,11 @@ export class AuthModel {
         }
         this.state = (session.state !== undefined) ? session.state : uuid.v1();
         this.scopes = (session.scopes !== undefined) ? session.scopes : [
-            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/transactions`,
-            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/events.read-only`,
-            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/organizations.read-only`,
-            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/orders.read-only`,
-            `${(<string>process.env.RESOURCE_SERVER_DOMAIN)}/places.read-only`
+            `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
+            `${(<string>process.env.RESOURCE_SERVER_URL)}/events.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_URL)}/organizations.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_URL)}/orders.read-only`,
+            `${(<string>process.env.RESOURCE_SERVER_URL)}/places.read-only`
         ];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
         this.credentials = (session.credentials !== undefined) ? session.credentials : null;
