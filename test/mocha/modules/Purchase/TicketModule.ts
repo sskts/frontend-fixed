@@ -136,7 +136,7 @@ describe('Purchase.TicketModule', () => {
     it('ticketSelect 正常', async () => {
         const ticketForm = sinon.stub(TicketForm, 'default').returns({});
         const placeOrder = sinon.stub(sasaki.service.transaction, 'placeOrder').returns({
-            createSeatReservationAuthorization: () => {
+            changeSeatReservationOffers: () => {
                 return Promise.resolve({
                     result: {
                         updTmpReserveSeatResult: {
@@ -144,9 +144,6 @@ describe('Purchase.TicketModule', () => {
                         }
                     }
                 });
-            },
-            cancelSeatReservationAuthorization: () => {
-                return Promise.resolve({});
             },
             cancelMvtkAuthorization: () => {
                 return Promise.resolve({});

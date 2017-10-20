@@ -193,7 +193,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             if (purchaseModel.seatReservationAuthorization === null) {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             }
-            log('SSKTSCOA仮予約更新', purchaseModel.seatReservationAuthorization);
+            log('SSKTSCOA仮予約更新');
             if (purchaseModel.mvtkAuthorization !== null) {
                 await sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                     transactionId: purchaseModel.transaction.id,

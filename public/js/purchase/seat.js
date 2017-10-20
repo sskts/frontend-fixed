@@ -409,11 +409,11 @@ function createScreen(setting, screen) {
                 var label = labels[labelCount] + String(x + 1);
                 if (screen.hc.indexOf(label) !== -1) {
                     seatHtml.push('<div class="seat seat-hc" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '" data-seat-section=""><span>' + label + '</span></a>' +
                         '</div>');
                 } else {
                     seatHtml.push('<div class="seat" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '" data-seat-section=""><span>' + label + '</span></a>' +
                         '</div>');
                 }
 

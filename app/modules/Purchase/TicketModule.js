@@ -167,7 +167,7 @@ function ticketSelect(req, res, next) {
                 if (purchaseModel.seatReservationAuthorization === null) {
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 }
-                log('SSKTSCOA仮予約更新', purchaseModel.seatReservationAuthorization);
+                log('SSKTSCOA仮予約更新');
                 if (purchaseModel.mvtkAuthorization !== null) {
                     yield sasaki.service.transaction.placeOrder(options).cancelMvtkAuthorization({
                         transactionId: purchaseModel.transaction.id,

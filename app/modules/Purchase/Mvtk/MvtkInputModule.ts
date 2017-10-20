@@ -72,13 +72,15 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         if (req.body.transactionId !== purchaseModel.transaction.id) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         MvtkInputForm(req);
         const validationResult = await req.getValidationResult();
-        if (!validationResult.isEmpty()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (!validationResult.isEmpty()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
         const mvtkService = MVTK.createPurchaseNumberAuthService();
-        const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
+        const inputInfoList: InputInfo[] = JSON.parse(req.body.mvtk);
+        mvtkValidation(inputInfoList);
+        log('ムビチケ券検証');
         const purchaseNumberAuthIn = {
             kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
             jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
-            knyknrNoInfoIn: inputInfo.map((value) => {
+            knyknrNoInfoIn: inputInfoList.map((value) => {
                 return {
                     KNYKNR_NO: value.code, //購入管理番号
                     PIN_CD: value.password // PINコード
@@ -105,7 +107,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const mvtkList: IMvtk[] = [];
         for (const purchaseNumberAuthResult of purchaseNumberAuthResults) {
             for (const info of purchaseNumberAuthResult.ykknInfo) {
-                const input = inputInfo.find((value) => {
+                const input = inputInfoList.find((value) => {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
                 if (input === undefined) continue;
@@ -144,11 +146,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         }
         // 認証エラーバリデーション
         if (validationList.length > 0) {
-            res.locals.error = JSON.stringify(validationList);
             log('認証エラー');
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation);
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
         }
         req.session.mvtk = mvtkList;
         res.redirect('/purchase/mvtk/confirm');
@@ -158,11 +159,29 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;
+            res.locals.error = err.errors[0].message;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
 
             return;
         }
         next(err);
+    }
+}
+
+/**
+ * ムビチケ券検証
+ * @function mvtkValidation
+ * @param {InputInfo[]} inputInfoList
+ */
+function mvtkValidation(inputInfoList: InputInfo[]): void {
+    const codeList = inputInfoList.map((inputInfo) => {
+        return inputInfo.code;
+    });
+    const validationList = codeList.filter((code, index) => {
+        return codeList.indexOf(code) === index && index !== codeList.lastIndexOf(code);
+    });
+    if (validationList.length > 0) {
+        throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
     }
 }
 

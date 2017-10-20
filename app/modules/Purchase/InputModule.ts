@@ -49,7 +49,6 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             };
             // Cognitoから参照
             const awsCognitoIdentityId = req.session.awsCognitoIdentityId;
-            log('Cognitoから参照', awsCognitoIdentityId);
             if (awsCognitoIdentityId !== undefined) {
                 const cognitoCredentials = AwsCognitoService.authenticateWithTerminal(awsCognitoIdentityId);
                 try {
