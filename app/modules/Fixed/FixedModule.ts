@@ -87,8 +87,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             if (inquiryModel.order === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
             // 印刷用
-            const reservations = createPrintReservations(req, inquiryModel);
-            delete req.session.fixed;
+            const reservations = createPrintReservations(inquiryModel);
             res.json({ result: reservations });
 
             return;
@@ -120,7 +119,7 @@ interface IReservation {
  * @param {InquiryModel} inquiryModel
  * @returns {IReservation[]}
  */
-export function createPrintReservations(req: Request, inquiryModel: InquiryModel): IReservation[] {
+export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === null
         || inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
@@ -144,9 +143,7 @@ export function createPrintReservations(req: Request, inquiryModel: InquiryModel
                 offer.itemOffered.reservationFor.coaInfo.dateJouei
             ),
             seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
-            ticketName: (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0)
-                ? `${offer.itemOffered.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
-                : offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
+            ticketName: offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
             ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
             qrStr: offer.itemOffered.reservedTicket.ticketToken
         };

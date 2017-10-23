@@ -65,8 +65,7 @@ exports.render = render;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
-// tslint:disable-next-line:cyclomatic-complexity
+// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
 function auth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {

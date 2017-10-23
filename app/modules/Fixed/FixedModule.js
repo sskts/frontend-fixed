@@ -101,8 +101,7 @@ function getInquiryData(req, res) {
                 if (inquiryModel.order === null)
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 // 印刷用
-                const reservations = createPrintReservations(req, inquiryModel);
-                delete req.session.fixed;
+                const reservations = createPrintReservations(inquiryModel);
                 res.json({ result: reservations });
                 return;
             }
@@ -121,7 +120,7 @@ exports.getInquiryData = getInquiryData;
  * @param {InquiryModel} inquiryModel
  * @returns {IReservation[]}
  */
-function createPrintReservations(req, inquiryModel) {
+function createPrintReservations(inquiryModel) {
     if (inquiryModel.order === null
         || inquiryModel.movieTheaterOrganization === null)
         throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
@@ -141,9 +140,7 @@ function createPrintReservations(req, inquiryModel) {
             performanceDay: moment(offer.itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
             performanceStartTime: UtilModule.timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei),
             seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
-            ticketName: (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0)
-                ? `${offer.itemOffered.reservedTicket.coaTicketInfo.ticketName}${req.__('common.glasses')}`
-                : offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
+            ticketName: offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
             ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
             qrStr: offer.itemOffered.reservedTicket.ticketToken
         };

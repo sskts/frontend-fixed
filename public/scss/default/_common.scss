@@ -737,14 +737,15 @@ p {
 
 .wrapper {
     width: 940px;
-    margin: 30px auto;
+    margin: 0 auto;
+    padding: 30px 0;
     @media screen and (max-width: $tablet){
         width: auto;
-        margin: 15px;
+        padding: 15px;
     }
     @media screen and (max-width: $mobile){
         width: auto;
-        margin: 10px;
+        padding: 10px;
     }
 }
 

@@ -411,12 +411,7 @@ describe('Fixed.FixedModule', () => {
                 }
             }
         };
-        const req: any = {
-            __: () => {
-                return '';
-            }
-        };
-        const printReservations = await FixedModule.createPrintReservations(req, inquiryModel);
+        const printReservations = await FixedModule.createPrintReservations(inquiryModel);
         assert(Array.isArray(printReservations));
     });
 
@@ -425,13 +420,8 @@ describe('Fixed.FixedModule', () => {
             movieTheaterOrganization: null,
             order: null
         };
-        const req: any = {
-            __: () => {
-                return '';
-            }
-        };
         try {
-            await FixedModule.createPrintReservations(req, inquiryModel);
+            await FixedModule.createPrintReservations(inquiryModel);
         } catch (err) {
             assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }
@@ -458,13 +448,8 @@ describe('Fixed.FixedModule', () => {
                 }
             }
         };
-        const req: any = {
-            __: () => {
-                return '';
-            }
-        };
         try {
-            await FixedModule.createPrintReservations(req, inquiryModel);
+            await FixedModule.createPrintReservations(inquiryModel);
         } catch (err) {
             assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
         }

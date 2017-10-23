@@ -38,11 +38,7 @@
                         <strong class="large-text"><%= offer.itemOffered.reservedTicket.ticketedSeat.seatNumber %></strong>
                     </div>
                     <div>
-                        <% if (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0) { %>
-                        [<%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %><%= __('common.glasses') %>]
-                        <% } else { %>
                         [<%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %>]
-                        <% } %>
                     </div>
                 </div>
                 

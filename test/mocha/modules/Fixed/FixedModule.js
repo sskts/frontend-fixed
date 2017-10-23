@@ -392,12 +392,7 @@ describe('Fixed.FixedModule', () => {
                 }
             }
         };
-        const req = {
-            __: () => {
-                return '';
-            }
-        };
-        const printReservations = yield FixedModule.createPrintReservations(req, inquiryModel);
+        const printReservations = yield FixedModule.createPrintReservations(inquiryModel);
         assert(Array.isArray(printReservations));
     }));
     it('createPrintReservations エラー order,movieTheaterOrganizationなし', () => __awaiter(this, void 0, void 0, function* () {
@@ -405,13 +400,8 @@ describe('Fixed.FixedModule', () => {
             movieTheaterOrganization: null,
             order: null
         };
-        const req = {
-            __: () => {
-                return '';
-            }
-        };
         try {
-            yield FixedModule.createPrintReservations(req, inquiryModel);
+            yield FixedModule.createPrintReservations(inquiryModel);
         }
         catch (err) {
             assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);
@@ -438,13 +428,8 @@ describe('Fixed.FixedModule', () => {
                 }
             }
         };
-        const req = {
-            __: () => {
-                return '';
-            }
-        };
         try {
-            yield FixedModule.createPrintReservations(req, inquiryModel);
+            yield FixedModule.createPrintReservations(inquiryModel);
         }
         catch (err) {
             assert.strictEqual(err.errorType, ErrorUtilModule.ErrorType.Property);

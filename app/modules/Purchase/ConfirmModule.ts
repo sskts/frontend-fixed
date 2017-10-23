@@ -2,7 +2,6 @@
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
@@ -10,7 +9,7 @@ import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
-import { IMvtk, PurchaseModel } from '../../models/Purchase/PurchaseModel';
+import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as AwsCognitoService from '../../service/AwsCognitoService';
 import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
@@ -95,14 +94,11 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
     } catch (err) {
-        logger.error(
-            'SSKTS-APP:ConfirmModule reserveMvtk',
-            `in: ${seatInfoSyncIn}`,
-            `err: ${err}`
-        );
+        log('MVTKムビチケ着券失敗', err);
+        logger.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${JSON.stringify(seatInfoSyncIn)}`, `err: ${err}`);
         throw err;
     }
-    log('MVTKムビチケ着券');
+    log('MVTKムビチケ着券成功');
     // log('GMO', purchaseModel.getReserveAmount());
     // log('MVTK', purchaseModel.getMvtkPrice());
     // log('FULL', purchaseModel.getPrice());
@@ -167,7 +163,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
             res.json({ isSuccess: true });
             log('MVTKムビチケ着券削除');
         } catch (err) {
-            logger.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
+            logger.error('SSKTS-APP:ConfirmModule cancelMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
             throw err;
         }
     } catch (err) {
@@ -230,52 +226,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
             reserveTickets: purchaseModel.reserveTickets
         };
-        if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
-            // 本予約に必要な情報を印刷セッションへ
-            const updateReserveIn: COA.services.reserve.IUpdReserveArgs = {
-                theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
-                dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
-                titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
-                timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin,
-                tmpReserveNum: purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum,
-                reserveName: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
-                reserveNameJkana: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
-                telNum: purchaseModel.profile.telephone,
-                mailAddr: purchaseModel.profile.email,
-                reserveAmount: purchaseModel.getReserveAmount(),
-                listTicket: purchaseModel.reserveTickets.map((ticket) => {
-                    let mvtkTicket: IMvtk | undefined;
-                    if (purchaseModel.mvtk !== null) {
-                        mvtkTicket = purchaseModel.mvtk.find((value) => {
-                            return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
-                        });
-                    }
-
-                    return {
-                        ticketCode: ticket.ticketCode,
-                        stdPrice: ticket.stdPrice,
-                        addPrice: ticket.addPrice,
-                        disPrice: 0,
-                        salePrice: (ticket.stdPrice + ticket.addPrice),
-                        ticketCount: 1,
-                        mvtkAppPrice: ticket.mvtkAppPrice,
-                        seatNum: ticket.seatCode,
-                        addGlasses: (ticket.glasses) ? ticket.addPriceGlasses : 0,
-                        kbnEisyahousiki: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.eishhshkTyp : '00',
-                        mvtkNum: (mvtkTicket !== undefined) ? mvtkTicket.code : '',
-                        mvtkKbnDenshiken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.dnshKmTyp : '00',
-                        mvtkKbnMaeuriken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.znkkkytsknGkjknTyp : '00',
-                        mvtkKbnKensyu: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.ykknshTyp : '00',
-                        mvtkSalesPrice: (mvtkTicket !== undefined) ? Number(mvtkTicket.ykknInfo.knshknhmbiUnip) : 0
-
-                    };
-                })
-            };
-            req.session.fixed = {
-                updateReserveIn: updateReserveIn
-            };
-        } else {
+        if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed) {
             try {
                 const theater = await sasaki.service.place(options).findMovieTheater({
                     branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
@@ -363,8 +314,8 @@ export function getCompleteData(req: Request, res: Response): void {
         res.json({ err: null, result: req.session.complete });
     } catch (err) {
         const msg: string = (err.errorType === ErrorType.Expire) ? req.__('common.error.expire')
-        : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
-            : err.message;
+            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
+                : err.message;
         res.json({ err: msg, result: null });
     }
 }

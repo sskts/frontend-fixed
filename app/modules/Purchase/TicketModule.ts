@@ -66,7 +66,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 
         //券種取得
         res.locals.error = '';
-        res.locals.salesTickets = purchaseModel.getSalesTickets(req);
+        res.locals.salesTickets = purchaseModel.getSalesTickets();
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.TICKET_STATE;
         //セッション更新
@@ -167,16 +167,8 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                         seatNumber: reserveTicket.seatCode,
                         ticketInfo: {
                             ticketCode: reserveTicket.ticketCode,
-                            ticketName: reserveTicket.ticketName,
-                            ticketNameEng: reserveTicket.ticketNameEng,
-                            ticketNameKana: reserveTicket.ticketNameKana,
-                            stdPrice: reserveTicket.stdPrice,
-                            addPrice: reserveTicket.addPrice,
-                            disPrice: reserveTicket.disPrice,
-                            salePrice: reserveTicket.salePrice,
                             mvtkAppPrice: reserveTicket.mvtkAppPrice,
                             ticketCount: 1,
-                            seatNum: reserveTicket.seatCode,
                             addGlasses: reserveTicket.addPriceGlasses,
                             kbnEisyahousiki: reserveTicket.kbnEisyahousiki,
                             mvtkNum: reserveTicket.mvtkNum,
@@ -239,7 +231,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             const purchaseModel = new PurchaseModel(req.session.purchase);
             purchaseModel.reserveTickets = JSON.parse(req.body.reserveTickets);
             res.locals.error = err.message;
-            res.locals.salesTickets = purchaseModel.getSalesTickets(req);
+            res.locals.salesTickets = purchaseModel.getSalesTickets();
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
@@ -257,7 +249,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 return purchaseModel.reserveTickets[index].ticketCode;
             });
             res.locals.error = JSON.stringify(errors);
-            res.locals.salesTickets = purchaseModel.getSalesTickets(req);
+            res.locals.salesTickets = purchaseModel.getSalesTickets();
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });

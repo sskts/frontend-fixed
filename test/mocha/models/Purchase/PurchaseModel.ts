@@ -231,12 +231,7 @@ describe('Purchase.PurchaseModel', () => {
                 }
             ]
         });
-        const req: any = {
-            __: () => {
-                return '';
-            }
-        };
-        const salesTickets = purchaseModel.getSalesTickets(req);
+        const salesTickets = purchaseModel.getSalesTickets();
         const answer = 2;
         assert(salesTickets.length === answer);
     });
@@ -274,12 +269,7 @@ describe('Purchase.PurchaseModel', () => {
                 }
             ]
         });
-        const req: any = {
-            __: () => {
-                return '';
-            }
-        };
-        const salesTickets = purchaseModel.getSalesTickets(req);
+        const salesTickets = purchaseModel.getSalesTickets();
         const answer = 4;
         assert(salesTickets.length === answer);
     });

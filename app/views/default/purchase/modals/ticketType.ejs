@@ -3,17 +3,21 @@
         <div class="radius bg-white">
             <ul class="box radius bg-light-gray">
                 <% for (let ticket of salesTickets) { %>
+                <% 
+                    const ticketName = (ticket.glasses) ? ticket.ticketName + __('common.glasses') : ticket.ticketName;
+                    const ticketNote = (ticket.mvtkNum !== '') ? __('common.mvtk_code') + ticket.ticketNote : ticket.ticketNote;
+                %>
                 <li>
                     <dl class="d-table">
                         <dt class="d-td">
-                            <div class="mb-xx-small"><strong><%= ticket.ticketName %> ￥<%= formatPrice(ticket.salePrice) %></strong></div>
-                            <p class="small-x-text"><%= ticket.ticketNote %></p>
+                            <div class="mb-xx-small"><strong><%= ticketName %> ￥<%= formatPrice(ticket.salePrice) %></strong></div>
+                            <p class="small-x-text"><%= ticketNote %></p>
                         </dt>
                         <dd class="d-td width-small">
                             <div class="button blue-button ticket-type-select">
                                 <a href="#" 
                                 data-ticket-code="<%= ticket.ticketCode %>"
-                                data-ticket-name="<%= ticket.ticketName %>"
+                                data-ticket-name="<%= ticketName %>"
                                 data-sale-price="<%= ticket.salePrice %>"
                                 data-glasses="<%= ticket.glasses %>"
                                 data-add-price-glasses="<%= ticket.addPriceGlasses %>"

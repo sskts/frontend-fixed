@@ -8,6 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 購入確認
+ * @namespace Purchase.ConfirmModule
+ */
 const MVTK = require("@motionpicture/mvtk-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
@@ -105,10 +109,11 @@ function reserveMvtk(purchaseModel) {
             }
         }
         catch (err) {
-            logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `err: ${err}`);
+            log('MVTKムビチケ着券失敗', err);
+            logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${JSON.stringify(seatInfoSyncIn)}`, `err: ${err}`);
             throw err;
         }
-        log('MVTKムビチケ着券');
+        log('MVTKムビチケ着券成功');
         // log('GMO', purchaseModel.getReserveAmount());
         // log('MVTK', purchaseModel.getMvtkPrice());
         // log('FULL', purchaseModel.getPrice());
@@ -177,7 +182,7 @@ function cancelMvtk(req, res) {
                 log('MVTKムビチケ着券削除');
             }
             catch (err) {
-                logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
+                logger_1.default.error('SSKTS-APP:ConfirmModule cancelMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
                 throw err;
             }
         }
@@ -241,51 +246,7 @@ function purchase(req, res) {
                 seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
                 reserveTickets: purchaseModel.reserveTickets
             };
-            if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
-                // 本予約に必要な情報を印刷セッションへ
-                const updateReserveIn = {
-                    theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
-                    dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
-                    titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                    titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
-                    timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin,
-                    tmpReserveNum: purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum,
-                    reserveName: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
-                    reserveNameJkana: `${purchaseModel.profile.familyName}　${purchaseModel.profile.givenName}`,
-                    telNum: purchaseModel.profile.telephone,
-                    mailAddr: purchaseModel.profile.email,
-                    reserveAmount: purchaseModel.getReserveAmount(),
-                    listTicket: purchaseModel.reserveTickets.map((ticket) => {
-                        let mvtkTicket;
-                        if (purchaseModel.mvtk !== null) {
-                            mvtkTicket = purchaseModel.mvtk.find((value) => {
-                                return (value.code === ticket.mvtkNum && value.ticket.ticketCode === ticket.ticketCode);
-                            });
-                        }
-                        return {
-                            ticketCode: ticket.ticketCode,
-                            stdPrice: ticket.stdPrice,
-                            addPrice: ticket.addPrice,
-                            disPrice: 0,
-                            salePrice: (ticket.stdPrice + ticket.addPrice),
-                            ticketCount: 1,
-                            mvtkAppPrice: ticket.mvtkAppPrice,
-                            seatNum: ticket.seatCode,
-                            addGlasses: (ticket.glasses) ? ticket.addPriceGlasses : 0,
-                            kbnEisyahousiki: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.eishhshkTyp : '00',
-                            mvtkNum: (mvtkTicket !== undefined) ? mvtkTicket.code : '',
-                            mvtkKbnDenshiken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.dnshKmTyp : '00',
-                            mvtkKbnMaeuriken: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.znkkkytsknGkjknTyp : '00',
-                            mvtkKbnKensyu: (mvtkTicket !== undefined) ? mvtkTicket.ykknInfo.ykknshTyp : '00',
-                            mvtkSalesPrice: (mvtkTicket !== undefined) ? Number(mvtkTicket.ykknInfo.knshknhmbiUnip) : 0
-                        };
-                    })
-                };
-                req.session.fixed = {
-                    updateReserveIn: updateReserveIn
-                };
-            }
-            else {
+            if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed) {
                 try {
                     const theater = yield sasaki.service.place(options).findMovieTheater({
                         branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode

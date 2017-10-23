@@ -4,7 +4,6 @@
 import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
-import { Request } from 'express';
 import * as moment from 'moment';
 import * as MvtkUtilModule from '../../modules/Purchase/Mvtk/MvtkUtilModule';
 import * as UtilModule from '../../modules/Util/UtilModule';
@@ -587,9 +586,7 @@ export class PurchaseModel {
      * @param {Request} req
      * @returns {ISalesTicket[]}
      */
-    public getSalesTickets(
-        req: Request
-    ): ISalesTicket[] {
+    public getSalesTickets(): ISalesTicket[] {
         if (this.individualScreeningEvent === null
             || this.salesTickets === null) {
             return [];
@@ -615,7 +612,7 @@ export class PurchaseModel {
             if (ticket.addGlasses > 0) {
                 result.push({
                     ticketCode: ticket.ticketCode,
-                    ticketName: `${ticket.ticketName}${req.__('common.glasses')}`,
+                    ticketName: ticket.ticketName,
                     ticketNameKana: ticket.ticketNameKana,
                     ticketNameEng: ticket.ticketNameEng,
                     stdPrice: ticket.stdPrice,
@@ -644,7 +641,7 @@ export class PurchaseModel {
                     stdPrice: 0,
                     addPrice: mvtk.ticket.addPrice,
                     salePrice: mvtk.ticket.addPrice,
-                    ticketNote: req.__('common.mvtk_code') + mvtk.code,
+                    ticketNote: mvtk.code,
                     addPriceGlasses: mvtk.ticket.addPriceGlasses,
                     mvtkNum: mvtk.code,
                     glasses: false
@@ -653,13 +650,13 @@ export class PurchaseModel {
                 if (mvtk.ticket.addPriceGlasses > 0) {
                     mvtkTickets.push({
                         ticketCode: mvtk.ticket.ticketCode,
-                        ticketName: `${mvtk.ticket.ticketName}${req.__('common.glasses')}`,
+                        ticketName: mvtk.ticket.ticketName,
                         ticketNameKana: mvtk.ticket.ticketNameKana,
                         ticketNameEng: mvtk.ticket.ticketNameEng,
                         stdPrice: 0,
                         addPrice: mvtk.ticket.addPrice,
                         salePrice: (<number>mvtk.ticket.addPrice) + (<number>mvtk.ticket.addPriceGlasses),
-                        ticketNote: req.__('common.mvtk_code') + mvtk.code,
+                        ticketNote: mvtk.code,
                         addPriceGlasses: mvtk.ticket.addPriceGlasses,
                         mvtkNum: mvtk.code,
                         glasses: true
