@@ -110,7 +110,7 @@ function reserveMvtk(purchaseModel) {
         }
         catch (err) {
             log('MVTKムビチケ着券失敗', err);
-            logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', `in: ${JSON.stringify(seatInfoSyncIn)}`, `err: ${err}`);
+            logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', seatInfoSyncIn, err);
             throw err;
         }
         log('MVTKムビチケ着券成功');
@@ -182,7 +182,7 @@ function cancelMvtk(req, res) {
                 log('MVTKムビチケ着券削除');
             }
             catch (err) {
-                logger_1.default.error('SSKTS-APP:ConfirmModule cancelMvtk', `in: ${seatInfoSyncIn}`, `error: ${err}`);
+                logger_1.default.error('SSKTS-APP:ConfirmModule cancelMvtk', seatInfoSyncIn, err);
                 throw err;
             }
         }
