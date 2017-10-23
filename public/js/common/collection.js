@@ -51,11 +51,11 @@ function collection(args) {
  * @returns {number[]}
  */
 function getCurrentPosition() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (data) {
-            if (data.latitude !== null && data.longitude !== null) {
-                collections.locations = [data.coords.latitude, data.coords.longitude];
-            }
-        });
-    }
+    // if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(function (data) {
+    //         if (data.latitude !== null && data.longitude !== null) {
+    //             collections.locations = [data.coords.latitude, data.coords.longitude];
+    //         }
+    //     });
+    // }
 }
