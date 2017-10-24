@@ -40,7 +40,6 @@
             <dd>
                 <% for (let i = 0; i < inquiryModel.order.acceptedOffers.length; i++) { %>
                 <% const offer = inquiryModel.order.acceptedOffers[i] %>
-                <% if (offer.itemOffered.reservedTicket.coaTicketInfo.addGlasses > 0) { %>
                 <p><%= offer.itemOffered.reservedTicket.ticketedSeat.seatNumber %> <%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %></p>
                 <% } %>
             </dd>
