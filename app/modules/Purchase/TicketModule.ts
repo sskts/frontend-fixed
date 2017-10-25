@@ -237,24 +237,6 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
 
             return;
-        } else if (err.code === HTTPStatus.BAD_REQUEST
-            && err.errors
-            && err.errors.filter((error: any) => error.reason === 'Argument').length > 0) {
-            // 割引条件エラー
-            const purchaseModel = new PurchaseModel(req.session.purchase);
-            purchaseModel.reserveTickets = JSON.parse(req.body.reserveTickets);
-            const errors = err.errors.map((error: any) => {
-                const index = Number(error.argumentName.split('.')[1]);
-
-                return purchaseModel.reserveTickets[index].ticketCode;
-            });
-            res.locals.error = JSON.stringify(errors);
-            res.locals.salesTickets = purchaseModel.getSalesTickets();
-            res.locals.purchaseModel = purchaseModel;
-            res.locals.step = PurchaseModel.TICKET_STATE;
-            res.render('purchase/ticket', { layout: 'layouts/purchase/layout' });
-
-            return;
         } else if (err.code === HTTPStatus.NOT_FOUND
             && err.errors
             && err.errors.find((error: any) => error.entityName.indexOf('offers') > -1) !== undefined) {
