@@ -1,6 +1,14 @@
 <%- contentFor('script') %>
 <script src="/js/common/numerickey.js"></script>
 <script src="/js/inquiry/login.js"></script>
+<%- contentFor('style') %>
+<style>
+.navigation .buttons .ticketing-button {
+    display: none;
+}
+</style>
+<%- contentFor('prev') %>
+/
 <%- contentFor('body') %>
 <%- include('../layouts/inquiry/steps', {step: 0}) %>
 <div class="inquiry-confirm">
@@ -12,22 +20,22 @@
             <dl class="mb-small">
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="reserve_num" maxlength="8" autocomplete="off" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= reserveNum %>" class="numerickeybord" readonly="readonly">
+                    <input type="text" pattern="\d*" name="reserveNum" maxlength="8" autocomplete="off" placeholder="<%- __('common.placeholder.purchase_number') %>" value="<%= inquiryModel.login.reserveNum %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
             <dl class="mb-large">
                 <dt><%- __('common.tel_num') %></dt>
                 <dd>
-                    <input type="text" pattern="\d*" name="tel_num" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= telNum %>" class="numerickeybord" readonly="readonly">
+                    <input type="text" pattern="\d*" name="telephone" autocomplete="off" placeholder="<%- __('common.placeholder.tel') %>" value="<%= inquiryModel.login.telephone %>" class="numerickeybord" readonly="readonly">
                 </dd>
             </dl>
         </div>
 
-        <% if (theaterCode) { %>
-            <input type="hidden" name="theater_code" value="<%= theaterCode %>">
+        <% if (inquiryModel.movieTheaterOrganization.location.branchCode) { %>
+            <input type="hidden" name="theaterCode" value="<%= inquiryModel.movieTheaterOrganization.location.branchCode %>">
         <% } %>
         
-        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('inquiry.login.next') %></button></div>
+        <div class="button middle-button next-button blue-button"><button class="center icon-triangle-white" type="submit"><%- __('inquiry.login.next') %></button></div>
     </form>
     <input type="hidden" name="validation" value="<%= JSON.stringify(error) %>">
 </div>

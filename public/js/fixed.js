@@ -34,6 +34,10 @@ $(function () {
     navigationInit();
     // 自動TOP遷移
     autoTop();
+    $(document).on('click', '.ticketing-button a', function (event) {
+        event.preventDefault();
+        location.href = '/inquiry/login?theater=' + window.config.theater;
+    })
 });
 
 /**
@@ -43,7 +47,7 @@ $(function () {
  */
 function navigationInit() {
     if ($('.purchase-seat, .purchase-ticket, .purchase-input, .purchase-confirm').length > 0) {
-        $('.navigation .restart-button a').attr({
+        $('.navigation .top-button a').attr({
             href: '#',
             'data-modal': 'backToTop'
         });
@@ -56,7 +60,7 @@ function navigationInit() {
  * @returns {void}
  */
 function changeViewport() {
-    var base = 1366;
+    var base = 1024;
     var ua = navigator.userAgent.toLowerCase();
     var isiOS = (ua.indexOf('iphone') > -1) || (ua.indexOf('ipod') > -1) || (ua.indexOf('ipad') > -1);
     var width = (isiOS) ? document.documentElement.clientWidth / base : window.outerWidth / base;
@@ -79,7 +83,22 @@ function fixedInit() {
             location.href = '/stop';
             return;
         }
-        window.config = JSON.parse(data);
+        var parseData = JSON.parse(data);
+        if (parseData.device_id) {
+            // 一時対応
+            var changeData = {
+                deviceId: parseData.device_id,
+                givenName: parseData.first_name_hira,
+                familyName: parseData.last_name_hira,
+                email: parseData.mail_addr,
+                printer: parseData.printer,
+                theater: parseData.theater
+            }
+            localStorage.setItem('config', JSON.stringify(changeData));
+            window.config = changeData;
+        } else {
+            window.config = JSON.parse(data);
+        }
     }
 }
 
@@ -89,7 +108,7 @@ function fixedInit() {
  * @return {void}
  */
 function autoTop() {
-    if ($('.index').length === 1) {
+    if ($('.purchase-performances').length === 1) {
         return;
     }
     var controlTime = 1000 * 60 * 5;

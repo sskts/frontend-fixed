@@ -7,130 +7,120 @@ import * as COA from '@motionpicture/coa-service';
 import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import MvtkInputForm from '../../../forms/Purchase/Mvtk/MvtkInputForm';
 import logger from '../../../middlewares/logger';
-import * as PurchaseSession from '../../../models/Purchase/PurchaseModel';
+import { IMvtk, PurchaseModel } from '../../../models/Purchase/PurchaseModel';
 import * as MvtkUtilModule from '../../Purchase/Mvtk/MvtkUtilModule';
-import * as ErrorUtilModule from '../../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../../Util/ErrorUtilModule';
 import * as UtilModule from '../../Util/UtilModule';
 const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 
 /**
  * ムビチケ券入力ページ表示
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
+export function render(req: Request, res: Response, next: NextFunction): void {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        const purchaseModel = new PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // ムビチケセッション削除
         delete req.session.mvtk;
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.transactionId = purchaseModel.transactionMP.id;
-        res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
         res.locals.error = null;
-        res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+        res.locals.purchaseModel = purchaseModel;
+        res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
-        next(error);
+        next(err);
     }
 }
 
 /**
- * 券種選択
+ * ムビチケ認証
  * @memberof Purchase.Mvtk.MvtkInputModule
- * @function select
+ * @function auth
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
-// tslint:disable-next-line:cyclomatic-complexity
-export async function select(req: Request, res: Response, next: NextFunction): Promise<void> {
+// tslint:disable-next-line:max-func-body-length cyclomatic-complexity
+export async function auth(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
 
         return;
     }
     try {
-        if (req.session.purchase === undefined) throw ErrorUtilModule.ERROR_EXPIRE;
-        const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.isExpired()) throw ErrorUtilModule.ERROR_EXPIRE;
-        if (purchaseModel.transactionMP === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.reserveSeats === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performance === null) throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null) throw ErrorUtilModule.ERROR_PROPERTY;
+        const purchaseModel = new PurchaseModel(req.session.purchase);
+        if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        if (purchaseModel.transaction === null
+            || purchaseModel.individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         //取引id確認
-        if (req.body.transaction_id !== purchaseModel.transactionMP.id) {
-            throw ErrorUtilModule.ERROR_ACCESS;
-        }
+        if (req.body.transactionId !== purchaseModel.transaction.id) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         MvtkInputForm(req);
         const validationResult = await req.getValidationResult();
-        if (!validationResult.isEmpty()) throw ErrorUtilModule.ERROR_ACCESS;
+        if (!validationResult.isEmpty()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
         const mvtkService = MVTK.createPurchaseNumberAuthService();
-        const inputInfo: InputInfo[] = JSON.parse(req.body.mvtk);
+        const inputInfoList: InputInfo[] = JSON.parse(req.body.mvtk);
+        mvtkValidation(inputInfoList);
+        log('ムビチケ券検証');
         const purchaseNumberAuthIn = {
             kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
             jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID, //情報種別コード
-            knyknrNoInfoIn: inputInfo.map((value) => {
+            knyknrNoInfoIn: inputInfoList.map((value) => {
                 return {
                     KNYKNR_NO: value.code, //購入管理番号
                     PIN_CD: value.password // PINコード
                 };
             }),
-            skhnCd: MvtkUtilModule.getfilmCode(
-                purchaseModel.performanceCOA.titleCode,
-                purchaseModel.performanceCOA.titleBranchNum), // 作品コード
-            stCd: MvtkUtilModule.getSiteCode(purchaseModel.performance.attributes.theater.id), // サイトコード
-            jeiYmd: moment(purchaseModel.performance.attributes.day).format('YYYY/MM/DD') //上映年月日
+            skhnCd: purchaseModel.getMvtkfilmCode(), // 作品コード
+            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
+            jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
         };
         let purchaseNumberAuthResults;
         try {
             purchaseNumberAuthResults = await mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
             log('ムビチケ認証', purchaseNumberAuthResults);
         } catch (err) {
-            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
-            logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberError', err);
+            logger.error(
+                'SSKTS-APP:MvtkInputModule.select',
+                `in: ${purchaseNumberAuthIn}`,
+                `err: ${err}`
+            );
             throw err;
         }
-        if (purchaseNumberAuthResults === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
         const validationList: string[] = [];
         // ムビチケセッション作成
-        const mvtkList: PurchaseSession.IMvtk[] = [];
+        const mvtkList: IMvtk[] = [];
         for (const purchaseNumberAuthResult of purchaseNumberAuthResults) {
             for (const info of purchaseNumberAuthResult.ykknInfo) {
-                const input = inputInfo.find((value) => {
+                const input = inputInfoList.find((value) => {
                     return (value.code === purchaseNumberAuthResult.knyknrNo);
                 });
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
                 const ticket = await COA.services.master.mvtkTicketcode({
-                    theater_code: purchaseModel.performance.attributes.theater.id,
-                    kbn_denshiken: purchaseNumberAuthResult.dnshKmTyp,
-                    kbn_maeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
-                    kbn_kensyu: info.ykknshTyp,
-                    sales_price: Number(info.knshknhmbiUnip),
-                    app_price: Number(info.kijUnip),
-                    kbn_eisyahousiki: info.eishhshkTyp,
-                    title_code: purchaseModel.performanceCOA.titleCode,
-                    title_branch_num: purchaseModel.performanceCOA.titleBranchNum
+                    theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
+                    kbnDenshiken: purchaseNumberAuthResult.dnshKmTyp,
+                    kbnMaeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
+                    kbnKensyu: info.ykknshTyp,
+                    salesPrice: Number(info.knshknhmbiUnip),
+                    appPrice: Number(info.kijUnip),
+                    kbnEisyahousiki: info.eishhshkTyp,
+                    titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                    titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
                 });
                 log('ムビチケチケットコード取得', ticket);
                 const validTicket = {
@@ -155,34 +145,42 @@ export async function select(req: Request, res: Response, next: NextFunction): P
         }
         // 認証エラーバリデーション
         if (validationList.length > 0) {
-            res.locals.error = JSON.stringify(validationList);
             log('認証エラー');
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
             logger.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
-            throw ErrorUtilModule.ERROR_VALIDATION;
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
         }
         req.session.mvtk = mvtkList;
         res.redirect('/purchase/mvtk/confirm');
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_VALIDATION) {
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.reserveSeats === null || purchaseModel.transactionMP === null) {
-                next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
-
-                return;
-            }
+        if (err.errorType === ErrorType.Validation) {
+            const purchaseModel = new PurchaseModel(req.session.purchase);
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
-            res.locals.transactionId = purchaseModel.transactionMP.id;
-            res.locals.reserveSeatLength = purchaseModel.reserveSeats.list_tmp_reserve.length;
-            res.locals.step = PurchaseSession.PurchaseModel.TICKET_STATE;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.TICKET_STATE;
+            res.locals.error = err.errors[0].message;
             res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
 
             return;
         }
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
-        next(error);
+        next(err);
+    }
+}
+
+/**
+ * ムビチケ券検証
+ * @function mvtkValidation
+ * @param {InputInfo[]} inputInfoList
+ */
+function mvtkValidation(inputInfoList: InputInfo[]): void {
+    const codeList = inputInfoList.map((inputInfo) => {
+        return inputInfo.code;
+    });
+    const validationList = codeList.filter((code, index) => {
+        return codeList.indexOf(code) === index && index !== codeList.lastIndexOf(code);
+    });
+    if (validationList.length > 0) {
+        throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
     }
 }
 

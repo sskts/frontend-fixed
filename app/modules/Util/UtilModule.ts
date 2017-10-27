@@ -2,7 +2,6 @@
  * 共通
  * @namespace Util.UtilModule
  */
-
 import { NextFunction, Request, Response } from 'express';
 import * as moment from 'moment';
 /**
@@ -21,7 +20,7 @@ export function setLocals(req: Request, res: Response, next: NextFunction): void
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
-    res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
+    res.locals.appSiteUrl = process.env.APP_SITE_URL;
     // クッキーからアプリ判定
     res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();
@@ -44,17 +43,17 @@ export function isApp(req: Request): boolean {
  * 時間フォーマット
  * @memberof Util.UtilModule
  * @function timeFormat
- * @param {string} str
+ * @param {string} referenceDate 基準日
+ * @param {Date} screeningTime 時間
  * @returns {string}
  */
-export function timeFormat(str: string): string {
-    if (typeof str !== 'string') {
-        return '';
-    }
-    const start = 2;
-    const end = 4;
+export function timeFormat(screeningTime: Date, referenceDate: string) {
+    const HOUR = 60;
+    const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS['02']);
+    const minutes = moment(screeningTime).format('mm');
 
-    return `${str.slice(0, start)}:${str.slice(start, end)}`;
+    return `${hour}:${minutes}`;
 }
 
 /**
@@ -65,9 +64,6 @@ export function timeFormat(str: string): string {
  * @returns {string}
  */
 export function escapeHtml(str: string): string {
-    if (typeof str !== 'string') {
-        return str;
-    }
     const change = (match: string): string => {
         const changeList: any = {
             '&': '&amp;',
@@ -93,30 +89,6 @@ export function escapeHtml(str: string): string {
  */
 export function formatPrice(price: number): string {
     return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
-}
-
-/**
- * パフォーマンスID取得
- * @memberof Util.UtilModule
- * @function getPerformanceId
- * @param {Object} args
- * @param {string} args.theaterCode
- * @param {string} args.day
- * @param {string} args.titleCode
- * @param {string} args.titleBranchNum
- * @param {string} args.screenCode
- * @param {string} args.timeBegin
- * @returns {string}
- */
-export function getPerformanceId(args: {
-    theaterCode: string,
-    day: string,
-    titleCode: string,
-    titleBranchNum: string,
-    screenCode: string,
-    timeBegin: string
-}): string {
-    return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
 }
 
 /**
@@ -164,25 +136,49 @@ export async function getEmailTemplate(res: Response, file: string, locals: {}):
 }
 
 /**
- * 2桁
  * @memberof Util.UtilModule
- * @const DIGITS_02
+ * @enum DIGITS
  * @type number
  */
-export const DIGITS_02 = -2;
+export enum DIGITS {
+    '02' = -2,
+    '03' = -3,
+    '08' = -8
+}
 
 /**
- * 3桁
+ * 表示
  * @memberof Util.UtilModule
- * @const DIGITS_03
- * @type number
+ * @enum VIEW
  */
-export const DIGITS_03 = -3;
+export enum VIEW {
+    /**
+     * Default
+     */
+    Default = 'default',
+    /**
+     * 券売機
+     */
+    Fixed = 'fixed'
+}
 
 /**
- * 8桁
+ * 環境
  * @memberof Util.UtilModule
- * @const DIGITS_08
- * @type number
+ * @enum ENV
+ * @type string
  */
-export const DIGITS_08 = -8;
+export enum ENV {
+    /**
+     * 開発
+     */
+    Development = 'development',
+    /**
+     * テスト
+     */
+    Test = 'test',
+    /**
+     * 本番
+     */
+    Production = 'production'
+}

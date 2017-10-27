@@ -1,26 +1,30 @@
-.icon-triangle-01 {
-    &:before {
-        content: '';
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        display: block;
-        width: 12px;
-        height: 12px;
-        background-image: url(/images/fixed/icon/icon_triangle_01.svg);
-    }
-}
-
-.icon-triangle-02 {
+.icon-triangle-white {
     &:before {
         content: '';
         position: absolute;
         bottom: 10px;
         right: 10px;
         display: block;
-        width: 12px;
-        height: 12px;
-        background-image: url(/images/fixed/icon/icon_triangle_02.svg);
+        width: 16px;
+        height: 16px;
+        background-size: 16px 16px; 
+        background-image: url(/images/fixed/icon/icon_triangle_white.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-triangle-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: block;
+        width: 16px;
+        height: 16px;
+        background-size: 16px 16px; 
+        background-image: url(/images/fixed/icon/icon_triangle_glay.svg);
+        background-repeat: no-repeat;
     }
 }
 
@@ -36,34 +40,118 @@
         height: 12px;
         background-size: 17px 12px;
         background-image: url(/images/fixed/icon/icon_select.png);
+        background-repeat: no-repeat;
     }
 }
 
-.icon-prev {
+.icon-prev-blue {
     &:before {
         content: '';
         position: absolute;
-        top: 30px;
+        top: 20px;
         left: 50%;
-        margin-left: -15.5px;
+        margin-left: -12.5px;
         display: block;
-        width: 31px;
-        height: 29px;
-        background-image: url(/images/fixed/icon/icon_prev.svg);
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_prev_blue.svg);
+        background-repeat: no-repeat;
     }
 }
 
-.icon-top {
+.icon-prev-gray {
     &:before {
         content: '';
         position: absolute;
-        top: 30px;
+        top: 20px;
         left: 50%;
-        margin-left: -15.5px;
+        margin-left: -12.5px;
         display: block;
-        width: 31px;
-        height: 31px;
-        background-image: url(/images/fixed/icon/icon_top.svg);
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_prev_gray.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-top-blue {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_top_blue.svg);
+        background-repeat: no-repeat;
+    }
+}
+.icon-top-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_top_gray.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-ticketing-white {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        margin-top: -12px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_ticketing_white.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-ticketing-blue {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_ticketing_blue.svg);
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-ticketing-gray {
+    &:before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        margin-left: -12.5px;
+        display: block;
+        width: 25px;
+        height: 24px;
+        background-size: 25px 24px;
+        background-image: url(/images/fixed/icon/icon_ticketing_gray.svg);
+        background-repeat: no-repeat;
     }
 }
 
@@ -74,6 +162,7 @@
         top: 50%;
         right: 20px;
         background-image: url(/images/fixed/icon/icon_add_white.svg);
+        background-repeat: no-repeat;
         background-size: 20px;
         width: 20px;
         height: 20px;
@@ -88,6 +177,7 @@
         top: 15px;
         left: 50%;
         background-image: url(/images/fixed/icon/icon_zoom_out.svg);
+        background-repeat: no-repeat;
         background-size: 22px 22px;
         width: 22px;
         height: 22px;
@@ -95,3 +185,56 @@
         margin-left: -7.5px;
     }
 }
+
+.icon-morning-white {
+    &:before {
+        content: '';
+        position: absolute;
+        background-image: url(/images/fixed/icon/icon_morning_white.svg);
+        background-repeat: no-repeat;
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-late-white {
+    &:before {
+        content: '';
+        position: absolute;
+        background-image: url(/images/fixed/icon/icon_late_white.svg);
+        background-repeat: no-repeat;
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-morning-black {
+    &:before {
+        content: '';
+        position: absolute;
+        background-image: url(/images/fixed/icon/icon_morning_black.svg);
+        background-repeat: no-repeat;
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+    }
+}
+
+.icon-late-black {
+    &:before {
+        content: '';
+        position: absolute;
+        background-image: url(/images/fixed/icon/icon_late_black.svg);
+        background-repeat: no-repeat;
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        background-repeat: no-repeat;
+    }
+}
+

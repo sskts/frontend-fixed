@@ -4,10 +4,15 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
+const SignInModule = require("../modules/Auth/SignInModule");
 const ScreenModule = require("../modules/Screen/ScreenModule");
+const UtilModule = require("../modules/Util/UtilModule");
 const rootRouter = express.Router();
-if (process.env.VIEW_TYPE === undefined
-    && (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed) {
+    rootRouter.get('/signIn', SignInModule.index);
+}
+if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed
+    && (process.env.NODE_ENV === UtilModule.ENV.Development || process.env.NODE_ENV === UtilModule.ENV.Test)) {
     // index
     rootRouter.get('/', (_, res) => { res.redirect('/purchase/performances'); });
     // 再起動

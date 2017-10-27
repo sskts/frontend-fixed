@@ -2,65 +2,58 @@
  * 照会
  * @namespace InquiryModule
  */
-
-import * as COA from '@motionpicture/coa-service';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
-import * as MP from '../../../libs/MP';
+import * as HTTPStatus from 'http-status';
 import LoginForm from '../../forms/Inquiry/LoginForm';
-import * as InquirySession from '../../models/Inquiry/InquiryModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
-import * as UtilModule from '../Util/UtilModule';
+import { AuthModel } from '../../models/Auth/AuthModel';
+import { InquiryModel } from '../../models/Inquiry/InquiryModel';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 const log = debug('SSKTS:InquiryModule');
 
 /**
  * 照会認証ページ表示
  * @memberof InquiryModule
- * @function login
+ * @function loginRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function login(req: Request, res: Response, next: NextFunction): Promise<void> {
-    if (req.query.theater === undefined) {
+export async function loginRender(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
+    if (theaterCode === undefined) {
         const status = 404;
         res.status(status).render('error/notFound');
 
         return;
     }
     try {
-        res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
-        res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
-        res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
-        res.locals.telNum = '';
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        const inquiryModel = new InquiryModel();
+        // 劇場のショップを検索
+        inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
+            branchCode: theaterCode
+        });
+        log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+        inquiryModel.login = {
+            reserveNum: (req.query.reserve !== undefined) ? req.query.reserve : '',
+            telephone: ''
+        };
+        res.locals.inquiryModel = inquiryModel;
         res.locals.error = null;
         res.render('inquiry/login');
 
         return;
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
-}
-
-/**
- * 劇場URL取得
- * @memberof InquiryModule
- * @function getPortalTheaterSite
- * @param {string} id
- * @returns {Promise<string>}
- */
-async function getPortalTheaterSite(id: string): Promise<string> {
-    const theater = await MP.getTheater(id);
-    const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
-    if (website === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-
-    return website.url;
 }
 
 /**
@@ -72,70 +65,66 @@ async function getPortalTheaterSite(id: string): Promise<string> {
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function auth(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function inquiryAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined) throw ErrorUtilModule.ERROR_PROPERTY;
-        const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
         LoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
-            inquiryModel.transactionId = await MP.makeInquiry({
-                inquiry_theater: req.body.theater_code, // 施設コード
-                inquiry_id: Number(req.body.reserve_num), // 座席チケット購入番号
-                inquiry_pass: req.body.tel_num // 電話番号
+            const inquiryModel = new InquiryModel();
+            inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                branchCode: req.body.theaterCode
             });
-            if (inquiryModel.transactionId === null) {
-                res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
-                res.locals.theaterCode = req.body.theater_code;
-                res.locals.reserveNum = req.body.reserve_num;
-                res.locals.telNum = req.body.tel_num;
+            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+            if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            inquiryModel.login = {
+                reserveNum: req.body.reserveNum,
+                telephone: req.body.telephone
+            };
+            inquiryModel.order = await sasaki.service.order(options).findByOrderInquiryKey({
+                telephone: inquiryModel.login.telephone,
+                confirmationNumber: Number(inquiryModel.login.reserveNum),
+                theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+            });
+            log('照会情報', inquiryModel.order);
+            if (inquiryModel.order === null) {
+                res.locals.inquiryModel = inquiryModel;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
 
                 return;
             }
-            log('MP取引Id取得', inquiryModel.transactionId);
-            inquiryModel.login = req.body;
-            inquiryModel.stateReserve = await COA.services.reserve.stateReserve({
-                theater_code: req.body.theater_code, // 施設コード
-                reserve_num: req.body.reserve_num, // 座席チケット購入番号
-                tel_num: req.body.tel_num // 電話番号
-            });
-            log('COA照会情報取得', inquiryModel.stateReserve);
-            if (inquiryModel.stateReserve === null) throw ErrorUtilModule.ERROR_PROPERTY;
-            const performanceId = UtilModule.getPerformanceId({
-                theaterCode: req.body.theater_code,
-                day: inquiryModel.stateReserve.date_jouei,
-                titleCode: inquiryModel.stateReserve.title_code,
-                titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-                screenCode: inquiryModel.stateReserve.screen_code,
-                timeBegin: inquiryModel.stateReserve.time_begin
-            });
-            log('パフォーマンスID取得', performanceId);
-            inquiryModel.performance = await MP.getPerformance(performanceId);
-            log('MPパフォーマンス取得');
-            req.session.inquiry = inquiryModel.toSession();
+            inquiryModel.save(req.session);
             //購入者内容確認へ
-            res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
+            res.redirect(
+                `/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.movieTheaterOrganization.location.branchCode}`
+            );
 
             return;
         } else {
-            res.locals.portalTheaterSite = await getPortalTheaterSite(req.query.theater);
-            res.locals.theaterCode = req.body.theater_code;
-            res.locals.reserveNum = req.body.reserve_num;
-            res.locals.telNum = req.body.tel_num;
+            const inquiryModel = new InquiryModel();
+            inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                branchCode: req.body.theaterCode
+            });
+            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+            if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            inquiryModel.login = {
+                reserveNum: req.body.reserveNum,
+                telephone: req.body.telephone
+            };
+            res.locals.inquiryModel = inquiryModel;
             res.locals.error = validationResult.mapped();
             res.render('inquiry/login');
 
             return;
         }
     } catch (err) {
-        const error = (err instanceof Error)
-            ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-            : new ErrorUtilModule.CustomError(err, undefined);
-        next(error);
-
-        return;
+        next(err);
     }
 }
 
@@ -148,11 +137,11 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
  */
 function getInquiryError(req: Request) {
     return {
-        reserve_num: {
-            parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+        reserveNum: {
+            parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
-        tel_num: {
-            parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+        telephone: {
+            parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
 }
@@ -160,41 +149,29 @@ function getInquiryError(req: Request) {
 /**
  * 照会確認ページ表示
  * @memberof InquiryModule
- * @function index
+ * @function confirmRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-export function index(req: Request, res: Response, next: NextFunction): void {
-    if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+export function confirmRender(req: Request, res: Response, next: NextFunction): void {
+    try {
+        if (req.session === undefined
+            || req.query.theater === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session.inquiry === undefined) {
+            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
 
-        return;
-    }
-    if (req.query.theater === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+            return;
+        }
 
-        return;
-    }
-    const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
-    if (inquiryModel.stateReserve !== null
-        && inquiryModel.performance !== null
-        && inquiryModel.login !== null
-        && inquiryModel.transactionId !== null) {
-        res.locals.theaterCode = inquiryModel.performance.attributes.theater.id;
-        res.locals.stateReserve = inquiryModel.stateReserve;
-        res.locals.performance = inquiryModel.performance;
-        res.locals.login = inquiryModel.login;
-        res.locals.transactionId = inquiryModel.transactionId;
+        const inquiryModel = new InquiryModel(req.session.inquiry);
+        res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;
         res.render('inquiry/index');
 
         return;
-    } else {
-        //照会認証ページへ
-        res.redirect(`/inquiry/login?theater=${req.query.theater}&transactionId=${req.params.transactionId}`);
-
-        return;
+    } catch (err) {
+        next(err);
     }
 }

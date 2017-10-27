@@ -1,17 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const log = debug('SSKTS:Error.ErrorModule');
 /**
  * Not Found
  * @memberof ErrorModule
- * @function notFound
+ * @function notFoundRender
  * @param {Request} req
  * @param {Response} res
  * @returns {void}
  */
-function notFound(req, res) {
+function notFoundRender(req, res, _) {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -21,61 +22,59 @@ function notFound(req, res) {
     }
     return;
 }
-exports.notFound = notFound;
+exports.notFoundRender = notFoundRender;
 /**
  * エラーページ
  * @memberof ErrorModule
- * @function index
+ * @function errorRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(err, req, res, _) {
+function errorRender(err, req, res, _) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
-    if (err instanceof ErrorUtilModule.CustomError) {
+    if (err.hasOwnProperty('errors')) {
         switch (err.code) {
-            case ErrorUtilModule.ERROR_PROPERTY:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.property');
-                err.message = 'ERROR_PROPERTY';
+            case HTTPStatus.BAD_REQUEST:
+                msg = req.__('common.error.badRequest');
                 break;
-            case ErrorUtilModule.ERROR_ACCESS:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.access');
-                err.message = 'ERROR_ACCESS';
+            case HTTPStatus.UNAUTHORIZED:
+                msg = req.__('common.error.unauthorized');
                 break;
-            case ErrorUtilModule.ERROR_VALIDATION:
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.validation');
-                err.message = 'ERROR_VALIDATION';
+            case HTTPStatus.FORBIDDEN:
+                msg = req.__('common.error.forbidden');
                 break;
-            case ErrorUtilModule.ERROR_EXPIRE:
-                // 期限切れのときもstatusが400になっている。200に変更するべき？
-                status = HTTPStatus.BAD_REQUEST;
-                msg = req.__('common.error.expire');
-                err.message = 'ERROR_EXPIRE';
+            case HTTPStatus.NOT_FOUND:
+                msg = req.__('common.error.notFound');
+                break;
+            case HTTPStatus.SERVICE_UNAVAILABLE:
+                msg = req.__('common.error.serviceUnavailable');
+                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
             default:
-                status = HTTPStatus.INTERNAL_SERVER_ERROR;
-                msg = err.message;
+                msg = req.__('common.error.internalServerError');
+                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
                 break;
         }
+        status = err.code;
     }
-    if (req.session !== undefined) {
-        delete req.session.purchase;
-        delete req.session.mvtk;
+    else {
+        log('Error');
+        status = HTTPStatus.INTERNAL_SERVER_ERROR;
+        msg = req.__('common.error.internalServerError');
+        logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
     }
+    deleteSession(req.session);
     /**
      * エラーメッセージ
-     * ERROR_PROPERTY: プロパティが無い
-     * ERROR_ACCESS: 不正なアクセス
-     * ERROR_VALIDATION: 不正な値のPOST
-     * ERROR_EXPIRE: 有効期限切れ
-     * etc: 外部モジュールエラー
+     * Property: プロパティが無い
+     * Access: 不正なアクセス
+     * Validation: 不正な値のPOST
+     * Expire: 有効期限切れ
+     * ExternalModule: 外部モジュールエラー
      */
-    logger_1.default.error('SSKTS-APP:ErrorModule.index', status, err);
     if (req.xhr) {
         res.status(status).send({ error: 'Something failed.' });
     }
@@ -86,4 +85,18 @@ function index(err, req, res, _) {
     }
     return;
 }
-exports.index = index;
+exports.errorRender = errorRender;
+/**
+ * セッション削除
+ * @function deleteSession
+ * @param {Express.Session | undefined} session
+ */
+function deleteSession(session) {
+    if (session !== undefined) {
+        delete session.purchase;
+        delete session.mvtk;
+        delete session.complete;
+        delete session.auth;
+    }
+}
+exports.deleteSession = deleteSession;

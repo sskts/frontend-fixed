@@ -7,7 +7,7 @@
 
     <form method="post">
         <% if (purchaseNoList.length > 0) { %>
-        <ul class="box radius bg-light-gray mb-medium mvtk-lists">
+        <ul class="box radius bg-light-gray mb-middle mvtk-lists">
             <% for (const purchaseNo of purchaseNoList) { %>
             <li>
                 <dl class="d-table">
@@ -15,7 +15,7 @@
                     <dd class="d-td width-medium">
                         <% for (const mvtkTicket of mvtk) { %>
                         <% if (mvtkTicket.code === purchaseNo) { %>
-                        <p><strong><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
+                        <p><strong><%= mvtkTicket.ticket.ticketName %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
                         <% } %>
                         <% } %>
                     </dd>
@@ -24,7 +24,7 @@
             <% } %>
         </ul>
         <% } else { %>
-        <div class="box radius bg-light-gray mb-medium">
+        <div class="box radius bg-light-gray mb-middle">
             <p><%- __('purchase.mvtk.confirm.not_ticket') %></p>
         </div>
         <% } %>
@@ -34,7 +34,7 @@
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/mvtk"><%- __('purchase.mvtk.confirm.prev') %></a></div>
         </div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 <%- include('../../layouts/siteSeal') %>
 </div>

@@ -4,8 +4,9 @@
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 const i18n = require("i18n");
+const UtilModule = require("../modules/Util/UtilModule");
 let directory = `${__dirname}/../locales/default`;
-if (process.env.VIEW_TYPE === 'fixed') {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
     directory = `${__dirname}/../locales/fixed`;
 }
 i18n.configure({

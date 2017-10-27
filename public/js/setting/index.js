@@ -37,24 +37,24 @@ $(function () {
         // 初期化
         window.starThermalPrint.init({
             ipAddress: config.printer,
-            deviceId: config.device_id,
+            deviceId: config.deviceId,
             timeout: 10000
         }).then(function () {
             // 印刷
             var zp = function (num) { return (parseInt(num, 10) < 10) ? '0' + num : num; };
             var dateObj = new Date();
             var reservations = [{
-                reserve_no: '0000',
-                film_name_ja: 'テスト',
-                film_name_en: 'TEST',
-                theater_name: 'テスト劇場',
-                screen_name: 'テストスクリーン',
-                performance_day: dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()),
-                performance_start_time: zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()),
-                seat_code: 'Ａ－１',
-                ticket_name: 'テスト',
-                ticket_sale_price: '0',
-                qr_str: 'TEST'
+                reserveNo: '0000',
+                filmNameJa: 'テスト',
+                filmNameEn: 'test',
+                theaterName: 'テスト劇場',
+                screenName: 'テストスクリーン',
+                performanceDay: dateObj.getFullYear() + '/' + zp(dateObj.getMonth() + 1) + '/' + zp(dateObj.getDate()),
+                performanceStartTime: zp(dateObj.getHours()) + ':' + zp(dateObj.getMinutes()),
+                seatCode: 'Ａ－１',
+                ticketName: 'テスト',
+                ticketSalePrice: '0',
+                qrStr: 'test'
             }];
 
             // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
@@ -95,10 +95,10 @@ function pageInit() {
 function saveConfig() {
     var data = {
         theater: $('select[name=theater]').val(),
-        device_id: $('input[name=device_id]').val(),
-        last_name_hira: $('input[name=last_name_hira]').val(),
-        first_name_hira: $('input[name=first_name_hira]').val(),
-        mail_addr: $('input[name=mail_addr]').val(),
+        deviceId: $('input[name=deviceId]').val(),
+        givenName: $('input[name=givenName]').val(),
+        familyName: $('input[name=familyName]').val(),
+        email: $('input[name=email]').val(),
         printer: $('input[name=printer]').val(),
     }
     localStorage.setItem('config', JSON.stringify(data));
@@ -120,10 +120,10 @@ function validation() {
     var TEL_MAX_LENGTH = 11;
     var TEL_MIN_LENGTH = 9;
     var validationList = [
-        { name: 'device_id', label: locales.label.device_id, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+$/, locales.validation.is_alphanumeric_characters] },
-        { name: 'last_name_hira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-        { name: 'first_name_hira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
-        { name: 'mail_addr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
+        { name: 'deviceId', label: locales.label.device_id, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+$/, locales.validation.is_alphanumeric_characters] },
+        { name: 'lastNameHira', label: locales.label.last_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+        { name: 'firstNameHira', label: locales.label.first_name_hira, required: true, maxLength: NAME_MAX_LENGTH, regex: [/^[ぁ-ゞー]+$/, locales.validation.is_hira] },
+        { name: 'mailAddr', label: locales.label.mail_addr, required: true, maxLength: MAIL_MAX_LENGTH, regex: [/^[\-0-9a-zA-Z\.\+_]+@[\-0-9a-zA-Z\.\+_]+\.[a-zA-Z]{2,}$/, locales.validation.is_email] },
         { name: 'printer', label: locales.label.printer, required: true, regex: [/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/, locales.validation.is_ip] }
     ];
 

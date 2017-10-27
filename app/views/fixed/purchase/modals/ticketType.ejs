@@ -1,27 +1,29 @@
-<div class="modal" data-modal="ticket_type">
+<div class="modal" data-modal="ticketType">
     <div class="inner">
         <ul>
-            <% for (let ticket of tickets) { %>
+            <% for (let ticket of salesTickets) { %>
+            <% 
+                const ticketName = (ticket.glasses) ? ticket.ticketName + __('common.glasses') : ticket.ticketName;
+                const ticketNote = (ticket.mvtkNum !== '') ? __('common.mvtk_code') + ticket.ticketNote : ticket.ticketNote;
+            %>
             <li>
-                <dl class="d-table">
-                    <dt class="d-td">
-                        <div class="mb-small"><%= ticket.ticket_name %> <strong>￥<%= formatPrice(ticket.sale_price) %></strong></div>
-                        <% if (ticket.ticket_note) { %>
-                        <p class="small-text"><%= ticket.ticket_note %></p>
-                        <% } %>
-                    </dt>
-                    <dd class="d-td">
-                        <div class="button small-button gray-button ticket-type-select">
-                            <a href="#" class="icon-triangle-02" 
-                            data-ticket-code="<%= ticket.ticket_code %>"
-                            data-ticket-name="<%= ticket.ticket_name %>"
-                            data-sale-price="<%= ticket.sale_price %>"
-                            data-glasses="<%= ticket.glasses %>"
-                            data-add-price-glasses="<%= ticket.add_price_glasses %>"
-                            data-mvtk-num="<%= ticket.mvtk_num %>">選択</a>
-                        </div>
-                    </dd>
-                </dl>
+                <a href="#" class="icon-triangle-gray" 
+                    data-ticket-code="<%= ticket.ticketCode %>"
+                    data-ticket-name="<%= ticketName %>"
+                    data-sale-price="<%= ticket.salePrice %>"
+                    data-glasses="<%= ticket.glasses %>"
+                    data-add-price-glasses="<%= ticket.addPriceGlasses %>"
+                    data-mvtk-num="<%= ticket.mvtkNum %>">
+                    <dl class="d-table">
+                        <dt class="d-td">
+                            <div class="mb-small"><%= ticketName %> <strong>￥<%= formatPrice(ticket.salePrice) %></strong></div>
+                            <% if (ticketNote) { %>
+                            <p class="small-text"><%= ticketNote %></p>
+                            <% } %>
+                        </dt>
+                        <dd class="d-td">選択</dd>
+                    </dl>
+                </a>
             </li>
             <% } %>
         </ul>

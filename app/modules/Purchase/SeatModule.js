@@ -13,121 +13,193 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const fs = require("fs-extra");
-const MP = require("../../../libs/MP");
+const HTTPStatus = require("http-status");
 const seatForm = require("../../forms/Purchase/SeatForm");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.SeatModule');
 /**
  * 座席選択
  * @memberof Purchase.SeatModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
-            if (!purchaseModel.accessAuth(PurchaseSession.PurchaseModel.SEAT_STATE)) {
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
+            if (!purchaseModel.accessAuth(PurchaseModel_1.PurchaseModel.SEAT_STATE)) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Access);
             }
-            if (req.params.id === undefined)
-                throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.transactionMP === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            purchaseModel.performance = yield MP.getPerformance(req.params.id);
-            log('パフォーマンス取得');
-            purchaseModel.theater = yield MP.getTheater(purchaseModel.performance.attributes.theater.id);
-            log('劇場詳細取得');
-            if (purchaseModel.theater === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const website = purchaseModel.theater.attributes.websites.find((value) => {
-                return (value.group === 'PORTAL');
-            });
-            purchaseModel.performanceCOA = yield MP.getPerformanceCOA(purchaseModel.performance.attributes.theater.id, purchaseModel.performance.attributes.screen.id, purchaseModel.performance.attributes.film.id);
-            log('COAパフォーマンス取得');
-            res.locals.performance = purchaseModel.performance;
-            res.locals.performanceCOA = purchaseModel.performanceCOA;
-            res.locals.reserveSeats = (purchaseModel.reserveSeats !== null)
-                ? JSON.stringify(purchaseModel.reserveSeats) //仮予約中
+            res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
+                ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
                 : null;
-            res.locals.transactionId = purchaseModel.transactionMP.id;
             res.locals.error = null;
-            res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
-            res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
-            //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            res.locals.reserveError = null;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel_1.PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
+            next(err);
         }
     });
 }
-exports.index = index;
+exports.render = render;
+/**
+ * パフォーマンス変更
+ * @memberof Purchase.SeatModule
+ * @function performanceChange
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+function performanceChange(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.isExpired())
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
+            // イベント情報取得
+            purchaseModel.individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
+                identifier: req.query.performanceId
+            });
+            purchaseModel.save(req.session);
+            res.json({
+                err: null,
+                result: {
+                    individualScreeningEvent: purchaseModel.individualScreeningEvent
+                }
+            });
+        }
+        catch (err) {
+            res.json({
+                err: err.message,
+                result: null
+            });
+        }
+    });
+}
+exports.performanceChange = performanceChange;
 /**
  * 座席決定
  * @memberof Purchase.SeatModule
- * @function select
+ * @function seatSelect
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function select(req, res, next) {
+// tslint:disable-next-line:max-func-body-length
+function seatSelect(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction === null
+                || purchaseModel.individualScreeningEvent === null)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             if (purchaseModel.isExpired())
-                throw ErrorUtilModule.ERROR_EXPIRE;
-            if (purchaseModel.transactionMP === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (req.params.id === undefined)
-                throw ErrorUtilModule.ERROR_ACCESS;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
             //取引id確認
-            if (req.body.transaction_id !== purchaseModel.transactionMP.id)
-                throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.theater === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const website = purchaseModel.theater.attributes.websites.find((value) => {
-                return (value.group === 'PORTAL');
-            });
+            if (req.body.transactionId !== purchaseModel.transaction.id)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             //バリデーション
             seatForm.seatSelect(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty()) {
-                res.locals.transactionId = purchaseModel.transactionMP;
-                res.locals.performance = purchaseModel.performance;
                 res.locals.reserveSeats = req.body.seats;
                 res.locals.error = validationResult.mapped();
-                res.locals.portalTheaterSite = (website !== undefined) ? website.url : process.env.PORTAL_SITE_URL;
-                res.locals.step = PurchaseSession.PurchaseModel.SEAT_STATE;
+                res.locals.reserveError = null;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.SEAT_STATE;
                 res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            const selectSeats = JSON.parse(req.body.seats).list_tmp_reserve;
-            yield reserve(selectSeats, purchaseModel);
+            const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
+            //予約中
+            if (purchaseModel.seatReservationAuthorization !== null) {
+                const cancelSeatReservationAuthorizationIn = {
+                    transactionId: purchaseModel.transaction.id,
+                    actionId: purchaseModel.seatReservationAuthorization.id
+                };
+                purchaseModel.seatReservationAuthorization = null;
+                purchaseModel.save(req.session);
+                yield sasaki.service.transaction.placeOrder(options)
+                    .cancelSeatReservationAuthorization(cancelSeatReservationAuthorizationIn);
+                log('仮予約削除');
+            }
+            if (purchaseModel.salesTickets === null) {
+                //コアAPI券種取得
+                const salesTicketResult = yield COA.services.reserve.salesTicket({
+                    theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
+                    dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei,
+                    titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
+                    titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
+                    timeBegin: purchaseModel.individualScreeningEvent.coaInfo.timeBegin
+                });
+                purchaseModel.salesTickets = salesTicketResult;
+                log('コアAPI券種取得');
+            }
+            if (purchaseModel.salesTickets.length === 0)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const createSeatReservationAuthorizationArgs = {
+                transactionId: purchaseModel.transaction.id,
+                eventIdentifier: purchaseModel.individualScreeningEvent.identifier,
+                offers: selectSeats.map((seat) => {
+                    const salesTicket = purchaseModel.salesTickets[0];
+                    return {
+                        seatSection: seat.seatSection,
+                        seatNumber: seat.seatNum,
+                        ticketInfo: {
+                            ticketCode: salesTicket.ticketCode,
+                            mvtkAppPrice: 0,
+                            ticketCount: 1,
+                            addGlasses: 0,
+                            kbnEisyahousiki: '00',
+                            mvtkNum: '',
+                            mvtkKbnDenshiken: '00',
+                            mvtkKbnMaeuriken: '00',
+                            mvtkKbnKensyu: '00',
+                            mvtkSalesPrice: 0
+                        }
+                    };
+                })
+            };
+            purchaseModel.seatReservationAuthorization = yield sasaki.service.transaction.placeOrder(options)
+                .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
+            log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
+            purchaseModel.orderCount = 0;
+            log('GMOオーソリカウント初期化');
+            purchaseModel.reserveTickets = [];
+            log('選択チケット初期化');
             //セッション更新
-            req.session.purchase = purchaseModel.toSession();
+            purchaseModel.save(req.session);
             // ムビチケセッション削除
             delete req.session.mvtk;
             //券種選択へ
@@ -135,125 +207,22 @@ function select(req, res, next) {
             return;
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
-            return;
+            if (err.hasOwnProperty('errors')
+                && (Number(err.code) === HTTPStatus.CONFLICT || Number(err.code) === HTTPStatus.SERVICE_UNAVAILABLE)) {
+                const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+                res.locals.reserveSeats = null;
+                res.locals.error = null;
+                res.locals.reserveError = err.code;
+                res.locals.purchaseModel = purchaseModel;
+                res.locals.step = PurchaseModel_1.PurchaseModel.SEAT_STATE;
+                res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
+                return;
+            }
+            next(err);
         }
     });
 }
-exports.select = select;
-/**
- * 座席仮予約
- * @memberof Purchase.SeatModule
- * @function reserve
- * @param {ReserveSeats[]} reserveSeats
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
- */
-function reserve(selectSeats, purchaseModel) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (purchaseModel.performance === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.transactionMP === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        if (purchaseModel.performanceCOA === null)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        const performance = purchaseModel.performance;
-        //予約中
-        if (purchaseModel.reserveSeats !== null) {
-            if (purchaseModel.authorizationCOA === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const reserveSeats = purchaseModel.reserveSeats;
-            //COA仮予約削除
-            yield COA.services.reserve.delTmpReserve({
-                theater_code: performance.attributes.theater.id,
-                date_jouei: performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num
-            });
-            log('COA仮予約削除');
-            // COAオーソリ削除
-            yield MP.removeCOAAuthorization({
-                transactionId: purchaseModel.transactionMP.id,
-                coaAuthorizationId: purchaseModel.authorizationCOA.id
-            });
-            log('MPCOAオーソリ削除');
-        }
-        //COA仮予約
-        purchaseModel.reserveSeats = yield COA.services.reserve.updTmpReserveSeat({
-            theater_code: performance.attributes.theater.id,
-            date_jouei: performance.attributes.day,
-            title_code: purchaseModel.performanceCOA.titleCode,
-            title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-            time_begin: performance.attributes.time_start,
-            // cnt_reserve_seat: number,
-            screen_code: purchaseModel.performanceCOA.screenCode,
-            list_seat: selectSeats
-        });
-        log('COA仮予約', purchaseModel.reserveSeats);
-        if (purchaseModel.salesTicketsCOA === null) {
-            //コアAPI券種取得
-            purchaseModel.salesTicketsCOA = yield COA.services.reserve.salesTicket({
-                theater_code: purchaseModel.performance.attributes.theater.id,
-                date_jouei: purchaseModel.performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: purchaseModel.performance.attributes.time_start
-                // flg_member: COA.services.reserve.FlgMember.NonMember
-            });
-            log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
-        }
-        //コアAPI券種取得
-        const salesTickets = purchaseModel.salesTicketsCOA;
-        purchaseModel.reserveTickets = [];
-        //予約チケット作成
-        const tmpReserveTickets = purchaseModel.reserveSeats.list_tmp_reserve.map((tmpReserve) => {
-            return {
-                section: tmpReserve.seat_section,
-                seat_code: tmpReserve.seat_num,
-                ticket_code: salesTickets[0].ticket_code,
-                ticket_name: salesTickets[0].ticket_name,
-                ticket_name_eng: salesTickets[0].ticket_name_eng,
-                ticket_name_kana: salesTickets[0].ticket_name_kana,
-                std_price: salesTickets[0].std_price,
-                add_price: salesTickets[0].add_price,
-                dis_price: 0,
-                sale_price: salesTickets[0].sale_price,
-                add_price_glasses: 0,
-                glasses: false,
-                mvtk_app_price: 0,
-                add_glasses: 0,
-                kbn_eisyahousiki: '00',
-                mvtk_num: '',
-                mvtk_kbn_denshiken: '00',
-                mvtk_kbn_maeuriken: '00',
-                mvtk_kbn_kensyu: '00',
-                mvtk_sales_price: 0 // ムビチケ販売単価
-            };
-        });
-        let price = 0;
-        for (const tmpReserveTicket of tmpReserveTickets) {
-            price += tmpReserveTicket.sale_price;
-        }
-        //COAオーソリ追加
-        const coaAuthorizationResult = yield MP.addCOAAuthorization({
-            transaction: purchaseModel.transactionMP,
-            reserveSeatsTemporarilyResult: purchaseModel.reserveSeats,
-            salesTicketResults: tmpReserveTickets,
-            performance: performance,
-            performanceCOA: purchaseModel.performanceCOA,
-            price: price
-        });
-        log('MPCOAオーソリ追加', coaAuthorizationResult);
-        purchaseModel.authorizationCOA = coaAuthorizationResult;
-        purchaseModel.authorizationCountGMO = 0;
-        log('GMOオーソリカウント初期化');
-    });
-}
+exports.seatSelect = seatSelect;
 /**
  * スクリーン状態取得
  * @memberof Purchase.SeatModule
@@ -270,18 +239,18 @@ function getScreenStateReserve(req, res) {
             seatForm.screenStateReserve(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
-                throw ErrorUtilModule.ERROR_VALIDATION;
-            const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS_02);
-            const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS_03);
+                throw ErrorUtilModule_1.ErrorType.Validation;
+            const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS['02']);
+            const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS['03']);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
             const state = yield COA.services.reserve.stateReserveSeat({
-                theater_code: req.body.theater_code,
-                date_jouei: req.body.date_jouei,
-                title_code: req.body.title_code,
-                title_branch_num: req.body.title_branch_num,
-                time_begin: req.body.time_begin,
-                screen_code: req.body.screen_code // スクリーンコード
+                theaterCode: req.body.theaterCode,
+                dateJouei: req.body.dateJouei,
+                titleCode: req.body.titleCode,
+                titleBranchNum: req.body.titleBranchNum,
+                timeBegin: req.body.timeBegin,
+                screenCode: req.body.screenCode // スクリーンコード
             });
             res.json({
                 err: null,
@@ -314,32 +283,25 @@ function saveSalesTickets(req, res) {
             seatForm.salesTickets(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
-                throw ErrorUtilModule.ERROR_VALIDATION;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Validation);
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (req.session.purchase === undefined)
-                throw ErrorUtilModule.ERROR_EXPIRE;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.salesTicketsCOA === null) {
-                //コアAPI券種取得
-                purchaseModel.salesTicketsCOA = yield COA.services.reserve.salesTicket({
-                    theater_code: req.body.theater_code,
-                    date_jouei: req.body.date_jouei,
-                    title_code: req.body.title_code,
-                    title_branch_num: req.body.title_branch_num,
-                    time_begin: req.body.time_begin
-                    // flg_member: COA.services.reserve.FlgMember.NonMember
-                });
-                log('コアAPI券種取得', purchaseModel.salesTicketsCOA);
-                req.session.purchase = purchaseModel.toSession();
-                res.json({ err: null });
-            }
-            else {
-                res.json({ err: null });
-            }
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            //コアAPI券種取得
+            purchaseModel.salesTickets = yield COA.services.reserve.salesTicket({
+                theaterCode: req.body.theaterCode,
+                dateJouei: req.body.dateJouei,
+                titleCode: req.body.titleCode,
+                titleBranchNum: req.body.titleBranchNum,
+                timeBegin: req.body.timeBegin
+                // flgMember: coa.services.reserve.FlgMember.NonMember
+            });
+            log('コアAPI券種取得', purchaseModel.salesTickets);
+            purchaseModel.save(req.session);
+            res.json({ err: null });
         }
         catch (err) {
-            res.json({ err: err });
+            res.json({ err: err.message });
         }
     });
 }

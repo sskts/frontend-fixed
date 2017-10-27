@@ -7,7 +7,7 @@
             <dl>
                 <dt><%- __('common.purchase_number') %></dt>
                 <dd>
-                    <strong class="red-text large-x-text"><%= reserveSeats.tmp_reserve_num %></strong>
+                    <strong class="red-text large-x-text"><%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %></strong>
                     <p class="small-x-text"><%- __('purchase.complete.reserve_read') %></p>
                 </dd>
             </dl>
@@ -15,27 +15,29 @@
         <li>
             <dl>
                 <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-                <dd><%= performance.attributes.theater.name[__('lang')] %> / <%= performance.attributes.screen.name[__('lang')] %></dd>
+                <dd><%= purchaseModel.individualScreeningEvent.superEvent.location.name.ja %> / <%= purchaseModel.individualScreeningEvent.location.name.ja %></dd>
             </dl>
         </li>
         <li>
             <dl>
                 <dt><%- __('common.film_title') %></dt>
-                <dd><%= performance.attributes.film.name[__('lang')] %></dd>
+                <dd><%= purchaseModel.individualScreeningEvent.workPerformed.name %></dd>
             </dl>
         </li>
         <li>
             <dl>
                 <dt><%- __('common.appreciation_date') %></dt>
-                <dd><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %> - <%= timeFormat(performance.attributes.time_end) %></dd>
+                <dd>
+                        <%= moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %> - <%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %>
+                </dd>
             </dl>
         </li>
         <li>
             <dl>
                 <dt><%- __('common.seat') %></dt>
                 <dd>
-                    <% for (ticket of reserveTickets) { %>
-                    <p><%= `${ticket.seat_code} ${ticket.ticket_name} ￥${formatPrice(ticket.sale_price)}` %></p>
+                    <% for (ticket of purchaseModel.reserveTickets) { %>
+                    <p><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %></p>
                     <% } %>
                 </dd>
             </dl>
@@ -43,19 +45,33 @@
         <li>
             <dl>
                 <dt><%- __('common.amount_spent') %></dt>
-                <dd>￥<%= formatPrice(price) %></dd>
+                <dd>￥<%= formatPrice(purchaseModel.getReserveAmount()) %></dd>
             </dl>
         </li>
         <li>
             <dl>
                 <dt><%- __('common.mail_addr') %></dt>
-                <dd><%= input.mail_addr %></dd>
+                <dd><%= purchaseModel.profile.email %></dd>
             </dl>
         </li>
     </ul>
 
+    <% if (viewType === 'app') { %>    
+    <dl class="box radius bg-light-gray mb-middle">
+        <dt class="mb-small text-center">
+            <strong><%- __('purchase.complete.ticket_holder.title') %></strong>
+        </dt>
+        <dd>
+            <div class="image mb-x-small bg-white"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
+            <p><%- __('purchase.complete.ticket_holder.read') %></p>
+        </dd>
+    </dl>
+    <div class="button blue-button center-button">
+        <a href="<%- appSiteUrl %>/#/ticket"><%= __('common.close') %></a>
+    </div>
+    <% } else { %>
     <div class="mb-x-large">
-        <p class="mb-medium small-x-text"><%- __('purchase.complete.print_read') %></p>
+        <p class="mb-middle small-x-text"><%- __('purchase.complete.print_read') %></p>
         <div class="button dark-blue-button print-button center-button not-print">
             <a class="icon-print-white" href="#"><%- __('purchase.complete.print') %></a>
         </div>
@@ -67,14 +83,14 @@
         <ul class="entry-method">
             <li>
                 <dl class="box radius bg-light-gray">
-                    <dt class="mb-x-small text-center mb-x-small">
+                    <dt class="mb-x-small text-center">
                         <strong><%- __('purchase.complete.entry_title') %></strong>
                     </dt>
                     <dd>
                         <p class="mb-small"><%- __('purchase.complete.entry_read_01') %></p>
                         <div class="image mb-x-small"><img src="/images/default/purchase/complete/qr.svg" alt=""></div>
                         <div class="button blue-button inquiry-button mb-small center-button">
-                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= performance.attributes.theater.id %>&reserve=<%= reserveSeats.tmp_reserve_num %>" target="_blank"><%- __('purchase.complete.entry_button') %></a>
+                            <a class="icon-new-tab-white" href="/inquiry/login?theater=<%= purchaseModel.individualScreeningEvent.coaInfo.theaterCode %>&reserve=<%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %>" target="_blank"><%- __('purchase.complete.entry_button') %></a>
                         </div>
                         <p><%- __('purchase.complete.entry_read_02') %></p>
                     </dd>
@@ -86,4 +102,5 @@
             <div class="prev-link"><a class="icon-prev-black"href="<%= portalSite %>"><%- __('purchase.complete.prev') %></a></div>
         </div>
     </div>
+    <% } %>    
 </div>

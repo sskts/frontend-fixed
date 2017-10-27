@@ -1,7 +1,7 @@
 <%- contentFor('script') %>
 <script src="/js/purchase/input.js"></script>
-<script src="<%= gmoModuleUrl %>"></script>
-<script>Multipayment.init('<%= gmoShopId %>');</script>
+<script src="<%= GMO_ENDPOINT %>/ext/js/token.js"></script>
+<script>Multipayment.init('<%= purchaseModel.movieTheaterOrganization.gmoInfo.shopId %>');</script>
 <%- contentFor('body') %>
 <div class="purchase-input">
     <h1 class="page-ttl"><%- __('purchase.input.page_ttl') %></h1>
@@ -16,18 +16,18 @@
                 <dl>
                     <dt><%- __('common.last_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="last_name_hira" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= input.last_name_hira %>">
-                        <% if (error && error.last_name_hira) { %>
-                        <div class="validation-text"><%= error.last_name_hira.msg %></div>
+                        <input type="text" name="familyName" autocomplete="family-name" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="<%= purchaseModel.profile.familyName %>">
+                        <% if (error && error.familyName) { %>
+                        <div class="validation-text"><%= error.familyName.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
                 <dl>
                     <dt><%- __('common.first_name_hira') %></dt>
                     <dd>
-                        <input type="text" name="first_name_hira" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= input.first_name_hira %>">
-                        <% if (error && error.first_name_hira) { %>
-                        <div class="validation-text"><%= error.first_name_hira.msg %></div>
+                        <input type="text" name="givenName" autocomplete="given-name" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="<%= purchaseModel.profile.givenName %>">
+                        <% if (error && error.givenName) { %>
+                        <div class="validation-text"><%= error.givenName.msg %></div>
                         <% } %>
                     </dd>
                 </dl>
@@ -37,18 +37,18 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="email" name="mail_addr" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= input.mail_addr %>">
-                    <% if (error && error.mail_addr) { %>
-                    <div class="validation-text"><%= error.mail_addr.msg %></div>
+                    <input type="email" name="email" autocomplete="email" placeholder="<%- __('common.placeholder.mail') %>" value="<%= purchaseModel.profile.email %>">
+                    <% if (error && error.email) { %>
+                    <div class="validation-text"><%= error.email.msg %></div>
                     <% } %>
                 </dd>
             </dl>
             <dl>
                 <dt><%- __('common.mail_confirm') %></dt>
                 <dd>
-                    <input type="email" name="mail_confirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= input.mail_confirm %>">
-                    <% if (error && error.mail_confirm) { %>
-                    <div class="validation-text"><%= error.mail_confirm.msg %></div>
+                    <input type="email" name="emailConfirm" placeholder="<%- __('common.placeholder.mail_confirm') %>" value="<%= purchaseModel.profile.emailConfirm %>">
+                    <% if (error && error.emailConfirm) { %>
+                    <div class="validation-text"><%= error.emailConfirm.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.mail') %></p>
                 </dd>
@@ -59,15 +59,15 @@
         <div class="box radius bg-light-gray mb-large">
             <dl>
                 <dd>
-                    <input type="tel" name="tel_num" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= input.tel_num %>">
-                    <% if (error && error.tel_num) { %>
-                    <div class="validation-text"><%= error.tel_num.msg %></div>
+                    <input type="tel" name="telephone" autocomplete="tel" placeholder="<%- __('common.placeholder.tel') %>" value="<%= purchaseModel.profile.telephone %>">
+                    <% if (error && error.telephone) { %>
+                    <div class="validation-text"><%= error.telephone.msg %></div>
                     <% } %>
                     <p class="small-x-text"><%- __('common.note.tel') %></p>
                 </dd>
             </dl>
         </div>      
-        <% if (price > 0) { %>
+        <% if (purchaseModel.getReserveAmount() > 0) { %>
         <h2 class="section-ttl">
             <%- __('common.payment') %><span class="text-icon-red small-x-text"><%- __('common.required') %></span>
             <span class="image credit-image"><img src="/images/default/common/credit_card.png" alt=""></span>
@@ -78,7 +78,7 @@
             <li class="price">
                 <dl>
                     <dt><%- __('common.amount_spent') %></dt>
-                    <dd class="large-text red-text"><strong>￥<%= formatPrice(price) %></strong></dd>
+                    <dd class="large-text red-text"><strong>￥<%= formatPrice(purchaseModel.getReserveAmount()) %></strong></dd>
                 </dl>
             </li>
             <li>
@@ -98,7 +98,7 @@
                     <dt><%- __('common.expire') %></dt>
                     <dd>
                         
-                        <select name="credit_month" id="cardExpirationMonth">
+                        <select name="creditMonth" id="cardExpirationMonth">
                             <%
                             for (let i = 0; i < 12; i++) {
                                 let num = i + 1;
@@ -107,7 +107,7 @@
                                 <option value="<%= month %>"><%= month %></option>
                             <% } %>
                         </select> <%- __('common.month') %> 
-                        <select name="credit_year" id="cardExpirationYear">
+                        <select name="creditYear" id="cardExpirationYear">
                             <%
                             let choices = {};
                             let year2digits = moment().format('YY');
@@ -151,18 +151,17 @@
                 </dl>
             </li>
         </ul>
-        <input type="hidden" name="gmo_token_object" value="">
-        <input type="hidden" name="gmo_error" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
-        <input type="hidden" name="gmo_error_message" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
+        <input type="hidden" name="gmoTokenObject" value="">
+        <input type="hidden" name="gmoError" value="<%- (error && error.gmo) ? error.gmo.msg : '' %>">
+        <input type="hidden" name="gmoErrorMessage" value="<%- (gmoError !== null) ? gmoError.message : '' %>">
         <% } %>
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.input.next') %></button></div>
             <div class="prev-link"><a class="icon-prev-black"href="/purchase/ticket/"><%- __('purchase.input.prev') %></a></div>
         </div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
-    <input type="hidden" name="price" value="<%= price %>">
-    <input type="hidden" name="theater_code" value="<%= performance.attributes.theater.id %>">
+    <input type="hidden" name="price" value="<%= purchaseModel.getReserveAmount() %>">
 <%- include('../layouts/siteSeal') %>
 </div>
 

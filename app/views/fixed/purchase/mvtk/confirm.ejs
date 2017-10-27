@@ -17,7 +17,7 @@
                     <dd class="d-td">
                         <% for (const mvtkTicket of mvtk) { %>
                         <% if (mvtkTicket.code === purchaseNo) { %>
-                        <p><strong><%= mvtkTicket.ticket.ticket_name %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
+                        <p><strong><%= mvtkTicket.ticket.ticketName %> × <%= mvtkTicket.ykknInfo.ykknKnshbtsmiNum %></strong></p>
                         <% } %>
                         <% } %>
                     </dd>
@@ -31,7 +31,8 @@
         </div>
         <% } %>
         
-        <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <div class="button next-button blue-button middle-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.mvtk.confirm.next') %></button></div>
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
+
     </form>
 </div>

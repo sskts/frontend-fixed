@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * 照会セッション
+ * 照会モデル
  * @class InquiryModel
  */
 class InquiryModel {
@@ -13,24 +13,23 @@ class InquiryModel {
         if (session === undefined) {
             session = {};
         }
-        this.transactionId = (session.transactionId !== undefined) ? session.transactionId : null;
-        this.performance = (session.performance !== undefined) ? session.performance : null;
-        this.stateReserve = (session.stateReserve !== undefined) ? session.stateReserve : null;
+        this.movieTheaterOrganization = (session.movieTheaterOrganization !== undefined) ? session.movieTheaterOrganization : null;
+        this.order = (session.order !== undefined) ? session.order : null;
         this.login = (session.login !== undefined) ? session.login : null;
     }
     /**
-     * セッションObjectへ変換
+     * セッションへ保存
      * @memberof InquiryModel
      * @method toSession
      * @returns {Object}
      */
-    toSession() {
-        return {
-            transactionId: this.transactionId,
-            performance: this.performance,
-            stateReserve: this.stateReserve,
+    save(session) {
+        const inquirySession = {
+            movieTheaterOrganization: this.movieTheaterOrganization,
+            order: this.order,
             login: this.login
         };
+        session.inquiry = inquirySession;
     }
 }
 exports.InquiryModel = InquiryModel;

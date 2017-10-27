@@ -11,91 +11,91 @@ const TEL_MIN_LENGTH = 9;
 export default (req: express.Request): void => {
     // 名前（せい）
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.last_name_hira')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.last_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`
     ).isLength({
         min: 0,
         max: NAME_MAX_LENGTH
     });
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.last_name_hira')}${req.__('common.validation.is_hira')}`
     ).matches(/^[ぁ-ゞー]+$/);
 
     // 名前（めい）
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.first_name_hira')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.first_name_hira')}${req.__('common.validation.maxlength %s', String(NAME_MAX_LENGTH))}`
     ).isLength({
         min: 0,
         max: NAME_MAX_LENGTH
     });
     req.checkBody(
-        'last_name_hira',
+        'familyName',
         `${req.__('common.first_name_hira')}${req.__('common.validation.is_hira')}`
     ).matches(/^[ぁ-ゞー]+$/);
 
     // メールアドレス
     req.checkBody(
-        'mail_addr',
+        'email',
         `${req.__('common.mail_addr')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'mail_addr',
+        'email',
         `${req.__('common.mail_addr')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`
     ).isLength({
         max: MAIL_MAX_LENGTH
     });
     req.checkBody(
-        'mail_addr',
+        'email',
         `${req.__('common.mail_addr')}${req.__('common.validation.is_email')}`
     ).isEmail();
 
     // メールアドレス確認
     req.checkBody(
-        'mail_confirm',
+        'emailConfirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'mail_confirm',
+        'emailConfirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.maxlength %s', String(MAIL_MAX_LENGTH))}`
     ).isLength({
         max: MAIL_MAX_LENGTH
     });
     req.checkBody(
-        'mail_confirm',
+        'emailConfirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`
     ).isEmail();
     req.checkBody(
-        'mail_confirm',
+        'emailConfirm',
         `${req.__('common.mail_confirm')}${req.__('common.validation.is_email')}`
-    ).equals(req.body.mail_addr);
+    ).equals(req.body.email);
 
     // 電話番号
     req.checkBody(
-        'tel_num',
+        'telephone',
         `${req.__('common.tel_num')}${req.__('common.validation.required')}`
     ).notEmpty();
     req.checkBody(
-        'tel_num',
+        'telephone',
         `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`
     ).matches(/^[0-9]+$/);
     req.checkBody(
-        'tel_num',
+        'telephone',
         `${req.__('common.tel_num')}${req.__('common.validation.maxlength %s', String(TEL_MAX_LENGTH))}`
     ).isLength({
         max: TEL_MAX_LENGTH
     });
     req.checkBody(
-        'tel_num',
+        'telephone',
         `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(TEL_MIN_LENGTH))}`
     ).isLength({
         min: TEL_MIN_LENGTH

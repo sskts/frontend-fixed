@@ -10,50 +10,50 @@
     <div class="table-layout mb-large center">
         <dl>
             <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-            <dd><%= performances.before.attributes.theater.name[__('lang')] %> / <%= performances.before.attributes.screen.name[__('lang')] %></dd>
+            <dd><%= before.superEvent.location.name.ja %> / <%= before.location.name.ja %></dd>
         </dl>
 
         <dl>
             <dt><%- __('common.film_title') %></dt>
-            <dd><%= performances.before.attributes.film.name[__('lang')] %></dd>
+            <dd><%= before.workPerformed.name %></dd>
         </dl>
 
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
             <dd>
-                <%= moment(performances.before.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performances.before.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performances.before.attributes.time_start) %> - <%= timeFormat(performances.before.attributes.time_end) %>
+                <%= moment(before.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(before.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(before.startDate, before.coaInfo.dateJouei) %> - <%= timeFormat(before.endDate, before.coaInfo.dateJouei) %>
             </dd>
         </dl>      
     </div>
     <p class="text-center mb-small"><%- __('purchase.overlap.prev_read') %></p>
     <form method="post" action="/purchase/overlap/prev">
         <div class="button prev-button middle-button mb-large"><button class="center" type="submit"><%- __('purchase.overlap.prev') %></button></div>
-        <input type="hidden" name="performance_id" value="<%= performances.before.id %>">
+        <input type="hidden" name="performanceId" value="<%= performances.before.id %>">
     </form>
     
     <h2 class="mb-small text-center"><%- __('purchase.overlap.next_ttl') %></h2>
     <div class="table-layout mb-large center">
         <dl>
             <dt><%- __('common.theater') %> / <%- __('common.screen') %></dt>
-            <dd><%= performances.after.attributes.theater.name[__('lang')] %> / <%= performances.after.attributes.screen.name[__('lang')] %></dd>
+            <dd><%= after.superEvent.location.name.ja %> / <%= after.location.name.ja %></dd>
         </dl>
 
         <dl>
             <dt><%- __('common.film_title') %></dt>
-            <dd><%= performances.after.attributes.film.name[__('lang')] %></dd>
+            <dd><%= after.workPerformed.name %></dd>
         </dl>
 
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
             <dd>
-                <%= moment(performances.after.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performances.after.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performances.after.attributes.time_start) %> - <%= timeFormat(performances.after.attributes.time_end) %>
+                <%= moment(after.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(after.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(after.startDate, after.coaInfo.dateJouei) %> - <%= timeFormat(after.endDate, after.coaInfo.dateJouei) %>
             </dd>
         </dl>
     </div> 
     <p class="text-center  mb-small"><%- __('purchase.overlap.next_read') %></p>
     <form method="post" action="/purchase/overlap/new">
-        <div class="button next-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.overlap.next') %></button></div>
-        <input type="hidden" name="performance_id" value="<%= performances.after.id %>">
+        <div class="button next-button blue-button middle-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.overlap.next') %></button></div>
+        <input type="hidden" name="performanceId" value="<%= performances.after.id %>">
     </form>
 
     

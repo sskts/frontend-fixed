@@ -1,0 +1,47 @@
+.app {
+    background-color: #000;
+    padding-top: 44px;
+    .wrapper {
+        margin-top: 0;
+    }
+    .header {
+        position: fixed;
+        z-index: 20;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #1B1464;
+        border-radius: 0;
+        border: none;
+        padding: 0;
+        .close {
+            a {
+                display: inline-block;
+                padding: 15px;
+                color: #FFF;
+            }
+        }
+    }
+    .footer {
+        display: none;
+    }
+    .site-seal {
+        display: none;
+    }
+    .prev-button {
+        button, a {
+            border-radius: 32px;
+        }
+        .icon-prev-white:before {
+            display: none;
+        } 
+    }
+    .next-button {
+        button, a {
+            border-radius: 32px;
+        }
+        .icon-next-white:before {
+            display: none;
+        }
+    }
+}

@@ -3,7 +3,6 @@
 <%- include head %>
 <% if (viewType === 'app') { %>
 <body class="app">
-<h1>アプリ</h1>
 <% } else { %>
 <body>
 <% } %>
@@ -22,6 +21,9 @@
 <div class="modal-cover" onclick=""></div>
 <%- defineContent('modals') %>
 <%- include loading %>
+
+<%- defineContent('afterScript') %>
+
 <%- include tags/env %>
 </body>
 </html>

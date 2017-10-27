@@ -5,15 +5,7 @@ $(function () {
     /**
      * 次へクリックイベント
      */
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        validation();
-        if ($('.validation-text').length > 0) {
-            validationScroll();
-            return;
-        }
-        purchase();
-    });
+    $(document).on('click', '.next-button button', nextButtonClick);
 
     var timer = false;
     $(window).on('resize', function () {
@@ -28,19 +20,41 @@ $(function () {
     /**
      * 確認クリックイベント
      */
-    $('.confirm-button a').on('click', function (event) {
-        event.preventDefault();
-        loadingStart(function () {
-            screenStateUpdate(function () {
-                modal.open('screen');
-                setTimeout(function () {
-                    screenSeatStatusesMap.init();
-                    modal.resize();
-                }, 0);
-            });
+    $('.confirm-button a').on('click', confirmButtonClick);
+});
+
+/**
+ * 確認クリックイベント
+ * @function confirmButtonClick
+ * @param {Event} event 
+ */
+function confirmButtonClick(event) {
+    event.preventDefault();
+    loadingStart(function () {
+        screenStateUpdate(function () {
+            modal.open('screen');
+            setTimeout(function () {
+                screenSeatStatusesMap.init();
+                modal.resize();
+            }, 0);
         });
     });
-});
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    validation();
+    if ($('.validation-text').length > 0) {
+        validationScroll();
+        return;
+    }
+    purchase();
+}
 
 /**
  * 購入完了
@@ -56,7 +70,7 @@ function purchase() {
         data: {
             toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
             isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
-            transaction_id: $('input[name=transaction_id]').val()
+            transactionId: $('input[name=transactionId]').val()
         },
         beforeSend: function () {
             loadingStart();
@@ -66,8 +80,8 @@ function purchase() {
             //エラー表示
             showError(res.err.message);
         } else {
-            var transactionId = $('input[name=transaction_id]').val();
-            var theaterCode = $('input[name=theater_code]').val();
+            var transactionId = $('input[name=transactionId]').val();
+            var theaterCode = $('input[name=theaterCode]').val();
             // 計測
             collection({
                 client: 'sskts-frontend',
@@ -148,7 +162,7 @@ function showError(message) {
     }
     $('.purchase-confirm').remove();
     $('.header .steps').remove();
-    $('.navigation .restart-button a').attr({
+    $('.navigation .top-button a').attr({
         href: '/',
         'data-modal': ''
     });
@@ -196,7 +210,7 @@ function showComplete(result) {
             navigationDom.show();
             //コンテンツ切り替え
             printDom.remove();
-            $('.navigation .restart-button a').attr({
+            $('.navigation .top-button a').attr({
                 href: '/',
                 'data-modal': ''
             });
@@ -238,7 +252,7 @@ function validation() {
     $('.validation-text').remove();
 
     var validationList = [
-        { name: 'notes_agree', label: locales.label.notes, agree: true },
+        { name: 'notesAgree', label: locales.label.notes, agree: true },
     ];
 
     validationList.forEach(function (validation, index) {
