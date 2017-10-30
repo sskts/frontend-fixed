@@ -12,6 +12,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.0.0 - 2017-10-27
+### Added
+ - 会員フロー追加
+ - テストコード追加
+ - ムビチケQRコードリーダ読み込み機能追加
+### Changed
+ - APIのバージョン変更
+
+## 1.8.2 - 2017-10-11
+### Fixed
+ - [Webアプリ] メンテナンス文言画面
+
 ## 1.8.2 - 2017-10-11
 ### Fixed
  - [Webアプリ] メンテナンス文言画面
