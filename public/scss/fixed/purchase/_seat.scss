@@ -1,11 +1,51 @@
 .purchase-seat {
+    .film-ttl {
+        padding: 15px 0;
+        background-color: #CECECE;
+        color: #333;
+        margin-left: -30px;
+        margin-right: -30px;
+    }
+    .film-info {
+        width: 750px;
+        display: flex;
+        justify-content: center;
+        div {
+            margin-right: 40px;
+            &:last-child {
+                margin-right: 0;
+            }
+            strong {
+                vertical-align: middle;
+            }
+            span {
+                vertical-align: middle;
+            }
+            .square {
+                display: inline-block;
+                border: 1px solid #FFF;
+                padding: 10px;
+                margin-right: 20px;
+            }
+            .d-ib {
+                color: #ffe600;
+            }
+            .change-animation {
+                animation-duration: 2s;
+                animation-fill-mode: both;
+                animation-name: flash;
+            }
+        }
+    }
     .screen-cover {
-        margin: 0 80px;
+        position: relative;
+        width: 750px;
+        margin: 0 auto;
         background-color: rgba(255, 255, 255, 0.85);
         border-radius: 5px;
     }
     .screen {
-        border-bottom: 1px solid #ACACAC;
+        
     }
     .zoom-btn {
         display: none;
@@ -31,5 +71,48 @@
         padding: 20px 0;
         display: flex;
         justify-content: center;
+        border-bottom: 1px solid #ACACAC;
+    }
+
+    .arrow {
+        display: none;
+        position: absolute;
+        top: 50%;
+        margin-top: -60px;
+        line-height: 1.2;
+        a {
+            display: block;
+            width: 35px;
+            height: 60px;
+            background-size: cover;
+            background-position: -12px 0;
+        }
+    }
+
+    .prev-arrow {
+        left: -115px;
+        a {
+            background-image: url(/images/fixed/arrow_prev.svg);
+        }
+    }
+    .next-arrow {
+        right: -115px;
+        a {
+            background-image: url(/images/fixed/arrow_next.svg);
+        }
+    }
+}
+
+.modal[data-modal=seatSelectAnnounce] {
+    .inner {
+        background-color: transparent;
+        border: 1px solid #FFF;
+    }
+    img {
+        width: 224px;
+        height: 300px;
+    }
+    p {
+        color: #FFF;
     }
 }

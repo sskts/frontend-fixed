@@ -1,8 +1,4 @@
 "use strict";
-/**
- * 共通
- * @namespace Util.UtilModule
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -29,7 +25,7 @@ function setLocals(req, res, next) {
     res.locals.timeFormat = timeFormat;
     res.locals.portalSite = process.env.PORTAL_SITE_URL;
     res.locals.env = process.env.NODE_ENV;
-    res.locals.webhookApiEndPoint = process.env.MP_WEBHOOK_ENDPOINT;
+    res.locals.appSiteUrl = process.env.APP_SITE_URL;
     // クッキーからアプリ判定
     res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
     next();
@@ -51,16 +47,16 @@ exports.isApp = isApp;
  * 時間フォーマット
  * @memberof Util.UtilModule
  * @function timeFormat
- * @param {string} str
+ * @param {string} referenceDate 基準日
+ * @param {Date} screeningTime 時間
  * @returns {string}
  */
-function timeFormat(str) {
-    if (typeof str !== 'string') {
-        return '';
-    }
-    const start = 2;
-    const end = 4;
-    return `${str.slice(0, start)}:${str.slice(start, end)}`;
+function timeFormat(screeningTime, referenceDate) {
+    const HOUR = 60;
+    const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
+    const hour = (`00${Math.floor(diff / HOUR)}`).slice(DIGITS['02']);
+    const minutes = moment(screeningTime).format('mm');
+    return `${hour}:${minutes}`;
 }
 exports.timeFormat = timeFormat;
 /**
@@ -71,9 +67,6 @@ exports.timeFormat = timeFormat;
  * @returns {string}
  */
 function escapeHtml(str) {
-    if (typeof str !== 'string') {
-        return str;
-    }
     const change = (match) => {
         const changeList = {
             '&': '&amp;',
@@ -99,23 +92,6 @@ function formatPrice(price) {
     return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
 }
 exports.formatPrice = formatPrice;
-/**
- * パフォーマンスID取得
- * @memberof Util.UtilModule
- * @function getPerformanceId
- * @param {Object} args
- * @param {string} args.theaterCode
- * @param {string} args.day
- * @param {string} args.titleCode
- * @param {string} args.titleBranchNum
- * @param {string} args.screenCode
- * @param {string} args.timeBegin
- * @returns {string}
- */
-function getPerformanceId(args) {
-    return `${args.theaterCode}${args.day}${args.titleCode}${args.titleBranchNum}${args.screenCode}${args.timeBegin}`;
-}
-exports.getPerformanceId = getPerformanceId;
 /**
  * ベース64エンコード
  * @memberof Util.UtilModule
@@ -162,23 +138,50 @@ function getEmailTemplate(res, file, locals) {
 }
 exports.getEmailTemplate = getEmailTemplate;
 /**
- * 2桁
  * @memberof Util.UtilModule
- * @const DIGITS_02
+ * @enum DIGITS
  * @type number
  */
-exports.DIGITS_02 = -2;
+var DIGITS;
+(function (DIGITS) {
+    DIGITS[DIGITS["02"] = -2] = "02";
+    DIGITS[DIGITS["03"] = -3] = "03";
+    DIGITS[DIGITS["08"] = -8] = "08";
+})(DIGITS = exports.DIGITS || (exports.DIGITS = {}));
 /**
- * 3桁
+ * 表示
  * @memberof Util.UtilModule
- * @const DIGITS_03
- * @type number
+ * @enum VIEW
  */
-exports.DIGITS_03 = -3;
+var VIEW;
+(function (VIEW) {
+    /**
+     * Default
+     */
+    VIEW["Default"] = "default";
+    /**
+     * 券売機
+     */
+    VIEW["Fixed"] = "fixed";
+})(VIEW = exports.VIEW || (exports.VIEW = {}));
 /**
- * 8桁
+ * 環境
  * @memberof Util.UtilModule
- * @const DIGITS_08
- * @type number
+ * @enum ENV
+ * @type string
  */
-exports.DIGITS_08 = -8;
+var ENV;
+(function (ENV) {
+    /**
+     * 開発
+     */
+    ENV["Development"] = "development";
+    /**
+     * テスト
+     */
+    ENV["Test"] = "test";
+    /**
+     * 本番
+     */
+    ENV["Production"] = "production";
+})(ENV = exports.ENV || (exports.ENV = {}));

@@ -19,7 +19,7 @@
     <div class="box radius bg-light-gray mb-large">
         <dl>
             <dt><%- __('common.purchase_number') %></dt>
-            <dd><strong class="red-text large-x-text"><%= login.reserve_num %></strong></dd>
+            <dd><strong class="red-text large-x-text"><%= inquiryModel.login.reserveNum %></strong></dd>
             <dd class="small-x-text"><%- __('inquiry.confirm.note') %></dd>
         </dl>
     </div>
@@ -27,44 +27,43 @@
     <h2 class="page-ttl qr-tickets"><%- __('inquiry.confirm.qr_ttl') %></h2>
     <p class="read"><%- __('inquiry.confirm.qr_read') %></p>
     <ul class="tickets mb-large">
-        <% for (let i = 0; i < stateReserve.list_ticket.length; i++) { %>
-        <% const ticket = stateReserve.list_ticket[i] %>
+        <% for (let i = 0; i < inquiryModel.order.acceptedOffers.length; i++) { %>
+        <% const offer = inquiryModel.order.acceptedOffers[i] %>
         <li class="ticket">
             <div class="inner bg-light-gray">
                 <div class="box radius border-bottom-dot bg-white">
                     <div class="mb-xx-small small-text"><strong><%- __('common.seat') %></strong> [<%- __('common.ticket') %>]</div>
-                    <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${stateReserve.list_ticket.length}` %><%- __('common.ticket_number') %></div>
+                    <div class="ticket-number bg-light-gray small-text"><%- `${i + 1}/${inquiryModel.order.acceptedOffers.length}` %><%- __('common.ticket_number') %></div>
                     <div class="mb-xx-small">
-                        <strong class="large-text"><%= ticket.seat_num %></strong>
+                        <strong class="large-text"><%= offer.itemOffered.reservedTicket.ticketedSeat.seatNumber %></strong>
                     </div>
                     <div>
-                        <% if (ticket.add_glasses > 0) { %>
-                        [<%= ticket.ticket_name %><%= __('common.glasses') %>]
-                        <% } else { %>
-                        [<%= ticket.ticket_name %>]
-                        <% } %>
+                        [<%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %>]
                     </div>
                 </div>
-                <% if (moment(`${performance.attributes.day} ${performance.attributes.time_start}`).subtract(24, 'hours').unix() > moment().unix()) { %>
-                <div class="box radius border-bottom-dot not-qr-code bg-white">
-                    <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
-                </div>
-                <% } else if (moment(`${performance.attributes.day} ${performance.attributes.time_end}`).add(1, 'months').unix() < moment().unix()) { %>
+                
+                <% if (moment(offer.itemOffered.reservationFor.endDate).add(1, 'months').unix() < moment().unix()) { %>
                 <div class="box radius border-bottom-dot not-qr-code bg-white">
                     <p class="text-center"><%- __('inquiry.confirm.qr_after') %></p>
                 </div>
+                <% } else if (moment(offer.itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
+                    <div class="box radius border-bottom-dot not-qr-code bg-white">
+                        <p class="text-center"><%- __('inquiry.confirm.qr_before') %></p>
+                    </div>
                 <% } else { %>
-                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- ticket.seat_qrcode %>"></div>
+                <div class="box radius border-bottom-dot qr-code bg-white text-center" data-qrcode="<%- offer.itemOffered.reservedTicket.ticketToken %>"></div>
                 <% } %>
                 <div class="box">
                     <div class="mb-xx-small small-text"><strong><%- __('common.appreciation_date') %></strong></div>
-                    <div class="mb-x-small"><%= moment(performance.attributes.day).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(performance.attributes.day).format('ddd') + ']') %>) <%= timeFormat(performance.attributes.time_start) %>-<%= timeFormat(performance.attributes.time_end) %></div>
+                    <div class="mb-x-small">
+                        <%= moment(offer.itemOffered.reservationFor.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(offer.itemOffered.reservationFor.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei) %> - <%= timeFormat(offer.itemOffered.reservationFor.endDate, offer.itemOffered.reservationFor.coaInfo.dateJouei) %>
+                    </div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.theater') %></strong></div>
-                    <div class="mb-x-small"><%= performance.attributes.theater.name[__('lang')] %></div>
+                    <div class="mb-x-small"><%= inquiryModel.movieTheaterOrganization.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.screen') %></strong></div>
-                    <div class="mb-x-small"><%= performance.attributes.screen.name[__('lang')] %></div>
+                    <div class="mb-x-small"><%= offer.itemOffered.reservationFor.location.name.ja %></div>
                     <div class="mb-xx-small small-text"><strong><%- __('common.film_title') %></strong></div>
-                    <div><%= performance.attributes.film.name[__('lang')] %></div>
+                    <div><%= offer.itemOffered.reservationFor.workPerformed.name %></div>
                 </div>
             </div>
         </li>
@@ -72,16 +71,14 @@
     </ul>
     
     <div class="button-area clearfix">
-        <div class="prev-link"><a class="icon-prev-black" href="/inquiry/login?theater=<%= theaterCode %>"><%- __('inquiry.confirm.prev') %></a></div>
+        <div class="prev-link"><a class="icon-prev-black" href="/inquiry/login?theater=<%= inquiryModel.movieTheaterOrganization.location.branchCode %>"><%- __('inquiry.confirm.prev') %></a></div>
     </div>
 </div>
 <div id="copy" style="display: none"></div>
 
-<input type="hidden" name="theater_code" value="<%= login.theater_code %>">
-<input type="hidden" name="reserve_num" value="<%= login.reserve_num %>">
-<input type="hidden" name="tel_num" value="<%= login.tel_num %>">
-<input type="hidden" name="transaction_id" value="<%= transactionId %>">
-<input type="hidden" name="expire" value="<%= moment(performance.attributes.day).add(10, 'day').format('x') %>">
-
-
+<input type="hidden" name="theaterCode" value="<%= inquiryModel.movieTheaterOrganization.location.branchCode %>">
+<input type="hidden" name="reserveNum" value="<%= inquiryModel.login.reserveNum %>">
+<input type="hidden" name="telephone" value="<%= inquiryModel.login.telephone %>">
+<input type="hidden" name="orderNumber" value="<%= inquiryModel.order.orderNumber %>">
+<input type="hidden" name="expire" value="<%= moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).add(10, 'day').format('x') %>">
 

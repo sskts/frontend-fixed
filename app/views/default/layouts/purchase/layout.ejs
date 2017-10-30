@@ -3,7 +3,6 @@
 <%- include ../head %>
 <% if (viewType === 'app') { %>
 <body class="app purchase">
-<h1>アプリ</h1>
 <% } else { %>
 <body class="purchase">
 <% } %>
@@ -23,6 +22,9 @@
 <%- defineContent('modals') %>
 
 <%- include ../loading %>
+
+<%- defineContent('afterScript') %>
+
 <%- include ../tags/env %>
 </body>
 </html>

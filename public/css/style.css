@@ -285,6 +285,9 @@ p a {
   .device-type-pc {
     display: none; } }
 
+.text-left {
+  text-align: left; }
+
 .text-right {
   text-align: right; }
 
@@ -324,7 +327,7 @@ p a {
 .mb-large {
   margin-bottom: 30px !important; }
 
-.mb-medium {
+.mb-middle {
   margin-bottom: 20px !important; }
 
 .mb-small {
@@ -677,15 +680,16 @@ p a {
 
 .wrapper {
   width: 940px;
-  margin: 30px auto; }
+  margin: 0 auto;
+  padding: 30px 0; }
   @media screen and (max-width: 1024px) {
     .wrapper {
       width: auto;
-      margin: 15px; } }
+      padding: 15px; } }
   @media screen and (max-width: 767px) {
     .wrapper {
       width: auto;
-      margin: 10px; } }
+      padding: 10px; } }
 
 .noscript {
   padding: 10px 0; }
@@ -1187,6 +1191,9 @@ p a {
     .purchase-seat .agree {
       height: 100px; } }
 
+.purchase-seat .arrow {
+  display: none; }
+
 .purchase-ticket .seats .validation {
   background-color: transparent !important; }
   .purchase-ticket .seats .validation .ghost-button a {
@@ -1217,7 +1224,7 @@ p a {
   height: 22px;
   vertical-align: bottom; }
 
-.modal[data-modal="ticket_type"] dl dt {
+.modal[data-modal="ticketType"] dl dt {
   padding-right: 10px; }
 
 .purchase-input .text-icon-red {
@@ -1326,6 +1333,16 @@ p a {
     .purchase-input label[for=agree] {
       font-size: 14px; } }
 
+.purchase-input .payment {
+  display: none; }
+  .purchase-input .payment.active {
+    display: block; }
+
+.purchase-input .change-button, .purchase-input .remove-button {
+  display: none; }
+  .purchase-input .change-button.active, .purchase-input .remove-button.active {
+    display: block; }
+
 .modal[data-modal=securitycode] dl dd img {
   display: block;
   margin: 0 auto;
@@ -1408,38 +1425,135 @@ p a {
   .purchase-complete .print-button {
     display: none; } }
 
-.purchase-performances .performances li {
-  background-color: rgba(255, 255, 255, 0.85);
+.purchase-performances .sort {
+  margin: 0 auto;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
   border-radius: 5px;
-  color: #333;
-  padding-bottom: 10px; }
-  .purchase-performances .performances li:after {
-    display: none; }
-  .purchase-performances .performances li dl .film-ttl, .purchase-performances .performances li dl .date-ttl {
-    display: inline-block;
-    width: 100px; }
-  .purchase-performances .performances li dl dt {
-    padding: 20px;
-    border-bottom: 1px solid #ACACAC; }
-  .purchase-performances .performances li dl dd {
-    padding: 20px 0 0 20px; }
-    .purchase-performances .performances li dl dd ul {
-      display: -webkit-flex;
-      display: -ms-flexbox;
-      display: flex;
-      -webkit-flex-wrap: wrap;
-          -ms-flex-wrap: wrap;
-              flex-wrap: wrap; }
-      .purchase-performances .performances li dl dd ul li {
-        width: 20%;
-        margin: 0 10px 10px 0;
-        padding-bottom: 0; }
-        @media screen and (max-width: 767px) {
-          .purchase-performances .performances li dl dd ul li {
-            width: 30%; } }
-        .purchase-performances .performances li dl dd ul li:after {
-          display: none;
-          background-image: none; }
+  border: 1px solid #FFF; }
+  .purchase-performances .sort div {
+    width: 50%;
+    border-right: 1px solid #FFF; }
+    .purchase-performances .sort div:last-child {
+      border: none; }
+    .purchase-performances .sort div a {
+      padding: 25px 0;
+      display: block;
+      background-color: #EEE; }
+      .purchase-performances .sort div a.active {
+        background-color: #CCCCCC;
+        color: #333; }
+
+.purchase-performances .chronological-order {
+  display: none; }
+  .purchase-performances .chronological-order.active {
+    display: block; }
+  .purchase-performances .chronological-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .chronological-order li a {
+      border: 2px solid #AFAFAF; }
+      .purchase-performances .chronological-order li a dl {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+        .purchase-performances .chronological-order li a dl dt {
+          width: 180px;
+          padding: 10px 10px 10px 20px;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-justify-content: space-between;
+              -ms-flex-pack: justify;
+                  justify-content: space-between;
+          -webkit-align-items: center;
+              -ms-flex-align: center;
+                  align-items: center; }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .chronological-order li a dl dt {
+              width: 50%;
+              padding: 10px; } }
+          .purchase-performances .chronological-order li a dl dt .status {
+            width: 80px; }
+            @media screen and (max-width: 767px) {
+              .purchase-performances .chronological-order li a dl dt .status {
+                width: 50px; } }
+            .purchase-performances .chronological-order li a dl dt .status img {
+              width: 30px; }
+        .purchase-performances .chronological-order li a dl dd {
+          width: 520px;
+          padding: 10px 40px 25px 40px;
+          border-left: 1px solid #777777; }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .chronological-order li a dl dd {
+              width: 50%;
+              padding: 10px 10px 25px 10px; } }
+          .purchase-performances .chronological-order li a dl dd .screen-name {
+            display: inline-block;
+            border: 1px solid #333;
+            padding: 5px; }
+
+.purchase-performances .film-order {
+  display: none; }
+  .purchase-performances .film-order.active {
+    display: block; }
+  .purchase-performances .film-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .film-order li > dl > dt {
+      color: #FFF;
+      background-color: #515151;
+      padding: 20px 25px; }
+    .purchase-performances .film-order li > dl > dd {
+      background-color: #2d2d2d;
+      padding: 20px 20px 0; }
+      .purchase-performances .film-order li > dl > dd ul {
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-flex-wrap: wrap;
+            -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+        margin: 0 0 0 -10px; }
+        .purchase-performances .film-order li > dl > dd ul li {
+          width: 25%;
+          padding: 0 0 0 10px;
+          margin: 0 0 20px; }
+          @media screen and (max-width: 1024px) {
+            .purchase-performances .film-order li > dl > dd ul li {
+              width: 33.3%; } }
+          @media screen and (max-width: 767px) {
+            .purchase-performances .film-order li > dl > dd ul li {
+              width: 50%; } }
+          .purchase-performances .film-order li > dl > dd ul li.disabled {
+            opacity: 0.5; }
+          .purchase-performances .film-order li > dl > dd ul li a {
+            padding: 0;
+            border: 2px solid #AFAFAF; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dt {
+              padding: 10px 15px;
+              border-bottom: 1px solid #777777;
+              display: -webkit-flex;
+              display: -ms-flexbox;
+              display: flex;
+              -webkit-justify-content: space-between;
+                  -ms-flex-pack: justify;
+                      justify-content: space-between;
+              -webkit-align-items: center;
+                  -ms-flex-align: center;
+                      align-items: center; }
+              @media screen and (max-width: 767px) {
+                .purchase-performances .film-order li > dl > dd ul li a dl dt {
+                  padding: 10px; } }
+              .purchase-performances .film-order li > dl > dd ul li a dl dt .status {
+                width: 60px; }
+                .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
+                  width: 30px; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dd {
+              padding: 10px 0; }
 
 .purchase-mvtk-input input[type=text],
 .purchase-mvtk-input input[type=number],
@@ -1717,3 +1831,35 @@ p a {
 @media print {
   .not-print {
     display: none; } }
+
+.app {
+  background-color: #000;
+  padding-top: 44px; }
+  .app .wrapper {
+    margin-top: 0; }
+  .app .header {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1B1464;
+    border-radius: 0;
+    border: none;
+    padding: 0; }
+    .app .header .close a {
+      display: inline-block;
+      padding: 15px;
+      color: #FFF; }
+  .app .footer {
+    display: none; }
+  .app .site-seal {
+    display: none; }
+  .app .prev-button button, .app .prev-button a {
+    border-radius: 32px; }
+  .app .prev-button .icon-prev-white:before {
+    display: none; }
+  .app .next-button button, .app .next-button a {
+    border-radius: 32px; }
+  .app .next-button .icon-next-white:before {
+    display: none; }

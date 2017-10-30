@@ -8,73 +8,74 @@
     <h1 class="page-ttl"><%- __('purchase.mvtk.input.page_ttl') %></h1>
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
 
-    <div class="mb-small white-box center">
-        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', reserveSeatLength) %></strong>
+    <div class="mb-x-large white-box center">
+        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length) %></strong>
     </div>
 
     <div class="ticket-list mb-small">
-        <% for (let i = 0; i < reserveSeatLength; i++) { %>
+        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length; i++) { %>
         <% if (mvtkInfo[i] !== undefined) { %>
-        <div class="mvtk-box active">
-            <div class="button small-button gray-button remove-button">
-                <a href="#"><%- __('common.remove') %></a>
+        <div class="mvtk-box form-layout center mb-x-large active">
+            <div class="mvtk-box-inner">
+                <dl class="mb-small">
+                    <dt><%- __('common.mvtk_code') %></dt>
+                    <dd>
+                        <input type="text" name="mvtkCode" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord" readonly="readonly">
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><%- __('common.mvtk_password') %></dt>
+                    <dd>
+                        <input type="password" name="mvtkPassword" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord" readonly="readonly">
+                    </dd>
+                </dl>
+                <div class="button small-button gray-button read-button">
+                    <a href="#">
+                        <div class="mb-x-small"><%- __('purchase.mvtk.input.read_button') %></div>
+                        <div><img src="/images/fixed/qr_button.svg"></div>
+                    </a>
+                </div>
+                <div class="remove-button"><a href="#"></a></div>
             </div>
-            <ul class="mb-small form-layout center">
-                <li class="mb-small">
-                    <dl>
-                        <dt><%- __('common.mvtk_code') %></dt>
-                        <dd>
-                            <input type="text" name="mvtk_code" value="<%= mvtkInfo[i].code %>" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
-                        </dd>
-                    </dl>
-                </li>
-                <li>
-                    <dl>
-                        <dt><%- __('common.mvtk_password') %></dt>
-                        <dd>
-                            <input type="password" name="mvtk_password" value="<%= mvtkInfo[i].password %>" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
+            
         </div>
         <% } else { %>
-        <div class="mvtk-box zoom">
-            <div class="button small-button gray-button remove-button">
-                <a href="#"><%- __('common.remove') %></a>
+        <div class="mvtk-box form-layout center mb-x-large zoom">
+            <div class="mvtk-box-inner">
+                <dl class="mb-small">
+                    <dt><%- __('common.mvtk_code') %></dt>
+                    <dd>
+                        <input type="text" name="mvtkCode" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
+                    </dd>
+                </dl>
+                <dl>
+                    <dt><%- __('common.mvtk_password') %></dt>
+                    <dd>
+                        <input type="password" name="mvtkPassword" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
+                    </dd>
+                </dl>
+                <div class="button small-button gray-button read-button">
+                    <a href="#">
+                        <div class="mb-x-small"><%- __('purchase.mvtk.input.read_button') %></div>
+                        <div><img src="/images/fixed/qr_button.svg"></div>
+                    </a>
+                </div>
+                <div class="remove-button"><a href="#"></a></div>
             </div>
-            <ul class="mb-small form-layout center">
-                <li class="mb-small">
-                    <dl>
-                        <dt><%- __('common.mvtk_code') %></dt>
-                        <dd>
-                            <input type="text" name="mvtk_code" value="" placeholder="<%- __('common.placeholder.mvtk_code') %>" maxlength="10" class="numerickeybord numerickeybord-top" readonly="readonly">
-                        </dd>
-                    </dl>
-                </li>
-                <li>
-                    <dl>
-                        <dt><%- __('common.mvtk_password') %></dt>
-                        <dd>
-                            <input type="password" name="mvtk_password" value="" autocomplete="off" placeholder="<%- __('common.placeholder.mvtk_password') %>" maxlength="4" class="numerickeybord numerickeybord-top" readonly="readonly">
-                        </dd>
-                    </dl>
-                </li>
-            </ul>
         </div>
         <% } %>
         <% } %>
     </div>   
-    <% if (reserveSeatLength > 1) { %>
+    <% if (purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length > 1) { %>
     <div class="button middle-button gray-button add-button mb-large">
         <a class="center icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
     <% } %>
         
     <form method="post">
-        <div class="button middle-button next-button"><button class="center icon-triangle-01" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
+        <div class="button middle-button next-button blue-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.mvtk.input.next') %></button></div>
         <input type="hidden" name="mvtk" value="">
-        <input type="hidden" name="transaction_id" value="<%= transactionId %>">
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
     </form>
 
 </div>
@@ -86,3 +87,4 @@
 <%- contentFor('modals') %>
 <%- include('../modals/validation') %>
 <%- include('../modals/mvtkValidation') %>
+<%- include('../modals/mvtkQrReader') %>

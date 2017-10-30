@@ -21,12 +21,12 @@ exports.seatSelect = seatSelect;
  * @returns {void}
  */
 function screenStateReserve(req) {
-    req.checkBody('theater_code').notEmpty();
-    req.checkBody('date_jouei').notEmpty();
-    req.checkBody('title_code').notEmpty();
-    req.checkBody('title_branch_num').notEmpty();
-    req.checkBody('time_begin').notEmpty();
-    req.checkBody('screen_code').notEmpty();
+    req.checkBody('theaterCode').notEmpty();
+    req.checkBody('dateJouei').notEmpty();
+    req.checkBody('titleCode').notEmpty();
+    req.checkBody('titleBranchNum').notEmpty();
+    req.checkBody('timeBegin').notEmpty();
+    req.checkBody('screenCode').notEmpty();
 }
 exports.screenStateReserve = screenStateReserve;
 /**
@@ -36,11 +36,11 @@ exports.screenStateReserve = screenStateReserve;
  * @returns {void}
  */
 function salesTickets(req) {
-    req.checkBody('theater_code').notEmpty();
-    req.checkBody('date_jouei').notEmpty();
-    req.checkBody('title_code').notEmpty();
-    req.checkBody('title_branch_num').notEmpty();
-    req.checkBody('time_begin').notEmpty();
-    req.checkBody('screen_code').notEmpty();
+    req.checkBody('theaterCode').notEmpty();
+    req.checkBody('dateJouei').notEmpty();
+    req.checkBody('titleCode').notEmpty();
+    req.checkBody('titleBranchNum').notEmpty();
+    req.checkBody('timeBegin').notEmpty();
+    req.checkBody('screenCode').notEmpty();
 }
 exports.salesTickets = salesTickets;

@@ -14,8 +14,8 @@
                 <dt><%- __('common.theater') %></dt>
                 <dd>
                     <select name="theater">
-                        <% for (const theater of theaters) { %>
-                        <option selected value="<%= theater.id %>"><%= theater.attributes.name.ja %></option>
+                        <% for (const theater of movieTheaters) { %>
+                        <option selected value="<%= theater.location.branchCode %>"><%= theater.name.ja %></option>
                         <% } %>
                     </select>
                 </dd>
@@ -23,25 +23,25 @@
             <dl class="mb-small">
                 <dt><%- __('common.device_id') %></dt>
                 <dd>
-                    <input type="text" name="device_id" autocomplete="off" placeholder="<%- __('common.placeholder.device_id') %>" value="">
+                    <input type="text" name="deviceId" autocomplete="off" placeholder="<%- __('common.placeholder.device_id') %>" value="">
                 </dd>
             </dl>
             <dl class="mb-small">
                 <dt><%- __('common.last_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="last_name_hira" autocomplete="off" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
+                    <input type="text" name="familyName" autocomplete="off" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
                 </dd>
             </dl>
             <dl class="mb-small">
                 <dt><%- __('common.first_name_hira') %></dt>
                 <dd>
-                    <input type="text" name="first_name_hira" autocomplete="off" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
+                    <input type="text" name="givenName" autocomplete="off" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
                 </dd>
             </dl>
             <dl class="mb-small">
                 <dt><%- __('common.mail_addr') %></dt>
                 <dd>
-                    <input type="text" name="mail_addr" autocomplete="off" placeholder="<%- __('common.placeholder.mail') %>" value="">
+                    <input type="text" name="email" autocomplete="off" placeholder="<%- __('common.placeholder.mail') %>" value="">
                 </dd>
             </dl>
             <dl class="mb-small">
@@ -53,9 +53,9 @@
             <p class="mb-large"><%- __('setting.certificate') %></p>
         </div>
         
-        <div class="button middle-button next-button mb-middle"><button class="center icon-triangle-01" type="submit"><%- __('setting.next') %></button></div>
+        <div class="button middle-button next-button blue-button mb-middle"><button class="center icon-triangle-white" type="submit"><%- __('setting.next') %></button></div>
     </form>
-    <div class="button middle-button print-button"><a class="center icon-triangle-01" href="#"><%- __('setting.print') %></a></div>
+    <div class="button middle-button blue-button print-button"><a class="center icon-triangle-white" href="#"><%- __('setting.print') %></a></div>
 </div>
 
 <%- include('../locales/validation') %>

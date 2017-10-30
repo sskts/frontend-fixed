@@ -11,7 +11,6 @@ import ipFilter from './middlewares/ipFilter';
 import * as locales from './middlewares/locales';
 import maintenance from './middlewares/maintenance';
 import session from './middlewares/session';
-import * as SupertestRequest from './middlewares/supertestRequest';
 import * as UtilModule from './modules/Util/UtilModule';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -29,7 +28,7 @@ app.use(helmet()); //セキュリティー対策
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
-if (process.env.VIEW_TYPE === 'fixed') {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
     app.set('views', `${__dirname}/views/fixed`);
 } else {
     app.set('views', `${__dirname}/views/default`);
@@ -52,14 +51,10 @@ app.use(expressValidator()); // バリデーション
 
 // ムビチケサービス初期化
 MVTK.initialize(
-    process.env.MVTK_ENDPOINT_SERVICE_01,
-    process.env.MVTK_ENDPOINT_SERVICE_02,
-    process.env.MVTK_ENDPOINT_RESERVE_SERVICE
+    (<string>process.env.MVTK_ENDPOINT_SERVICE_01),
+    (<string>process.env.MVTK_ENDPOINT_SERVICE_02),
+    (<string>process.env.MVTK_ENDPOINT_RESERVE_SERVICE)
 );
-
-if (process.env.NODE_ENV === 'development') {
-    app.use(SupertestRequest.supertestSession); // テスト用
-}
 
 router(app); // ルーティング
 

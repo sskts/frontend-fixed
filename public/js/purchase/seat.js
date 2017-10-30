@@ -1,82 +1,162 @@
 var screenSeatStatusesMap;
 
 $(function () {
-    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
-    saveSalesTickets();
-    loadingStart();
-    screenStateUpdate(function () {
-        loadingEnd();
-    });
-    
-
-    // 座席クリックイベント
-    $(document).on('click', '.zoom-btn a', function (event) {
-        event.preventDefault();
-        if (screenSeatStatusesMap.isZoom()) {
-            screenSeatStatusesMap.scaleDown();
-        }
-    });
-
-    // 座席クリックイベント
-    $('.screen').on('click', '.seat a', function (event) {
-        event.preventDefault();
-        //スマホで拡大操作
-        if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
+    var reserveError = $('input[name=reserveError]').val();
+    pageInit(function () {
+        if (reserveError) {
+            modal.open('reserveError');
             return;
         }
-        var limit = Number($('.screen-cover').attr('data-limit'));
-        if ($(this).hasClass('disabled')) {
-            return;
+        if (isFixed()) {
+            showSeatSelectAnnounce();
         }
-        // 座席数上限チェック
-        if (!$(this).hasClass('active')) {
-            if ($('.screen .seat a.active').length > limit - 1) {
-                modal.open('seat_upper_limit');
-                return;
-            }
-        }
-
-        $(this).toggleClass('active');
     });
+
+    // 拡大クリックイベント
+    $(document).on('click', '.zoom-btn a', zoomButtonClick);
+
+    // 座席クリックイベント
+    $('.screen').on('click', '.seat a', seatClick);
 
     // 次へクリックイベント
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        // 座席コードリストを取得
-        var seats = {
-            list_tmp_reserve: []
-        };
-        $('.screen .seat a.active').each(function (index, elem) {
-            seats.list_tmp_reserve.push({
-                seat_num: $(this).attr('data-seat-code'),
-                seat_section: '0'
-            });
-        });
+    $(document).on('click', '.next-button button', nextButtonClick);
 
-        if (seats.list_tmp_reserve.length < 1) {
-            modal.open('seat_not_select');
-            return;
-        }
-        validation();
-        if ($('.validation-text').length > 0) {
-            validationScroll();
-            return;
-        }
-
-        var reserveTickets = [];
-        var form = $('form');
-        $('input[name=seats]').val(JSON.stringify(seats));
-
-        loadingStart(function () {
-            form.submit();
-        });
-    });
+    // パフォーマンス切り替え
+    $(document).on('click', '.arrow a', performanceChangeClick);
 
     // スクロール
     $(window).on('scroll', function (event) {
         zoomButtonScroll();
     });
 });
+
+/**
+ * 拡大クリックイベント
+ * @function zoomButtonClick
+ * @param {Event} event 
+ */
+function zoomButtonClick(event) {
+    event.preventDefault();
+    if (screenSeatStatusesMap.isZoom()) {
+        screenSeatStatusesMap.scaleDown();
+    }
+}
+
+/**
+ * 座席クリックイベント
+ * @function seatClick
+ * @param {Event} event 
+ */
+function seatClick(event) {
+    event.preventDefault();
+    //スマホで拡大操作
+    if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
+        return;
+    }
+    var limit = Number($('.screen-cover').attr('data-limit'));
+    if ($(this).hasClass('disabled')) {
+        return;
+    }
+    // 座席数上限チェック
+    if (!$(this).hasClass('active')) {
+        if ($('.screen .seat a.active').length > limit - 1) {
+            modal.open('seatUpperLimit');
+            return;
+        }
+    }
+
+    $(this).toggleClass('active');
+}
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {*} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    // 座席コードリストを取得
+    var seats = {
+        listTmpReserve: []
+    };
+    $('.screen .seat a.active').each(function (index, elem) {
+        seats.listTmpReserve.push({
+            seatNum: $(this).attr('data-seat-code'),
+            seatSection: $(this).attr('data-seat-section')
+        });
+    });
+
+    if (seats.listTmpReserve.length < 1) {
+        modal.open('seatNotSelect');
+        return;
+    }
+    validation();
+    if ($('.validation-text').length > 0) {
+        validationScroll();
+        return;
+    }
+
+    var reserveTickets = [];
+    var form = $('form');
+    $('input[name=seats]').val(JSON.stringify(seats));
+
+    loadingStart(function () {
+        form.submit();
+    });
+}
+
+/**
+ * パフォーマンス切り替えクリック
+ * @function performanceChangeClick
+ * @param {Event} event 
+ */
+function performanceChangeClick(event) {
+    event.preventDefault();
+    var performanceId = $(this).attr('data-performanceId');
+    arrowClick(performanceId);
+}
+
+/**
+ * 初期化
+ * @function pageInit
+ * @param {function} cb
+ */
+function pageInit(cb) {
+    $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
+    saveSalesTickets();
+    loadingStart();
+    if (isFixed()) {
+        setArrows();
+    }
+    screenStateUpdate(function () {
+        loadingEnd();
+        if (cb !== undefined) {
+            cb();
+        }
+    });
+}
+
+/**
+ * 次の時間帯へ説明表示
+ * @function showSeatSelectAnnounce
+ * @returns {void}
+ */
+function showSeatSelectAnnounce() {
+    setTimeout(function() {
+        var json = sessionStorage.getItem('performances');
+        if (json === null) {
+            return;
+        }
+        var performances = JSON.parse(json);
+        if (performances.length === 1) {
+            return;
+        }
+        modal.open('seatSelectAnnounce');
+        setTimeout(function() {
+            modal.close('seatSelectAnnounce');
+        }, 5000);
+    }, 0);
+}
 
 /**
  * ズームボタンスクロール
@@ -124,12 +204,12 @@ function getScreenStateReserve(count, cb) {
         type: 'POST',
         timeout: 10000,
         data: {
-            theater_code: target.attr('data-theater'), // 施設コード
-            date_jouei: target.attr('data-day'), // 上映日
-            title_code: target.attr('data-coa-title-code'), // 作品コード
-            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
-            time_begin: target.attr('data-time-start'), // 上映時刻
-            screen_code: target.attr('data-screen-code'), // スクリーンコード
+            theaterCode: target.attr('data-theater'), // 施設コード
+            dateJouei: target.attr('data-day'), // 上映日
+            titleCode: target.attr('data-coa-title-code'), // 作品コード
+            titleBranchNum: target.attr('data-coa-title-branch-num'), // 作品枝番
+            timeBegin: target.attr('data-time-start'), // 上映時刻
+            screenCode: target.attr('data-screen-code'), // スクリーンコード
         },
         beforeSend: function () { }
     }).done(function (res) {
@@ -139,7 +219,7 @@ function getScreenStateReserve(count, cb) {
     }).fail(function (jqxhr, textStatus, error) {
         retry(count, cb)
     }).always(function () {
-        
+
     });
 }
 
@@ -156,12 +236,12 @@ function saveSalesTickets() {
         type: 'POST',
         timeout: 10000,
         data: {
-            theater_code: target.attr('data-theater'), // 施設コード
-            date_jouei: target.attr('data-day'), // 上映日
-            title_code: target.attr('data-coa-title-code'), // 作品コード
-            title_branch_num: target.attr('data-coa-title-branch-num'), // 作品枝番
-            time_begin: target.attr('data-time-start'), // 上映時刻
-            screen_code: target.attr('data-screen-code'), // スクリーンコード
+            theaterCode: target.attr('data-theater'), // 施設コード
+            dateJouei: target.attr('data-day'), // 上映日
+            titleCode: target.attr('data-coa-title-code'), // 作品コード
+            titleBranchNum: target.attr('data-coa-title-branch-num'), // 作品枝番
+            timeBegin: target.attr('data-time-start'), // 上映時刻
+            screenCode: target.attr('data-screen-code'), // スクリーンコード
         }
     }).done(function (res) {
     }).fail(function (jqxhr, textStatus, error) {
@@ -198,26 +278,38 @@ function screenStateChange(state) {
     $('.seat a').addClass('disabled');
 
     var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
+    
     if (purchaseSeats) {
         //予約している席設定
-        for (var i = 0, len = purchaseSeats.list_tmp_reserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.list_tmp_reserve[i];
-            var seatNum = purchaseSeat.seat_num;
+        for (var i = 0, len = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve.length; i < len; i++) {
+            var purchaseSeat = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve[i];
+            var seatNum = purchaseSeat.seatNum;
             var seat = $('.seat a[data-seat-code=' + seatNum + ']');
+            seat.attr({
+                'data-seat-code':  seatNum,
+                'data-seat-section': purchaseSeat.seatSection
+            })
             seat.removeClass('disabled');
             seat.addClass('active');
         }
     }
-    if (state && state.cnt_reserve_free > 0) {
+
+    if (state && state.cntReserveFree > 0) {
         //空いている座席設定
-        var freeSeats = state.list_seat[0].list_free_seat;
-        for (var i = 0, len = freeSeats.length; i < len; i++) {
-            var freeSeat = freeSeats[i];
-            // var seatNum = replaceHalfSize(freeSeat.seat_num);
-            var seat = $('.seat a[data-seat-code=' + freeSeat.seat_num + ']');
-            if (seat && !seat.hasClass('active')) {
-                seat.removeClass('disabled');
-                seat.addClass('default');
+        for (var i = 0, len = state.listSeat.length; i < len; i++) {
+            var freeSeats = state.listSeat[i];
+            for (var j = 0, len2 = freeSeats.listFreeSeat.length; j < len2; j++) {
+                var freeSeat = freeSeats.listFreeSeat[j];
+                // var seatNum = replaceHalfSize(freeSeat.seatNum);
+                var seat = $('.seat a[data-seat-code=' + freeSeat.seatNum + ']');
+                seat.attr({
+                    'data-seat-code':  freeSeat.seatNum,
+                    'data-seat-section': freeSeats.seatSection
+                });
+                if (seat && !seat.hasClass('active')) {
+                    seat.removeClass('disabled');
+                    seat.addClass('default');
+                }
             }
         }
     }
@@ -317,11 +409,11 @@ function createScreen(setting, screen) {
                 var label = labels[labelCount] + String(x + 1);
                 if (screen.hc.indexOf(label) !== -1) {
                     seatHtml.push('<div class="seat seat-hc" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '" data-seat-section=""><span>' + label + '</span></a>' +
                         '</div>');
                 } else {
                     seatHtml.push('<div class="seat" style="top:' + pos.y + 'px; left:' + pos.x + 'px">' +
-                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '"><span>' + label + '</span></a>' +
+                        '<a href="#" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px" data-seat-code="' + code + '" data-seat-section=""><span>' + label + '</span></a>' +
                         '</div>');
                 }
 
@@ -444,5 +536,103 @@ function validation() {
             target.addClass('validation');
             target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
         }
+    });
+}
+
+/**
+ * 時間変更ボタン初期化
+ * @function setArrows
+ * @returns {void}
+ */
+function setArrows() {
+    $('.arrow').hide();
+    var performanceId = $('input[name=performanceId]').val();
+    var json = sessionStorage.getItem('performances');
+    if (json === null) {
+        return;
+    }
+    var performances = JSON.parse(json);
+    if (performances.length < 2) {
+        return;
+    }
+    var current;
+    performances.forEach(function(value, index){
+        if (value.id === performanceId) {
+            current = index;
+            return;
+        }
+    });
+    var prev = $('.prev-arrow');
+    var next = $('.next-arrow');
+    if (current === 0) {
+        prev.hide();
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
+        next.show();
+    } else if (current === performances.length - 1) {
+        next.hide();
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
+        prev.show();
+    } else {
+        prev.find('.time').text(performances[current - 1].startTime);
+        prev.find('a').attr('data-performanceId', performances[current - 1].id);
+        prev.show();
+        next.find('.time').text(performances[current + 1].startTime);
+        next.find('a').attr('data-performanceId', performances[current + 1].id);
+        next.show();
+    }
+}
+
+/**
+ * 作品変更クリック
+ * @function arrowClick
+ * @param {string} performanceId 
+ */
+function arrowClick(performanceId) {
+    loadingStart();
+    $.ajax({
+        dataType: 'json',
+        url: '/purchase/performanceChange',
+        type: 'GET',
+        timeout: 10000,
+        data: {
+            performanceId: performanceId
+        },
+        beforeSend: function () { }
+    }).done(function (res) {
+        if (res.result && res.error !== null) {
+            $('input[name=seats]').val('');
+            $('.screen-inner').remove();
+            var target = $('.screen-cover');
+            var individualScreeningEvent = res.result.individualScreeningEvent;
+            target.attr({
+                'data-limit': individualScreeningEvent.coaInfo.availableNum,
+                'data-theater': individualScreeningEvent.coaInfo.theaterCode,
+                'data-day': individualScreeningEvent.coaInfo.dateJouei,
+                'data-coa-title-code': individualScreeningEvent.coaInfo.titleCode,
+                'data-coa-title-branch-num': individualScreeningEvent.coaInfo.titleBranchNum,
+                'data-time-start': individualScreeningEvent.coaInfo.timeBegin,
+                'data-screen-code': individualScreeningEvent.coaInfo.screenCode
+            });
+            $('input[name=performanceId]').val(individualScreeningEvent.identifier);
+            $('.screen-name').text(individualScreeningEvent.location.name.ja);
+            $('.time-start').text(timeFormat(individualScreeningEvent.startDate, individualScreeningEvent.coaInfo.dateJouei));
+            $('.time-end').text(timeFormat(individualScreeningEvent.endDate, individualScreeningEvent.coaInfo.dateJouei));
+            $('.performance-date').removeClass('change-animation');
+            pageInit(function() {
+                $('.performance-date').addClass('change-animation');
+            });
+        } else {
+            $('.purchase-seat').remove();
+            $('.error').find('.access').hide();
+            $('.error').find('.expire').show();
+            $('.error').show();
+            loadingEnd();
+        }
+    }).fail(function (jqxhr, textStatus, error) {
+        loadingEnd();
+    }).always(function () {
+
     });
 }

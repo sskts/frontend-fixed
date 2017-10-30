@@ -1,8 +1,4 @@
 "use strict";
-/**
- * 重複予約
- * @namespace Purchase.OverlapModule
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,50 +8,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const COA = require("@motionpicture/coa-service");
+/**
+ * 重複予約
+ * @namespace Purchase.OverlapModule
+ */
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
-const MP = require("../../../libs/MP");
-const PurchaseSession = require("../../models/Purchase/PurchaseModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const HTTPStatus = require("http-status");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
+const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
  * @memberof Purchase.OverlapModule
- * @function index
+ * @function render
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function index(req, res, next) {
+function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (req.params.id === undefined)
-                throw ErrorUtilModule.ERROR_ACCESS;
-            if (purchaseModel.performance === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            //パフォーマンス取得
-            const result = yield MP.getPerformance(req.params.id);
-            res.locals.performances = {
-                after: result,
-                before: purchaseModel.performance
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
             };
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (req.params.id === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            if (purchaseModel.individualScreeningEvent === null)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            // イベント情報取得
+            const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
+                identifier: req.params.id
+            });
+            log('イベント情報取得', individualScreeningEvent);
+            res.locals.after = individualScreeningEvent;
+            res.locals.before = purchaseModel.individualScreeningEvent;
             res.render('purchase/overlap');
-            return;
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
-exports.index = index;
+exports.render = render;
 /**
  * 新規予約へ
  * @memberof Purchase.OverlapModule
@@ -69,47 +71,34 @@ function newReserve(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-            if (purchaseModel.performance === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.transactionMP === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.reserveSeats === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.authorizationCOA === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            if (purchaseModel.performanceCOA === null)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const performance = purchaseModel.performance;
-            const reserveSeats = purchaseModel.reserveSeats;
-            //COA仮予約削除
-            yield COA.services.reserve.delTmpReserve({
-                theater_code: performance.attributes.theater.id,
-                date_jouei: performance.attributes.day,
-                title_code: purchaseModel.performanceCOA.titleCode,
-                title_branch_num: purchaseModel.performanceCOA.titleBranchNum,
-                time_begin: performance.attributes.time_start,
-                tmp_reserve_num: reserveSeats.tmp_reserve_num
-            });
-            log('COA仮予約削除');
-            // COAオーソリ削除
-            yield MP.removeCOAAuthorization({
-                transactionId: purchaseModel.transactionMP.id,
-                coaAuthorizationId: purchaseModel.authorizationCOA.id
-            });
-            log('COAオーソリ削除');
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction !== null
+                && purchaseModel.seatReservationAuthorization !== null
+                && !purchaseModel.isExpired()) {
+                try {
+                    // COA仮予約削除
+                    yield sasaki.service.transaction.placeOrder(options).cancelSeatReservationAuthorization({
+                        transactionId: purchaseModel.transaction.id,
+                        actionId: purchaseModel.seatReservationAuthorization.id
+                    });
+                    log('COA仮予約削除');
+                }
+                catch (err) {
+                    log('COA仮予約削除失敗', err);
+                }
+            }
             //購入スタートへ
             delete req.session.purchase;
-            res.redirect(`/purchase?id=${req.body.performance_id}`);
-            return;
+            res.redirect(`/purchase?id=${req.body.performanceId}`);
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
@@ -125,11 +114,11 @@ exports.newReserve = newReserve;
  */
 function prevReserve(req, res, next) {
     if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
+        next(new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property));
         return;
     }
     //座席選択へ
-    res.redirect(`/purchase/seat/${req.body.performance_id}/`);
+    res.redirect(`/purchase/seat/${req.body.performanceId}/`);
     return;
 }
 exports.prevReserve = prevReserve;

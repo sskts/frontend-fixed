@@ -1,55 +1,60 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * エラー共通
  * @namespace Util.ErrorUtilModule
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * エラー番号（propertyなし）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_PROPERTY
- */
-exports.ERROR_PROPERTY = '000';
-/**
- * エラー番号（アクセス）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_ACCESS
- */
-exports.ERROR_ACCESS = '001';
-/**
- * エラー番号（時間切れ）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_TIMEOUT
- */
-exports.ERROR_TIMEOUT = '002';
-/**
- * エラー番号（バリデーション）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_VALIDATION
- */
-exports.ERROR_VALIDATION = '003';
-/**
- * エラー番号（期限切れ）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_EXPIRE
- */
-exports.ERROR_EXPIRE = '004';
-/**
- * エラー（外部モジュール）
- * @memberof Util.ErrorUtilModule
- * @const ERROR_EXTERNAL_MODULE
- */
-exports.ERROR_EXTERNAL_MODULE = '999';
+const HTTPStatus = require("http-status");
+var ErrorType;
+(function (ErrorType) {
+    /**
+     * プロパティなし
+     */
+    ErrorType["Property"] = "000";
+    /**
+     * アクセス
+     */
+    ErrorType["Access"] = "001";
+    /**
+     * 時間切れ
+     */
+    ErrorType["Timeout"] = "002";
+    /**
+     * バリデーション
+     */
+    ErrorType["Validation"] = "003";
+    /**
+     * 期限切れ
+     */
+    ErrorType["Expire"] = "004";
+    /**
+     * 外部モジュール
+     */
+    ErrorType["ExternalModule"] = "999";
+})(ErrorType = exports.ErrorType || (exports.ErrorType = {}));
 /**
  * カスタムエラー
  * @memberof Util.ErrorUtilModule
  * @extends Error
- * @class CustomError
+ * @class AppError
  */
-class CustomError extends Error {
-    constructor(code, message) {
+class AppError extends Error {
+    constructor(code, errorType, message) {
+        if (message === undefined) {
+            message = (errorType === ErrorType.Property) ? 'Property Error'
+                : (errorType === ErrorType.Access) ? 'Access Error'
+                    : (errorType === ErrorType.Timeout) ? 'Timeout Error'
+                        : (errorType === ErrorType.Validation) ? 'Validation Error'
+                            : (errorType === ErrorType.Expire) ? 'Expire Error'
+                                : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
+                                    : undefined;
+        }
         super(message);
         this.code = code;
+        this.errorType = errorType;
+        this.errors = [
+            { name: 'SSKTSApplicationError', reason: HTTPStatus[code], message: message }
+        ];
     }
 }
-exports.CustomError = CustomError;
+exports.AppError = AppError;

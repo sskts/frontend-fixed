@@ -1,6 +1,4 @@
-var modal;
 $(function () {
-    modal = new SASAKI.Modal();
     if (!isFixed()) {
         saveInquiry();
         showQRCode();
@@ -48,10 +46,10 @@ function showQRCode() {
  */
 function saveInquiry() {
     var inquiryInfo = {
-        transaction_id: $('input[name=transaction_id]').val(),
-        theater_code: $('input[name=theater_code]').val(),
-        reserve_num: $('input[name=reserve_num]').val(),
-        tel_num: $('input[name=tel_num]').val(),
+        orderNumber: $('input[name=orderNumber]').val(),
+        theaterCode: $('input[name=theaterCode]').val(),
+        reserveNum: $('input[name=reserveNum]').val(),
+        telephone: $('input[name=telephone]').val(),
         expire: $('input[name=expire]').val()
     };
     var data = localStorage.getItem('inquiryInfo');
@@ -83,8 +81,8 @@ function showComplete() {
     printDom.show();
     $(window).scrollTop(0);
     printTicket(0, function () {
-        var transactionId = $('input[name=transaction_id]').val();
-        var theaterCode = $('input[name=theater_code]').val();
+        var orderNumber = $('input[name=orderNumber]').val();
+        var theaterCode = $('input[name=theaterCode]').val();
         // 計測
         collection({
             client: 'sskts-frontend',
@@ -92,7 +90,7 @@ function showComplete() {
             action: 'print',
             category: 'inquiry',
             message: '発券完了',
-            transaction: transactionId
+            transaction: orderNumber
         });
         try {
             ga('send', {

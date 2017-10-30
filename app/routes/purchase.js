@@ -14,44 +14,50 @@ const PerformancesModule = require("../modules/Purchase/PerformancesModule");
 const SeatModule = require("../modules/Purchase/SeatModule");
 const TicketModule = require("../modules/Purchase/TicketModule");
 const TransactionModule = require("../modules/Purchase/TransactionModule");
+const UtilModule = require("../modules/Util/UtilModule");
 const purchaseRouter = express.Router();
-if (process.env.VIEW_TYPE === 'fixed'
-    || (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test')) {
+if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed
+    || (process.env.NODE_ENV === UtilModule.ENV.Development || process.env.NODE_ENV === UtilModule.ENV.Test)) {
     // パフォーマンス一覧
-    purchaseRouter.get('/performances', PerformancesModule.index);
-    purchaseRouter.post('/performances', PerformancesModule.getPerformances);
+    purchaseRouter.get('/performances', PerformancesModule.render);
 }
+// パフォーマンス一覧
+purchaseRouter.get('/performances/getPerformances', PerformancesModule.getPerformances);
+purchaseRouter.get('/performances/getMovieTheaters', PerformancesModule.getMovieTheaters);
 //購入(取引開始)
 purchaseRouter.post('/transaction', TransactionModule.start);
 //仮予約重複
-purchaseRouter.get('/:id/overlap', OverlapModule.index);
+purchaseRouter.get('/:id/overlap', OverlapModule.render);
 purchaseRouter.post('/overlap/new', OverlapModule.newReserve);
 purchaseRouter.post('/overlap/prev', OverlapModule.prevReserve);
 //座席選択
-purchaseRouter.get('/seat/:id/', SeatModule.index);
-purchaseRouter.post('/seat/:id/', SeatModule.select);
+purchaseRouter.get('/seat/:id/', SeatModule.render);
+purchaseRouter.post('/seat/:id/', SeatModule.seatSelect);
 //券種選択
-purchaseRouter.get('/ticket', TicketModule.index);
-purchaseRouter.post('/ticket', TicketModule.select);
+purchaseRouter.get('/ticket', TicketModule.render);
+purchaseRouter.post('/ticket', TicketModule.ticketSelect);
 //購入者情報入力
-purchaseRouter.get('/input', InputModule.index);
-purchaseRouter.post('/input', InputModule.submit);
+purchaseRouter.get('/input', InputModule.render);
+purchaseRouter.post('/input', InputModule.purchaserInformationRegistration);
+purchaseRouter.post('/input/member', InputModule.purchaserInformationRegistrationOfMember);
 //購入内容確認
-purchaseRouter.get('/confirm', ConfirmModule.index);
+purchaseRouter.get('/confirm', ConfirmModule.render);
 purchaseRouter.post('/confirm', ConfirmModule.purchase);
 purchaseRouter.get('/getComplete', ConfirmModule.getCompleteData);
 //ムビチケ着券取り消し
 purchaseRouter.post('/mvtk/cancel', ConfirmModule.cancelMvtk);
 //購入完了
-purchaseRouter.get('/complete', CompleteModule.index);
+purchaseRouter.get('/complete', CompleteModule.render);
 //ムビチケ券入力
-purchaseRouter.get('/mvtk', MvtkInputModule.index);
-purchaseRouter.post('/mvtk', MvtkInputModule.select);
+purchaseRouter.get('/mvtk', MvtkInputModule.render);
+purchaseRouter.post('/mvtk', MvtkInputModule.auth);
 //ムビチケ券適用確認
-purchaseRouter.get('/mvtk/confirm', MvtkConfirmModule.index);
+purchaseRouter.get('/mvtk/confirm', MvtkConfirmModule.render);
 purchaseRouter.post('/mvtk/confirm', MvtkConfirmModule.submit);
 //座席状態取得
 purchaseRouter.post('/getScreenStateReserve', SeatModule.getScreenStateReserve);
 //券種情報をセションへ保存
 purchaseRouter.post('/saveSalesTickets', SeatModule.saveSalesTickets);
+// パフォーマンス変更
+purchaseRouter.get('/performanceChange', SeatModule.performanceChange);
 exports.default = purchaseRouter;

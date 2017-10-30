@@ -83,7 +83,10 @@
          * @method close
          * @returns {void}
          */
-        close: function () {
+        close: function (modalName) {
+            if (modalName !== undefined && this.modal.attr('data-modal') !== modalName) {
+                return;
+            }
             if (this.modal && this.cover) {
                 this.modal
                     .removeClass('active')

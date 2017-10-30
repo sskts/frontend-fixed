@@ -1,8 +1,4 @@
 "use strict";
-/**
- * 照会
- * @namespace InquiryModule
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -12,65 +8,64 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const COA = require("@motionpicture/coa-service");
+/**
+ * 照会
+ * @namespace InquiryModule
+ */
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
-const MP = require("../../../libs/MP");
+const HTTPStatus = require("http-status");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
-const InquirySession = require("../../models/Inquiry/InquiryModel");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
-const UtilModule = require("../Util/UtilModule");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
+const InquiryModel_1 = require("../../models/Inquiry/InquiryModel");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
  * @memberof InquiryModule
- * @function login
+ * @function loginRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function login(req, res, next) {
+function loginRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (req.query.theater === undefined) {
+        const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
+        if (theaterCode === undefined) {
             const status = 404;
             res.status(status).render('error/notFound');
             return;
         }
         try {
-            res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
-            res.locals.theaterCode = (req.query.theater !== undefined) ? req.query.theater : '';
-            res.locals.reserveNum = (req.query.reserve !== undefined) ? req.query.reserve : '';
-            res.locals.telNum = '';
+            if (req.session === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const inquiryModel = new InquiryModel_1.InquiryModel();
+            // 劇場のショップを検索
+            inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                branchCode: theaterCode
+            });
+            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+            inquiryModel.login = {
+                reserveNum: (req.query.reserve !== undefined) ? req.query.reserve : '',
+                telephone: ''
+            };
+            res.locals.inquiryModel = inquiryModel;
             res.locals.error = null;
             res.render('inquiry/login');
             return;
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
-exports.login = login;
-/**
- * 劇場URL取得
- * @memberof InquiryModule
- * @function getPortalTheaterSite
- * @param {string} id
- * @returns {Promise<string>}
- */
-function getPortalTheaterSite(id) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const theater = yield MP.getTheater(id);
-        const website = theater.attributes.websites.find((value) => value.group === 'PORTAL');
-        if (website === undefined)
-            throw ErrorUtilModule.ERROR_PROPERTY;
-        return website.url;
-    });
-}
+exports.loginRender = loginRender;
 /**
  * 照会認証
  * @memberof InquiryModule
@@ -80,75 +75,71 @@ function getPortalTheaterSite(id) {
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-function auth(req, res, next) {
+function inquiryAuth(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
-            const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                inquiryModel.transactionId = yield MP.makeInquiry({
-                    inquiry_theater: req.body.theater_code,
-                    inquiry_id: Number(req.body.reserve_num),
-                    inquiry_pass: req.body.tel_num // 電話番号
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                    branchCode: req.body.theaterCode
                 });
-                if (inquiryModel.transactionId === null) {
-                    res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
-                    res.locals.theaterCode = req.body.theater_code;
-                    res.locals.reserveNum = req.body.reserve_num;
-                    res.locals.telNum = req.body.tel_num;
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+                inquiryModel.login = {
+                    reserveNum: req.body.reserveNum,
+                    telephone: req.body.telephone
+                };
+                inquiryModel.order = yield sasaki.service.order(options).findByOrderInquiryKey({
+                    telephone: inquiryModel.login.telephone,
+                    confirmationNumber: Number(inquiryModel.login.reserveNum),
+                    theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+                });
+                log('照会情報', inquiryModel.order);
+                if (inquiryModel.order === null) {
+                    res.locals.inquiryModel = inquiryModel;
                     res.locals.error = getInquiryError(req);
                     res.render('inquiry/login');
                     return;
                 }
-                log('MP取引Id取得', inquiryModel.transactionId);
-                inquiryModel.login = req.body;
-                inquiryModel.stateReserve = yield COA.services.reserve.stateReserve({
-                    theater_code: req.body.theater_code,
-                    reserve_num: req.body.reserve_num,
-                    tel_num: req.body.tel_num // 電話番号
-                });
-                log('COA照会情報取得', inquiryModel.stateReserve);
-                if (inquiryModel.stateReserve === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                const performanceId = UtilModule.getPerformanceId({
-                    theaterCode: req.body.theater_code,
-                    day: inquiryModel.stateReserve.date_jouei,
-                    titleCode: inquiryModel.stateReserve.title_code,
-                    titleBranchNum: inquiryModel.stateReserve.title_branch_num,
-                    screenCode: inquiryModel.stateReserve.screen_code,
-                    timeBegin: inquiryModel.stateReserve.time_begin
-                });
-                log('パフォーマンスID取得', performanceId);
-                inquiryModel.performance = yield MP.getPerformance(performanceId);
-                log('MPパフォーマンス取得');
-                req.session.inquiry = inquiryModel.toSession();
+                inquiryModel.save(req.session);
                 //購入者内容確認へ
-                res.redirect(`/inquiry/${inquiryModel.transactionId}/?theater=${req.body.theater_code}`);
+                res.redirect(`/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.movieTheaterOrganization.location.branchCode}`);
                 return;
             }
             else {
-                res.locals.portalTheaterSite = yield getPortalTheaterSite(req.query.theater);
-                res.locals.theaterCode = req.body.theater_code;
-                res.locals.reserveNum = req.body.reserve_num;
-                res.locals.telNum = req.body.tel_num;
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                    branchCode: req.body.theaterCode
+                });
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+                inquiryModel.login = {
+                    reserveNum: req.body.reserveNum,
+                    telephone: req.body.telephone
+                };
+                res.locals.inquiryModel = inquiryModel;
                 res.locals.error = validationResult.mapped();
                 res.render('inquiry/login');
                 return;
             }
         }
         catch (err) {
-            const error = (err instanceof Error)
-                ? new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message)
-                : new ErrorUtilModule.CustomError(err, undefined);
-            next(error);
-            return;
+            next(err);
         }
     });
 }
-exports.auth = auth;
+exports.inquiryAuth = inquiryAuth;
 /**
  * 照会エラー取得
  * @memberof InquiryModule
@@ -158,50 +149,40 @@ exports.auth = auth;
  */
 function getInquiryError(req) {
     return {
-        reserve_num: {
-            parm: 'reserve_num', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+        reserveNum: {
+            parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
         },
-        tel_num: {
-            parm: 'tel_num', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
+        telephone: {
+            parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
         }
     };
 }
 /**
  * 照会確認ページ表示
  * @memberof InquiryModule
- * @function index
+ * @function confirmRender
  * @param {Request} req
  * @param {Response} res
  * @param {NextFunction} next
  * @returns {void}
  */
-function index(req, res, next) {
-    if (req.session === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
-        return;
-    }
-    if (req.query.theater === undefined) {
-        next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_PROPERTY, undefined));
-        return;
-    }
-    const inquiryModel = new InquirySession.InquiryModel(req.session.inquiry);
-    if (inquiryModel.stateReserve !== null
-        && inquiryModel.performance !== null
-        && inquiryModel.login !== null
-        && inquiryModel.transactionId !== null) {
-        res.locals.theaterCode = inquiryModel.performance.attributes.theater.id;
-        res.locals.stateReserve = inquiryModel.stateReserve;
-        res.locals.performance = inquiryModel.performance;
-        res.locals.login = inquiryModel.login;
-        res.locals.transactionId = inquiryModel.transactionId;
+function confirmRender(req, res, next) {
+    try {
+        if (req.session === undefined
+            || req.query.theater === undefined)
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+        if (req.session.inquiry === undefined) {
+            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
+            return;
+        }
+        const inquiryModel = new InquiryModel_1.InquiryModel(req.session.inquiry);
+        res.locals.inquiryModel = inquiryModel;
         delete req.session.inquiry;
         res.render('inquiry/index');
         return;
     }
-    else {
-        //照会認証ページへ
-        res.redirect(`/inquiry/login?theater=${req.query.theater}&transactionId=${req.params.transactionId}`);
-        return;
+    catch (err) {
+        next(err);
     }
 }
-exports.index = index;
+exports.confirmRender = confirmRender;

@@ -2,40 +2,36 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
-import * as GMO from '@motionpicture/gmo-service';
+import * as MVTK from '@motionpicture/mvtk-service';
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
+import * as MvtkUtilModule from '../../modules/Purchase/Mvtk/MvtkUtilModule';
 import * as UtilModule from '../../modules/Util/UtilModule';
 /**
  * 購入者情報
- * @interface IInput
+ * @interface IProfile
  */
-export interface IInput {
+export interface IProfile {
     /**
      * せい
      */
-    last_name_hira: string;
+    familyName: string;
     /**
      * めい
      */
-    first_name_hira: string;
+    givenName: string;
     /**
      * メールアドレス
      */
-    mail_addr: string;
+    email: string;
     /**
      * メールアドレス確認
      */
-    mail_confirm: string;
+    emailConfirm: string;
     /**
      * 電話番号
      */
-    tel_num: string;
-    /**
-     * 利用規約
-     */
-    agree: string;
-
+    telephone: string;
 }
 
 /**
@@ -47,10 +43,14 @@ export interface IGMO {
      * トークン
      */
     token: string;
+    /**
+     * マクスされたカード番号
+     */
+    maskedCardNo: string;
 }
 
 /**
- * ムビチケ情報
+ * ムビチケ
  * @interface IMvtk
  */
 export interface IMvtk {
@@ -108,7 +108,226 @@ export interface IValidTicketResult {
 }
 
 /**
+ * 予約チケット
+ * @interface IReserveTicket
+ */
+export interface IReserveTicket {
+    /**
+     * セクション
+     */
+    section: string;
+    /**
+     * 座席コード
+     */
+    seatCode: string;
+    /**
+     * チケットコード
+     */
+    ticketCode: string;
+    /**
+     * チケット名
+     */
+    ticketName: string;
+    /**
+     * チケット名(カナ)
+     */
+    ticketNameKana: string;
+    /**
+     * チケット名(英)
+     */
+    ticketNameEng: string;
+    /**
+     * 標準単価
+     */
+    stdPrice: number;
+    /**
+     * 割引額
+     */
+    disPrice: number;
+    /**
+     * 加算単価
+     */
+    addPrice: number;
+    /**
+     * 販売単価
+     */
+    salePrice: number;
+    /**
+     * チケット備考
+     */
+    ticketNote: string;
+    /**
+     * メガネ単価
+     */
+    addPriceGlasses: number;
+    /**
+     * メガネ有り無し
+     */
+    glasses: boolean;
+    /**
+     * ムビチケ計上単価
+     */
+    mvtkAppPrice: number;
+    /**
+     * ムビチケ映写方式区分
+     */
+    kbnEisyahousiki: string;
+    /**
+     * ムビチケ購入管理番号
+     */
+    mvtkNum: string;
+    /**
+     * ムビチケ電子券区分
+     */
+    mvtkKbnDenshiken: string;
+    /**
+     * ムビチケ前売券区分
+     */
+    mvtkKbnMaeuriken: string;
+    /**
+     * ムビチケ券種区分
+     */
+    mvtkKbnKensyu: string;
+    /**
+     * ムビチケ販売単価
+     */
+    mvtkSalesPrice: number;
+    /**
+     * 制限単位
+     */
+    limitUnit: string;
+    /**
+     * 人数制限
+     */
+    limitCount: number;
+}
+
+/**
+ * 券種
+ * @interface ISalesTicket
+ */
+export interface ISalesTicket {
+    /**
+     * チケットコード
+     */
+    ticketCode: string;
+    /**
+     * チケット名
+     */
+    ticketName: string;
+    /**
+     * チケット名(カナ)
+     */
+    ticketNameKana: string;
+    /**
+     * チケット名(英)
+     */
+    ticketNameEng: string;
+    /**
+     * 標準単価
+     */
+    stdPrice: number;
+    /**
+     * 加算単価
+     */
+    addPrice: number;
+    /**
+     * 販売単価
+     */
+    salePrice: number;
+    /**
+     * チケット備考
+     */
+    ticketNote: string;
+    /**
+     * メガネ単価
+     */
+    addPriceGlasses: number;
+    /**
+     * ムビチケ購入番号
+     */
+    mvtkNum: string;
+    /**
+     * メガネ有無
+     */
+    glasses: boolean;
+}
+
+/**
  * 購入セッション
+ * @interface IPurchaseSession
+ */
+export interface IPurchaseSession {
+    /**
+     * 上映イベント
+     */
+    individualScreeningEvent: sasaki.factory.event.individualScreeningEvent.IEvent | null;
+    /**
+     * 劇場ショップ
+     */
+    movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
+    /**
+     * 取引
+     */
+    transaction: sasaki.factory.transaction.placeOrder.ITransaction | null;
+    /**
+     * 販売可能チケット情報
+     */
+    salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
+    /**
+     * 予約チケット
+     */
+    reserveTickets: IReserveTicket[];
+    /**
+     * 予約座席
+     */
+    seatReservationAuthorization: sasaki.factory.action.authorize.seatReservation.IAction | null;
+    /**
+     * GMOオーダーID
+     */
+    orderId: string | null;
+    /**
+     * GMOオーダー回数
+     */
+    orderCount: number;
+    /**
+     * GMOオーソリ
+     */
+    creditCardAuthorization: {
+        id: string;
+        price: number;
+    } | null;
+    /**
+     * プロフィール
+     */
+    profile: IProfile | null;
+    /**
+     * クレジットカード情報
+     */
+    creditCards: sasaki.factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
+    /**
+     * GMO情報
+     */
+    gmo: IGMO | null;
+    /**
+     * ムビチケ
+     */
+    mvtk: IMvtk[];
+    /**
+     * ムビチケオーソリ
+     */
+    mvtkAuthorization: {
+        id: string;
+        price: number;
+    } | null;
+    /**
+     * 有効期限
+     */
+    expired: Date;
+}
+
+/**
+ * 購入モデル
  * @class PurchaseModel
  */
 export class PurchaseModel {
@@ -120,161 +339,125 @@ export class PurchaseModel {
     public static COMPLETE_STATE: number = 5;
 
     /**
-     * パフォーマンス
+     * 上映イベント
      */
-    public performance: MP.IPerformance | null;
+    public individualScreeningEvent: sasaki.factory.event.individualScreeningEvent.IEvent | null;
     /**
-     * 劇場
+     * 劇場ショップ
      */
-    public theater: MP.ITheater | null;
+    public movieTheaterOrganization: sasaki.factory.organization.movieTheater.IPublicFields | null;
     /**
-     * COA仮予約
+     * 取引
      */
-    public reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
+    public transaction: sasaki.factory.transaction.placeOrder.ITransaction | null;
+    /**
+     * 販売可能チケット情報
+     */
+    public salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
     /**
      * 予約チケット
      */
-    public reserveTickets: MP.IReserveTicket[] | null;
+    public reserveTickets: IReserveTicket[];
     /**
-     * 入力情報
+     * 予約座席
      */
-    public input: IInput | null;
+    public seatReservationAuthorization: sasaki.factory.action.authorize.seatReservation.IAction | null;
     /**
-     * GMO TOKEN情報
-     */
-    public gmo: IGMO | null;
-    /**
-     * COA本予約
-     */
-    public updateReserve: COA.services.reserve.IUpdReserveResult | null;
-    /**
-     * 取引MP
-     */
-    public transactionMP: MP.ITransactionStartResult | null;
-    /**
-     * 取引GMO
-     */
-    public transactionGMO: GMO.CreditService.EntryTranResult | null;
-    /**
-     * COAオーソリ
-     */
-    public authorizationCOA: MP.IAddCOAAuthorizationResult | null;
-    /**
-     * ムビチケオーソリ
-     */
-    public authorizationMvtk: MP.IAddMvtkAuthorizationResult | null;
-    /**
-     * GMOオーソリ
-     */
-    public authorizationGMO: MP.IAddGMOAuthorizationResult | null;
-    /**
-     * GMOオーソリ回数
-     */
-    public authorizationCountGMO: number;
-    /**
-     * オーダーID
+     * GMOオーダーID
      */
     public orderId: string | null;
     /**
-     * 有効期限
+     * GMOオーダー回数
      */
-    public expired: number;
+    public orderCount: number;
+    /**
+     * GMOオーソリ
+     */
+    public creditCardAuthorization: {
+        id: string;
+        price: number;
+    } | null;
+    /**
+     * プロフィール
+     */
+    public profile: IProfile | null;
+    /**
+     * クレジットカード情報
+     */
+    public creditCards: sasaki.factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
+    /**
+     * GMO情報
+     */
+    public gmo: IGMO | null;
     /**
      * ムビチケ
      */
-    public mvtk: IMvtk[] | null;
+    public mvtk: IMvtk[];
     /**
-     * CAO情報
+     * ムビチケオーソリ
      */
-    public performanceCOA: MP.IPerformanceCOA | null;
+    public mvtkAuthorization: {
+        id: string;
+        price: number;
+    } | null;
     /**
-     * COA販売可能チケット情報
+     * 有効期限
      */
-    public salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null;
-    /**
-     * 完了メールID
-     */
-    public completeMailId: string | null;
+    public expired: Date;
 
     /**
      * @constructor
      * @param {any} session
      */
     // tslint:disable-next-line:cyclomatic-complexity
-    constructor(session: any) {
+    constructor(session?: any) {
         if (session === undefined) {
             session = {};
         }
 
-        this.performance = (session.performance !== undefined) ? session.performance : null;
-        this.theater = (session.theater !== undefined) ? session.theater : null;
-        this.reserveSeats = (session.reserveSeats !== undefined) ? session.reserveSeats : null;
-        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : null;
-        this.input = (session.input !== undefined) ? session.input : null;
-        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
-        this.updateReserve = (session.updateReserve !== undefined) ? session.updateReserve : null;
-        this.transactionMP = (session.transactionMP !== undefined) ? session.transactionMP : null;
-        this.transactionGMO = (session.transactionGMO !== undefined) ? session.transactionGMO : null;
-        this.authorizationCOA = (session.authorizationCOA !== undefined) ? session.authorizationCOA : null;
-        this.authorizationMvtk = (session.authorizationMvtk !== undefined) ? session.authorizationMvtk : null;
-        this.authorizationGMO = (session.authorizationGMO !== undefined) ? session.authorizationGMO : null;
-        this.authorizationCountGMO = (session.authorizationCountGMO !== undefined) ? session.authorizationCountGMO : 0;
+        this.individualScreeningEvent = (session.individualScreeningEvent !== undefined) ? session.individualScreeningEvent : null;
+        this.movieTheaterOrganization = (session.movieTheaterOrganization !== undefined) ? session.movieTheaterOrganization : null;
+        this.transaction = (session.transaction !== undefined) ? session.transaction : null;
+        this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
+        this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
+        this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
+            ? session.seatReservationAuthorization : null;
         this.orderId = (session.orderId !== undefined) ? session.orderId : null;
+        this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
+        this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
+        this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
+        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
+        this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
+        this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
         this.expired = (session.expired !== undefined) ? session.expired : null;
-        this.mvtk = (session.mvtk !== undefined) ? session.mvtk : null;
-        this.performanceCOA = (session.performanceCOA !== undefined) ? session.performanceCOA : null;
-        this.salesTicketsCOA = (session.salesTicketsCOA !== undefined) ? session.salesTicketsCOA : null;
-        this.completeMailId = (session.completeMailId !== undefined) ? session.completeMailId : null;
     }
 
     /**
-     * セッションObjectへ変換
+     * セッションへ保存
      * @memberof PurchaseModel
      * @method toSession
-     * @returns {Object} result
+     * @returns {void}
      */
-    public toSession(): {
-        performance: MP.IPerformance | null;
-        theater: MP.ITheater | null;
-        reserveSeats: COA.services.reserve.IUpdTmpReserveSeatResult | null;
-        reserveTickets: MP.IReserveTicket[] | null;
-        input: IInput | null;
-        gmo: IGMO | null;
-        updateReserve: COA.services.reserve.IUpdReserveResult | null;
-        transactionMP: MP.ITransactionStartResult | null;
-        transactionGMO: GMO.CreditService.EntryTranResult | null;
-        authorizationCOA: MP.IAddCOAAuthorizationResult | null;
-        authorizationMvtk: MP.IAddMvtkAuthorizationResult | null;
-        authorizationGMO: MP.IAddGMOAuthorizationResult | null;
-        authorizationCountGMO: number;
-        orderId: string | null;
-        expired: number;
-        mvtk: IMvtk[] | null;
-        performanceCOA: MP.IPerformanceCOA | null;
-        salesTicketsCOA: COA.services.reserve.ISalesTicketResult[] | null
-        completeMailId: string | null
-    } {
-        return {
-            performance: this.performance,
-            theater: this.theater,
-            reserveSeats: this.reserveSeats,
+    public save(session: any): void {
+        const purchaseSession: IPurchaseSession = {
+            individualScreeningEvent: this.individualScreeningEvent,
+            movieTheaterOrganization: this.movieTheaterOrganization,
+            transaction: this.transaction,
+            salesTickets: this.salesTickets,
             reserveTickets: this.reserveTickets,
-            input: this.input,
-            gmo: this.gmo,
-            updateReserve: this.updateReserve,
-            transactionMP: this.transactionMP,
-            transactionGMO: this.transactionGMO,
-            authorizationCOA: this.authorizationCOA,
-            authorizationMvtk: this.authorizationMvtk,
-            authorizationGMO: this.authorizationGMO,
-            authorizationCountGMO: this.authorizationCountGMO,
+            seatReservationAuthorization: this.seatReservationAuthorization,
             orderId: this.orderId,
-            expired: this.expired,
+            orderCount: this.orderCount,
+            creditCardAuthorization: this.creditCardAuthorization,
+            profile: this.profile,
+            creditCards: this.creditCards,
+            gmo: this.gmo,
             mvtk: this.mvtk,
-            performanceCOA: this.performanceCOA,
-            salesTicketsCOA: this.salesTicketsCOA,
-            completeMailId: this.completeMailId
+            mvtkAuthorization: this.mvtkAuthorization,
+            expired: this.expired
         };
+        session.purchase = purchaseSession;
     }
 
     /**
@@ -286,21 +469,19 @@ export class PurchaseModel {
      */
     public accessAuth(value: number): boolean {
         let result = true;
-        if (this.transactionMP === null) result = false;
+        if (this.transaction === null) result = false;
         switch (value) {
             case PurchaseModel.SEAT_STATE:
                 break;
             case PurchaseModel.TICKET_STATE:
-                if (this.reserveSeats === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
                 break;
             case PurchaseModel.INPUT_STATE:
-                if (this.reserveSeats === null) result = false;
-                if (this.reserveTickets === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
                 break;
             case PurchaseModel.CONFIRM_STATE:
-                if (this.reserveSeats === null) result = false;
-                if (this.reserveTickets === null) result = false;
-                if (this.input === null) result = false;
+                if (this.seatReservationAuthorization === null) result = false;
+                if (this.profile === null) result = false;
                 break;
             case PurchaseModel.COMPLETE_STATE:
                 break;
@@ -309,6 +490,23 @@ export class PurchaseModel {
         }
 
         return result;
+    }
+
+    /**
+     * ムビチケ対応作品判定
+     * @memberof PurchaseModel
+     * @method isUsedMvtk
+     * @returns {boolean}
+     */
+    public isUsedMvtk(): boolean {
+        if (this.individualScreeningEvent === null) {
+            return false;
+        }
+        const today = moment().format('YYYYMMDD');
+
+        return (this.individualScreeningEvent.superEvent.coaInfo.flgMvtkUse === '1'
+            && this.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin !== undefined
+            && Number(this.individualScreeningEvent.superEvent.coaInfo.dateMvtkBegin) <= Number(today));
     }
 
     /**
@@ -321,7 +519,7 @@ export class PurchaseModel {
         let result = false;
         if (this.reserveTickets === null) return result;
         for (const reserveTicket of this.reserveTickets) {
-            if (reserveTicket.mvtk_num !== '' && reserveTicket.mvtk_num.length > 0) result = true;
+            if (reserveTicket.mvtkNum !== '' && reserveTicket.mvtkNum.length > 0) result = true;
         }
 
         return result;
@@ -338,7 +536,7 @@ export class PurchaseModel {
         let amount = 0;
         if (reserveTickets === null) return amount;
         for (const ticket of reserveTickets) {
-            amount += ticket.sale_price;
+            amount += ticket.salePrice;
         }
 
         return amount;
@@ -365,20 +563,10 @@ export class PurchaseModel {
         let price = 0;
         if (reserveTickets === null) return price;
         for (const ticket of reserveTickets) {
-            price += ticket.mvtk_app_price;
+            price += ticket.mvtkSalesPrice;
         }
 
         return price;
-    }
-
-    /**
-     * GMOオーソリ回数取得
-     * @memberof PurchaseModel
-     * @method authorizationCountGMOToString
-     * @returns {string}
-     */
-    public authorizationCountGMOToString(): string {
-        return `00${this.authorizationCountGMO}`.slice(UtilModule.DIGITS_02);
     }
 
     /**
@@ -388,6 +576,265 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isExpired(): boolean {
-        return (this.expired < moment().unix());
+        return (moment(this.expired).unix() < moment().unix());
+    }
+
+    /**
+     * 券種リスト取得
+     * @memberof PurchaseModel
+     * @method getSalesTickets
+     * @param {Request} req
+     * @returns {ISalesTicket[]}
+     */
+    public getSalesTickets(): ISalesTicket[] {
+        if (this.individualScreeningEvent === null
+            || this.salesTickets === null) {
+            return [];
+        }
+
+        const result: ISalesTicket[] = [];
+
+        for (const ticket of this.salesTickets) {
+            result.push({
+                ticketCode: ticket.ticketCode,
+                ticketName: ticket.ticketName,
+                ticketNameKana: ticket.ticketNameKana,
+                ticketNameEng: ticket.ticketNameEng,
+                stdPrice: ticket.stdPrice,
+                addPrice: ticket.addPrice,
+                salePrice: ticket.salePrice,
+                ticketNote: ticket.ticketNote,
+                addPriceGlasses: 0,
+                mvtkNum: '',
+                glasses: false
+            });
+
+            if (ticket.addGlasses > 0) {
+                result.push({
+                    ticketCode: ticket.ticketCode,
+                    ticketName: ticket.ticketName,
+                    ticketNameKana: ticket.ticketNameKana,
+                    ticketNameEng: ticket.ticketNameEng,
+                    stdPrice: ticket.stdPrice,
+                    addPrice: ticket.addPrice,
+                    salePrice: (<number>ticket.salePrice) + (<number>ticket.addGlasses),
+                    ticketNote: ticket.ticketNote,
+                    addPriceGlasses: ticket.addGlasses,
+                    mvtkNum: '',
+                    glasses: true
+                });
+            }
+        }
+
+        if (this.mvtk.length === 0) {
+            return result;
+        }
+        // ムビチケ情報からチケット情報へ変換
+        const mvtkTickets: ISalesTicket[] = [];
+        for (const mvtk of this.mvtk) {
+            for (let i = 0; i < Number(mvtk.ykknInfo.ykknKnshbtsmiNum); i += 1) {
+                mvtkTickets.push({
+                    ticketCode: mvtk.ticket.ticketCode,
+                    ticketName: mvtk.ticket.ticketName,
+                    ticketNameKana: mvtk.ticket.ticketNameKana,
+                    ticketNameEng: mvtk.ticket.ticketNameEng,
+                    stdPrice: 0,
+                    addPrice: mvtk.ticket.addPrice,
+                    salePrice: mvtk.ticket.addPrice,
+                    ticketNote: mvtk.code,
+                    addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                    mvtkNum: mvtk.code,
+                    glasses: false
+                });
+
+                if (mvtk.ticket.addPriceGlasses > 0) {
+                    mvtkTickets.push({
+                        ticketCode: mvtk.ticket.ticketCode,
+                        ticketName: mvtk.ticket.ticketName,
+                        ticketNameKana: mvtk.ticket.ticketNameKana,
+                        ticketNameEng: mvtk.ticket.ticketNameEng,
+                        stdPrice: 0,
+                        addPrice: mvtk.ticket.addPrice,
+                        salePrice: (<number>mvtk.ticket.addPrice) + (<number>mvtk.ticket.addPriceGlasses),
+                        ticketNote: mvtk.code,
+                        addPriceGlasses: mvtk.ticket.addPriceGlasses,
+                        mvtkNum: mvtk.code,
+                        glasses: true
+                    });
+                }
+            }
+        }
+
+        return mvtkTickets.concat(result);
+    }
+
+    /**
+     * オーダーID生成
+     * @memberof PurchaseModel
+     * @method createOrderId
+     * @returns {void}
+     */
+    public createOrderId(): void {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization.result === undefined) {
+            return;
+        }
+        // GMOオーソリ取得
+        const theaterCode = `000${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['03']);
+        const tmpReserveNum =
+            `00000000${this.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum}`.slice(UtilModule.DIGITS['08']);
+        // オーダーID 予約日 + 劇場ID(3桁) + 予約番号(8桁) + オーソリカウント(2桁)
+        this.orderId =
+            `${moment().format('YYYYMMDD')}${theaterCode}${tmpReserveNum}${`00${this.orderCount}`.slice(UtilModule.DIGITS['02'])}`;
+        this.orderCount += 1;
+    }
+
+    /**
+     * ムビチケ作品コード取得
+     * @memberof PurchaseModel
+     * @function getMvtkfilmCode
+     * @returns {string}
+     */
+    public getMvtkfilmCode(): string {
+        if (this.individualScreeningEvent === null) return '';
+        const titleCode = this.individualScreeningEvent.coaInfo.titleCode;
+        const titleBranchNum = this.individualScreeningEvent.coaInfo.titleBranchNum;
+        const branch = `00${titleBranchNum}`.slice(UtilModule.DIGITS['02']);
+
+        return `${titleCode}${branch}`;
+    }
+
+    /**
+     * ムビチケ着券情報取得
+     * @method getMvtkSeatInfoSync
+     */
+    // tslint:disable-next-line:max-func-body-length
+    public getMvtkSeatInfoSync(options?: {
+        deleteFlag?: string
+        reservedDeviceType?: string
+    }) {
+        if (this.individualScreeningEvent === null
+            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization.result === undefined) {
+            return null;
+        }
+
+        const mvtkPurchaseNoInfo: {
+            knyknrNo: string; // 購入管理番号（ムビチケ購入番号）
+            pinCd: string; // PINコード（ムビチケ暗証番号）
+            knshInfo: {
+                knshTyp: string; // 券種区分
+                miNum: number; // 枚数
+            }[];
+        }[] = [];
+        const mvtkseat: {
+            zskCd: string; // 座席コード
+        }[] = [];
+
+        for (const reserveTicket of this.reserveTickets) {
+            const mvtk = this.mvtk.find((value) => {
+                return (value.code === reserveTicket.mvtkNum && value.ticket.ticketCode === reserveTicket.ticketCode);
+            });
+            if (mvtk === undefined) continue;
+            const mvtkTicket = mvtkPurchaseNoInfo.find((value) => (value.knyknrNo === mvtk.code));
+            if (mvtkTicket !== undefined) {
+                // 券種追加
+                const tcket = mvtkTicket.knshInfo.find((value) => (value.knshTyp === mvtk.ykknInfo.ykknshTyp));
+                if (tcket !== undefined) {
+                    // 枚数追加
+                    tcket.miNum = tcket.miNum + 1;
+                } else {
+                    // 新規券種作成
+                    mvtkTicket.knshInfo.push({
+                        knshTyp: mvtk.ykknInfo.ykknshTyp, //券種区分
+                        miNum: 1 //枚数
+                    });
+                }
+            } else {
+                // 新規購入番号作成
+                mvtkPurchaseNoInfo.push({
+                    knyknrNo: mvtk.code, //購入管理番号（ムビチケ購入番号）
+                    pinCd: UtilModule.base64Decode(mvtk.password), //PINコード（ムビチケ暗証番号）
+                    knshInfo: [
+                        {
+                            knshTyp: mvtk.ykknInfo.ykknshTyp, //券種区分
+                            miNum: 1 //枚数
+                        }
+                    ]
+                });
+            }
+            mvtkseat.push({ zskCd: reserveTicket.seatCode });
+        }
+        if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
+            return null;
+        }
+
+        const day = moment(this.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
+        const time = `${UtilModule.timeFormat(
+            this.individualScreeningEvent.startDate,
+            this.individualScreeningEvent.coaInfo.dateJouei
+        )}:00`;
+        const tmpReserveNum = this.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum;
+        const systemReservationNumber =
+            `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
+        const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const deleteFlag = (options === undefined || options.deleteFlag === undefined)
+            ? MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE
+            : options.deleteFlag;
+        const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
+            ? MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC
+            : options.reservedDeviceType;
+
+        return {
+            /**
+             * 興行会社コード
+             */
+            kgygishCd: MvtkUtilModule.COMPANY_CODE,
+            /**
+             * 予約デバイス区分
+             */
+            yykDvcTyp: reservedDeviceType,
+            /**
+             * 取消フラグ
+             */
+            trkshFlg: deleteFlag,
+            /**
+             * 興行会社システム座席予約番号
+             */
+            kgygishSstmZskyykNo: systemReservationNumber,
+            /**
+             * 興行会社ユーザー座席予約番号
+             */
+            kgygishUsrZskyykNo: String(tmpReserveNum),
+            /**
+             * 上映日時
+             */
+            jeiDt: `${day} ${time}`,
+            /**
+             * 計上年月日
+             */
+            kijYmd: day,
+            /**
+             * サイトコード
+             */
+            stCd: siteCode,
+            /**
+             * スクリーンコード
+             */
+            screnCd: this.individualScreeningEvent.coaInfo.screenCode,
+            /**
+             * 購入管理番号情報
+             */
+            knyknrNoInfo: mvtkPurchaseNoInfo,
+            /**
+             * 座席情報（itemArray）
+             */
+            zskInfo: mvtkseat,
+            /**
+             * 作品コード
+             */
+            skhnCd: this.getMvtkfilmCode()
+        };
     }
 }

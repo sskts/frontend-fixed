@@ -12,63 +12,58 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace Fixed.FixedModule
  */
-const COA = require("@motionpicture/coa-service");
+const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
-const MP = require("../../../libs/MP");
 const LoginForm_1 = require("../../forms/Inquiry/LoginForm");
-const ErrorUtilModule = require("../Util/ErrorUtilModule");
+const AuthModel_1 = require("../../models/Auth/AuthModel");
+const InquiryModel_1 = require("../../models/Inquiry/InquiryModel");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Fixed.FixedModule');
 /**
- * 券売機TOPページ表示
- * @memberof FixedModule
- * @function index
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise<void>}
- */
-function index(_, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        res.locals.ticketingSite = process.env.TICKETING_SITE_URL;
-        res.render('index/index');
-        log('券売機TOPページ表示');
-    });
-}
-exports.index = index;
-/**
  * 券売機設定ページ表示
- * @memberof FixedModule
- * @function setting
+ * @memberof Fixed.FixedModule
+ * @function settingRender
  * @param {Response} res
  * @returns {Promise<void>}
  */
-function setting(_, res, next) {
+function settingRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            res.locals.theaters = yield MP.getTheaters();
+            if (req.session === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel();
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
+            log('movieTheaters: ', movieTheaters);
+            res.locals.movieTheaters = movieTheaters;
             res.render('setting/index');
         }
         catch (err) {
-            next(new ErrorUtilModule.CustomError(ErrorUtilModule.ERROR_EXTERNAL_MODULE, err.message));
+            next(err);
         }
     });
 }
-exports.setting = setting;
+exports.settingRender = settingRender;
 /**
  * 利用停止ページ表示
- * @memberof FixedModule
- * @function stop
+ * @memberof Fixed.FixedModule
+ * @function stopRender
  * @param {Response} res
  * @returns {void}
  */
-function stop(_, res) {
+function stopRender(_, res) {
     res.render('stop/index');
 }
-exports.stop = stop;
+exports.stopRender = stopRender;
 /**
  * 照会情報取得
+ * @memberof Fixed.FixedModule
  * @function getInquiryData
  * @param {Request} req
  * @param {Response} res
@@ -78,73 +73,35 @@ function getInquiryData(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined)
-                throw ErrorUtilModule.ERROR_PROPERTY;
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
             LoginForm_1.default(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
-                const transactionId = yield MP.makeInquiry({
-                    inquiry_theater: req.body.theater_code,
-                    inquiry_id: Number(req.body.reserve_num),
-                    inquiry_pass: req.body.tel_num // 電話番号
+                const inquiryModel = new InquiryModel_1.InquiryModel();
+                inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
+                    branchCode: req.body.theaterCode
                 });
-                if (transactionId === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                log('MP取引Id取得', transactionId);
-                let stateReserve = yield COA.services.reserve.stateReserve({
-                    theater_code: req.body.theater_code,
-                    reserve_num: req.body.reserve_num,
-                    tel_num: req.body.tel_num // 電話番号
+                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+                if (inquiryModel.movieTheaterOrganization === null)
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+                inquiryModel.login = {
+                    reserveNum: req.body.reserveNum,
+                    telephone: req.body.telephone
+                };
+                inquiryModel.order = yield sasaki.service.order(options).findByOrderInquiryKey({
+                    telephone: inquiryModel.login.telephone,
+                    confirmationNumber: Number(inquiryModel.login.reserveNum),
+                    theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
-                log('COA照会情報取得', stateReserve);
-                if (stateReserve === null) {
-                    // 本予約して照会情報取得
-                    if (req.session.fixed === undefined)
-                        throw ErrorUtilModule.ERROR_PROPERTY;
-                    if (req.session.fixed.updateReserveIn === undefined)
-                        throw ErrorUtilModule.ERROR_PROPERTY;
-                    const updReserve = yield COA.services.reserve.updReserve(req.session.fixed.updateReserveIn);
-                    log('COA本予約', updReserve);
-                    stateReserve = yield COA.services.reserve.stateReserve({
-                        theater_code: req.body.theater_code,
-                        reserve_num: req.body.reserve_num,
-                        tel_num: req.body.tel_num // 電話番号
-                    });
-                    log('COA照会情報取得', stateReserve);
-                    if (stateReserve === null)
-                        throw ErrorUtilModule.ERROR_PROPERTY;
-                }
-                const performanceId = UtilModule.getPerformanceId({
-                    theaterCode: req.body.theater_code,
-                    day: stateReserve.date_jouei,
-                    titleCode: stateReserve.title_code,
-                    titleBranchNum: stateReserve.title_branch_num,
-                    screenCode: stateReserve.screen_code,
-                    timeBegin: stateReserve.time_begin
-                });
-                log('パフォーマンスID取得', performanceId);
-                const performance = yield MP.getPerformance(performanceId);
-                if (performance === null)
-                    throw ErrorUtilModule.ERROR_PROPERTY;
-                log('MPパフォーマンス取得');
+                if (inquiryModel.order === null)
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 // 印刷用
-                const reservations = stateReserve.list_ticket.map((ticket) => {
-                    return {
-                        reserve_no: req.body.reserve_num,
-                        film_name_ja: performance.attributes.film.name.ja,
-                        film_name_en: performance.attributes.film.name.en,
-                        theater_name: performance.attributes.theater.name.ja,
-                        screen_name: performance.attributes.screen.name.ja,
-                        performance_day: moment(performance.attributes.day).format('YYYY/MM/DD'),
-                        performance_start_time: `${UtilModule.timeFormat(performance.attributes.time_start)}`,
-                        seat_code: ticket.seat_num,
-                        ticket_name: (ticket.add_glasses > 0)
-                            ? `${ticket.ticket_name}${req.__('common.glasses')}`
-                            : ticket.ticket_name,
-                        ticket_sale_price: ticket.ticket_price,
-                        qr_str: ticket.seat_qrcode
-                    };
-                });
-                delete req.session.fixed;
+                const reservations = createPrintReservations(inquiryModel);
                 res.json({ result: reservations });
                 return;
             }
@@ -156,3 +113,37 @@ function getInquiryData(req, res) {
     });
 }
 exports.getInquiryData = getInquiryData;
+/**
+ * 印刷用予約情報生成
+ * @function createPrintReservations
+ * @param {Request} req
+ * @param {InquiryModel} inquiryModel
+ * @returns {IReservation[]}
+ */
+function createPrintReservations(inquiryModel) {
+    if (inquiryModel.order === null
+        || inquiryModel.movieTheaterOrganization === null)
+        throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+    const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
+    const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
+    return inquiryModel.order.acceptedOffers.map((offer) => {
+        if (offer.itemOffered.reservationFor.workPerformed === undefined
+            || offer.itemOffered.reservationFor.location === undefined
+            || offer.itemOffered.reservationFor.location.name === undefined)
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+        return {
+            reserveNo: reserveNo,
+            filmNameJa: offer.itemOffered.reservationFor.workPerformed.name,
+            filmNameEn: '',
+            theaterName: theaterName,
+            screenName: offer.itemOffered.reservationFor.location.name.ja,
+            performanceDay: moment(offer.itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
+            performanceStartTime: UtilModule.timeFormat(offer.itemOffered.reservationFor.startDate, offer.itemOffered.reservationFor.coaInfo.dateJouei),
+            seatCode: offer.itemOffered.reservedTicket.coaTicketInfo.seatNum,
+            ticketName: offer.itemOffered.reservedTicket.coaTicketInfo.ticketName,
+            ticketSalePrice: offer.itemOffered.reservedTicket.coaTicketInfo.salePrice,
+            qrStr: offer.itemOffered.reservedTicket.ticketToken
+        };
+    });
+}
+exports.createPrintReservations = createPrintReservations;

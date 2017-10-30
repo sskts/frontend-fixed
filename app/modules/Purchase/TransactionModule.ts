@@ -3,31 +3,38 @@
  * @namespace Purchase.TransactionModule
  */
 
+import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { Request, Response } from 'express';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
-import * as MP from '../../../libs/MP';
-import * as PurchaseSession from '../../models/Purchase/PurchaseModel';
-import * as ErrorUtilModule from '../Util/ErrorUtilModule';
+import { AuthModel } from '../../models/Auth/AuthModel';
+import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
+import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.TransactionModule');
 /**
  * 販売終了時間 30分前
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const END_TIME_DEFAULT = 30;
 /**
  * 販売終了時間(券売機) 10分後
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const END_TIME_FIXED = -10;
 
 /**
  * 取引有効時間 15分間
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const VALID_TIME_DEFAULT = 15;
 /**
  * 取引有効時間(券売機) 5分間
+ * @memberof Purchase.TransactionModule
  * @const {number} END_TIME_DEFAULT
  */
 const VALID_TIME_FIXED = 5;
@@ -41,50 +48,97 @@ const VALID_TIME_FIXED = 5;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function start(req: Request, res: Response): Promise<void> {
     try {
-        if (req.session === undefined || req.body.id === undefined) {
-            throw ErrorUtilModule.ERROR_PROPERTY;
+        if (req.session === undefined || req.body.performanceId === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        authModel.save(req.session);
+        log('会員判定', authModel.isMember());
+
+        // イベント情報取得
+        const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
+            identifier: req.body.performanceId
+        });
+        log('イベント情報取得', individualScreeningEvent);
+        if (individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        // awsCognitoIdentityIdを保存
+        if (req.body.identityId === undefined) {
+            delete req.session.awsCognitoIdentityId;
+        } else {
+            req.session.awsCognitoIdentityId = req.body.identityId;
+            log('awsCognitoIdentityIdを保存', req.session.awsCognitoIdentityId);
         }
 
-        const performance = await MP.getPerformance(req.body.id);
         // 開始可能日判定
-        if (moment().unix() < moment(`${performance.attributes.coa_rsv_start_date}`).unix()) {
-            throw ErrorUtilModule.ERROR_ACCESS;
+        if (moment().unix() < moment(individualScreeningEvent.coaInfo.rsvStartDate).unix()) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
+        log('開始可能日判定');
 
         // 終了可能日判定
-        const limit = (process.env.VIEW_TYPE === 'fixed') ? END_TIME_FIXED : END_TIME_DEFAULT;
+        const limit = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? END_TIME_FIXED : END_TIME_DEFAULT;
         const limitTime = moment().add(limit, 'minutes');
-        if (limitTime.unix() > moment(`${performance.attributes.day} ${performance.attributes.time_start}`).unix()) {
-            throw ErrorUtilModule.ERROR_ACCESS;
+        if (limitTime.unix() > moment(individualScreeningEvent.startDate).unix()) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
+        log('終了可能日判定');
+
+        let purchaseModel: PurchaseModel;
+
+        if (!authModel.isMember()) {
+            // 非会員なら重複確認
+            purchaseModel = new PurchaseModel(req.session.purchase);
+            log('重複確認');
+            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+                // 重複確認へ
+                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
+                log('重複確認へ');
+
+                return;
+            }
         }
 
-        let purchaseModel = new PurchaseSession.PurchaseModel(req.session.purchase);
-        if (purchaseModel.transactionMP !== null && purchaseModel.reserveSeats !== null) {
-            //重複確認へ
-            res.json({ redirect: `/purchase/${req.body.id}/overlap`, err: null });
-
-            return;
-        }
-        purchaseModel = new PurchaseSession.PurchaseModel({});
-        // 取引開始
-        const valid = (process.env.VIEW_TYPE === 'fixed') ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
-        purchaseModel.expired = moment().add(valid, 'minutes').unix();
-        purchaseModel.transactionMP = await MP.transactionStart({
-            expires_at: purchaseModel.expired
-        });
-        log('MP取引開始', purchaseModel.transactionMP.attributes.owners);
+        // セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
         delete req.session.complete;
+        log('セッション削除');
+
+        purchaseModel = new PurchaseModel({
+            individualScreeningEvent: individualScreeningEvent
+        });
+
+        // 劇場のショップを検索
+        purchaseModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
+            branchCode: individualScreeningEvent.coaInfo.theaterCode
+        });
+        log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
+        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+
+        // 取引開始
+        const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
+        purchaseModel.expired = moment().add(valid, 'minutes').toDate();
+        purchaseModel.transaction = await sasaki.service.transaction.placeOrder(options).start({
+            expires: purchaseModel.expired,
+            sellerId: purchaseModel.movieTheaterOrganization.id
+        });
+        log('SSKTS取引開始', purchaseModel.transaction);
+
         //セッション更新
-        req.session.purchase = purchaseModel.toSession();
+        purchaseModel.save(req.session);
         //座席選択へ
-        res.json({ redirect: `/purchase/seat/${req.body.id}/`, contents: null });
+        res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
     } catch (err) {
-        if (err === ErrorUtilModule.ERROR_ACCESS
-            || err === ErrorUtilModule.ERROR_PROPERTY) {
+        log('SSKTS取引開始エラー', err);
+        if (err.errorType === ErrorType.Access
+            || err.errorType === ErrorType.Property) {
             res.json({ redirect: null, contents: 'access-error' });
 
             return;
