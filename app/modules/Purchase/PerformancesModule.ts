@@ -101,6 +101,68 @@ export async function getPerformances(req: Request, res: Response): Promise<void
 }
 
 /**
+ * スケジュールリスト取得
+ * @memberof Purchase.PerformancesModule
+ * @function getSchedule
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function getSchedule(req: Request, res: Response): Promise<void> {
+    try {
+        if (req.session === undefined
+            || req.query.beginDate === undefined
+            || req.query.endDate === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        const diff = moment(req.query.beginDate).diff(moment(req.query.endDate), 'days');
+        const limitDays = 100;
+        if (diff > limitDays) {
+            throw new Error('It exceeds the upper limit');
+        }
+        const schedule: any[] = [];
+        const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
+        for (const theater of movieTheaters) {
+            schedule.push({
+                theater: theater,
+                schedule: []
+            });
+            for (let i = 0; i < diff; i += 1) {
+                const date = moment(req.query.beginDate).add(i, 'days').format('YYYYMMDD');
+                const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
+                    theater: theater.branchCode,
+                    day: date
+                });
+                const theaterSchedule = schedule.find((targetSchedule) => {
+                    return (targetSchedule.theater.branchCode === theater.branchCode);
+                });
+                if (theaterSchedule !== undefined) {
+                    theaterSchedule.schedule.push({
+                        date: date,
+                        individualScreeningEvents: individualScreeningEvents
+                    });
+                }
+            }
+        }
+
+        if (req.query.callback === undefined) {
+            res.json({ error: null, result: schedule });
+        } else {
+            res.jsonp({ error: null, result: schedule });
+        }
+    } catch (err) {
+        if (req.query.callback === undefined) {
+            res.json({ error: err, result: null });
+        } else {
+            res.jsonp({ error: err, result: null });
+        }
+    }
+}
+
+/**
  * 劇場一覧検索
  * @memberof Purchase.PerformancesModule
  * @function getMovieTheaters
