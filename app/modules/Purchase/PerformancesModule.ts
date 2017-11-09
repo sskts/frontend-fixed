@@ -118,7 +118,7 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        const diff = moment(req.query.beginDate).diff(moment(req.query.endDate), 'days');
+        const diff = moment(req.query.endDate).diff(moment(req.query.beginDate), 'days');
         const limitDays = 100;
         if (diff > limitDays) {
             throw new Error('It exceeds the upper limit');
@@ -130,10 +130,11 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
                 theater: theater,
                 schedule: []
             });
+            const theaterCode = theater.location.branchCode;
             for (let i = 0; i < diff; i += 1) {
                 const date = moment(req.query.beginDate).add(i, 'days').format('YYYYMMDD');
                 const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
-                    theater: theater.branchCode,
+                    theater: theaterCode,
                     day: date
                 });
                 const theaterSchedule = schedule.find((targetSchedule) => {
