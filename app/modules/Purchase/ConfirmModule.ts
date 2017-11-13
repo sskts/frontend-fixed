@@ -2,7 +2,7 @@
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-import * as MVTK from '@motionpicture/mvtk-reserve-service';
+import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -59,8 +59,8 @@ async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
     log('購入管理番号情報', seatInfoSyncIn);
     if (seatInfoSyncIn === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     try {
-        const seatInfoSyncInResult = await MVTK.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== MVTK.services.seat.seatInfoSync.ReservationResult.Success) {
+        const seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+        if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.Success) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not success');
         }
     } catch (err) {
@@ -88,7 +88,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         const purchaseModel = new PurchaseModel(req.session.purchase);
         // 購入管理番号情報
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
-            deleteFlag: MVTK.services.seat.seatInfoSync.DeleteFlag.True
+            deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
         });
         log('購入管理番号情報', seatInfoSyncIn);
         //セッション削除
@@ -97,8 +97,8 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         if (seatInfoSyncIn === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         try {
-            const seatInfoSyncInResult = await MVTK.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
-            if (seatInfoSyncInResult.zskyykResult !== MVTK.services.seat.seatInfoSync.ReservationResult.CancelSuccess) {
+            const seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+            if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.CancelSuccess) {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not cancelSuccess');
             }
             res.json({ isSuccess: true });

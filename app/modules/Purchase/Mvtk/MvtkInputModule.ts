@@ -4,7 +4,7 @@
  */
 
 import * as COA from '@motionpicture/coa-service';
-import * as MVTK from '@motionpicture/mvtk-reserve-service';
+import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -75,9 +75,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const inputInfoList: InputInfo[] = JSON.parse(req.body.mvtk);
         mvtkValidation(inputInfoList);
         log('ムビチケ券検証');
-        const purchaseNumberAuthIn: MVTK.services.auth.purchaseNumberAuth.IPurchaseNumberAuthIn = {
+        const purchaseNumberAuthIn: mvtkReserve.services.auth.purchaseNumberAuth.IPurchaseNumberAuthIn = {
             kgygishCd: MvtkUtilModule.COMPANY_CODE, //興行会社コード
-            jhshbtsCd: MVTK.services.auth.purchaseNumberAuth.InformationTypeCode.Valid, //情報種別コード
+            jhshbtsCd: mvtkReserve.services.auth.purchaseNumberAuth.InformationTypeCode.Valid, //情報種別コード
             knyknrNoInfoIn: inputInfoList.map((value) => {
                 return {
                     knyknrNo: value.code, //購入管理番号
@@ -88,9 +88,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
             stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
             jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
         };
-        let purchaseNumberAuthResult: MVTK.services.auth.purchaseNumberAuth.IPurchaseNumberAuthResult;
+        let purchaseNumberAuthResult: mvtkReserve.services.auth.purchaseNumberAuth.IPurchaseNumberAuthResult;
         try {
-            purchaseNumberAuthResult = await MVTK.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
+            purchaseNumberAuthResult = await mvtkReserve.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
             if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
                 throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === null');
             }

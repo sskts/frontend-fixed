@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
-const MVTK = require("@motionpicture/mvtk-reserve-service");
+const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -91,7 +91,7 @@ function auth(req, res, next) {
             log('ムビチケ券検証');
             const purchaseNumberAuthIn = {
                 kgygishCd: MvtkUtilModule.COMPANY_CODE,
-                jhshbtsCd: MVTK.services.auth.purchaseNumberAuth.InformationTypeCode.Valid,
+                jhshbtsCd: mvtkReserve.services.auth.purchaseNumberAuth.InformationTypeCode.Valid,
                 knyknrNoInfoIn: inputInfoList.map((value) => {
                     return {
                         knyknrNo: value.code,
@@ -104,7 +104,7 @@ function auth(req, res, next) {
             };
             let purchaseNumberAuthResult;
             try {
-                purchaseNumberAuthResult = yield MVTK.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
+                purchaseNumberAuthResult = yield mvtkReserve.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
                 if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
                     throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === null');
                 }

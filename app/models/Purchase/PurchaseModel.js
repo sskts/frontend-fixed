@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const MVTK = require("@motionpicture/mvtk-reserve-service");
+const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const moment = require("moment");
 const MvtkUtilModule = require("../../modules/Purchase/Mvtk/MvtkUtilModule");
 const UtilModule = require("../../modules/Util/UtilModule");
@@ -352,10 +352,10 @@ class PurchaseModel {
         const systemReservationNumber = `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
         const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
         const deleteFlag = (options === undefined || options.deleteFlag === undefined)
-            ? MVTK.services.seat.seatInfoSync.DeleteFlag.False
+            ? mvtkReserve.services.seat.seatInfoSync.DeleteFlag.False
             : options.deleteFlag;
         const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
-            ? MVTK.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC
+            ? mvtkReserve.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC
             : options.reservedDeviceType;
         return {
             /**

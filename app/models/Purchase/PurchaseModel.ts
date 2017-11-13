@@ -2,7 +2,7 @@
  * 購入セッション
  */
 import * as COA from '@motionpicture/coa-service';
-import * as MVTK from '@motionpicture/mvtk-reserve-service';
+import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as moment from 'moment';
 import * as MvtkUtilModule from '../../modules/Purchase/Mvtk/MvtkUtilModule';
@@ -780,10 +780,10 @@ export class PurchaseModel {
             `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
         const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
         const deleteFlag = (options === undefined || options.deleteFlag === undefined)
-            ? MVTK.services.seat.seatInfoSync.DeleteFlag.False
+            ? mvtkReserve.services.seat.seatInfoSync.DeleteFlag.False
             : options.deleteFlag;
         const reservedDeviceType = (options === undefined || options.reservedDeviceType === undefined)
-            ? MVTK.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC
+            ? mvtkReserve.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC
             : options.reservedDeviceType;
 
         return {

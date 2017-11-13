@@ -2,7 +2,7 @@
  * Purchase.Mvtk.MvtkInputModuleテスト
  */
 import * as COA from '@motionpicture/coa-service';
-import * as MVTK from '@motionpicture/mvtk-reserve-service';
+import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as assert from 'assert';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
@@ -73,7 +73,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select 正常', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+        const purchaseNumberAuth = sinon.stub(mvtkReserve.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
             Promise.resolve({
                 knyknrNoInfoOut: [{
                     knyknrNo: '',
@@ -129,7 +129,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select 正常 ムビチケ認証失敗', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+        const purchaseNumberAuth = sinon.stub(mvtkReserve.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
             Promise.resolve({
                 knyknrNoInfoOut: [{
                     knyknrNoMkujyuCd: {},
@@ -185,7 +185,7 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select エラー ムビチケ認証失敗', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+        const purchaseNumberAuth = sinon.stub(mvtkReserve.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
             Promise.reject({})
         );
         const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
