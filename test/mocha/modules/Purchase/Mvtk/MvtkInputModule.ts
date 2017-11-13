@@ -2,7 +2,7 @@
  * Purchase.Mvtk.MvtkInputModuleテスト
  */
 import * as COA from '@motionpicture/coa-service';
-import * as MVTK from '@motionpicture/mvtk-service';
+import * as MVTK from '@motionpicture/mvtk-reserve-service';
 import * as assert from 'assert';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
@@ -73,14 +73,14 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select 正常', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
-            purchaseNumberAuth: () => {
-                return Promise.resolve([{
+        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+            Promise.resolve({
+                knyknrNoInfoOut: [{
                     knyknrNo: '',
                     ykknInfo: [{}]
-                }]);
-            }
-        });
+                }]
+            })
+        );
         const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
             Promise.resolve({})
         );
@@ -129,14 +129,14 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select 正常 ムビチケ認証失敗', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
-            purchaseNumberAuth: () => {
-                return Promise.resolve([{
+        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+            Promise.resolve({
+                knyknrNoInfoOut: [{
                     knyknrNoMkujyuCd: {},
                     ykknInfo: []
-                }]);
-            }
-        });
+                }]
+            })
+        );
         const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
             Promise.resolve({})
         );
@@ -185,11 +185,9 @@ describe('Purchase.Mvtk.MvtkInputModule', () => {
 
     it('select エラー ムビチケ認証失敗', async () => {
         const mvtkInputForm = sinon.stub(MvtkInputForm, 'default').returns({});
-        const purchaseNumberAuth = sinon.stub(MVTK, 'createPurchaseNumberAuthService').returns({
-            purchaseNumberAuth: () => {
-                return Promise.reject({});
-            }
-        });
+        const purchaseNumberAuth = sinon.stub(MVTK.services.auth.purchaseNumberAuth, 'purchaseNumberAuth').returns(
+            Promise.reject({})
+        );
         const mvtkTicketcode = sinon.stub(COA.services.master, 'mvtkTicketcode').returns(
             Promise.resolve({})
         );

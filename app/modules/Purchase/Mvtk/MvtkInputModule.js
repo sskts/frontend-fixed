@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const COA = require("@motionpicture/coa-service");
-const MVTK = require("@motionpicture/mvtk-service");
+const MVTK = require("@motionpicture/mvtk-reserve-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -86,47 +86,51 @@ function auth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Access);
-            const mvtkService = MVTK.createPurchaseNumberAuthService();
             const inputInfoList = JSON.parse(req.body.mvtk);
             mvtkValidation(inputInfoList);
             log('ムビチケ券検証');
             const purchaseNumberAuthIn = {
                 kgygishCd: MvtkUtilModule.COMPANY_CODE,
-                jhshbtsCd: MVTK.PurchaseNumberAuthUtilities.INFORMATION_TYPE_CODE_VALID,
+                jhshbtsCd: MVTK.services.auth.purchaseNumberAuth.InformationTypeCode.Valid,
                 knyknrNoInfoIn: inputInfoList.map((value) => {
                     return {
-                        KNYKNR_NO: value.code,
-                        PIN_CD: value.password // PINコード
+                        knyknrNo: value.code,
+                        pinCd: value.password // PINコード
                     };
                 }),
                 skhnCd: purchaseModel.getMvtkfilmCode(),
                 stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']),
                 jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
             };
-            let purchaseNumberAuthResults;
+            let purchaseNumberAuthResult;
             try {
-                purchaseNumberAuthResults = yield mvtkService.purchaseNumberAuth(purchaseNumberAuthIn);
-                log('ムビチケ認証', purchaseNumberAuthResults);
+                purchaseNumberAuthResult = yield MVTK.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
+                if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
+                    throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === null');
+                }
+                log('ムビチケ認証', purchaseNumberAuthResult);
             }
             catch (err) {
-                logger_1.default.error('SSKTS-APP:MvtkInputModule.select', `in: ${purchaseNumberAuthIn}`, `err: ${err}`);
-                throw err;
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.auth', purchaseNumberAuthIn, err);
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.ExternalModule, err.message);
             }
             const validationList = [];
             // ムビチケセッション作成
             const mvtkList = [];
-            for (const purchaseNumberAuthResult of purchaseNumberAuthResults) {
-                for (const info of purchaseNumberAuthResult.ykknInfo) {
+            for (const purchaseNumberInfo of purchaseNumberAuthResult.knyknrNoInfoOut) {
+                if (purchaseNumberInfo.ykknInfo === null)
+                    continue;
+                for (const info of purchaseNumberInfo.ykknInfo) {
                     const input = inputInfoList.find((value) => {
-                        return (value.code === purchaseNumberAuthResult.knyknrNo);
+                        return (value.code === purchaseNumberInfo.knyknrNo);
                     });
                     if (input === undefined)
                         continue;
                     // ムビチケチケットコード取得
                     const ticket = yield COA.services.master.mvtkTicketcode({
                         theaterCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode,
-                        kbnDenshiken: purchaseNumberAuthResult.dnshKmTyp,
-                        kbnMaeuriken: purchaseNumberAuthResult.znkkkytsknGkjknTyp,
+                        kbnDenshiken: purchaseNumberInfo.dnshKmTyp,
+                        kbnMaeuriken: purchaseNumberInfo.znkkkytsknGkjknTyp,
                         kbnKensyu: info.ykknshTyp,
                         salesPrice: Number(info.knshknhmbiUnip),
                         appPrice: Number(info.kijUnip),
@@ -141,25 +145,23 @@ function auth(req, res, next) {
                         ykknKnshbtsmiNum: info.ykknKnshbtsmiNum,
                         knshknhmbiUnip: info.knshknhmbiUnip,
                         kijUnip: info.kijUnip,
-                        dnshKmTyp: purchaseNumberAuthResult.dnshKmTyp,
-                        znkkkytsknGkjknTyp: purchaseNumberAuthResult.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
+                        dnshKmTyp: purchaseNumberInfo.dnshKmTyp,
+                        znkkkytsknGkjknTyp: purchaseNumberInfo.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
                     };
                     mvtkList.push({
-                        code: purchaseNumberAuthResult.knyknrNo,
+                        code: purchaseNumberInfo.knyknrNo,
                         password: UtilModule.bace64Encode(input.password),
                         ykknInfo: validTicket,
                         ticket: ticket
                     });
                 }
-                if (purchaseNumberAuthResult.knyknrNoMkujyuCd !== undefined) {
-                    validationList.push(purchaseNumberAuthResult.knyknrNo);
+                if (purchaseNumberInfo.knyknrNoMkujyuCd !== undefined) {
+                    validationList.push(purchaseNumberInfo.knyknrNo);
                 }
             }
             // 認証エラーバリデーション
             if (validationList.length > 0) {
-                log('認証エラー');
-                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthIn', purchaseNumberAuthIn);
-                logger_1.default.error('SSKTS-APP:MvtkInputModule.select purchaseNumberAuthOut', purchaseNumberAuthResults);
+                logger_1.default.error('SSKTS-APP:MvtkInputModule.auth', purchaseNumberAuthResult);
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Validation, JSON.stringify(validationList));
             }
             req.session.mvtk = mvtkList;

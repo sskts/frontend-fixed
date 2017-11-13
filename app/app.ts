@@ -1,4 +1,3 @@
-import * as MVTK from '@motionpicture/mvtk-service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
@@ -48,13 +47,6 @@ app.use(UtilModule.setLocals); // viewSet
 app.use(maintenance); // メンテナンスページ
 app.use(express.static(`${__dirname}/../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
-
-// ムビチケサービス初期化
-MVTK.initialize(
-    (<string>process.env.MVTK_ENDPOINT_SERVICE_01),
-    (<string>process.env.MVTK_ENDPOINT_SERVICE_02),
-    (<string>process.env.MVTK_ENDPOINT_RESERVE_SERVICE)
-);
 
 router(app); // ルーティング
 

@@ -1,7 +1,7 @@
 /**
  * Purchase.PurchaseModelテスト
  */
-import * as MVTK from '@motionpicture/mvtk-service';
+import * as MVTK from '@motionpicture/mvtk-reserve-service';
 import * as assert from 'assert';
 import * as moment from 'moment';
 
@@ -361,8 +361,8 @@ describe('Purchase.PurchaseModel', () => {
         }
         // tslint:disable:max-line-length no-magic-numbers
         assert.strictEqual(mvtkSeatInfoSync.kgygishCd, MvtkUtilModule.COMPANY_CODE);
-        assert.strictEqual(mvtkSeatInfoSync.yykDvcTyp, MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC);
-        assert.strictEqual(mvtkSeatInfoSync.trkshFlg, MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE);
+        assert.strictEqual(mvtkSeatInfoSync.yykDvcTyp, MVTK.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC);
+        assert.strictEqual(mvtkSeatInfoSync.trkshFlg, MVTK.services.seat.seatInfoSync.DeleteFlag.False);
         assert.strictEqual(
             mvtkSeatInfoSync.kgygishSstmZskyykNo,
             `${data.individualScreeningEvent.coaInfo.dateJouei}${data.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum}`

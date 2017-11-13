@@ -63,11 +63,11 @@ export function errorRender(
                 break;
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 msg = req.__('common.error.serviceUnavailable');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
             default:
                 msg = req.__('common.error.internalServerError');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
         }
         status = (<sasaki.transporters.RequestError | AppError>err).code;

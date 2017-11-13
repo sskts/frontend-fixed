@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Purchase.ConfirmModuleテスト
  */
-const MVTK = require("@motionpicture/mvtk-service");
+const MVTK = require("@motionpicture/mvtk-reserve-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
 const moment = require("moment");
@@ -96,13 +96,9 @@ describe('Purchase.ConfirmModule', () => {
         assert(next.calledOnce);
     }));
     it('cancelMvtk 正常', () => __awaiter(this, void 0, void 0, function* () {
-        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
-            seatInfoSync: () => {
-                return Promise.resolve({
-                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS
-                });
-            }
-        });
+        const createSeatInfoSyncService = sinon.stub(MVTK.services.seat.seatInfoSync, 'seatInfoSync').returns(Promise.resolve({
+            zskyykResult: MVTK.services.seat.seatInfoSync.ReservationResult.CancelSuccess
+        }));
         const req = {
             session: {
                 purchase: {
@@ -152,13 +148,9 @@ describe('Purchase.ConfirmModule', () => {
         createSeatInfoSyncService.restore();
     }));
     it('cancelMvtk エラー 取消失敗', () => __awaiter(this, void 0, void 0, function* () {
-        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
-            seatInfoSync: () => {
-                return Promise.resolve({
-                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_FAILURE
-                });
-            }
-        });
+        const createSeatInfoSyncService = sinon.stub(MVTK.services.seat.seatInfoSync, 'seatInfoSync').returns(Promise.resolve({
+            zskyykResult: MVTK.services.seat.seatInfoSync.ReservationResult.CancelFailure
+        }));
         const req = {
             session: {
                 purchase: {
@@ -302,13 +294,9 @@ describe('Purchase.ConfirmModule', () => {
                 return Promise.resolve({});
             }
         });
-        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
-            seatInfoSync: () => {
-                return Promise.resolve({
-                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS
-                });
-            }
-        });
+        const createSeatInfoSyncService = sinon.stub(MVTK.services.seat.seatInfoSync, 'seatInfoSync').returns(Promise.resolve({
+            zskyykResult: MVTK.services.seat.seatInfoSync.ReservationResult.Success
+        }));
         const req = {
             session: {
                 purchase: {
@@ -390,13 +378,9 @@ describe('Purchase.ConfirmModule', () => {
                 return Promise.resolve({});
             }
         });
-        const createSeatInfoSyncService = sinon.stub(MVTK, 'createSeatInfoSyncService').returns({
-            seatInfoSync: () => {
-                return Promise.resolve({
-                    zskyykResult: MVTK.SeatInfoSyncUtilities.RESERVATION_FAILURE_OTHER
-                });
-            }
-        });
+        const createSeatInfoSyncService = sinon.stub(MVTK.services.seat.seatInfoSync, 'seatInfoSync').returns(Promise.resolve({
+            zskyykResult: MVTK.services.seat.seatInfoSync.ReservationResult.FailureOther
+        }));
         const req = {
             session: {
                 purchase: {

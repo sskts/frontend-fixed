@@ -2,7 +2,6 @@
  * ムビチケ確認
  * @namespace Purchase.Mvtk.MvtkConfirmModule
  */
-import * as MVTK from '@motionpicture/mvtk-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -36,7 +35,6 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
-        res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
         res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     } catch (err) {
