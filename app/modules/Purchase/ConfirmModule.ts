@@ -90,7 +90,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
             deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
         });
-        log('購入管理番号情報', seatInfoSyncIn);
+        log('購入管理番号情報');
         //セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
@@ -148,7 +148,6 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
             return (ticket.mvtkNum !== '');
         });
-        log('ムビチケ券', mvtkTickets);
         // ムビチケ使用
         if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
             await reserveMvtk(purchaseModel);
@@ -158,7 +157,7 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         const order = await sasaki.service.transaction.placeOrder(options).confirm({
             transactionId: purchaseModel.transaction.id
         });
-        log('注文確定', order);
+        log('注文確定');
 
         //購入情報をセッションへ
         req.session.complete = {

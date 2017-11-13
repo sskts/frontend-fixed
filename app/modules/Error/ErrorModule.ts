@@ -7,7 +7,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
-import { AppError } from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 
 const log = debug('SSKTS:Error.ErrorModule');
 
@@ -69,6 +69,9 @@ export function errorRender(
                 msg = req.__('common.error.internalServerError');
                 logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
+        }
+        if ((<AppError>err).errorType !== undefined && (<AppError>err).errorType === ErrorType.Expire) {
+            msg = req.__('common.error.expire');
         }
         status = (<sasaki.transporters.RequestError | AppError>err).code;
     } else {
