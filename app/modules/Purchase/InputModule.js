@@ -17,7 +17,6 @@ const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const InputForm_1 = require("../../forms/Purchase/InputForm");
-const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const AwsCognitoService = require("../../service/AwsCognitoService");
@@ -342,13 +341,7 @@ function creditCardProsess(req, purchaseModel, authModel) {
             purchaseModel.creditCardAuthorization = null;
             purchaseModel.gmo = null;
             purchaseModel.save(req.session);
-            try {
-                yield sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
-            }
-            catch (err) {
-                logger_1.default.error('SSKTS-APP:InputModule.submit cancelCreditCardAuthorization', `in: ${cancelCreditCardAuthorizationArgs}`, `err: ${err}`);
-                throw err;
-            }
+            yield sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
             log('GMOオーソリ削除');
         }
         if (purchaseModel.getReserveAmount() > 0) {
@@ -377,15 +370,8 @@ function creditCardProsess(req, purchaseModel, authModel) {
                 method: GMO.utils.util.Method.Lump,
                 creditCard: creditCard
             };
-            try {
-                purchaseModel.creditCardAuthorization = yield sasaki.service.transaction.placeOrder(options)
-                    .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
-            }
-            catch (err) {
-                log(createCreditCardAuthorizationArgs);
-                logger_1.default.error('SSKTS-APP:InputModule.submit createCreditCardAuthorization', `in: ${createCreditCardAuthorizationArgs}`, `err: ${err}`);
-                throw err;
-            }
+            purchaseModel.creditCardAuthorization = yield sasaki.service.transaction.placeOrder(options)
+                .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
             log('GMOオーソリ追加');
         }
     });
