@@ -101,6 +101,48 @@ export async function getPerformances(req: Request, res: Response): Promise<void
 }
 
 /**
+ * スケジュールリスト取得
+ * @memberof Purchase.PerformancesModule
+ * @function getSchedule
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function getSchedule(req: Request, res: Response): Promise<void> {
+    try {
+        if (req.session === undefined
+            || req.query.startFrom === undefined
+            || req.query.startThrough === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        const authModel = new AuthModel(req.session.auth);
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        const args: any = {
+            startFrom: req.query.startFrom,
+            startThrough: req.query.startThrough
+        };
+        const theaters = await sasaki.service.organization(options).searchMovieTheaters();
+        const screeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent(args);
+        const result = {
+            theaters: theaters,
+            screeningEvents: screeningEvents
+        };
+        if (req.query.callback === undefined) {
+            res.json({ error: null, result: result });
+        } else {
+            res.jsonp({ error: null, result: result });
+        }
+    } catch (err) {
+        if (req.query.callback === undefined) {
+            res.json({ error: err, result: null });
+        } else {
+            res.jsonp({ error: err, result: null });
+        }
+    }
+}
+
+/**
  * 劇場一覧検索
  * @memberof Purchase.PerformancesModule
  * @function getMovieTheaters
