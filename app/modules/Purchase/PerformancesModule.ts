@@ -111,48 +111,27 @@ export async function getPerformances(req: Request, res: Response): Promise<void
 export async function getSchedule(req: Request, res: Response): Promise<void> {
     try {
         if (req.session === undefined
-            || req.query.beginDate === undefined
-            || req.query.endDate === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            || req.query.startFrom === undefined
+            || req.query.startThrough === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
         const options = {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        const diff = moment(req.query.endDate).diff(moment(req.query.beginDate), 'days');
-        const limitDays = 100;
-        if (diff > limitDays) {
-            throw new Error('It exceeds the upper limit');
-        }
-        const schedule: any[] = [];
-        const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
-        for (const theater of movieTheaters) {
-            schedule.push({
-                theater: theater,
-                schedule: []
-            });
-            const theaterCode = theater.location.branchCode;
-            for (let i = 0; i < diff; i += 1) {
-                const date = moment(req.query.beginDate).add(i, 'days').format('YYYYMMDD');
-                const individualScreeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent({
-                    theater: theaterCode,
-                    day: date
-                });
-                const theaterSchedule = schedule.find((targetSchedule) => {
-                    return (targetSchedule.theater.branchCode === theater.branchCode);
-                });
-                if (theaterSchedule !== undefined) {
-                    theaterSchedule.schedule.push({
-                        date: date,
-                        individualScreeningEvents: individualScreeningEvents
-                    });
-                }
-            }
-        }
-
+        const args: any = {
+            startFrom: req.query.startFrom,
+            startThrough: req.query.startThrough
+        };
+        const theaters = await sasaki.service.organization(options).searchMovieTheaters();
+        const screeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent(args);
+        const result = {
+            theaters: theaters,
+            screeningEvents: screeningEvents
+        };
         if (req.query.callback === undefined) {
-            res.json({ error: null, result: schedule });
+            res.json({ error: null, result: result });
         } else {
-            res.jsonp({ error: null, result: schedule });
+            res.jsonp({ error: null, result: result });
         }
     } catch (err) {
         if (req.query.callback === undefined) {
