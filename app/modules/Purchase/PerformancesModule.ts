@@ -34,12 +34,16 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.seatReservationAuthorization !== null
             && purchaseModel.transaction !== null
             && !purchaseModel.isExpired()) {
-            await sasaki.service.transaction.placeOrder(options)
-                .cancelSeatReservationAuthorization({
-                    transactionId: purchaseModel.transaction.id,
-                    actionId: purchaseModel.seatReservationAuthorization.id
-                });
-            log('仮予約削除');
+                try {
+                    await sasaki.service.transaction.placeOrder(options)
+                    .cancelSeatReservationAuthorization({
+                        transactionId: purchaseModel.transaction.id,
+                        actionId: purchaseModel.seatReservationAuthorization.id
+                    });
+                    log('仮予約削除');
+                } catch (err) {
+                    log('仮予約削除失敗', err);
+                }
         }
 
         if (process.env.VIEW_TYPE === 'fixed') {
@@ -52,7 +56,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 
         if (process.env.VIEW_TYPE === undefined) {
             res.locals.movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
-            log(res.locals.movieTheaters);
+            log('劇場検索');
         }
         res.locals.step = PurchaseModel.PERFORMANCE_STATE;
         res.render('purchase/performances', { layout: 'layouts/purchase/layout' });

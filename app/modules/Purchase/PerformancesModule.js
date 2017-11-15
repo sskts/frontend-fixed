@@ -43,12 +43,17 @@ function render(req, res, next) {
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null
                 && !purchaseModel.isExpired()) {
-                yield sasaki.service.transaction.placeOrder(options)
-                    .cancelSeatReservationAuthorization({
-                    transactionId: purchaseModel.transaction.id,
-                    actionId: purchaseModel.seatReservationAuthorization.id
-                });
-                log('仮予約削除');
+                try {
+                    yield sasaki.service.transaction.placeOrder(options)
+                        .cancelSeatReservationAuthorization({
+                        transactionId: purchaseModel.transaction.id,
+                        actionId: purchaseModel.seatReservationAuthorization.id
+                    });
+                    log('仮予約削除');
+                }
+                catch (err) {
+                    log('仮予約削除失敗', err);
+                }
             }
             if (process.env.VIEW_TYPE === 'fixed') {
                 // セッション削除
@@ -59,7 +64,7 @@ function render(req, res, next) {
             }
             if (process.env.VIEW_TYPE === undefined) {
                 res.locals.movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
-                log(res.locals.movieTheaters);
+                log('劇場検索');
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });

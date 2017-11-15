@@ -100,9 +100,9 @@ function nextButtonClick(event) {
     var form = $('form');
     $('input[name=seats]').val(JSON.stringify(seats));
 
-    loadingStart(function () {
-        form.submit();
-    });
+    loadingStart();
+    form.submit();
+    $(this).prop('disabled', true);
 }
 
 /**

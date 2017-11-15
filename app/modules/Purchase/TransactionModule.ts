@@ -66,7 +66,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
             identifier: req.body.performanceId
         });
-        log('イベント情報取得', individualScreeningEvent);
+        log('イベント情報取得');
         if (individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // awsCognitoIdentityIdを保存
         if (req.body.identityId === undefined) {
@@ -119,7 +119,7 @@ export async function start(req: Request, res: Response): Promise<void> {
         purchaseModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
-        log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
+        log('劇場のショップを検索');
         if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         // 取引開始
@@ -129,7 +129,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             expires: purchaseModel.expired,
             sellerId: purchaseModel.movieTheaterOrganization.id
         });
-        log('SSKTS取引開始', purchaseModel.transaction);
+        log('SSKTS取引開始', purchaseModel.transaction.id);
 
         //セッション更新
         purchaseModel.save(req.session);

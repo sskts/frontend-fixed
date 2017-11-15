@@ -36,9 +36,9 @@ $(function () {
         }
         var price = $('input[name=price]').val();
         if (Number(price) === 0) {
-            loadingStart(function () {
-                $('#purchaseform').submit();
-            });
+            loadingStart();
+            $('#purchaseform').submit();
+            $(this).prop('disabled', true);
         } else {
             loadingStart(function () {
                 var cardno = $('input[name=cardno]').val();
@@ -70,14 +70,6 @@ function pageInit() {
         var theaterCode = $('input[name=theaterCode]').val();
         var gmoErrorMessage = $('input[name=gmoErrorMessage]').val();
         var transactionId = $('input[name=transactionId]').val();
-        collection({
-            client: 'sskts-frontend',
-            label: 'GMOErrorMessage-' + theaterCode,
-            action: 'error',
-            category: 'GMO',
-            message: gmoErrorMessage,
-            transaction: transactionId
-        });
         var msg = $('input[name=gmoError]').val();
         var target = $('.modal[data-modal=creditcardAlert]');
         target.find('p').html(msg);
@@ -129,6 +121,7 @@ function someCallbackFunction(response) {
         $('input[name=gmoTokenObject]').val(JSON.stringify(response.tokenObject));
         //スクリプトからフォームを submit
         $('#purchaseform').submit();
+        $('.next-button button').prop('disabled', true);
     }
 }
 
@@ -218,19 +211,6 @@ function validation() {
             names.push(validation.name)
         }
     });
-    
-    if (validations.length > 0) {
-        // 計測
-        collection({
-            client: 'sskts-frontend',
-            label: 'purchaseValidationMessage',
-            action: 'validation',
-            category: 'form',
-            message: validations.join(', '),
-            notes: names.join(', '),
-            transaction: $('input[name=transactionId]').val()
-        });
-    }
 }
 
 /**

@@ -123,12 +123,12 @@ $(function () {
             return;
         }
 
-        loadingStart(function () {
-            var form = $('form');
-            var dom = $('input[name=mvtk]').val(JSON.stringify(mvtkList));
-            form.append(dom);
-            form.submit();
-        });
+        loadingStart();
+        var form = $('form');
+        var dom = $('input[name=mvtk]').val(JSON.stringify(mvtkList));
+        form.append(dom);
+        form.submit();
+        $(this).prop('disabled', true);
     }
 
     /**
@@ -242,16 +242,6 @@ $(function () {
                 // 券売機
                 modal.open('validation');
             }
-            // 計測
-            collection({
-                client: 'sskts-frontend',
-                label: 'mvtkValidationMessage',
-                action: 'validation',
-                category: 'form',
-                message: validations.join(', '),
-                notes: names.join(', '),
-                transaction: $('input[name=transactionId]').val()
-            });
         }
     }
 });
