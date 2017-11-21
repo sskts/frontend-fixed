@@ -3,13 +3,21 @@ $(function () {
     if (!isFixed()) {
         toInquiry();
     }
-    $(document).on('click', '.next-button button', function (event) {
-        event.preventDefault();
-        loadingStart(function () {
-            $('form').submit();
-        });
-    });
+    $(document).on('click', '.next-button button', nextButtonClick);
 });
+
+
+/**
+ * 次へクリックイベント
+ * @function nextButtonClick
+ * @param {Event} event 
+ */
+function nextButtonClick(event) {
+    event.preventDefault();
+    loadingStart();
+    $('form').submit();
+    $(this).prop('disabled', true);
+}
 
 /**
  * バリデーション
@@ -41,19 +49,6 @@ function validation() {
             var target = $(elem);
             validations.push(target.parent().prev().text() + ': ' + target.next().text());
             names.push(target.attr('name'));
-        });
-    }
-
-    if (validations.length > 0) {
-        // 計測
-        collection({
-            client: 'sskts-frontend',
-            label: 'inquiryValidationMessage',
-            action: 'validation',
-            category: 'form',
-            message: validations.join(', '),
-            notes: names.join(', '),
-            transaction: $('input[name=orderNumber]').val()
         });
     }
 }

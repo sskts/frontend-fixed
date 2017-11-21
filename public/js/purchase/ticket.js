@@ -51,9 +51,9 @@ function nextButtonClick(event) {
         var form = $('form');
         var dom = $('<input type="hidden" name="reserveTickets">').val(JSON.stringify(result));
         form.append(dom);
-        loadingStart(function () {
-            form.submit();
-        });
+        loadingStart();
+        form.submit();
+        $(this).prop('disabled', true);
     }
 }
 

@@ -72,7 +72,7 @@ function start(req, res) {
             const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
                 identifier: req.body.performanceId
             });
-            log('イベント情報取得', individualScreeningEvent);
+            log('イベント情報取得');
             if (individualScreeningEvent === null)
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // awsCognitoIdentityIdを保存
@@ -119,7 +119,7 @@ function start(req, res) {
             purchaseModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: individualScreeningEvent.coaInfo.theaterCode
             });
-            log('劇場のショップを検索', purchaseModel.movieTheaterOrganization);
+            log('劇場のショップを検索');
             if (purchaseModel.movieTheaterOrganization === null)
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // 取引開始
@@ -129,7 +129,7 @@ function start(req, res) {
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id
             });
-            log('SSKTS取引開始', purchaseModel.transaction);
+            log('SSKTS取引開始', purchaseModel.transaction.id);
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ

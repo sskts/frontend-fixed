@@ -83,15 +83,6 @@ function showComplete() {
     printTicket(0, function () {
         var orderNumber = $('input[name=orderNumber]').val();
         var theaterCode = $('input[name=theaterCode]').val();
-        // 計測
-        collection({
-            client: 'sskts-frontend',
-            label: 'inquiryPrintConversion-' + theaterCode,
-            action: 'print',
-            category: 'inquiry',
-            message: '発券完了',
-            transaction: orderNumber
-        });
         try {
             ga('send', {
                 hitType: 'event',

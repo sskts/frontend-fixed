@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const log = debug('SSKTS:Error.ErrorModule');
 /**
  * Not Found
@@ -51,12 +52,15 @@ function errorRender(err, req, res, _) {
                 break;
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 msg = req.__('common.error.serviceUnavailable');
-                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
             default:
                 msg = req.__('common.error.internalServerError');
-                logger_1.default.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
+        }
+        if (err.errorType !== undefined && err.errorType === ErrorUtilModule_1.ErrorType.Expire) {
+            msg = req.__('common.error.expire');
         }
         status = err.code;
     }

@@ -9,7 +9,6 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import InputForm from '../../forms/Purchase/InputForm';
-import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { IGMO, PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as AwsCognitoService from '../../service/AwsCognitoService';
@@ -330,16 +329,7 @@ async function creditCardProsess(
         purchaseModel.creditCardAuthorization = null;
         purchaseModel.gmo = null;
         purchaseModel.save(req.session);
-        try {
-            await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
-        } catch (err) {
-            logger.error(
-                'SSKTS-APP:InputModule.submit cancelCreditCardAuthorization',
-                `in: ${cancelCreditCardAuthorizationArgs}`,
-                `err: ${err}`
-            );
-            throw err;
-        }
+        await sasaki.service.transaction.placeOrder(options).cancelCreditCardAuthorization(cancelCreditCardAuthorizationArgs);
         log('GMOオーソリ削除');
     }
     if (purchaseModel.getReserveAmount() > 0) {
@@ -368,18 +358,8 @@ async function creditCardProsess(
             method: GMO.utils.util.Method.Lump,
             creditCard: creditCard
         };
-        try {
-            purchaseModel.creditCardAuthorization = await sasaki.service.transaction.placeOrder(options)
-                .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
-        } catch (err) {
-            log(createCreditCardAuthorizationArgs);
-            logger.error(
-                'SSKTS-APP:InputModule.submit createCreditCardAuthorization',
-                `in: ${createCreditCardAuthorizationArgs}`,
-                `err: ${err}`
-            );
-            throw err;
-        }
+        purchaseModel.creditCardAuthorization = await sasaki.service.transaction.placeOrder(options)
+            .createCreditCardAuthorization(createCreditCardAuthorizationArgs);
         log('GMOオーソリ追加');
     }
 }

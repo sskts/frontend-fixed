@@ -5,9 +5,9 @@ $(function () {
     $(document).on('click', '.next-button button', function (event) {
         event.preventDefault();
         var form = $(this).parent().parent();
-        loadingStart(function () {
-            form.submit();
-        });
+        loadingStart();
+        form.submit();
+        $(this).prop('disabled', true);
     });
 
     /**
@@ -16,8 +16,8 @@ $(function () {
     $(document).on('click', '.prev-button button', function (event) {
         event.preventDefault();
         var form = $(this).parent().parent();
-        loadingStart(function () {
-            form.submit();
-        });
+        loadingStart();
+        form.submit();
+        $(this).prop('disabled', true);
     });
 });

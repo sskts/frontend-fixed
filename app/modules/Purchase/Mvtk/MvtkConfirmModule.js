@@ -4,7 +4,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * ムビチケ確認
  * @namespace Purchase.Mvtk.MvtkConfirmModule
  */
-const MVTK = require("@motionpicture/mvtk-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const PurchaseModel_1 = require("../../../models/Purchase/PurchaseModel");
@@ -35,7 +34,6 @@ function render(req, res, next) {
         res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
-        res.locals.MVTK_TICKET_TYPE = MVTK.Constants.TICKET_TYPE;
         res.locals.step = PurchaseModel_1.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/confirm', { layout: 'layouts/purchase/layout' });
     }

@@ -1,5 +1,4 @@
 "use strict";
-const MVTK = require("@motionpicture/mvtk-service");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
@@ -43,7 +42,5 @@ app.use(UtilModule.setLocals); // viewSet
 app.use(maintenance_1.default); // メンテナンスページ
 app.use(express.static(`${__dirname}/../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
-// ムビチケサービス初期化
-MVTK.initialize(process.env.MVTK_ENDPOINT_SERVICE_01, process.env.MVTK_ENDPOINT_SERVICE_02, process.env.MVTK_ENDPOINT_RESERVE_SERVICE);
 router_1.default(app); // ルーティング
 module.exports = app;
