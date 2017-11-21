@@ -24,6 +24,7 @@ purchaseRouter.get('/performances', PerformancesModule.render);
 // パフォーマンス一覧
 purchaseRouter.get('/performances/getPerformances', PerformancesModule.getPerformances);
 purchaseRouter.get('/performances/getMovieTheaters', PerformancesModule.getMovieTheaters);
+purchaseRouter.get('/performances/getSchedule', PerformancesModule.getSchedule);
 
 //購入(取引開始)
 purchaseRouter.post('/transaction', TransactionModule.start);

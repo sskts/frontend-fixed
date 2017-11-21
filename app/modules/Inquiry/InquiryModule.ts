@@ -80,7 +80,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
-            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+            log('劇場のショップを検索');
             if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
@@ -91,7 +91,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
             });
-            log('照会情報', inquiryModel.order);
+            log('照会情報');
             if (inquiryModel.order === null) {
                 res.locals.inquiryModel = inquiryModel;
                 res.locals.error = getInquiryError(req);
@@ -111,7 +111,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
-            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
+            log('劇場のショップを検索');
             if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,

@@ -53,6 +53,7 @@ function nextButtonClick(event) {
         validationScroll();
         return;
     }
+    $(this).prop('disabled', true);
     purchase();
 }
 
@@ -82,15 +83,7 @@ function purchase() {
         } else {
             var transactionId = $('input[name=transactionId]').val();
             var theaterCode = $('input[name=theaterCode]').val();
-            // 計測
-            collection({
-                client: 'sskts-frontend',
-                label: 'purchaseCompleteConversion-' + theaterCode,
-                action: 'complete',
-                category: 'purchase',
-                message: '購入完了',
-                transaction: transactionId
-            });
+            
             try {
                 ga('send', {
                     hitType: 'event',
@@ -110,7 +103,7 @@ function purchase() {
     }).fail(function (jqxhr, textStatus, error) {
         getComplete(0);
     }).always(function () {
-
+        $('.next-button button').prop('disabled', false);
     });
 }
 

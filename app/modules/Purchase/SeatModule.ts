@@ -185,7 +185,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         };
         purchaseModel.seatReservationAuthorization = await sasaki.service.transaction.placeOrder(options)
             .createSeatReservationAuthorization(createSeatReservationAuthorizationArgs);
-        log('SSKTSオーソリ追加', purchaseModel.seatReservationAuthorization);
+        log('SSKTSオーソリ追加');
         purchaseModel.orderCount = 0;
         log('GMOオーソリカウント初期化');
         purchaseModel.reserveTickets = [];
@@ -283,7 +283,7 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
             timeBegin: req.body.timeBegin
             // flgMember: coa.services.reserve.FlgMember.NonMember
         });
-        log('コアAPI券種取得', purchaseModel.salesTickets);
+        log('コアAPI券種取得');
         purchaseModel.save(req.session);
         res.json({ err: null });
     } catch (err) {

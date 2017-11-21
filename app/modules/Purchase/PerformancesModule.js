@@ -43,12 +43,17 @@ function render(req, res, next) {
             if (purchaseModel.seatReservationAuthorization !== null
                 && purchaseModel.transaction !== null
                 && !purchaseModel.isExpired()) {
-                yield sasaki.service.transaction.placeOrder(options)
-                    .cancelSeatReservationAuthorization({
-                    transactionId: purchaseModel.transaction.id,
-                    actionId: purchaseModel.seatReservationAuthorization.id
-                });
-                log('仮予約削除');
+                try {
+                    yield sasaki.service.transaction.placeOrder(options)
+                        .cancelSeatReservationAuthorization({
+                        transactionId: purchaseModel.transaction.id,
+                        actionId: purchaseModel.seatReservationAuthorization.id
+                    });
+                    log('仮予約削除');
+                }
+                catch (err) {
+                    log('仮予約削除失敗', err);
+                }
             }
             if (process.env.VIEW_TYPE === 'fixed') {
                 // セッション削除
@@ -59,7 +64,7 @@ function render(req, res, next) {
             }
             if (process.env.VIEW_TYPE === undefined) {
                 res.locals.movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
-                log(res.locals.movieTheaters);
+                log('劇場検索');
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
@@ -113,6 +118,54 @@ function getPerformances(req, res) {
     });
 }
 exports.getPerformances = getPerformances;
+/**
+ * スケジュールリスト取得
+ * @memberof Purchase.PerformancesModule
+ * @function getSchedule
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+function getSchedule(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session === undefined
+                || req.query.startFrom === undefined
+                || req.query.startThrough === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const options = {
+                endpoint: process.env.SSKTS_API_ENDPOINT,
+                auth: authModel.create()
+            };
+            const args = {
+                startFrom: req.query.startFrom,
+                startThrough: req.query.startThrough
+            };
+            const theaters = yield sasaki.service.organization(options).searchMovieTheaters();
+            const screeningEvents = yield sasaki.service.event(options).searchIndividualScreeningEvent(args);
+            const result = {
+                theaters: theaters,
+                screeningEvents: screeningEvents
+            };
+            if (req.query.callback === undefined) {
+                res.json({ error: null, result: result });
+            }
+            else {
+                res.jsonp({ error: null, result: result });
+            }
+        }
+        catch (err) {
+            if (req.query.callback === undefined) {
+                res.json({ error: err, result: null });
+            }
+            else {
+                res.jsonp({ error: err, result: null });
+            }
+        }
+    });
+}
+exports.getSchedule = getSchedule;
 /**
  * 劇場一覧検索
  * @memberof Purchase.PerformancesModule

@@ -7,7 +7,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
-import { AppError } from '../Util/ErrorUtilModule';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 
 const log = debug('SSKTS:Error.ErrorModule');
 
@@ -63,12 +63,15 @@ export function errorRender(
                 break;
             case HTTPStatus.SERVICE_UNAVAILABLE:
                 msg = req.__('common.error.serviceUnavailable');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
             default:
                 msg = req.__('common.error.internalServerError');
-                logger.error('SSKTS-APP:ErrorModule', 'sasaki.transporters.RequestError', status, err.message, err);
+                logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
                 break;
+        }
+        if ((<AppError>err).errorType !== undefined && (<AppError>err).errorType === ErrorType.Expire) {
+            msg = req.__('common.error.expire');
         }
         status = (<sasaki.transporters.RequestError | AppError>err).code;
     } else {

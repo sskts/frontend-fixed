@@ -16,10 +16,10 @@ function nextButtonClick(event) {
         return;
     }
     var price = $('input[name=price]').val();
+    $(this).prop('disabled', true);
     if (Number(price) === 0) {
-        loadingStart(function () {
-            $('#purchaseform').submit();
-        });
+        loadingStart();
+        $('#purchaseform').submit();
     } else {
         loadingStart(function () {
             var cardno = $('input[name=cardno]').val();
@@ -32,7 +32,6 @@ function nextButtonClick(event) {
                 securitycode: securitycode, // 加盟店様の購入フォームから取得したセキュリティコード
                 holdername: holdername // 加盟店様の購入フォームから取得したカード名義人
             }
-
             Multipayment.getToken(sendParam, someCallbackFunction);
         });
     }
@@ -74,14 +73,6 @@ function pageInit() {
         var theaterCode = $('input[name=theaterCode]').val();
         var gmoErrorMessage = $('input[name=gmoErrorMessage]').val();
         var transactionId = $('input[name=transactionId]').val();
-        collection({
-            client: 'sskts-frontend',
-            label: 'GMOErrorMessage-' + theaterCode,
-            action: 'error',
-            category: 'GMO',
-            message: gmoErrorMessage,
-            transaction: transactionId
-        });
         var msg = $('input[name=gmoError]').val();
         var target = $('.modal[data-modal=creditcardAlert]');
         target.find('p').html(msg);
@@ -128,6 +119,7 @@ function someCallbackFunction(response) {
         loadingEnd();
         gmoValidation();
         validationScroll();
+        $('.next-button button').prop('disabled', false);
     } else {
         //予め購入フォームに用意した token フィールドに、値を設定
         $('input[name=gmoTokenObject]').val(JSON.stringify(response.tokenObject));
@@ -250,16 +242,6 @@ function validation() {
             // 券売機
             modal.open('validation');
         }
-        // 計測
-        collection({
-            client: 'sskts-frontend',
-            label: 'purchaseValidationMessage',
-            action: 'validation',
-            category: 'form',
-            message: validations.join(', '),
-            notes: names.join(', '),
-            transaction: $('input[name=transactionId]').val()
-        });
     }
 }
 

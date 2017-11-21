@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-const MVTK = require("@motionpicture/mvtk-service");
+const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
@@ -68,49 +68,19 @@ exports.render = render;
 function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         // 購入管理番号情報
-        const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
-        log('購入管理番号情報', mvtkSeatInfoSync);
-        if (mvtkSeatInfoSync === null)
+        const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
+        log('購入管理番号情報', seatInfoSyncIn);
+        if (seatInfoSyncIn === null)
             throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-        const seatInfoSyncService = MVTK.createSeatInfoSyncService();
-        const seatInfoSyncIn = {
-            kgygishCd: mvtkSeatInfoSync.kgygishCd,
-            yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
-            trkshFlg: mvtkSeatInfoSync.trkshFlg,
-            kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
-            kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
-            jeiDt: mvtkSeatInfoSync.jeiDt,
-            kijYmd: mvtkSeatInfoSync.kijYmd,
-            stCd: mvtkSeatInfoSync.stCd,
-            screnCd: mvtkSeatInfoSync.screnCd,
-            knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
-                return {
-                    KNYKNR_NO: knyknrNoInfo.knyknrNo,
-                    PIN_CD: knyknrNoInfo.pinCd,
-                    KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
-                        return {
-                            KNSH_TYP: knshInfo.knshTyp,
-                            MI_NUM: String(knshInfo.miNum)
-                        };
-                    })
-                };
-            }),
-            zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
-                return {
-                    ZSK_CD: zskInfo.zskCd
-                };
-            }),
-            skhnCd: mvtkSeatInfoSync.skhnCd
-        };
         try {
-            const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-            if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_SUCCESS) {
-                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            const seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+            if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.Success) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.ExternalModule, 'reservationResult is not success');
             }
         }
         catch (err) {
             log('MVTKムビチケ着券失敗', err);
-            logger_1.default.error('SSKTS-APP:ConfirmModule reserveMvtk', seatInfoSyncIn, err);
+            logger_1.default.error('SSKTS-APP:ConfirmModule.reserveMvtk', seatInfoSyncIn, err);
             throw err;
         }
         log('MVTKムビチケ着券成功');
@@ -134,55 +104,25 @@ function cancelMvtk(req, res) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             // 購入管理番号情報
-            const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync({
-                deleteFlag: MVTK.SeatInfoSyncUtilities.DELETE_FLAG_TRUE
+            const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
+                deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
             });
-            log('購入管理番号情報', mvtkSeatInfoSync);
+            log('購入管理番号情報');
             //セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
-            if (mvtkSeatInfoSync === null)
+            if (seatInfoSyncIn === null)
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-            const seatInfoSyncService = MVTK.createSeatInfoSyncService();
-            const seatInfoSyncIn = {
-                kgygishCd: mvtkSeatInfoSync.kgygishCd,
-                yykDvcTyp: mvtkSeatInfoSync.yykDvcTyp,
-                trkshFlg: mvtkSeatInfoSync.trkshFlg,
-                kgygishSstmZskyykNo: mvtkSeatInfoSync.kgygishSstmZskyykNo,
-                kgygishUsrZskyykNo: mvtkSeatInfoSync.kgygishUsrZskyykNo,
-                jeiDt: mvtkSeatInfoSync.jeiDt,
-                kijYmd: mvtkSeatInfoSync.kijYmd,
-                stCd: mvtkSeatInfoSync.stCd,
-                screnCd: mvtkSeatInfoSync.screnCd,
-                knyknrNoInfo: mvtkSeatInfoSync.knyknrNoInfo.map((knyknrNoInfo) => {
-                    return {
-                        KNYKNR_NO: knyknrNoInfo.knyknrNo,
-                        PIN_CD: knyknrNoInfo.pinCd,
-                        KNSH_INFO: knyknrNoInfo.knshInfo.map((knshInfo) => {
-                            return {
-                                KNSH_TYP: knshInfo.knshTyp,
-                                MI_NUM: String(knshInfo.miNum)
-                            };
-                        })
-                    };
-                }),
-                zskInfo: mvtkSeatInfoSync.zskInfo.map((zskInfo) => {
-                    return {
-                        ZSK_CD: zskInfo.zskCd
-                    };
-                }),
-                skhnCd: mvtkSeatInfoSync.skhnCd
-            };
             try {
-                const seatInfoSyncInResult = yield seatInfoSyncService.seatInfoSync(seatInfoSyncIn);
-                if (seatInfoSyncInResult.zskyykResult !== MVTK.SeatInfoSyncUtilities.RESERVATION_CANCEL_SUCCESS) {
-                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+                const seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+                if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.CancelSuccess) {
+                    throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.ExternalModule, 'reservationResult is not cancelSuccess');
                 }
                 res.json({ isSuccess: true });
                 log('MVTKムビチケ着券削除');
             }
             catch (err) {
-                logger_1.default.error('SSKTS-APP:ConfirmModule cancelMvtk', seatInfoSyncIn, err);
+                logger_1.default.error('SSKTS-APP:ConfirmModule.cancelMvtk', seatInfoSyncIn, err);
                 throw err;
             }
         }
@@ -229,7 +169,6 @@ function purchase(req, res) {
             const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
                 return (ticket.mvtkNum !== '');
             });
-            log('ムビチケ券', mvtkTickets);
             // ムビチケ使用
             if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
                 yield reserveMvtk(purchaseModel);
@@ -238,7 +177,7 @@ function purchase(req, res) {
             const order = yield sasaki.service.transaction.placeOrder(options).confirm({
                 transactionId: purchaseModel.transaction.id
             });
-            log('注文確定', order);
+            log('注文確定');
             //購入情報をセッションへ
             req.session.complete = {
                 individualScreeningEvent: purchaseModel.individualScreeningEvent,

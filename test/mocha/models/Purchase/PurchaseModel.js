@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Purchase.PurchaseModelテスト
  */
-const MVTK = require("@motionpicture/mvtk-service");
+const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const assert = require("assert");
 const moment = require("moment");
 const PurchaseModel_1 = require("../../../../app/models/Purchase/PurchaseModel");
@@ -337,8 +337,8 @@ describe('Purchase.PurchaseModel', () => {
         }
         // tslint:disable:max-line-length no-magic-numbers
         assert.strictEqual(mvtkSeatInfoSync.kgygishCd, MvtkUtilModule.COMPANY_CODE);
-        assert.strictEqual(mvtkSeatInfoSync.yykDvcTyp, MVTK.SeatInfoSyncUtilities.RESERVED_DEVICE_TYPE_ENTERTAINER_SITE_PC);
-        assert.strictEqual(mvtkSeatInfoSync.trkshFlg, MVTK.SeatInfoSyncUtilities.DELETE_FLAG_FALSE);
+        assert.strictEqual(mvtkSeatInfoSync.yykDvcTyp, mvtkReserve.services.seat.seatInfoSync.ReserveDeviceType.EntertainerSitePC);
+        assert.strictEqual(mvtkSeatInfoSync.trkshFlg, mvtkReserve.services.seat.seatInfoSync.DeleteFlag.False);
         assert.strictEqual(mvtkSeatInfoSync.kgygishSstmZskyykNo, `${data.individualScreeningEvent.coaInfo.dateJouei}${data.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum}`);
         assert.strictEqual(mvtkSeatInfoSync.kgygishUsrZskyykNo, data.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum);
         assert.strictEqual(mvtkSeatInfoSync.kijYmd, moment(data.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD'));
