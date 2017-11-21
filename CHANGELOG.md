@@ -12,6 +12,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.1.0 - 2017-11-21
+### Added
+ - スケジュール取得追加
+### Changed
+ - ムビチケサービス変更 [@motionpicture/mvtk-reserve-service@^1.1.0](https://github.com/motionpicture/mvtk-reserve-service)
+### Fixed
+ - 復数リクエスト対策（クライアントサイド）
+
 ## 2.0.0 - 2017-10-27
 ### Added
  - 会員フロー追加
