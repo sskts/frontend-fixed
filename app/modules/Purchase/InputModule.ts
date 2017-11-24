@@ -7,6 +7,7 @@ import * as GMO from '@motionpicture/gmo-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import { PhoneNumberUtil } from 'google-libphonenumber';
 import * as HTTPStatus from 'http-status';
 import InputForm from '../../forms/Purchase/InputForm';
 import { AuthModel } from '../../models/Auth/AuthModel';
@@ -131,6 +132,21 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
 
             return;
         }
+        const phoneUtil = PhoneNumberUtil.getInstance();
+        const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+            purchaseModel.profile = req.body;
+            res.locals.error = {
+                telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
+            };
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
         // 入力情報をセッションへ
         purchaseModel.profile = {
             familyName: req.body.familyName,
@@ -211,6 +227,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistrationOfMember(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
@@ -244,6 +261,21 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
+        const phoneUtil = PhoneNumberUtil.getInstance();
+        const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+            purchaseModel.profile = req.body;
+            res.locals.error = {
+                telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
+            };
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
 
             return;
         }
