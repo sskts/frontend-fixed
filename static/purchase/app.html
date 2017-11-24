@@ -36,12 +36,8 @@
 <body class="app">
     <div class="wrapper">
         <div class="wrapper-inner" style="display: none">
-            <header class="header clearfix">
-                <div class="inner">
-                    <div class="logo">
-                        <a href="http://www.cinemasunshine.co.jp"><img src="/images/default/common/logo.svg" alt="シネマサンシャイン"></a>
-                    </div>
-                </div>
+            <header class="header">
+                <div class="close"><a href="javascript:history.back();">閉じる</a></div>
             </header>
 
             <div class="contents">
@@ -51,6 +47,9 @@
                         お手続きの途中でエラーが発生いたしました。<br>
                         お手数をおかけいたしますが、もう一度最初から操作をお願いいたします。
                     </p>
+                    <div class="button-area clearfix">
+                        <div class="prev-link"><a class="icon-prev-black" href="javascript:history.back();">戻る</a></div>
+                    </div>
                 </div>
                 <div class="error access-congestion">
                     <h1 class="page-ttl">只今、アクセスが混雑しております。</h1>
@@ -58,12 +57,9 @@
                         現在アクセスが集中しております。<br>
                         誠に申し訳ございませんがしばらく時間を置いてから再度アクセスしてください。
                     </p>
-                </div>
-                <div class="error not-recommended">
-                    <h1 class="page-ttl">お使いのブラウザは対応していません。</h1>
-                    <p class="read">
-                        ブラウザを最新バージョンへアップデートしてください。
-                    </p>
+                    <div class="button-area clearfix">
+                        <div class="prev-link"><a class="icon-prev-black" href="javascript:history.back();">戻る</a></div>
+                    </div>
                 </div>
             </div>
 
