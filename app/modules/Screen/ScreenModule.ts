@@ -30,8 +30,8 @@ export async function index(_: Request, res: Response): Promise<void> {
  */
 export async function getScreenStateReserve(req: Request, res: Response): Promise<void> {
     try {
-        const theaterCode = `00${req.body.theater_code}`.slice(UtilModule.DIGITS['02']);
-        const screenCode = `000${req.body.screen_code}`.slice(UtilModule.DIGITS['03']);
+        const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS['03']);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
         res.json({
