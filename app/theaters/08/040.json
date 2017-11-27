@@ -1,24 +1,24 @@
 {
     "type": 0,
-    "size": { "w": 1346, "h": 1632 },
+    "size": { "w": 1346, "h": 1442 },
     "objects": [
         {
-            "w": 760, "h": 70,
-            "x": 293, "y": 90,
+            "w": 886, "h": 84,
+            "x": 230, "y": 90,
             "image": "/images/theater/12/screen/004.svg"
         },
         {
-            "w": 128, "h": 400,
-            "x": 229, "y": 912,
-            "image": "/images/theater/12/entrance/004_01.svg"
+            "w": 38, "h": 104,
+            "x": 158, "y": 1224,
+            "image": "/images/theater/08/door/002.svg"
         },
         {
-            "w": 128, "h": 470,
-            "x": 989, "y": 912,
-            "image": "/images/theater/12/entrance/004_02.svg"
+            "w": 104, "h": 38,
+            "x": 210, "y": 1314,
+            "image": "/images/theater/08/door/001.svg"
         }
     ],
-    "seatStart": { "x": 229, "y": 250 },
+    "seatStart": { "x": 210, "y": 234 },
     "map": [
         [0, 0, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
         [0, 0, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
