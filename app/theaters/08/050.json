@@ -8,7 +8,7 @@
             "image": "/images/theater/08/screen/005.svg"
         }
     ],
-    "seatStart": { "x": 210, "y": 260 },
+    "seatStart": { "x": 210, "y": 190 },
     "map": [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
@@ -38,5 +38,6 @@
     ],
     "special": [],
     "hc": [],
-    "pair": []
+    "pair": [],
+    "style": "<style>.column-object{ top: 200px !important; } .line-object-0{ display:none; }</style>"
 }

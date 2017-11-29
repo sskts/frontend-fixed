@@ -13,6 +13,11 @@ function createScreen(setting, screen) {
         return screenDom.append(screen.html);
     }
 
+    //style挿入の場合
+    if (screen.style) {
+        screenDom.append(screen.style);
+    }
+
     //通路大きさ
     var aisle = (screen.aisle) ? screen.aisle : setting.aisle;
     //座席同士の間隔
@@ -73,7 +78,7 @@ function createScreen(setting, screen) {
 
             //座席ラベルHTML生成
             if (x === 0) {
-                seatLabelHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
+                seatLabelHtml.push('<div class="object label-object line-object line-object-' + labelCount + '" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + pos.y + 'px; left:' + (pos.x - seatLabelPos) + 'px">' + labels[labelCount] + '</div>');
             }
 
             if (screen.map[y][x] === 8) {
@@ -88,7 +93,7 @@ function createScreen(setting, screen) {
 
             //座席番号HTML生成
             if (y === 0) {
-                seatNumberHtml.push('<div class="object label-object" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
+                seatNumberHtml.push('<div class="object label-object column-object column-object-' + x + '" style="width: ' + seatSize.w + 'px; height: ' + seatSize.h + 'px; top:' + (pos.y - seatNumberPos) + 'px; left:' + pos.x + 'px">' + (x + 1) + '</div>');
             }
             if (screen.map[y][x] === 1 || screen.map[y][x] === 4 || screen.map[y][x] === 5 || screen.map[y][x] === 8 || screen.map[y][x] === 10) {
                 //座席HTML生成
