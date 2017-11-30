@@ -1,5 +1,7 @@
 var screenSeatStatusesMap;
 $(function () {
+    var params = getParameter();
+    $('.page-ttl').text('劇場: ' + params.theater + ' スクリーン: ' + params.screen);
     $('.seat-limit-text').text($('.screen-cover').attr('data-limit'));
     loadingStart();
     screenStateUpdate(function () {
@@ -14,60 +16,8 @@ $(function () {
         }
     });
 
-    // 座席クリックイベント
-    $('.screen').on('click', '.seat a', function () {
-        //スマホで拡大操作
-        if ($('.screen .device-type-sp').is(':visible') && !screenSeatStatusesMap.isZoom()) {
-            return;
-        }
-        var limit = Number($('.screen-cover').attr('data-limit'));
-        if ($(this).hasClass('disabled')) {
-            return;
-        }
-        // 座席数上限チェック
-        if (!$(this).hasClass('active')) {
-            if ($('.screen .seat a.active').length > limit - 1) {
-                modal.open('seatUpperLimit');
-                return;
-            }
-        }
-
-        $(this).toggleClass('active');
-    });
-
-    // スクロール
-    $(window).on('scroll', function (event) {
-        zoomButtonScroll();
-    });
 });
 
-/**
- * ズームボタンスクロール
- * @function zoomButtonScroll
- * @returns {void}
- */
-function zoomButtonScroll() {
-    if (screenSeatStatusesMap && !screenSeatStatusesMap.isZoom()) return;
-    var win = $(window);
-    var winTop = win.scrollTop();
-    var screen = $('.screen');
-    var screenTop = screen.offset().top;
-    var screenRight = screen.offset().left;
-    var screenH = screen.height();
-    var target = $('.zoom-btn');
-    var targetH = target.height();
-    var fixH = 10;
-    if (screenTop < winTop && (screenTop + screenH - targetH - fixH * 2) > winTop) {
-        target.css({ top: fixH + 'px', right: screenRight + fixH + 'px' });
-        target.addClass('scroll');
-    } else if ((screenTop + screenH - targetH - fixH * 2) < winTop) {
-        target.css({ top: screenH - targetH - fixH + 'px', right: fixH + 'px' });
-        target.removeClass('scroll');
-    } else {
-        target.css({ top: fixH + 'px', right: fixH + 'px' });
-        target.removeClass('scroll');
-    }
-}
 
 
 /**
@@ -182,57 +132,3 @@ function screenStateUpdate(cb) {
     });
 }
 
-/**
- * バリデーションスクロール
- * @function validationScroll
- * @returns {void}
- */
-function validationScroll() {
-    var target = $('.validation').eq(0);
-    var top = target.offset().top - 20;
-    $('html,body').animate({ scrollTop: top }, 300);
-}
-
-/**
- * バリデーション
- * @function validation
- * @returns {void}
- */
-function validation() {
-    $('.validation').removeClass('validation');
-    $('.validation-text').remove();
-
-    var validationList = [
-        { name: 'agree', label: locales.label.agree, agree: true },
-    ];
-
-    validationList.forEach(function (validation, index) {
-
-        var target = $('input[name=' + validation.name + ']');
-        var value = target.val();
-
-        if (validation.required
-            && !value
-            && value == '') {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
-        } else if (validation.maxLength
-            && value.length > validation.maxLength) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.required + '</div>');
-        } else if (validation.regex
-            && !value.match(validation.regex[0])) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + validation.regex[1] + '</div>');
-        } else if (validation.equals
-            && value !== $('input[name=' + validation.equals + ']').val()) {
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.equals + '</div>');
-        } else if (validation.agree
-            && !target.is(':checked')) {
-            target = $('label[for=' + validation.name + ']');
-            target.addClass('validation');
-            target.after('<div class="validation-text">' + validation.label + locales.validation.agree + '</div>');
-        }
-    });
-}
