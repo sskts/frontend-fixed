@@ -127,7 +127,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
         purchaseModel.transaction = await sasaki.service.transaction.placeOrder(options).start({
             expires: purchaseModel.expired,
-            sellerId: purchaseModel.movieTheaterOrganization.id
+            sellerId: purchaseModel.movieTheaterOrganization.id,
+            passportToken: req.body.passportToken
         });
         log('SSKTS取引開始', purchaseModel.transaction.id);
 

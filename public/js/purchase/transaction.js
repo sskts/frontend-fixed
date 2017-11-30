@@ -37,7 +37,8 @@ function getToken() {
         if (res.token) {
             var getTransactionArgs = {
                 performanceId: performanceId,
-                identityId: getParameter()['identityId']
+                identityId: getParameter()['identityId'],
+                passportToken: res.token
             };
             getTransaction(getTransactionArgs);
             return;
@@ -59,7 +60,7 @@ function getToken() {
  * @param {Object} args
  * @param {string} args.performanceId
  * @param {string | undefined} args.identityId
- * @param {string} args.password
+ * @param {string} args.passportToken
  * @returns {void}
  */
 function getTransaction(args) {

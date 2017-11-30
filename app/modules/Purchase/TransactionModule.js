@@ -127,7 +127,8 @@ function start(req, res) {
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
             purchaseModel.transaction = yield sasaki.service.transaction.placeOrder(options).start({
                 expires: purchaseModel.expired,
-                sellerId: purchaseModel.movieTheaterOrganization.id
+                sellerId: purchaseModel.movieTheaterOrganization.id,
+                passportToken: req.body.passportToken
             });
             log('SSKTS取引開始', purchaseModel.transaction.id);
             //セッション更新
