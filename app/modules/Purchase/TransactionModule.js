@@ -133,16 +133,11 @@ function start(req, res) {
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ
-            res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
+            res.json({ redirect: `/purchase/seat/${req.body.performanceId}/` });
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);
-            if (err.errorType === ErrorUtilModule_1.ErrorType.Access
-                || err.errorType === ErrorUtilModule_1.ErrorType.Property) {
-                res.json({ redirect: null, contents: 'access-error' });
-                return;
-            }
-            res.json({ redirect: null, contents: 'access-congestion' });
+            res.json({ redirect: null });
         }
     });
 }

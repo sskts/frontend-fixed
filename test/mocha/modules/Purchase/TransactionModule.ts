@@ -46,7 +46,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -81,7 +80,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
         event.restore();
     });
 
@@ -95,7 +93,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
     });
 
     it('start エラー セッションなし', async () => {
@@ -116,7 +113,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     });
 
@@ -138,7 +134,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     });
 
@@ -165,7 +160,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     });
 
@@ -193,7 +187,6 @@ describe('Purchase.TransactionModule', () => {
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     });
 
@@ -230,7 +223,6 @@ describe('Purchase.TransactionModule', () => {
 
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
     });
 
 });

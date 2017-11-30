@@ -53,7 +53,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -87,7 +86,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
         event.restore();
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
@@ -100,7 +98,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const event = sinon.stub(sasaki.service, 'event').returns({
@@ -120,7 +117,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     }));
     it('start エラー APIエラー', () => __awaiter(this, void 0, void 0, function* () {
@@ -141,7 +137,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     }));
     it('start エラー 開始可能日前', () => __awaiter(this, void 0, void 0, function* () {
@@ -167,7 +162,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     }));
     it('start エラー 終了可能日後', () => __awaiter(this, void 0, void 0, function* () {
@@ -194,7 +188,6 @@ describe('Purchase.TransactionModule', () => {
         yield TransactionModule.start(req, res);
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
         event.restore();
     }));
     it('start エラー 対象劇場なし', () => __awaiter(this, void 0, void 0, function* () {
@@ -228,6 +221,5 @@ describe('Purchase.TransactionModule', () => {
         organization.restore();
         assert(res.json.calledOnce);
         assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
     }));
 });
