@@ -102,7 +102,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
+                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap` });
                     log('重複確認へ');
                     return;
                 }
@@ -121,7 +121,7 @@ function start(req, res) {
             });
             log('劇場のショップを検索');
             if (purchaseModel.movieTheaterOrganization === null)
-                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.NOT_FOUND, ErrorUtilModule_1.ErrorType.Access);
             // 取引開始
             const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
@@ -138,7 +138,13 @@ function start(req, res) {
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);
-            res.json({ redirect: null });
+            if (err.code !== undefined) {
+                res.status(err.code);
+            }
+            else {
+                res.status(httpStatus.BAD_REQUEST);
+            }
+            res.json({ error: err });
         }
     });
 }

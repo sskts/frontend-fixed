@@ -261,6 +261,9 @@ p a {
   color: #019fe8;
   text-decoration: underline; }
 
+.not-display {
+  display: none; }
+
 .d-table {
   display: table;
   width: 100%; }

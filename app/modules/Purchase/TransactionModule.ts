@@ -98,7 +98,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             log('重複確認');
             if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                 // 重複確認へ
-                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
+                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`});
                 log('重複確認へ');
 
                 return;
@@ -120,7 +120,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索');
-        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
@@ -138,6 +138,11 @@ export async function start(req: Request, res: Response): Promise<void> {
         res.json({ redirect: `/purchase/seat/${req.body.performanceId}/` });
     } catch (err) {
         log('SSKTS取引開始エラー', err);
-        res.json({ redirect: null});
+        if (err.code !== undefined) {
+            res.status(err.code);
+        } else {
+            res.status(httpStatus.BAD_REQUEST);
+        }
+        res.json({ error: err });
     }
 }

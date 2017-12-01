@@ -3,10 +3,11 @@
  */
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
-
 import * as TransactionModule from '../../../../app/modules/Purchase/TransactionModule';
+import { AppError, ErrorType } from '../../../../app/modules/Util/ErrorUtilModule';
 
 describe('Purchase.TransactionModule', () => {
 
@@ -41,11 +42,15 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -75,11 +80,15 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         event.restore();
     });
 
@@ -88,11 +97,15 @@ describe('Purchase.TransactionModule', () => {
             session: undefined
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
     });
 
     it('start エラー セッションなし', async () => {
@@ -108,18 +121,22 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
 
     it('start エラー APIエラー', async () => {
         const event = sinon.stub(sasaki.service, 'event').returns({
             findIndividualScreeningEvent: () => {
-                return Promise.reject({});
+                return Promise.reject(new AppError(HTTPStatus.INTERNAL_SERVER_ERROR, ErrorType.ExternalModule));
             }
         });
         const req: any = {
@@ -129,11 +146,15 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.INTERNAL_SERVER_ERROR);
         event.restore();
     });
 
@@ -155,11 +176,15 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
 
@@ -182,11 +207,15 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
 
@@ -214,7 +243,11 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
 
@@ -222,7 +255,7 @@ describe('Purchase.TransactionModule', () => {
         organization.restore();
 
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.NOT_FOUND);
     });
 
 });

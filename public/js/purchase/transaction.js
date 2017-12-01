@@ -4,7 +4,6 @@ $(function () {
         $('.wrapper-inner').show();
         return;
     }
-    loadingStart();
     getToken();
 });
 
@@ -23,33 +22,60 @@ function getToken() {
         ? 'https://sskts-waiter-development.appspot.com'
         : (/test/i.test(location.hostname))
             ? 'https://sskts-waiter-test.appspot.com'
-            : 'https://sskts-waiter-production.appspot.com'
+            : 'https://sskts-waiter-production.appspot.com';
+    var scope = 'placeOrderTransaction.MovieTheater-' + performanceId.slice(0, 3);
     var option = {
         dataType: 'json',
         url: endPoint + '/passports',
         type: 'POST',
         timeout: 10000,
         data: {
-            scope: 'placeOrderTransaction.' + performanceId.slice(0, 3)
+            scope: scope
         }
     };
-    var doneFunction = function (res) {
-        if (res.token) {
+    var expired = Date.now() + 60000;
+    var congestion = JSON.parse(sessionStorage.getItem('congestion'));
+    if (congestion !== null && Date.now() < congestion.expired && scope === congestion.scope) {
+        // 混雑期間内
+        showAccessCongestionError();
+        return;
+    }
+    var prosess = function (data, jqXhr) {
+        if (jqXhr.status === HTTP_STATUS.CREATED) {
             var getTransactionArgs = {
                 performanceId: performanceId,
                 identityId: getParameter()['identityId'],
-                passportToken: res.token
+                passportToken: data.token
             };
             getTransaction(getTransactionArgs);
-            return;
+        } else if (jqXhr.status === HTTP_STATUS.BAD_REQUEST
+            || jqXhr.status === HTTP_STATUS.NOT_FOUND) {
+            // アクセスエラー
+            showAccessError();
+            loadingEnd();
+        } else if (jqXhr.status === HTTP_STATUS.TOO_MANY_REQUESTS
+            || jqXhr.status === HTTP_STATUS.INTERNAL_SERVER_ERROR) {
+            // 混雑エラー
+            sessionStorage.setItem('congestion', JSON.stringify({
+                expired: expired,
+                scope: scope
+            }));
+            showAccessCongestionError();
+            loadingEnd();
+        } else if (jqXhr.status === HTTP_STATUS.SERVICE_UNAVAILABLE) {
+            // メンテナンス
+            showMaintenance();
+            loadingEnd();
         }
-        showAccessCongestionError();
-        loadingEnd();
+    }
+
+    var doneFunction = function (data, textStatus, jqXhr) {
+        prosess(data, jqXhr);
     };
-    var failFunction = function (jqxhr, textStatus, error) {
-        showAccessCongestionError();
-        loadingEnd();
+    var failFunction = function (jqXhr, textStatus, error) {
+        prosess(null, jqXhr);
     };
+    loadingStart();
     $.ajax(option)
         .done(doneFunction)
         .fail(failFunction);
@@ -71,23 +97,31 @@ function getTransaction(args) {
         timeout: 10000,
         data: args
     };
-    var doneFunction = function (res) {
-        if (res.redirect !== null) {
-            location.replace(res.redirect);
+    var doneFunction = function (data, textStatus, jqXhr) {
+        if (jqXhr.status === HTTP_STATUS.OK) {
+            location.replace(data.redirect);
             return;
         }
         showAccessError();
+        loadingEnd();
     };
     var failFunction = function (jqxhr, textStatus, error) {
         showAccessError();
-    };
-    var alwaysFunction = function () {
         loadingEnd();
     };
     $.ajax(option)
         .done(doneFunction)
-        .fail(failFunction)
-        .always(alwaysFunction);
+        .fail(failFunction);
+}
+
+/**
+ * メンテナンス表示
+ * @function showMaintenance
+ * @returns {void}
+ */
+function showMaintenance() {
+    $('.maintenance').show();
+    $('.wrapper-inner').show();
 }
 
 /**
@@ -96,11 +130,9 @@ function getTransaction(args) {
  * @returns {void}
  */
 function showAccessError() {
-    $('.error').hide();
     $('.access-error').show();
     $('.wrapper-inner').show();
 }
-
 
 /**
  * アクセス混雑エラー表示
@@ -108,22 +140,8 @@ function showAccessError() {
  * @returns {void}
  */
 function showAccessCongestionError() {
-    $('.error').hide();
     $('.access-congestion').show();
     $('.wrapper-inner').show();
-    retry();
-}
-
-/**
- * リトライ
- * @function retry
- * @returns {void}
- */
-function retry() {
-    var timer = 60000;
-    setTimeout(function () {
-        getToken();
-    }, timer);
 }
 
 /**
