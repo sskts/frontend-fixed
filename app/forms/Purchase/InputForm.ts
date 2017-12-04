@@ -2,8 +2,6 @@ import * as express from 'express';
 
 const NAME_MAX_LENGTH = 12;
 const MAIL_MAX_LENGTH = 50;
-const TEL_MAX_LENGTH = 11;
-const TEL_MIN_LENGTH = 9;
 
 /**
  * 購入情報入力フォーム
@@ -84,20 +82,4 @@ export default (req: express.Request): void => {
         'telephone',
         `${req.__('common.tel_num')}${req.__('common.validation.required')}`
     ).notEmpty();
-    req.checkBody(
-        'telephone',
-        `${req.__('common.tel_num')}${req.__('common.validation.is_hira')}`
-    ).matches(/^[0-9]+$/);
-    req.checkBody(
-        'telephone',
-        `${req.__('common.tel_num')}${req.__('common.validation.maxlength %s', String(TEL_MAX_LENGTH))}`
-    ).isLength({
-        max: TEL_MAX_LENGTH
-    });
-    req.checkBody(
-        'telephone',
-        `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(TEL_MIN_LENGTH))}`
-    ).isLength({
-        min: TEL_MIN_LENGTH
-    });
 };

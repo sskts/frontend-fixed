@@ -68,7 +68,11 @@
     
         <div class="button-area clearfix">
             <div class="button next-button blue-button"><button class="icon-next-white" type="submit"><%- __('purchase.seat.next') %></button></div>
+            <% if (viewType === 'app') { %>
+            <div class="prev-link"><a class="icon-prev-black" href="<%- appSiteUrl %>/#/purchase"><%- __('purchase.seat.prev') %></a></div>
+            <% } else { %>
             <div class="prev-link"><a class="icon-prev-black" href="<%= purchaseModel.movieTheaterOrganization.url %>"><%- __('purchase.seat.prev') %></a></div>
+            <% } %>
         </div>
         <input type="hidden" name="seats" value="<%= reserveSeats %>">
         <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">

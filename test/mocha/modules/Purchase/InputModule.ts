@@ -3,9 +3,9 @@
  */
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import { PhoneNumberUtil } from 'google-libphonenumber';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
-
 import * as InputForm from '../../../../app/forms/Purchase/InputForm';
 import { MemberType } from '../../../../app/models/Auth/AuthModel';
 import * as InputModule from '../../../../app/modules/Purchase/InputModule';
@@ -131,6 +131,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.resolve({});
             }
         });
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req: any = {
             session: {
                 purchase: {
@@ -186,6 +194,7 @@ describe('Purchase.InputModule', () => {
         assert(res.redirect.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     });
 
     it('purchaserInformationRegistration バリデーション', async () => {
@@ -244,6 +253,76 @@ describe('Purchase.InputModule', () => {
         await InputModule.purchaserInformationRegistration(req, res, next);
         assert(res.render.calledOnce);
         inputForm.restore();
+    });
+
+    it('purchaserInformationRegistration バリデーション 電話番号', async () => {
+        const inputForm = sinon.stub(InputForm, 'default').returns({});
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return false;
+            }
+        });
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    creditCardAuthorization: {
+                        id: ''
+                    },
+                    reserveTickets: [
+                        { salePrice: 1000 }
+                    ],
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: ''
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: ''
+                            }
+                        }
+                    },
+                    orderCount: 0,
+                    creditCards: []
+                }
+            },
+            body: {
+                transactionId: '',
+                gmoTokenObject: JSON.stringify({ token: '' })
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    },
+                    mapped: () => {
+                        return;
+                    }
+                });
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res: any = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
+        await InputModule.purchaserInformationRegistration(req, res, next);
+        assert(res.render.calledOnce);
+        inputForm.restore();
+        phoneNumberUtil.restore();
     });
 
     it('purchaserInformationRegistration エラー セッションなし', async () => {
@@ -331,6 +410,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.reject(new Error());
             }
         });
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req: any = {
             session: {
                 purchase: {
@@ -389,6 +476,7 @@ describe('Purchase.InputModule', () => {
         assert(res.render.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     });
 
     it('purchaserInformationRegistrationOfMember 正常', async () => {
@@ -410,6 +498,14 @@ describe('Purchase.InputModule', () => {
             },
             addCreditCard: () => {
                 return Promise.resolve({});
+            }
+        });
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
             }
         });
         const req: any = {
@@ -473,6 +569,7 @@ describe('Purchase.InputModule', () => {
         inputForm.restore();
         placeOrder.restore();
         person.restore();
+        phoneNumberUtil.restore();
     });
 
     it('purchaserInformationRegistrationOfMember バリデーション', async () => {
@@ -535,6 +632,80 @@ describe('Purchase.InputModule', () => {
         await InputModule.purchaserInformationRegistrationOfMember(req, res, next);
         assert(res.render.calledOnce);
         inputForm.restore();
+    });
+
+    it('purchaserInformationRegistrationOfMember バリデーション 電話番号', async () => {
+        const inputForm = sinon.stub(InputForm, 'default').returns({});
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return false;
+            }
+        });
+        const req: any = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    creditCardAuthorization: {
+                        id: ''
+                    },
+                    reserveTickets: [
+                        { salePrice: 1000 }
+                    ],
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: ''
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: ''
+                            }
+                        }
+                    },
+                    orderCount: 0,
+                    creditCards: [],
+                    profile: {}
+                },
+                auth: {
+                    memberType: MemberType.Member
+                }
+            },
+            body: {
+                transactionId: '',
+                gmoTokenObject: JSON.stringify({ token: '' })
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    },
+                    mapped: () => {
+                        return;
+                    }
+                });
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res: any = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next: any = (err: any) => {
+            throw err.massage;
+        };
+        await InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+        assert(res.render.calledOnce);
+        inputForm.restore();
+        phoneNumberUtil.restore();
     });
 
     it('purchaserInformationRegistrationOfMember エラー セッションなし', async () => {
@@ -649,6 +820,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.reject(new Error());
             }
         });
+        const phoneNumberUtil = sinon.stub(PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req: any = {
             session: {
                 purchase: {
@@ -711,5 +890,6 @@ describe('Purchase.InputModule', () => {
         assert(res.render.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     });
 });
