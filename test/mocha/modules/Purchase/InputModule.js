@@ -13,6 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
+const google_libphonenumber_1 = require("google-libphonenumber");
 const moment = require("moment");
 const sinon = require("sinon");
 const InputForm = require("../../../../app/forms/Purchase/InputForm");
@@ -132,6 +133,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.resolve({});
             }
         });
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req = {
             session: {
                 purchase: {
@@ -187,6 +196,7 @@ describe('Purchase.InputModule', () => {
         assert(res.redirect.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     }));
     it('purchaserInformationRegistration バリデーション', () => __awaiter(this, void 0, void 0, function* () {
         const inputForm = sinon.stub(InputForm, 'default').returns({});
@@ -244,6 +254,75 @@ describe('Purchase.InputModule', () => {
         yield InputModule.purchaserInformationRegistration(req, res, next);
         assert(res.render.calledOnce);
         inputForm.restore();
+    }));
+    it('purchaserInformationRegistration バリデーション 電話番号', () => __awaiter(this, void 0, void 0, function* () {
+        const inputForm = sinon.stub(InputForm, 'default').returns({});
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return false;
+            }
+        });
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    creditCardAuthorization: {
+                        id: ''
+                    },
+                    reserveTickets: [
+                        { salePrice: 1000 }
+                    ],
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: ''
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: ''
+                            }
+                        }
+                    },
+                    orderCount: 0,
+                    creditCards: []
+                }
+            },
+            body: {
+                transactionId: '',
+                gmoTokenObject: JSON.stringify({ token: '' })
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    },
+                    mapped: () => {
+                        return;
+                    }
+                });
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield InputModule.purchaserInformationRegistration(req, res, next);
+        assert(res.render.calledOnce);
+        inputForm.restore();
+        phoneNumberUtil.restore();
     }));
     it('purchaserInformationRegistration エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -326,6 +405,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.reject(new Error());
             }
         });
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req = {
             session: {
                 purchase: {
@@ -384,6 +471,7 @@ describe('Purchase.InputModule', () => {
         assert(res.render.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     }));
     it('purchaserInformationRegistrationOfMember 正常', () => __awaiter(this, void 0, void 0, function* () {
         const inputForm = sinon.stub(InputForm, 'default').returns({});
@@ -404,6 +492,14 @@ describe('Purchase.InputModule', () => {
             },
             addCreditCard: () => {
                 return Promise.resolve({});
+            }
+        });
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
             }
         });
         const req = {
@@ -467,6 +563,7 @@ describe('Purchase.InputModule', () => {
         inputForm.restore();
         placeOrder.restore();
         person.restore();
+        phoneNumberUtil.restore();
     }));
     it('purchaserInformationRegistrationOfMember バリデーション', () => __awaiter(this, void 0, void 0, function* () {
         const inputForm = sinon.stub(InputForm, 'default').returns({});
@@ -528,6 +625,79 @@ describe('Purchase.InputModule', () => {
         yield InputModule.purchaserInformationRegistrationOfMember(req, res, next);
         assert(res.render.calledOnce);
         inputForm.restore();
+    }));
+    it('purchaserInformationRegistrationOfMember バリデーション 電話番号', () => __awaiter(this, void 0, void 0, function* () {
+        const inputForm = sinon.stub(InputForm, 'default').returns({});
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return false;
+            }
+        });
+        const req = {
+            session: {
+                purchase: {
+                    expired: moment().add(1, 'hours').toDate(),
+                    transaction: {
+                        id: ''
+                    },
+                    creditCardAuthorization: {
+                        id: ''
+                    },
+                    reserveTickets: [
+                        { salePrice: 1000 }
+                    ],
+                    individualScreeningEvent: {
+                        coaInfo: {
+                            theaterCode: ''
+                        }
+                    },
+                    seatReservationAuthorization: {
+                        result: {
+                            updTmpReserveSeatResult: {
+                                tmpReserveNum: ''
+                            }
+                        }
+                    },
+                    orderCount: 0,
+                    creditCards: [],
+                    profile: {}
+                },
+                auth: {
+                    memberType: AuthModel_1.MemberType.Member
+                }
+            },
+            body: {
+                transactionId: '',
+                gmoTokenObject: JSON.stringify({ token: '' })
+            },
+            getValidationResult: () => {
+                return Promise.resolve({
+                    isEmpty: () => {
+                        return true;
+                    },
+                    mapped: () => {
+                        return;
+                    }
+                });
+            },
+            __: () => {
+                return '';
+            }
+        };
+        const res = {
+            locals: {},
+            render: sinon.spy()
+        };
+        const next = (err) => {
+            throw err.massage;
+        };
+        yield InputModule.purchaserInformationRegistrationOfMember(req, res, next);
+        assert(res.render.calledOnce);
+        inputForm.restore();
+        phoneNumberUtil.restore();
     }));
     it('purchaserInformationRegistrationOfMember エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -636,6 +806,14 @@ describe('Purchase.InputModule', () => {
                 return Promise.reject(new Error());
             }
         });
+        const phoneNumberUtil = sinon.stub(google_libphonenumber_1.PhoneNumberUtil, 'getInstance').returns({
+            parse: () => {
+                return {};
+            },
+            isValidNumber: () => {
+                return true;
+            }
+        });
         const req = {
             session: {
                 purchase: {
@@ -698,5 +876,6 @@ describe('Purchase.InputModule', () => {
         assert(res.render.calledOnce);
         inputForm.restore();
         placeOrder.restore();
+        phoneNumberUtil.restore();
     }));
 });
