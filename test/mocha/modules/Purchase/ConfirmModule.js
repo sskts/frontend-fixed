@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
 const sinon = require("sinon");
 const ConfirmModule = require("../../../../app/modules/Purchase/ConfirmModule");
@@ -270,13 +271,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        // tslint:disable-next-line:no-console
-        console.log('--------------', res);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
     }));
@@ -353,11 +352,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -436,11 +435,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -457,11 +456,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('purchase エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -477,11 +476,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('purchase エラー アクセス', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -509,11 +508,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('purchase エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -542,11 +541,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('getCompleteData 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -555,12 +554,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].result);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('getCompleteData エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -574,12 +577,12 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
     it('getCompleteData エラー completeセッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -595,11 +598,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     }));
 });

@@ -97,6 +97,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistration(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
@@ -117,8 +118,35 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-        // バリデーション
-        await inputValidation(req, res, purchaseModel, authModel);
+        //バリデーション
+        InputForm(req);
+        const validationResult = await req.getValidationResult();
+        if (!validationResult.isEmpty()) {
+            purchaseModel.profile = req.body;
+            res.locals.error = validationResult.mapped();
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
+        const phoneUtil = PhoneNumberUtil.getInstance();
+        const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+            purchaseModel.profile = req.body;
+            res.locals.error = {
+                telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
+            };
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
         // 入力情報をセッションへ
         purchaseModel.profile = {
             familyName: req.body.familyName,
@@ -199,6 +227,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function purchaserInformationRegistrationOfMember(req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.session === undefined) {
         next(new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property));
@@ -222,8 +251,34 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-        // バリデーション
-        await inputValidation(req, res, purchaseModel, authModel);
+        //バリデーション
+        InputForm(req);
+        const validationResult = await req.getValidationResult();
+        if (!validationResult.isEmpty()) {
+            res.locals.error = validationResult.mapped();
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
+        const phoneUtil = PhoneNumberUtil.getInstance();
+        const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+            purchaseModel.profile = req.body;
+            res.locals.error = {
+                telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
+            };
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel.INPUT_STATE;
+            res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
+
+            return;
+        }
         const creditCardRegistration = (<boolean | undefined>req.body.creditCardRegistration);
         if (creditCardRegistration !== undefined && creditCardRegistration) {
             if (purchaseModel.creditCards.length > 0) {
@@ -282,60 +337,11 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
 }
 
 /**
- * バリデーション処理
- * @function inputValidation
- * @param {Request} req
- * @param {Response} res
- * @param {PurchaseModel} purchaseModel
- * @param {AuthModel} authModel
- */
-async function inputValidation(
-    req: Request,
-    res: Response,
-    purchaseModel: PurchaseModel,
-    authModel: AuthModel
-): Promise<void> {
-    //バリデーション
-    InputForm(req);
-    const validationResult = await req.getValidationResult();
-    const renderView = (authModel.isMember()) ? 'purchase/member/input' : 'purchase/input';
-
-    if (!validationResult.isEmpty()) {
-        if (!authModel.isMember()) {
-            purchaseModel.profile = req.body;
-        }
-        res.locals.error = validationResult.mapped();
-        res.locals.gmoError = null;
-        res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-        res.locals.purchaseModel = purchaseModel;
-        res.locals.step = PurchaseModel.INPUT_STATE;
-        res.render(renderView, { layout: 'layouts/purchase/layout' });
-
-        return;
-    }
-    const phoneUtil = PhoneNumberUtil.getInstance();
-    const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
-    if (!phoneUtil.isValidNumber(phoneNumber)) {
-        purchaseModel.profile = req.body;
-        res.locals.error = {
-            telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
-        };
-        res.locals.gmoError = null;
-        res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-        res.locals.purchaseModel = purchaseModel;
-        res.locals.step = PurchaseModel.INPUT_STATE;
-        res.render(renderView, { layout: 'layouts/purchase/layout' });
-
-        return;
-    }
-}
-
-/**
  * クレジットカード処理
  * @function creditCardProsess
  * @param {Request} req
+ * @param {Response} res
  * @param {PurchaseModel} purchaseModel
- * @param {AuthModel} authModel
  */
 async function creditCardProsess(
     req: Request,

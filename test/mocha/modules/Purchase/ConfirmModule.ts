@@ -4,6 +4,7 @@
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
 
@@ -276,13 +277,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        // tslint:disable-next-line:no-console
-        console.log('--------------', res);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
     });
@@ -364,11 +363,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -452,11 +451,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -474,11 +473,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー プロパティ', async () => {
@@ -495,11 +494,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー アクセス', async () => {
@@ -528,11 +527,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー 期限切れ', async () => {
@@ -562,11 +561,11 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData 正常', async () => {
@@ -576,12 +575,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].result);
-        assert.strictEqual(res.statusCode, httpStatus.OK);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData エラー セッションなし', async () => {
@@ -596,12 +599,12 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData エラー completeセッションなし', async () => {
@@ -618,12 +621,12 @@ describe('Purchase.ConfirmModule', () => {
             status: (code: number) => {
                 res.statusCode = code;
             },
-            statusCode: httpStatus.OK
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
         assert(res.json.args[0][0].error);
-        assert.notStrictEqual(res.statusCode, httpStatus.OK);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
 });
