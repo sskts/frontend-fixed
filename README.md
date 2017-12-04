@@ -16,9 +16,7 @@ set GMO_CLIENT_MODULE=**********GMOCLIENTモージュールURL=**********
 set GMO_ENDPOINT=**********gmo apiのエンドポイント**********
 set COA_ENDPOINT=**********coa apiのエンドポイント**********
 set COA_REFRESH_TOKEN=**********coa apiのリフレッシュトークン**********
-set MVTK_ENDPOINT_SERVICE_01=**********ムビチケService apiのエンドポイント**********
-set MVTK_ENDPOINT_SERVICE_02=**********ムビチケService2 apiのエンドポイント**********
-set MVTK_ENDPOINT_RESERVE_SERVICE=**********ムビチケReserveService apiのエンドポイント**********
+set MVTK_RESERVE_ENDPOINT=**********ムビチケMvtkReserveService apiのエンドポイント**********
 set PORTAL_SITE_URL=**********ポータルサイトURL**********
 set CLIENT_ID=**********クライアントID**********
 set CLIENT_SECRET=**********クライアント鍵**********
