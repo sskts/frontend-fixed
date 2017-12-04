@@ -51,6 +51,7 @@ purchaseRouter.post('/input/member', InputModule.purchaserInformationRegistratio
 purchaseRouter.get('/confirm', ConfirmModule.render);
 purchaseRouter.post('/confirm', ConfirmModule.purchase);
 purchaseRouter.get('/getComplete', ConfirmModule.getCompleteData);
+purchaseRouter.post('/resendMail', ConfirmModule.resendMail);
 
 //ムビチケ着券取り消し
 purchaseRouter.post('/mvtk/cancel', ConfirmModule.cancelMvtk);

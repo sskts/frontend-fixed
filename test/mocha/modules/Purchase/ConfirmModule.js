@@ -266,12 +266,17 @@ describe('Purchase.ConfirmModule', () => {
         };
         const res = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        // tslint:disable-next-line:no-console
+        console.log('--------------', res);
+        assert.strictEqual(res.statusCode, httpStatus.OK);
         placeOrder.restore();
         place.restore();
     }));
@@ -344,12 +349,15 @@ describe('Purchase.ConfirmModule', () => {
         };
         const res = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        assert.strictEqual(res.statusCode, httpStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -424,11 +432,15 @@ describe('Purchase.ConfirmModule', () => {
         const res = {
             locals: {},
             render: () => '',
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -441,11 +453,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
     it('purchase エラー プロパティ', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -457,11 +473,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
     it('purchase エラー アクセス', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -485,11 +505,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
     it('purchase エラー 期限切れ', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -514,11 +538,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
     it('getCompleteData 正常', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -531,8 +559,8 @@ describe('Purchase.ConfirmModule', () => {
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].result);
+        assert.strictEqual(res.statusCode, httpStatus.OK);
     }));
     it('getCompleteData エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -542,12 +570,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
     it('getCompleteData エラー completeセッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
@@ -559,11 +591,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code) => {
+                res.statusCode = code;
+            },
+            statusCode: httpStatus.OK
         };
         yield ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, httpStatus.OK);
     }));
 });

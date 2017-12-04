@@ -13,6 +13,7 @@ import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import * as AwsCognitoService from '../../service/AwsCognitoService';
 import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
+
 const log = debug('SSKTS:Purchase.ConfirmModule');
 
 /**
@@ -51,27 +52,29 @@ export async function render(req: Request, res: Response, next: NextFunction): P
  * @memberof Purchase.ConfirmModule
  * @function reserveMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
+ * @returns {Promise<mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult>}
  */
-async function reserveMvtk(purchaseModel: PurchaseModel): Promise<void> {
+async function reserveMvtk(purchaseModel: PurchaseModel): Promise<mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult> {
     // 購入管理番号情報
     const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
-    log('購入管理番号情報', seatInfoSyncIn);
     if (seatInfoSyncIn === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+    let seatInfoSyncInResult: mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult;
     try {
-        const seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+        seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
         if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.Success) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not success');
         }
     } catch (err) {
-        log('MVTKムビチケ着券失敗', err);
+        log('Mvtk failure', err);
         logger.error('SSKTS-APP:ConfirmModule.reserveMvtk', seatInfoSyncIn, err);
         throw err;
     }
-    log('MVTKムビチケ着券成功');
+    log('Mvtk successful');
     // log('GMO', purchaseModel.getReserveAmount());
     // log('MVTK', purchaseModel.getMvtkPrice());
     // log('FULL', purchaseModel.getPrice());
+
+    return seatInfoSyncInResult;
 }
 
 /**
@@ -90,7 +93,6 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
             deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
         });
-        log('購入管理番号情報');
         //セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;
@@ -102,7 +104,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not cancelSuccess');
             }
             res.json({ isSuccess: true });
-            log('MVTKムビチケ着券削除');
+            log('Mvtk remove');
         } catch (err) {
             logger.error('SSKTS-APP:ConfirmModule.cancelMvtk', seatInfoSyncIn, err);
             throw err;
@@ -110,6 +112,18 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
     } catch (err) {
         res.json({ isSuccess: false });
     }
+}
+
+/**
+ * 購入結果
+ * @interface IPurchaseResult
+ */
+interface IPurchaseResult {
+    mvtk: null | mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult;
+    order: null | sasaki.factory.order.IOrder;
+    mail: null | any;
+    cognito: null | any;
+    complete: null | any;
 }
 
 /**
@@ -123,6 +137,13 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
  */
 // tslint:disable-next-line:max-func-body-length
 export async function purchase(req: Request, res: Response): Promise<void> {
+    const purchaseResult: IPurchaseResult = {
+        mvtk: null,
+        order: null,
+        mail: null,
+        cognito: null,
+        complete: null
+    };
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const authModel = new AuthModel(req.session.auth);
@@ -132,14 +153,9 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         };
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.transaction === null
-            || purchaseModel.individualScreeningEvent === null
-            || purchaseModel.profile === null
-            || purchaseModel.seatReservationAuthorization === null
-            || purchaseModel.seatReservationAuthorization.result === undefined
             || req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-
         //購入期限切れ
         if (purchaseModel.isExpired()) {
             delete req.session.purchase;
@@ -150,58 +166,31 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         });
         // ムビチケ使用
         if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
-            await reserveMvtk(purchaseModel);
-            log('ムビチケ決済');
+            purchaseResult.mvtk = await reserveMvtk(purchaseModel);
+            log('Mvtk payment');
         }
 
-        const order = await sasaki.service.transaction.placeOrder(options).confirm({
+        purchaseResult.order = await sasaki.service.transaction.placeOrder(options).confirm({
             transactionId: purchaseModel.transaction.id
         });
-        log('注文確定');
+        log('Order confirmation');
 
         //購入情報をセッションへ
-        req.session.complete = {
+        const complete = {
+            transaction: purchaseModel.transaction,
             individualScreeningEvent: purchaseModel.individualScreeningEvent,
             profile: purchaseModel.profile,
             seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
             reserveTickets: purchaseModel.reserveTickets
         };
+        req.session.complete = complete;
+        purchaseResult.complete = complete;
         if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed) {
             try {
-                const theater = await sasaki.service.place(options).findMovieTheater({
-                    branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
-                });
-                log('劇場', theater.telephone);
-                const content = await UtilModule.getEmailTemplate(
-                    res,
-                    `email/complete/${req.__('lang')}`,
-                    {
-                        purchaseModel: purchaseModel,
-                        theater: theater,
-                        domain: req.headers.host,
-                        layout: false
-                    }
-                );
-                log('メールテンプレート取得');
-                const sender = 'noreply@ticket-cinemasunshine.com';
-                await sasaki.service.transaction.placeOrder(options).sendEmailNotification({
-                    transactionId: purchaseModel.transaction.id,
-                    emailMessageAttributes: {
-                        sender: {
-                            name: purchaseModel.transaction.seller.name,
-                            email: sender
-                        },
-                        toRecipient: {
-                            name: `${purchaseModel.profile.emailConfirm} ${purchaseModel.profile.givenName}`,
-                            email: purchaseModel.profile.email
-                        },
-                        about: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                        text: content
-                    }
-                });
-                log('メール通知');
+                purchaseResult.mail = await sendMail(req, res, purchaseModel, authModel);
+                log('Mail notification');
             } catch (err) {
-                log('メール登録失敗', err);
+                log('Mail registration failure', err);
             }
         }
         // Cognitoへ登録
@@ -216,8 +205,8 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 if (reservationRecord.orders === undefined) {
                     reservationRecord.orders = [];
                 }
-                reservationRecord.orders.push(order);
-                await AwsCognitoService.updateRecords({
+                reservationRecord.orders.push(purchaseResult.order);
+                purchaseResult.cognito = await AwsCognitoService.updateRecords({
                     datasetName: 'reservation',
                     value: reservationRecord,
                     credentials: cognitoCredentials
@@ -229,13 +218,102 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         // 購入セッション削除
         delete req.session.purchase;
         // 購入完了情報を返す
-        res.json({ err: null, result: req.session.complete });
+        res.json({ result: purchaseResult });
     } catch (err) {
-        log('ERROR', err);
-        const msg: string = (err.errorType === ErrorType.Expire) ? req.__('common.error.expire')
-            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
-                : err.message;
-        res.json({ err: msg, result: null });
+        log('purchase error', err);
+        if (err.code !== undefined) {
+            res.status(err.code);
+        } else {
+            res.status(httpStatus.BAD_REQUEST);
+        }
+        res.json({ error: err });
+    }
+}
+
+/**
+ * メール送信
+ * @function sendMail
+ * @param {Request} req
+ * @param {Response} res
+ * @param {PurchaseModel} purchaseModel
+ * @param {AuthModel} authModel
+ */
+async function sendMail(
+    req: Request,
+    res: Response,
+    purchaseModel: PurchaseModel,
+    authModel: AuthModel
+): Promise<sasaki.factory.order.IOrder> {
+    if (purchaseModel.transaction === null
+        || purchaseModel.individualScreeningEvent === null
+        || purchaseModel.profile === null
+        || purchaseModel.seatReservationAuthorization === null
+        || purchaseModel.seatReservationAuthorization.result === undefined) {
+        throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+    }
+    const options = {
+        endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+        auth: authModel.create()
+    };
+    const theater = await sasaki.service.place(options).findMovieTheater({
+        branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
+    });
+    const content = await UtilModule.getEmailTemplate(
+        res,
+        `email/complete/${req.__('lang')}`,
+        {
+            purchaseModel: purchaseModel,
+            theater: theater,
+            domain: req.headers.host,
+            layout: false
+        }
+    );
+    log('Retrieve mail template');
+    const sender = 'noreply@ticket-cinemasunshine.com';
+    // tslint:disable-next-line:no-unnecessary-local-variable
+    const sendEmailNotification = await sasaki.service.transaction.placeOrder(options).sendEmailNotification({
+        transactionId: purchaseModel.transaction.id,
+        emailMessageAttributes: {
+            sender: {
+                name: purchaseModel.transaction.seller.name,
+                email: sender
+            },
+            toRecipient: {
+                name: `${purchaseModel.profile.emailConfirm} ${purchaseModel.profile.givenName}`,
+                email: purchaseModel.profile.email
+            },
+            about: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
+            text: content
+        }
+    });
+
+    return sendEmailNotification;
+}
+
+/**
+ * メール再送信
+ * @memberof Purchase.resendMail
+ * @function resendMail
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+export async function resendMail(req: Request, res: Response): Promise<void> {
+    try {
+        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session.complete === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
+        const authModel = new AuthModel(req.session.auth);
+        const purchaseModel = new PurchaseModel(req.session.complete);
+        await sendMail(req, res, purchaseModel, authModel);
+        res.json();
+    } catch (err) {
+        log('resendMail error', err);
+        if (err.code !== undefined) {
+            res.status(err.code);
+        } else {
+            res.status(httpStatus.BAD_REQUEST);
+        }
+        res.json({ error: err });
     }
 }
 
@@ -251,11 +329,14 @@ export function getCompleteData(req: Request, res: Response): void {
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         if (req.session.complete === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        res.json({ err: null, result: req.session.complete });
+        res.json({ result: req.session.complete });
     } catch (err) {
-        const msg: string = (err.errorType === ErrorType.Expire) ? req.__('common.error.expire')
-            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
-                : err.message;
-        res.json({ err: msg, result: null });
+        log('getCompleteData error', err);
+        if (err.code !== undefined) {
+            res.status(err.code);
+        } else {
+            res.status(httpStatus.BAD_REQUEST);
+        }
+        res.json({ error: err });
     }
 }

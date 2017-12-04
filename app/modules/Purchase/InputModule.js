@@ -110,7 +110,6 @@ exports.render = render;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
 function purchaserInformationRegistration(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -133,33 +132,8 @@ function purchaserInformationRegistration(req, res, next) {
             if (req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
-            //バリデーション
-            InputForm_1.default(req);
-            const validationResult = yield req.getValidationResult();
-            if (!validationResult.isEmpty()) {
-                purchaseModel.profile = req.body;
-                res.locals.error = validationResult.mapped();
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            const phoneUtil = google_libphonenumber_1.PhoneNumberUtil.getInstance();
-            const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
-            if (!phoneUtil.isValidNumber(phoneNumber)) {
-                purchaseModel.profile = req.body;
-                res.locals.error = {
-                    telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
-                };
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
+            // バリデーション
+            yield inputValidation(req, res, purchaseModel, authModel);
             // 入力情報をセッションへ
             purchaseModel.profile = {
                 familyName: req.body.familyName,
@@ -240,7 +214,6 @@ exports.purchaserInformationRegistration = purchaserInformationRegistration;
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-// tslint:disable-next-line:max-func-body-length
 function purchaserInformationRegistrationOfMember(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         if (req.session === undefined) {
@@ -266,32 +239,8 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
             if (req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
-            //バリデーション
-            InputForm_1.default(req);
-            const validationResult = yield req.getValidationResult();
-            if (!validationResult.isEmpty()) {
-                res.locals.error = validationResult.mapped();
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            const phoneUtil = google_libphonenumber_1.PhoneNumberUtil.getInstance();
-            const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
-            if (!phoneUtil.isValidNumber(phoneNumber)) {
-                purchaseModel.profile = req.body;
-                res.locals.error = {
-                    telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
-                };
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
+            // バリデーション
+            yield inputValidation(req, res, purchaseModel, authModel);
             const creditCardRegistration = req.body.creditCardRegistration;
             if (creditCardRegistration !== undefined && creditCardRegistration) {
                 if (purchaseModel.creditCards.length > 0) {
@@ -349,11 +298,53 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
 }
 exports.purchaserInformationRegistrationOfMember = purchaserInformationRegistrationOfMember;
 /**
- * クレジットカード処理
- * @function creditCardProsess
+ * バリデーション処理
+ * @function inputValidation
  * @param {Request} req
  * @param {Response} res
  * @param {PurchaseModel} purchaseModel
+ * @param {AuthModel} authModel
+ */
+function inputValidation(req, res, purchaseModel, authModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //バリデーション
+        InputForm_1.default(req);
+        const validationResult = yield req.getValidationResult();
+        const renderView = (authModel.isMember()) ? 'purchase/member/input' : 'purchase/input';
+        if (!validationResult.isEmpty()) {
+            if (!authModel.isMember()) {
+                purchaseModel.profile = req.body;
+            }
+            res.locals.error = validationResult.mapped();
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+            res.render(renderView, { layout: 'layouts/purchase/layout' });
+            return;
+        }
+        const phoneUtil = google_libphonenumber_1.PhoneNumberUtil.getInstance();
+        const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
+        if (!phoneUtil.isValidNumber(phoneNumber)) {
+            purchaseModel.profile = req.body;
+            res.locals.error = {
+                telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
+            };
+            res.locals.gmoError = null;
+            res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.purchaseModel = purchaseModel;
+            res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
+            res.render(renderView, { layout: 'layouts/purchase/layout' });
+            return;
+        }
+    });
+}
+/**
+ * クレジットカード処理
+ * @function creditCardProsess
+ * @param {Request} req
+ * @param {PurchaseModel} purchaseModel
+ * @param {AuthModel} authModel
  */
 function creditCardProsess(req, purchaseModel, authModel) {
     return __awaiter(this, void 0, void 0, function* () {

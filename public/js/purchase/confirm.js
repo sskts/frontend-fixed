@@ -54,6 +54,7 @@ function nextButtonClick(event) {
         return;
     }
     $(this).prop('disabled', true);
+    loadingStart();
     purchase();
 }
 
@@ -63,7 +64,7 @@ function nextButtonClick(event) {
  * @returns {void}
  */
 function purchase() {
-    $.ajax({
+    var option = {
         dataType: 'json',
         url: '/purchase/confirm',
         type: 'POST',
@@ -72,39 +73,80 @@ function purchase() {
             toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
             isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
             transactionId: $('input[name=transactionId]').val()
-        },
-        beforeSend: function () {
-            loadingStart();
         }
-    }).done(function (res) {
-        if (res.err || !res.result) {
-            //エラー表示
-            showError(res.err.message);
-        } else {
+    };
+    var process = function (data, jqXhr) {
+        if (jqXhr.status === HTTP_STATUS.OK) {
             var transactionId = $('input[name=transactionId]').val();
             var theaterCode = $('input[name=theaterCode]').val();
-            
             try {
-                ga('send', {
+                var sendData = {
                     hitType: 'event',
                     eventCategory: 'purchase',
                     eventAction: 'complete',
                     eventLabel: 'conversion-' + theaterCode
-                });
+                };
+                ga('send', sendData);
             } catch (err) {
                 console.error(err);
             }
-
-            //完了画面表示
-            showComplete(res.result);
-
+            if (data.mail === null) {
+                resendMail(0);
+            }
+            showComplete(data.result);
+            loadingEnd();
+        } else if (jqXhr.status === HTTP_STATUS.BAD_REQUEST) {
+            showError(data.error);
+            loadingEnd();
+        } else {
+            getComplete(0);
         }
-        loadingEnd();
-    }).fail(function (jqxhr, textStatus, error) {
-        getComplete(0);
-    }).always(function () {
+    }
+    var doneFunction = function (data, textStatus, jqXhr) {
+        process(data, jqXhr);
+    }
+    var failFunction = function (jqXhr, textStatus, errorThrown) {
+        process(null, jqXhr);
+    };
+    var alwaysFunction = function () {
         $('.next-button button').prop('disabled', false);
-    });
+    }
+    $.ajax(option).done(doneFunction).fail(failFunction).always(alwaysFunction);
+}
+
+/**
+ * メール送信
+ * @function resendMail
+ * @param {number} count
+ * @returns {void}
+ */
+function resendMail(count) {
+    var option = {
+        dataType: 'json',
+        url: '/purchase/resendMail',
+        type: 'POST',
+        timeout: 10000
+    };
+    var process = function (data, jqXhr) {
+        if (jqXhr.status !== HTTP_STATUS.OK) {
+            count++;
+            var limit = 10;
+            if (count > limit) {
+                return;
+            }
+            var timer = 3000;
+            setTimeout(function () {
+                resendMail(count);
+            }, timer);
+        }
+    }
+    var doneFunction = function (data, textStatus, jqXhr) {
+        process(data, jqXhr);
+    }
+    var failFunction = function (jqXhr, textStatus, errorThrown) {
+        process(null, jqXhr);
+    }
+    $.ajax(option).done(doneFunction).fail(failFunction);
 }
 
 /**
@@ -114,33 +156,37 @@ function purchase() {
  * @returns {void}
  */
 function getComplete(count) {
-    $.ajax({
+    var option = {
         dataType: 'json',
         url: '/purchase/getComplete',
-        type: 'POST',
-        timeout: 10000,
-        data: {},
-        beforeSend: function () { }
-    }).done(function (res) {
-        if (res.err || !res.result) {
-            //エラー表示
-            showError(res.err.message);
+        type: 'GET',
+        timeout: 10000
+    };
+    var process = function (data, jqXhr) {
+        if (jqXhr.status === HTTP_STATUS.OK) {
+            showComplete(data.result);
+            loadingEnd();
         } else {
-            //完了画面表示
-            showComplete(res.result);
+            count++;
+            var limit = 10;
+            if (count > limit) {
+                showError();
+                loadingEnd();
+                return;
+            }
+            var timer = 3000;
+            setTimeout(function () {
+                getComplete(count);
+            }, timer);
         }
-        loadingEnd();
-    }).fail(function (jqxhr, textStatus, error) {
-        count++;
-        var limit = 10;
-        if (count > limit) return showError();
-        var timer = 3000;
-        setTimeout(function () {
-            getComplete(count);
-        }, timer);
-    }).always(function () {
-
-    });
+    }
+    var doneFunction = function (data, textStatus, jqXhr) {
+        process(data, jqXhr);
+    }
+    var failFunction = function (jqXhr, textStatus, errorThrown) {
+        process(null, jqXhr);
+    }
+    $.ajax(option).done(doneFunction).fail(failFunction);
 }
 
 /**
@@ -164,17 +210,13 @@ function showError(message) {
     history.pushState(null, null, '/error');
     loadingEnd();
     //ムビチケ着券取り消し
-    $.ajax({
+    var option = {
         dataType: 'json',
         url: '/purchase/mvtk/cancel',
         type: 'POST',
-        timeout: 10000,
-        data: {},
-    }).done(function (res) {
-        console.log(res)
-    }).fail(function (jqxhr, textStatus, error) {
-    }).always(function () {
-    });
+        timeout: 10000
+    };
+    $.ajax(option);
 }
 
 /**

@@ -53,7 +53,7 @@ export async function updateRecords(args: {
     const mergeValue = convertToObjects(listRecords.Records);
     Object.assign(mergeValue, args.value);
 
-    await cognitoSync.updateRecords({
+    const updateRecordsResult = await cognitoSync.updateRecords({
         DatasetName: args.datasetName,
         IdentityId: args.credentials.identityId,
         IdentityPoolId: IDENTITY_POOL_ID,
@@ -61,6 +61,8 @@ export async function updateRecords(args: {
         RecordPatches: convertToRecords(mergeValue, <number>listRecords.DatasetSyncCount)
     }).promise();
     log('updateRecords');
+
+    return convertToObjects(updateRecordsResult);
 }
 
 /**

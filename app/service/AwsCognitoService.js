@@ -55,7 +55,7 @@ function updateRecords(args) {
         }).promise();
         const mergeValue = convertToObjects(listRecords.Records);
         Object.assign(mergeValue, args.value);
-        yield cognitoSync.updateRecords({
+        const updateRecordsResult = yield cognitoSync.updateRecords({
             DatasetName: args.datasetName,
             IdentityId: args.credentials.identityId,
             IdentityPoolId: IDENTITY_POOL_ID,
@@ -63,6 +63,7 @@ function updateRecords(args) {
             RecordPatches: convertToRecords(mergeValue, listRecords.DatasetSyncCount)
         }).promise();
         log('updateRecords');
+        return convertToObjects(updateRecordsResult);
     });
 }
 exports.updateRecords = updateRecords;
