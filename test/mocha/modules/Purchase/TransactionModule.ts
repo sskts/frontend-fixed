@@ -42,14 +42,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.OK);
         event.restore();
         organization.restore();
@@ -80,14 +80,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.OK);
         event.restore();
     });
@@ -97,14 +97,14 @@ describe('Purchase.TransactionModule', () => {
             session: undefined
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
     });
 
@@ -121,14 +121,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
@@ -146,14 +146,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.INTERNAL_SERVER_ERROR);
         event.restore();
     });
@@ -176,14 +176,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
@@ -207,14 +207,14 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
             statusCode: HTTPStatus.OK
         };
         await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
         event.restore();
     });
@@ -243,7 +243,7 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy(),
+            jsonp: sinon.spy(),
             status: (code: number) => {
                 res.statusCode = code;
             },
@@ -254,7 +254,7 @@ describe('Purchase.TransactionModule', () => {
         event.restore();
         organization.restore();
 
-        assert(res.json.calledOnce);
+        assert(res.jsonp.calledOnce);
         assert.strictEqual(res.statusCode, HTTPStatus.NOT_FOUND);
     });
 

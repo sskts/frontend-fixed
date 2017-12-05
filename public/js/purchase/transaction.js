@@ -93,10 +93,10 @@ function getTransaction(args) {
     var development;
     var production;
     if (isFixed()) {
-        development = 'http://sskts-frontend-fixed-';
+        development = 'https://sskts-frontend-fixed-';
         production = 'https://machine.ticket-cinemasunshine.com';
     } else {
-        development = 'http://sskts-frontend-';
+        development = 'https://sskts-frontend-';
         production = 'https://ticket-cinemasunshine.com';
     }
     var endPoint = (/localhost/i.test(location.hostname))
@@ -109,7 +109,7 @@ function getTransaction(args) {
                     ? development + 'production-staging.azurewebsites.net'
                     : production;
     var option = {
-        dataType: 'json',
+        dataType: 'jsonp',
         url: endPoint + '/purchase/transaction',
         type: 'POST',
         timeout: 10000,

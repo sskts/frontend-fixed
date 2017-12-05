@@ -165,15 +165,15 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
              * @param {any} res
              * @returns {void}
              */
-            successHandler: function (res) {
-                if (res.error !== null) {
+            successHandler: function (data, textStatus, jqXhr) {
+                if (jqXhr.status !== HTTP_STATUS.OK) {
                     // エラー
                     this.error = 'スケジュールを取得できません。';
                     return;
                 }
                 this.error = null;
-                this.chronologicalOrder = this.convertToChronologicalOrder(res.result);
-                this.filmOrder = this.convertToFilmOrder(res.result);
+                this.chronologicalOrder = this.convertToChronologicalOrder(data.result);
+                this.filmOrder = this.convertToFilmOrder(data.result);
                 if (this.chronologicalOrder.length === 0) {
                     // パフォーマンスなし
                     this.error = 'スケジュールがありません。';

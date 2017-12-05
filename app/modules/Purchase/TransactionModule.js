@@ -103,7 +103,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.json({ redirect: `${rootUrl}/purchase/${req.body.performanceId}/overlap` });
+                    res.jsonp({ redirect: `${rootUrl}/purchase/${req.body.performanceId}/overlap` });
                     log('重複確認へ');
                     return;
                 }
@@ -135,7 +135,7 @@ function start(req, res) {
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ
-            res.json({ redirect: `${rootUrl}/purchase/seat/${req.body.performanceId}/` });
+            res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.body.performanceId}/` });
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);
@@ -145,7 +145,7 @@ function start(req, res) {
             else {
                 res.status(httpStatus.BAD_REQUEST);
             }
-            res.json({ error: err });
+            res.jsonp({ error: err });
         }
     });
 }

@@ -90,17 +90,14 @@ export async function getPerformances(req: Request, res: Response): Promise<void
         });
         log('上映イベント検索');
 
-        if (req.query.callback === undefined) {
-            res.json({ error: null, result: individualScreeningEvents });
-        } else {
-            res.jsonp({ error: null, result: individualScreeningEvents });
-        }
+        res.json({ result: individualScreeningEvents });
     } catch (err) {
-        if (req.query.callback === undefined) {
-            res.json({ error: err, result: null });
+        if (err.code !== undefined) {
+            res.status(err.code);
         } else {
-            res.jsonp({ error: err, result: null });
+            res.status(httpStatus.BAD_REQUEST);
         }
+        res.json({ error: err });
     }
 }
 
@@ -122,7 +119,7 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
             auth: authModel.create()
         };
-        const args: any = {
+        const args = {
             startFrom: req.query.startFrom,
             startThrough: req.query.startThrough
         };
@@ -132,17 +129,14 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             theaters: theaters,
             screeningEvents: screeningEvents
         };
-        if (req.query.callback === undefined) {
-            res.json({ error: null, result: result });
-        } else {
-            res.jsonp({ error: null, result: result });
-        }
+        res.jsonp({ result: result });
     } catch (err) {
-        if (req.query.callback === undefined) {
-            res.json({ error: err, result: null });
+        if (err.code !== undefined) {
+            res.status(err.code);
         } else {
-            res.jsonp({ error: err, result: null });
+            res.status(httpStatus.BAD_REQUEST);
         }
+        res.jsonp({ error: err });
     }
 }
 
@@ -164,16 +158,13 @@ export async function getMovieTheaters(req: Request, res: Response) {
         };
         const movieTheaters = await sasaki.service.organization(options).searchMovieTheaters();
         log('劇場検索');
-        if (req.query.callback === undefined) {
-            res.json({ error: null, result: movieTheaters });
-        } else {
-            res.jsonp({ error: null, result: movieTheaters });
-        }
+        res.json({ result: movieTheaters });
     } catch (err) {
-        if (req.query.callback === undefined) {
-            res.json({ error: err, result: null });
+        if (err.code !== undefined) {
+            res.status(err.code);
         } else {
-            res.jsonp({ error: err, result: null });
+            res.status(httpStatus.BAD_REQUEST);
         }
+        res.json({ error: err });
     }
 }
