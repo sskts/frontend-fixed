@@ -24,14 +24,12 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
             sortType: 'chronological',
             error: null,
             timer: null,
-            viewType: 0,
             views: []
         },
 
         created: function () {
             this.getTheaterCode();
             this.createDate(3);
-            this.createviewType();
             this.fetchPerformancesData();
         },
 
@@ -97,17 +95,6 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
         },
 
         methods: {
-            /**
-             * 表示形式生成
-             * @function createviewType
-             * @returns {void}
-             */
-            createviewType: function () {
-                this.views = [
-                    { value: 0, text: 'WEB' },
-                    { value: 1, text: 'APP' }
-                ]
-            },
             /**
              * 劇場コード取得
              * @function getTheaterCode
@@ -275,14 +262,11 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                         sessionStorage.setItem('performances', json);
                     }
                 }
+                var endPoint = $('input[name=entranceServerUrl]').val();
                 if (isFixed()) {
-                    location.href = '/fixed?id=' + id;
+                    location.href = endPoint + '/fixed/index.html?id=' + id;
                 } else {
-                    if (this.viewType === 0) {
-                        location.href = '/purchase?id=' + id;
-                    } else if (this.viewType === 1) {
-                        location.href = '/signIn?id=' + id;
-                    }
+                    location.href = endPoint + '/purchase/index.html?id=' + id;
                 }
             },
             /**

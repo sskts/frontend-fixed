@@ -67,6 +67,7 @@ function render(req, res, next) {
                 log('劇場検索');
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
+            res.locals.entranceServerUrl = process.env.ENTRANCE_SERVER_URL;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {

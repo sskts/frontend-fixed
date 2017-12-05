@@ -46,16 +46,6 @@
                 </select>
             </dd>
         </dl>
-        <dl>
-            <dt class="mb-x-small"><%- __('purchase.performances.view') %></dt>
-            <dd class="mb-small">
-                <select v-model="viewType">
-                    <template v-for="view in views">
-                        <option v-bind:value="view.value">{{view.text}}</option>
-                    </template>
-                </select>
-            </dd>
-        </dl>
     </div>
 
     <div class="sort mb-middle text-center">
@@ -132,4 +122,5 @@
     </template>
     <p v-if="error !== null" class="text-center">{{ error }}</p>
 </div>
+<input type="hidden" name="entranceServerUrl" value="<%= entranceServerUrl %>">
 
