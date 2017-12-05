@@ -22,7 +22,7 @@ export function setLocals(req: Request, res: Response, next: NextFunction): void
     res.locals.env = process.env.NODE_ENV;
     res.locals.appSiteUrl = process.env.APP_SITE_URL;
     // クッキーからアプリ判定
-    res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
+    res.locals.viewType = (isApp(req)) ? 'app' : '';
     next();
 }
 
@@ -34,9 +34,8 @@ export function setLocals(req: Request, res: Response, next: NextFunction): void
  * @returns {boolean}
  */
 export function isApp(req: Request): boolean {
-    const viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
 
-    return (viewType === 'app');
+    return (req.session !== undefined && req.session.awsCognitoIdentityId !== undefined);
 }
 
 /**
