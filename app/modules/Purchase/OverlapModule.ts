@@ -9,6 +9,7 @@ import * as HTTPStatus from 'http-status';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
 import { AppError, ErrorType } from '../Util/ErrorUtilModule';
+import { isApp } from '../Util/UtilModule';
 const log = debug('SSKTS:Purchase.OverlapModule');
 
 /**
@@ -81,7 +82,16 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
 
         //購入スタートへ
         delete req.session.purchase;
-        res.redirect(`/purchase?id=${req.body.performanceId}`);
+        let url: string;
+        let params: string;
+        if (isApp(req)) {
+            params = `id=${req.body.performanceId}&identityId=${req.session.awsCognitoIdentityId}`;
+            url = `${process.env.ENTRANCE_SERVER_URL}/ticket/index.html?${params}`;
+        } else {
+            params = `id=${req.body.performanceId}`;
+            url = `${process.env.ENTRANCE_SERVER_URL}/purchase/index.html?${params}`;
+        }
+        res.redirect(url);
     } catch (err) {
         next(err);
     }
