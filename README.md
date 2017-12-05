@@ -22,6 +22,7 @@ set CLIENT_ID=**********クライアントID**********
 set CLIENT_SECRET=**********クライアント鍵**********
 set AUTHORIZE_SERVER_DOMAIN=**********認証サーバードメイン**********
 set RESOURCE_SERVER_URL=**********リソースサーバーURL**********
+set ENTRANCE_SERVER_URL=**********エントランスサーバーURL**********
 ```
 
 only on Aure WebApps

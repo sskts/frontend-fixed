@@ -67,6 +67,7 @@ function render(req, res, next) {
                 log('劇場検索');
             }
             res.locals.step = PurchaseModel_1.PurchaseModel.PERFORMANCE_STATE;
+            res.locals.entranceServerUrl = process.env.ENTRANCE_SERVER_URL;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
@@ -100,20 +101,16 @@ function getPerformances(req, res) {
                 day: moment(req.query.day).format('YYYYMMDD')
             });
             log('上映イベント検索');
-            if (req.query.callback === undefined) {
-                res.json({ error: null, result: individualScreeningEvents });
-            }
-            else {
-                res.jsonp({ error: null, result: individualScreeningEvents });
-            }
+            res.json({ result: individualScreeningEvents });
         }
         catch (err) {
-            if (req.query.callback === undefined) {
-                res.json({ error: err, result: null });
+            if (err.code !== undefined) {
+                res.status(err.code);
             }
             else {
-                res.jsonp({ error: err, result: null });
+                res.status(httpStatus.BAD_REQUEST);
             }
+            res.json({ error: err });
         }
     });
 }
@@ -148,20 +145,16 @@ function getSchedule(req, res) {
                 theaters: theaters,
                 screeningEvents: screeningEvents
             };
-            if (req.query.callback === undefined) {
-                res.json({ error: null, result: result });
-            }
-            else {
-                res.jsonp({ error: null, result: result });
-            }
+            res.jsonp({ result: result });
         }
         catch (err) {
-            if (req.query.callback === undefined) {
-                res.json({ error: err, result: null });
+            if (err.code !== undefined) {
+                res.status(err.code);
             }
             else {
-                res.jsonp({ error: err, result: null });
+                res.status(httpStatus.BAD_REQUEST);
             }
+            res.jsonp({ error: err });
         }
     });
 }
@@ -186,20 +179,16 @@ function getMovieTheaters(req, res) {
             };
             const movieTheaters = yield sasaki.service.organization(options).searchMovieTheaters();
             log('劇場検索');
-            if (req.query.callback === undefined) {
-                res.json({ error: null, result: movieTheaters });
-            }
-            else {
-                res.jsonp({ error: null, result: movieTheaters });
-            }
+            res.json({ result: movieTheaters });
         }
         catch (err) {
-            if (req.query.callback === undefined) {
-                res.json({ error: err, result: null });
+            if (err.code !== undefined) {
+                res.status(err.code);
             }
             else {
-                res.jsonp({ error: err, result: null });
+                res.status(httpStatus.BAD_REQUEST);
             }
+            res.json({ error: err });
         }
     });
 }

@@ -50,6 +50,7 @@ const VALID_TIME_FIXED = 5;
  */
 // tslint:disable-next-line:max-func-body-length
 export async function start(req: Request, res: Response): Promise<void> {
+    const rootUrl = `${req.protocol}://${req.hostname}`;
     try {
         if (req.session === undefined || req.body.performanceId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
@@ -98,7 +99,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             log('重複確認');
             if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                 // 重複確認へ
-                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
+                res.jsonp({ redirect: `${rootUrl}/purchase/${req.body.performanceId}/overlap`});
                 log('重複確認へ');
 
                 return;
@@ -120,29 +121,29 @@ export async function start(req: Request, res: Response): Promise<void> {
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索');
-        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
         purchaseModel.transaction = await sasaki.service.transaction.placeOrder(options).start({
             expires: purchaseModel.expired,
-            sellerId: purchaseModel.movieTheaterOrganization.id
+            sellerId: purchaseModel.movieTheaterOrganization.id,
+            passportToken: req.body.passportToken
         });
         log('SSKTS取引開始', purchaseModel.transaction.id);
 
         //セッション更新
         purchaseModel.save(req.session);
         //座席選択へ
-        res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
+        res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.body.performanceId}/` });
     } catch (err) {
         log('SSKTS取引開始エラー', err);
-        if (err.errorType === ErrorType.Access
-            || err.errorType === ErrorType.Property) {
-            res.json({ redirect: null, contents: 'access-error' });
-
-            return;
+        if (err.code !== undefined) {
+            res.status(err.code);
+        } else {
+            res.status(httpStatus.BAD_REQUEST);
         }
-        res.json({ redirect: null, contents: 'access-congestion' });
+        res.jsonp({ error: err });
     }
 }
