@@ -37,7 +37,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -75,7 +75,7 @@ describe('Purchase.TransactionModule', () => {
                     seatReservationAuthorization: {}
                 }
             },
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -116,7 +116,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -141,7 +141,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -171,7 +171,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -202,7 +202,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
@@ -238,7 +238,7 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };

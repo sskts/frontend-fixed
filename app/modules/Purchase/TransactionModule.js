@@ -59,7 +59,7 @@ function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const rootUrl = `${req.protocol}://${req.hostname}`;
         try {
-            if (req.session === undefined || req.body.performanceId === undefined) {
+            if (req.session === undefined || req.query.performanceId === undefined) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
             const authModel = new AuthModel_1.AuthModel(req.session.auth);
@@ -71,17 +71,17 @@ function start(req, res) {
             log('会員判定', authModel.isMember());
             // イベント情報取得
             const individualScreeningEvent = yield sasaki.service.event(options).findIndividualScreeningEvent({
-                identifier: req.body.performanceId
+                identifier: req.query.performanceId
             });
             log('イベント情報取得');
             if (individualScreeningEvent === null)
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             // awsCognitoIdentityIdを保存
-            if (req.body.identityId === undefined) {
+            if (req.query.identityId === undefined) {
                 delete req.session.awsCognitoIdentityId;
             }
             else {
-                req.session.awsCognitoIdentityId = req.body.identityId;
+                req.session.awsCognitoIdentityId = req.query.identityId;
                 log('awsCognitoIdentityIdを保存', req.session.awsCognitoIdentityId);
             }
             // 開始可能日判定
@@ -103,7 +103,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.jsonp({ redirect: `${rootUrl}/purchase/${req.body.performanceId}/overlap` });
+                    res.jsonp({ redirect: `${rootUrl}/purchase/${req.query.performanceId}/overlap` });
                     log('重複確認へ');
                     return;
                 }
@@ -129,13 +129,13 @@ function start(req, res) {
             purchaseModel.transaction = yield sasaki.service.transaction.placeOrder(options).start({
                 expires: purchaseModel.expired,
                 sellerId: purchaseModel.movieTheaterOrganization.id,
-                passportToken: req.body.passportToken
+                passportToken: req.query.passportToken
             });
             log('SSKTS取引開始', purchaseModel.transaction.id);
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ
-            res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.body.performanceId}/` });
+            res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.query.performanceId}/` });
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);

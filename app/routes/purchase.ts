@@ -27,7 +27,7 @@ purchaseRouter.get('/performances/getMovieTheaters', PerformancesModule.getMovie
 purchaseRouter.get('/performances/getSchedule', PerformancesModule.getSchedule);
 
 //購入(取引開始)
-purchaseRouter.post('/transaction', TransactionModule.start);
+purchaseRouter.get('/transaction', TransactionModule.start);
 
 //仮予約重複
 purchaseRouter.get('/:id/overlap', OverlapModule.render);
