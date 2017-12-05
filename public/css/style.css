@@ -1836,7 +1836,9 @@ p a {
     display: none; } }
 
 .app {
-  padding-top: 44px; }
+  padding-top: 44px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none; }
   .app .wrapper {
     margin-top: 0; }
   .app .header {
@@ -1857,14 +1859,12 @@ p a {
     display: none; }
   .app .site-seal {
     display: none; }
-  .app .prev-button button, .app .prev-button a, .app .next-button button, .app .next-button a, .app .blue-button button, .app .blue-button a {
+  .app .prev-button button, .app .prev-button a, .app .next-button button, .app .next-button a, .app .blue-button button, .app .blue-button a, .app .change-button button, .app .change-button a {
     border-radius: 0;
     box-shadow: none; }
-  .app .prev-button .icon-prev-white:before, .app .next-button .icon-prev-white:before, .app .blue-button .icon-prev-white:before {
+  .app .prev-button .icon-prev-white:before, .app .next-button .icon-prev-white:before, .app .blue-button .icon-prev-white:before, .app .change-button .icon-prev-white:before {
     display: none; }
-  .app .prev-button .icon-next-white:before, .app .next-button .icon-next-white:before, .app .blue-button .icon-next-white:before {
-    display: none; }
-  .app .purchase-confirm .section-ttl .right {
+  .app .prev-button .icon-next-white:before, .app .next-button .icon-next-white:before, .app .blue-button .icon-next-white:before, .app .change-button .icon-next-white:before {
     display: none; }
   .app .loading {
     width: 40px;
