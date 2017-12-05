@@ -1836,7 +1836,6 @@ p a {
     display: none; } }
 
 .app {
-  background-color: #000;
   padding-top: 44px; }
   .app .wrapper {
     margin-top: 0; }
@@ -1846,7 +1845,7 @@ p a {
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #1B1464;
+    background-color: #000;
     border-radius: 0;
     border: none;
     padding: 0; }
@@ -1858,11 +1857,23 @@ p a {
     display: none; }
   .app .site-seal {
     display: none; }
-  .app .prev-button button, .app .prev-button a {
-    border-radius: 32px; }
-  .app .prev-button .icon-prev-white:before {
+  .app .prev-button button, .app .prev-button a, .app .next-button button, .app .next-button a, .app .blue-button button, .app .blue-button a {
+    border-radius: 0;
+    box-shadow: none; }
+  .app .prev-button .icon-prev-white:before, .app .next-button .icon-prev-white:before, .app .blue-button .icon-prev-white:before {
     display: none; }
-  .app .next-button button, .app .next-button a {
-    border-radius: 32px; }
-  .app .next-button .icon-next-white:before {
+  .app .prev-button .icon-next-white:before, .app .next-button .icon-next-white:before, .app .blue-button .icon-next-white:before {
     display: none; }
+  .app .purchase-confirm .section-ttl .right {
+    display: none; }
+  .app .loading {
+    width: 40px;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: -20px; }
+    .app .loading div {
+      height: 20px;
+      width: 2px;
+      margin-right: 7px; }
+      .app .loading div:last-child {
+        margin-right: 0; }

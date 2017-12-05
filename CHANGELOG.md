@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.2.0 - 2017-12-04
+### Added
+ - 電話番号バリデーション追加 [google-libphonenumber@3.0.9](https://github.com/ruimarinho/google-libphonenumber)
+
 ## 2.1.0 - 2017-11-21
 ### Added
  - スケジュール取得追加
