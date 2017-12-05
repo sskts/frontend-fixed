@@ -276,7 +276,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                     }
                 }
                 if (isFixed()) {
-                    location.href = '/purchase/fixed.html?id=' + id;
+                    location.href = '/fixed?id=' + id;
                 } else {
                     if (this.viewType === 0) {
                         location.href = '/purchase?id=' + id;

@@ -90,6 +90,24 @@ function getToken() {
  * @returns {void}
  */
 function getTransaction(args) {
+    var development;
+    var production;
+    if (isFixed()) {
+        development = 'http://sskts-frontend-fixed-';
+        production = 'https://machine.ticket-cinemasunshine.com';
+    } else {
+        development = 'http://sskts-frontend-';
+        production = 'https://ticket-cinemasunshine.com';
+    }
+    var endPoint = (/localhost/i.test(location.hostname))
+        ? ''
+        : (/development/i.test(location.hostname))
+            ? development + 'development.azurewebsites.net'
+            : (/test/i.test(location.hostname))
+                ? development + 'test.azurewebsites.net'
+                : (/production/i.test(location.hostname))
+                    ? development + 'production-staging.azurewebsites.net'
+                    : production;
     var option = {
         dataType: 'json',
         url: '/purchase/transaction',
@@ -166,3 +184,82 @@ function isSupportBrowser() {
     }
     return result;
 }
+
+/**
+ * ローディングスタート
+ * @function loadingStart
+ * @param {function} cb
+ * @returns {void}
+ */
+function loadingStart(cb) {
+    $('.loading-cover').addClass('active');
+    $('.loading').addClass('active');
+    $('.wrapper').addClass('blur');
+    setTimeout(function () {
+        if (cb) cb();
+    }, 1000);
+}
+
+
+/**
+ * アプリ判定
+ * @function isApp
+ * @returns {boolean} 
+ */
+function isApp() {
+    return $('body').hasClass('app');
+}
+
+/**
+ * 券売機判定
+ * @function isFixed
+ * @returns {boolean} 
+ */
+function isFixed() {
+    return $('body').hasClass('fixed');
+}
+
+/**
+ * ローディングエンド
+ * @function loadingEnd
+ * @returns {void}
+ */
+function loadingEnd() {
+    $('.loading-cover').removeClass('active');
+    $('.loading').removeClass('active');
+    $('.wrapper').removeClass('blur');
+}
+
+/**
+ * パラメーター取得
+ * @returns {any}
+ */
+function getParameter() {
+    var result = {};
+    var params = location.search.replace('?', '').split('&');
+    var transactionId = null;
+    for (var i = 0; i < params.length; i++) {
+        var param = params[i].split('=');
+        var key = param[0];
+        var value = param[1];
+        if (key && value) {
+            result[key] = value;
+        }
+    }
+    return result;
+}
+
+/**
+ * ステータスコード
+ * @var HTTP_STATUS
+ */
+var HTTP_STATUS = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    NOT_FOUND: 404,
+    TOO_MANY_REQUESTS: 429,
+    INTERNAL_SERVER_ERROR: 500,
+    SERVICE_UNAVAILABLE: 503
+};
+window.HTTP_STATUS = HTTP_STATUS;
