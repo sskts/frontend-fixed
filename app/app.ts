@@ -24,10 +24,12 @@ const app = express();
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
-app.use(helmet.frameguard({
-    action: 'allow-from',
-    domain: process.env.APP_SITE_URL
-}));
+if (process.env.APP_SITE_URL !== undefined) {
+    app.use(helmet.frameguard({
+        action: 'allow-from',
+        domain: process.env.APP_SITE_URL
+    }));
+}
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 
