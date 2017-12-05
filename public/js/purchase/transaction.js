@@ -110,7 +110,7 @@ function getTransaction(args) {
                     : production;
     var option = {
         dataType: 'json',
-        url: '/purchase/transaction',
+        url: endPoint + '/purchase/transaction',
         type: 'POST',
         timeout: 10000,
         data: args
