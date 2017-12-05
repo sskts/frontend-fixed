@@ -57,6 +57,7 @@ const VALID_TIME_FIXED = 5;
 // tslint:disable-next-line:max-func-body-length
 function start(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        const rootUrl = `${req.protocol}://${req.hostname}`;
         try {
             if (req.session === undefined || req.body.performanceId === undefined) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
@@ -102,7 +103,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.json({ redirect: `/purchase/${req.body.performanceId}/overlap` });
+                    res.json({ redirect: `${rootUrl}/purchase/${req.body.performanceId}/overlap` });
                     log('重複確認へ');
                     return;
                 }
@@ -134,7 +135,7 @@ function start(req, res) {
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ
-            res.json({ redirect: `/purchase/seat/${req.body.performanceId}/` });
+            res.json({ redirect: `${rootUrl}/purchase/seat/${req.body.performanceId}/` });
         }
         catch (err) {
             log('SSKTS取引開始エラー', err);
