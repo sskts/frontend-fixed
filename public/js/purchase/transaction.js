@@ -18,9 +18,9 @@ function getToken() {
         showAccessError();
         return;
     }
-    var endPoint = (/development|localhost/i.test(location.hostname))
+    var endPoint = (/development|localhost|d2n1h4enbzumbc/i.test(location.hostname))
         ? 'https://sskts-waiter-development.appspot.com'
-        : (/test/i.test(location.hostname))
+        : (/test|d24x7394fq3aqi/i.test(location.hostname))
             ? 'https://sskts-waiter-test.appspot.com'
             : 'https://sskts-waiter-production.appspot.com';
     var scope = 'placeOrderTransaction.MovieTheater-' + performanceId.slice(0, 3);
@@ -42,12 +42,12 @@ function getToken() {
     }
     var prosess = function (data, jqXhr) {
         if (jqXhr.status === HTTP_STATUS.CREATED) {
-            var getTransactionArgs = {
+            var redirectToTransactionArgs = {
                 performanceId: performanceId,
                 identityId: getParameter()['identityId'],
                 passportToken: data.token
             };
-            getTransaction(getTransactionArgs);
+            redirectToTransaction(redirectToTransactionArgs);
         } else if (jqXhr.status === HTTP_STATUS.BAD_REQUEST
             || jqXhr.status === HTTP_STATUS.NOT_FOUND) {
             // アクセスエラー
@@ -89,7 +89,8 @@ function getToken() {
  * @param {string} args.passportToken
  * @returns {void}
  */
-function getTransaction(args) {
+function redirectToTransaction(args) {
+    var local;
     var development;
     var production;
     if (isFixed()) {
@@ -99,40 +100,26 @@ function getTransaction(args) {
         development = 'https://sskts-frontend-';
         production = 'https://ticket-cinemasunshine.com';
     }
-    var endPoint = (/localhost/i.test(location.hostname))
-        ? ''
-        : (/development/i.test(location.hostname))
-            ? development + 'development.azurewebsites.net'
-            : (/test/i.test(location.hostname))
-                ? development + 'test.azurewebsites.net'
-                : (/production/i.test(location.hostname))
-                    ? development + 'production-staging.azurewebsites.net'
-                    : production;
+    var endPoint = (/development|d2n1h4enbzumbc/i.test(location.hostname))
+        ? development + 'development.azurewebsites.net'
+        : (/test|d24x7394fq3aqi/i.test(location.hostname))
+            ? development + 'test.azurewebsites.net'
+            : (/production/i.test(location.hostname))
+                ? development + 'production-staging.azurewebsites.net'
+                : production;
     if (/localhost/i.test(document.referrer)) {
-        endPoint = new URL(document.referrer).origin
+        endPoint = (isApp()) ? 'https://localhost' : new URL(document.referrer).origin;
+    } else if (/localhost/i.test(location.hostname)) {
+        endPoint = 'https://localhost';
+    } else if (/production\-staging/i.test(document.referrer)) {
+        endPoint = development + 'production-staging.azurewebsites.net';
     }
-    var option = {
-        dataType: 'jsonp',
-        url: endPoint + '/purchase/transaction',
-        type: 'GET',
-        timeout: 10000,
-        data: args
-    };
-    var doneFunction = function (data, textStatus, jqXhr) {
-        if (jqXhr.status === HTTP_STATUS.OK) {
-            location.replace(data.redirect);
-            return;
-        }
-        showAccessError();
-        loadingEnd();
-    };
-    var failFunction = function (jqxhr, textStatus, error) {
-        showAccessError();
-        loadingEnd();
-    };
-    $.ajax(option)
-        .done(doneFunction)
-        .fail(failFunction);
+    var params = 'performanceId=' + args.performanceId + '&passportToken=' + args.passportToken;
+    if (args.identityId !== undefined) {
+        params += '&identityId=' + args.identityId;
+    }
+    var url = endPoint + '/purchase/transaction?' + params;
+    location.replace(url);
 }
 
 /**
