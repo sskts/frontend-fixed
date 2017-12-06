@@ -5,7 +5,7 @@
 
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import { AuthModel } from '../../models/Auth/AuthModel';
@@ -49,8 +49,7 @@ const VALID_TIME_FIXED = 5;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-export async function start(req: Request, res: Response): Promise<void> {
-    const rootUrl = `${req.protocol}://${req.hostname}`;
+export async function start(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined || req.query.performanceId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
@@ -99,7 +98,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             log('重複確認');
             if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                 // 重複確認へ
-                res.jsonp({ redirect: `${rootUrl}/purchase/${req.query.performanceId}/overlap`});
+                res.redirect(`/purchase/${req.query.performanceId}/overlap`);
                 log('重複確認へ');
 
                 return;
@@ -136,14 +135,8 @@ export async function start(req: Request, res: Response): Promise<void> {
         //セッション更新
         purchaseModel.save(req.session);
         //座席選択へ
-        res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.query.performanceId}/` });
+        res.redirect(`/purchase/seat/${req.query.performanceId}/`);
     } catch (err) {
-        log('SSKTS取引開始エラー', err);
-        if (err.code !== undefined) {
-            res.status(err.code);
-        } else {
-            res.status(httpStatus.BAD_REQUEST);
-        }
-        res.jsonp({ error: err });
+        next(err);
     }
 }

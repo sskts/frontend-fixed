@@ -55,9 +55,8 @@ const VALID_TIME_FIXED = 5;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-function start(req, res) {
+function start(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const rootUrl = `${req.protocol}://${req.hostname}`;
         try {
             if (req.session === undefined || req.query.performanceId === undefined) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
@@ -103,7 +102,7 @@ function start(req, res) {
                 log('重複確認');
                 if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                     // 重複確認へ
-                    res.jsonp({ redirect: `${rootUrl}/purchase/${req.query.performanceId}/overlap` });
+                    res.redirect(`/purchase/${req.query.performanceId}/overlap`);
                     log('重複確認へ');
                     return;
                 }
@@ -135,17 +134,10 @@ function start(req, res) {
             //セッション更新
             purchaseModel.save(req.session);
             //座席選択へ
-            res.jsonp({ redirect: `${rootUrl}/purchase/seat/${req.query.performanceId}/` });
+            res.redirect(`/purchase/seat/${req.query.performanceId}/`);
         }
         catch (err) {
-            log('SSKTS取引開始エラー', err);
-            if (err.code !== undefined) {
-                res.status(err.code);
-            }
-            else {
-                res.status(httpStatus.BAD_REQUEST);
-            }
-            res.jsonp({ error: err });
+            next(err);
         }
     });
 }

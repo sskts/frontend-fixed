@@ -42,15 +42,11 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
+            redirect: sinon.spy()
         };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.OK);
+        const next: any = {};
+        await TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -80,15 +76,11 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
+            redirect: sinon.spy()
         };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.OK);
+        const next: any = {};
+        await TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
     });
 
@@ -96,16 +88,10 @@ describe('Purchase.TransactionModule', () => {
         const req: any = {
             session: undefined
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
     });
 
     it('start エラー セッションなし', async () => {
@@ -120,16 +106,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -145,16 +125,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.INTERNAL_SERVER_ERROR);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -175,16 +149,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -206,16 +174,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -242,20 +204,14 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res: any = {
-            jsonp: sinon.spy(),
-            status: (code: number) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        await TransactionModule.start(req, res);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
 
         event.restore();
         organization.restore();
 
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.NOT_FOUND);
+        assert(next.calledOnce);
     });
 
 });

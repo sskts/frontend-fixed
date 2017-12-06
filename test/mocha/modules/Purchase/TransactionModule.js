@@ -50,15 +50,11 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
+            redirect: sinon.spy()
         };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.OK);
+        const next = {};
+        yield TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -87,31 +83,21 @@ describe('Purchase.TransactionModule', () => {
             }
         };
         const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
+            redirect: sinon.spy()
         };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.OK);
+        const next = {};
+        yield TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const event = sinon.stub(sasaki.service, 'event').returns({
@@ -125,16 +111,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー APIエラー', () => __awaiter(this, void 0, void 0, function* () {
@@ -149,16 +129,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.INTERNAL_SERVER_ERROR);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 開始可能日前', () => __awaiter(this, void 0, void 0, function* () {
@@ -178,16 +152,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 終了可能日後', () => __awaiter(this, void 0, void 0, function* () {
@@ -208,16 +176,10 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.BAD_REQUEST);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 対象劇場なし', () => __awaiter(this, void 0, void 0, function* () {
@@ -243,17 +205,11 @@ describe('Purchase.TransactionModule', () => {
                 performanceId: ''
             }
         };
-        const res = {
-            jsonp: sinon.spy(),
-            status: (code) => {
-                res.statusCode = code;
-            },
-            statusCode: HTTPStatus.OK
-        };
-        yield TransactionModule.start(req, res);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
         event.restore();
         organization.restore();
-        assert(res.jsonp.calledOnce);
-        assert.strictEqual(res.statusCode, HTTPStatus.NOT_FOUND);
+        assert(next.calledOnce);
     }));
 });
