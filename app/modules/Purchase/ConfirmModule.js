@@ -217,7 +217,7 @@ function purchase(req, res) {
                     log('before reservationRecord order', reservationRecord.orders.length);
                     reservationRecord.orders.forEach((order, index) => {
                         const endDate = moment(order.acceptedOffers[0].itemOffered.reservationFor.endDate).unix();
-                        const limitDate = moment().subtract(1, 'day').unix();
+                        const limitDate = moment().subtract(1, 'month').unix();
                         if (endDate < limitDate)
                             reservationRecord.orders.splice(index, 1);
                     });
