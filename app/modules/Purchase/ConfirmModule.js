@@ -16,6 +16,7 @@ const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
+const moment = require("moment");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
@@ -213,6 +214,14 @@ function purchase(req, res) {
                         reservationRecord.orders = [];
                     }
                     reservationRecord.orders.push(purchaseResult.order);
+                    log('before reservationRecord order', reservationRecord.orders.length);
+                    reservationRecord.orders.forEach((order, index) => {
+                        const endDate = moment(order.acceptedOffers[0].itemOffered.reservationFor.endDate).unix();
+                        const limitDate = moment().subtract(1, 'day').unix();
+                        if (endDate < limitDate)
+                            reservationRecord.orders.splice(index, 1);
+                    });
+                    log('after reservationRecord order', reservationRecord.orders.length);
                     purchaseResult.cognito = yield AwsCognitoService.updateRecords({
                         datasetName: 'reservation',
                         value: reservationRecord,

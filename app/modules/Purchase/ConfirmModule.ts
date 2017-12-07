@@ -7,6 +7,7 @@ import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
+import * as moment from 'moment';
 import logger from '../../middlewares/logger';
 import { AuthModel } from '../../models/Auth/AuthModel';
 import { PurchaseModel } from '../../models/Purchase/PurchaseModel';
@@ -206,6 +207,13 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                     reservationRecord.orders = [];
                 }
                 reservationRecord.orders.push(purchaseResult.order);
+                log('before reservationRecord order', reservationRecord.orders.length);
+                (<sasaki.factory.order.IOrder[]>reservationRecord.orders).forEach((order, index) => {
+                    const endDate = moment(order.acceptedOffers[0].itemOffered.reservationFor.endDate).unix();
+                    const limitDate = moment().subtract(1, 'month').unix();
+                    if (endDate < limitDate) reservationRecord.orders.splice(index, 1);
+                });
+                log('after reservationRecord order', reservationRecord.orders.length);
                 purchaseResult.cognito = await AwsCognitoService.updateRecords({
                     datasetName: 'reservation',
                     value: reservationRecord,

@@ -49,6 +49,9 @@ export async function updateRecords(args: {
         IdentityPoolId: IDENTITY_POOL_ID,
         LastSyncCount: 0
     }).promise();
+    if (listRecords.Records === undefined) {
+        listRecords.Records = [];
+    }
 
     const mergeValue = convertToObjects(listRecords.Records);
     Object.assign(mergeValue, args.value);
@@ -61,8 +64,11 @@ export async function updateRecords(args: {
         RecordPatches: convertToRecords(mergeValue, <number>listRecords.DatasetSyncCount)
     }).promise();
     log('updateRecords');
+    if (updateRecordsResult.Records === undefined) {
+        updateRecordsResult.Records = [];
+    }
 
-    return convertToObjects(updateRecordsResult);
+    return convertToObjects(updateRecordsResult.Records);
 }
 
 /**
@@ -88,6 +94,9 @@ export async function getRecords(args: {
         IdentityPoolId: IDENTITY_POOL_ID,
         LastSyncCount: 0
     }).promise();
+    if (listRecords.Records === undefined) {
+        listRecords.Records = [];
+    }
     log('getRecords', convertToObjects(listRecords.Records));
 
     return convertToObjects(listRecords.Records);
@@ -119,7 +128,7 @@ function convertToRecords(value: any, count: number): {
  * @param {any} records
  * @param {number} count
  */
-function convertToObjects(records: any): any {
+function convertToObjects(records: any[]): any {
     const result: any = {};
     records.forEach((record: {
         Key: string;
