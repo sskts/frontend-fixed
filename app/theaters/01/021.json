@@ -10,7 +10,17 @@
         {
             "w": 104, "h": 38,
             "x": 254, "y": 1233,
-            "image": "/images/theater/01/door/021.svg"
+            "image": "/images/theater/01/door/001.svg"
+        },
+        {
+            "w": 104, "h": 38,
+            "x": 621, "y": 1233,
+            "image": "/images/theater/01/door/001.svg"
+        },
+        {
+            "w": 104, "h": 38,
+            "x": 988, "y": 1233,
+            "image": "/images/theater/01/door/001.svg"
         }
     ],
     "seatStart": { "x": 254, "y": 253 },
