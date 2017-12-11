@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.3.0 - 2017-12-11
+### Added
+ - 池袋劇場の座席データ追加
+ - WAITER導入
+
 ## 2.2.0 - 2017-12-04
 ### Added
  - 電話番号バリデーション追加 [google-libphonenumber@3.0.9](https://github.com/ruimarinho/google-libphonenumber)
