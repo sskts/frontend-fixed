@@ -12,7 +12,11 @@
             <%- __('common.film_info') %>
             <div class="right">
                 <div class="button light-gray-button change-button">
+                <% if (viewType === 'app') { %>
+                    <a href="<%- appSiteUrl %>/#/purchase"><%- __('common.change') %></a>
+                <% } else { %>
                     <a href="<%= purchaseModel.movieTheaterOrganization.url %>"><%- __('common.change') %></a>
+                <% } %>
                 </div>
             </div>
         </h2>

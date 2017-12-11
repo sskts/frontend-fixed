@@ -7,27 +7,22 @@
         margin-right: -30px;
     }
     .film-info {
-        width: 750px;
         display: flex;
         justify-content: center;
         div {
             margin-right: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             &:last-child {
                 margin-right: 0;
             }
-            strong {
-                vertical-align: middle;
-            }
-            span {
-                vertical-align: middle;
-            }
             .square {
-                display: inline-block;
                 border: 1px solid #FFF;
                 padding: 10px;
                 margin-right: 20px;
             }
-            .d-ib {
+            .performance-date {
                 color: #ffe600;
             }
             .change-animation {

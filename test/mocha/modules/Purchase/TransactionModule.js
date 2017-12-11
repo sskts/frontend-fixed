@@ -13,9 +13,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const assert = require("assert");
+const HTTPStatus = require("http-status");
 const moment = require("moment");
 const sinon = require("sinon");
 const TransactionModule = require("../../../../app/modules/Purchase/TransactionModule");
+const ErrorUtilModule_1 = require("../../../../app/modules/Util/ErrorUtilModule");
 describe('Purchase.TransactionModule', () => {
     it('start 正常', () => __awaiter(this, void 0, void 0, function* () {
         const event = sinon.stub(sasaki.service, 'event').returns({
@@ -43,17 +45,16 @@ describe('Purchase.TransactionModule', () => {
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
         const res = {
-            json: sinon.spy()
+            redirect: sinon.spy()
         };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
+        const next = {};
+        yield TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -77,30 +78,26 @@ describe('Purchase.TransactionModule', () => {
                     seatReservationAuthorization: {}
                 }
             },
-            body: {
+            query: {
                 performanceId: ''
             }
         };
         const res = {
-            json: sinon.spy()
+            redirect: sinon.spy()
         };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
+        const next = {};
+        yield TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             session: undefined
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
     }));
     it('start エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const event = sinon.stub(sasaki.service, 'event').returns({
@@ -110,38 +107,32 @@ describe('Purchase.TransactionModule', () => {
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー APIエラー', () => __awaiter(this, void 0, void 0, function* () {
         const event = sinon.stub(sasaki.service, 'event').returns({
             findIndividualScreeningEvent: () => {
-                return Promise.reject({});
+                return Promise.reject(new ErrorUtilModule_1.AppError(HTTPStatus.INTERNAL_SERVER_ERROR, ErrorUtilModule_1.ErrorType.ExternalModule));
             }
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 開始可能日前', () => __awaiter(this, void 0, void 0, function* () {
@@ -157,17 +148,14 @@ describe('Purchase.TransactionModule', () => {
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 終了可能日後', () => __awaiter(this, void 0, void 0, function* () {
@@ -184,17 +172,14 @@ describe('Purchase.TransactionModule', () => {
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     }));
     it('start エラー 対象劇場なし', () => __awaiter(this, void 0, void 0, function* () {
@@ -216,18 +201,15 @@ describe('Purchase.TransactionModule', () => {
         });
         const req = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res = {
-            json: sinon.spy()
-        };
-        yield TransactionModule.start(req, res);
+        const res = {};
+        const next = sinon.spy();
+        yield TransactionModule.start(req, res, next);
         event.restore();
         organization.restore();
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        assert(next.calledOnce);
     }));
 });

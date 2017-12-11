@@ -275,7 +275,7 @@ export async function purchaserInformationRegistrationOfMember(req: Request, res
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
-            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
 
             return;
         }

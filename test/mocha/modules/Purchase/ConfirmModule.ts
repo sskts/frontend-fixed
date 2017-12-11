@@ -4,6 +4,7 @@
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
 
@@ -272,12 +273,15 @@ describe('Purchase.ConfirmModule', () => {
         };
         const res: any = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
     });
@@ -355,12 +359,15 @@ describe('Purchase.ConfirmModule', () => {
         };
         const res: any = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -440,11 +447,15 @@ describe('Purchase.ConfirmModule', () => {
         const res: any = {
             locals: {},
             render: () => '',
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
         placeOrder.restore();
         place.restore();
         createSeatInfoSyncService.restore();
@@ -458,11 +469,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー プロパティ', async () => {
@@ -475,11 +490,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー アクセス', async () => {
@@ -504,11 +523,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('purchase エラー 期限切れ', async () => {
@@ -534,11 +557,15 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.purchase(req, res);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData 正常', async () => {
@@ -548,12 +575,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
-        assert.strictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].result);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData エラー セッションなし', async () => {
@@ -564,12 +595,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getCompleteData エラー completeセッションなし', async () => {
@@ -582,12 +617,16 @@ describe('Purchase.ConfirmModule', () => {
             }
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await ConfirmModule.getCompleteData(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].err, null);
+        assert(res.json.args[0][0].error);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
 });

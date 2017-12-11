@@ -25,8 +25,8 @@ describe('Util.UtilModule', () => {
 
     it('isApp 正常 アプリ', () => {
         const req: any = {
-            cookies: {
-                applicationData: JSON.stringify({ viewType: 'app' })
+            session: {
+                awsCognitoIdentityId: '11111111'
             }
         };
         const isApp = UtilModule.isApp(req);
@@ -34,9 +34,7 @@ describe('Util.UtilModule', () => {
     });
 
     it('isApp 正常 アプリでない', () => {
-        const req: any = {
-            cookies: {}
-        };
+        const req: any = {};
         const isApp = UtilModule.isApp(req);
         assert.strictEqual(isApp, false);
     });

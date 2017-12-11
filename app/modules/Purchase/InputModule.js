@@ -289,7 +289,7 @@ function purchaserInformationRegistrationOfMember(req, res, next) {
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = PurchaseModel_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
             const creditCardRegistration = req.body.creditCardRegistration;

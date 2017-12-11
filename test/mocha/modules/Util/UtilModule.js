@@ -31,17 +31,15 @@ describe('Util.UtilModule', () => {
     });
     it('isApp 正常 アプリ', () => {
         const req = {
-            cookies: {
-                applicationData: JSON.stringify({ viewType: 'app' })
+            session: {
+                awsCognitoIdentityId: '11111111'
             }
         };
         const isApp = UtilModule.isApp(req);
         assert.strictEqual(isApp, true);
     });
     it('isApp 正常 アプリでない', () => {
-        const req = {
-            cookies: {}
-        };
+        const req = {};
         const isApp = UtilModule.isApp(req);
         assert.strictEqual(isApp, false);
     });

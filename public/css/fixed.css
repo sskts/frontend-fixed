@@ -526,6 +526,9 @@ p {
 a {
   text-decoration: none; }
 
+.not-display {
+  display: none; }
+
 .d-table {
   display: table;
   width: 100%; }
@@ -992,7 +995,6 @@ a {
   margin-right: -30px; }
 
 .purchase-seat .film-info {
-  width: 750px;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
@@ -1000,19 +1002,23 @@ a {
       -ms-flex-pack: center;
           justify-content: center; }
   .purchase-seat .film-info div {
-    margin-right: 40px; }
+    margin-right: 40px;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-justify-content: center;
+        -ms-flex-pack: center;
+            justify-content: center; }
     .purchase-seat .film-info div:last-child {
       margin-right: 0; }
-    .purchase-seat .film-info div strong {
-      vertical-align: middle; }
-    .purchase-seat .film-info div span {
-      vertical-align: middle; }
     .purchase-seat .film-info div .square {
-      display: inline-block;
       border: 1px solid #FFF;
       padding: 10px;
       margin-right: 20px; }
-    .purchase-seat .film-info div .d-ib {
+    .purchase-seat .film-info div .performance-date {
       color: #ffe600; }
     .purchase-seat .film-info div .change-animation {
       -webkit-animation-duration: 2s;
