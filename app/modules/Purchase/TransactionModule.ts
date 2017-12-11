@@ -5,7 +5,7 @@
 
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import { AuthModel } from '../../models/Auth/AuthModel';
@@ -49,9 +49,9 @@ const VALID_TIME_FIXED = 5;
  * @returns {Promise<void>}
  */
 // tslint:disable-next-line:max-func-body-length
-export async function start(req: Request, res: Response): Promise<void> {
+export async function start(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-        if (req.session === undefined || req.body.performanceId === undefined) {
+        if (req.session === undefined || req.query.performanceId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         const authModel = new AuthModel(req.session.auth);
@@ -64,15 +64,15 @@ export async function start(req: Request, res: Response): Promise<void> {
 
         // イベント情報取得
         const individualScreeningEvent = await sasaki.service.event(options).findIndividualScreeningEvent({
-            identifier: req.body.performanceId
+            identifier: req.query.performanceId
         });
         log('イベント情報取得');
         if (individualScreeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // awsCognitoIdentityIdを保存
-        if (req.body.identityId === undefined) {
+        if (req.query.identityId === undefined) {
             delete req.session.awsCognitoIdentityId;
         } else {
-            req.session.awsCognitoIdentityId = req.body.identityId;
+            req.session.awsCognitoIdentityId = req.query.identityId;
             log('awsCognitoIdentityIdを保存', req.session.awsCognitoIdentityId);
         }
 
@@ -98,7 +98,7 @@ export async function start(req: Request, res: Response): Promise<void> {
             log('重複確認');
             if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
                 // 重複確認へ
-                res.json({ redirect: `/purchase/${req.body.performanceId}/overlap`, contents: null });
+                res.redirect(`/purchase/${req.query.performanceId}/overlap`);
                 log('重複確認へ');
 
                 return;
@@ -120,29 +120,23 @@ export async function start(req: Request, res: Response): Promise<void> {
             branchCode: individualScreeningEvent.coaInfo.theaterCode
         });
         log('劇場のショップを検索');
-        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
 
         // 取引開始
         const valid = (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) ? VALID_TIME_FIXED : VALID_TIME_DEFAULT;
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
         purchaseModel.transaction = await sasaki.service.transaction.placeOrder(options).start({
             expires: purchaseModel.expired,
-            sellerId: purchaseModel.movieTheaterOrganization.id
+            sellerId: purchaseModel.movieTheaterOrganization.id,
+            passportToken: req.query.passportToken
         });
         log('SSKTS取引開始', purchaseModel.transaction.id);
 
         //セッション更新
         purchaseModel.save(req.session);
         //座席選択へ
-        res.json({ redirect: `/purchase/seat/${req.body.performanceId}/`, contents: null });
+        res.redirect(`/purchase/seat/${req.query.performanceId}/`);
     } catch (err) {
-        log('SSKTS取引開始エラー', err);
-        if (err.errorType === ErrorType.Access
-            || err.errorType === ErrorType.Property) {
-            res.json({ redirect: null, contents: 'access-error' });
-
-            return;
-        }
-        res.json({ redirect: null, contents: 'access-congestion' });
+        next(err);
     }
 }

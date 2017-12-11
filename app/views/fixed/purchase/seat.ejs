@@ -1,5 +1,6 @@
 
 <%- contentFor('script') %>
+<script src="/js/screen/create.js"></script>
 <script src="/js/purchase/seat.js"></script>
 <script src="/js/ScreenSeatStatusesMap.js"></script>
 <%- contentFor('prev') %>
@@ -14,7 +15,7 @@
         <div><span class="small-text square"><%- __('common.screen') %></span><strong class="large-text screen-name"><%= purchaseModel.individualScreeningEvent.location.name.ja %></strong></div>
         <div>
             <span class="small-text square"><%- __('common.screening_time') %></span>
-            <div class="d-ib performance-date">
+            <div class="performance-date">
                 <strong class="large-x-text time-start"><%= timeFormat(purchaseModel.individualScreeningEvent.startDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %></strong> - <span class="time-end"><%= timeFormat(purchaseModel.individualScreeningEvent.endDate, purchaseModel.individualScreeningEvent.coaInfo.dateJouei) %></span>
             </div>
         </div>

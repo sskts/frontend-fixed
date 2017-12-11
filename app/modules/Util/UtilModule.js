@@ -27,7 +27,7 @@ function setLocals(req, res, next) {
     res.locals.env = process.env.NODE_ENV;
     res.locals.appSiteUrl = process.env.APP_SITE_URL;
     // クッキーからアプリ判定
-    res.locals.viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
+    res.locals.viewType = (isApp(req)) ? 'app' : '';
     next();
 }
 exports.setLocals = setLocals;
@@ -39,8 +39,7 @@ exports.setLocals = setLocals;
  * @returns {boolean}
  */
 function isApp(req) {
-    const viewType = (req.cookies.applicationData !== undefined) ? JSON.parse(req.cookies.applicationData).viewType : null;
-    return (viewType === 'app');
+    return (req.session !== undefined && req.session.awsCognitoIdentityId !== undefined);
 }
 exports.isApp = isApp;
 /**

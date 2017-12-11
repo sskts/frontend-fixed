@@ -3,10 +3,11 @@
  */
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
 import * as sinon from 'sinon';
-
 import * as TransactionModule from '../../../../app/modules/Purchase/TransactionModule';
+import { AppError, ErrorType } from '../../../../app/modules/Util/ErrorUtilModule';
 
 describe('Purchase.TransactionModule', () => {
 
@@ -36,17 +37,16 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
         const res: any = {
-            json: sinon.spy()
+            redirect: sinon.spy()
         };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
+        const next: any = {};
+        await TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
         organization.restore();
         placeOrder.restore();
@@ -71,17 +71,16 @@ describe('Purchase.TransactionModule', () => {
                     seatReservationAuthorization: {}
                 }
             },
-            body: {
+            query: {
                 performanceId: ''
             }
         };
         const res: any = {
-            json: sinon.spy()
+            redirect: sinon.spy()
         };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.notStrictEqual(res.json.args[0][0].redirect, null);
-        assert.strictEqual(res.json.args[0][0].contents, null);
+        const next: any = {};
+        await TransactionModule.start(req, res, next);
+        assert(res.redirect.calledOnce);
         event.restore();
     });
 
@@ -89,13 +88,10 @@ describe('Purchase.TransactionModule', () => {
         const req: any = {
             session: undefined
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
     });
 
     it('start エラー セッションなし', async () => {
@@ -106,39 +102,33 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
     it('start エラー APIエラー', async () => {
         const event = sinon.stub(sasaki.service, 'event').returns({
             findIndividualScreeningEvent: () => {
-                return Promise.reject({});
+                return Promise.reject(new AppError(HTTPStatus.INTERNAL_SERVER_ERROR, ErrorType.ExternalModule));
             }
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -155,17 +145,14 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -183,17 +170,14 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
+        assert(next.calledOnce);
         event.restore();
     });
 
@@ -216,21 +200,18 @@ describe('Purchase.TransactionModule', () => {
         });
         const req: any = {
             session: {},
-            body: {
+            query: {
                 performanceId: ''
             }
         };
-        const res: any = {
-            json: sinon.spy()
-        };
-        await TransactionModule.start(req, res);
+        const res: any = {};
+        const next: any = sinon.spy();
+        await TransactionModule.start(req, res, next);
 
         event.restore();
         organization.restore();
 
-        assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].redirect, null);
-        assert.notStrictEqual(res.json.args[0][0].contents, null);
+        assert(next.calledOnce);
     });
 
 });

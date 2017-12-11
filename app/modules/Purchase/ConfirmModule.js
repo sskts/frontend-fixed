@@ -16,6 +16,7 @@ const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
 const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
+const moment = require("moment");
 const logger_1 = require("../../middlewares/logger");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
@@ -63,30 +64,31 @@ exports.render = render;
  * @memberof Purchase.ConfirmModule
  * @function reserveMvtk
  * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<void>}
+ * @returns {Promise<mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult>}
  */
 function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         // 購入管理番号情報
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
-        log('購入管理番号情報', seatInfoSyncIn);
         if (seatInfoSyncIn === null)
             throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+        let seatInfoSyncInResult;
         try {
-            const seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
+            seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
             if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.Success) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.ExternalModule, 'reservationResult is not success');
             }
         }
         catch (err) {
-            log('MVTKムビチケ着券失敗', err);
+            log('Mvtk failure', err);
             logger_1.default.error('SSKTS-APP:ConfirmModule.reserveMvtk', seatInfoSyncIn, err);
             throw err;
         }
-        log('MVTKムビチケ着券成功');
+        log('Mvtk successful');
         // log('GMO', purchaseModel.getReserveAmount());
         // log('MVTK', purchaseModel.getMvtkPrice());
         // log('FULL', purchaseModel.getPrice());
+        return seatInfoSyncInResult;
     });
 }
 /**
@@ -107,7 +109,6 @@ function cancelMvtk(req, res) {
             const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
                 deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
             });
-            log('購入管理番号情報');
             //セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
@@ -119,7 +120,7 @@ function cancelMvtk(req, res) {
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.ExternalModule, 'reservationResult is not cancelSuccess');
                 }
                 res.json({ isSuccess: true });
-                log('MVTKムビチケ着券削除');
+                log('Mvtk remove');
             }
             catch (err) {
                 logger_1.default.error('SSKTS-APP:ConfirmModule.cancelMvtk', seatInfoSyncIn, err);
@@ -144,6 +145,13 @@ exports.cancelMvtk = cancelMvtk;
 // tslint:disable-next-line:max-func-body-length
 function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        const purchaseResult = {
+            mvtk: null,
+            order: null,
+            mail: null,
+            cognito: null,
+            complete: null
+        };
         try {
             if (req.session === undefined)
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
@@ -154,10 +162,6 @@ function purchase(req, res) {
             };
             const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.transaction === null
-                || purchaseModel.individualScreeningEvent === null
-                || purchaseModel.profile === null
-                || purchaseModel.seatReservationAuthorization === null
-                || purchaseModel.seatReservationAuthorization.result === undefined
                 || req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
@@ -171,53 +175,30 @@ function purchase(req, res) {
             });
             // ムビチケ使用
             if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
-                yield reserveMvtk(purchaseModel);
-                log('ムビチケ決済');
+                purchaseResult.mvtk = yield reserveMvtk(purchaseModel);
+                log('Mvtk payment');
             }
-            const order = yield sasaki.service.transaction.placeOrder(options).confirm({
+            purchaseResult.order = yield sasaki.service.transaction.placeOrder(options).confirm({
                 transactionId: purchaseModel.transaction.id
             });
-            log('注文確定');
+            log('Order confirmation');
             //購入情報をセッションへ
-            req.session.complete = {
+            const complete = {
+                transaction: purchaseModel.transaction,
                 individualScreeningEvent: purchaseModel.individualScreeningEvent,
                 profile: purchaseModel.profile,
                 seatReservationAuthorization: purchaseModel.seatReservationAuthorization,
                 reserveTickets: purchaseModel.reserveTickets
             };
+            req.session.complete = complete;
+            purchaseResult.complete = complete;
             if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed) {
                 try {
-                    const theater = yield sasaki.service.place(options).findMovieTheater({
-                        branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
-                    });
-                    log('劇場', theater.telephone);
-                    const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
-                        purchaseModel: purchaseModel,
-                        theater: theater,
-                        domain: req.headers.host,
-                        layout: false
-                    });
-                    log('メールテンプレート取得');
-                    const sender = 'noreply@ticket-cinemasunshine.com';
-                    yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
-                        transactionId: purchaseModel.transaction.id,
-                        emailMessageAttributes: {
-                            sender: {
-                                name: purchaseModel.transaction.seller.name,
-                                email: sender
-                            },
-                            toRecipient: {
-                                name: `${purchaseModel.profile.emailConfirm} ${purchaseModel.profile.givenName}`,
-                                email: purchaseModel.profile.email
-                            },
-                            about: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
-                            text: content
-                        }
-                    });
-                    log('メール通知');
+                    purchaseResult.mail = yield sendMail(req, res, purchaseModel, authModel);
+                    log('Mail notification');
                 }
                 catch (err) {
-                    log('メール登録失敗', err);
+                    log('Mail registration failure', err);
                 }
             }
             // Cognitoへ登録
@@ -232,8 +213,16 @@ function purchase(req, res) {
                     if (reservationRecord.orders === undefined) {
                         reservationRecord.orders = [];
                     }
-                    reservationRecord.orders.push(order);
-                    yield AwsCognitoService.updateRecords({
+                    reservationRecord.orders.push(purchaseResult.order);
+                    log('before reservationRecord order', reservationRecord.orders.length);
+                    reservationRecord.orders.forEach((order, index) => {
+                        const endDate = moment(order.acceptedOffers[0].itemOffered.reservationFor.endDate).unix();
+                        const limitDate = moment().subtract(1, 'month').unix();
+                        if (endDate < limitDate)
+                            reservationRecord.orders.splice(index, 1);
+                    });
+                    log('after reservationRecord order', reservationRecord.orders.length);
+                    purchaseResult.cognito = yield AwsCognitoService.updateRecords({
                         datasetName: 'reservation',
                         value: reservationRecord,
                         credentials: cognitoCredentials
@@ -246,18 +235,105 @@ function purchase(req, res) {
             // 購入セッション削除
             delete req.session.purchase;
             // 購入完了情報を返す
-            res.json({ err: null, result: req.session.complete });
+            res.json({ result: purchaseResult });
         }
         catch (err) {
-            log('ERROR', err);
-            const msg = (err.errorType === ErrorUtilModule_1.ErrorType.Expire) ? req.__('common.error.expire')
-                : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
-                    : err.message;
-            res.json({ err: msg, result: null });
+            log('purchase error', err);
+            if (err.code !== undefined) {
+                res.status(err.code);
+            }
+            else {
+                res.status(httpStatus.BAD_REQUEST);
+            }
+            res.json({ error: err });
         }
     });
 }
 exports.purchase = purchase;
+/**
+ * メール送信
+ * @function sendMail
+ * @param {Request} req
+ * @param {Response} res
+ * @param {PurchaseModel} purchaseModel
+ * @param {AuthModel} authModel
+ */
+function sendMail(req, res, purchaseModel, authModel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (purchaseModel.transaction === null
+            || purchaseModel.individualScreeningEvent === null
+            || purchaseModel.profile === null
+            || purchaseModel.seatReservationAuthorization === null
+            || purchaseModel.seatReservationAuthorization.result === undefined) {
+            throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+        }
+        const options = {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: authModel.create()
+        };
+        const theater = yield sasaki.service.place(options).findMovieTheater({
+            branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
+        });
+        const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
+            purchaseModel: purchaseModel,
+            theater: theater,
+            domain: req.headers.host,
+            layout: false
+        });
+        log('Retrieve mail template');
+        const sender = 'noreply@ticket-cinemasunshine.com';
+        // tslint:disable-next-line:no-unnecessary-local-variable
+        const sendEmailNotification = yield sasaki.service.transaction.placeOrder(options).sendEmailNotification({
+            transactionId: purchaseModel.transaction.id,
+            emailMessageAttributes: {
+                sender: {
+                    name: purchaseModel.transaction.seller.name,
+                    email: sender
+                },
+                toRecipient: {
+                    name: `${purchaseModel.profile.emailConfirm} ${purchaseModel.profile.givenName}`,
+                    email: purchaseModel.profile.email
+                },
+                about: `${purchaseModel.individualScreeningEvent.superEvent.location.name.ja} 購入完了`,
+                text: content
+            }
+        });
+        return sendEmailNotification;
+    });
+}
+/**
+ * メール再送信
+ * @memberof Purchase.resendMail
+ * @function resendMail
+ * @param {Request} req
+ * @param {Response} res
+ * @returns {Promise<void>}
+ */
+function resendMail(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (req.session === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            if (req.session.complete === undefined)
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
+            const authModel = new AuthModel_1.AuthModel(req.session.auth);
+            const purchaseModel = new PurchaseModel_1.PurchaseModel(req.session.complete);
+            yield sendMail(req, res, purchaseModel, authModel);
+            res.json();
+        }
+        catch (err) {
+            log('resendMail error', err);
+            if (err.code !== undefined) {
+                res.status(err.code);
+            }
+            else {
+                res.status(httpStatus.BAD_REQUEST);
+            }
+            res.json({ error: err });
+        }
+    });
+}
+exports.resendMail = resendMail;
 /**
  * 完了情報取得
  * @memberof Purchase.ConfirmModule
@@ -272,13 +348,17 @@ function getCompleteData(req, res) {
             throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         if (req.session.complete === undefined)
             throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Expire);
-        res.json({ err: null, result: req.session.complete });
+        res.json({ result: req.session.complete });
     }
     catch (err) {
-        const msg = (err.errorType === ErrorUtilModule_1.ErrorType.Expire) ? req.__('common.error.expire')
-            : (err.code === HTTPStatus.BAD_REQUEST) ? req.__('common.error.badRequest')
-                : err.message;
-        res.json({ err: msg, result: null });
+        log('getCompleteData error', err);
+        if (err.code !== undefined) {
+            res.status(err.code);
+        }
+        else {
+            res.status(httpStatus.BAD_REQUEST);
+        }
+        res.json({ error: err });
     }
 }
 exports.getCompleteData = getCompleteData;

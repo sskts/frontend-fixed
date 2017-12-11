@@ -1,5 +1,7 @@
 .app {
     padding-top: 44px;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
     .wrapper {
         margin-top: 0;
     }
@@ -27,7 +29,7 @@
     .site-seal {
         display: none;
     }
-    .prev-button, .next-button, .blue-button {
+    .prev-button, .next-button, .blue-button, .change-button {
         button, a {
             border-radius: 0;
             box-shadow: none;
@@ -37,13 +39,6 @@
         } 
         .icon-next-white:before {
             display: none;
-        }
-    }
-    .purchase-confirm {
-        .section-ttl {
-            .right {
-                display: none;
-            }
         }
     }
 

@@ -3,8 +3,8 @@
  */
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as assert from 'assert';
+import * as HTTPStatus from 'http-status';
 import * as sinon from 'sinon';
-
 import * as PerformancesModule from '../../../../app/modules/Purchase/PerformancesModule';
 
 describe('Purchase.PerformancesModule', () => {
@@ -70,12 +70,15 @@ describe('Purchase.PerformancesModule', () => {
         };
         const res: any = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await PerformancesModule.getPerformances(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].error, null);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         event.restore();
     });
 
@@ -85,12 +88,15 @@ describe('Purchase.PerformancesModule', () => {
             query: {}
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await PerformancesModule.getPerformances(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].error, null);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
     it('getMovieTheaters 正常', async () => {
@@ -105,12 +111,15 @@ describe('Purchase.PerformancesModule', () => {
         };
         const res: any = {
             locals: {},
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await PerformancesModule.getMovieTheaters(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].error, null);
-        assert.notStrictEqual(res.json.args[0][0].result, null);
+        assert.strictEqual(res.statusCode, HTTPStatus.OK);
         organization.restore();
     });
 
@@ -120,12 +129,15 @@ describe('Purchase.PerformancesModule', () => {
             query: {}
         };
         const res: any = {
-            json: sinon.spy()
+            json: sinon.spy(),
+            status: (code: number) => {
+                res.statusCode = code;
+            },
+            statusCode: HTTPStatus.OK
         };
         await PerformancesModule.getMovieTheaters(req, res);
         assert(res.json.calledOnce);
-        assert.strictEqual(res.json.args[0][0].result, null);
-        assert.notStrictEqual(res.json.args[0][0].error, null);
+        assert.notStrictEqual(res.statusCode, HTTPStatus.OK);
     });
 
 });

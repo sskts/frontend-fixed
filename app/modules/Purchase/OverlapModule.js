@@ -18,6 +18,7 @@ const HTTPStatus = require("http-status");
 const AuthModel_1 = require("../../models/Auth/AuthModel");
 const PurchaseModel_1 = require("../../models/Purchase/PurchaseModel");
 const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
+const UtilModule_1 = require("../Util/UtilModule");
 const log = debug('SSKTS:Purchase.OverlapModule');
 /**
  * 仮予約重複
@@ -95,7 +96,17 @@ function newReserve(req, res, next) {
             }
             //購入スタートへ
             delete req.session.purchase;
-            res.redirect(`/purchase?id=${req.body.performanceId}`);
+            let url;
+            let params;
+            if (UtilModule_1.isApp(req)) {
+                params = `id=${req.body.performanceId}&identityId=${req.session.awsCognitoIdentityId}`;
+                url = `${process.env.ENTRANCE_SERVER_URL}/ticket/index.html?${params}`;
+            }
+            else {
+                params = `id=${req.body.performanceId}`;
+                url = `${process.env.ENTRANCE_SERVER_URL}/purchase/index.html?${params}`;
+            }
+            res.redirect(url);
         }
         catch (err) {
             next(err);

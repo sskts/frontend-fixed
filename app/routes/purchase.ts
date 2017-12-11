@@ -27,7 +27,7 @@ purchaseRouter.get('/performances/getMovieTheaters', PerformancesModule.getMovie
 purchaseRouter.get('/performances/getSchedule', PerformancesModule.getSchedule);
 
 //購入(取引開始)
-purchaseRouter.post('/transaction', TransactionModule.start);
+purchaseRouter.get('/transaction', TransactionModule.start);
 
 //仮予約重複
 purchaseRouter.get('/:id/overlap', OverlapModule.render);
@@ -51,6 +51,7 @@ purchaseRouter.post('/input/member', InputModule.purchaserInformationRegistratio
 purchaseRouter.get('/confirm', ConfirmModule.render);
 purchaseRouter.post('/confirm', ConfirmModule.purchase);
 purchaseRouter.get('/getComplete', ConfirmModule.getCompleteData);
+purchaseRouter.post('/resendMail', ConfirmModule.resendMail);
 
 //ムビチケ着券取り消し
 purchaseRouter.post('/mvtk/cancel', ConfirmModule.cancelMvtk);
