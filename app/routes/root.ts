@@ -20,6 +20,7 @@ if (process.env.VIEW_TYPE !== UtilModule.VIEW.Fixed
     rootRouter.get('/500', () => { process.exit(1); });
     // スクリーンテスト
     rootRouter.get('/screen', ScreenModule.index);
+    rootRouter.get('/screen/getHtml', ScreenModule.getScreenHtml);
     rootRouter.post('/screen', ScreenModule.getScreenStateReserve);
 }
 

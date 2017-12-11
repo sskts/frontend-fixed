@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+@import "common/config";
+
+@import "default/screen/style";
+
+.screen {
+    visibility: visible;
+    overflow: visible;
+    .screen-scroll {
+        height: auto;
+    }
+}
