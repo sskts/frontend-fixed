@@ -31,7 +31,7 @@ const log = debug('SSKTS:InquiryModule');
  */
 function loginRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
-        const theaterCode = (req.query.orderNumber !== undefined) ? req.query.orderNumber.split('-')[0] : req.query.theater;
+        const theaterCode = req.query.theater;
         if (theaterCode === undefined) {
             const status = 404;
             res.status(status).render('error/notFound');
@@ -172,7 +172,7 @@ function confirmRender(req, res, next) {
             || req.query.theater === undefined)
             throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
         if (req.session.inquiry === undefined) {
-            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}`);
+            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}&theater=${req.query.theater}`);
             return;
         }
         const inquiryModel = new InquiryModel_1.InquiryModel(req.session.inquiry);
