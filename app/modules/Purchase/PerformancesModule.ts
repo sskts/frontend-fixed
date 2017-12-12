@@ -111,6 +111,8 @@ export async function getPerformances(req: Request, res: Response): Promise<void
  * @returns {Promise<void>}
  */
 export async function getSchedule(req: Request, res: Response): Promise<void> {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     try {
         if (req.session === undefined
             || req.query.startFrom === undefined
@@ -130,14 +132,14 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             theaters: theaters,
             screeningEvents: screeningEvents
         };
-        res.jsonp({ result: result });
+        res.json({ result: result });
     } catch (err) {
         if (err.code !== undefined) {
             res.status(err.code);
         } else {
             res.status(httpStatus.BAD_REQUEST);
         }
-        res.jsonp({ error: err });
+        res.json({ error: err });
     }
 }
 
