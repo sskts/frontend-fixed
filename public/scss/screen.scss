@@ -4,6 +4,9 @@
 
 @import "default/screen/style";
 
+* {
+    box-sizing: border-box;
+}
 .screen {
     visibility: visible;
     overflow: visible;

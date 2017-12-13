@@ -113,10 +113,14 @@
   overflow: auto;
   transition: -webkit-transform 0.2s;
   transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s; }
+  transition: transform 0.2s, -webkit-transform 0.2s;
+  -webkit-overflow-scrolling: touch; }
 
 .zoom .seat a span {
   display: block; }
+
+* {
+  box-sizing: border-box; }
 
 .screen {
   visibility: visible;
