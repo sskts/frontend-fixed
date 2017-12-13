@@ -2,9 +2,12 @@
  * 座席テスト
  * @namespace Screen.ScreenModule
  */
+import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { Request, Response } from 'express';
 import * as fs from 'fs-extra';
+import * as HTTPStatus from 'http-status';
+import { AppError, ErrorType } from '../Util/ErrorUtilModule';
 import * as UtilModule from '../Util/UtilModule';
 const log = debug('SSKTS:Screen.ScreenModule');
 
@@ -55,11 +58,32 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
  */
 export async function getScreenHtml(req: Request, res: Response) {
     try {
+        if (req.query.theaterCode === undefined
+            || req.query.dateJouei === undefined
+            || req.query.titleCode === undefined
+            || req.query.titleBranchNum === undefined
+            || req.query.timeBegin === undefined
+            || req.query.screenCode === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         const theaterCode = `00${req.query.theaterCode}`.slice(UtilModule.DIGITS['02']);
         const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
-        const html = await createScreen(setting, screen);
+        const state = await COA.services.reserve.stateReserveSeat({
+            theaterCode: req.query.theaterCode, // 施設コード
+            dateJouei: req.query.dateJouei, // 上映日
+            titleCode: req.query.titleCode, // 作品コード
+            titleBranchNum: req.query.titleBranchNum, // 作品枝番
+            timeBegin: req.query.timeBegin, // 上映時刻
+            screenCode: req.query.screenCode // スクリーンコード
+        });
+        const html = await createScreen({
+            setting: setting,
+            screen: screen,
+            state: state,
+            option: req.query.option
+        });
         res.json({
             result: {
                 html: html,
@@ -67,7 +91,12 @@ export async function getScreenHtml(req: Request, res: Response) {
             }
         });
     } catch (err) {
-        res.status(httpStatus.NOT_FOUND);
+        if (err.code !== undefined && err.code === HTTPStatus.BAD_REQUEST) {
+            res.status(err.code);
+        } else {
+            res.status(HTTPStatus.NOT_FOUND);
+        }
+        log(res.statusCode);
         res.json({ error: err });
     }
 }
@@ -101,20 +130,37 @@ interface IScreenSetting {
     special: string[];
     hc: string[];
     pair: string[];
-    html: string;
-    style: string;
+    html?: string;
+    style?: string;
+}
+
+interface ICreateScreenOption {
+    resources?: string;
+    width?: number;
+}
+
+interface ICreateScreenArgs {
+    setting: IScreenSetting;
+    screen: IScreenSetting;
+    state: COA.services.reserve.IStateReserveSeatResult;
+    option?: ICreateScreenOption;
 }
 
 /**
  * スクリーン生成
  * @function createScreen
- * @param {Object} setting スクリーン共通設定
- * @param {Object} screen スクリーン固有設定
+ * @param {IScreenSetting} setting スクリーン共通設定
+ * @param {IScreenSetting} screen スクリーン固有設定
+ * @param {string | undefined} resources リソース場所
  * @returns {Promise<string>}
  */
 // tslint:disable:max-func-body-length cyclomatic-complexity no-magic-numbers
-async function createScreen(setting: IScreenSetting, screen: IScreenSetting): Promise<string> {
+async function createScreen(args: ICreateScreenArgs): Promise<string> {
     log('createScreen');
+    const screen = args.screen;
+    const setting = args.setting;
+    const state = args.state;
+    const option = args.option;
     let html = '';
     //スクリーンタイプ
     let screenType = '';
@@ -129,11 +175,19 @@ async function createScreen(setting: IScreenSetting, screen: IScreenSetting): Pr
             screenType = '';
             break;
     }
+    const scale = (option !== undefined && option.width) ? option.width / screen.size.w : 1;
     //html挿入の場合
     if (screen.html) {
         return `<div class="screen-cover ${screenType}">
         <div class="screen">
-            <div class="screen-scroll">${screen.html}</div>
+            <div class="screen-scroll"
+            style="transform-origin: 0px 0px 0px;
+            transform: scale(${scale});
+            height: ${screen.size.h * scale}px">
+                <div class="screen-inner" style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+                    ${screen.html}
+                </div>
+            </div>
         </div>
     </div>`;
     }
@@ -167,13 +221,16 @@ async function createScreen(setting: IScreenSetting, screen: IScreenSetting): Pr
     const seatHtml = [];
     let labelCount = 0;
     for (const object of screen.objects) {
-        objectsHtml.push(`<div class="object" style="
-        'width: ${object.w}'px;
-        'height: ${object.h}'px;
-        'top: ${object.y}'px;
-        'left: ${object.x}'px;
-        'background-image: url(${object.image});
-        'background-size: ${object.w}px ${object.h}px;"></div>`);
+        const imageUrl = (option !== undefined && option.resources !== undefined)
+            ? (option.resources + object.image)
+            : object.image;
+        objectsHtml.push(`<div class="object"
+        style="width: ${object.w}px;
+        height: ${object.h}px;
+        top: ${object.y}px;
+        left: ${object.x}px;
+        background-image: url(${imageUrl});
+        background-size: ${object.w}px ${object.h}px;"></div>`);
     }
     for (let y = 0; y < screen.map.length; y += 1) {
         if (y === 0)
@@ -226,18 +283,31 @@ async function createScreen(setting: IScreenSetting, screen: IScreenSetting): Pr
                     seatHtml.push(`<div class="seat seat-hc"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
+                        class="default"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}" data-seat-section="">
                             <span>${label}</span>
                         </a>
                     </div>`);
                 } else {
+                    let section = '';
+                    let seat: COA.services.reserve.IStateReserveSeatFreeSeat | undefined;
+                    state.listSeat.forEach((listSeat) => {
+                        seat = listSeat.listFreeSeat.find((freeSeat) => {
+                            return (freeSeat.seatNum === code);
+                        });
+                        log(seat);
+                        if (seat !== undefined) {
+                            section = listSeat.seatSection;
+                        }
+                    });
                     seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
+                        class="${(seat === undefined) ? 'default' : ''}"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}"
-                        data-seat-section="">
+                        data-seat-section="${section}">
                             <span>${label}</span>
                         </a>
                     </div>`);
@@ -271,7 +341,14 @@ async function createScreen(setting: IScreenSetting, screen: IScreenSetting): Pr
 
     return `<div class="screen-cover ${screenType}">
         <div class="screen">
-            <div class="screen-scroll">${html}</div>
+            <div class="screen-scroll"
+            style="transform-origin: 0px 0px 0px;
+            transform: scale(${scale});
+            height: ${screen.size.h * scale}px">
+                <div class="screen-inner" style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+                    ${html}
+                </div>
+            </div>
         </div>
     </div>`;
 }

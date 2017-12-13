@@ -12,8 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 座席テスト
  * @namespace Screen.ScreenModule
  */
+const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
 const fs = require("fs-extra");
+const HTTPStatus = require("http-status");
+const ErrorUtilModule_1 = require("../Util/ErrorUtilModule");
 const UtilModule = require("../Util/UtilModule");
 const log = debug('SSKTS:Screen.ScreenModule');
 /**
@@ -69,11 +72,32 @@ exports.getScreenStateReserve = getScreenStateReserve;
 function getScreenHtml(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            if (req.query.theaterCode === undefined
+                || req.query.dateJouei === undefined
+                || req.query.titleCode === undefined
+                || req.query.titleBranchNum === undefined
+                || req.query.timeBegin === undefined
+                || req.query.screenCode === undefined) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            }
             const theaterCode = `00${req.query.theaterCode}`.slice(UtilModule.DIGITS['02']);
             const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
-            const html = yield createScreen(setting, screen);
+            const state = yield COA.services.reserve.stateReserveSeat({
+                theaterCode: req.query.theaterCode,
+                dateJouei: req.query.dateJouei,
+                titleCode: req.query.titleCode,
+                titleBranchNum: req.query.titleBranchNum,
+                timeBegin: req.query.timeBegin,
+                screenCode: req.query.screenCode // スクリーンコード
+            });
+            const html = yield createScreen({
+                setting: setting,
+                screen: screen,
+                state: state,
+                option: req.query.option
+            });
             res.json({
                 result: {
                     html: html,
@@ -82,7 +106,13 @@ function getScreenHtml(req, res) {
             });
         }
         catch (err) {
-            res.status(httpStatus.NOT_FOUND);
+            if (err.code !== undefined && err.code === HTTPStatus.BAD_REQUEST) {
+                res.status(err.code);
+            }
+            else {
+                res.status(HTTPStatus.NOT_FOUND);
+            }
+            log(res.statusCode);
             res.json({ error: err });
         }
     });
@@ -91,14 +121,19 @@ exports.getScreenHtml = getScreenHtml;
 /**
  * スクリーン生成
  * @function createScreen
- * @param {Object} setting スクリーン共通設定
- * @param {Object} screen スクリーン固有設定
+ * @param {IScreenSetting} setting スクリーン共通設定
+ * @param {IScreenSetting} screen スクリーン固有設定
+ * @param {string | undefined} resources リソース場所
  * @returns {Promise<string>}
  */
 // tslint:disable:max-func-body-length cyclomatic-complexity no-magic-numbers
-function createScreen(setting, screen) {
+function createScreen(args) {
     return __awaiter(this, void 0, void 0, function* () {
         log('createScreen');
+        const screen = args.screen;
+        const setting = args.setting;
+        const state = args.state;
+        const option = args.option;
         let html = '';
         //スクリーンタイプ
         let screenType = '';
@@ -113,11 +148,19 @@ function createScreen(setting, screen) {
                 screenType = '';
                 break;
         }
+        const scale = (option !== undefined && option.width) ? option.width / screen.size.w : 1;
         //html挿入の場合
         if (screen.html) {
             return `<div class="screen-cover ${screenType}">
         <div class="screen">
-            <div class="screen-scroll">${screen.html}</div>
+            <div class="screen-scroll"
+            style="transform-origin: 0px 0px 0px;
+            transform: scale(${scale});
+            height: ${screen.size.h * scale}px">
+                <div class="screen-inner" style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+                    ${screen.html}
+                </div>
+            </div>
         </div>
     </div>`;
         }
@@ -151,13 +194,16 @@ function createScreen(setting, screen) {
         const seatHtml = [];
         let labelCount = 0;
         for (const object of screen.objects) {
-            objectsHtml.push(`<div class="object" style="
-        'width: ${object.w}'px;
-        'height: ${object.h}'px;
-        'top: ${object.y}'px;
-        'left: ${object.x}'px;
-        'background-image: url(${object.image});
-        'background-size: ${object.w}px ${object.h}px;"></div>`);
+            const imageUrl = (option !== undefined && option.resources !== undefined)
+                ? (option.resources + object.image)
+                : object.image;
+            objectsHtml.push(`<div class="object"
+        style="width: ${object.w}px;
+        height: ${object.h}px;
+        top: ${object.y}px;
+        left: ${object.x}px;
+        background-image: url(${imageUrl});
+        background-size: ${object.w}px ${object.h}px;"></div>`);
         }
         for (let y = 0; y < screen.map.length; y += 1) {
             if (y === 0)
@@ -215,6 +261,7 @@ function createScreen(setting, screen) {
                         seatHtml.push(`<div class="seat seat-hc"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
+                        class="default"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}" data-seat-section="">
                             <span>${label}</span>
@@ -222,12 +269,24 @@ function createScreen(setting, screen) {
                     </div>`);
                     }
                     else {
+                        let section = '';
+                        let seat;
+                        state.listSeat.forEach((listSeat) => {
+                            seat = listSeat.listFreeSeat.find((freeSeat) => {
+                                return (freeSeat.seatNum === code);
+                            });
+                            log(seat);
+                            if (seat !== undefined) {
+                                section = listSeat.seatSection;
+                            }
+                        });
                         seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
+                        class="${(seat === undefined) ? 'default' : ''}"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}"
-                        data-seat-section="">
+                        data-seat-section="${section}">
                             <span>${label}</span>
                         </a>
                     </div>`);
@@ -266,7 +325,14 @@ function createScreen(setting, screen) {
     <div>`;
         return `<div class="screen-cover ${screenType}">
         <div class="screen">
-            <div class="screen-scroll">${html}</div>
+            <div class="screen-scroll"
+            style="transform-origin: 0px 0px 0px;
+            transform: scale(${scale});
+            height: ${screen.size.h * scale}px">
+                <div class="screen-inner" style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+                    ${html}
+                </div>
+            </div>
         </div>
     </div>`;
     });
