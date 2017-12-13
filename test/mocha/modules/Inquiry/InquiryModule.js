@@ -29,7 +29,7 @@ describe('Inquiry.InquiryModule', () => {
         });
         const req = {
             query: {
-                orderNumber: '118-'
+                theater: '118'
             },
             session: {}
         };
@@ -63,7 +63,7 @@ describe('Inquiry.InquiryModule', () => {
     it('loginRender エラー セッションなし', () => __awaiter(this, void 0, void 0, function* () {
         const req = {
             query: {
-                orderNumber: '118-'
+                theater: '118'
             },
             session: undefined
         };

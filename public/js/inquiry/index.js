@@ -61,7 +61,12 @@ function saveInquiry() {
             console.log(err);
         }
     }
-    saveData.push(inquiryInfo);
+    var orderNumber = saveData.find(function(data){
+        return (data.orderNumber === inquiryInfo.orderNumber)
+    });
+    if (orderNumber === undefined) {
+        saveData.push(inquiryInfo);
+    }
     localStorage.setItem('inquiryInfo', JSON.stringify(saveData));
 }
 

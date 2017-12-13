@@ -350,7 +350,7 @@ class PurchaseModel {
         const time = `${UtilModule.timeFormat(this.individualScreeningEvent.startDate, this.individualScreeningEvent.coaInfo.dateJouei)}:00`;
         const tmpReserveNum = this.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum;
         const systemReservationNumber = `${this.individualScreeningEvent.coaInfo.dateJouei}${tmpReserveNum}`;
-        const siteCode = `00${this.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const siteCode = Number(this.individualScreeningEvent.coaInfo.theaterCode.slice(UtilModule.DIGITS['02'])).toString();
         const deleteFlag = (options === undefined || options.deleteFlag === undefined)
             ? mvtkReserve.services.seat.seatInfoSync.DeleteFlag.False
             : options.deleteFlag;
