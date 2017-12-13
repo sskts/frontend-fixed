@@ -801,7 +801,8 @@ p a {
         margin-top: -50%; }
 
 .modal.scroll .inner {
-  overflow-y: auto; }
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .modal-cover.active,
 .modal.active {
@@ -1188,6 +1189,7 @@ p a {
 
 .purchase-seat .agree {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   resize: vertical;
   height: 150px; }
   @media screen and (max-width: 767px) {
@@ -1741,7 +1743,8 @@ p a {
   overflow: auto;
   transition: -webkit-transform 0.2s;
   transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s; }
+  transition: transform 0.2s, -webkit-transform 0.2s;
+  -webkit-overflow-scrolling: touch; }
 
 .zoom .seat a span {
   display: block; }

@@ -68,6 +68,7 @@
     }
     .agree {
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
         resize: vertical;
         height: 150px;
         @media screen and (max-width: $mobile) {

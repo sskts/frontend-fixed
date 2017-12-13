@@ -34,16 +34,16 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (purchaseModel.seatReservationAuthorization !== null
             && purchaseModel.transaction !== null
             && !purchaseModel.isExpired()) {
-                try {
-                    await sasaki.service.transaction.placeOrder(options)
+            try {
+                await sasaki.service.transaction.placeOrder(options)
                     .cancelSeatReservationAuthorization({
                         transactionId: purchaseModel.transaction.id,
                         actionId: purchaseModel.seatReservationAuthorization.id
                     });
-                    log('仮予約削除');
-                } catch (err) {
-                    log('仮予約削除失敗', err);
-                }
+                log('仮予約削除');
+            } catch (err) {
+                log('仮予約削除失敗', err);
+            }
         }
 
         if (process.env.VIEW_TYPE === 'fixed') {
@@ -111,6 +111,11 @@ export async function getPerformances(req: Request, res: Response): Promise<void
  * @returns {Promise<void>}
  */
 export async function getSchedule(req: Request, res: Response): Promise<void> {
+    if (process.env.APP_SITE_URL === undefined) {
+        return;
+    }
+    res.setHeader('Access-Control-Allow-Origin', <string>process.env.APP_SITE_URL);
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     try {
         if (req.session === undefined
             || req.query.startFrom === undefined
@@ -130,14 +135,14 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             theaters: theaters,
             screeningEvents: screeningEvents
         };
-        res.jsonp({ result: result });
+        res.json({ result: result });
     } catch (err) {
         if (err.code !== undefined) {
             res.status(err.code);
         } else {
             res.status(httpStatus.BAD_REQUEST);
         }
-        res.jsonp({ error: err });
+        res.json({ error: err });
     }
 }
 
