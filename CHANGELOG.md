@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.3.1 - 2017-12-13
+### Fixed
+ - ムビチケサイトコード変換修正
+ - 照会ページリロード時自動認証機能修正
+
 ## 2.3.0 - 2017-12-11
 ### Added
  - 池袋劇場の座席データ追加

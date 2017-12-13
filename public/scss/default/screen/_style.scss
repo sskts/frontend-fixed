@@ -152,6 +152,7 @@
     .screen-scroll {
         overflow: auto;
         transition: transform 0.2s;
+        -webkit-overflow-scrolling: touch;
     }
     .seat {
         a {

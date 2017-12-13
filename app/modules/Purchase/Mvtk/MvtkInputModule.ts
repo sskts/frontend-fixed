@@ -85,7 +85,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 };
             }),
             skhnCd: purchaseModel.getMvtkfilmCode(), // 作品コード
-            stCd: `00${purchaseModel.individualScreeningEvent.coaInfo.theaterCode}`.slice(UtilModule.DIGITS['02']), // サイトコード
+            stCd: Number(purchaseModel.individualScreeningEvent.coaInfo.theaterCode.slice(UtilModule.DIGITS['02'])).toString(), // サイトコード
             jeiYmd: moment(purchaseModel.individualScreeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
         };
         let purchaseNumberAuthResult: mvtkReserve.services.auth.purchaseNumberAuth.IPurchaseNumberAuthResult;
