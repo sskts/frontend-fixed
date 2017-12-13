@@ -272,10 +272,12 @@ function createScreen(args) {
                         let section = '';
                         let seat;
                         state.listSeat.forEach((listSeat) => {
+                            if (seat !== undefined) {
+                                return;
+                            }
                             seat = listSeat.listFreeSeat.find((freeSeat) => {
                                 return (freeSeat.seatNum === code);
                             });
-                            log(seat);
                             if (seat !== undefined) {
                                 section = listSeat.seatSection;
                             }
@@ -283,7 +285,7 @@ function createScreen(args) {
                         seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
-                        class="${(seat === undefined) ? 'default' : ''}"
+                        class="${(seat === undefined) ? 'disabled' : 'default'}"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}"
                         data-seat-section="${section}">
