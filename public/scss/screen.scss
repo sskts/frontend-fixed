@@ -1,11 +1,13 @@
 @charset "UTF-8";
 
 @import "common/config";
-
 @import "default/screen/style";
 
 * {
     box-sizing: border-box;
+}
+body {
+    margin: 0;
 }
 .screen {
     visibility: visible;

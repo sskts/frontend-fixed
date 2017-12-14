@@ -19,33 +19,64 @@ const log = debug('SSKTS:Screen.ScreenModule');
  * @param {Response} res
  * @returns {Promise<void>}
  */
-export async function index(_: Request, res: Response): Promise<void> {
-    res.render('screens/test');
-}
-
-/**
- * スクリーン状態取得
- * @memberof Screen.ScreenModule
- * @function getScreenStateReserve
- * @param {Request} req
- * @param {Response} res
- * @returns {Promise<void>}
- */
-export async function getScreenStateReserve(req: Request, res: Response): Promise<void> {
+export async function index(req: Request, res: Response): Promise<void> {
     try {
-        const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS['02']);
-        const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS['03']);
+        if (req.query.theaterCode === undefined
+            || req.query.screenCode === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
+        const theaterCode = `00${req.query.theaterCode}`.slice(UtilModule.DIGITS['02']);
+        const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
-        res.json({
-            err: null,
-            result: {
-                screen: screen,
-                setting: setting
+        let state: COA.services.reserve.IStateReserveSeatResult | undefined;
+        if (req.query.dateJouei !== undefined
+            && req.query.titleCode !== undefined
+            && req.query.titleBranchNum !== undefined
+            && req.query.timeBegin !== undefined) {
+            state = await COA.services.reserve.stateReserveSeat({
+                theaterCode: req.query.theaterCode, // 施設コード
+                dateJouei: req.query.dateJouei, // 上映日
+                titleCode: req.query.titleCode, // 作品コード
+                titleBranchNum: req.query.titleBranchNum, // 作品枝番
+                timeBegin: req.query.timeBegin, // 上映時刻
+                screenCode: req.query.screenCode // スクリーンコード
+            });
+        }
+        const createScreenArgs: ICreateScreenArgs = {
+            setting: setting,
+            screen: screen,
+            state: state,
+            option: {
+                resources: req.query.resources,
+                width: req.query.width
             }
-        });
+        };
+        let html = await createScreen(createScreenArgs);
+        const resources = (req.query.resources !== undefined) ? req.query.resources : '';
+        html += `<link href="${resources}/css/screen.css" rel="stylesheet">`;
+        // tslint:disable-next-line:no-multiline-string
+        html += `<script>
+        window.onload = function() {
+            var inner = document.querySelector('.screen-inner');
+            var scroll = document.querySelector('.screen-scroll');
+            var scale = Number(scroll.style.transform.replace(/[^-^0-9^\.]/g, ''));
+            var data = {
+                width: inner.clientWidth * scale,
+                height: inner.scrollHeight * scale
+            };
+            window.parent.postMessage(JSON.stringify(data), '*');
+        }
+        </script>`;
+        res.send(html);
     } catch (err) {
-        res.json({ err: err, result: null });
+        if (err.code !== undefined && err.code === HTTPStatus.BAD_REQUEST) {
+            res.status(err.code);
+        } else {
+            res.status(HTTPStatus.NOT_FOUND);
+        }
+        log(res.statusCode);
+        res.send();
     }
 }
 
@@ -59,10 +90,6 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
 export async function getScreenHtml(req: Request, res: Response) {
     try {
         if (req.query.theaterCode === undefined
-            || req.query.dateJouei === undefined
-            || req.query.titleCode === undefined
-            || req.query.titleBranchNum === undefined
-            || req.query.timeBegin === undefined
             || req.query.screenCode === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
@@ -70,24 +97,33 @@ export async function getScreenHtml(req: Request, res: Response) {
         const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
         const screen = await fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
         const setting = await fs.readJSON('./app/theaters/setting.json');
-        const state = await COA.services.reserve.stateReserveSeat({
-            theaterCode: req.query.theaterCode, // 施設コード
-            dateJouei: req.query.dateJouei, // 上映日
-            titleCode: req.query.titleCode, // 作品コード
-            titleBranchNum: req.query.titleBranchNum, // 作品枝番
-            timeBegin: req.query.timeBegin, // 上映時刻
-            screenCode: req.query.screenCode // スクリーンコード
-        });
-        const html = await createScreen({
+        let state: COA.services.reserve.IStateReserveSeatResult | undefined;
+        if (req.query.dateJouei !== undefined
+            && req.query.titleCode !== undefined
+            && req.query.titleBranchNum !== undefined
+            && req.query.timeBegin !== undefined) {
+            state = await COA.services.reserve.stateReserveSeat({
+                theaterCode: req.query.theaterCode, // 施設コード
+                dateJouei: req.query.dateJouei, // 上映日
+                titleCode: req.query.titleCode, // 作品コード
+                titleBranchNum: req.query.titleBranchNum, // 作品枝番
+                timeBegin: req.query.timeBegin, // 上映時刻
+                screenCode: req.query.screenCode // スクリーンコード
+            });
+        }
+        const createScreenArgs: ICreateScreenArgs = {
             setting: setting,
             screen: screen,
             state: state,
             option: req.query.option
-        });
+        };
+        const html = await createScreen(createScreenArgs);
+        const resources = (req.query.option !== undefined || req.query.option.resources !== undefined)
+            ? req.query.option.resources : '';
         res.json({
             result: {
                 html: html,
-                style: `${req.protocol}://${req.hostname}/css/screen.css`
+                style: `${resources}/css/screen.css`
             }
         });
     } catch (err) {
@@ -101,16 +137,25 @@ export async function getScreenHtml(req: Request, res: Response) {
     }
 }
 
+/**
+ * 大きさ
+ */
 interface ISize {
     w: number;
     h: number;
 }
 
+/**
+ * 位置
+ */
 interface IPosition {
     x: number;
     y: number;
 }
 
+/**
+ * スクリーン設定
+ */
 interface IScreenSetting {
     seatSize: ISize;
     seatMargin: ISize;
@@ -134,24 +179,28 @@ interface IScreenSetting {
     style?: string;
 }
 
+/**
+ * スクリーンオプション
+ */
 interface ICreateScreenOption {
     resources?: string;
     width?: number;
 }
 
+/**
+ * スクリーン生成in
+ */
 interface ICreateScreenArgs {
     setting: IScreenSetting;
     screen: IScreenSetting;
-    state: COA.services.reserve.IStateReserveSeatResult;
+    state?: COA.services.reserve.IStateReserveSeatResult;
     option?: ICreateScreenOption;
 }
 
 /**
  * スクリーン生成
  * @function createScreen
- * @param {IScreenSetting} setting スクリーン共通設定
- * @param {IScreenSetting} screen スクリーン固有設定
- * @param {string | undefined} resources リソース場所
+ * @param {ICreateScreenArgs} args スクリーン固有設定
  * @returns {Promise<string>}
  */
 // tslint:disable:max-func-body-length cyclomatic-complexity no-magic-numbers
@@ -277,7 +326,7 @@ async function createScreen(args: ICreateScreenArgs): Promise<string> {
                 || screen.map[y][x] === 8
                 || screen.map[y][x] === 10) {
                 //座席HTML生成
-                const code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`; //Ａ－１９
+                const code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`;
                 const label = `${labels[labelCount]}${String(x + 1)}`;
                 if (screen.hc.indexOf(label) !== -1) {
                     seatHtml.push(`<div class="seat seat-hc"
@@ -292,17 +341,19 @@ async function createScreen(args: ICreateScreenArgs): Promise<string> {
                 } else {
                     let section = '';
                     let seat: COA.services.reserve.IStateReserveSeatFreeSeat | undefined;
-                    state.listSeat.forEach((listSeat) => {
-                        if (seat !== undefined) {
-                            return;
-                        }
-                        seat = listSeat.listFreeSeat.find((freeSeat) => {
-                            return (freeSeat.seatNum === code);
+                    if (state !== undefined) {
+                        state.listSeat.forEach((listSeat) => {
+                            if (seat !== undefined) {
+                                return;
+                            }
+                            seat = listSeat.listFreeSeat.find((freeSeat) => {
+                                return (freeSeat.seatNum === code);
+                            });
+                            if (seat !== undefined) {
+                                section = listSeat.seatSection;
+                            }
                         });
-                        if (seat !== undefined) {
-                            section = listSeat.seatSection;
-                        }
-                    });
+                    }
                     seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
@@ -333,13 +384,12 @@ async function createScreen(args: ICreateScreenArgs): Promise<string> {
             }
         }
     }
-    html += `<div class="screen-inner"
-        style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+    html += `
         ${objectsHtml.join('\n')}
         ${seatNumberHtml.join('\n')}
         ${seatLabelHtml.join('\n')}
         ${seatHtml.join('\n')}
-    <div>`;
+    `;
 
     return `<div class="screen-cover ${screenType}">
         <div class="screen">

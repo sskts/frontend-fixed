@@ -27,41 +27,71 @@ const log = debug('SSKTS:Screen.ScreenModule');
  * @param {Response} res
  * @returns {Promise<void>}
  */
-function index(_, res) {
+function index(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        res.render('screens/test');
+        try {
+            if (req.query.theaterCode === undefined
+                || req.query.screenCode === undefined) {
+                throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
+            }
+            const theaterCode = `00${req.query.theaterCode}`.slice(UtilModule.DIGITS['02']);
+            const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
+            const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
+            const setting = yield fs.readJSON('./app/theaters/setting.json');
+            let state;
+            if (req.query.dateJouei !== undefined
+                && req.query.titleCode !== undefined
+                && req.query.titleBranchNum !== undefined
+                && req.query.timeBegin !== undefined) {
+                state = yield COA.services.reserve.stateReserveSeat({
+                    theaterCode: req.query.theaterCode,
+                    dateJouei: req.query.dateJouei,
+                    titleCode: req.query.titleCode,
+                    titleBranchNum: req.query.titleBranchNum,
+                    timeBegin: req.query.timeBegin,
+                    screenCode: req.query.screenCode // スクリーンコード
+                });
+            }
+            const createScreenArgs = {
+                setting: setting,
+                screen: screen,
+                state: state,
+                option: {
+                    resources: req.query.resources,
+                    width: req.query.width
+                }
+            };
+            let html = yield createScreen(createScreenArgs);
+            const resources = (req.query.resources !== undefined) ? req.query.resources : '';
+            html += `<link href="${resources}/css/screen.css" rel="stylesheet">`;
+            // tslint:disable-next-line:no-multiline-string
+            html += `<script>
+        window.onload = function() {
+            var inner = document.querySelector('.screen-inner');
+            var scroll = document.querySelector('.screen-scroll');
+            var scale = Number(scroll.style.transform.replace(/[^-^0-9^\.]/g, ''));
+            var data = {
+                width: inner.clientWidth * scale,
+                height: inner.scrollHeight * scale
+            };
+            window.parent.postMessage(JSON.stringify(data), '*');
+        }
+        </script>`;
+            res.send(html);
+        }
+        catch (err) {
+            if (err.code !== undefined && err.code === HTTPStatus.BAD_REQUEST) {
+                res.status(err.code);
+            }
+            else {
+                res.status(HTTPStatus.NOT_FOUND);
+            }
+            log(res.statusCode);
+            res.send();
+        }
     });
 }
 exports.index = index;
-/**
- * スクリーン状態取得
- * @memberof Screen.ScreenModule
- * @function getScreenStateReserve
- * @param {Request} req
- * @param {Response} res
- * @returns {Promise<void>}
- */
-function getScreenStateReserve(req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const theaterCode = `00${req.body.theaterCode}`.slice(UtilModule.DIGITS['02']);
-            const screenCode = `000${req.body.screenCode}`.slice(UtilModule.DIGITS['03']);
-            const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
-            const setting = yield fs.readJSON('./app/theaters/setting.json');
-            res.json({
-                err: null,
-                result: {
-                    screen: screen,
-                    setting: setting
-                }
-            });
-        }
-        catch (err) {
-            res.json({ err: err, result: null });
-        }
-    });
-}
-exports.getScreenStateReserve = getScreenStateReserve;
 /**
  * スクリーンHTML取得
  * @memberof Screen.ScreenModule
@@ -73,10 +103,6 @@ function getScreenHtml(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.query.theaterCode === undefined
-                || req.query.dateJouei === undefined
-                || req.query.titleCode === undefined
-                || req.query.titleBranchNum === undefined
-                || req.query.timeBegin === undefined
                 || req.query.screenCode === undefined) {
                 throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
             }
@@ -84,24 +110,33 @@ function getScreenHtml(req, res) {
             const screenCode = `000${req.query.screenCode}`.slice(UtilModule.DIGITS['03']);
             const screen = yield fs.readJSON(`./app/theaters/${theaterCode}/${screenCode}.json`);
             const setting = yield fs.readJSON('./app/theaters/setting.json');
-            const state = yield COA.services.reserve.stateReserveSeat({
-                theaterCode: req.query.theaterCode,
-                dateJouei: req.query.dateJouei,
-                titleCode: req.query.titleCode,
-                titleBranchNum: req.query.titleBranchNum,
-                timeBegin: req.query.timeBegin,
-                screenCode: req.query.screenCode // スクリーンコード
-            });
-            const html = yield createScreen({
+            let state;
+            if (req.query.dateJouei !== undefined
+                && req.query.titleCode !== undefined
+                && req.query.titleBranchNum !== undefined
+                && req.query.timeBegin !== undefined) {
+                state = yield COA.services.reserve.stateReserveSeat({
+                    theaterCode: req.query.theaterCode,
+                    dateJouei: req.query.dateJouei,
+                    titleCode: req.query.titleCode,
+                    titleBranchNum: req.query.titleBranchNum,
+                    timeBegin: req.query.timeBegin,
+                    screenCode: req.query.screenCode // スクリーンコード
+                });
+            }
+            const createScreenArgs = {
                 setting: setting,
                 screen: screen,
                 state: state,
                 option: req.query.option
-            });
+            };
+            const html = yield createScreen(createScreenArgs);
+            const resources = (req.query.option !== undefined || req.query.option.resources !== undefined)
+                ? req.query.option.resources : '';
             res.json({
                 result: {
                     html: html,
-                    style: `${req.protocol}://${req.hostname}/css/screen.css`
+                    style: `${resources}/css/screen.css`
                 }
             });
         }
@@ -121,9 +156,7 @@ exports.getScreenHtml = getScreenHtml;
 /**
  * スクリーン生成
  * @function createScreen
- * @param {IScreenSetting} setting スクリーン共通設定
- * @param {IScreenSetting} screen スクリーン固有設定
- * @param {string | undefined} resources リソース場所
+ * @param {ICreateScreenArgs} args スクリーン固有設定
  * @returns {Promise<string>}
  */
 // tslint:disable:max-func-body-length cyclomatic-complexity no-magic-numbers
@@ -255,7 +288,7 @@ function createScreen(args) {
                     || screen.map[y][x] === 8
                     || screen.map[y][x] === 10) {
                     //座席HTML生成
-                    const code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`; //Ａ－１９
+                    const code = `${toFullWidth(labels[labelCount])}－${toFullWidth(String(x + 1))}`;
                     const label = `${labels[labelCount]}${String(x + 1)}`;
                     if (screen.hc.indexOf(label) !== -1) {
                         seatHtml.push(`<div class="seat seat-hc"
@@ -271,17 +304,19 @@ function createScreen(args) {
                     else {
                         let section = '';
                         let seat;
-                        state.listSeat.forEach((listSeat) => {
-                            if (seat !== undefined) {
-                                return;
-                            }
-                            seat = listSeat.listFreeSeat.find((freeSeat) => {
-                                return (freeSeat.seatNum === code);
+                        if (state !== undefined) {
+                            state.listSeat.forEach((listSeat) => {
+                                if (seat !== undefined) {
+                                    return;
+                                }
+                                seat = listSeat.listFreeSeat.find((freeSeat) => {
+                                    return (freeSeat.seatNum === code);
+                                });
+                                if (seat !== undefined) {
+                                    section = listSeat.seatSection;
+                                }
                             });
-                            if (seat !== undefined) {
-                                section = listSeat.seatSection;
-                            }
-                        });
+                        }
                         seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
                         <a href="#"
@@ -318,13 +353,12 @@ function createScreen(args) {
                 }
             }
         }
-        html += `<div class="screen-inner"
-        style=" width: ${screen.size.w}px; height: ${screen.size.h}px;">
+        html += `
         ${objectsHtml.join('\n')}
         ${seatNumberHtml.join('\n')}
         ${seatLabelHtml.join('\n')}
         ${seatHtml.join('\n')}
-    <div>`;
+    `;
         return `<div class="screen-cover ${screenType}">
         <div class="screen">
             <div class="screen-scroll"

@@ -122,6 +122,9 @@
 * {
   box-sizing: border-box; }
 
+body {
+  margin: 0; }
+
 .screen {
   visibility: visible;
   overflow: visible; }
