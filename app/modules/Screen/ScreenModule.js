@@ -293,10 +293,11 @@ function createScreen(args) {
                     if (screen.hc.indexOf(label) !== -1) {
                         seatHtml.push(`<div class="seat seat-hc"
                     style="top:${pos.y}px; left:${pos.x}px">
-                        <a href="#"
+                        <a href="javascript:void(0)"
                         class="default"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
-                        data-seat-code="${code}" data-seat-section="">
+                        data-seat-code="${code}"
+                        data-seat-section="">
                             <span>${label}</span>
                         </a>
                     </div>`);
@@ -319,7 +320,7 @@ function createScreen(args) {
                         }
                         seatHtml.push(`<div class="seat"
                     style="top:${pos.y}px; left:${pos.x}px">
-                        <a href="#"
+                        <a href="javascript:void(0)"
                         class="${(seat === undefined) ? 'disabled' : 'default'}"
                         style="width: ${seatSize.w}px; height: ${seatSize.h}px"
                         data-seat-code="${code}"
