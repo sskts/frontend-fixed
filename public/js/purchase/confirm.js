@@ -80,6 +80,7 @@ function purchase() {
             var transactionId = $('input[name=transactionId]').val();
             var theaterCode = $('input[name=theaterCode]').val();
             try {
+                // Google Analytics
                 var sendData = {
                     hitType: 'event',
                     eventCategory: 'purchase',
@@ -89,6 +90,31 @@ function purchase() {
                 ga('send', sendData);
             } catch (err) {
                 console.error(err);
+            }
+            if (isApp()) {
+                try {
+                    // プッシュ通知登録
+                    var TARGET_VIEW = 'mainView';
+                    var string = '';
+                    var reservationFor = data.order.acceptedOffers[0].itemOffered.reservationFor;
+                    var data = {
+                        id: Number(data.order.orderNumber.replace(/\-/g, '')), // ID
+                        title: 'シネマサンシャイン', // タイトル
+                        text: '鑑賞時間が近づいています。\n' +
+                            '劇場 / スクリーン: ' + reservationFor.superEvent.location.name.ja + '/' + reservationFor.location.name.ja + '\n' +
+                            '作品名: ' + reservationFor.workPerformed.name + '\n' +
+                            '上映開始: ' + moment(reservationFor.startDate).format('YYYY/MM/DD HH:mm'), // テキスト
+                        trigger: {
+                            at: moment(reservationFor.startDate).subtract(30, 'minutes').toISOString() // 通知を送る時間（ISO）
+                        },
+                        smallIcon: string, // スモールアイコンの画像パス
+                        foreground: true // 前面表示（デフォルトは前面表示しない）
+                    };
+                    var json = JSON.stringify(data);
+                    window.wizViewMessenger.postMessage(json, TARGET_VIEW);
+                } catch (err) {
+                    console.error(err);
+                }
             }
             if (data.mail === null) {
                 resendMail(0);
@@ -111,11 +137,14 @@ function purchase() {
     var alwaysFunction = function () {
         $('.next-button button').prop('disabled', false);
     }
-    $.ajax(option).done(doneFunction).fail(failFunction).always(alwaysFunction);
+    $.ajax(option)
+        .done(doneFunction)
+        .fail(failFunction)
+        .always(alwaysFunction);
 }
 
 /**
- * メール送信
+ * メール再送信
  * @function resendMail
  * @param {number} count
  * @returns {void}
@@ -146,7 +175,9 @@ function resendMail(count) {
     var failFunction = function (jqXhr, textStatus, errorThrown) {
         process(null, jqXhr);
     }
-    $.ajax(option).done(doneFunction).fail(failFunction);
+    $.ajax(option)
+        .done(doneFunction)
+        .fail(failFunction);
 }
 
 /**
@@ -320,3 +351,4 @@ function validation() {
         }
     });
 }
+
