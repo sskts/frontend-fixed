@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.3.2 - 2017-12-20
+### Fixed
+ - 池袋スクリーン5修正
+
 ## 2.3.1 - 2017-12-13
 ### Fixed
  - ムビチケサイトコード変換修正
