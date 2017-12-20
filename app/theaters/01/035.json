@@ -8,19 +8,19 @@
             "image": "/images/theater/01/screen/025.svg"
         },
         {
-            "w": 1066, "h": 3,
-            "x": 140, "y": 1469,
+            "w": 1146, "h": 4,
+            "x": 100, "y": 1469,
             "image": "/images/theater/01/extra/line_05.svg"
         },
         {
-            "w": 50, "h": 40,
-            "x": 1156, "y": 260,
-            "image": "/images/theater/label/floor_05.svg"
+            "w": 85, "h": 30,
+            "x": 1156, "y": 1400,
+            "image": "/images/theater/label/floor_01.svg"
         },
         {
-            "w": 50, "h": 40,
+            "w": 88, "h": 30,
             "x": 1156, "y": 1510,
-            "image": "/images/theater/label/floor_06.svg"
+            "image": "/images/theater/label/floor_02.svg"
         }
     ],
     "seatStart": { "x": 210, "y": 190 },
