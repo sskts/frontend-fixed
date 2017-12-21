@@ -109,7 +109,10 @@ function purchase() {
                         foreground: true // 前面表示（デフォルトは前面表示しない）
                     };
                     console.log(option);
-                    var json = JSON.stringify(option);
+                    var json = JSON.stringify({
+                        method: 'localNotification',
+                        option: option
+                    });
                     window.wizViewMessenger.postMessage(json, TARGET_VIEW);
                 } catch (err) {
                     console.error(err);
