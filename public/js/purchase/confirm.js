@@ -96,9 +96,9 @@ function purchase() {
                     // プッシュ通知登録
                     var TARGET_VIEW = 'mainView';
                     var string = '';
-                    var reservationFor = data.order.acceptedOffers[0].itemOffered.reservationFor;
-                    var data = {
-                        id: Number(data.order.orderNumber.replace(/\-/g, '')), // ID
+                    var reservationFor = data.result.order.acceptedOffers[0].itemOffered.reservationFor;
+                    var option = {
+                        id: Number(data.result.order.orderNumber.replace(/\-/g, '')), // ID
                         title: 'シネマサンシャイン', // タイトル
                         text: '鑑賞時間が近づいています。\n' +
                             '劇場 / スクリーン: ' + reservationFor.superEvent.location.name.ja + '/' + reservationFor.location.name.ja + '\n' +
@@ -110,13 +110,13 @@ function purchase() {
                         smallIcon: string, // スモールアイコンの画像パス
                         foreground: true // 前面表示（デフォルトは前面表示しない）
                     };
-                    var json = JSON.stringify(data);
+                    var json = JSON.stringify(option);
                     window.wizViewMessenger.postMessage(json, TARGET_VIEW);
                 } catch (err) {
                     console.error(err);
                 }
             }
-            if (data.mail === null) {
+            if (data.result.mail === null) {
                 resendMail(0);
             }
             showComplete(data.result);
