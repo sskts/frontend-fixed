@@ -801,8 +801,7 @@ p a {
         margin-top: -50%; }
 
 .modal.scroll .inner {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; }
+  overflow-y: auto; }
 
 .modal-cover.active,
 .modal.active {
