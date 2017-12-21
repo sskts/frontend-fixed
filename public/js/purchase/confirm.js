@@ -95,7 +95,6 @@ function purchase() {
                 try {
                     // プッシュ通知登録
                     var TARGET_VIEW = 'mainView';
-                    var string = '';
                     var reservationFor = data.result.order.acceptedOffers[0].itemOffered.reservationFor;
                     var option = {
                         id: Number(data.result.order.orderNumber.replace(/\-/g, '')), // ID
@@ -107,9 +106,9 @@ function purchase() {
                         trigger: {
                             at: moment(reservationFor.startDate).subtract(30, 'minutes').toISOString() // 通知を送る時間（ISO）
                         },
-                        smallIcon: string, // スモールアイコンの画像パス
                         foreground: true // 前面表示（デフォルトは前面表示しない）
                     };
+                    console.log(option);
                     var json = JSON.stringify(option);
                     window.wizViewMessenger.postMessage(json, TARGET_VIEW);
                 } catch (err) {
