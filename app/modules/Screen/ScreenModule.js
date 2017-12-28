@@ -181,9 +181,9 @@ function createScreen(args) {
                 screenType = '';
                 break;
         }
-        const scale = (option !== undefined && option.width) ? option.width / screen.size.w : 1;
+        const scale = (option !== undefined && option.width !== undefined) ? option.width / screen.size.w : 1;
         //html挿入の場合
-        if (screen.html) {
+        if (screen.html !== undefined) {
             return `<div class="screen-cover ${screenType}">
         <div class="screen">
             <div class="screen-scroll"
@@ -198,19 +198,19 @@ function createScreen(args) {
     </div>`;
         }
         //style挿入の場合
-        if (screen.style) {
+        if (screen.style !== undefined) {
             html = screen.style;
         }
         //通路大きさ
-        const aisle = (screen.aisle) ? screen.aisle : setting.aisle;
+        const aisle = (screen.aisle !== undefined) ? screen.aisle : setting.aisle;
         //座席同士の間隔
-        const seatMargin = (screen.seatMargin) ? screen.seatMargin : setting.seatMargin;
+        const seatMargin = (screen.seatMargin !== undefined) ? screen.seatMargin : setting.seatMargin;
         //座席の大きさ
-        const seatSize = (screen.seatSize) ? screen.seatSize : setting.seatSize;
+        const seatSize = (screen.seatSize !== undefined) ? screen.seatSize : setting.seatSize;
         //座席ラベル位置
-        const seatLabelPos = (screen.seatLabelPos) ? screen.seatLabelPos : setting.seatLabelPos;
+        const seatLabelPos = (screen.seatLabelPos !== undefined) ? screen.seatLabelPos : setting.seatLabelPos;
         //座席番号位置
-        const seatNumberPos = (screen.seatNumberPos) ? screen.seatNumberPos : setting.seatNumberPos;
+        const seatNumberPos = (screen.seatNumberPos !== undefined) ? screen.seatNumberPos : setting.seatNumberPos;
         //y軸ラベル
         const labels = [];
         const startLabelNo = 65;
