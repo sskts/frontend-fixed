@@ -266,9 +266,10 @@ async function sendMail(
     const theater = await sasaki.service.place(options).findMovieTheater({
         branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
     });
+    const file = (UtilModule.isApp(req)) ? `email/complete/ticket_${req.__('lang')}` : `email/complete/${req.__('lang')}`;
     const content = await UtilModule.getEmailTemplate(
         res,
-        `email/complete/${req.__('lang')}`,
+        file,
         {
             purchaseModel: purchaseModel,
             theater: theater,
