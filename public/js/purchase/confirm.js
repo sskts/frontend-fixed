@@ -98,9 +98,8 @@ function purchase() {
                     var reservationFor = data.result.order.acceptedOffers[0].itemOffered.reservationFor;
                     var option = {
                         id: Number(data.result.order.orderNumber.replace(/\-/g, '')), // ID
-                        title: 'シネマサンシャイン', // タイトル
-                        text: '鑑賞時間が近づいています。\n' +
-                            '劇場 / スクリーン: ' + reservationFor.superEvent.location.name.ja + '/' + reservationFor.location.name.ja + '\n' +
+                        title: '鑑賞時間が近づいています。', // タイトル
+                        text: '劇場 / スクリーン: ' + reservationFor.superEvent.location.name.ja + '/' + reservationFor.location.name.ja + '\n' +
                             '作品名: ' + reservationFor.workPerformed.name + '\n' +
                             '上映開始: ' + moment(reservationFor.startDate).format('YYYY/MM/DD HH:mm'), // テキスト
                         trigger: {
@@ -108,7 +107,6 @@ function purchase() {
                         },
                         foreground: true // 前面表示（デフォルトは前面表示しない）
                     };
-                    console.log(option);
                     var json = JSON.stringify({
                         method: 'localNotification',
                         option: option

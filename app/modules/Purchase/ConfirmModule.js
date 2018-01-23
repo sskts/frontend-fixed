@@ -274,7 +274,8 @@ function sendMail(req, res, purchaseModel, authModel) {
         const theater = yield sasaki.service.place(options).findMovieTheater({
             branchCode: purchaseModel.individualScreeningEvent.coaInfo.theaterCode
         });
-        const content = yield UtilModule.getEmailTemplate(res, `email/complete/${req.__('lang')}`, {
+        const file = (UtilModule.isApp(req)) ? `email/complete/ticket_${req.__('lang')}` : `email/complete/${req.__('lang')}`;
+        const content = yield UtilModule.getEmailTemplate(res, file, {
             purchaseModel: purchaseModel,
             theater: theater,
             domain: req.headers.host,
