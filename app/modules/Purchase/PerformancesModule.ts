@@ -111,11 +111,6 @@ export async function getPerformances(req: Request, res: Response): Promise<void
  * @returns {Promise<void>}
  */
 export async function getSchedule(req: Request, res: Response): Promise<void> {
-    if (process.env.APP_SITE_URL === undefined) {
-        return;
-    }
-    res.setHeader('Access-Control-Allow-Origin', <string>process.env.APP_SITE_URL);
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     try {
         if (req.session === undefined
             || req.query.startFrom === undefined
