@@ -32,6 +32,12 @@ set WEBSITE_NODE_DEFAULT_VERSION=**********node.jsバージョン**********
 set WEBSITE_TIME_ZONE=Tokyo Standard Time
 ```
 
+クロスドメイン、iframeからのリクエスト許可
+
+```shell
+set WHITELIST=**********カンマつなぎのURLリスト**********
+```
+
 IP制限をかけたい場合
 
 ```shell

@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.4.0 - 2017-01-23
+### Added
+ - スクリーン生成API追加
+ - スマホアプリ用購入完了メール追加
+ - スマホアプリプッシュ通知連携追加
+
 ## 2.3.3 - 2017-12-21
 ### Fixed
  - iPhone券種選択不具合修正
