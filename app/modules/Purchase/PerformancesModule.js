@@ -125,11 +125,6 @@ exports.getPerformances = getPerformances;
  */
 function getSchedule(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (process.env.APP_SITE_URL === undefined) {
-            return;
-        }
-        res.setHeader('Access-Control-Allow-Origin', process.env.APP_SITE_URL);
-        res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
         try {
             if (req.session === undefined
                 || req.query.startFrom === undefined

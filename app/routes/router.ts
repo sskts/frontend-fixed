@@ -10,6 +10,7 @@ import inquiryRouter from './inquiry';
 import methodRouter from './method';
 import purchaseRouter from './purchase';
 import rootRouter from './root';
+import screenRouter from './screen';
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ export default (app: express.Application) => {
     app.use('/purchase', purchaseRouter); // 購入
     app.use('/inquiry', inquiryRouter); // 照会
     app.use('/method', methodRouter); // 方法
+    app.use('/screen', screenRouter); // スクリーン
 
     if (process.env.VIEW_TYPE === UtilModule.VIEW.Fixed) {
         app.use('', fixedRouter); // 券売機

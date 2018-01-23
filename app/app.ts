@@ -10,6 +10,7 @@ import ipFilter from './middlewares/ipFilter';
 import * as locales from './middlewares/locales';
 import maintenance from './middlewares/maintenance';
 import session from './middlewares/session';
+import whiteList from './middlewares/whiteList';
 import * as UtilModule from './modules/Util/UtilModule';
 import router from './routes/router';
 // tslint:disable-next-line:no-var-requires no-require-imports
@@ -24,12 +25,7 @@ const app = express();
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
-if (process.env.APP_SITE_URL !== undefined) {
-    app.use(helmet.frameguard({
-        action: 'allow-from',
-        domain: process.env.APP_SITE_URL
-    }));
-}
+app.use(whiteList); // 許可設定
 app.use(benchmarks); // ベンチマーク的な
 app.use(session); // セッション
 

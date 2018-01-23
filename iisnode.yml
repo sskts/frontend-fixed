@@ -1,6 +1,6 @@
 devErrorsEnabled: false
 enableXFF: true
-loggingEnabled: true
+loggingEnabled: false
 maxConcurrentRequestsPerProcess: 1024
 nodeProcessCountPerApplication: 0
 maxNamedPipeConnectionRetry: 200

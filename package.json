@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "ssl": "node ./ssl.js",
@@ -14,7 +14,7 @@
     "tslint-fix": "tslint -c tslint.json app/**/**.ts --project tsconfig.json --fix",
     "jsdoc": "grunt jsdoc",
     "clean": "rimraf libs/**/*.js app/**/*.js test/**/*.js docs/* npm-debug.log*",
-    "build": "tsc",
+    "build": "tsc --locale ja-jp",
     "test": "npm run check && npm run nyc",
     "preversion": "npm run clean && npm run build && npm run css && npm test",
     "version": "git add -A",
