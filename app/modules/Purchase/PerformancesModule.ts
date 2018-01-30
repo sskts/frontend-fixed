@@ -2,6 +2,7 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
+import * as COA from '@motionpicture/coa-service';
 import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -126,9 +127,15 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
         };
         const theaters = await sasaki.service.organization(options).searchMovieTheaters();
         const screeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent(args);
-        const result = {
+        const checkedScreeningEvents = await checkedSchedules({
+            startFrom: req.query.startFrom,
+            startThrough: req.query.startThrough,
             theaters: theaters,
             screeningEvents: screeningEvents
+        });
+        const result = {
+            theaters: theaters,
+            screeningEvents: checkedScreeningEvents
         };
         res.json({ result: result });
     } catch (err) {
@@ -139,6 +146,118 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
         }
         res.json({ error: err });
     }
+}
+
+type IEventWithOffer = sasaki.factory.event.individualScreeningEvent.IEventWithOffer;
+
+interface ICoaSchedule {
+    theater: sasaki.factory.organization.movieTheater.IPublicFields;
+    schedules: COA.services.master.IScheduleResult[];
+}
+
+let coaSchedules: ICoaSchedule[] = [];
+coaSchedulesUpdate();
+
+/**
+ * COAスケジュール更新
+ * @function coaSchedulesUpdate
+ */
+async function coaSchedulesUpdate(): Promise<void> {
+    log('coaSchedulesUpdate start', coaSchedules.length);
+    try {
+        const result: ICoaSchedule[] = [];
+        const authModel = new AuthModel();
+        const options = {
+            endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
+            auth: authModel.create()
+        };
+        const theaters = await sasaki.service.organization(options).searchMovieTheaters();
+        const end = 5;
+        for (const theater of theaters) {
+            const scheduleArgs = {
+                theaterCode: theater.location.branchCode,
+                begin: moment().format('YYYYMMDD'),
+                end: moment().add(end, 'week').format('YYYYMMDD')
+            };
+            const schedules = await COA.services.master.schedule(scheduleArgs);
+            result.push({
+                theater: theater,
+                schedules: schedules
+            });
+        }
+        coaSchedules = result;
+        const upDateTime = 3600000; // 1000 * 60 * 60
+        setTimeout(async () => { await coaSchedulesUpdate(); }, upDateTime);
+    } catch (err) {
+        log(err);
+        await coaSchedulesUpdate();
+    }
+    log('coaSchedulesUpdate end', coaSchedules.length);
+}
+
+/**
+ * COAスケジュール更新待ち
+ * @function waitCoaSchedulesUpdate
+ */
+async function waitCoaSchedulesUpdate() {
+    const timer = 1000;
+    const limit = 10000;
+    let count = 0;
+
+    return new Promise<void>((resolve, reject) => {
+        setInterval(
+            () => {
+                if (count > limit) {
+                    reject();
+                }
+                if (coaSchedules.length > 0) {
+                    resolve();
+                }
+                count += 1;
+            },
+            timer
+        );
+    });
+}
+
+/**
+ * スケジュール整合性確認
+ * @function checkedSchedules
+ */
+async function checkedSchedules(args: {
+    startFrom: string;
+    startThrough: string;
+    theaters: sasaki.factory.organization.movieTheater.IPublicFields[];
+    screeningEvents: IEventWithOffer[];
+}): Promise<IEventWithOffer[]> {
+    if (coaSchedules.length === 0) {
+        await waitCoaSchedulesUpdate();
+    }
+    const screeningEvents: IEventWithOffer[] = [];
+    let coaScreeningEventsLength: number = 0;
+    for (const coaSchedule of coaSchedules) {
+        coaScreeningEventsLength += coaSchedule.schedules.length;
+        for (const schedule of coaSchedule.schedules) {
+            const id = [
+                coaSchedule.theater.location.branchCode,
+                schedule.titleCode,
+                schedule.titleBranchNum,
+                schedule.dateJouei,
+                schedule.screenCode,
+                schedule.timeBegin
+            ].join('');
+            const screeningEvent = args.screeningEvents.find((event) => {
+                return (event.identifier === id);
+            });
+            if (screeningEvent !== undefined) {
+                screeningEvents.push(screeningEvent);
+            }
+        }
+    }
+    log('screeningEvents', screeningEvents.length);
+    log('notScreeningEvents', coaScreeningEventsLength - screeningEvents.length);
+
+    return screeningEvents;
 }
 
 /**
