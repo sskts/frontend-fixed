@@ -205,12 +205,14 @@ async function waitCoaSchedulesUpdate() {
     let count = 0;
 
     return new Promise<void>((resolve, reject) => {
-        setInterval(
+        const check = setInterval(
             () => {
                 if (count > limit) {
+                    clearInterval(check);
                     reject();
                 }
                 if (coaSchedules.length > 0) {
+                    clearInterval(check);
                     resolve();
                 }
                 count += 1;

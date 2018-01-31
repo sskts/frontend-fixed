@@ -217,11 +217,13 @@ function waitCoaSchedulesUpdate() {
         const limit = 10000;
         let count = 0;
         return new Promise((resolve, reject) => {
-            setInterval(() => {
+            const check = setInterval(() => {
                 if (count > limit) {
+                    clearInterval(check);
                     reject();
                 }
                 if (coaSchedules.length > 0) {
+                    clearInterval(check);
                     resolve();
                 }
                 count += 1;
