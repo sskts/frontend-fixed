@@ -368,7 +368,8 @@
 		"glasses": "メガネ込み",
 		"reserve_tickets": "common.reserve_tickets",
 		"reserve_num": "common.reserve_num",
-		"mvtk": "common.mvtk"
+		"mvtk": "common.mvtk",
+		"ticket_holder_prev": "チケットホルダーに戻る"
 	},
 	"%s ticket": {
 		"one": "%s枚",
