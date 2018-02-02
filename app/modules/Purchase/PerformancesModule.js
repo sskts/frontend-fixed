@@ -141,10 +141,18 @@ function getSchedule(req, res) {
                 startThrough: req.query.startThrough
             };
             const theaters = yield sasaki.service.organization(options).searchMovieTheaters();
+            // theaters = theaters.filter((theater) => {
+            //     return (theater.location.branchCode === '018');
+            // });
+            // const add = 5;
+            // const args = {
+            //     theater: theaters[0].location.branchCode,
+            //     startFrom: <any>moment('20180202').toISOString(),
+            //     startThrough: <any>moment('20180202').add(add, 'week').toISOString()
+            // };
+            // log(args);
             const screeningEvents = yield sasaki.service.event(options).searchIndividualScreeningEvent(args);
             const checkedScreeningEvents = yield checkedSchedules({
-                startFrom: req.query.startFrom,
-                startThrough: req.query.startThrough,
                 theaters: theaters,
                 screeningEvents: screeningEvents
             });
@@ -241,9 +249,7 @@ function checkedSchedules(args) {
             yield waitCoaSchedulesUpdate();
         }
         const screeningEvents = [];
-        let coaScreeningEventsLength = 0;
         for (const coaSchedule of coaSchedules) {
-            coaScreeningEventsLength += coaSchedule.schedules.length;
             for (const schedule of coaSchedule.schedules) {
                 const id = [
                     coaSchedule.theater.location.branchCode,
@@ -261,11 +267,35 @@ function checkedSchedules(args) {
                 }
             }
         }
-        log('screeningEvents', screeningEvents.length);
-        log('notScreeningEvents', coaScreeningEventsLength - screeningEvents.length);
+        // const diffList = diffScreeningEvents(args.screeningEvents, screeningEvents);
+        // for (const diff of diffList) {
+        //     log('diff', diff.identifier);
+        // }
+        // log('all length', screeningEvents.length + diffList.length);
+        // log('screeningEvents length', screeningEvents.length);
+        // log('diffList length', diffList.length);
         return screeningEvents;
     });
 }
+/**
+ * 差分抽出
+ * @function diffScreeningEvents
+ * @param　{IEventWithOffer[]} array1
+ * @param {IEventWithOffer[]} array2
+ */
+function diffScreeningEvents(array1, array2) {
+    const diffArray = [];
+    for (const array of array1) {
+        const target = array2.find((event) => {
+            return (event.identifier === array.identifier);
+        });
+        if (target === undefined) {
+            diffArray.push(array);
+        }
+    }
+    return diffArray;
+}
+exports.diffScreeningEvents = diffScreeningEvents;
 /**
  * 劇場一覧検索
  * @memberof Purchase.PerformancesModule

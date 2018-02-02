@@ -126,10 +126,18 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
             startThrough: req.query.startThrough
         };
         const theaters = await sasaki.service.organization(options).searchMovieTheaters();
+        // theaters = theaters.filter((theater) => {
+        //     return (theater.location.branchCode === '018');
+        // });
+        // const add = 5;
+        // const args = {
+        //     theater: theaters[0].location.branchCode,
+        //     startFrom: <any>moment('20180202').toISOString(),
+        //     startThrough: <any>moment('20180202').add(add, 'week').toISOString()
+        // };
+        // log(args);
         const screeningEvents = await sasaki.service.event(options).searchIndividualScreeningEvent(args);
         const checkedScreeningEvents = await checkedSchedules({
-            startFrom: req.query.startFrom,
-            startThrough: req.query.startThrough,
             theaters: theaters,
             screeningEvents: screeningEvents
         });
@@ -227,8 +235,6 @@ async function waitCoaSchedulesUpdate() {
  * @function checkedSchedules
  */
 async function checkedSchedules(args: {
-    startFrom: string;
-    startThrough: string;
     theaters: sasaki.factory.organization.movieTheater.IPublicFields[];
     screeningEvents: IEventWithOffer[];
 }): Promise<IEventWithOffer[]> {
@@ -236,9 +242,7 @@ async function checkedSchedules(args: {
         await waitCoaSchedulesUpdate();
     }
     const screeningEvents: IEventWithOffer[] = [];
-    let coaScreeningEventsLength: number = 0;
     for (const coaSchedule of coaSchedules) {
-        coaScreeningEventsLength += coaSchedule.schedules.length;
         for (const schedule of coaSchedule.schedules) {
             const id = [
                 coaSchedule.theater.location.branchCode,
@@ -256,10 +260,36 @@ async function checkedSchedules(args: {
             }
         }
     }
-    log('screeningEvents', screeningEvents.length);
-    log('notScreeningEvents', coaScreeningEventsLength - screeningEvents.length);
+    // const diffList = diffScreeningEvents(args.screeningEvents, screeningEvents);
+    // for (const diff of diffList) {
+    //     log('diff', diff.identifier);
+    // }
+    // log('all length', screeningEvents.length + diffList.length);
+    // log('screeningEvents length', screeningEvents.length);
+    // log('diffList length', diffList.length);
 
     return screeningEvents;
+}
+
+/**
+ * 差分抽出
+ * @function diffScreeningEvents
+ * @param　{IEventWithOffer[]} array1
+ * @param {IEventWithOffer[]} array2
+ */
+export function diffScreeningEvents(array1: IEventWithOffer[], array2: IEventWithOffer[]) {
+    const diffArray: IEventWithOffer[] = [];
+
+    for (const array of array1) {
+        const target = array2.find((event) => {
+            return (event.identifier === array.identifier);
+        });
+        if (target === undefined) {
+            diffArray.push(array);
+        }
+    }
+
+    return diffArray;
 }
 
 /**
