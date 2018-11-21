@@ -136,7 +136,8 @@ function auth(req, res, next) {
                         appPrice: Number(info.kijUnip),
                         kbnEisyahousiki: info.eishhshkTyp,
                         titleCode: purchaseModel.individualScreeningEvent.coaInfo.titleCode,
-                        titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum
+                        titleBranchNum: purchaseModel.individualScreeningEvent.coaInfo.titleBranchNum,
+                        dateJouei: purchaseModel.individualScreeningEvent.coaInfo.dateJouei
                     });
                     log('ムビチケチケットコード取得', ticket);
                     const validTicket = {

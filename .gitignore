@@ -4,6 +4,7 @@ typings/*
 iisnode/*
 docs/
 .env*
+.prod*
 app.yaml*
 *.log
 .vscode/
