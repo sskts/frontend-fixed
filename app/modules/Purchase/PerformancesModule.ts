@@ -164,7 +164,7 @@ interface ICoaSchedule {
 }
 
 let coaSchedules: ICoaSchedule[] = [];
-coaSchedulesUpdate();
+coaSchedulesUpdate().then().catch();
 
 /**
  * COAスケジュール更新
@@ -198,7 +198,8 @@ async function coaSchedulesUpdate(): Promise<void> {
         setTimeout(async () => { await coaSchedulesUpdate(); }, upDateTime);
     } catch (err) {
         log(err);
-        await coaSchedulesUpdate();
+        const upDateTime = 3600000; // 1000 * 60 * 30
+        setTimeout(async () => { await coaSchedulesUpdate(); }, upDateTime);
     }
     log('coaSchedulesUpdate end', coaSchedules.length);
 }
