@@ -175,7 +175,7 @@ function getSchedule(req, res) {
 }
 exports.getSchedule = getSchedule;
 let coaSchedules = [];
-coaSchedulesUpdate();
+coaSchedulesUpdate().then().catch();
 /**
  * COAスケジュール更新
  * @function coaSchedulesUpdate
@@ -210,7 +210,8 @@ function coaSchedulesUpdate() {
         }
         catch (err) {
             log(err);
-            yield coaSchedulesUpdate();
+            const upDateTime = 3600000; // 1000 * 60 * 30
+            setTimeout(() => __awaiter(this, void 0, void 0, function* () { yield coaSchedulesUpdate(); }), upDateTime);
         }
         log('coaSchedulesUpdate end', coaSchedules.length);
     });
