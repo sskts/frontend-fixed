@@ -6,3 +6,4 @@ nodeProcessCountPerApplication: 0
 maxNamedPipeConnectionRetry: 200
 namedPipeConnectionRetryDelay: 250
 watchedFiles: *.js;web.config;iisnode.yml
+nodeProcessCommandLine: "D:\Program Files (x86)\nodejs\8.4.0\node.exe"
