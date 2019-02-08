@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.4.2 - 2019-02-08
+### Fixed
+ - 印刷不具合修正（APIアップデートによる互換性調整）
+
 ## 2.4.1 - 2017-11-21
 ### Changed
  - 4DX動的金額対応
