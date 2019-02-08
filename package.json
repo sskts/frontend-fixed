@@ -1,10 +1,10 @@
 {
   "name": "sskts-frontend",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "private": true,
   "scripts": {
     "ssl": "node ./ssl.js",
-    "check": "npm run tslint && nsp check",
+    "check": "npm run tslint",
     "snyk": "snyk auth && snyk test --ignore-policy",
     "start": "node ./index.js",
     "ui-test": "node ./test/uiTest.js",

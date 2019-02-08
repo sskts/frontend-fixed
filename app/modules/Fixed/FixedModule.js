@@ -86,7 +86,6 @@ function getInquiryData(req, res) {
                 inquiryModel.movieTheaterOrganization = yield sasaki.service.organization(options).findMovieTheaterByBranchCode({
                     branchCode: req.body.theaterCode
                 });
-                log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
                 if (inquiryModel.movieTheaterOrganization === null)
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 inquiryModel.login = {
@@ -98,6 +97,12 @@ function getInquiryData(req, res) {
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
                 });
+                log('オーダーIn', {
+                    telephone: inquiryModel.login.telephone,
+                    confirmationNumber: Number(inquiryModel.login.reserveNum),
+                    theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+                });
+                log('オーダーOut', inquiryModel.order);
                 if (inquiryModel.order === null)
                     throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
                 // 印刷用
@@ -108,6 +113,7 @@ function getInquiryData(req, res) {
             res.json({ result: null });
         }
         catch (err) {
+            log('オーダーerr', err);
             res.json({ result: null });
         }
     });
@@ -124,7 +130,7 @@ function createPrintReservations(inquiryModel) {
     if (inquiryModel.order === null
         || inquiryModel.movieTheaterOrganization === null)
         throw new ErrorUtilModule_1.AppError(HTTPStatus.BAD_REQUEST, ErrorUtilModule_1.ErrorType.Property);
-    const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
+    const reserveNo = inquiryModel.order.confirmationNumber;
     const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
     return inquiryModel.order.acceptedOffers.map((offer) => {
         if (offer.itemOffered.reservationFor.workPerformed === undefined

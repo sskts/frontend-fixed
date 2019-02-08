@@ -72,7 +72,6 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
             inquiryModel.movieTheaterOrganization = await sasaki.service.organization(options).findMovieTheaterByBranchCode({
                 branchCode: req.body.theaterCode
             });
-            log('劇場のショップを検索', inquiryModel.movieTheaterOrganization);
             if (inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
@@ -84,6 +83,14 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
             });
 
+            log('オーダーIn', {
+                telephone: inquiryModel.login.telephone,
+                confirmationNumber: Number(inquiryModel.login.reserveNum),
+                theaterCode: inquiryModel.movieTheaterOrganization.location.branchCode
+            });
+
+            log('オーダーOut', inquiryModel.order);
+
             if (inquiryModel.order === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
             // 印刷用
@@ -94,6 +101,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         }
         res.json({ result: null });
     } catch (err) {
+        log('オーダーerr', err);
         res.json({ result: null });
     }
 }
@@ -122,7 +130,7 @@ interface IReservation {
 export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === null
         || inquiryModel.movieTheaterOrganization === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-    const reserveNo = inquiryModel.order.orderInquiryKey.confirmationNumber;
+    const reserveNo = inquiryModel.order.confirmationNumber;
     const theaterName = inquiryModel.movieTheaterOrganization.location.name.ja;
 
     return inquiryModel.order.acceptedOffers.map((offer) => {
