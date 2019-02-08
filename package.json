@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "ssl": "node ./ssl.js",
-    "check": "npm run tslint && nsp check",
+    "check": "npm run tslint",
     "snyk": "snyk auth && snyk test --ignore-policy",
     "start": "node ./index.js",
     "ui-test": "node ./test/uiTest.js",

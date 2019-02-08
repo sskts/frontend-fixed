@@ -8,6 +8,17 @@ $(function () {
 });
 
 /**
+ * エントランス取得
+ */
+function getEntranceRegExp() {
+    return {
+        development: /localhost|d2n1h4enbzumbc/i,
+        test: /d24x7394fq3aqi/i,
+        production: /https\:\/\/sskts\-waiter\-production\.appspot\.com/i
+    };
+}
+
+/**
  * トークン取得
  * @function getToken
  * @returns {void}
@@ -18,15 +29,27 @@ function getToken() {
         showAccessError();
         return;
     }
-    var endPoint = (/development|localhost|d2n1h4enbzumbc/i.test(location.hostname))
-        ? 'https://sskts-waiter-development.appspot.com'
-        : (/test|d24x7394fq3aqi/i.test(location.hostname))
-            ? 'https://sskts-waiter-test.appspot.com'
-            : 'https://sskts-waiter-production.appspot.com';
+    var entrance = getEntranceRegExp();
+    var env = (entrance.development.test(location.hostname))
+        ? 'development'
+        : (entrance.test.test(location.hostname))
+            ? 'test'
+            : 'production';
+    var waiter = {
+        development: 'https://waiter-development.appspot.com',
+        test: 'https://waiter-test-224022.appspot.com',
+        production: 'https://waiter-production.appspot.com'
+    };
+    var projectId = {
+        development: 'sskts-development',
+        test: 'sskts-test',
+        production: 'sskts-production'
+    };
+    var url = waiter[env] + '/projects/' + projectId[env] + '/passports';
     var scope = 'placeOrderTransaction.MovieTheater-' + performanceId.slice(0, 3);
     var option = {
         dataType: 'json',
-        url: endPoint + '/passports',
+        url: url,
         type: 'POST',
         timeout: 10000,
         data: {
@@ -42,12 +65,7 @@ function getToken() {
     }
     var prosess = function (data, jqXhr) {
         if (jqXhr.status === HTTP_STATUS.CREATED) {
-            var redirectToTransactionArgs = {
-                performanceId: performanceId,
-                identityId: getParameter()['identityId'],
-                passportToken: data.token
-            };
-            redirectToTransaction(redirectToTransactionArgs);
+            redirectToTransaction({ passportToken: data.token });
         } else if (jqXhr.status === HTTP_STATUS.BAD_REQUEST
             || jqXhr.status === HTTP_STATUS.NOT_FOUND) {
             // アクセスエラー
@@ -84,41 +102,57 @@ function getToken() {
 /**
  * 取引取得
  * @param {Object} args
- * @param {string} args.performanceId
- * @param {string | undefined} args.identityId
  * @param {string} args.passportToken
  * @returns {void}
  */
 function redirectToTransaction(args) {
-    var local;
-    var development;
-    var production;
-    if (isFixed()) {
-        development = 'https://sskts-frontend-fixed-';
-        production = 'https://machine.ticket-cinemasunshine.com';
-    } else {
-        development = 'https://sskts-frontend-';
-        production = 'https://ticket-cinemasunshine.com';
+    var entrance = getEntranceRegExp();
+    var frontend = {
+        development: 'https://sskts-frontend-development.azurewebsites.net',
+        test: 'https://sskts-frontend-test.azurewebsites.net',
+        production: 'https://ticket-cinemasunshine.com'
     }
-    var endPoint = (/development|d2n1h4enbzumbc/i.test(location.hostname))
-        ? development + 'development.azurewebsites.net'
-        : (/test|d24x7394fq3aqi/i.test(location.hostname))
-            ? development + 'test.azurewebsites.net'
-            : (/production/i.test(location.hostname))
-                ? development + 'production-staging.azurewebsites.net'
-                : production;
+    var frontendStaging = {
+        development: 'https://sskts-frontend-development-staging.azurewebsites.net',
+        test: 'https://sskts-frontend-test-staging.azurewebsites.net',
+        production: 'https://prodssktsfrontend-staging.azurewebsites.net'
+    }
+    var frontendFixed = {
+        development: 'https://sskts-frontend-fixed-development.azurewebsites.net',
+        test: 'https://sskts-frontend-fixed-test.azurewebsites.net',
+        production: 'https://machine.ticket-cinemasunshine.com'
+    }
+    var frontendFixedStaging = {
+        development: 'https://sskts-frontend-fixed-development-staging.azurewebsites.net',
+        test: 'https://sskts-frontend-fixed-test-staging.azurewebsites.net',
+        production: 'https://sskts-frontend-fixed-production-staging.azurewebsites.net'
+    }
+    var domain = (isFixed()) ? frontendFixed : frontend;
+    if (getParameter()['staging'] !== undefined
+        && getParameter()['staging']) {
+        domain = (isFixed()) ? frontendFixedStaging : frontendStaging;
+    }
+
+    var endPoint = (entrance.development.test(location.hostname))
+        ? domain.development
+        : (entrance.test.test(location.hostname))
+            ? domain.test
+            : domain.production;
+
     if (/localhost/i.test(document.referrer)) {
-        endPoint = (isApp()) ? 'https://localhost' : new URL(document.referrer).origin;
-    } else if (/localhost/i.test(location.hostname)) {
-        endPoint = 'https://localhost';
-    } else if (/production\-staging/i.test(document.referrer)) {
-        endPoint = development + 'production-staging.azurewebsites.net';
+        if (isIE()) {
+            endPoint = 'https://localhost';
+        } else {
+            endPoint = (isApp()) ? 'https://localhost' : new URL(document.referrer).origin;
+        }
     }
-    var params = 'performanceId=' + args.performanceId + '&passportToken=' + args.passportToken;
-    if (args.identityId !== undefined) {
-        params += '&identityId=' + args.identityId;
-    }
-    var url = endPoint + '/purchase/transaction?' + params;
+
+    var params = getParameter();
+    params.performanceId = getParameter()['id'];
+    params.passportToken = args.passportToken;
+    var query = toQueryString(params);
+
+    var url = endPoint + '/purchase/transaction?' + query;
     location.replace(url);
 }
 
@@ -237,6 +271,33 @@ function getParameter() {
         }
     }
     return result;
+}
+
+/**
+ * クエリ変換
+ * @param {Object} obj 
+ */
+function toQueryString(obj) {
+    var keys = Object.keys(obj);
+    var query = "";
+    for (var i = 0; i < keys.length; i++) {
+        query += keys[i] + "=" + encodeURIComponent(obj[keys[i]]);
+        if (i != keys.length - 1) query += "&";
+    }
+    return query;
+};
+
+/**
+ * IE判定
+ */
+function isIE() {
+    var result = false;
+    var userAgent = window.navigator.userAgent.toLowerCase();
+    if (userAgent.match(/(msie|MSIE)/) || userAgent.match(/(T|t)rident/)) {
+        result = true;
+        var ieVersion = userAgent.match(/((msie|MSIE)\s|rv:)([\d\.]+)/)[3];
+        ieVersion = parseInt(ieVersion);
+    }
 }
 
 /**

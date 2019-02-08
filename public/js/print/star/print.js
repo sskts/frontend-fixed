@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function printTicket(count, cb) {
     var retryTime = 5000;
-    var limit = 10;
+    var limit = 20;
     count++;
     if (count > limit) {
         printAlert('印刷情報が取得できません<br>劇場係員をお呼びください。');

@@ -116,9 +116,9 @@ function purchase() {
                     console.error(err);
                 }
             }
-            if (data.result.mail === null) {
-                resendMail(0);
-            }
+            // if (data.result.mail === null) {
+            //     resendMail(0);
+            // }
             showComplete(data.result);
             loadingEnd();
         } else if (jqXhr.status === HTTP_STATUS.BAD_REQUEST) {
