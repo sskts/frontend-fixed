@@ -1,0 +1,65 @@
+<%- contentFor('script') %>
+<script src="/js/print/star/StarWebPrintTrader.js"></script>
+<script src="/js/print/star/StarWebPrintBuilder.js"></script>
+<script src="/js/print/star/starprint.js"></script>
+<script src="/js/print/star/print.js"></script>
+<script src="/js/setting/index.js"></script>
+<%- contentFor('body') %>
+<div class="setting">
+    <h1 class="page-ttl"><%- __('setting.page_ttl') %></h1>
+    <p class="read"><%- __('setting.read') %></p>
+    <form method="post">
+        <div class="form-layout center">
+            <dl class="mb-small">
+                <dt><%- __('common.theater') %></dt>
+                <dd>
+                    <select name="theater">
+                        <% for (const theater of sellers) { %>
+                        <option selected value="<%= theater.location.branchCode %>"><%= theater.name.ja %></option>
+                        <% } %>
+                    </select>
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.device_id') %></dt>
+                <dd>
+                    <input type="text" name="deviceId" autocomplete="off" placeholder="<%- __('common.placeholder.device_id') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.last_name_hira') %></dt>
+                <dd>
+                    <input type="text" name="familyName" autocomplete="off" placeholder="<%- __('common.placeholder.last_name_hira') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.first_name_hira') %></dt>
+                <dd>
+                    <input type="text" name="givenName" autocomplete="off" placeholder="<%- __('common.placeholder.first_name_hira') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.mail_addr') %></dt>
+                <dd>
+                    <input type="text" name="email" autocomplete="off" placeholder="<%- __('common.placeholder.mail') %>" value="">
+                </dd>
+            </dl>
+            <dl class="mb-small">
+                <dt><%- __('common.printer') %></dt>
+                <dd>
+                    <input type="text" pattern="\d*" name="printer" autocomplete="off" placeholder="<%- __('common.placeholder.printer') %>" value="">
+                </dd>
+            </dl>
+            <p class="mb-large"><%- __('setting.certificate') %></p>
+        </div>
+        
+        <div class="button middle-button next-button blue-button mb-middle"><button class="center icon-triangle-white" type="submit"><%- __('setting.next') %></button></div>
+    </form>
+    <div class="button middle-button blue-button print-button"><a class="center icon-triangle-white" href="#"><%- __('setting.print') %></a></div>
+</div>
+
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('../purchase/modals/validation') %>
+<%- include('../purchase/modals/print') %>

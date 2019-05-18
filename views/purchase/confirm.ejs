@@ -1,0 +1,52 @@
+<%- contentFor('script') %>
+<script src="/js/print/star/StarWebPrintTrader.js"></script>
+<script src="/js/print/star/StarWebPrintBuilder.js"></script>
+<script src="/js/print/star/starprint.js"></script>
+<script src="/js/print/star/print.js"></script>
+<script src="/js/purchase/confirm.js"></script>
+<script src="/js/purchase/complete.js"></script>
+<%- contentFor('prev') %>
+/purchase/input
+<%- contentFor('body') %>
+<div class="purchase-confirm">
+    <h1 class="page-ttl"><%- __('purchase.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.confirm.read') %></p>
+
+    <form method="post">
+        <div class="table-layout center mb-large">
+            <dl>
+                <dt><%- __('common.film_title') %></dt>
+                <dd><%= purchaseModel.screeningEvent.workPerformed.name %></dd>
+            </dl>
+            <dl>
+                <dt><%- __('common.appreciation_date') %></dt>
+                <dd>
+                        <%= moment(purchaseModel.screeningEvent.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(purchaseModel.screeningEvent.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(purchaseModel.screeningEvent.startDate, purchaseModel.screeningEvent.coaInfo.dateJouei) %> - <%= timeFormat(purchaseModel.screeningEvent.endDate, purchaseModel.screeningEvent.coaInfo.dateJouei) %>
+                </dd>
+            </dl>
+            <dl>
+                <dt><%- __('common.seat') %></dt>
+                <dd>
+                    <% for (ticket of purchaseModel.reserveTickets) { %>
+                    <p><%= `${ticket.seatCode} ${ticket.ticketName} ￥${formatPrice(ticket.salePrice)}` %></p>
+                    <% } %>
+                    <div style="display: none" class="right">
+                        <div class="button dark-blue-button confirm-button"><a href="#"><%- __('common.confirm') %></a></div><!--
+                        --><div class="button light-gray-button change-button"><a href="/purchase/seat/<%= purchaseModel.screeningEvent.identifierperformance %>/"><%- __('common.change') %></a></div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+        <input type="hidden" name="notesAgree" value="true">
+        <div class="button next-button blue-button middle-button"><button class="center icon-triangle-white" type="submit"><%- __('purchase.confirm.next') %></button></div>
+        <input type="hidden" name="transactionId" value="<%= purchaseModel.transaction.id %>">
+    </form>
+</div>
+<input type="hidden" name="theaterCode" value="<%= purchaseModel.screeningEvent.coaInfo.theaterCode %>">
+<%- include('completeContents') %>
+<%- include('../error/static') %>
+<%- include('../locales/validation') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/updateReserveError') %>
+<%- include('modals/print') %>
