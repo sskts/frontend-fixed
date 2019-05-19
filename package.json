@@ -41,6 +41,7 @@
     "http-status": "^1.0.1",
     "i18n": "^0.8.3",
     "moment": "^2.19.3",
+    "moment-timezone": "^0.5.25",
     "redis": "^2.8.0",
     "uuid": "^3.1.0",
     "winston": "^2.4.0"
@@ -61,6 +62,7 @@
     "@types/http-status": "^0.2.30",
     "@types/i18n": "^0.5.20",
     "@types/mocha": "^2.2.44",
+    "@types/moment-timezone": "^0.5.12",
     "@types/redis": "^2.8.1",
     "@types/selenium-webdriver": "^2.53.43",
     "@types/sinon": "^2.3.7",
