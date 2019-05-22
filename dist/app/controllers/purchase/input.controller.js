@@ -36,7 +36,6 @@ function render(req, res, next) {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            const authModel = new models_1.AuthModel(req.session.auth);
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
             if (!purchaseModel.accessAuth(models_1.PurchaseModel.INPUT_STATE)) {
@@ -57,17 +56,23 @@ function render(req, res, next) {
                 purchaseModel.profile = defaultProfile;
             }
             purchaseModel.save(req.session);
+            if (purchaseModel.seller === undefined
+                || purchaseModel.seller.paymentAccepted === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+            }
+            const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
+                return (paymentAccepted.paymentMethodType === sasaki.factory.paymentMethodType.CreditCard);
+            });
+            if (findPaymentAcceptedResult === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+            }
             res.locals.error = null;
             res.locals.gmoError = null;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
+            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
             res.locals.step = models_1.PurchaseModel.INPUT_STATE;
-            if (authModel.isMember()) {
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-            }
-            else {
-                res.render('purchase/input', { layout: 'layouts/purchase/layout' });
-            }
+            res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
             next(err);
@@ -183,102 +188,6 @@ function purchaserInformationRegistration(req, res, next) {
     });
 }
 exports.purchaserInformationRegistration = purchaserInformationRegistration;
-/**
- * 購入者情報入力完了(会員)
- * @memberof Purchase.InputModule
- * @function purchaserInformationRegistrationOfMember
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise<void>}
- */
-// tslint:disable-next-line:max-func-body-length
-function purchaserInformationRegistrationOfMember(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (req.session === undefined) {
-            next(new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property));
-            return;
-        }
-        const authModel = new models_1.AuthModel(req.session.auth);
-        const options = functions_1.getApiOption(req);
-        const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-        try {
-            if (!authModel.isMember())
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            if (purchaseModel.isExpired())
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === null
-                || purchaseModel.reserveTickets === null
-                || purchaseModel.profile === null)
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            //取引id確認
-            if (req.body.transactionId !== purchaseModel.transaction.id) {
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            }
-            //バリデーション
-            forms_1.purchaseInputForm(req);
-            const validationResult = yield req.getValidationResult();
-            if (!validationResult.isEmpty()) {
-                res.locals.error = validationResult.mapped();
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = models_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            const phoneUtil = google_libphonenumber_1.PhoneNumberUtil.getInstance();
-            const phoneNumber = phoneUtil.parse(req.body.telephone, 'JP'); // 日本以外は非対応
-            if (!phoneUtil.isValidNumber(phoneNumber)) {
-                purchaseModel.profile = req.body;
-                res.locals.error = {
-                    telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
-                };
-                res.locals.gmoError = null;
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = models_1.PurchaseModel.INPUT_STATE;
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-                return;
-            }
-            // クレジットカード処理
-            try {
-                yield creditCardProsess(req, purchaseModel);
-                log('クレジットカード処理終了');
-            }
-            catch (err) {
-                res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
-                res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.purchaseModel = purchaseModel;
-                res.locals.step = models_1.PurchaseModel.INPUT_STATE;
-                res.locals.gmoError = err.message;
-                res.render('purchase/member/input', { layout: 'layouts/purchase/layout' });
-                log('クレジットカード処理失敗', err);
-                return;
-            }
-            yield new sasaki.service.transaction.PlaceOrder(options).setCustomerContact({
-                id: purchaseModel.transaction.id,
-                object: {
-                    customerContact: {
-                        familyName: purchaseModel.profile.familyName,
-                        givenName: purchaseModel.profile.givenName,
-                        email: purchaseModel.profile.email,
-                        telephone: purchaseModel.profile.telephone
-                    }
-                }
-            });
-            log('SSKTS購入者情報登録');
-            // セッション更新
-            purchaseModel.save(req.session);
-            // 購入者内容確認へ
-            res.redirect('/purchase/confirm');
-        }
-        catch (err) {
-            next(err);
-        }
-    });
-}
-exports.purchaserInformationRegistrationOfMember = purchaserInformationRegistrationOfMember;
 /**
  * クレジットカード処理
  * @function creditCardProsess

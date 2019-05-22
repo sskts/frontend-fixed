@@ -39,7 +39,6 @@ purchaseRouter.post('/ticket', ticket.ticketSelect);
 //購入者情報入力
 purchaseRouter.get('/input', input.render);
 purchaseRouter.post('/input', input.purchaserInformationRegistration);
-purchaseRouter.post('/input/member', input.purchaserInformationRegistrationOfMember);
 
 //購入内容確認
 purchaseRouter.get('/confirm', confirm.render);

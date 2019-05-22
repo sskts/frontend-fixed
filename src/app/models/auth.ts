@@ -82,31 +82,14 @@ export class AuthModel {
      * @method create
      * @returns {sasaki.auth.ClientCredentials}
      */
-    public create(): sasaki.auth.ClientCredentials | sasaki.auth.OAuth2 {
-        if (this.isMember()) {
-            const auth = new sasaki.auth.OAuth2({
-                domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
-                clientId: (<string>process.env.CLIENT_ID_OAUTH2),
-                clientSecret: (<string>process.env.CLIENT_SECRET_OAUTH2),
-                redirectUri: (<string>process.env.AUTH_REDIRECT_URI),
-                logoutUri: (<string>process.env.AUTH_LOGUOT_URI),
-                state: this.state,
-                scopes: this.scopes
-            });
-            if (this.credentials !== null) {
-                auth.setCredentials(this.credentials);
-            }
-
-            return auth;
-        } else {
-            return new sasaki.auth.ClientCredentials({
-                domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
-                clientId: (<string>process.env.CLIENT_ID),
-                clientSecret: (<string>process.env.CLIENT_SECRET),
-                state: this.state,
-                scopes: this.scopes
-            });
-        }
+    public create(): sasaki.auth.ClientCredentials {
+        return new sasaki.auth.ClientCredentials({
+            domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
+            clientId: (<string>process.env.CLIENT_ID),
+            clientSecret: (<string>process.env.CLIENT_SECRET),
+            state: this.state,
+            scopes: this.scopes
+        });
     }
 
     /**

@@ -44,7 +44,6 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         const authModel = new AuthModel(req.session.auth);
         const options = getApiOption(req);
         authModel.save(req.session);
-        log('会員判定', authModel.isMember());
 
         // イベント情報取得
         const screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
@@ -72,19 +71,16 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
 
         let purchaseModel: PurchaseModel;
 
-        if (!authModel.isMember()) {
-            // 非会員なら重複確認
-            purchaseModel = new PurchaseModel(req.session.purchase);
-            log('重複確認');
-            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
-                // 重複確認へ
-                res.redirect(`/purchase/${req.query.performanceId}/overlap`);
-                log('重複確認へ');
+        // 非会員なら重複確認
+        purchaseModel = new PurchaseModel(req.session.purchase);
+        log('重複確認');
+        if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+            // 重複確認へ
+            res.redirect(`/purchase/${req.query.performanceId}/overlap`);
+            log('重複確認へ');
 
-                return;
-            }
+            return;
         }
-
         // セッション削除
         delete req.session.purchase;
         delete req.session.mvtk;

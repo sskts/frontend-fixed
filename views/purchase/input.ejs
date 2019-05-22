@@ -2,7 +2,7 @@
 <script src="/js/common/numerickey.js"></script>
 <script src="/js/purchase/input.js"></script>
 <script src="<%= GMO_ENDPOINT %>/ext/js/token.js"></script>
-<script>Multipayment.init('<%= purchaseModel.seller.gmoInfo.shopId %>');</script>
+<script>Multipayment.init('<%= shopId %>');</script>
 <%- contentFor('prev') %>
 /purchase/ticket
 <%- contentFor('body') %>

@@ -50,7 +50,6 @@ function start(req, res, next) {
             const authModel = new models_1.AuthModel(req.session.auth);
             const options = functions_1.getApiOption(req);
             authModel.save(req.session);
-            log('会員判定', authModel.isMember());
             // イベント情報取得
             const screeningEvent = yield new sasaki.service.Event(options).findScreeningEventById({
                 id: req.query.performanceId
@@ -73,16 +72,14 @@ function start(req, res, next) {
             }
             log('終了可能日判定');
             let purchaseModel;
-            if (!authModel.isMember()) {
-                // 非会員なら重複確認
-                purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-                log('重複確認');
-                if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
-                    // 重複確認へ
-                    res.redirect(`/purchase/${req.query.performanceId}/overlap`);
-                    log('重複確認へ');
-                    return;
-                }
+            // 非会員なら重複確認
+            purchaseModel = new models_1.PurchaseModel(req.session.purchase);
+            log('重複確認');
+            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+                // 重複確認へ
+                res.redirect(`/purchase/${req.query.performanceId}/overlap`);
+                log('重複確認へ');
+                return;
             }
             // セッション削除
             delete req.session.purchase;
