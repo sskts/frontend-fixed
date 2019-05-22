@@ -21,7 +21,7 @@
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
             <dd>
-                <%= moment(before.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(before.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(before.startDate, before.coaInfo.dateJouei) %> - <%= timeFormat(before.endDate, before.coaInfo.dateJouei) %>
+                <%= moment(before.coaInfo.dateJouei).format('YYYY年MM月DD日 (ddd)') %> <%= timeFormat(before.startDate, before.coaInfo.dateJouei) %> - <%= timeFormat(before.endDate, before.coaInfo.dateJouei) %>
             </dd>
         </dl>      
     </div>
@@ -46,7 +46,7 @@
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
             <dd>
-                <%= moment(after.coaInfo.dateJouei).format('YYYY年MM月DD日') %>(<%= __('week[' + moment(after.coaInfo.dateJouei).format('ddd') + ']') %>) <%= timeFormat(after.startDate, after.coaInfo.dateJouei) %> - <%= timeFormat(after.endDate, after.coaInfo.dateJouei) %>
+                <%= moment(after.coaInfo.dateJouei).format('YYYY年MM月DD日 (ddd)') %> <%= timeFormat(after.startDate, after.coaInfo.dateJouei) %> - <%= timeFormat(after.endDate, after.coaInfo.dateJouei) %>
             </dd>
         </dl>
     </div> 

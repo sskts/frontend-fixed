@@ -4,6 +4,7 @@ import * as express from 'express';
 // tslint:disable-next-line:no-require-imports
 import expressValidator = require('express-validator');
 import * as helmet from 'helmet';
+import * as moment from 'moment-timezone';
 import basicAuth from './middlewares/basicAuth';
 import benchmarks from './middlewares/benchmarks';
 import ipFilter from './middlewares/ipFilter';
@@ -35,6 +36,12 @@ app.set('layout', 'layouts/layout');
 app.use(locales.setLocale); // 言語
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+/**
+ * タイムゾーン設定
+ */
+moment.tz.setDefault('Asia/Tokyo');
+moment.locale('ja');
 
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../../public`)); // staticDir設定
