@@ -27,8 +27,8 @@ export async function index(req: Request, res: Response): Promise<void> {
         }
         const theaterCode = `00${req.query.theaterCode}`.slice(Digits['02']);
         const screenCode = `000${req.query.screenCode}`.slice(Digits['03']);
-        const screen = await fs.readJSON(`./../public/jsontheaters/${theaterCode}/${screenCode}.json`);
-        const setting = await fs.readJSON('./../public/jsontheaters/setting.json');
+        const screen = await fs.readJSON(`${__dirname}/../../../../../public/json/theaters/${theaterCode}/${screenCode}.json`);
+        const setting = await fs.readJSON(`${__dirname}/../../../../../public/json/theaters/setting.json`);
         let state: COA.services.reserve.IStateReserveSeatResult | undefined;
         if (req.query.dateJouei !== undefined
             && req.query.titleCode !== undefined

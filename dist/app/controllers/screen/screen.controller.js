@@ -36,8 +36,8 @@ function index(req, res) {
             }
             const theaterCode = `00${req.query.theaterCode}`.slice(functions_1.Digits['02']);
             const screenCode = `000${req.query.screenCode}`.slice(functions_1.Digits['03']);
-            const screen = yield fs.readJSON(`./../public/jsontheaters/${theaterCode}/${screenCode}.json`);
-            const setting = yield fs.readJSON('./../public/jsontheaters/setting.json');
+            const screen = yield fs.readJSON(`${__dirname}/../../../../../public/json/theaters/${theaterCode}/${screenCode}.json`);
+            const setting = yield fs.readJSON(`${__dirname}/../../../../../public/json/theaters/setting.json`);
             let state;
             if (req.query.dateJouei !== undefined
                 && req.query.titleCode !== undefined

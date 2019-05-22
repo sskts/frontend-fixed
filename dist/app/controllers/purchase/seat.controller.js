@@ -242,8 +242,8 @@ function getScreenStateReserve(req, res) {
                 throw models_1.ErrorType.Validation;
             const theaterCode = `00${req.body.theaterCode}`.slice(functions_1.Digits['02']);
             const screenCode = `000${req.body.screenCode}`.slice(functions_1.Digits['03']);
-            const screen = yield fs.readJSON(`./public/json/theaters/${theaterCode}/${screenCode}.json`);
-            const setting = yield fs.readJSON('./public/json/theaters/setting.json');
+            const screen = yield fs.readJSON(`${__dirname}/../../../../public/json/theaters/${theaterCode}/${screenCode}.json`);
+            const setting = yield fs.readJSON(`${__dirname}/../../../../public/json/theaters/setting.json`);
             const state = yield COA.services.reserve.stateReserveSeat({
                 theaterCode: req.body.theaterCode,
                 dateJouei: req.body.dateJouei,

@@ -234,8 +234,8 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
         if (!validationResult.isEmpty()) throw ErrorType.Validation;
         const theaterCode = `00${req.body.theaterCode}`.slice(Digits['02']);
         const screenCode = `000${req.body.screenCode}`.slice(Digits['03']);
-        const screen = await fs.readJSON(`./public/json/theaters/${theaterCode}/${screenCode}.json`);
-        const setting = await fs.readJSON('./public/json/theaters/setting.json');
+        const screen = await fs.readJSON(`${__dirname}/../../../../public/json/theaters/${theaterCode}/${screenCode}.json`);
+        const setting = await fs.readJSON(`${__dirname}/../../../../public/json/theaters/setting.json`);
         const state = await COA.services.reserve.stateReserveSeat({
             theaterCode: req.body.theaterCode, // 施設コード
             dateJouei: req.body.dateJouei, // 上映日
