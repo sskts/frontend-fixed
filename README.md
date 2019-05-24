@@ -57,30 +57,6 @@ set SSKTS_BASIC_AUTH_PASS=**********認証パスワード**********
 set SSKTS_MAINTENANCE_TEXT=**********適当な文字列**********
 ```
 
-券売機モード
-
-```shell
-set VIEW_TYPE=fixed
-```
-
-スマホアプリ内表示
-
-```shell
-set APP_SITE_URL=**********アプリサイトURL**********
-set COGNITO_REGION=**********COGNITO REGION**********
-set COGNITO_IDENTITY_POOL_ID=**********COGNITO IDENTITY POOL ID**********
-```
-
-会員フロー
-```shell
-set AUTH_REDIRECT_URI=**********認証リダイレクトURL**********
-set AUTH_LOGUOT_URI=**********認証ログアウトURL**********
-set SSKTS_OAUTH2_TOKEN_URL=**********認証トークンURL**********
-set CLIENT_ID_OAUTH2=**********会員クライアントID**********
-set CLIENT_SECRET_OAUTH2=**********会員クライアント鍵**********
-set COGNITO_USER_POOL_ID=**********COGNITO USER POOL ID**********
-set COGNITO_CLIENT_ID=**********COGNITO CLIENT ID**********
-```
 
 # Build
 

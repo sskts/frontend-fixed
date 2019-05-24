@@ -111,9 +111,7 @@
 
 .zoom .screen-scroll {
   overflow: auto;
-  transition: -webkit-transform 0.2s;
   transition: transform 0.2s;
-  transition: transform 0.2s, -webkit-transform 0.2s;
   -webkit-overflow-scrolling: touch; }
 
 .zoom .seat a span {

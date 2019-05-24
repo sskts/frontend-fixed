@@ -7,12 +7,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 ### Changed
-- [@motionpicture/sskts-api-javascript-client@8.0.1](https://github.com/motionpicture/sskts-api-javascript-client)に対応。
-- [@motionpicture/sskts-api-nodejs-client@8.0.1](https://github.com/motionpicture/sskts-api-nodejs-client)に対応。
 
 ### Fixed
 
 ### Security
+
+## 2.5.0 - 2019-05-24
+### Changed
+- [@motionpicture/sskts-api-javascript-client@8.0.1](https://github.com/motionpicture/sskts-api-javascript-client)に対応。
+- [@motionpicture/sskts-api-nodejs-client@8.0.1](https://github.com/motionpicture/sskts-api-nodejs-client)に対応。
 
 ## 2.4.2 - 2019-02-08
 ### Fixed
