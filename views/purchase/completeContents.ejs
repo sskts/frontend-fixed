@@ -1,0 +1,15 @@
+<div style="display: none" class="purchase-print center">
+    <h1 class="page-ttl"><%- __('purchase.print.page_ttl') %></h1>
+    <p class="read mb-x-large"><%- __('purchase.print.read') %></p>
+    <div class="center animation-ptint"></div>
+</div>
+<div style="display: none" class="purchase-complete">
+    <h1 class="page-ttl"><%- __('purchase.complete.page_ttl') %></h1>
+    <p class="read"><%- __('purchase.complete.read') %></p>
+    <div class="text-center mb-large"><img src="/images/fixed/print.svg" width="400" height="259" alt=""></div>
+    <div class="button middle-button blue-button"><a class="center icon-triangle-white" href="/"><%- __('purchase.complete.next') %></a></div>
+</div>
+<input type="hidden" name="ticketLength" value="<%= purchaseModel.reserveTickets.length %>">
+<input type="hidden" name="theaterCode" value="<%= purchaseModel.screeningEvent.coaInfo.theaterCode %>">
+<input type="hidden" name="reserveNum" value="<%= purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.tmpReserveNum %>">
+<input type="hidden" name="telephone" value="<%= purchaseModel.profile.telephone %>">

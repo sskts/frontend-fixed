@@ -460,20 +460,20 @@ function arrowClick(performanceId) {
             $('input[name=seats]').val('');
             $('.screen-inner').remove();
             var target = $('.screen-cover');
-            var individualScreeningEvent = res.result.individualScreeningEvent;
+            var screeningEvent = res.result.screeningEvent;
             target.attr({
-                'data-limit': individualScreeningEvent.coaInfo.availableNum,
-                'data-theater': individualScreeningEvent.coaInfo.theaterCode,
-                'data-day': individualScreeningEvent.coaInfo.dateJouei,
-                'data-coa-title-code': individualScreeningEvent.coaInfo.titleCode,
-                'data-coa-title-branch-num': individualScreeningEvent.coaInfo.titleBranchNum,
-                'data-time-start': individualScreeningEvent.coaInfo.timeBegin,
-                'data-screen-code': individualScreeningEvent.coaInfo.screenCode
+                'data-limit': screeningEvent.coaInfo.availableNum,
+                'data-theater': screeningEvent.coaInfo.theaterCode,
+                'data-day': screeningEvent.coaInfo.dateJouei,
+                'data-coa-title-code': screeningEvent.coaInfo.titleCode,
+                'data-coa-title-branch-num': screeningEvent.coaInfo.titleBranchNum,
+                'data-time-start': screeningEvent.coaInfo.timeBegin,
+                'data-screen-code': screeningEvent.coaInfo.screenCode
             });
-            $('input[name=performanceId]').val(individualScreeningEvent.identifier);
-            $('.screen-name').text(individualScreeningEvent.location.name.ja);
-            $('.time-start').text(timeFormat(individualScreeningEvent.startDate, individualScreeningEvent.coaInfo.dateJouei));
-            $('.time-end').text(timeFormat(individualScreeningEvent.endDate, individualScreeningEvent.coaInfo.dateJouei));
+            $('input[name=performanceId]').val(screeningEvent.identifier);
+            $('.screen-name').text(screeningEvent.location.name.ja);
+            $('.time-start').text(timeFormat(screeningEvent.startDate, screeningEvent.coaInfo.dateJouei));
+            $('.time-end').text(timeFormat(screeningEvent.endDate, screeningEvent.coaInfo.dateJouei));
             $('.performance-date').removeClass('change-animation');
             pageInit(function() {
                 $('.performance-date').addClass('change-animation');
