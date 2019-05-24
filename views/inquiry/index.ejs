@@ -1,0 +1,64 @@
+<%- contentFor('script') %>
+<script src="/js/print/star/StarWebPrintTrader.js"></script>
+<script src="/js/print/star/StarWebPrintBuilder.js"></script>
+<script src="/js/print/star/starprint.js"></script>
+<script src="/js/print/star/print.js"></script>
+<script src="/js/inquiry/index.js"></script>
+<%- contentFor('style') %>
+<style>
+.navigation .buttons .ticketing-button {
+    display: none;
+}
+</style>
+<%- contentFor('prev') %>
+/inquiry/login?theater=<%= inquiryModel.seller.location.branchCode %>
+<%- contentFor('body') %>
+<%- include('../layouts/inquiry/steps', {step: 1}) %>
+<div class="inquiry-confirm">
+    <h1 class="page-ttl"><%- __('inquiry.confirm.page_ttl') %></h1>
+    <p class="read"><%- __('inquiry.confirm.read') %></p>
+
+    <div class="table-layout center mb-large">
+        <dl>
+            <dt><%- __('common.purchase_number') %></dt>
+            <dd><%= inquiryModel.login.reserveNum %></dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.film_title') %></dt>
+            <dd>
+                <%= inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.workPerformed.name %>
+            </dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.appreciation_date') %></dt>
+            <dd>
+                <%= moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).format('YYYY年MM月DD日 (ddd)') %> %>) <%= timeFormat(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.startDate, inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %> - <%= timeFormat(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.endDate, inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %>
+            </dd>
+        </dl>
+        <dl>
+            <dt><%- __('common.seat') %></dt>
+            <dd>
+                <% for (let i = 0; i < inquiryModel.order.acceptedOffers.length; i++) { %>
+                <% const offer = inquiryModel.order.acceptedOffers[i] %>
+                <p><%= offer.itemOffered.reservedTicket.ticketedSeat.seatNumber %> <%= offer.itemOffered.reservedTicket.coaTicketInfo.ticketName %></p>
+                <% } %>
+            </dd>
+        </dl>
+    </div>
+    <% if (moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.endDate).add(10 ,'minutes').unix() < moment().unix()) { %>
+    <p class="text-center"><%- __('inquiry.confirm.after') %></p>
+    <% } else if (moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
+    <p class="text-center"><%- __('inquiry.confirm.before') %></p>
+    <% } else { %>
+    <div class="button middle-button print-button blue-button"><a class="center icon-triangle-white" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
+    <% } %>
+</div>
+<input type="hidden" name="ticketLength" value="<%= inquiryModel.order.acceptedOffers.length %>">
+<input type="hidden" name="theaterCode" value="<%= inquiryModel.seller.location.branchCode %>">
+<input type="hidden" name="reserveNum" value="<%= inquiryModel.login.reserveNum %>">
+<input type="hidden" name="telephone" value="<%= inquiryModel.login.telephone %>">
+<input type="hidden" name="expire" value="<%= moment(inquiryModel.order.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).add(10, 'day').format('x') %>">
+<%- include('completeContents') %>
+
+<%- contentFor('modals') %>
+<%- include('modals/print') %>

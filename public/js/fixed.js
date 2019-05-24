@@ -1,3 +1,8 @@
+/**
+ * タイムゾーン設定
+ */
+moment.tz.setDefault('Asia/Tokyo');
+moment.locale('ja');
 (function () {
     // viewport変更
     changeViewport();

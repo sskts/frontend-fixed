@@ -17,8 +17,8 @@
     "import-name": false,
     "interface-over-type-literal": true,
     "linebreak-style": [
-      "LF",
-      true
+      true,
+      "LF"
     ],
     "no-any": false,
     "no-backbone-get-set-outside-model": false,
@@ -42,5 +42,11 @@
   },
   "rulesDirectory": [
     "node_modules/tslint-microsoft-contrib"
-  ]
+  ],
+  "linterOptions": {
+    "exclude": [
+        "src/index.ts",
+        "src/ssl.ts"
+    ]
+}
 }
