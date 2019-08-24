@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.5.1 - 2019-08-24
+### Changed
+- jqueryをcdnから変更
+
 ## 2.5.0 - 2019-05-24
 ### Changed
 - [@motionpicture/sskts-api-javascript-client@8.0.1](https://github.com/motionpicture/sskts-api-javascript-client)に対応。
