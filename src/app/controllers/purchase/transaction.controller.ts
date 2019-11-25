@@ -50,7 +50,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
             id: req.query.performanceId
         });
         log('イベント情報取得');
-        if (screeningEvent === null
+        if (screeningEvent === undefined
             || screeningEvent.coaInfo === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
@@ -74,7 +74,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         // 非会員なら重複確認
         purchaseModel = new PurchaseModel(req.session.purchase);
         log('重複確認');
-        if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+        if (purchaseModel.transaction !== undefined && purchaseModel.seatReservationAuthorization !== undefined) {
             // 重複確認へ
             res.redirect(`/purchase/${req.query.performanceId}/overlap`);
             log('重複確認へ');
@@ -99,7 +99,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         });
         purchaseModel.seller = searchResult.data[0];
         log('劇場のショップを検索');
-        if (purchaseModel.seller === null) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
+        if (purchaseModel.seller === undefined) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
 
         // 取引開始
         const valid = VALID_TIME_FIXED;

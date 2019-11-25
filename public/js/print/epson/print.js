@@ -61,7 +61,7 @@ function printTicket(count, cb) {
         },
     }).done(function (res) {
         var reservations = res.result;
-        if (reservations !== null) {
+        if (reservations.length > 0) {
             // 予約オブジェクトを投げ込んで印刷する (Promiseが返ってくる。配列の場合はprintReservationArray()を使う)
             window.epsonThermalPrint.printReservationArray(reservations).then(function () {
                 // printAlert('印刷完了');

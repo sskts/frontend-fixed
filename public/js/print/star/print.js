@@ -49,7 +49,7 @@ function printTicket(count, cb) {
         },
     }).done(function (res) {
         var reservations = res.result;
-        if (reservations !== null) {
+        if (reservations.length > 0) {
             printerSend(reservations, cb);
         } else {
             setTimeout(function () {

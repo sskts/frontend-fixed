@@ -26,7 +26,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        if (purchaseModel.screeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.screeningEvent === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // イベント情報取得
         const screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
             id: req.params.id
@@ -55,8 +55,8 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.transaction !== null
-            && purchaseModel.seatReservationAuthorization !== null
+        if (purchaseModel.transaction !== undefined
+            && purchaseModel.seatReservationAuthorization !== undefined
             && !purchaseModel.isExpired()) {
             try {
                 // COA仮予約削除

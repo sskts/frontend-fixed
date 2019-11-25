@@ -26,8 +26,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.seatReservationAuthorization !== null
-            && purchaseModel.transaction !== null
+        if (purchaseModel.seatReservationAuthorization !== undefined
+            && purchaseModel.transaction !== undefined
             && !purchaseModel.isExpired()) {
             try {
                 await new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({

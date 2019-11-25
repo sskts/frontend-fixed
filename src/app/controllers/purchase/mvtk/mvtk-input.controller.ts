@@ -30,13 +30,13 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.transaction === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // ムビチケセッション削除
         delete req.session.mvtk;
 
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
@@ -64,8 +64,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
     try {
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === null
-            || purchaseModel.screeningEvent === null
+        if (purchaseModel.transaction === undefined
+            || purchaseModel.screeningEvent === undefined
             || purchaseModel.screeningEvent.coaInfo === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
@@ -94,7 +94,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         try {
             purchaseNumberAuthResult = await mvtkReserve.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
             if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
-                throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === null');
+                throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === undefined');
             }
             log('ムビチケ認証', purchaseNumberAuthResult);
         } catch (err) {
@@ -201,5 +201,5 @@ interface IInputInfo {
     /**
      * エラー
      */
-    error: string | null;
+    error: string | undefined;
 }

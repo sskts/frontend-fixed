@@ -43,7 +43,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
             telephone: ''
         };
         res.locals.inquiryModel = inquiryModel;
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.render('inquiry/login');
 
         return;
@@ -89,7 +89,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 theaterCode: inquiryModel.seller.location.branchCode
             });
             log('照会情報');
-            if (inquiryModel.order === null) {
+            if (inquiryModel.order === undefined) {
                 res.locals.inquiryModel = inquiryModel;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
@@ -110,7 +110,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (inquiryModel.seller === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            if (inquiryModel.seller === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone

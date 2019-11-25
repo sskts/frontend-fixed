@@ -56,7 +56,7 @@ function start(req, res, next) {
                 id: req.query.performanceId
             });
             log('イベント情報取得');
-            if (screeningEvent === null
+            if (screeningEvent === undefined
                 || screeningEvent.coaInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -76,7 +76,7 @@ function start(req, res, next) {
             // 非会員なら重複確認
             purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             log('重複確認');
-            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+            if (purchaseModel.transaction !== undefined && purchaseModel.seatReservationAuthorization !== undefined) {
                 // 重複確認へ
                 res.redirect(`/purchase/${req.query.performanceId}/overlap`);
                 log('重複確認へ');
@@ -98,7 +98,7 @@ function start(req, res, next) {
             });
             purchaseModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (purchaseModel.seller === null)
+            if (purchaseModel.seller === undefined)
                 throw new models_1.AppError(HTTPStatus.NOT_FOUND, models_1.ErrorType.Access);
             // 取引開始
             const valid = VALID_TIME_FIXED;

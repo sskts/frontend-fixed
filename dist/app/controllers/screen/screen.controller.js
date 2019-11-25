@@ -180,7 +180,6 @@ function createScreen(args) {
                 break;
             default:
                 screenType = '';
-                break;
         }
         const scale = (option !== undefined && option.width !== undefined) ? option.width / screen.size.w : 1;
         //html挿入の場合

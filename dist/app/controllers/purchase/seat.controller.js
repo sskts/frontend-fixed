@@ -42,11 +42,11 @@ function render(req, res, next) {
             if (!purchaseModel.accessAuth(models_1.PurchaseModel.SEAT_STATE)) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
             }
-            res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
+            res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== undefined)
                 ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
-                : null;
-            res.locals.error = null;
-            res.locals.reserveError = null;
+                : undefined;
+            res.locals.error = undefined;
+            res.locals.reserveError = undefined;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = models_1.PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -80,7 +80,7 @@ function performanceChange(req, res) {
             });
             purchaseModel.save(req.session);
             res.json({
-                err: null,
+                err: undefined,
                 result: {
                     screeningEvent: purchaseModel.screeningEvent
                 }
@@ -89,7 +89,7 @@ function performanceChange(req, res) {
         catch (err) {
             res.json({
                 err: err.message,
-                result: null
+                result: undefined
             });
         }
     });
@@ -111,8 +111,8 @@ function seatSelect(req, res, next) {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction === null
-                || purchaseModel.screeningEvent === null
+            if (purchaseModel.transaction === undefined
+                || purchaseModel.screeningEvent === undefined
                 || purchaseModel.screeningEvent.coaInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -128,7 +128,7 @@ function seatSelect(req, res, next) {
             if (!validationResult.isEmpty()) {
                 res.locals.reserveSeats = req.body.seats;
                 res.locals.error = validationResult.mapped();
-                res.locals.reserveError = null;
+                res.locals.reserveError = undefined;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.SEAT_STATE;
                 res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -136,7 +136,7 @@ function seatSelect(req, res, next) {
             }
             const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
             //予約中
-            if (purchaseModel.seatReservationAuthorization !== null) {
+            if (purchaseModel.seatReservationAuthorization !== undefined) {
                 yield new sasaki.service.transaction.PlaceOrder(options)
                     .cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
@@ -145,11 +145,11 @@ function seatSelect(req, res, next) {
                         typeOf: purchaseModel.transaction.typeOf
                     }
                 });
-                purchaseModel.seatReservationAuthorization = null;
+                purchaseModel.seatReservationAuthorization = undefined;
                 purchaseModel.save(req.session);
                 log('仮予約削除');
             }
-            if (purchaseModel.salesTickets === null) {
+            if (purchaseModel.salesTickets === undefined) {
                 //コアAPI券種取得
                 const salesTicketResult = yield COA.services.reserve.salesTicket({
                     theaterCode: purchaseModel.screeningEvent.coaInfo.theaterCode,
@@ -211,8 +211,8 @@ function seatSelect(req, res, next) {
             if (err.hasOwnProperty('errors')
                 && (Number(err.code) === HTTPStatus.CONFLICT || Number(err.code) === HTTPStatus.SERVICE_UNAVAILABLE)) {
                 const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-                res.locals.reserveSeats = null;
-                res.locals.error = null;
+                res.locals.reserveSeats = undefined;
+                res.locals.error = undefined;
                 res.locals.reserveError = err.code;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.SEAT_STATE;
@@ -254,7 +254,7 @@ function getScreenStateReserve(req, res) {
                 screenCode: req.body.screenCode // スクリーンコード
             });
             res.json({
-                err: null,
+                err: undefined,
                 result: {
                     screen: screen,
                     setting: setting,
@@ -263,7 +263,7 @@ function getScreenStateReserve(req, res) {
             });
         }
         catch (err) {
-            res.json({ err: err, result: null });
+            res.json({ err: err, result: undefined });
         }
     });
 }
@@ -299,7 +299,7 @@ function saveSalesTickets(req, res) {
             });
             log('コアAPI券種取得');
             purchaseModel.save(req.session);
-            res.json({ err: null });
+            res.json({ err: undefined });
         }
         catch (err) {
             res.json({ err: err.message });

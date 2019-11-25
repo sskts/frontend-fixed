@@ -34,7 +34,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         }
 
         //購入者情報入力表示
-        if (purchaseModel.profile !== null) {
+        if (purchaseModel.profile !== undefined) {
             res.locals.input = purchaseModel.profile;
         } else {
             const defaultProfile = {
@@ -58,8 +58,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
 
-        res.locals.error = null;
-        res.locals.gmoError = null;
+        res.locals.error = undefined;
+        res.locals.gmoError = undefined;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
         res.locals.purchaseModel = purchaseModel;
         res.locals.shopId = (<sasaki.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
@@ -90,8 +90,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     const purchaseModel = new PurchaseModel(req.session.purchase);
     try {
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === null
-            || purchaseModel.reserveTickets === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.transaction === undefined
+            || purchaseModel.reserveTickets === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
@@ -102,7 +102,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
         if (!validationResult.isEmpty()) {
             purchaseModel.profile = req.body;
             res.locals.error = validationResult.mapped();
-            res.locals.gmoError = null;
+            res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
@@ -117,7 +117,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             res.locals.error = {
                 telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
             };
-            res.locals.gmoError = null;
+            res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
@@ -191,8 +191,8 @@ async function creditCardProsess(
     purchaseModel: PurchaseModel
 ): Promise<void> {
     const options = getApiOption(req);
-    if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-    if (purchaseModel.creditCardAuthorization !== null) {
+    if (purchaseModel.transaction === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+    if (purchaseModel.creditCardAuthorization !== undefined) {
         await new sasaki.service.Payment(options).voidTransaction({
             id: purchaseModel.creditCardAuthorization.id,
             object: {
@@ -203,8 +203,8 @@ async function creditCardProsess(
                 typeOf: purchaseModel.transaction.typeOf
             }
         });
-        purchaseModel.creditCardAuthorization = null;
-        purchaseModel.gmo = null;
+        purchaseModel.creditCardAuthorization = undefined;
+        purchaseModel.gmo = undefined;
         purchaseModel.save(req.session);
         log('GMOオーソリ削除');
     }

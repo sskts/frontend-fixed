@@ -36,8 +36,8 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.seatReservationAuthorization !== null
-                && purchaseModel.transaction !== null
+            if (purchaseModel.seatReservationAuthorization !== undefined
+                && purchaseModel.transaction !== undefined
                 && !purchaseModel.isExpired()) {
                 try {
                     yield new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({

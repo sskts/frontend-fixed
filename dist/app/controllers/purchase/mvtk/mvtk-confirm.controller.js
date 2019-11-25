@@ -24,12 +24,12 @@ function render(req, res, next) {
         const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-        if (req.session.mvtk === null) {
+        if (req.session.mvtk === undefined) {
             res.redirect('/purchase/mvtk');
             return;
         }
         // ムビチケ券適用確認ページ表示
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
@@ -75,7 +75,7 @@ function submit(req, res, next) {
         const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-        if (purchaseModel.transaction === null)
+        if (purchaseModel.transaction === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {

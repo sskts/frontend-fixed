@@ -68,7 +68,6 @@ export function errorRender(
             default:
                 msg = req.__('common.error.internalServerError');
                 logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
-                break;
         }
         if ((<AppError>err).errorType !== undefined && (<AppError>err).errorType === ErrorType.Expire) {
             msg = req.__('common.error.expire');

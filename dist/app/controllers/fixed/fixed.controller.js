@@ -94,18 +94,18 @@ function getInquiryData(req, res) {
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
                 log('オーダーOut', inquiryModel.order);
-                if (inquiryModel.order === null)
+                if (inquiryModel.order === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 // 印刷用
                 const reservations = createPrintReservations(inquiryModel);
                 res.json({ result: reservations });
                 return;
             }
-            res.json({ result: null });
+            res.json({ result: [] });
         }
         catch (err) {
             log('オーダーerr', err);
-            res.json({ result: null });
+            res.json({ result: [] });
         }
     });
 }
@@ -118,7 +118,7 @@ exports.getInquiryData = getInquiryData;
  * @returns {IReservation[]}
  */
 function createPrintReservations(inquiryModel) {
-    if (inquiryModel.order === null
+    if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
         || inquiryModel.seller.location === undefined)
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);

@@ -81,7 +81,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
 
             log('オーダーOut', inquiryModel.order);
 
-            if (inquiryModel.order === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            if (inquiryModel.order === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
             // 印刷用
             const reservations = createPrintReservations(inquiryModel);
@@ -89,10 +89,10 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
 
             return;
         }
-        res.json({ result: null });
+        res.json({ result: [] });
     } catch (err) {
         log('オーダーerr', err);
-        res.json({ result: null });
+        res.json({ result: [] });
     }
 }
 
@@ -118,7 +118,7 @@ interface IReservation {
  * @returns {IReservation[]}
  */
 export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
-    if (inquiryModel.order === null
+    if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
         || inquiryModel.seller.location === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     const reserveNo = inquiryModel.order.confirmationNumber;

@@ -14,7 +14,7 @@ const log = debug('SSKTS:middlewares:whiteList');
  */
 export default (req: Request, res: Response, next: NextFunction) => {
     if (process.env.WHITELIST !== undefined) {
-        const whiteList = (<string>process.env.WHITELIST).replace(/\s+/g, '').split(',');
+        const whiteList = process.env.WHITELIST.replace(/\s+/g, '').split(',');
         const requestUrl = (req.xhr) ? req.get('Origin')
             : (req.xhr) ? req.get('Origin')
                 : (req.get('referer') !== undefined) ? new URL(<string>req.get('referer')).origin

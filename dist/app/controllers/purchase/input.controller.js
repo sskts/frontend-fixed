@@ -43,7 +43,7 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
             }
             //購入者情報入力表示
-            if (purchaseModel.profile !== null) {
+            if (purchaseModel.profile !== undefined) {
                 res.locals.input = purchaseModel.profile;
             }
             else {
@@ -67,8 +67,8 @@ function render(req, res, next) {
             if (findPaymentAcceptedResult === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            res.locals.error = null;
-            res.locals.gmoError = null;
+            res.locals.error = undefined;
+            res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
             res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
@@ -102,8 +102,8 @@ function purchaserInformationRegistration(req, res, next) {
         try {
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === null
-                || purchaseModel.reserveTickets === null)
+            if (purchaseModel.transaction === undefined
+                || purchaseModel.reserveTickets === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {
@@ -115,7 +115,7 @@ function purchaserInformationRegistration(req, res, next) {
             if (!validationResult.isEmpty()) {
                 purchaseModel.profile = req.body;
                 res.locals.error = validationResult.mapped();
-                res.locals.gmoError = null;
+                res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
@@ -129,7 +129,7 @@ function purchaserInformationRegistration(req, res, next) {
                 res.locals.error = {
                     telephone: { parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.is_tel')}`, value: '' }
                 };
-                res.locals.gmoError = null;
+                res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
@@ -199,9 +199,9 @@ exports.purchaserInformationRegistration = purchaserInformationRegistration;
 function creditCardProsess(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         const options = functions_1.getApiOption(req);
-        if (purchaseModel.transaction === null)
+        if (purchaseModel.transaction === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-        if (purchaseModel.creditCardAuthorization !== null) {
+        if (purchaseModel.creditCardAuthorization !== undefined) {
             yield new sasaki.service.Payment(options).voidTransaction({
                 id: purchaseModel.creditCardAuthorization.id,
                 object: {
@@ -212,8 +212,8 @@ function creditCardProsess(req, purchaseModel) {
                     typeOf: purchaseModel.transaction.typeOf
                 }
             });
-            purchaseModel.creditCardAuthorization = null;
-            purchaseModel.gmo = null;
+            purchaseModel.creditCardAuthorization = undefined;
+            purchaseModel.gmo = undefined;
             purchaseModel.save(req.session);
             log('GMOオーソリ削除');
         }

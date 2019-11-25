@@ -53,7 +53,7 @@ function loginRender(req, res, next) {
                 telephone: ''
             };
             res.locals.inquiryModel = inquiryModel;
-            res.locals.error = null;
+            res.locals.error = undefined;
             res.render('inquiry/login');
             return;
         }
@@ -102,7 +102,7 @@ function inquiryAuth(req, res, next) {
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
                 log('照会情報');
-                if (inquiryModel.order === null) {
+                if (inquiryModel.order === undefined) {
                     res.locals.inquiryModel = inquiryModel;
                     res.locals.error = getInquiryError(req);
                     res.render('inquiry/login');
@@ -120,7 +120,7 @@ function inquiryAuth(req, res, next) {
                 });
                 inquiryModel.seller = searchResult.data[0];
                 log('劇場のショップを検索');
-                if (inquiryModel.seller === null)
+                if (inquiryModel.seller === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,

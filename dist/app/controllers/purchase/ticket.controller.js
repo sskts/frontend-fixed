@@ -80,9 +80,9 @@ function ticketSelect(req, res, next) {
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === null
-                || purchaseModel.screeningEvent === null
-                || purchaseModel.seatReservationAuthorization === null
+            if (purchaseModel.transaction === undefined
+                || purchaseModel.screeningEvent === undefined
+                || purchaseModel.seatReservationAuthorization === undefined
                 || req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -131,7 +131,7 @@ function ticketSelect(req, res, next) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 log('SSKTSCOA仮予約更新');
-                if (purchaseModel.mvtkAuthorization !== null) {
+                if (purchaseModel.mvtkAuthorization !== undefined) {
                     yield new sasaki.service.transaction.PlaceOrder(options).cancelMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
@@ -145,7 +145,7 @@ function ticketSelect(req, res, next) {
                     // 購入管理番号情報
                     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                     log('購入管理番号情報', mvtkSeatInfoSync);
-                    if (mvtkSeatInfoSync === null)
+                    if (mvtkSeatInfoSync === undefined)
                         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                     purchaseModel.mvtkAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
                         .createMvtkAuthorization({

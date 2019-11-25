@@ -42,8 +42,8 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
             }
             //購入者内容確認表示
-            res.locals.updateReserve = null;
-            res.locals.error = null;
+            res.locals.updateReserve = undefined;
+            res.locals.error = undefined;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = models_1.PurchaseModel.CONFIRM_STATE;
             //セッション更新
@@ -67,7 +67,7 @@ function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         // 購入管理番号情報
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
-        if (seatInfoSyncIn === null)
+        if (seatInfoSyncIn === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         let seatInfoSyncInResult;
         try {
@@ -109,7 +109,7 @@ function cancelMvtk(req, res) {
             //セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
-            if (seatInfoSyncIn === null)
+            if (seatInfoSyncIn === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             try {
                 const seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
@@ -143,18 +143,18 @@ exports.cancelMvtk = cancelMvtk;
 function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const purchaseResult = {
-            mvtk: null,
-            order: null,
-            mail: null,
-            cognito: null,
-            complete: null
+            mvtk: undefined,
+            order: undefined,
+            mail: undefined,
+            cognito: undefined,
+            complete: undefined
         };
         try {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction === null
+            if (purchaseModel.transaction === undefined
                 || req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -167,7 +167,7 @@ function purchase(req, res) {
                 return (ticket.mvtkNum !== '');
             });
             // ムビチケ使用
-            if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
+            if (purchaseModel.mvtk !== undefined && mvtkTickets.length > 0) {
                 purchaseResult.mvtk = yield reserveMvtk(purchaseModel);
                 log('Mvtk payment');
             }
