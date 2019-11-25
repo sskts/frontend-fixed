@@ -202,7 +202,7 @@ function getScreenStateReserve(count, cb) {
         dataType: 'json',
         url: '/purchase/getScreenStateReserve',
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             theaterCode: target.attr('data-theater'), // 施設コード
             dateJouei: target.attr('data-day'), // 上映日
@@ -234,7 +234,7 @@ function saveSalesTickets() {
         dataType: 'json',
         url: '/purchase/saveSalesTickets',
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             theaterCode: target.attr('data-theater'), // 施設コード
             dateJouei: target.attr('data-day'), // 上映日
@@ -450,7 +450,7 @@ function arrowClick(performanceId) {
         dataType: 'json',
         url: '/purchase/performanceChange',
         type: 'GET',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             performanceId: performanceId
         },

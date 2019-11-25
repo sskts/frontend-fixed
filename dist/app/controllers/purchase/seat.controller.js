@@ -13,8 +13,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const COA = require("@motionpicture/coa-service");
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const fs = require("fs-extra");
 const HTTPStatus = require("http-status");
@@ -75,7 +75,7 @@ function performanceChange(req, res) {
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
             // イベント情報取得
-            purchaseModel.screeningEvent = yield new sasaki.service.Event(options).findScreeningEventById({
+            purchaseModel.screeningEvent = yield new cinerinoService.service.Event(options).findById({
                 id: req.query.performanceId
             });
             purchaseModel.save(req.session);
@@ -137,7 +137,7 @@ function seatSelect(req, res, next) {
             const selectSeats = JSON.parse(req.body.seats).listTmpReserve;
             //予約中
             if (purchaseModel.seatReservationAuthorization !== undefined) {
-                yield new sasaki.service.transaction.PlaceOrder(options)
+                yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                     .cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
@@ -163,7 +163,7 @@ function seatSelect(req, res, next) {
             }
             if (purchaseModel.salesTickets.length === 0)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            purchaseModel.seatReservationAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
+            purchaseModel.seatReservationAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                 .createSeatReservationAuthorization({
                 object: {
                     event: {

@@ -13,8 +13,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -171,11 +171,10 @@ function purchase(req, res) {
                 purchaseResult.mvtk = yield reserveMvtk(purchaseModel);
                 log('Mvtk payment');
             }
-            purchaseResult.order = yield new sasaki.service.transaction.PlaceOrder(options).confirm({
+            purchaseResult.order = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
+                .confirm({
                 id: purchaseModel.transaction.id,
-                options: {
-                    sendEmailMessage: false
-                }
+                sendEmailMessage: false
             });
             log('Order confirmation');
             //購入情報をセッションへ

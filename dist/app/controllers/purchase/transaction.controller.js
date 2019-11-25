@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -52,7 +52,7 @@ function start(req, res, next) {
             const options = functions_1.getApiOption(req);
             authModel.save(req.session);
             // イベント情報取得
-            const screeningEvent = yield new sasaki.service.Event(options).findScreeningEventById({
+            const screeningEvent = yield new cinerinoService.service.Event(options).findById({
                 id: req.query.performanceId
             });
             log('イベント情報取得');
@@ -91,7 +91,7 @@ function start(req, res, next) {
                 screeningEvent: screeningEvent
             });
             // 劇場のショップを検索
-            const searchResult = yield new sasaki.service.Seller(options).search({
+            const searchResult = yield new cinerinoService.service.Seller(options).search({
                 location: {
                     branchCodes: [screeningEvent.coaInfo.theaterCode]
                 }
@@ -103,7 +103,7 @@ function start(req, res, next) {
             // 取引開始
             const valid = VALID_TIME_FIXED;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-            purchaseModel.transaction = yield new sasaki.service.transaction.PlaceOrder(options).start({
+            purchaseModel.transaction = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).start({
                 expires: purchaseModel.expired,
                 seller: {
                     typeOf: purchaseModel.seller.typeOf,

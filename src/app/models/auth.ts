@@ -1,4 +1,4 @@
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as uuid from 'uuid';
 
 /**
@@ -78,10 +78,10 @@ export class AuthModel {
      * 認証クラス作成
      * @memberof AuthModel
      * @method create
-     * @returns {sasaki.auth.ClientCredentials}
+     * @returns {cinerinoService.auth.ClientCredentials}
      */
-    public create(): sasaki.auth.ClientCredentials {
-        return new sasaki.auth.ClientCredentials({
+    public create(): cinerinoService.auth.ClientCredentials {
+        return new cinerinoService.auth.ClientCredentials({
             domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
             clientId: (<string>process.env.CLIENT_ID),
             clientSecret: (<string>process.env.CLIENT_SECRET),

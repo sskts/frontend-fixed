@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace InquiryModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -43,7 +43,7 @@ function loginRender(req, res, next) {
             const options = functions_1.getApiOption(req);
             const inquiryModel = new models_1.InquiryModel();
             // 劇場のショップを検索
-            const searchResult = yield new sasaki.service.Seller(options).search({
+            const searchResult = yield new cinerinoService.service.Seller(options).search({
                 location: { branchCodes: [theaterCode] }
             });
             inquiryModel.seller = searchResult.data[0];
@@ -82,7 +82,7 @@ function inquiryAuth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new sasaki.service.Seller(options).search({
+                const searchResult = yield new cinerinoService.service.Seller(options).search({
                     location: { branchCodes: [req.body.theaterCode] }
                 });
                 inquiryModel.seller = searchResult.data[0];
@@ -96,7 +96,7 @@ function inquiryAuth(req, res, next) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield new sasaki.service.Order(options).findByOrderInquiryKey({
+                inquiryModel.order = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.seller.location.branchCode
@@ -115,7 +115,7 @@ function inquiryAuth(req, res, next) {
             }
             else {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new sasaki.service.Seller(options).search({
+                const searchResult = yield new cinerinoService.service.Seller(options).search({
                     location: { branchCodes: [req.body.theaterCode] }
                 });
                 inquiryModel.seller = searchResult.data[0];

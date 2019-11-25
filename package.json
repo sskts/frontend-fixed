@@ -21,10 +21,11 @@
     "nyc": "nyc mocha --no-timeouts --recursive"
   },
   "dependencies": {
+    "@cinerino/api-javascript-client": "2.0.0-alpha.45",
+    "@cinerino/api-nodejs-client": "2.0.0-alpha.46",
     "@motionpicture/coa-service": "^6.0.1",
     "@motionpicture/gmo-service": "^4.3.0",
     "@motionpicture/mvtk-reserve-service": "^1.2.1",
-    "@motionpicture/sskts-api-nodejs-client": "^8.0.1",
     "basic-auth": "^1.1.0",
     "body-parser": "^1.18.2",
     "connect-redis": "^3.3.2",
@@ -43,6 +44,7 @@
     "moment": "^2.19.3",
     "moment-timezone": "^0.5.25",
     "redis": "^2.8.0",
+    "sinon": "^7.5.0",
     "uuid": "^3.1.0",
     "winston": "^2.4.0"
   },
@@ -65,7 +67,7 @@
     "@types/moment-timezone": "^0.5.12",
     "@types/redis": "^2.8.1",
     "@types/selenium-webdriver": "^2.53.43",
-    "@types/sinon": "^2.3.7",
+    "@types/sinon": "^7.5.1",
     "@types/supertest": "^2.0.4",
     "@types/uuid": "^3.4.3",
     "@types/winston": "^2.3.7",
@@ -82,7 +84,6 @@
     "postcss-cli": "^6.1.3",
     "rimraf": "^2.6.2",
     "selenium-webdriver": "^3.6.0",
-    "sinon": "^7.3.2",
     "snyk": "^1.251.0",
     "supertest": "^3.0.0",
     "tslint": "^5.20.1",

@@ -2,8 +2,8 @@
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -117,7 +117,7 @@ export async function cancelMvtk(req: Request, res: Response): Promise<void> {
  */
 interface IPurchaseResult {
     mvtk: undefined | mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult;
-    order: undefined | sasaki.factory.order.IOrder;
+    order: undefined | cinerinoService.factory.transaction.placeOrder.IResult;
     mail: undefined | any;
     cognito: undefined | any;
     complete: undefined | any;
@@ -163,12 +163,11 @@ export async function purchase(req: Request, res: Response): Promise<void> {
             log('Mvtk payment');
         }
 
-        purchaseResult.order = await new sasaki.service.transaction.PlaceOrder(options).confirm({
-            id: purchaseModel.transaction.id,
-            options: {
+        purchaseResult.order = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
+            .confirm({
+                id: purchaseModel.transaction.id,
                 sendEmailMessage: false
-            }
-        });
+            });
         log('Order confirmation');
 
         //購入情報をセッションへ

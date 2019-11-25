@@ -131,7 +131,7 @@ document.cookie = 'applicationData=; max-age=0; path=/;';
                     dataType: 'json',
                     url: '/purchase/performances/getPerformances',
                     type: 'GET',
-                    timeout: 10000,
+                    timeout: API_TIMEOUT,
                     data: {
                         theater: this.theaterCode,
                         day: this.date

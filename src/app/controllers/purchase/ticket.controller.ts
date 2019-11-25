@@ -2,7 +2,7 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -120,7 +120,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             ticketValidation(purchaseModel);
             log('券種検証');
             //COAオーソリ追加
-            purchaseModel.seatReservationAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+            purchaseModel.seatReservationAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                 .changeSeatReservationOffers({
                     id: purchaseModel.seatReservationAuthorization.id,
                     object: {
@@ -156,7 +156,7 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             }
             log('SSKTSCOA仮予約更新');
             if (purchaseModel.mvtkAuthorization !== undefined) {
-                await new sasaki.service.transaction.PlaceOrder(options).cancelMvtkAuthorization({
+                await new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelMvtkAuthorization({
                     purpose: {
                         id: purchaseModel.transaction.id,
                         typeOf: purchaseModel.transaction.typeOf
@@ -170,15 +170,13 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                 log('購入管理番号情報', mvtkSeatInfoSync);
                 if (mvtkSeatInfoSync === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-                purchaseModel.mvtkAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+                purchaseModel.mvtkAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                     .createMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
                         },
                         object: {
-                            typeOf: sasaki.factory.action.authorize.discount.mvtk.ObjectType.Mvtk,
-                            price: purchaseModel.getMvtkPrice(),
                             seatInfoSyncIn: mvtkSeatInfoSync
                         }
                     });

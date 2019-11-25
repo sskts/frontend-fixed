@@ -1,4 +1,5 @@
 var SASAKI = {};
+var API_TIMEOUT = 60000;
 var modal;
 $(function () {
     modal = new SASAKI.Modal();

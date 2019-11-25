@@ -1,4 +1,4 @@
-import { factory } from '@motionpicture/sskts-api-nodejs-client';
+import { factory } from '@cinerino/api-nodejs-client';
 
 /**
  * ログイン情報

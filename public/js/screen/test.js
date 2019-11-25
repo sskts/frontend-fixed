@@ -37,7 +37,7 @@ function getScreenStateReserve(count, cb) {
         dataType: 'json',
         url: '/screen',
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             theaterCode: params.theater, // 施設コード
             screenCode: params.screen, // スクリーンコード

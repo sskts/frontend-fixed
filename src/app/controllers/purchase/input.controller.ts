@@ -3,8 +3,8 @@
  * @namespace Purchase.InputModule
  */
 
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as GMO from '@motionpicture/gmo-service';
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { PhoneNumberUtil } from 'google-libphonenumber';
@@ -52,7 +52,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-            return (paymentAccepted.paymentMethodType === sasaki.factory.paymentMethodType.CreditCard);
+            return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
         });
         if (findPaymentAcceptedResult === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
@@ -62,7 +62,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.locals.gmoError = undefined;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
         res.locals.purchaseModel = purchaseModel;
-        res.locals.shopId = (<sasaki.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
+        res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
         res.locals.step = PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
@@ -91,12 +91,20 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     try {
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         if (purchaseModel.transaction === undefined
+            || purchaseModel.seller === undefined
+            || purchaseModel.seller.paymentAccepted === undefined
             || purchaseModel.reserveTickets === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-        //バリデーション
+        const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
+            return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
+        });
+        if (findPaymentAcceptedResult === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
+        // バリデーション
         purchaseInputForm(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) {
@@ -104,9 +112,11 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            log('入力バリデーション');
 
             return;
         }
@@ -119,9 +129,11 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+            log('電話番号バリデーション');
 
             return;
         }
@@ -147,6 +159,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.locals.gmoError = err.message;
@@ -156,7 +169,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             return;
         }
 
-        await new sasaki.service.transaction.PlaceOrder(options).setCustomerContact({
+        await new cinerinoService.service.transaction.PlaceOrder4sskts(options).setCustomerContact({
             id: purchaseModel.transaction.id,
             object: {
                 customerContact: {
@@ -193,10 +206,10 @@ async function creditCardProsess(
     const options = getApiOption(req);
     if (purchaseModel.transaction === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     if (purchaseModel.creditCardAuthorization !== undefined) {
-        await new sasaki.service.Payment(options).voidTransaction({
+        await new cinerinoService.service.Payment(options).voidTransaction({
             id: purchaseModel.creditCardAuthorization.id,
             object: {
-                typeOf: sasaki.factory.paymentMethodType.CreditCard
+                typeOf: cinerinoService.factory.paymentMethodType.CreditCard
             },
             purpose: {
                 id: purchaseModel.transaction.id,
@@ -215,9 +228,9 @@ async function creditCardProsess(
         const creditCard = {
             token: (<IGMO>purchaseModel.gmo).token
         };
-        purchaseModel.creditCardAuthorization = await new sasaki.service.Payment(options).authorizeCreditCard({
+        purchaseModel.creditCardAuthorization = await new cinerinoService.service.Payment(options).authorizeCreditCard({
             object: {
-                typeOf: sasaki.factory.paymentMethodType.CreditCard,
+                typeOf: cinerinoService.factory.paymentMethodType.CreditCard,
                 amount: purchaseModel.getReserveAmount(),
                 method: GMO.utils.util.Method.Lump,
                 creditCard

@@ -3,7 +3,7 @@
  * @namespace Purchase.TransactionModule
  */
 
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -46,9 +46,10 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         authModel.save(req.session);
 
         // イベント情報取得
-        const screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
-            id: req.query.performanceId
-        });
+        const screeningEvent =
+            await new cinerinoService.service.Event(options).findById<cinerinoService.factory.chevre.eventType.ScreeningEvent>({
+                id: req.query.performanceId
+            });
         log('イベント情報取得');
         if (screeningEvent === undefined
             || screeningEvent.coaInfo === undefined) {
@@ -92,7 +93,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         });
 
         // 劇場のショップを検索
-        const searchResult = await new sasaki.service.Seller(options).search({
+        const searchResult = await new cinerinoService.service.Seller(options).search({
             location: {
                 branchCodes: [screeningEvent.coaInfo.theaterCode]
             }
@@ -104,7 +105,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         // 取引開始
         const valid = VALID_TIME_FIXED;
         purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-        purchaseModel.transaction = await new sasaki.service.transaction.PlaceOrder(options).start({
+        purchaseModel.transaction = await new cinerinoService.service.transaction.PlaceOrder4sskts(options).start({
             expires: purchaseModel.expired,
             seller: {
                 typeOf: purchaseModel.seller.typeOf,

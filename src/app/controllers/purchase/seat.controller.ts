@@ -3,8 +3,8 @@
  * @namespace Purchase.SeatModule
  */
 
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as COA from '@motionpicture/coa-service';
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
@@ -60,7 +60,7 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         // イベント情報取得
-        purchaseModel.screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
+        purchaseModel.screeningEvent = await new cinerinoService.service.Event(options).findById({
             id: req.query.performanceId
         });
         purchaseModel.save(req.session);
@@ -127,7 +127,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).listTmpReserve;
         //予約中
         if (purchaseModel.seatReservationAuthorization !== undefined) {
-            await new sasaki.service.transaction.PlaceOrder(options)
+            await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                 .cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
@@ -154,7 +154,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         }
         if (purchaseModel.salesTickets.length === 0) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
-        purchaseModel.seatReservationAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+        purchaseModel.seatReservationAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
             .createSeatReservationAuthorization({
                 object: {
                     event: {

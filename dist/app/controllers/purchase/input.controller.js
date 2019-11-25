@@ -13,8 +13,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const GMO = require("@motionpicture/gmo-service");
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const google_libphonenumber_1 = require("google-libphonenumber");
 const HTTPStatus = require("http-status");
@@ -62,7 +62,7 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-                return (paymentAccepted.paymentMethodType === sasaki.factory.paymentMethodType.CreditCard);
+                return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
             });
             if (findPaymentAcceptedResult === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
@@ -103,13 +103,21 @@ function purchaserInformationRegistration(req, res, next) {
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
             if (purchaseModel.transaction === undefined
+                || purchaseModel.seller === undefined
+                || purchaseModel.seller.paymentAccepted === undefined
                 || purchaseModel.reserveTickets === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             //取引id確認
             if (req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            //バリデーション
+            const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
+                return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
+            });
+            if (findPaymentAcceptedResult === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+            }
+            // バリデーション
             forms_1.purchaseInputForm(req);
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty()) {
@@ -117,9 +125,11 @@ function purchaserInformationRegistration(req, res, next) {
                 res.locals.error = validationResult.mapped();
                 res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+                log('入力バリデーション');
                 return;
             }
             const phoneUtil = google_libphonenumber_1.PhoneNumberUtil.getInstance();
@@ -131,9 +141,11 @@ function purchaserInformationRegistration(req, res, next) {
                 };
                 res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
+                log('電話番号バリデーション');
                 return;
             }
             // 入力情報をセッションへ
@@ -159,6 +171,7 @@ function purchaserInformationRegistration(req, res, next) {
                 };
                 res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
+                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.locals.gmoError = err.message;
@@ -166,7 +179,7 @@ function purchaserInformationRegistration(req, res, next) {
                 log('クレジットカード処理失敗', err);
                 return;
             }
-            yield new sasaki.service.transaction.PlaceOrder(options).setCustomerContact({
+            yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).setCustomerContact({
                 id: purchaseModel.transaction.id,
                 object: {
                     customerContact: {
@@ -202,10 +215,10 @@ function creditCardProsess(req, purchaseModel) {
         if (purchaseModel.transaction === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         if (purchaseModel.creditCardAuthorization !== undefined) {
-            yield new sasaki.service.Payment(options).voidTransaction({
+            yield new cinerinoService.service.Payment(options).voidTransaction({
                 id: purchaseModel.creditCardAuthorization.id,
                 object: {
-                    typeOf: sasaki.factory.paymentMethodType.CreditCard
+                    typeOf: cinerinoService.factory.paymentMethodType.CreditCard
                 },
                 purpose: {
                     id: purchaseModel.transaction.id,
@@ -224,9 +237,9 @@ function creditCardProsess(req, purchaseModel) {
             const creditCard = {
                 token: purchaseModel.gmo.token
             };
-            purchaseModel.creditCardAuthorization = yield new sasaki.service.Payment(options).authorizeCreditCard({
+            purchaseModel.creditCardAuthorization = yield new cinerinoService.service.Payment(options).authorizeCreditCard({
                 object: {
-                    typeOf: sasaki.factory.paymentMethodType.CreditCard,
+                    typeOf: cinerinoService.factory.paymentMethodType.CreditCard,
                     amount: purchaseModel.getReserveAmount(),
                     method: GMO.utils.util.Method.Lump,
                     creditCard

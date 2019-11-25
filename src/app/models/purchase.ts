@@ -1,9 +1,9 @@
 /**
  * 購入セッション
  */
+import { factory } from '@cinerino/api-nodejs-client';
 import * as COA from '@motionpicture/coa-service';
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
-import { factory } from '@motionpicture/sskts-api-nodejs-client';
 import * as moment from 'moment';
 import { COMPANY_CODE } from '../controllers/purchase/mvtk/mvtk-util.controller';
 import { base64Decode, Digits, timeFormat } from '../functions';

@@ -14,8 +14,10 @@
                 <dt><%- __('common.theater') %></dt>
                 <dd>
                     <select name="theater">
-                        <% for (const theater of sellers) { %>
-                        <option selected value="<%= theater.location.branchCode %>"><%= theater.name.ja %></option>
+                        <% for (const seller of sellers) { %>
+                            <% if (seller.location && seller.location.branchCode) { %>
+                                <option selected value="<%= seller.location.branchCode %>"><%= seller.name.ja %></option>
+                            <% } %>
                         <% } %>
                     </select>
                 </dd>

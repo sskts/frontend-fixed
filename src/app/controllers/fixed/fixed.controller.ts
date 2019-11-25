@@ -2,7 +2,7 @@
  * 照会
  * @namespace Fixed.FixedModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -23,7 +23,7 @@ export async function settingRender(req: Request, res: Response, next: NextFunct
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const options = getApiOption(req);
-        const searchResult = await new sasaki.service.Seller(options).search({});
+        const searchResult = await new cinerinoService.service.Seller(options).search({});
         const sellers = searchResult.data;
         log('sellers: ', sellers);
         res.locals.sellers = sellers;
@@ -60,7 +60,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new sasaki.service.Seller(options).search({
+            const searchResult = await new cinerinoService.service.Seller(options).search({
                 location: { branchCodes: [req.body.theaterCode] }
             });
             inquiryModel.seller = searchResult.data[0];
@@ -73,7 +73,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await new sasaki.service.Order(options).findByOrderInquiryKey({
+            inquiryModel.order = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                 telephone: inquiryModel.login.telephone,
                 confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.seller.location.branchCode
@@ -120,12 +120,14 @@ interface IReservation {
 export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        || inquiryModel.seller.location === undefined) {
+        throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+    }
     const reserveNo = inquiryModel.order.confirmationNumber;
     const theaterName = inquiryModel.seller.location.name.ja;
 
     return inquiryModel.order.acceptedOffers.map((offer) => {
-        if (offer.itemOffered.typeOf !== sasaki.factory.chevre.reservationType.EventReservation
+        if (offer.itemOffered.typeOf !== cinerinoService.factory.chevre.reservationType.EventReservation
             || offer.itemOffered.reservationFor.workPerformed === undefined
             || offer.itemOffered.reservationFor.location === undefined
             || offer.itemOffered.reservationFor.location.name === undefined

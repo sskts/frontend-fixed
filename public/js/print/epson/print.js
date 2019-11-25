@@ -53,7 +53,7 @@ function printTicket(count, cb) {
         dataType: 'json',
         url: '/fixed/getInquiryData',
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             theater_code: $('input[name=theater_code]').val(),
             reserve_num: $('input[name=reserve_num]').val(),

@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -96,7 +96,7 @@ function ticketSelect(req, res, next) {
                 ticketValidation(purchaseModel);
                 log('券種検証');
                 //COAオーソリ追加
-                purchaseModel.seatReservationAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
+                purchaseModel.seatReservationAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                     .changeSeatReservationOffers({
                     id: purchaseModel.seatReservationAuthorization.id,
                     object: {
@@ -132,7 +132,7 @@ function ticketSelect(req, res, next) {
                 }
                 log('SSKTSCOA仮予約更新');
                 if (purchaseModel.mvtkAuthorization !== undefined) {
-                    yield new sasaki.service.transaction.PlaceOrder(options).cancelMvtkAuthorization({
+                    yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
@@ -147,15 +147,13 @@ function ticketSelect(req, res, next) {
                     log('購入管理番号情報', mvtkSeatInfoSync);
                     if (mvtkSeatInfoSync === undefined)
                         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-                    purchaseModel.mvtkAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
+                    purchaseModel.mvtkAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                         .createMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
                         },
                         object: {
-                            typeOf: sasaki.factory.action.authorize.discount.mvtk.ObjectType.Mvtk,
-                            price: purchaseModel.getMvtkPrice(),
                             seatInfoSyncIn: mvtkSeatInfoSync
                         }
                     });
