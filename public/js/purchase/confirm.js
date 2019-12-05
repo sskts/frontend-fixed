@@ -68,7 +68,7 @@ function purchase() {
         dataType: 'json',
         url: '/purchase/confirm',
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             toBeExpiredAt: $('input[name=toBeExpiredAt]').val(),
             isSecurityCodeSet: $('input[name=isSecurityCodeSet]').val(),
@@ -154,7 +154,7 @@ function resendMail(count) {
         dataType: 'json',
         url: '/purchase/resendMail',
         type: 'POST',
-        timeout: 10000
+        timeout: API_TIMEOUT
     };
     var process = function (data, jqXhr) {
         if (jqXhr.status !== HTTP_STATUS.OK) {
@@ -191,7 +191,7 @@ function getComplete(count) {
         dataType: 'json',
         url: '/purchase/getComplete',
         type: 'GET',
-        timeout: 10000
+        timeout: API_TIMEOUT
     };
     var process = function (data, jqXhr) {
         if (jqXhr.status === HTTP_STATUS.OK) {
@@ -245,7 +245,7 @@ function showError(message) {
         dataType: 'json',
         url: '/purchase/mvtk/cancel',
         type: 'POST',
-        timeout: 10000
+        timeout: API_TIMEOUT
     };
     $.ajax(option);
 }

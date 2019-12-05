@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.starThermalPrint.init({
         ipAddress: machineProperties.printer,
         deviceId: machineProperties.deviceId,
-        timeout: 100000
+        timeout: API_TIMEOUT
     }).then(function () {
         loadingEnd();
     }).catch(function (errorMsg) {
@@ -40,7 +40,7 @@ function printTicket(count, cb) {
         dataType: 'json',
         url: '/fixed/getInquiryData',
         type: 'POST',
-        timeout: 60000,
+        timeout: API_TIMEOUT,
         data: {
             theaterCode: $('input[name=theaterCode]').val(),
             reserveNum: $('input[name=reserveNum]').val(
@@ -49,7 +49,7 @@ function printTicket(count, cb) {
         },
     }).done(function (res) {
         var reservations = res.result;
-        if (reservations !== null) {
+        if (reservations.length > 0) {
             printerSend(reservations, cb);
         } else {
             setTimeout(function () {

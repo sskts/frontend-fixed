@@ -3,8 +3,8 @@
  * @namespace Purchase.SeatModule
  */
 
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as COA from '@motionpicture/coa-service';
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as fs from 'fs-extra';
@@ -32,11 +32,11 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
         }
 
-        res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== null)
+        res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== undefined)
             ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
-            : null;
-        res.locals.error = null;
-        res.locals.reserveError = null;
+            : undefined;
+        res.locals.error = undefined;
+        res.locals.reserveError = undefined;
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = PurchaseModel.SEAT_STATE;
         res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -60,12 +60,12 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         // イベント情報取得
-        purchaseModel.screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
+        purchaseModel.screeningEvent = await new cinerinoService.service.Event(options).findById({
             id: req.query.performanceId
         });
         purchaseModel.save(req.session);
         res.json({
-            err: null,
+            err: undefined,
             result: {
                 screeningEvent: purchaseModel.screeningEvent
             }
@@ -74,7 +74,7 @@ export async function performanceChange(req: Request, res: Response): Promise<vo
     } catch (err) {
         res.json({
             err: err.message,
-            result: null
+            result: undefined
         });
     }
 }
@@ -102,8 +102,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.transaction === null
-            || purchaseModel.screeningEvent === null
+        if (purchaseModel.transaction === undefined
+            || purchaseModel.screeningEvent === undefined
             || purchaseModel.screeningEvent.coaInfo === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
@@ -117,7 +117,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         if (!validationResult.isEmpty()) {
             res.locals.reserveSeats = req.body.seats;
             res.locals.error = validationResult.mapped();
-            res.locals.reserveError = null;
+            res.locals.reserveError = undefined;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.SEAT_STATE;
             res.render('purchase/seat', { layout: 'layouts/purchase/layout' });
@@ -126,8 +126,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         }
         const selectSeats: ISelectSeats[] = JSON.parse(req.body.seats).listTmpReserve;
         //予約中
-        if (purchaseModel.seatReservationAuthorization !== null) {
-            await new sasaki.service.transaction.PlaceOrder(options)
+        if (purchaseModel.seatReservationAuthorization !== undefined) {
+            await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                 .cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
@@ -135,12 +135,12 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
                         typeOf: purchaseModel.transaction.typeOf
                     }
                 });
-            purchaseModel.seatReservationAuthorization = null;
+            purchaseModel.seatReservationAuthorization = undefined;
             purchaseModel.save(req.session);
             log('仮予約削除');
         }
 
-        if (purchaseModel.salesTickets === null) {
+        if (purchaseModel.salesTickets === undefined) {
             //コアAPI券種取得
             const salesTicketResult = await COA.services.reserve.salesTicket({
                 theaterCode: purchaseModel.screeningEvent.coaInfo.theaterCode,
@@ -154,14 +154,14 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         }
         if (purchaseModel.salesTickets.length === 0) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
-        purchaseModel.seatReservationAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+        purchaseModel.seatReservationAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
             .createSeatReservationAuthorization({
                 object: {
                     event: {
                         id: purchaseModel.screeningEvent.id
                     },
                     acceptedOffer: selectSeats.map((seat) => {
-                        const salesTicket = (<COA.services.reserve.ISalesTicketResult[]>purchaseModel.salesTickets)[0];
+                        const salesTicket = purchaseModel.salesTickets[0];
 
                         return {
                             seatSection: seat.seatSection,
@@ -204,8 +204,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         if (err.hasOwnProperty('errors')
             && (Number(err.code) === HTTPStatus.CONFLICT || Number(err.code) === HTTPStatus.SERVICE_UNAVAILABLE)) {
             const purchaseModel = new PurchaseModel((<Express.Session>req.session).purchase);
-            res.locals.reserveSeats = null;
-            res.locals.error = null;
+            res.locals.reserveSeats = undefined;
+            res.locals.error = undefined;
             res.locals.reserveError = err.code;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.SEAT_STATE;
@@ -245,7 +245,7 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
             screenCode: req.body.screenCode // スクリーンコード
         });
         res.json({
-            err: null,
+            err: undefined,
             result: {
                 screen: screen,
                 setting: setting,
@@ -253,7 +253,7 @@ export async function getScreenStateReserve(req: Request, res: Response): Promis
             }
         });
     } catch (err) {
-        res.json({ err: err, result: null });
+        res.json({ err: err, result: undefined });
     }
 }
 
@@ -286,7 +286,7 @@ export async function saveSalesTickets(req: Request, res: Response): Promise<voi
         });
         log('コアAPI券種取得');
         purchaseModel.save(req.session);
-        res.json({ err: null });
+        res.json({ err: undefined });
     } catch (err) {
         res.json({ err: err.message });
     }

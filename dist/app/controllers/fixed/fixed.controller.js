@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace Fixed.FixedModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -33,7 +34,7 @@ function settingRender(req, res, next) {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
-            const searchResult = yield new sasaki.service.Seller(options).search({});
+            const searchResult = yield new cinerinoService.service.Seller(options).search({});
             const sellers = searchResult.data;
             log('sellers: ', sellers);
             res.locals.sellers = sellers;
@@ -74,7 +75,7 @@ function getInquiryData(req, res) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new sasaki.service.Seller(options).search({
+                const searchResult = yield new cinerinoService.service.Seller(options).search({
                     location: { branchCodes: [req.body.theaterCode] }
                 });
                 inquiryModel.seller = searchResult.data[0];
@@ -87,24 +88,24 @@ function getInquiryData(req, res) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield new sasaki.service.Order(options).findByOrderInquiryKey({
+                inquiryModel.order = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
                 log('オーダーOut', inquiryModel.order);
-                if (inquiryModel.order === null)
+                if (inquiryModel.order === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 // 印刷用
                 const reservations = createPrintReservations(inquiryModel);
                 res.json({ result: reservations });
                 return;
             }
-            res.json({ result: null });
+            res.json({ result: [] });
         }
         catch (err) {
             log('オーダーerr', err);
-            res.json({ result: null });
+            res.json({ result: [] });
         }
     });
 }
@@ -117,14 +118,15 @@ exports.getInquiryData = getInquiryData;
  * @returns {IReservation[]}
  */
 function createPrintReservations(inquiryModel) {
-    if (inquiryModel.order === null
+    if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined)
+        || inquiryModel.seller.location === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+    }
     const reserveNo = inquiryModel.order.confirmationNumber;
     const theaterName = inquiryModel.seller.location.name.ja;
     return inquiryModel.order.acceptedOffers.map((offer) => {
-        if (offer.itemOffered.typeOf !== sasaki.factory.chevre.reservationType.EventReservation
+        if (offer.itemOffered.typeOf !== cinerinoService.factory.chevre.reservationType.EventReservation
             || offer.itemOffered.reservationFor.workPerformed === undefined
             || offer.itemOffered.reservationFor.location === undefined
             || offer.itemOffered.reservationFor.location.name === undefined

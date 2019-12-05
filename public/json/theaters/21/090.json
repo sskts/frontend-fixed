@@ -1,0 +1,53 @@
+{
+    "type": 0,
+    "size": { "w": 1346, "h": 1183 },
+    "objects": [
+        {
+            "w": 528, "h": 52,
+            "x": 409, "y": 90,
+            "image": "/images/theater/21/screen/009.svg"
+        },
+        {
+            "w": 128, "h": 330,
+            "x": 864, "y": 223,
+            "image": "/images/theater/21/entrance/009.svg"
+        }
+    ],
+    "seatStart": { "x": 389, "y": 223 },
+    "map": [
+        [0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+        [0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0],
+        [],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ],
+    "hc": ["A9"],
+    "pair": [
+        ["A2", "A3"],
+        ["A5", "A6"],
+        ["B2", "B3"],
+        ["B5", "B6"],
+        ["B8", "B9"],
+        ["C2", "C3"],
+        ["C5", "C6"],
+        ["C8", "C9"],
+        ["D2", "D3"],
+        ["D5", "D6"],
+        ["D8", "D9"],
+        ["E2", "E3"],
+        ["E5", "E6"],
+        ["E8", "E9"]
+    ],
+    "specialSeats": [
+        { "name": "parentAndChildPairLeft", "data": ["A2", "A5", "B2", "B5", "B8", "C2", "C5", "C8", "D2", "D5", "D8", "E2", "E5", "E8"] },
+        { "name": "parentAndChildPairRight", "data": ["A3", "A6", "B3", "B6", "B9", "C3", "C6", "C9", "D3", "D6", "D9", "E3", "E6", "E9"] }
+    ],
+    "style": "<style>.seat-parent-and-child-pair-right{margin-left: -4px;}.seat-A5,.seat-B5,.seat-C5,.seat-D5,.seat-E5{left: 549px !important;}.seat-A6,.seat-B6,.seat-C6,.seat-D6,.seat-E6{left: 609px !important;}.seat-B8,.seat-C8,.seat-D8,.seat-E8{left: 665px !important;}.seat-B9,.seat-C9,.seat-D9,.seat-E9{left: 725px !important;}.seat-A9{left: 700px !important;}</style>"
+}

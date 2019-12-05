@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -79,9 +80,9 @@ function ticketSelect(req, res, next) {
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === null
-                || purchaseModel.screeningEvent === null
-                || purchaseModel.seatReservationAuthorization === null
+            if (purchaseModel.transaction === undefined
+                || purchaseModel.screeningEvent === undefined
+                || purchaseModel.seatReservationAuthorization === undefined
                 || req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -95,7 +96,7 @@ function ticketSelect(req, res, next) {
                 ticketValidation(purchaseModel);
                 log('券種検証');
                 //COAオーソリ追加
-                purchaseModel.seatReservationAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
+                purchaseModel.seatReservationAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                     .changeSeatReservationOffers({
                     id: purchaseModel.seatReservationAuthorization.id,
                     object: {
@@ -130,8 +131,8 @@ function ticketSelect(req, res, next) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 log('SSKTSCOA仮予約更新');
-                if (purchaseModel.mvtkAuthorization !== null) {
-                    yield new sasaki.service.transaction.PlaceOrder(options).cancelMvtkAuthorization({
+                if (purchaseModel.mvtkAuthorization !== undefined) {
+                    yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
@@ -144,17 +145,15 @@ function ticketSelect(req, res, next) {
                     // 購入管理番号情報
                     const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                     log('購入管理番号情報', mvtkSeatInfoSync);
-                    if (mvtkSeatInfoSync === null)
+                    if (mvtkSeatInfoSync === undefined)
                         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-                    purchaseModel.mvtkAuthorization = yield new sasaki.service.transaction.PlaceOrder(options)
+                    purchaseModel.mvtkAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                         .createMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
                         },
                         object: {
-                            typeOf: sasaki.factory.action.authorize.discount.mvtk.ObjectType.Mvtk,
-                            price: purchaseModel.getMvtkPrice(),
                             seatInfoSyncIn: mvtkSeatInfoSync
                         }
                     });

@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -36,10 +37,10 @@ function render(req, res, next) {
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             if (req.params.id === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            if (purchaseModel.screeningEvent === null)
+            if (purchaseModel.screeningEvent === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             // イベント情報取得
-            const screeningEvent = yield new sasaki.service.Event(options).findScreeningEventById({
+            const screeningEvent = yield new cinerinoService.service.Event(options).findById({
                 id: req.params.id
             });
             log('イベント情報取得', screeningEvent);
@@ -69,12 +70,12 @@ function newReserve(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction !== null
-                && purchaseModel.seatReservationAuthorization !== null
+            if (purchaseModel.transaction !== undefined
+                && purchaseModel.seatReservationAuthorization !== undefined
                 && !purchaseModel.isExpired()) {
                 try {
                     // COA仮予約削除
-                    yield new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({
+                    yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelSeatReservationAuthorization({
                         id: purchaseModel.seatReservationAuthorization.id,
                         purpose: {
                             id: purchaseModel.transaction.id,

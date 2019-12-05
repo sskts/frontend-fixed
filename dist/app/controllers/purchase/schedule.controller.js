@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -35,11 +36,11 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.seatReservationAuthorization !== null
-                && purchaseModel.transaction !== null
+            if (purchaseModel.seatReservationAuthorization !== undefined
+                && purchaseModel.transaction !== undefined
                 && !purchaseModel.isExpired()) {
                 try {
-                    yield new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({
+                    yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelSeatReservationAuthorization({
                         id: purchaseModel.seatReservationAuthorization.id,
                         purpose: {
                             id: purchaseModel.transaction.id,
@@ -58,7 +59,7 @@ function render(req, res, next) {
             delete req.session.complete;
             delete req.session.auth;
             // if (process.env.VIEW_TYPE === undefined) {
-            //     const searchResult = await new sasaki.service.Seller(options).search({});
+            //     const searchResult = await new cinerinoService.service.Seller(options).search({});
             //     res.locals.sellers = searchResult.data;
             //     log('劇場検索');
             // }
@@ -93,10 +94,10 @@ function getPerformances(req, res) {
             let roop = true;
             let screeningEvents = [];
             while (roop) {
-                const screeningEventsResult = yield new sasaki.service.Event(options).searchScreeningEvents({
+                const screeningEventsResult = yield new cinerinoService.service.Event(options).search({
                     page,
                     limit,
-                    typeOf: sasaki.factory.chevre.eventType.ScreeningEvent,
+                    typeOf: cinerinoService.factory.chevre.eventType.ScreeningEvent,
                     superEvent: {
                         locationBranchCodes: [req.query.theater]
                     },
@@ -137,7 +138,7 @@ function getMovieTheaters(req, res) {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
-            const searchResult = yield new sasaki.service.Seller(options).search({});
+            const searchResult = yield new cinerinoService.service.Seller(options).search({});
             const sellers = searchResult.data;
             log('劇場検索');
             res.json({ result: sellers });

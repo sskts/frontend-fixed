@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,8 +13,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const mvtkReserve = require("@motionpicture/mvtk-reserve-service");
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -41,8 +42,8 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
             }
             //購入者内容確認表示
-            res.locals.updateReserve = null;
-            res.locals.error = null;
+            res.locals.updateReserve = undefined;
+            res.locals.error = undefined;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = models_1.PurchaseModel.CONFIRM_STATE;
             //セッション更新
@@ -66,7 +67,7 @@ function reserveMvtk(purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         // 購入管理番号情報
         const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
-        if (seatInfoSyncIn === null)
+        if (seatInfoSyncIn === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         let seatInfoSyncInResult;
         try {
@@ -108,7 +109,7 @@ function cancelMvtk(req, res) {
             //セッション削除
             delete req.session.purchase;
             delete req.session.mvtk;
-            if (seatInfoSyncIn === null)
+            if (seatInfoSyncIn === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             try {
                 const seatInfoSyncInResult = yield mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
@@ -142,18 +143,18 @@ exports.cancelMvtk = cancelMvtk;
 function purchase(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const purchaseResult = {
-            mvtk: null,
-            order: null,
-            mail: null,
-            cognito: null,
-            complete: null
+            mvtk: undefined,
+            order: undefined,
+            mail: undefined,
+            cognito: undefined,
+            complete: undefined
         };
         try {
             if (req.session === undefined)
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             const options = functions_1.getApiOption(req);
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction === null
+            if (purchaseModel.transaction === undefined
                 || req.body.transactionId !== purchaseModel.transaction.id) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -166,15 +167,14 @@ function purchase(req, res) {
                 return (ticket.mvtkNum !== '');
             });
             // ムビチケ使用
-            if (purchaseModel.mvtk !== null && mvtkTickets.length > 0) {
+            if (purchaseModel.mvtk !== undefined && mvtkTickets.length > 0) {
                 purchaseResult.mvtk = yield reserveMvtk(purchaseModel);
                 log('Mvtk payment');
             }
-            purchaseResult.order = yield new sasaki.service.transaction.PlaceOrder(options).confirm({
+            purchaseResult.order = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
+                .confirm({
                 id: purchaseModel.transaction.id,
-                options: {
-                    sendEmailMessage: false
-                }
+                sendEmailMessage: false
             });
             log('Order confirmation');
             //購入情報をセッションへ

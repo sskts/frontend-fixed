@@ -53,9 +53,9 @@ function pageInit() {
         $('input[name=emailConfirm]').val(json.email);
 
         var str = $('input[name=validation]').val();
+        if (str === '') return;
         var errors = JSON.parse(str);
         if (errors === null) return;
-        var errors = JSON.parse(str);
         var modalBody = $('.modal[data-modal=validation] .modal-body');
         modalBody.html('');
         Object.keys(errors).forEach(function(value) {

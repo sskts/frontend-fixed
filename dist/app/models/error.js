@@ -41,15 +41,18 @@ var ErrorType;
 class AppError extends Error {
     constructor(code, errorType, message) {
         if (message === undefined) {
-            message = (errorType === ErrorType.Property) ? 'Property Error'
+            const customMessage = (errorType === ErrorType.Property) ? 'Property Error'
                 : (errorType === ErrorType.Access) ? 'Access Error'
                     : (errorType === ErrorType.Timeout) ? 'Timeout Error'
                         : (errorType === ErrorType.Validation) ? 'Validation Error'
                             : (errorType === ErrorType.Expire) ? 'Expire Error'
                                 : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
                                     : undefined;
+            super(customMessage);
         }
-        super(message);
+        else {
+            super(message);
+        }
         this.code = code;
         this.errorType = errorType;
         this.errors = [

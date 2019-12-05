@@ -15,11 +15,13 @@
     "curly": false,
     "export-name": false,
     "import-name": false,
+    "informative-docs": false,
     "interface-over-type-literal": true,
     "linebreak-style": [
       true,
       "LF"
     ],
+    "newline-per-chained-call": false,
     "no-any": false,
     "no-backbone-get-set-outside-model": false,
     "no-default-export": false,
@@ -30,6 +32,7 @@
     "no-unnecessary-initializer": true,
     "no-unsafe-any": false,
     "no-use-before-declare": false,
+    "no-redundant-jsdoc": false,
     "object-literal-shorthand": false,
     "prefer-function-over-method": true,
     "prefer-method-signature": true,

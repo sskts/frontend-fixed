@@ -1,4 +1,4 @@
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as uuid from 'uuid';
 
 /**
@@ -25,7 +25,7 @@ export interface IAuthSession {
     /**
      * コード検証
      */
-    codeVerifier: string | null;
+    codeVerifier?: string;
 }
 
 /**
@@ -48,20 +48,18 @@ export class AuthModel {
     /**
      * 資格情報
      */
-    public credentials: any | null;
+    public credentials?: any;
     /**
      * コード検証
      */
-    public codeVerifier: string | null;
+    public codeVerifier?: string;
 
     /**
      * @constructor
      * @param {any} session
      */
-    constructor(session?: any) {
-        if (session === undefined) {
-            session = {};
-        }
+    constructor(session: any = {}) {
+
         this.state = (session.state !== undefined) ? session.state : uuid.v1();
         // this.scopes = (session.scopes !== undefined) ? session.scopes : [
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
@@ -72,18 +70,18 @@ export class AuthModel {
         // ];
         this.scopes = [];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
-        this.credentials = (session.credentials !== undefined) ? session.credentials : null;
-        this.codeVerifier = (session.codeVerifier !== undefined) ? session.codeVerifier : null;
+        this.credentials = session.credentials;
+        this.codeVerifier = session.codeVerifier;
     }
 
     /**
      * 認証クラス作成
      * @memberof AuthModel
      * @method create
-     * @returns {sasaki.auth.ClientCredentials}
+     * @returns {cinerinoService.auth.ClientCredentials}
      */
-    public create(): sasaki.auth.ClientCredentials {
-        return new sasaki.auth.ClientCredentials({
+    public create(): cinerinoService.auth.ClientCredentials {
+        return new cinerinoService.auth.ClientCredentials({
             domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
             clientId: (<string>process.env.CLIENT_ID),
             clientSecret: (<string>process.env.CLIENT_SECRET),

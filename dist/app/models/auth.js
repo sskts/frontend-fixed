@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const uuid = require("uuid");
 /**
  * 認証モデル
@@ -11,10 +11,7 @@ class AuthModel {
      * @constructor
      * @param {any} session
      */
-    constructor(session) {
-        if (session === undefined) {
-            session = {};
-        }
+    constructor(session = {}) {
         this.state = (session.state !== undefined) ? session.state : uuid.v1();
         // this.scopes = (session.scopes !== undefined) ? session.scopes : [
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
@@ -25,17 +22,17 @@ class AuthModel {
         // ];
         this.scopes = [];
         this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
-        this.credentials = (session.credentials !== undefined) ? session.credentials : null;
-        this.codeVerifier = (session.codeVerifier !== undefined) ? session.codeVerifier : null;
+        this.credentials = session.credentials;
+        this.codeVerifier = session.codeVerifier;
     }
     /**
      * 認証クラス作成
      * @memberof AuthModel
      * @method create
-     * @returns {sasaki.auth.ClientCredentials}
+     * @returns {cinerinoService.auth.ClientCredentials}
      */
     create() {
-        return new sasaki.auth.ClientCredentials({
+        return new cinerinoService.auth.ClientCredentials({
             domain: process.env.AUTHORIZE_SERVER_DOMAIN,
             clientId: process.env.CLIENT_ID,
             clientSecret: process.env.CLIENT_SECRET,
