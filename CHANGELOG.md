@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.6.0 - 2019-12-05
+### Changed
+ - SDK変更
+
 ## 2.5.1 - 2019-08-24
 ### Changed
 - jqueryをcdnから変更
