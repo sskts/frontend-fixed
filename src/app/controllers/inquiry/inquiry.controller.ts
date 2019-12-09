@@ -2,7 +2,7 @@
  * 照会
  * @namespace InquiryModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -33,7 +33,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         const options = getApiOption(req);
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
-        const searchResult = await new sasaki.service.Seller(options).search({
+        const searchResult = await new cinerinoService.service.Seller(options).search({
             location: { branchCodes: [theaterCode] }
         });
         inquiryModel.seller = searchResult.data[0];
@@ -43,7 +43,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
             telephone: ''
         };
         res.locals.inquiryModel = inquiryModel;
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.render('inquiry/login');
 
         return;
@@ -69,7 +69,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new sasaki.service.Seller(options).search({
+            const searchResult = await new cinerinoService.service.Seller(options).search({
                 location: { branchCodes: [req.body.theaterCode] }
             });
             inquiryModel.seller = searchResult.data[0];
@@ -83,13 +83,13 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await new sasaki.service.Order(options).findByOrderInquiryKey({
+            inquiryModel.order = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                 telephone: inquiryModel.login.telephone,
                 confirmationNumber: Number(inquiryModel.login.reserveNum),
                 theaterCode: inquiryModel.seller.location.branchCode
             });
             log('照会情報');
-            if (inquiryModel.order === null) {
+            if (inquiryModel.order === undefined) {
                 res.locals.inquiryModel = inquiryModel;
                 res.locals.error = getInquiryError(req);
                 res.render('inquiry/login');
@@ -105,12 +105,12 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             return;
         } else {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new sasaki.service.Seller(options).search({
+            const searchResult = await new cinerinoService.service.Seller(options).search({
                 location: { branchCodes: [req.body.theaterCode] }
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (inquiryModel.seller === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            if (inquiryModel.seller === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone

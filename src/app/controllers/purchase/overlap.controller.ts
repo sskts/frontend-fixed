@@ -2,7 +2,7 @@
  * 重複予約
  * @namespace Purchase.OverlapModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -26,9 +26,9 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
         if (req.params.id === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        if (purchaseModel.screeningEvent === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.screeningEvent === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         // イベント情報取得
-        const screeningEvent = await new sasaki.service.Event(options).findScreeningEventById({
+        const screeningEvent = await new cinerinoService.service.Event(options).findById({
             id: req.params.id
         });
         log('イベント情報取得', screeningEvent);
@@ -55,12 +55,12 @@ export async function newReserve(req: Request, res: Response, next: NextFunction
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.transaction !== null
-            && purchaseModel.seatReservationAuthorization !== null
+        if (purchaseModel.transaction !== undefined
+            && purchaseModel.seatReservationAuthorization !== undefined
             && !purchaseModel.isExpired()) {
             try {
                 // COA仮予約削除
-                await new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({
+                await new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
                         id: purchaseModel.transaction.id,

@@ -1,0 +1,30 @@
+{
+    "type": 0,
+    "size": { "w": 1346, "h": 923 },
+    "objects": [
+        {
+            "w": 396, "h": 48,
+            "x": 431, "y": 90,
+            "image": "/images/theater/09/screen/006.svg"
+        },
+        {
+            "w": 128, "h": 540,
+            "x": 191, "y": 223,
+            "image": "/images/theater/09/entrance/006.svg"
+        }
+    ],
+    "seatStart": { "x": 411, "y": 223 },
+    "map": [
+        [1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1, 4, 1, 1, 1, 1, 1, 1, 1],
+        [1]
+    ],
+    "hc": ["I1"],
+    "style": "<style>.seat a { position: absolute; top: 0; left: 0;}.seat-A a { left: 136px !important; }.line-object-8 { display: none;}</style>"
+}

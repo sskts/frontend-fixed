@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -12,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace InquiryModule
  */
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -42,7 +43,7 @@ function loginRender(req, res, next) {
             const options = functions_1.getApiOption(req);
             const inquiryModel = new models_1.InquiryModel();
             // 劇場のショップを検索
-            const searchResult = yield new sasaki.service.Seller(options).search({
+            const searchResult = yield new cinerinoService.service.Seller(options).search({
                 location: { branchCodes: [theaterCode] }
             });
             inquiryModel.seller = searchResult.data[0];
@@ -52,7 +53,7 @@ function loginRender(req, res, next) {
                 telephone: ''
             };
             res.locals.inquiryModel = inquiryModel;
-            res.locals.error = null;
+            res.locals.error = undefined;
             res.render('inquiry/login');
             return;
         }
@@ -81,7 +82,7 @@ function inquiryAuth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new sasaki.service.Seller(options).search({
+                const searchResult = yield new cinerinoService.service.Seller(options).search({
                     location: { branchCodes: [req.body.theaterCode] }
                 });
                 inquiryModel.seller = searchResult.data[0];
@@ -95,13 +96,13 @@ function inquiryAuth(req, res, next) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield new sasaki.service.Order(options).findByOrderInquiryKey({
+                inquiryModel.order = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: Number(inquiryModel.login.reserveNum),
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
                 log('照会情報');
-                if (inquiryModel.order === null) {
+                if (inquiryModel.order === undefined) {
                     res.locals.inquiryModel = inquiryModel;
                     res.locals.error = getInquiryError(req);
                     res.render('inquiry/login');
@@ -114,12 +115,12 @@ function inquiryAuth(req, res, next) {
             }
             else {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new sasaki.service.Seller(options).search({
+                const searchResult = yield new cinerinoService.service.Seller(options).search({
                     location: { branchCodes: [req.body.theaterCode] }
                 });
                 inquiryModel.seller = searchResult.data[0];
                 log('劇場のショップを検索');
-                if (inquiryModel.seller === null)
+                if (inquiryModel.seller === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,

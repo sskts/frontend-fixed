@@ -4,15 +4,16 @@
  * @namespace Purchase.TransactionModule
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sasaki = require("@motionpicture/sskts-api-nodejs-client");
+const cinerinoService = require("@cinerino/api-nodejs-client");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -51,11 +52,11 @@ function start(req, res, next) {
             const options = functions_1.getApiOption(req);
             authModel.save(req.session);
             // イベント情報取得
-            const screeningEvent = yield new sasaki.service.Event(options).findScreeningEventById({
+            const screeningEvent = yield new cinerinoService.service.Event(options).findById({
                 id: req.query.performanceId
             });
             log('イベント情報取得');
-            if (screeningEvent === null
+            if (screeningEvent === undefined
                 || screeningEvent.coaInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -75,7 +76,7 @@ function start(req, res, next) {
             // 非会員なら重複確認
             purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             log('重複確認');
-            if (purchaseModel.transaction !== null && purchaseModel.seatReservationAuthorization !== null) {
+            if (purchaseModel.transaction !== undefined && purchaseModel.seatReservationAuthorization !== undefined) {
                 // 重複確認へ
                 res.redirect(`/purchase/${req.query.performanceId}/overlap`);
                 log('重複確認へ');
@@ -90,19 +91,19 @@ function start(req, res, next) {
                 screeningEvent: screeningEvent
             });
             // 劇場のショップを検索
-            const searchResult = yield new sasaki.service.Seller(options).search({
+            const searchResult = yield new cinerinoService.service.Seller(options).search({
                 location: {
                     branchCodes: [screeningEvent.coaInfo.theaterCode]
                 }
             });
             purchaseModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (purchaseModel.seller === null)
+            if (purchaseModel.seller === undefined)
                 throw new models_1.AppError(HTTPStatus.NOT_FOUND, models_1.ErrorType.Access);
             // 取引開始
             const valid = VALID_TIME_FIXED;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();
-            purchaseModel.transaction = yield new sasaki.service.transaction.PlaceOrder(options).start({
+            purchaseModel.transaction = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).start({
                 expires: purchaseModel.expired,
                 seller: {
                     typeOf: purchaseModel.seller.typeOf,

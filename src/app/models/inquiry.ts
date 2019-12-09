@@ -1,4 +1,4 @@
-import { factory } from '@motionpicture/sskts-api-nodejs-client';
+import { factory } from '@cinerino/api-nodejs-client';
 
 /**
  * ログイン情報
@@ -27,11 +27,11 @@ export interface IInquirySession {
     /**
      * 照会情報
      */
-    order: factory.order.IOrder | null;
+    order?: factory.order.IOrder;
     /**
      * login情報
      */
-    login: ILogin | null;
+    login?: ILogin;
 }
 
 /**
@@ -46,23 +46,20 @@ export class InquiryModel {
     /**
      * 照会情報
      */
-    public order: factory.order.IOrder | null;
+    public order?: factory.order.IOrder;
     /**
      * login情報
      */
-    public login: ILogin | null;
+    public login?: ILogin;
 
     /**
      * @constructor
      * @param {any} session
      */
-    constructor(session?: any) {
-        if (session === undefined) {
-            session = {};
-        }
-        this.seller = (session.seller !== undefined) ? session.seller : null;
-        this.order = (session.order !== undefined) ? session.order : null;
-        this.login = (session.login !== undefined) ? session.login : null;
+    constructor(session: any = {}) {
+        this.seller = session.seller;
+        this.order = session.order;
+        this.login = session.login;
     }
 
     /**

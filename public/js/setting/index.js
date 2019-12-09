@@ -38,7 +38,7 @@ $(function () {
         window.starThermalPrint.init({
             ipAddress: config.printer,
             deviceId: config.deviceId,
-            timeout: 10000
+            timeout: API_TIMEOUT
         }).then(function () {
             // 印刷
             var zp = function (num) { return (parseInt(num, 10) < 10) ? '0' + num : num; };

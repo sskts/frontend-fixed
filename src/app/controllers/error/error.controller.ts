@@ -2,7 +2,7 @@
  * エラー
  * @namespace ErrorModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -40,7 +40,7 @@ export function notFoundRender(req: Request, res: Response, _: NextFunction): vo
  * @returns {void}
  */
 export function errorRender(
-    err: Error | AppError | sasaki.transporters.RequestError,
+    err: Error | AppError | cinerinoService.transporters.RequestError,
     req: Request,
     res: Response,
     _: NextFunction
@@ -48,7 +48,7 @@ export function errorRender(
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err.hasOwnProperty('errors')) {
-        switch ((<sasaki.transporters.RequestError | AppError>err).code) {
+        switch ((<cinerinoService.transporters.RequestError | AppError>err).code) {
             case HTTPStatus.BAD_REQUEST:
                 msg = req.__('common.error.badRequest');
                 break;
@@ -68,12 +68,11 @@ export function errorRender(
             default:
                 msg = req.__('common.error.internalServerError');
                 logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
-                break;
         }
         if ((<AppError>err).errorType !== undefined && (<AppError>err).errorType === ErrorType.Expire) {
             msg = req.__('common.error.expire');
         }
-        status = (<sasaki.transporters.RequestError | AppError>err).code;
+        status = (<cinerinoService.transporters.RequestError | AppError>err).code;
     } else {
         log('Error');
         status = HTTPStatus.INTERNAL_SERVER_ERROR;

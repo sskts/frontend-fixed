@@ -9,13 +9,10 @@ class InquiryModel {
      * @constructor
      * @param {any} session
      */
-    constructor(session) {
-        if (session === undefined) {
-            session = {};
-        }
-        this.seller = (session.seller !== undefined) ? session.seller : null;
-        this.order = (session.order !== undefined) ? session.order : null;
-        this.login = (session.login !== undefined) ? session.login : null;
+    constructor(session = {}) {
+        this.seller = session.seller;
+        this.order = session.order;
+        this.login = session.login;
     }
     /**
      * セッションへ保存

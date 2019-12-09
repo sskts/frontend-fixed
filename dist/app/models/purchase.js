@@ -14,26 +14,22 @@ class PurchaseModel {
      * @param {any} session
      */
     // tslint:disable-next-line:cyclomatic-complexity
-    constructor(session) {
-        if (session === undefined) {
-            session = {};
-        }
-        this.screeningEvent = (session.screeningEvent !== undefined) ? session.screeningEvent : null;
-        this.seller = (session.seller !== undefined) ? session.seller : null;
-        this.transaction = (session.transaction !== undefined) ? session.transaction : null;
-        this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
+    constructor(session = {}) {
+        this.screeningEvent = session.screeningEvent;
+        this.seller = session.seller;
+        this.transaction = session.transaction;
+        this.salesTickets = session.salesTickets;
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
-        this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
-            ? session.seatReservationAuthorization : null;
-        this.orderId = (session.orderId !== undefined) ? session.orderId : null;
+        this.seatReservationAuthorization = session.seatReservationAuthorization;
+        this.orderId = session.orderId;
         this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
-        this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
-        this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.creditCardAuthorization = session.creditCardAuthorization;
+        this.profile = session.profile;
         this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
-        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
+        this.gmo = session.gmo;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
-        this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
-        this.expired = (session.expired !== undefined) ? session.expired : null;
+        this.mvtkAuthorization = session.mvtkAuthorization;
+        this.expired = session.expired;
     }
     /**
      * セッションへ保存
@@ -92,7 +88,6 @@ class PurchaseModel {
             case PurchaseModel.COMPLETE_STATE:
                 break;
             default:
-                break;
         }
         return result;
     }
@@ -103,7 +98,7 @@ class PurchaseModel {
      * @returns {boolean}
      */
     isUsedMvtk() {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.superEvent.coaInfo === undefined) {
             return false;
         }
@@ -289,7 +284,7 @@ class PurchaseModel {
      * @returns {string}
      */
     getMvtkfilmCode() {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.coaInfo === undefined) {
             return '';
         }
@@ -303,11 +298,11 @@ class PurchaseModel {
      * @method getMvtkSeatInfoSync
      */
     getMvtkSeatInfoSync(options) {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.coaInfo === undefined
-            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization === undefined
             || this.seatReservationAuthorization.result === undefined) {
-            return null;
+            return;
         }
         const mvtkPurchaseNoInfo = [];
         const mvtkseat = [];
@@ -341,7 +336,7 @@ class PurchaseModel {
             mvtkseat.push({ zskCd: reserveTicket.seatCode });
         }
         if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
-            return null;
+            return;
         }
         const day = moment(this.screeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
         const time = `${functions_1.timeFormat(this.screeningEvent.startDate, this.screeningEvent.coaInfo.dateJouei)}:00`;
@@ -368,10 +363,10 @@ class PurchaseModel {
         };
     }
 }
+exports.PurchaseModel = PurchaseModel;
 PurchaseModel.PERFORMANCE_STATE = 0;
 PurchaseModel.SEAT_STATE = 1;
 PurchaseModel.TICKET_STATE = 2;
 PurchaseModel.INPUT_STATE = 3;
 PurchaseModel.CONFIRM_STATE = 4;
 PurchaseModel.COMPLETE_STATE = 5;
-exports.PurchaseModel = PurchaseModel;

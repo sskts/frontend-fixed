@@ -168,7 +168,7 @@ interface IScreenSetting {
     objects: {
         w: number; h: number;
         x: number; y: number;
-        image: string
+        image: string;
     }[];
     seatStart: IPosition;
     map: number[][];
@@ -222,7 +222,6 @@ async function createScreen(args: ICreateScreenArgs): Promise<string> {
             break;
         default:
             screenType = '';
-            break;
     }
     const scale = (option !== undefined && option.width !== undefined) ? option.width / screen.size.w : 1;
     //html挿入の場合

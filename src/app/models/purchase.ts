@@ -1,9 +1,9 @@
 /**
  * 購入セッション
  */
+import { factory } from '@cinerino/api-nodejs-client';
 import * as COA from '@motionpicture/coa-service';
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
-import { factory } from '@motionpicture/sskts-api-nodejs-client';
 import * as moment from 'moment';
 import { COMPANY_CODE } from '../controllers/purchase/mvtk/mvtk-util.controller';
 import { base64Decode, Digits, timeFormat } from '../functions';
@@ -262,7 +262,7 @@ export interface IPurchaseSession {
     /**
      * 上映イベント
      */
-    screeningEvent: factory.chevre.event.screeningEvent.IEvent | null;
+    screeningEvent?: factory.chevre.event.screeningEvent.IEvent;
     /**
      * 劇場ショップ
      */
@@ -270,11 +270,11 @@ export interface IPurchaseSession {
     /**
      * 取引
      */
-    transaction: factory.transaction.placeOrder.ITransaction | null;
+    transaction?: factory.transaction.placeOrder.ITransaction;
     /**
      * 販売可能チケット情報
      */
-    salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
+    salesTickets?: COA.services.reserve.ISalesTicketResult[];
     /**
      * 予約チケット
      */
@@ -282,11 +282,11 @@ export interface IPurchaseSession {
     /**
      * 予約座席
      */
-    seatReservationAuthorization: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier> | null;
+    seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier>;
     /**
      * GMOオーダーID
      */
-    orderId: string | null;
+    orderId?: string;
     /**
      * GMOオーダー回数
      */
@@ -294,11 +294,11 @@ export interface IPurchaseSession {
     /**
      * GMOオーソリ
      */
-    creditCardAuthorization: factory.action.authorize.paymentMethod.creditCard.IAction | null;
+    creditCardAuthorization?: factory.action.authorize.paymentMethod.creditCard.IAction;
     /**
      * プロフィール
      */
-    profile: IProfile | null;
+    profile?: IProfile;
     /**
      * クレジットカード情報
      */
@@ -306,7 +306,7 @@ export interface IPurchaseSession {
     /**
      * GMO情報
      */
-    gmo: IGMO | null;
+    gmo?: IGMO;
     /**
      * ムビチケ
      */
@@ -314,7 +314,7 @@ export interface IPurchaseSession {
     /**
      * ムビチケオーソリ
      */
-    mvtkAuthorization: { id: string; } | null;
+    mvtkAuthorization?: { id: string };
     /**
      * 有効期限
      */
@@ -336,7 +336,7 @@ export class PurchaseModel {
     /**
      * 上映イベント
      */
-    public screeningEvent: factory.chevre.event.screeningEvent.IEvent | null;
+    public screeningEvent?: factory.chevre.event.screeningEvent.IEvent;
     /**
      * 劇場ショップ
      */
@@ -344,11 +344,11 @@ export class PurchaseModel {
     /**
      * 取引
      */
-    public transaction: factory.transaction.placeOrder.ITransaction | null;
+    public transaction?: factory.transaction.placeOrder.ITransaction;
     /**
      * 販売可能チケット情報
      */
-    public salesTickets: COA.services.reserve.ISalesTicketResult[] | null;
+    public salesTickets: COA.services.reserve.ISalesTicketResult[];
     /**
      * 予約チケット
      */
@@ -356,11 +356,11 @@ export class PurchaseModel {
     /**
      * 予約座席
      */
-    public seatReservationAuthorization: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier> | null;
+    public seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier>;
     /**
      * GMOオーダーID
      */
-    public orderId: string | null;
+    public orderId?: string;
     /**
      * GMOオーダー回数
      */
@@ -368,11 +368,11 @@ export class PurchaseModel {
     /**
      * GMOオーソリ
      */
-    public creditCardAuthorization: factory.action.authorize.paymentMethod.creditCard.IAction | null;
+    public creditCardAuthorization?: factory.action.authorize.paymentMethod.creditCard.IAction;
     /**
      * プロフィール
      */
-    public profile: IProfile | null;
+    public profile?: IProfile;
     /**
      * クレジットカード情報
      */
@@ -380,7 +380,7 @@ export class PurchaseModel {
     /**
      * GMO情報
      */
-    public gmo: IGMO | null;
+    public gmo?: IGMO;
     /**
      * ムビチケ
      */
@@ -388,7 +388,7 @@ export class PurchaseModel {
     /**
      * ムビチケオーソリ
      */
-    public mvtkAuthorization: { id: string; } | null;
+    public mvtkAuthorization?: { id: string };
     /**
      * 有効期限
      */
@@ -399,27 +399,23 @@ export class PurchaseModel {
      * @param {any} session
      */
     // tslint:disable-next-line:cyclomatic-complexity
-    constructor(session?: any) {
-        if (session === undefined) {
-            session = {};
-        }
+    constructor(session: any = {}) {
 
-        this.screeningEvent = (session.screeningEvent !== undefined) ? session.screeningEvent : null;
-        this.seller = (session.seller !== undefined) ? session.seller : null;
-        this.transaction = (session.transaction !== undefined) ? session.transaction : null;
-        this.salesTickets = (session.salesTickets !== undefined) ? session.salesTickets : null;
+        this.screeningEvent = session.screeningEvent;
+        this.seller = session.seller;
+        this.transaction = session.transaction;
+        this.salesTickets = session.salesTickets;
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
-        this.seatReservationAuthorization = (session.seatReservationAuthorization !== undefined)
-            ? session.seatReservationAuthorization : null;
-        this.orderId = (session.orderId !== undefined) ? session.orderId : null;
+        this.seatReservationAuthorization = session.seatReservationAuthorization;
+        this.orderId = session.orderId;
         this.orderCount = (session.orderCount !== undefined) ? session.orderCount : 0;
-        this.creditCardAuthorization = (session.creditCardAuthorization !== undefined) ? session.creditCardAuthorization : null;
-        this.profile = (session.profile !== undefined) ? session.profile : null;
+        this.creditCardAuthorization = session.creditCardAuthorization;
+        this.profile = session.profile;
         this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
-        this.gmo = (session.gmo !== undefined) ? session.gmo : null;
+        this.gmo = session.gmo;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
-        this.mvtkAuthorization = (session.mvtkAuthorization !== undefined) ? session.mvtkAuthorization : null;
-        this.expired = (session.expired !== undefined) ? session.expired : null;
+        this.mvtkAuthorization = session.mvtkAuthorization;
+        this.expired = session.expired;
     }
 
     /**
@@ -475,7 +471,6 @@ export class PurchaseModel {
             case PurchaseModel.COMPLETE_STATE:
                 break;
             default:
-                break;
         }
 
         return result;
@@ -488,7 +483,7 @@ export class PurchaseModel {
      * @returns {boolean}
      */
     public isUsedMvtk(): boolean {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.superEvent.coaInfo === undefined) {
             return false;
         }
@@ -607,7 +602,7 @@ export class PurchaseModel {
                     ticketNameEng: ticket.ticketNameEng,
                     stdPrice: ticket.stdPrice,
                     addPrice: ticket.addPrice,
-                    salePrice: (<number>ticket.salePrice) + (<number>ticket.addGlasses),
+                    salePrice: ticket.salePrice + ticket.addGlasses,
                     ticketNote: ticket.ticketNote,
                     addPriceGlasses: ticket.addGlasses,
                     mvtkNum: '',
@@ -645,7 +640,7 @@ export class PurchaseModel {
                         ticketNameEng: mvtk.ticket.ticketNameEng,
                         stdPrice: 0,
                         addPrice: mvtk.ticket.addPrice,
-                        salePrice: (<number>mvtk.ticket.addPrice) + (<number>mvtk.ticket.addPriceGlasses),
+                        salePrice: mvtk.ticket.addPrice + mvtk.ticket.addPriceGlasses,
                         ticketNote: mvtk.code,
                         addPriceGlasses: mvtk.ticket.addPriceGlasses,
                         mvtkNum: mvtk.code,
@@ -688,7 +683,7 @@ export class PurchaseModel {
      * @returns {string}
      */
     public getMvtkfilmCode(): string {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.coaInfo === undefined) {
             return '';
         }
@@ -704,14 +699,14 @@ export class PurchaseModel {
      * @method getMvtkSeatInfoSync
      */
     public getMvtkSeatInfoSync(options?: {
-        deleteFlag?: string
-        reservedDeviceType?: string
+        deleteFlag?: string;
+        reservedDeviceType?: string;
     }) {
-        if (this.screeningEvent === null
+        if (this.screeningEvent === undefined
             || this.screeningEvent.coaInfo === undefined
-            || this.seatReservationAuthorization === null
+            || this.seatReservationAuthorization === undefined
             || this.seatReservationAuthorization.result === undefined) {
-            return null;
+            return;
         }
         const mvtkPurchaseNoInfo: {
             knyknrNo: string; // 購入管理番号（ムビチケ購入番号）
@@ -751,7 +746,7 @@ export class PurchaseModel {
             mvtkseat.push({ zskCd: reserveTicket.seatCode });
         }
         if (mvtkPurchaseNoInfo.length === 0 || mvtkseat.length === 0) {
-            return null;
+            return;
         }
         const day = moment(this.screeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD');
         const time = `${timeFormat(this.screeningEvent.startDate, this.screeningEvent.coaInfo.dateJouei)}:00`;

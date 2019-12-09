@@ -4,10 +4,11 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -39,13 +40,13 @@ function render(req, res, next) {
         const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired())
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-        if (purchaseModel.transaction === null)
+        if (purchaseModel.transaction === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         // ムビチケセッション削除
         delete req.session.mvtk;
         // 購入者情報入力表示
         res.locals.mvtkInfo = [{ code: '', password: '' }];
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.locals.purchaseModel = purchaseModel;
         res.locals.step = models_1.PurchaseModel.TICKET_STATE;
         res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
@@ -75,8 +76,8 @@ function auth(req, res, next) {
             const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === null
-                || purchaseModel.screeningEvent === null
+            if (purchaseModel.transaction === undefined
+                || purchaseModel.screeningEvent === undefined
                 || purchaseModel.screeningEvent.coaInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
@@ -107,7 +108,7 @@ function auth(req, res, next) {
             try {
                 purchaseNumberAuthResult = yield mvtkReserve.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
                 if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
-                    throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === null');
+                    throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === undefined');
                 }
                 log('ムビチケ認証', purchaseNumberAuthResult);
             }

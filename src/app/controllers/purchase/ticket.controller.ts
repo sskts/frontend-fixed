@@ -2,7 +2,7 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -104,9 +104,9 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === null
-            || purchaseModel.screeningEvent === null
-            || purchaseModel.seatReservationAuthorization === null
+        if (purchaseModel.transaction === undefined
+            || purchaseModel.screeningEvent === undefined
+            || purchaseModel.seatReservationAuthorization === undefined
             || req.body.transactionId !== purchaseModel.transaction.id) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
@@ -120,14 +120,14 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
             ticketValidation(purchaseModel);
             log('券種検証');
             //COAオーソリ追加
-            purchaseModel.seatReservationAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+            purchaseModel.seatReservationAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                 .changeSeatReservationOffers({
                     id: purchaseModel.seatReservationAuthorization.id,
                     object: {
                         event: {
                             id: purchaseModel.screeningEvent.id
                         },
-                        acceptedOffer: (<IReserveTicket[]>purchaseModel.reserveTickets).map((reserveTicket) => {
+                        acceptedOffer: purchaseModel.reserveTickets.map((reserveTicket) => {
                             return {
                                 seatSection: reserveTicket.section,
                                 seatNumber: reserveTicket.seatCode,
@@ -155,8 +155,8 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             }
             log('SSKTSCOA仮予約更新');
-            if (purchaseModel.mvtkAuthorization !== null) {
-                await new sasaki.service.transaction.PlaceOrder(options).cancelMvtkAuthorization({
+            if (purchaseModel.mvtkAuthorization !== undefined) {
+                await new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelMvtkAuthorization({
                     purpose: {
                         id: purchaseModel.transaction.id,
                         typeOf: purchaseModel.transaction.typeOf
@@ -169,16 +169,14 @@ export async function ticketSelect(req: Request, res: Response, next: NextFuncti
                 // 購入管理番号情報
                 const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
                 log('購入管理番号情報', mvtkSeatInfoSync);
-                if (mvtkSeatInfoSync === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-                purchaseModel.mvtkAuthorization = await new sasaki.service.transaction.PlaceOrder(options)
+                if (mvtkSeatInfoSync === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+                purchaseModel.mvtkAuthorization = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
                     .createMvtkAuthorization({
                         purpose: {
                             id: purchaseModel.transaction.id,
                             typeOf: purchaseModel.transaction.typeOf
                         },
                         object: {
-                            typeOf: sasaki.factory.action.authorize.discount.mvtk.ObjectType.Mvtk,
-                            price: purchaseModel.getMvtkPrice(),
                             seatInfoSyncIn: mvtkSeatInfoSync
                         }
                     });
@@ -261,7 +259,7 @@ function convertToReserveTickets(
                 addPrice: mvtkTicket.ticket.addPrice, // 加算単価
                 disPrice: 0, // 割引額
                 salePrice: (ticket.glasses)
-                    ? (<number>mvtkTicket.ticket.addPrice) + (<number>mvtkTicket.ticket.addPriceGlasses)
+                    ? mvtkTicket.ticket.addPrice + mvtkTicket.ticket.addPriceGlasses
                     : mvtkTicket.ticket.addPrice, // 販売単価
                 ticketNote: '',
                 addPriceGlasses: (ticket.glasses)
@@ -299,7 +297,7 @@ function convertToReserveTickets(
                 addPrice: salesTicket.addPrice, // 加算単価
                 disPrice: 0, // 割引額
                 salePrice: (ticket.glasses)
-                    ? (<number>salesTicket.salePrice) + (<number>salesTicket.addGlasses)
+                    ? salesTicket.salePrice + salesTicket.addGlasses
                     : salesTicket.salePrice, // 販売単価
                 ticketNote: salesTicket.ticketNote,
                 addPriceGlasses: (ticket.glasses)

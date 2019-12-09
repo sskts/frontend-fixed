@@ -23,14 +23,14 @@ export function render(req: Request, res: Response, next: NextFunction): void {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (req.session.mvtk === null) {
+        if (req.session.mvtk === undefined) {
             res.redirect('/purchase/mvtk');
 
             return;
         }
 
         // ムビチケ券適用確認ページ表示
-        res.locals.error = null;
+        res.locals.error = undefined;
         res.locals.purchaseModel = purchaseModel;
         res.locals.mvtk = req.session.mvtk;
         res.locals.purchaseNoList = creatPurchaseNoList(req.session.mvtk);
@@ -74,7 +74,7 @@ export function submit(req: Request, res: Response, next: NextFunction): void {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === null) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (purchaseModel.transaction === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
 
         //取引id確認
         if (req.body.transactionId !== purchaseModel.transaction.id) {

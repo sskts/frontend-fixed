@@ -51,7 +51,7 @@ function getToken() {
         dataType: 'json',
         url: url,
         type: 'POST',
-        timeout: 10000,
+        timeout: API_TIMEOUT,
         data: {
             scope: scope
         }

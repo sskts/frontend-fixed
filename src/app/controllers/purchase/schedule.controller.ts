@@ -2,7 +2,7 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-import * as sasaki from '@motionpicture/sskts-api-nodejs-client';
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -26,11 +26,11 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
 
-        if (purchaseModel.seatReservationAuthorization !== null
-            && purchaseModel.transaction !== null
+        if (purchaseModel.seatReservationAuthorization !== undefined
+            && purchaseModel.transaction !== undefined
             && !purchaseModel.isExpired()) {
             try {
-                await new sasaki.service.transaction.PlaceOrder(options).cancelSeatReservationAuthorization({
+                await new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
                         id: purchaseModel.transaction.id,
@@ -50,7 +50,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         delete req.session.auth;
 
         // if (process.env.VIEW_TYPE === undefined) {
-        //     const searchResult = await new sasaki.service.Seller(options).search({});
+        //     const searchResult = await new cinerinoService.service.Seller(options).search({});
         //     res.locals.sellers = searchResult.data;
         //     log('劇場検索');
         // }
@@ -80,12 +80,12 @@ export async function getPerformances(req: Request, res: Response): Promise<void
         const limit = 100;
         let page = 1;
         let roop = true;
-        let screeningEvents: sasaki.factory.chevre.event.screeningEvent.IEvent[] = [];
+        let screeningEvents: cinerinoService.factory.chevre.event.screeningEvent.IEvent[] = [];
         while (roop) {
-            const screeningEventsResult = await new sasaki.service.Event(options).searchScreeningEvents({
+            const screeningEventsResult = await new cinerinoService.service.Event(options).search({
                 page,
                 limit,
-                typeOf: sasaki.factory.chevre.eventType.ScreeningEvent,
+                typeOf: cinerinoService.factory.chevre.eventType.ScreeningEvent,
                 superEvent: {
                     locationBranchCodes: [req.query.theater]
                 },
@@ -122,7 +122,7 @@ export async function getMovieTheaters(req: Request, res: Response) {
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const options = getApiOption(req);
-        const searchResult = await new sasaki.service.Seller(options).search({});
+        const searchResult = await new cinerinoService.service.Seller(options).search({});
         const sellers = searchResult.data;
         log('劇場検索');
         res.json({ result: sellers });
