@@ -1,8 +1,9 @@
 <%- contentFor('script') %>
 <% if (env === 'development') { %>
-<script src="https://unpkg.com/vue"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <% } else { %>
-<script src="/js/common/vue.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11"></script>
+<script>window.Vue || document.write('<script src="/js/lib/vue@2.6.11.js"><\/script>');</script>
 <% } %>
 
 <%- contentFor('afterScript') %>
@@ -26,7 +27,7 @@
             <dt><%- __('purchase.performances.date') %></dt>
             <dd>
                 <select v-model="date">
-                    <template v-for="select in selects">
+                    <template v-for="select in dateList">
                         <option v-bind:value="select.value">{{select.text}}</option>
                     </template>
                 </select>
@@ -35,8 +36,8 @@
     </div>
 
     <div class="sort mb-middle text-center">
-        <div><a v-bind:class="{active: (sortType === 'chronological')}" v-on:click="onClickSort('chronological', $event)" href="#"><%- __('purchase.performances.sort.chronological') %></a></div>
-        <div><a v-bind:class="{active: (sortType === 'film')}" v-on:click="onClickSort('film', $event)" href="#"><%- __('purchase.performances.sort.film') %></a></div>
+        <div><a v-bind:class="{active: (sortType === 'time')}" v-on:click="changeSortType('time', $event)" href="#"><%- __('purchase.performances.sort.chronological') %></a></div>
+        <div><a v-bind:class="{active: (sortType === 'film')}" v-on:click="changeSortType('film', $event)" href="#"><%- __('purchase.performances.sort.film') %></a></div>
     </div>
 
     <div class="mb-small service">
@@ -44,74 +45,11 @@
         <span><img src="/images/fixed/icon/icon_morning_white.svg" alt="">… <%- __('common.first') %></span>
     </div>
 
-    <template v-if="error === null">
-    <ul v-bind:class="{ active: sortType === 'chronological' }" class="chronological-order">
-        <li v-for="order in chronologicalOrder" v-bind:class="order.offer.availability | availability('string')" v-bind:key="order.identifier" class="button white-button mb-middle">
-            <a v-on:click="onclickPerformance($event, order)" class="icon-triangle-gray">
-                <div v-if="order.coaInfo.kbnService.kubunCode === '001'" class="icon-morning-black"></div>
-                <div v-if="order.coaInfo.kbnService.kubunCode === '002'" class="icon-late-black"></div>
-                <dl>
-                    <dt class="text-left">
-                        <div>
-                            <div class="mb-x-small"><strong class="large-x-text">{{ order.startDate | timeFormat(order.coaInfo.dateJouei) }}</strong></div>
-                            <div>～{{ order.endDate | timeFormat(order.coaInfo.dateJouei) }}</div>
-                        </div>
-                        <div class="small-text text-center status">
-                            <div v-if="order.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
-                            <div v-else-if="order.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
-                            <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                            <div><img v-bind:src="order.offer.availability | availability('image')"></div>
-                        </div>
-                    </dt>
-                    <dd class="text-left">
-                        <div class="screen-name mb-x-small small-text d-ib">{{ order.location.name.ja }}</div>
-                        <div class="small-text mb-x-small d-ib">{{ order.workPerformed.duration | duration }}分</div>
-                        <p><strong>{{ order.workPerformed.name }}</strong></p>
-                    </dd>
-                </dl>
-            </a>
-        </li>
-    </ul>
-    
-    <ul v-bind:class="{ active: sortType === 'film' }" class="film-order">
-        <li v-for="order in filmOrder" v-bind:key="order.identifier" class="performance mb-x-small">
-            <dl>
-                <dt>
-                    <div class="mb-x-small"><strong>{{ order.films[0].workPerformed.name }}</strong></div>
-                    <div class="small-text">{{ order.films[0].workPerformed.duration | duration }}分</div>
-                </dt>
-                <dd>
-                    <ul>
-                        <li v-for="film in order.films" v-bind:class="film.offer.availability | availability('string')" v-bind:key="film.identifier" class="button white-button">
-                            <a v-on:click="onclickPerformance($event, film)" class="icon-triangle-gray">
-                                <div v-if="film.coaInfo.kbnService.kubunCode === '001'" class="icon-morning-black"></div>
-                                <div v-if="film.coaInfo.kbnService.kubunCode === '002'" class="icon-late-black"></div>
-                                <dl>
-                                    <dt>
-                                        <div class="text-left">
-                                            <div class="large-text mb-x-small"><strong>{{ film.startDate | timeFormat(film.coaInfo.dateJouei) }}</strong></div>
-                                            <div>～{{ film.endDate | timeFormat(film.coaInfo.dateJouei) }}</div>
-                                        </div>
-                                        <div class="text-cente small-x-text status">
-                                            <div v-if="film.offer.availability === 0" class="mb-x-small"><%- __('purchase.performances.status.full') %></div>
-                                            <div v-else-if="film.offer.availability <= 10" class="mb-x-small"><%- __('purchase.performances.status.few') %></div>
-                                            <div v-else class="mb-x-small"><%- __('purchase.performances.status.many') %></div>
-                                            <div><img v-bind:src="film.offer.availability | availability('image')"></div>
-                                        </div>
-                                    </dt>
-                                    <dd class="small-text text-center">
-                                        <div class="screen-name">{{ film.location.name.ja }}</div>
-                                    </dd>
-                                </dl>
-                            </a>
-                        </li>
-                    </ul>
-                </dd>
-            </dl>
-        </li>
-    </ul>
+    <template v-if="error === undefined">
+    <purchase-performance-time v-if="sortType === 'time' && schedule" v-bind:schedule="schedule" v-on:select="selectPerformance"></purchase-performance-time>
+    <purchase-performance-film v-if="sortType === 'film' && schedule" v-bind:schedule="schedule" v-on:select="selectPerformance"></purchase-performance-film>
     </template>
-    <p v-if="error !== null" class="text-center">{{ error }}</p>
+    <p v-if="error !== undefined" class="text-center">{{ error }}</p>
 
     <div class="inquiry text-center">
         <div class="mb-middle"><%- __('purchase.performances.inquiry.read') %></div>
@@ -120,4 +58,5 @@
         </div>
     </div>
 </div>
-<input type="hidden" name="entranceServerUrl" value="<%= entranceServerUrl %>">
+<input type="hidden" name="ENTRANCE_SERVER_URL" value="<%= ENTRANCE_SERVER_URL %>">
+<input type="hidden" name="SCHEDULE_API_ENDPOINT" value="<%= SCHEDULE_API_ENDPOINT %>">

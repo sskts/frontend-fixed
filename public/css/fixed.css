@@ -1156,85 +1156,79 @@ a {
     margin-right: 5px; }
   .purchase-performances .service span {
     margin-right: 20px; }
-  .purchase-performances .chronological-order {
-    display: none; }
-    .purchase-performances .chronological-order.active {
-      display: block; }
-    .purchase-performances .chronological-order li {
-      border-radius: 5px;
-      color: #333;
-      overflow: hidden; }
-      .purchase-performances .chronological-order li a {
-        border: 2px solid #AFAFAF; }
-        .purchase-performances .chronological-order li a .icon-morning-black:before, .purchase-performances .chronological-order li a .icon-late-black:before {
-          top: 10px;
-          left: 10px;
-          background-size: 24px 24px;
-          width: 24px;
-          height: 24px; }
-        .purchase-performances .chronological-order li a dl {
-          display: flex; }
-          .purchase-performances .chronological-order li a dl dt {
-            width: 358px;
-            padding: 25px 30px 25px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center; }
-            .purchase-performances .chronological-order li a dl dt .status {
-              width: 120px; }
-              .purchase-performances .chronological-order li a dl dt .status img {
-                width: 70px; }
-          .purchase-performances .chronological-order li a dl dd {
-            min-height: 160px;
-            width: 606px;
-            padding: 10px 40px 25px 40px;
-            border-left: 1px solid #777777; }
-            .purchase-performances .chronological-order li a dl dd .screen-name {
-              display: inline-block;
-              border: 1px solid #333;
-              padding: 5px; }
-  .purchase-performances .film-order {
-    display: none; }
-    .purchase-performances .film-order.active {
-      display: block; }
-    .purchase-performances .film-order li {
-      border-radius: 5px;
-      color: #333;
-      overflow: hidden; }
-      .purchase-performances .film-order li > dl > dt {
-        color: #FFF;
-        background-color: #515151;
-        padding: 20px 25px; }
-      .purchase-performances .film-order li > dl > dd {
-        background-color: #2d2d2d;
-        padding: 20px 25px 0; }
-        .purchase-performances .film-order li > dl > dd ul {
+  .purchase-performances .break-all {
+    word-break: break-all; }
+  .purchase-performances .time-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .time-order li a {
+      border: 2px solid #AFAFAF; }
+      .purchase-performances .time-order li a .icon-morning-black:before, .purchase-performances .time-order li a .icon-late-black:before {
+        top: 10px;
+        left: 10px;
+        background-size: 24px 24px;
+        width: 24px;
+        height: 24px; }
+      .purchase-performances .time-order li a dl {
+        display: flex; }
+        .purchase-performances .time-order li a dl dt {
+          width: 358px;
+          padding: 25px 30px 25px 50px;
           display: flex;
-          flex-wrap: wrap;
-          margin: 0 0 0 -12.5px; }
-          .purchase-performances .film-order li > dl > dd ul li {
-            width: 25%;
-            padding: 0 0 0 10px;
-            margin: 0 0 20px; }
-            .purchase-performances .film-order li > dl > dd ul li.disabled {
-              opacity: 0.5; }
-            .purchase-performances .film-order li > dl > dd ul li a {
-              border: 2px solid #AFAFAF; }
-              .purchase-performances .film-order li > dl > dd ul li a .icon-morning-black:before, .purchase-performances .film-order li > dl > dd ul li a .icon-late-black:before {
-                top: 5px;
-                left: 5px; }
-              .purchase-performances .film-order li > dl > dd ul li a dl dt {
-                padding: 10px 10px 10px 25px;
-                border-bottom: 1px solid #777777;
-                display: flex;
-                justify-content: space-between;
-                align-items: center; }
-                .purchase-performances .film-order li > dl > dd ul li a dl dt .status {
-                  width: 90px; }
-                  .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
-                    width: 50px; }
-              .purchase-performances .film-order li > dl > dd ul li a dl dd {
-                padding: 10px 0; }
+          justify-content: space-between;
+          align-items: center; }
+          .purchase-performances .time-order li a dl dt .status {
+            width: 120px; }
+            .purchase-performances .time-order li a dl dt .status img {
+              width: 70px; }
+        .purchase-performances .time-order li a dl dd {
+          min-height: 160px;
+          width: 606px;
+          padding: 10px 40px 25px 40px;
+          border-left: 1px solid #777777; }
+          .purchase-performances .time-order li a dl dd .screen-name {
+            display: inline-block;
+            border: 1px solid #333;
+            padding: 5px; }
+  .purchase-performances .film-order li {
+    border-radius: 5px;
+    color: #333;
+    overflow: hidden; }
+    .purchase-performances .film-order li > dl > dt {
+      color: #FFF;
+      background-color: #515151;
+      padding: 20px 25px; }
+    .purchase-performances .film-order li > dl > dd {
+      background-color: #2d2d2d;
+      padding: 20px 25px 0; }
+      .purchase-performances .film-order li > dl > dd ul {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 0 0 -12.5px; }
+        .purchase-performances .film-order li > dl > dd ul li {
+          width: 25%;
+          padding: 0 0 0 10px;
+          margin: 0 0 20px; }
+          .purchase-performances .film-order li > dl > dd ul li.disabled {
+            opacity: 0.5; }
+          .purchase-performances .film-order li > dl > dd ul li a {
+            border: 2px solid #AFAFAF; }
+            .purchase-performances .film-order li > dl > dd ul li a .icon-morning-black:before, .purchase-performances .film-order li > dl > dd ul li a .icon-late-black:before {
+              top: 5px;
+              left: 5px; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dt {
+              padding: 10px 10px 10px 25px;
+              border-bottom: 1px solid #777777;
+              display: flex;
+              justify-content: space-between;
+              align-items: center; }
+              .purchase-performances .film-order li > dl > dd ul li a dl dt .status {
+                width: 90px; }
+                .purchase-performances .film-order li > dl > dd ul li a dl dt .status img {
+                  width: 50px; }
+            .purchase-performances .film-order li > dl > dd ul li a dl dd {
+              padding: 10px 0; }
   .purchase-performances .inquiry {
     position: fixed;
     bottom: 0;

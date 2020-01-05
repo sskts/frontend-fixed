@@ -55,7 +55,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         //     log('劇場検索');
         // }
         res.locals.step = PurchaseModel.PERFORMANCE_STATE;
-        res.locals.entranceServerUrl = process.env.ENTRANCE_SERVER_URL;
+        res.locals.ENTRANCE_SERVER_URL = process.env.ENTRANCE_SERVER_URL;
+        res.locals.SCHEDULE_API_ENDPOINT = process.env.SCHEDULE_API_ENDPOINT;
         res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
 
     } catch (err) {
