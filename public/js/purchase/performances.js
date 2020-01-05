@@ -238,10 +238,10 @@ var app = new Vue({
     created: function () {
         var _this = this;
         this.getSchedule().done(function (data) {
-            console.log(data)
             _this.schedules = data;
             _this.createDate();
             _this.createSchedule();
+            _this.update();
         }).fail(function (error) {
             console.error(error);
         });
@@ -289,25 +289,33 @@ var app = new Vue({
          * スケジュール作成
          */
         createSchedule: function () {
-            const now = moment();
-            const today = moment(now).format('YYYYMMDD');
+            this.schedule = undefined;
             var _this = this;
-            const searchDate = (this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
-                ? today : this.date;
-            this.date = searchDate;
-            // 選択したスケジュールを抽出　上映終了は除外
-            this.schedule = this.schedules.find(function (s) { return (String(s.date) === _this.date); });
-            console.log(this.schedule);
+            setTimeout(function(){
+                const now = moment();
+                const today = moment(now).format('YYYYMMDD');
+                const searchDate = (_this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
+                    ? today : _this.date;
+                _this.date = searchDate;
+                // 選択したスケジュールを抽出　上映終了は除外
+                _this.schedule = _this.schedules.find(function (s) { return (String(s.date) === _this.date); });
+            }, 0);
         },
         /**
          * 定期的にスケジュール更新
          */
         update: function () {
-            var time = 1000 * 60 * 3;
-            if (this.timer !== undefined) {
-                clearTimeout(this.timer);
-            }
-            this.timer = setTimeout(this.getSchedule, time);
+            var time = 1000 * 60 * 5;
+            var _this = this;
+            this.timer = setInterval(function () {
+                _this.getSchedule().done(function (data) {
+                    _this.schedules = data;
+                    _this.createDate();
+                    _this.createSchedule();
+                }).fail(function (error) {
+                    console.error(error);
+                });
+            }, time);
         },
 
         /**
@@ -340,7 +348,7 @@ var app = new Vue({
             location.href = entrance + '/fixed/index.html?id=' + id;
         },
         /**
-         * ソート選択
+         * ソート変更
          */
         changeSortType: function (type, event) {
             event.preventDefault();
@@ -348,6 +356,12 @@ var app = new Vue({
                 return;
             }
             this.sortType = type
+        },
+        /**
+         * 日付変更
+         */
+        changeDate: function () {
+            this.createSchedule();
         },
         /**
          * 照会ボタンクリック

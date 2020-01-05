@@ -26,7 +26,7 @@
         <dl>
             <dt><%- __('purchase.performances.date') %></dt>
             <dd>
-                <select v-model="date">
+                <select v-model="date" v-on:change="changeDate">
                     <template v-for="select in dateList">
                         <option v-bind:value="select.value">{{select.text}}</option>
                     </template>
