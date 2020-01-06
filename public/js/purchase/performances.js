@@ -61,6 +61,15 @@ var Performance = (function () {
             : this.time.end_time.slice(0, 2) + ":" + this.time.end_time.slice(2, 4);
     };
     /**
+     * 表示判定
+     */
+    Performance.prototype.isDisplay = function () {
+        var now = moment();
+        var displayStartDate = moment(this.time.online_display_start_day, 'YYYYMMDD');
+        var endDate = moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm');
+        return (displayStartDate < now && endDate > now);
+    };
+    /**
      * id生成
      */
     Performance.prototype.createId = function () {
@@ -136,7 +145,7 @@ Vue.component('purchase-performance-time', {
         this.performances = schedule2Performance(this.schedule, false);
     },
     template: '<ul class="time-order">\
-    <li v-for="performance in performances" v-if="performance.isSalse()" v-bind:class="performance.getAvailability().className" class="button white-button mb-middle">\
+    <li v-for="performance in performances" v-if="performance.isDisplay()" v-bind:class="performance.getAvailability().className" class="button white-button mb-middle">\
         <a v-on:click="$emit(\'select\', { event: $event, performance: performance })" class="icon-triangle-gray">\
             <div v-if="performance.time.late === 1" class="icon-morning-black"></div>\
             <div v-if="performance.time.late === 2" class="icon-late-black"></div>\
@@ -188,7 +197,7 @@ Vue.component('purchase-performance-film', {
             </dt>\
             <dd>\
                 <ul>\
-                    <li v-for="performance of filterPerformancebyMovie(performances, movie)" v-if="performance.isSalse()" v-bind:class="performance.getAvailability().className" class="button white-button">\
+                    <li v-for="performance of filterPerformancebyMovie(performances, movie)" v-if="performance.isDisplay()" v-bind:class="performance.getAvailability().className" class="button white-button">\
                         <a v-on:click="$emit(\'select\', { event: $event, performance: performance })" class="icon-triangle-gray">\
                             <div v-if="performance.time.late === 1" class="icon-morning-black"></div>\
                             <div v-if="performance.time.late === 2" class="icon-late-black"></div>\
