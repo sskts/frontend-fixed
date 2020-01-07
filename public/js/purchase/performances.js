@@ -280,10 +280,10 @@ var app = new Vue({
          */
         getSchedule: function () {
             this.error = undefined;
-            const now = moment().format('YYYYMMDDHHmm');
-            const branchCode = this.theaterCode;
-            const theatreTable = getTheaterTable();
-            const theatreTableFindResult = theatreTable.find(function (t) { return (branchCode.slice(-2) === t.code); });
+            var now = moment().format('YYYYMMDDHHmm');
+            var branchCode = this.theaterCode;
+            var theatreTable = getTheaterTable();
+            var theatreTableFindResult = theatreTable.find(function (t) { return (branchCode.slice(-2) === t.code); });
             var url = $('input[name=SCHEDULE_API_ENDPOINT]').val() + '/' + theatreTableFindResult.name + '/schedule/json/schedule.json?date=' + now;
             var options = {
                 dataType: 'json',
@@ -301,9 +301,9 @@ var app = new Vue({
             this.schedule = undefined;
             var _this = this;
             setTimeout(function(){
-                const now = moment();
-                const today = moment(now).format('YYYYMMDD');
-                const searchDate = (_this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
+                var now = moment();
+                var today = moment(now).format('YYYYMMDD');
+                var searchDate = (_this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
                     ? today : _this.date;
                 _this.date = searchDate;
                 // 選択したスケジュールを抽出　上映終了は除外
