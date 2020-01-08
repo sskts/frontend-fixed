@@ -17,7 +17,7 @@ var Performance = (function () {
      * 予約ステータス情報取得
      */
     Performance.prototype.getAvailability = function () {
-        var value = this.time.seat_count.cntReserveMax / this.time.seat_count.countAllSeat * 100;
+        var value = this.time.seat_count.cnt_reserve_free / this.time.seat_count.cnt_reserve_max * 100;
         var availability = [
             { symbolText: '×', icon: '/images/fixed/status_03.svg', className: 'availability-full', text: '満席' },
             { symbolText: '△', icon: '/images/fixed/status_02.svg', className: 'availability-little', text: '残りわずか' },
@@ -34,7 +34,7 @@ var Performance = (function () {
     Performance.prototype.isSalse = function () {
         return !this.isBeforePeriod()
             && !this.isAfterPeriod()
-            && this.time.seat_count.cntReserveMax > 0;
+            && this.time.seat_count.cnt_reserve_free > 0;
     };
     /**
      * 予約期間前判定
@@ -84,7 +84,7 @@ var Performance = (function () {
  */
 function schedule2Performance(schedule, member) {
     var performances = [];
-    var date = String(schedule.date);
+    var date = schedule.date;
     schedule.movie.forEach(function (movie) {
         movie.screen.forEach(function (screen) {
             screen.time.forEach(function (time) {
@@ -130,7 +130,7 @@ function getTheaterTable() {
         { "code": "15", "name": "masaki" },
         { "code": "12", "name": "kitajima" },
         { "code": "18", "name": "aira" }
-    ]
+    ];
 }
 
 Vue.component('purchase-performance-time', {
@@ -307,7 +307,7 @@ var app = new Vue({
                     ? today : _this.date;
                 _this.date = searchDate;
                 // 選択したスケジュールを抽出　上映終了は除外
-                _this.schedule = _this.schedules.find(function (s) { return (String(s.date) === _this.date); });
+                _this.schedule = _this.schedules.find(function (s) { return (s.date === _this.date); });
             }, 0);
         },
         /**
