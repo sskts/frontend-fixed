@@ -173,7 +173,7 @@ function mvtkToggle(beforeData, afterData) {
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
-            var data = getSalseTicketData(target.find('.button a'));
+            var data = getSalseTicketData(target.find('a'));
             if (data.mvtkNum === beforeData.mvtkNum
                 && data.ticketCode === beforeData.ticketCode
                 && target.is(':hidden')) {
@@ -189,7 +189,7 @@ function mvtkToggle(beforeData, afterData) {
         var count = 0;
         modalDom.find('li').each(function (index, elem) {
             var target = $(elem);
-            var data = getSalseTicketData(target.find('.button a'));
+            var data = getSalseTicketData(target.find('a'));
             if (data.mvtkNum === afterData.mvtkNum
                 && data.ticketCode === afterData.ticketCode
                 && target.is(':visible')) {
