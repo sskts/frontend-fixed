@@ -66,7 +66,7 @@ var Performance = (function () {
     Performance.prototype.isDisplay = function () {
         var now = moment();
         var displayStartDate = moment(this.time.online_display_start_day, 'YYYYMMDD');
-        var endDate = (this.time.start_time < this.getTime.end_time) 
+        var endDate = (this.time.start_time < this.time.end_time) 
         ? moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm')
         : moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm').add(1, 'days');
         return (displayStartDate < now && endDate > now);
