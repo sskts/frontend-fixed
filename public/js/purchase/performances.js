@@ -66,7 +66,9 @@ var Performance = (function () {
     Performance.prototype.isDisplay = function () {
         var now = moment();
         var displayStartDate = moment(this.time.online_display_start_day, 'YYYYMMDD');
-        var endDate = moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm');
+        var endDate = (this.time.start_time < this.getTime.end_time) 
+        ? moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm')
+        : moment(this.date + " " + this.time.end_time, 'YYYYMMDD HHmm').add(1, 'days');
         return (displayStartDate < now && endDate > now);
     };
     /**
@@ -92,13 +94,23 @@ function schedule2Performance(schedule, member) {
             });
         });
     });
-    return performances;
+    // 上映開始時間順へソート
+    var sortResult = performances.sort(function (a, b) {
+        if (a.time.start_time < b.time.start_time) {
+            return -1;
+        }
+        else {
+            return 1;
+        }
+    });
+    return sortResult;
 }
 /**
  * パフォーマンスを作品で絞り込み
  */
 function filterPerformancebyMovie(performances, movie) {
     var filterResult = performances.filter(function (p) { return p.movie.movie_short_code === movie.movie_short_code && p.movie.movie_branch_code === movie.movie_branch_code; });
+    // 上映開始時間順へソート
     var sortResult = filterResult.sort(function (a, b) {
         if (a.time.start_time < b.time.start_time) {
             return -1;
