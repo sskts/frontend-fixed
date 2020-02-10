@@ -64,7 +64,8 @@ function render(req, res, next) {
             //     log('劇場検索');
             // }
             res.locals.step = models_1.PurchaseModel.PERFORMANCE_STATE;
-            res.locals.entranceServerUrl = process.env.ENTRANCE_SERVER_URL;
+            res.locals.ENTRANCE_SERVER_URL = process.env.ENTRANCE_SERVER_URL;
+            res.locals.SCHEDULE_API_ENDPOINT = process.env.SCHEDULE_API_ENDPOINT;
             res.render('purchase/performances', { layout: 'layouts/purchase/layout' });
         }
         catch (err) {
