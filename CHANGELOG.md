@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.7.0 - 2020-02-10
+### Changed
+ - スケジュールをjson形式で取得へ変更
+
 ## 2.6.0 - 2019-12-05
 ### Changed
  - SDK変更
