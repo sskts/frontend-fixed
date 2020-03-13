@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.7.1 - 2020-03-13
+### Added
+ - 緊急用スクリーン追加
+
 ## 2.7.0 - 2020-02-10
 ### Changed
  - スケジュールをjson形式で取得へ変更
