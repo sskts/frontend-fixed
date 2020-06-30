@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.7.2 - 2020-06-30
+### Changed
+ - ムビチケロゴ変更
+
 ## 2.7.1 - 2020-03-13
 ### Added
  - 緊急用スクリーン追加
