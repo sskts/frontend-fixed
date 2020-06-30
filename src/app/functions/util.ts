@@ -5,16 +5,19 @@ import { Request, Response } from 'express';
 import * as moment from 'moment';
 import { AppError, AuthModel, ErrorType } from '../models';
 
- /**
-  * API設定取得
-  */
+/**
+ * API設定取得
+ */
 export function getApiOption(req: Request) {
     if (req.session === undefined) throw new AppError(httpStatus.BAD_REQUEST, ErrorType.Property);
     const authModel = new AuthModel(req.session.auth);
 
-    return  {
+    return {
         endpoint: (<string>process.env.SSKTS_API_ENDPOINT),
-        auth: authModel.create()
+        auth: authModel.create(),
+        project: {
+            id: (<string>process.env.PROJECT_ID)
+        }
     };
 }
 
@@ -172,4 +175,14 @@ export enum Env {
      * 本番
      */
     Production = 'production'
+}
+
+/**
+ * ミリ秒待つ
+ * デフォルト値3000ms
+ */
+export async function sleep(time: number = 3000) {
+    return new Promise((resolve) => {
+        setTimeout(() => { resolve(); }, time);
+    });
 }

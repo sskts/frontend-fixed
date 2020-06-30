@@ -20,7 +20,10 @@ function getApiOption(req) {
     const authModel = new models_1.AuthModel(req.session.auth);
     return {
         endpoint: process.env.SSKTS_API_ENDPOINT,
-        auth: authModel.create()
+        auth: authModel.create(),
+        project: {
+            id: process.env.PROJECT_ID
+        }
     };
 }
 exports.getApiOption = getApiOption;
@@ -177,3 +180,15 @@ var Env;
      */
     Env["Production"] = "production";
 })(Env = exports.Env || (exports.Env = {}));
+/**
+ * ミリ秒待つ
+ * デフォルト値3000ms
+ */
+function sleep(time = 3000) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
+            setTimeout(() => { resolve(); }, time);
+        });
+    });
+}
+exports.sleep = sleep;
