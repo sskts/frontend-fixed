@@ -1053,8 +1053,8 @@ a {
     width: 320px;
     padding: 30px; }
     .purchase-ticket .mvtk .mvtk-button label img, .purchase-ticket .mvtk .mvtk-button a img {
-      width: 214px;
-      height: 46px; }
+      width: 200px;
+      height: 38px; }
 
 .modal[data-modal="ticketType"] .inner {
   padding: 0; }
