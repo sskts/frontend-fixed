@@ -7,7 +7,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import * as moment from 'moment';
-import { getApiOption } from '../../functions';
+import { getApiOption, sleep } from '../../functions';
 import { AppError, ErrorType, PurchaseModel } from '../../models';
 const log = debug('SSKTS:Purchase.PerformancesModule');
 
@@ -83,7 +83,7 @@ export async function getPerformances(req: Request, res: Response): Promise<void
         let roop = true;
         let screeningEvents: cinerinoService.factory.chevre.event.screeningEvent.IEvent[] = [];
         while (roop) {
-            const screeningEventsResult = await new cinerinoService.service.Event(options).search({
+            const searchResult = await new cinerinoService.service.Event(options).search({
                 page,
                 limit,
                 typeOf: cinerinoService.factory.chevre.eventType.ScreeningEvent,
@@ -93,10 +93,11 @@ export async function getPerformances(req: Request, res: Response): Promise<void
                 startFrom: moment(req.query.day).toDate(),
                 startThrough: moment(req.query.day).add(1, 'day').toDate()
             });
-            screeningEvents = screeningEvents.concat(screeningEventsResult.data);
-            const lastPage = Math.ceil(screeningEventsResult.totalCount / limit);
+            screeningEvents = screeningEvents.concat(searchResult.data);
             page += 1;
-            roop = !(page > lastPage);
+            roop = searchResult.data.length === limit;
+            const time = 500;
+            await sleep(time);
         }
         log('上映イベント検索');
 
