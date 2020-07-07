@@ -12,6 +12,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.7.3 - 2020-07-07
+### Changed
+ - SDKアップデート
+ - confirmationNumber参照を予約番号に変更
+ - Cinerino SDKでサービスインスタンス生成時にプロジェクト指定へ変更
+
+## 2.7.2 - 2020-06-30
+### Changed
+ - ムビチケロゴ変更
+
 ## 2.7.2 - 2020-06-30
 ### Changed
  - ムビチケロゴ変更

@@ -95,7 +95,7 @@ function getPerformances(req, res) {
             let roop = true;
             let screeningEvents = [];
             while (roop) {
-                const screeningEventsResult = yield new cinerinoService.service.Event(options).search({
+                const searchResult = yield new cinerinoService.service.Event(options).search({
                     page,
                     limit,
                     typeOf: cinerinoService.factory.chevre.eventType.ScreeningEvent,
@@ -105,10 +105,11 @@ function getPerformances(req, res) {
                     startFrom: moment(req.query.day).toDate(),
                     startThrough: moment(req.query.day).add(1, 'day').toDate()
                 });
-                screeningEvents = screeningEvents.concat(screeningEventsResult.data);
-                const lastPage = Math.ceil(screeningEventsResult.totalCount / limit);
+                screeningEvents = screeningEvents.concat(searchResult.data);
                 page += 1;
-                roop = !(page > lastPage);
+                roop = searchResult.data.length === limit;
+                const time = 500;
+                yield functions_1.sleep(time);
             }
             log('上映イベント検索');
             res.json({ result: screeningEvents });
