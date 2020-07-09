@@ -282,7 +282,7 @@ export interface IPurchaseSession {
     /**
      * 予約座席
      */
-    seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier>;
+    seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier.COA>;
     /**
      * GMOオーダーID
      */
@@ -311,6 +311,10 @@ export interface IPurchaseSession {
      * ムビチケ
      */
     mvtk: IMvtk[];
+    /**
+     * ムビチケ使用情報
+     */
+    checkMovieTicketAction?: factory.action.check.paymentMethod.movieTicket.IAction;
     /**
      * ムビチケオーソリ
      */
@@ -356,7 +360,7 @@ export class PurchaseModel {
     /**
      * 予約座席
      */
-    public seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier>;
+    public seatReservationAuthorization?: factory.action.authorize.offer.seatReservation.IAction<factory.service.webAPI.Identifier.COA>;
     /**
      * GMOオーダーID
      */
@@ -386,6 +390,10 @@ export class PurchaseModel {
      */
     public mvtk: IMvtk[];
     /**
+     * ムビチケ使用情報
+     */
+    public checkMovieTicketAction?: factory.action.check.paymentMethod.movieTicket.IAction;
+    /**
      * ムビチケオーソリ
      */
     public mvtkAuthorization?: { id: string };
@@ -414,6 +422,7 @@ export class PurchaseModel {
         this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
         this.gmo = session.gmo;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
+        this.checkMovieTicketAction = session.checkMovieTicketAction;
         this.mvtkAuthorization = session.mvtkAuthorization;
         this.expired = session.expired;
     }
@@ -439,6 +448,7 @@ export class PurchaseModel {
             creditCards: this.creditCards,
             gmo: this.gmo,
             mvtk: this.mvtk,
+            checkMovieTicketAction: this.checkMovieTicketAction,
             mvtkAuthorization: this.mvtkAuthorization,
             expired: this.expired
         };

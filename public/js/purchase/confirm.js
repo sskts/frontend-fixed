@@ -240,14 +240,6 @@ function showError(message) {
     $(window).scrollTop(0);
     history.pushState(null, null, '/error');
     loadingEnd();
-    //ムビチケ着券取り消し
-    var option = {
-        dataType: 'json',
-        url: '/purchase/mvtk/cancel',
-        type: 'POST',
-        timeout: API_TIMEOUT
-    };
-    $.ajax(option);
 }
 
 /**

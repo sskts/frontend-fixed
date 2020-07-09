@@ -3,17 +3,15 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 
+import * as cinerinoService from '@cinerino/api-nodejs-client';
 import * as COA from '@motionpicture/coa-service';
-import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
-import * as moment from 'moment';
-import { bace64Encode, Digits } from '../../../functions';
+import { bace64Encode, getApiOption } from '../../../functions';
 import { purchaseMvtkInputForm } from '../../../functions/forms';
 import logger from '../../../middlewares/logger';
 import { AppError, ErrorType, IMvtk, PurchaseModel } from '../../../models';
-import { COMPANY_CODE } from './mvtk-util.controller';
 const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 
 /**
@@ -64,43 +62,75 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
     try {
         const purchaseModel = new PurchaseModel(req.session.purchase);
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === undefined
-            || purchaseModel.screeningEvent === undefined
-            || purchaseModel.screeningEvent.coaInfo === undefined) {
+        const transaction = purchaseModel.transaction;
+        const screeningEvent = purchaseModel.screeningEvent;
+        const seller = purchaseModel.seller;
+        if (transaction === undefined
+            || screeningEvent === undefined
+            || screeningEvent.coaInfo === undefined
+            || seller === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.body.transactionId !== transaction.id) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         purchaseMvtkInputForm(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
         const inputInfoList: IInputInfo[] = JSON.parse(req.body.mvtk);
         mvtkValidation(inputInfoList);
         log('ムビチケ券検証');
-        const purchaseNumberAuthIn: mvtkReserve.services.auth.purchaseNumberAuth.IPurchaseNumberAuthIn = {
-            kgygishCd: COMPANY_CODE, //興行会社コード
-            jhshbtsCd: mvtkReserve.services.auth.purchaseNumberAuth.InformationTypeCode.Valid, //情報種別コード
-            knyknrNoInfoIn: inputInfoList.map((value) => {
+        const movieTickets = inputInfoList.map((i) => {
+            return {
+                typeOf: <cinerinoService.factory.paymentMethodType.MovieTicket>cinerinoService.factory.paymentMethodType.MovieTicket,
+                project: seller.project,
+                identifier: i.code, // 購入管理番号
+                accessCode: i.password // PINコード
+            };
+        });
+        const options = getApiOption(req);
+        const paymentService = new cinerinoService.service.Payment(options);
+        const checkMovieTicketAction = await paymentService.checkMovieTicket({
+            typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+            movieTickets: movieTickets.map((movieTicket) => {
                 return {
-                    knyknrNo: value.code, //購入管理番号
-                    pinCd: value.password // PINコード
+                    ...movieTicket,
+                    serviceType: '', // 情報空でよし
+                    serviceOutput: {
+                        reservationFor: {
+                            typeOf: screeningEvent.typeOf,
+                            id: screeningEvent.id
+                        },
+                        reservedTicket: {
+                            ticketedSeat: {
+                                typeOf: cinerinoService.factory.chevre.placeType.Seat,
+                                seatingType: <any>'', // 情報空でよし
+                                seatNumber: '', // 情報空でよし
+                                seatRow: '', // 情報空でよし
+                                seatSection: '' // 情報空でよし
+                            }
+                        }
+                    }
                 };
             }),
-            skhnCd: purchaseModel.getMvtkfilmCode(), // 作品コード
-            stCd: Number(purchaseModel.screeningEvent.coaInfo.theaterCode.slice(Digits['02'])).toString(), // サイトコード
-            jeiYmd: moment(purchaseModel.screeningEvent.coaInfo.dateJouei).format('YYYY/MM/DD') //上映年月日
-        };
-        let purchaseNumberAuthResult: mvtkReserve.services.auth.purchaseNumberAuth.IPurchaseNumberAuthResult;
-        try {
-            purchaseNumberAuthResult = await mvtkReserve.services.auth.purchaseNumberAuth.purchaseNumberAuth(purchaseNumberAuthIn);
-            if (purchaseNumberAuthResult.knyknrNoInfoOut === null) {
-                throw new Error('purchaseNumberAuthResult.knyknrNoInfoOut === undefined');
+            seller: {
+                typeOf: transaction.seller.typeOf,
+                id: transaction.seller.id
             }
-            log('ムビチケ認証', purchaseNumberAuthResult);
-        } catch (err) {
-            logger.error('SSKTS-APP:MvtkInputModule.auth', purchaseNumberAuthIn, err);
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, err.message);
+        });
+        if (checkMovieTicketAction.result === undefined) {
+            throw new Error('checkMovieTicketAction error');
         }
+        const success = 'N000';
+        const purchaseNumberAuthResult = checkMovieTicketAction.result.purchaseNumberAuthResult;
+        if (purchaseNumberAuthResult.resultInfo.status !== success
+            || purchaseNumberAuthResult.ykknmiNumSum === null
+            || purchaseNumberAuthResult.ykknmiNumSum === 0
+            || purchaseNumberAuthResult.knyknrNoInfoOut === null) {
+            throw new Error('purchaseNumberAuth error');
+        }
+        log('ムビチケ認証', purchaseNumberAuthResult);
         const validationList: string[] = [];
 
         // ムビチケセッション作成
@@ -114,16 +144,16 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
                 const ticket = await COA.services.master.mvtkTicketcode({
-                    theaterCode: purchaseModel.screeningEvent.coaInfo.theaterCode,
+                    theaterCode: screeningEvent.coaInfo.theaterCode,
                     kbnDenshiken: purchaseNumberInfo.dnshKmTyp,
                     kbnMaeuriken: purchaseNumberInfo.znkkkytsknGkjknTyp,
                     kbnKensyu: info.ykknshTyp,
                     salesPrice: Number(info.knshknhmbiUnip),
                     appPrice: Number(info.kijUnip),
                     kbnEisyahousiki: info.eishhshkTyp,
-                    titleCode: purchaseModel.screeningEvent.coaInfo.titleCode,
-                    titleBranchNum: purchaseModel.screeningEvent.coaInfo.titleBranchNum,
-                    dateJouei: purchaseModel.screeningEvent.coaInfo.dateJouei
+                    titleCode: screeningEvent.coaInfo.titleCode,
+                    titleBranchNum: screeningEvent.coaInfo.titleBranchNum,
+                    dateJouei: screeningEvent.coaInfo.dateJouei
                 });
                 log('ムビチケチケットコード取得', ticket);
                 const validTicket = {
@@ -149,13 +179,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         // 認証エラーバリデーション
         if (validationList.length > 0) {
             logger.error('SSKTS-APP:MvtkInputModule.auth', purchaseNumberAuthResult);
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
-        }
-        req.session.mvtk = mvtkList;
-        res.redirect('/purchase/mvtk/confirm');
-    } catch (err) {
-        if (err.errorType === ErrorType.Validation) {
-            const purchaseModel = new PurchaseModel(req.session.purchase);
+            const err = new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Validation, JSON.stringify(validationList));
             res.locals.mvtkInfo = JSON.parse(req.body.mvtk);
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.TICKET_STATE;
@@ -164,6 +188,11 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
             return;
         }
+        req.session.mvtk = mvtkList;
+        purchaseModel.checkMovieTicketAction = checkMovieTicketAction;
+        purchaseModel.save(req.session);
+        res.redirect('/purchase/mvtk/confirm');
+    } catch (err) {
         next(err);
     }
 }
