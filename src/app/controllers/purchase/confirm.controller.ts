@@ -151,19 +151,30 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         if (purchaseModel.mvtk !== undefined
             && mvtkTickets.length > 0
             && checkMovieTicketAction !== undefined) {
-            const paymentService = new cinerinoService.service.Payment(options);
-            await paymentService.authorizeMovieTicket({
-                object: {
-                    typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
-                    amount: 0,
-                    movieTickets: createMovieTicketsFromAuthorizeSeatReservation({
-                        authorizeSeatReservation: seatReservationAuthorization,
-                        seller,
-                        checkMovieTicketAction
-                    })
-                },
-                purpose: transaction
+            const movieTickets = createMovieTicketsFromAuthorizeSeatReservation({
+                authorizeSeatReservation: seatReservationAuthorization,
+                seller,
+                checkMovieTicketAction
             });
+            const identifiers: string[] = [];
+            movieTickets.forEach((m) => {
+                const findResult = identifiers.find((i) => i === m.identifier);
+                if (findResult !== undefined) {
+                    return;
+                }
+                identifiers.push(m.identifier);
+            });
+            const paymentService = new cinerinoService.service.Payment(options);
+            for (const identifier of identifiers) {
+                await paymentService.authorizeMovieTicket({
+                    object: {
+                        typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+                        amount: 0,
+                        movieTickets: movieTickets.filter((m) => m.identifier === identifier)
+                    },
+                    purpose: transaction
+                });
+            }
             log('Mvtk payment');
         }
 
