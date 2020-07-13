@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.7.4 - 2020-07-13
+### Changed
+ - ムビチケ決済処理をサービス側へ変更
+
 ## 2.7.3 - 2020-07-07
 ### Changed
  - SDKアップデート
