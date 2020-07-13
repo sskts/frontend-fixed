@@ -131,34 +131,6 @@ function ticketSelect(req, res, next) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 log('SSKTSCOA仮予約更新');
-                if (purchaseModel.mvtkAuthorization !== undefined) {
-                    yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).cancelMvtkAuthorization({
-                        purpose: {
-                            id: purchaseModel.transaction.id,
-                            typeOf: purchaseModel.transaction.typeOf
-                        },
-                        id: purchaseModel.mvtkAuthorization.id
-                    });
-                    log('SSKTSムビチケオーソリ削除');
-                }
-                if (purchaseModel.mvtk.length > 0 && purchaseModel.isReserveMvtkTicket()) {
-                    // 購入管理番号情報
-                    const mvtkSeatInfoSync = purchaseModel.getMvtkSeatInfoSync();
-                    log('購入管理番号情報', mvtkSeatInfoSync);
-                    if (mvtkSeatInfoSync === undefined)
-                        throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-                    purchaseModel.mvtkAuthorization = yield new cinerinoService.service.transaction.PlaceOrder4sskts(options)
-                        .createMvtkAuthorization({
-                        purpose: {
-                            id: purchaseModel.transaction.id,
-                            typeOf: purchaseModel.transaction.typeOf
-                        },
-                        object: {
-                            seatInfoSyncIn: mvtkSeatInfoSync
-                        }
-                    });
-                    log('SSKTSムビチケオーソリ追加', purchaseModel.mvtkAuthorization);
-                }
                 purchaseModel.save(req.session);
                 log('セッション更新');
                 res.redirect('/purchase/input');

@@ -8,7 +8,6 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import { getApiOption } from '../../functions';
-import logger from '../../middlewares/logger';
 import { AppError, ErrorType, PurchaseModel } from '../../models';
 
 const log = debug('SSKTS:Purchase.ConfirmModule');
@@ -45,70 +44,55 @@ export async function render(req: Request, res: Response, next: NextFunction): P
 }
 
 /**
- * ムビチケ決済
- * @memberof Purchase.ConfirmModule
- * @function reserveMvtk
- * @param {PurchaseSession.PurchaseModel} purchaseModel
- * @returns {Promise<mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult>}
+ *  予約情報からムビチケ情報作成
  */
-async function reserveMvtk(purchaseModel: PurchaseModel): Promise<mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult> {
-    // 購入管理番号情報
-    const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync();
-    if (seatInfoSyncIn === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-    let seatInfoSyncInResult: mvtkReserve.services.seat.seatInfoSync.ISeatInfoSyncResult;
-    try {
-        seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
-        if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.Success) {
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not success');
-        }
-    } catch (err) {
-        log('Mvtk failure', err);
-        logger.error('SSKTS-APP:ConfirmModule.reserveMvtk', seatInfoSyncIn, err);
-        throw err;
+export function createMovieTicketsFromAuthorizeSeatReservation(params: {
+    authorizeSeatReservation: cinerinoService.factory.action.authorize.offer.seatReservation.IAction<
+        cinerinoService.factory.service.webAPI.Identifier.COA
+    >;
+    checkMovieTicketAction: cinerinoService.factory.action.check.paymentMethod.movieTicket.IAction;
+    seller: cinerinoService.factory.seller.IOrganization<
+        cinerinoService.factory.seller.IAttributes<cinerinoService.factory.organizationType>
+    >;
+}) {
+    const results: cinerinoService.factory.paymentMethod.paymentCard.movieTicket.IMovieTicket[] = [];
+    const authorizeSeatReservation = params.authorizeSeatReservation;
+    const checkMovieTicketAction = params.checkMovieTicketAction;
+    const seller = params.seller;
+    if (checkMovieTicketAction.result === undefined) {
+        return [];
     }
-    log('Mvtk successful');
-    // log('GMO', purchaseModel.getReserveAmount());
-    // log('MVTK', purchaseModel.getMvtkPrice());
-    // log('FULL', purchaseModel.getPrice());
+    const movieTickets = checkMovieTicketAction.result.movieTickets;
 
-    return seatInfoSyncInResult;
-}
-
-/**
- * ムビチケ決済取り消し
- * @memberof Purchase.ConfirmModule
- * @function cancelMvtk
- * @param {Request} req
- * @param {Response} res
- * @returns {Promise<void>}
- */
-export async function cancelMvtk(req: Request, res: Response): Promise<void> {
-    try {
-        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        const purchaseModel = new PurchaseModel(req.session.purchase);
-        // 購入管理番号情報
-        const seatInfoSyncIn = purchaseModel.getMvtkSeatInfoSync({
-            deleteFlag: mvtkReserve.services.seat.seatInfoSync.DeleteFlag.True
+    authorizeSeatReservation.object.acceptedOffer.forEach((o) => {
+        const findReservation =
+            movieTickets.find((m) => {
+                return m.identifier === o.ticketInfo.mvtkNum && m.serviceType === o.ticketInfo.mvtkKbnKensyu;
+            });
+        if (findReservation === undefined) {
+            return;
+        }
+        results.push({
+            typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+            identifier: findReservation.identifier,
+            accessCode: findReservation.accessCode,
+            serviceType: findReservation.serviceType,
+            serviceOutput: {
+                ...findReservation.serviceOutput,
+                reservedTicket: {
+                    ...findReservation.serviceOutput.reservedTicket,
+                    ticketedSeat: {
+                        ...findReservation.serviceOutput.reservedTicket.ticketedSeat,
+                        seatNumber: o.seatNumber,
+                        seatSection: o.seatSection
+                    }
+                }
+            },
+            project: seller.project
         });
-        //セッション削除
-        delete req.session.purchase;
-        delete req.session.mvtk;
-        if (seatInfoSyncIn === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+    });
 
-        try {
-            const seatInfoSyncInResult = await mvtkReserve.services.seat.seatInfoSync.seatInfoSync(seatInfoSyncIn);
-            if (seatInfoSyncInResult.zskyykResult !== mvtkReserve.services.seat.seatInfoSync.ReservationResult.CancelSuccess) {
-                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.ExternalModule, 'reservationResult is not cancelSuccess');
-            }
-            res.json({ isSuccess: true });
-            log('Mvtk remove');
-        } catch (err) {
-            logger.error('SSKTS-APP:ConfirmModule.cancelMvtk', seatInfoSyncIn, err);
-            throw err;
-        }
-    } catch (err) {
-        res.json({ isSuccess: false });
-    }
+    return results;
 }
 
 /**
@@ -145,8 +129,13 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const options = getApiOption(req);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.transaction === undefined
-            || req.body.transactionId !== purchaseModel.transaction.id) {
+        const transaction = purchaseModel.transaction;
+        const seller = purchaseModel.seller;
+        const seatReservationAuthorization = purchaseModel.seatReservationAuthorization;
+        if (transaction === undefined
+            || req.body.transactionId !== transaction.id
+            || seller === undefined
+            || seatReservationAuthorization === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         //購入期限切れ
@@ -157,15 +146,41 @@ export async function purchase(req: Request, res: Response): Promise<void> {
         const mvtkTickets = purchaseModel.reserveTickets.filter((ticket) => {
             return (ticket.mvtkNum !== '');
         });
+        const checkMovieTicketAction = purchaseModel.checkMovieTicketAction;
         // ムビチケ使用
-        if (purchaseModel.mvtk !== undefined && mvtkTickets.length > 0) {
-            purchaseResult.mvtk = await reserveMvtk(purchaseModel);
+        if (purchaseModel.mvtk !== undefined
+            && mvtkTickets.length > 0
+            && checkMovieTicketAction !== undefined) {
+            const movieTickets = createMovieTicketsFromAuthorizeSeatReservation({
+                authorizeSeatReservation: seatReservationAuthorization,
+                seller,
+                checkMovieTicketAction
+            });
+            const identifiers: string[] = [];
+            movieTickets.forEach((m) => {
+                const findResult = identifiers.find((i) => i === m.identifier);
+                if (findResult !== undefined) {
+                    return;
+                }
+                identifiers.push(m.identifier);
+            });
+            const paymentService = new cinerinoService.service.Payment(options);
+            for (const identifier of identifiers) {
+                await paymentService.authorizeMovieTicket({
+                    object: {
+                        typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+                        amount: 0,
+                        movieTickets: movieTickets.filter((m) => m.identifier === identifier)
+                    },
+                    purpose: transaction
+                });
+            }
             log('Mvtk payment');
         }
 
         purchaseResult.order = await new cinerinoService.service.transaction.PlaceOrder4sskts(options)
             .confirm({
-                id: purchaseModel.transaction.id,
+                id: transaction.id,
                 sendEmailMessage: false
             });
         log('Order confirmation');
