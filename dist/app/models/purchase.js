@@ -28,6 +28,7 @@ class PurchaseModel {
         this.creditCards = (session.creditCards !== undefined) ? session.creditCards : [];
         this.gmo = session.gmo;
         this.mvtk = (session.mvtk !== undefined) ? session.mvtk : [];
+        this.checkMovieTicketAction = session.checkMovieTicketAction;
         this.mvtkAuthorization = session.mvtkAuthorization;
         this.expired = session.expired;
     }
@@ -52,6 +53,7 @@ class PurchaseModel {
             creditCards: this.creditCards,
             gmo: this.gmo,
             mvtk: this.mvtk,
+            checkMovieTicketAction: this.checkMovieTicketAction,
             mvtkAuthorization: this.mvtkAuthorization,
             expired: this.expired
         };

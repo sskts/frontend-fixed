@@ -39,8 +39,6 @@ purchaseRouter.post('/input', input.purchaserInformationRegistration);
 purchaseRouter.get('/confirm', confirm.render);
 purchaseRouter.post('/confirm', confirm.purchase);
 purchaseRouter.get('/getComplete', confirm.getCompleteData);
-//ムビチケ着券取り消し
-purchaseRouter.post('/mvtk/cancel', confirm.cancelMvtk);
 //購入完了
 purchaseRouter.get('/complete', complete.render);
 //ムビチケ券入力
