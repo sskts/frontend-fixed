@@ -3,7 +3,7 @@
  * @namespace Purchase.TransactionModule
  */
 
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -100,7 +100,10 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
         });
         purchaseModel.seller = searchResult.data[0];
         log('劇場のショップを検索');
-        if (purchaseModel.seller === undefined) throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
+        if (purchaseModel.seller === undefined
+            || purchaseModel.seller.id === undefined) {
+            throw new AppError(HTTPStatus.NOT_FOUND, ErrorType.Access);
+        }
 
         // 取引開始
         const valid = VALID_TIME_FIXED;

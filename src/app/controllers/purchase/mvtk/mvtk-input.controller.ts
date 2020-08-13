@@ -3,7 +3,7 @@
  * @namespace Purchase.Mvtk.MvtkInputModule
  */
 
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as COA from '@motionpicture/coa-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -68,7 +68,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         if (transaction === undefined
             || screeningEvent === undefined
             || screeningEvent.coaInfo === undefined
-            || seller === undefined) {
+            || seller === undefined
+            || seller.id === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         //取引id確認
@@ -115,8 +116,8 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 };
             }),
             seller: {
-                typeOf: transaction.seller.typeOf,
-                id: transaction.seller.id
+                typeOf: seller.typeOf,
+                id: seller.id
             }
         });
         if (checkMovieTicketAction.result === undefined) {

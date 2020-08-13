@@ -2,7 +2,7 @@
  * パフォーマンス一覧
  * @namespace Purchase.PerformancesModule
  */
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';

@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 照会
  * @namespace Fixed.FixedModule
  */
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -120,7 +120,8 @@ exports.getInquiryData = getInquiryData;
 function createPrintReservations(inquiryModel) {
     if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined) {
+        || inquiryModel.seller.location === undefined
+        || inquiryModel.seller.location.name.ja === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
     }
     const theaterName = inquiryModel.seller.location.name.ja;
@@ -134,9 +135,8 @@ function createPrintReservations(inquiryModel) {
             || itemOffered.reservedTicket.coaTicketInfo === undefined
             || itemOffered.reservationFor.coaInfo === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-        const reserveNo = itemOffered.reservationNumber;
         return {
-            reserveNo: reserveNo,
+            reserveNo: itemOffered.reservationNumber,
             filmNameJa: itemOffered.reservationFor.workPerformed.name,
             filmNameEn: '',
             theaterName: theaterName,
