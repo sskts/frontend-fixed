@@ -2,7 +2,7 @@
  * 照会
  * @namespace Fixed.FixedModule
  */
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -120,13 +120,16 @@ interface IReservation {
 export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined) {
+        || inquiryModel.seller.location === undefined
+        || inquiryModel.seller.location.name.ja === undefined) {
         throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     }
     const theaterName = inquiryModel.seller.location.name.ja;
 
     return inquiryModel.order.acceptedOffers.map((offer) => {
-        const itemOffered = offer.itemOffered;
+        const itemOffered = <cinerinoService.factory.chevre.reservation.IReservation<
+            cinerinoService.factory.chevre.reservationType.EventReservation
+        >>offer.itemOffered;
         if (itemOffered.typeOf !== cinerinoService.factory.chevre.reservationType.EventReservation
             || itemOffered.reservationFor.workPerformed === undefined
             || itemOffered.reservationFor.location === undefined
@@ -135,10 +138,9 @@ export function createPrintReservations(inquiryModel: InquiryModel): IReservatio
             || itemOffered.reservedTicket.coaTicketInfo === undefined
             || itemOffered.reservationFor.coaInfo === undefined
         ) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        const reserveNo = itemOffered.reservationNumber;
 
         return {
-            reserveNo: reserveNo,
+            reserveNo: itemOffered.reservationNumber,
             filmNameJa: itemOffered.reservationFor.workPerformed.name,
             filmNameEn: '',
             theaterName: theaterName,

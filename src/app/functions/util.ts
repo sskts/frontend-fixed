@@ -2,6 +2,7 @@
  * 共通
  */
 import { Request, Response } from 'express';
+import * as libphonenumber from 'google-libphonenumber';
 import * as moment from 'moment';
 import { AppError, AuthModel, ErrorType } from '../models';
 
@@ -185,4 +186,18 @@ export async function sleep(time: number = 3000) {
     return new Promise((resolve) => {
         setTimeout(() => { resolve(); }, time);
     });
+}
+
+/**
+ * 電話番号変換
+ */
+export function formatTelephone(telephone: string, format?: libphonenumber.PhoneNumberFormat) {
+    if (telephone === undefined) {
+        return '';
+    }
+    const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
+    const phoneNumber = phoneUtil.parseAndKeepRawInput(telephone, 'JP');
+    const phoneFormat = (format === undefined) ? libphonenumber.PhoneNumberFormat.INTERNATIONAL : format;
+
+    return phoneUtil.format(phoneNumber, phoneFormat).replace(/\s/g, '');
 }

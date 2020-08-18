@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
@@ -80,7 +80,8 @@ function auth(req, res, next) {
             if (transaction === undefined
                 || screeningEvent === undefined
                 || screeningEvent.coaInfo === undefined
-                || seller === undefined) {
+                || seller === undefined
+                || seller.id === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             //取引id確認
@@ -124,8 +125,8 @@ function auth(req, res, next) {
                         } });
                 }),
                 seller: {
-                    typeOf: transaction.seller.typeOf,
-                    id: transaction.seller.id
+                    typeOf: seller.typeOf,
+                    id: seller.id
                 }
             });
             if (checkMovieTicketAction.result === undefined) {

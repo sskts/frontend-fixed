@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const GMO = require("@motionpicture/gmo-service");
 const debug = require("debug");
 const google_libphonenumber_1 = require("google-libphonenumber");
@@ -179,15 +179,13 @@ function purchaserInformationRegistration(req, res, next) {
                 log('クレジットカード処理失敗', err);
                 return;
             }
-            yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).setCustomerContact({
+            yield new cinerinoService.service.transaction.PlaceOrder4sskts(options).setProfile({
                 id: purchaseModel.transaction.id,
-                object: {
-                    customerContact: {
-                        familyName: purchaseModel.profile.familyName,
-                        givenName: purchaseModel.profile.givenName,
-                        email: purchaseModel.profile.email,
-                        telephone: purchaseModel.profile.telephone
-                    }
+                agent: {
+                    familyName: purchaseModel.profile.familyName,
+                    givenName: purchaseModel.profile.givenName,
+                    email: purchaseModel.profile.email,
+                    telephone: functions_1.formatTelephone(purchaseModel.profile.telephone)
                 }
             });
             log('SSKTS購入者情報登録');

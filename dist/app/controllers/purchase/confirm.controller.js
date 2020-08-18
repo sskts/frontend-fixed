@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
