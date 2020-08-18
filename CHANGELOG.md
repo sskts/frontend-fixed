@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.8.0 - 2020-08-18
+### Changed
+ - @cinerino/sdkへ変更
+ - StarWebPRNTSDK更新
+ 
 ## 2.7.4 - 2020-07-13
 ### Changed
  - ムビチケ決済処理をサービス側へ変更
