@@ -3,13 +3,13 @@
  * @namespace Purchase.InputModule
  */
 
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as GMO from '@motionpicture/gmo-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import * as HTTPStatus from 'http-status';
-import { getApiOption } from '../../functions';
+import { formatTelephone, getApiOption } from '../../functions';
 import { purchaseInputForm } from '../../functions/forms';
 import { AppError, ErrorType, IGMO, PurchaseModel } from '../../models';
 const log = debug('SSKTS:Purchase.InputModule');
@@ -169,15 +169,13 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             return;
         }
 
-        await new cinerinoService.service.transaction.PlaceOrder4sskts(options).setCustomerContact({
+        await new cinerinoService.service.transaction.PlaceOrder4sskts(options).setProfile({
             id: purchaseModel.transaction.id,
-            object: {
-                customerContact: {
-                    familyName: purchaseModel.profile.familyName,
-                    givenName: purchaseModel.profile.givenName,
-                    email: purchaseModel.profile.email,
-                    telephone: purchaseModel.profile.telephone
-                }
+            agent: {
+                familyName: purchaseModel.profile.familyName,
+                givenName: purchaseModel.profile.givenName,
+                email: purchaseModel.profile.email,
+                telephone: formatTelephone(purchaseModel.profile.telephone)
             }
         });
         log('SSKTS購入者情報登録');

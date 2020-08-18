@@ -1,7 +1,7 @@
 /**
  * 購入セッション
  */
-import { factory } from '@cinerino/api-nodejs-client';
+import { factory } from '@cinerino/sdk';
 import * as COA from '@motionpicture/coa-service';
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as moment from 'moment';
@@ -266,7 +266,7 @@ export interface IPurchaseSession {
     /**
      * 劇場ショップ
      */
-    seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    seller?: factory.chevre.seller.ISeller;
     /**
      * 取引
      */
@@ -302,7 +302,7 @@ export interface IPurchaseSession {
     /**
      * クレジットカード情報
      */
-    creditCards: factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
+    creditCards: factory.chevre.paymentMethod.paymentCard.creditCard.ICheckedCard[];
     /**
      * GMO情報
      */
@@ -344,7 +344,7 @@ export class PurchaseModel {
     /**
      * 劇場ショップ
      */
-    public seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    public seller?: factory.chevre.seller.ISeller;
     /**
      * 取引
      */
@@ -380,7 +380,7 @@ export class PurchaseModel {
     /**
      * クレジットカード情報
      */
-    public creditCards: factory.paymentMethod.paymentCard.creditCard.ICheckedCard[];
+    public creditCards: factory.chevre.paymentMethod.paymentCard.creditCard.ICheckedCard[];
     /**
      * GMO情報
      */

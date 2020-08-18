@@ -1,4 +1,4 @@
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as uuid from 'uuid';
 
 /**

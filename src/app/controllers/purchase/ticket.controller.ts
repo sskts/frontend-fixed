@@ -2,7 +2,7 @@
  * 購入券種選択
  * @namespace Purchase.TicketModule
  */
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';

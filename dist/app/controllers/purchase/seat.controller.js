@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const COA = require("@motionpicture/coa-service");
 const debug = require("debug");
 const fs = require("fs-extra");

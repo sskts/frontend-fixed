@@ -13,7 +13,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cinerinoService = require("@cinerino/api-nodejs-client");
+const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const moment = require("moment");
@@ -98,8 +98,10 @@ function start(req, res, next) {
             });
             purchaseModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (purchaseModel.seller === undefined)
+            if (purchaseModel.seller === undefined
+                || purchaseModel.seller.id === undefined) {
                 throw new models_1.AppError(HTTPStatus.NOT_FOUND, models_1.ErrorType.Access);
+            }
             // 取引開始
             const valid = VALID_TIME_FIXED;
             purchaseModel.expired = moment().add(valid, 'minutes').toDate();

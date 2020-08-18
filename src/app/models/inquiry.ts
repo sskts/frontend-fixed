@@ -1,4 +1,4 @@
-import { factory } from '@cinerino/api-nodejs-client';
+import { factory } from '@cinerino/sdk';
 
 /**
  * ログイン情報
@@ -23,7 +23,7 @@ export interface IInquirySession {
     /**
      * 劇場ショップ
      */
-    seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    seller?: factory.chevre.seller.ISeller;
     /**
      * 照会情報
      */
@@ -42,7 +42,7 @@ export class InquiryModel {
     /**
      * 劇場ショップ
      */
-    public seller?: factory.seller.IOrganization<factory.seller.IAttributes<factory.organizationType>>;
+    public seller?: factory.chevre.seller.ISeller;
     /**
      * 照会情報
      */

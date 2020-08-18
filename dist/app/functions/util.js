@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const libphonenumber = require("google-libphonenumber");
 const moment = require("moment");
 const models_1 = require("../models");
 /**
@@ -192,3 +193,16 @@ function sleep(time = 3000) {
     });
 }
 exports.sleep = sleep;
+/**
+ * 電話番号変換
+ */
+function formatTelephone(telephone, format) {
+    if (telephone === undefined) {
+        return '';
+    }
+    const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
+    const phoneNumber = phoneUtil.parseAndKeepRawInput(telephone, 'JP');
+    const phoneFormat = (format === undefined) ? libphonenumber.PhoneNumberFormat.INTERNATIONAL : format;
+    return phoneUtil.format(phoneNumber, phoneFormat).replace(/\s/g, '');
+}
+exports.formatTelephone = formatTelephone;

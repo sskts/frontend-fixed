@@ -2,7 +2,7 @@
  * 購入確認
  * @namespace Purchase.ConfirmModule
  */
-import * as cinerinoService from '@cinerino/api-nodejs-client';
+import * as cinerinoService from '@cinerino/sdk';
 import * as mvtkReserve from '@motionpicture/mvtk-reserve-service';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
@@ -51,11 +51,9 @@ export function createMovieTicketsFromAuthorizeSeatReservation(params: {
         cinerinoService.factory.service.webAPI.Identifier.COA
     >;
     checkMovieTicketAction: cinerinoService.factory.action.check.paymentMethod.movieTicket.IAction;
-    seller: cinerinoService.factory.seller.IOrganization<
-        cinerinoService.factory.seller.IAttributes<cinerinoService.factory.organizationType>
-    >;
+    seller: cinerinoService.factory.chevre.seller.ISeller;
 }) {
-    const results: cinerinoService.factory.paymentMethod.paymentCard.movieTicket.IMovieTicket[] = [];
+    const results: cinerinoService.factory.chevre.paymentMethod.paymentCard.movieTicket.IMovieTicket[] = [];
     const authorizeSeatReservation = params.authorizeSeatReservation;
     const checkMovieTicketAction = params.checkMovieTicketAction;
     const seller = params.seller;
