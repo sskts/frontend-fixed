@@ -294,7 +294,7 @@ export interface IPurchaseSession {
     /**
      * GMOオーソリ
      */
-    creditCardAuthorization?: factory.action.authorize.paymentMethod.creditCard.IAction;
+    creditCardAuthorization?: factory.action.authorize.paymentMethod.any.IAction;
     /**
      * プロフィール
      */
@@ -372,7 +372,7 @@ export class PurchaseModel {
     /**
      * GMOオーソリ
      */
-    public creditCardAuthorization?: factory.action.authorize.paymentMethod.creditCard.IAction;
+    public creditCardAuthorization?: factory.action.authorize.paymentMethod.any.IAction;
     /**
      * プロフィール
      */

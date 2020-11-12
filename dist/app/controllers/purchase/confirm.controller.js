@@ -148,9 +148,10 @@ function purchase(req, res) {
                 for (const identifier of identifiers) {
                     yield paymentService.authorizeMovieTicket({
                         object: {
-                            typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+                            typeOf: cinerinoService.factory.action.authorize.paymentMethod.any.ResultType.Payment,
                             amount: 0,
-                            movieTickets: movieTickets.filter((m) => m.identifier === identifier)
+                            movieTickets: movieTickets.filter((m) => m.identifier === identifier),
+                            paymentMethod: movieTickets[0].typeOf
                         },
                         purpose: transaction
                     });

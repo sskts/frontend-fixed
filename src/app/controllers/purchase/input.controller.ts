@@ -54,7 +54,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
             return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
         });
-        if (findPaymentAcceptedResult === undefined) {
+        if (findPaymentAcceptedResult === undefined
+            || findPaymentAcceptedResult.gmoInfo === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
 
@@ -62,7 +63,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.locals.gmoError = undefined;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
         res.locals.purchaseModel = purchaseModel;
-        res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
+        res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
         res.locals.step = PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
@@ -101,7 +102,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
         const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
             return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
         });
-        if (findPaymentAcceptedResult === undefined) {
+        if (findPaymentAcceptedResult === undefined
+            || findPaymentAcceptedResult.gmoInfo === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         // バリデーション
@@ -112,7 +114,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -129,7 +131,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -159,7 +161,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<cinerinoService.factory.seller.ICreditCardPaymentAccepted>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.locals.gmoError = err.message;
@@ -228,10 +230,11 @@ async function creditCardProsess(
         };
         purchaseModel.creditCardAuthorization = await new cinerinoService.service.Payment(options).authorizeCreditCard({
             object: {
-                typeOf: cinerinoService.factory.paymentMethodType.CreditCard,
+                typeOf: cinerinoService.factory.action.authorize.paymentMethod.any.ResultType.Payment,
                 amount: purchaseModel.getReserveAmount(),
                 method: GMO.utils.util.Method.Lump,
-                creditCard
+                creditCard,
+                paymentMethod: cinerinoService.factory.chevre.paymentMethodType.CreditCard
             },
             purpose: {
                 id: purchaseModel.transaction.id,

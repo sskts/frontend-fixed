@@ -61,7 +61,7 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
             const searchResult = await new cinerinoService.service.Seller(options).search({
-                location: { branchCodes: [req.body.theaterCode] }
+                branchCode: { $eq: req.body.theaterCode }
             });
             inquiryModel.seller = searchResult.data[0];
             if (inquiryModel.seller === undefined
@@ -73,11 +73,12 @@ export async function getInquiryData(req: Request, res: Response): Promise<void>
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
+            const findResult = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                 telephone: inquiryModel.login.telephone,
-                confirmationNumber: Number(inquiryModel.login.reserveNum),
+                confirmationNumber: inquiryModel.login.reserveNum,
                 theaterCode: inquiryModel.seller.location.branchCode
             });
+            inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
 
             log('オーダーOut', inquiryModel.order);
 
@@ -120,11 +121,15 @@ interface IReservation {
 export function createPrintReservations(inquiryModel: InquiryModel): IReservation[] {
     if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined
-        || inquiryModel.seller.location.name.ja === undefined) {
+        || inquiryModel.seller.location === undefined) {
         throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
     }
-    const theaterName = inquiryModel.seller.location.name.ja;
+    const theaterName = (typeof inquiryModel.seller.location.name === 'string')
+        ? inquiryModel.seller.location.name
+        : (inquiryModel.seller.location.name === undefined
+            || inquiryModel.seller.location.name.ja === undefined)
+            ? ''
+            : inquiryModel.seller.location.name.ja;
 
     return inquiryModel.order.acceptedOffers.map((offer) => {
         const itemOffered = <cinerinoService.factory.chevre.reservation.IReservation<

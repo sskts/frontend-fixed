@@ -44,7 +44,7 @@ function loginRender(req, res, next) {
             const inquiryModel = new models_1.InquiryModel();
             // 劇場のショップを検索
             const searchResult = yield new cinerinoService.service.Seller(options).search({
-                location: { branchCodes: [theaterCode] }
+                branchCode: { $eq: theaterCode }
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索', inquiryModel.seller);
@@ -83,7 +83,7 @@ function inquiryAuth(req, res, next) {
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
                 const searchResult = yield new cinerinoService.service.Seller(options).search({
-                    location: { branchCodes: [req.body.theaterCode] }
+                    branchCode: { $eq: req.body.theaterCode }
                 });
                 inquiryModel.seller = searchResult.data[0];
                 log('劇場のショップを検索');
@@ -96,11 +96,12 @@ function inquiryAuth(req, res, next) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
+                const findResult = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
-                    confirmationNumber: Number(inquiryModel.login.reserveNum),
+                    confirmationNumber: inquiryModel.login.reserveNum,
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
+                inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
                 log('照会情報');
                 if (inquiryModel.order === undefined) {
                     res.locals.inquiryModel = inquiryModel;
@@ -116,7 +117,7 @@ function inquiryAuth(req, res, next) {
             else {
                 const inquiryModel = new models_1.InquiryModel();
                 const searchResult = yield new cinerinoService.service.Seller(options).search({
-                    location: { branchCodes: [req.body.theaterCode] }
+                    branchCode: { $eq: req.body.theaterCode }
                 });
                 inquiryModel.seller = searchResult.data[0];
                 log('劇場のショップを検索');

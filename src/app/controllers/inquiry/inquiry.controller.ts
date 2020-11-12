@@ -34,7 +34,7 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
         const searchResult = await new cinerinoService.service.Seller(options).search({
-            location: { branchCodes: [theaterCode] }
+            branchCode: { $eq: theaterCode }
         });
         inquiryModel.seller = searchResult.data[0];
         log('劇場のショップを検索', inquiryModel.seller);
@@ -70,7 +70,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
             const searchResult = await new cinerinoService.service.Seller(options).search({
-                location: { branchCodes: [req.body.theaterCode] }
+                branchCode: { $eq: req.body.theaterCode }
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
@@ -83,11 +83,12 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
-            inquiryModel.order = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
+            const findResult = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                 telephone: inquiryModel.login.telephone,
-                confirmationNumber: Number(inquiryModel.login.reserveNum),
+                confirmationNumber: inquiryModel.login.reserveNum,
                 theaterCode: inquiryModel.seller.location.branchCode
             });
+            inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
             log('照会情報');
             if (inquiryModel.order === undefined) {
                 res.locals.inquiryModel = inquiryModel;
@@ -106,7 +107,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
         } else {
             const inquiryModel = new InquiryModel();
             const searchResult = await new cinerinoService.service.Seller(options).search({
-                location: { branchCodes: [req.body.theaterCode] }
+                branchCode: { $eq: req.body.theaterCode }
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');

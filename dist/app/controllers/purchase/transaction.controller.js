@@ -92,9 +92,7 @@ function start(req, res, next) {
             });
             // 劇場のショップを検索
             const searchResult = yield new cinerinoService.service.Seller(options).search({
-                location: {
-                    branchCodes: [screeningEvent.coaInfo.theaterCode]
-                }
+                branchCode: { $eq: screeningEvent.coaInfo.theaterCode }
             });
             purchaseModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
