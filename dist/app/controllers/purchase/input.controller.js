@@ -64,7 +64,8 @@ function render(req, res, next) {
             const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
                 return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
             });
-            if (findPaymentAcceptedResult === undefined) {
+            if (findPaymentAcceptedResult === undefined
+                || findPaymentAcceptedResult.gmoInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             res.locals.error = undefined;
@@ -114,7 +115,8 @@ function purchaserInformationRegistration(req, res, next) {
             const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
                 return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
             });
-            if (findPaymentAcceptedResult === undefined) {
+            if (findPaymentAcceptedResult === undefined
+                || findPaymentAcceptedResult.gmoInfo === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             // バリデーション
@@ -237,10 +239,11 @@ function creditCardProsess(req, purchaseModel) {
             };
             purchaseModel.creditCardAuthorization = yield new cinerinoService.service.Payment(options).authorizeCreditCard({
                 object: {
-                    typeOf: cinerinoService.factory.paymentMethodType.CreditCard,
+                    typeOf: cinerinoService.factory.action.authorize.paymentMethod.any.ResultType.Payment,
                     amount: purchaseModel.getReserveAmount(),
                     method: GMO.utils.util.Method.Lump,
-                    creditCard
+                    creditCard,
+                    paymentMethod: cinerinoService.factory.chevre.paymentMethodType.CreditCard
                 },
                 purpose: {
                     id: purchaseModel.transaction.id,

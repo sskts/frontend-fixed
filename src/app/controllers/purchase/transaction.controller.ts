@@ -94,9 +94,7 @@ export async function start(req: Request, res: Response, next: NextFunction): Pr
 
         // 劇場のショップを検索
         const searchResult = await new cinerinoService.service.Seller(options).search({
-            location: {
-                branchCodes: [screeningEvent.coaInfo.theaterCode]
-            }
+            branchCode: { $eq: screeningEvent.coaInfo.theaterCode }
         });
         purchaseModel.seller = searchResult.data[0];
         log('劇場のショップを検索');

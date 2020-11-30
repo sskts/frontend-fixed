@@ -76,7 +76,7 @@ function getInquiryData(req, res) {
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
                 const searchResult = yield new cinerinoService.service.Seller(options).search({
-                    location: { branchCodes: [req.body.theaterCode] }
+                    branchCode: { $eq: req.body.theaterCode }
                 });
                 inquiryModel.seller = searchResult.data[0];
                 if (inquiryModel.seller === undefined
@@ -88,11 +88,12 @@ function getInquiryData(req, res) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
-                inquiryModel.order = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
+                const findResult = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
-                    confirmationNumber: Number(inquiryModel.login.reserveNum),
+                    confirmationNumber: inquiryModel.login.reserveNum,
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
+                inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
                 log('オーダーOut', inquiryModel.order);
                 if (inquiryModel.order === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
@@ -120,11 +121,15 @@ exports.getInquiryData = getInquiryData;
 function createPrintReservations(inquiryModel) {
     if (inquiryModel.order === undefined
         || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined
-        || inquiryModel.seller.location.name.ja === undefined) {
+        || inquiryModel.seller.location === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
     }
-    const theaterName = inquiryModel.seller.location.name.ja;
+    const theaterName = (typeof inquiryModel.seller.location.name === 'string')
+        ? inquiryModel.seller.location.name
+        : (inquiryModel.seller.location.name === undefined
+            || inquiryModel.seller.location.name.ja === undefined)
+            ? ''
+            : inquiryModel.seller.location.name.ja;
     return inquiryModel.order.acceptedOffers.map((offer) => {
         const itemOffered = offer.itemOffered;
         if (itemOffered.typeOf !== cinerinoService.factory.chevre.reservationType.EventReservation
