@@ -91,7 +91,12 @@ function errorRender(err, req, res, _) {
             if (purchaseModel.transaction !== undefined) {
                 const options = functions_1.getApiOption(req);
                 const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
-                yield transactionService.cancel({ id: purchaseModel.transaction.id });
+                try {
+                    yield transactionService.cancel({ id: purchaseModel.transaction.id });
+                }
+                catch (error) {
+                    logger_1.default.error('SSKTS-APP:ErrorModule', 'cancel', status, error.message, error);
+                }
             }
         }
         deleteSession(req.session);

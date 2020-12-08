@@ -86,7 +86,11 @@ export async function errorRender(
         if (purchaseModel.transaction !== undefined) {
             const options = getApiOption(req);
             const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
-            await transactionService.cancel({ id: purchaseModel.transaction.id });
+            try {
+                await transactionService.cancel({ id: purchaseModel.transaction.id });
+            } catch (error) {
+                logger.error('SSKTS-APP:ErrorModule', 'cancel', status, error.message, error);
+            }
         }
     }
     deleteSession(req.session);
