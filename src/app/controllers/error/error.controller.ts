@@ -6,8 +6,9 @@ import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
+import { getApiOption } from '../../functions';
 import logger from '../../middlewares/logger';
-import { AppError, ErrorType } from '../../models';
+import { AppError, ErrorType, PurchaseModel } from '../../models';
 
 const log = debug('SSKTS:Error.ErrorModule');
 
@@ -39,12 +40,12 @@ export function notFoundRender(req: Request, res: Response, _: NextFunction): vo
  * @param {NextFunction} next
  * @returns {void}
  */
-export function errorRender(
+export async function errorRender(
     err: Error | AppError | cinerinoService.transporters.RequestError,
     req: Request,
     res: Response,
     _: NextFunction
-): void {
+) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err.hasOwnProperty('errors')) {
@@ -79,7 +80,15 @@ export function errorRender(
         msg = req.__('common.error.internalServerError');
         logger.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
     }
-
+    if (req.session !== undefined
+        && req.session.purchase !== undefined) {
+        const purchaseModel = new PurchaseModel(req.session.purchase);
+        if (purchaseModel.transaction !== undefined) {
+            const options = getApiOption(req);
+            const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
+            await transactionService.cancel({ id: purchaseModel.transaction.id });
+        }
+    }
     deleteSession(req.session);
     /**
      * エラーメッセージ
