@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.8.2 - 2020-12-09
+### Added
+ - 注文取引の明示的な中止
+
 ## 2.8.1 - 2020-11-27
 ### Changed
  - 確認番号での注文照会結果を新しい型に対応
