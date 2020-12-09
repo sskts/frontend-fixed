@@ -1,7 +1,22 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * エラー
+ * @namespace ErrorModule
+ */
+const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
+const functions_1 = require("../../functions");
 const logger_1 = require("../../middlewares/logger");
 const models_1 = require("../../models");
 const log = debug('SSKTS:Error.ErrorModule');
@@ -34,59 +49,75 @@ exports.notFoundRender = notFoundRender;
  * @returns {void}
  */
 function errorRender(err, req, res, _) {
-    let status = HTTPStatus.INTERNAL_SERVER_ERROR;
-    let msg = err.message;
-    if (err.hasOwnProperty('errors')) {
-        switch (err.code) {
-            case HTTPStatus.BAD_REQUEST:
-                msg = req.__('common.error.badRequest');
-                break;
-            case HTTPStatus.UNAUTHORIZED:
-                msg = req.__('common.error.unauthorized');
-                break;
-            case HTTPStatus.FORBIDDEN:
-                msg = req.__('common.error.forbidden');
-                break;
-            case HTTPStatus.NOT_FOUND:
-                msg = req.__('common.error.notFound');
-                break;
-            case HTTPStatus.SERVICE_UNAVAILABLE:
-                msg = req.__('common.error.serviceUnavailable');
-                logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
-                break;
-            default:
-                msg = req.__('common.error.internalServerError');
-                logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
+    return __awaiter(this, void 0, void 0, function* () {
+        let status = HTTPStatus.INTERNAL_SERVER_ERROR;
+        let msg = err.message;
+        if (err.hasOwnProperty('errors')) {
+            switch (err.code) {
+                case HTTPStatus.BAD_REQUEST:
+                    msg = req.__('common.error.badRequest');
+                    break;
+                case HTTPStatus.UNAUTHORIZED:
+                    msg = req.__('common.error.unauthorized');
+                    break;
+                case HTTPStatus.FORBIDDEN:
+                    msg = req.__('common.error.forbidden');
+                    break;
+                case HTTPStatus.NOT_FOUND:
+                    msg = req.__('common.error.notFound');
+                    break;
+                case HTTPStatus.SERVICE_UNAVAILABLE:
+                    msg = req.__('common.error.serviceUnavailable');
+                    logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
+                    break;
+                default:
+                    msg = req.__('common.error.internalServerError');
+                    logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
+            }
+            if (err.errorType !== undefined && err.errorType === models_1.ErrorType.Expire) {
+                msg = req.__('common.error.expire');
+            }
+            status = err.code;
         }
-        if (err.errorType !== undefined && err.errorType === models_1.ErrorType.Expire) {
-            msg = req.__('common.error.expire');
+        else {
+            log('Error');
+            status = HTTPStatus.INTERNAL_SERVER_ERROR;
+            msg = req.__('common.error.internalServerError');
+            logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
         }
-        status = err.code;
-    }
-    else {
-        log('Error');
-        status = HTTPStatus.INTERNAL_SERVER_ERROR;
-        msg = req.__('common.error.internalServerError');
-        logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
-    }
-    deleteSession(req.session);
-    /**
-     * エラーメッセージ
-     * Property: プロパティが無い
-     * Access: 不正なアクセス
-     * Validation: 不正な値のPOST
-     * Expire: 有効期限切れ
-     * ExternalModule: 外部モジュールエラー
-     */
-    if (req.xhr) {
-        res.status(status).send({ error: 'Something failed.' });
-    }
-    else {
-        res.locals.message = msg;
-        res.locals.error = err;
-        res.status(status).render('error/error');
-    }
-    return;
+        if (req.session !== undefined
+            && req.session.purchase !== undefined) {
+            const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
+            if (purchaseModel.transaction !== undefined) {
+                const options = functions_1.getApiOption(req);
+                const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
+                try {
+                    yield transactionService.cancel({ id: purchaseModel.transaction.id });
+                }
+                catch (error) {
+                    logger_1.default.error('SSKTS-APP:ErrorModule', 'cancel', status, error.message, error);
+                }
+            }
+        }
+        deleteSession(req.session);
+        /**
+         * エラーメッセージ
+         * Property: プロパティが無い
+         * Access: 不正なアクセス
+         * Validation: 不正な値のPOST
+         * Expire: 有効期限切れ
+         * ExternalModule: 外部モジュールエラー
+         */
+        if (req.xhr) {
+            res.status(status).send({ error: 'Something failed.' });
+        }
+        else {
+            res.locals.message = msg;
+            res.locals.error = err;
+            res.status(status).render('error/error');
+        }
+        return;
+    });
 }
 exports.errorRender = errorRender;
 /**
