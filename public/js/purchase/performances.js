@@ -1,6 +1,9 @@
 var dt = new Date('1999-12-31T23:59:59Z'); // 過去の日付をGMT形式に変換
 document.cookie = 'applicationData=; max-age=0; path=/;';
 
+var SCHEDULE_API_ENDPOINT;
+var ENTRANCE_SERVER_URL;
+var SELLER;
 /**
  * パフォーマンス
  * @class
@@ -122,29 +125,6 @@ function filterPerformancebyMovie(performances, movie) {
     return sortResult;
 }
 
-/**
- * 劇場一覧取得
- */
-function getTheaterTable() {
-    return [
-        { "code": "20", "name": "gdcs" },
-        { "code": "02", "name": "heiwajima" },
-        { "code": "19", "name": "yukarigaoka" },
-        { "code": "13", "name": "tsuchiura" },
-        { "code": "06", "name": "numazu" },
-        { "code": "21", "name": "lalaportnumazu" },
-        { "code": "14", "name": "kahoku" },
-        { "code": "16", "name": "yamatokoriyama" },
-        { "code": "17", "name": "shimonoseki" },
-        { "code": "07", "name": "okaido" },
-        { "code": "08", "name": "kinuyama" },
-        { "code": "09", "name": "shigenobu" },
-        { "code": "15", "name": "masaki" },
-        { "code": "12", "name": "kitajima" },
-        { "code": "18", "name": "aira" }
-    ];
-}
-
 Vue.component('purchase-performance-time', {
     props: ['schedule'],
     data: function () {
@@ -243,158 +223,201 @@ Vue.component('purchase-performance-film', {
 </ul>'
 });
 
-var app = new Vue({
-    el: '#performances',
-    data: {
-        theaterCode: config.theater,
-        date: moment().format('YYYYMMDD'),
-        dateList: [],
-        sortType: 'time',
-        error: undefined,
-        timer: undefined,
-        schedules: [],
-        schedule: undefined
-    },
-
-    created: function () {
-        var _this = this;
-        this.getSchedule().done(function (data) {
-            _this.schedules = data;
-            _this.createDate();
-            _this.createSchedule();
-            _this.update();
-        }).fail(function (error) {
-            console.error(error);
-        });
-
-    },
-
-    methods: {
-        /**
-         * 選択日生成
-         */
-        createDate: function () {
-            var results = [];
-            var limit = 3;
-            for (var i = 0; i < limit; i++) {
-                results.push({
-                    value: moment().add(i, 'days').format('YYYYMMDD'),
-                    text: (i === 0) ? '本日'
-                        : (i === 1) ? '明日'
-                            : (i === 2) ? '明後日'
-                                : date.format('YYYY年MM月DD日')
-                });
-            }
-            this.dateList = results;
-        },
-        /**
-         * スケジュール取得
-         */
-        getSchedule: function () {
-            this.error = undefined;
-            var now = moment().format('YYYYMMDDHHmm');
-            var branchCode = this.theaterCode;
-            var theatreTable = getTheaterTable();
-            var theatreTableFindResult = theatreTable.find(function (t) { return (branchCode.slice(-2) === t.code); });
-            var url = $('input[name=SCHEDULE_API_ENDPOINT]').val() + '/' + theatreTableFindResult.name + '/schedule/json/schedule.json?date=' + now;
-            var options = {
-                dataType: 'json',
-                url: url,
-                type: 'GET',
-                timeout: API_TIMEOUT
-            };
-            var _this = this;
-            return $.ajax(options);
-        },
-        /**
-         * スケジュール作成
-         */
-        createSchedule: function () {
-            this.schedule = undefined;
-            var _this = this;
-            setTimeout(function(){
-                var now = moment();
-                var today = moment(now).format('YYYYMMDD');
-                var searchDate = (_this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
-                    ? today : _this.date;
-                _this.date = searchDate;
-                // 選択したスケジュールを抽出　上映終了は除外
-                _this.schedule = _this.schedules.find(function (s) { return (s.date === _this.date); });
-            }, 0);
-        },
-        /**
-         * 定期的にスケジュール更新
-         */
-        update: function () {
-            var time = 1000 * 60 * 5;
-            var _this = this;
-            this.timer = setInterval(function () {
-                _this.getSchedule().done(function (data) {
-                    _this.schedules = data;
-                    _this.createDate();
-                    _this.createSchedule();
-                }).fail(function (error) {
-                    console.error(error);
-                });
-            }, time);
-        },
-
-        /**
-         * パフォーマンス選択
-         */
-        selectPerformance: function (params) {
-            var event = params.event;
-            var performance = params.performance;
-            event.preventDefault();
-            // 残席なしなら遷移しない
-            if (!performance.isSalse()) {
-                return;
-            };
-            var performances = schedule2Performance(this.schedule, false);
-            var filterResult = performances.filter(function (p) {
-                return (p.movie.movie_short_code === performance.movie.movie_short_code
-                    && p.movie.movie_branch_code === performance.movie.movie_branch_code
-                    && p.isSalse());
-            });
-            var _this = this;
-            var data = filterResult.map(function (p) {
-                return {
-                    id: _this.theaterCode + p.createId(),
-                    startTime: p.getTime('start')
-                };
-            });
-            sessionStorage.setItem('performances', JSON.stringify(data));
-            var id = this.theaterCode + performance.createId();
-            var entrance = $('input[name=ENTRANCE_SERVER_URL]').val();
-            location.href = entrance + '/fixed/index.html?id=' + id;
-        },
-        /**
-         * ソート変更
-         */
-        changeSortType: function (type, event) {
-            event.preventDefault();
-            if (this.sortType === type) {
-                return;
-            }
-            this.sortType = type
-        },
-        /**
-         * 日付変更
-         */
-        changeDate: function () {
-            this.createSchedule();
-        },
-        /**
-         * 照会ボタンクリック
-         * @function onclickInquiry
-         * @param {Event} event
-         * @returns {void}
-         */
-        onclickInquiry: function (event) {
-            event.preventDefault();
-            location.href = 'inquiry/login?theater=' + this.theaterCode;
-        },
+/**
+ * オブジェクトをクエリストリングへ変換
+ */
+ function object2query(params) {
+    var query = '';
+    for (var i = 0; i < Object.keys(params).length; i++) {
+        var key = Object.keys(params)[i];
+        var value = params[key];
+        if (i > 0) {
+            query += '&';
+        }
+        query += key + '=' + value;
     }
-});
+    return query;
+}
 
+function createVueInstance() {
+    return new Vue({
+        el: '#performances',
+        data: {
+            theaterCode: config.theater,
+            date: moment().format('YYYYMMDD'),
+            dateList: [],
+            sortType: 'time',
+            error: undefined,
+            timer: undefined,
+            schedules: [],
+            schedule: undefined
+        },
+    
+        created: function () {
+            var _this = this;
+            this.getSchedule().done(function (data) {
+                _this.schedules = data;
+                _this.createDate();
+                _this.createSchedule();
+                _this.update();
+            }).fail(function (error) {
+                console.error(error);
+            });
+    
+        },
+    
+        methods: {
+            /**
+             * 選択日生成
+             */
+            createDate: function () {
+                var results = [];
+                var limit = 3;
+                for (var i = 0; i < limit; i++) {
+                    results.push({
+                        value: moment().add(i, 'days').format('YYYYMMDD'),
+                        text: (i === 0) ? '本日'
+                            : (i === 1) ? '明日'
+                                : (i === 2) ? '明後日'
+                                    : date.format('YYYY年MM月DD日')
+                    });
+                }
+                this.dateList = results;
+            },
+            /**
+             * スケジュール取得
+             */
+            getSchedule: function () {
+                this.error = undefined;
+                var now = moment().format('YYYYMMDDHHmm');
+                var url = SCHEDULE_API_ENDPOINT + '/' + SELLER.alias + '/schedule/json/schedule.json?date=' + now;
+                var options = {
+                    dataType: 'json',
+                    url: url,
+                    type: 'GET',
+                    timeout: API_TIMEOUT
+                };
+                var _this = this;
+                return $.ajax(options);
+            },
+            /**
+             * スケジュール作成
+             */
+            createSchedule: function () {
+                this.schedule = undefined;
+                var _this = this;
+                setTimeout(function(){
+                    var now = moment();
+                    var today = moment(now).format('YYYYMMDD');
+                    var searchDate = (_this.dateList.find(function (d) { return (d.value === _this.date); }) === undefined)
+                        ? today : _this.date;
+                    _this.date = searchDate;
+                    // 選択したスケジュールを抽出　上映終了は除外
+                    _this.schedule = _this.schedules.find(function (s) { return (s.date === _this.date); });
+                }, 0);
+            },
+            /**
+             * 定期的にスケジュール更新
+             */
+            update: function () {
+                var time = 1000 * 60 * 5;
+                var _this = this;
+                this.timer = setInterval(function () {
+                    _this.getSchedule().done(function (data) {
+                        _this.schedules = data;
+                        _this.createDate();
+                        _this.createSchedule();
+                    }).fail(function (error) {
+                        console.error(error);
+                    });
+                }, time);
+            },
+    
+            /**
+             * パフォーマンス選択
+             */
+            selectPerformance: function (params) {
+                var event = params.event;
+                var performance = params.performance;
+                event.preventDefault();
+                // 残席なしなら遷移しない
+                if (!performance.isSalse()) {
+                    return;
+                };
+                var performances = schedule2Performance(this.schedule, false);
+                var filterResult = performances.filter(function (p) {
+                    return (p.movie.movie_short_code === performance.movie.movie_short_code
+                        && p.movie.movie_branch_code === performance.movie.movie_branch_code
+                        && p.isSalse());
+                });
+                var _this = this;
+                var data = filterResult.map(function (p) {
+                    return {
+                        id: _this.theaterCode + p.createId(),
+                        startTime: p.getTime('start')
+                    };
+                });
+                sessionStorage.setItem('performances', JSON.stringify(data));
+                var id = this.theaterCode + performance.createId();
+                location.href = ENTRANCE_SERVER_URL + '/fixed/index.html?' + object2query({
+                    id: id,
+                    sellerId: SELLER.id,
+                    redirectUrl: encodeURIComponent(location.origin),
+                });
+            },
+            /**
+             * ソート変更
+             */
+            changeSortType: function (type, event) {
+                event.preventDefault();
+                if (this.sortType === type) {
+                    return;
+                }
+                this.sortType = type;
+            },
+            /**
+             * 日付変更
+             */
+            changeDate: function () {
+                this.createSchedule();
+            },
+            /**
+             * 照会ボタンクリック
+             * @function onclickInquiry
+             * @param {Event} event
+             * @returns {void}
+             */
+            onclickInquiry: function (event) {
+                event.preventDefault();
+                location.href = 'inquiry/login?theater=' + this.theaterCode;
+            },
+        }
+    });
+}
 
+function scheduleRender() {
+    SCHEDULE_API_ENDPOINT = $('input[name=SCHEDULE_API_ENDPOINT]').val();
+    ENTRANCE_SERVER_URL = $('input[name=ENTRANCE_SERVER_URL]').val();
+    var now = moment().format('YYYYMMDDHHmm');
+    var options = {
+        dataType: 'json',
+        url: SCHEDULE_API_ENDPOINT + '/seller/seller.json?date=' + now,
+        type: 'GET',
+        timeout: API_TIMEOUT
+    };
+    $.ajax(options).done(function (data) {
+        var findResult = data.find(function(s) {
+            return s.branchCode === config.theater;
+        });
+        if (findResult === undefined) {
+            console.error('not seller');
+            return;
+        }
+        SELLER = findResult;
+        var app = createVueInstance();
+    }).fail(function (error) {
+        console.error(error);
+    });
+}
+
+scheduleRender();
