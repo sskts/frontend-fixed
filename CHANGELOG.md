@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.8.3 - 2021-04-30
+### Added
+ - エントランスへのリクエストに「sellerId」、「redirectUrl」を追加
+
 ## 2.8.2 - 2020-12-09
 ### Added
  - 注文取引の明示的な中止
