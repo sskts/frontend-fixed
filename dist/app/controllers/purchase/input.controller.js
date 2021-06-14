@@ -65,7 +65,8 @@ function render(req, res, next) {
                 return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
             });
             if (findPaymentAcceptedResult === undefined
-                || findPaymentAcceptedResult.gmoInfo === undefined) {
+                || findPaymentAcceptedResult.gmoInfo === undefined
+                || findPaymentAcceptedResult.gmoInfo.shopId === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             res.locals.error = undefined;
@@ -116,7 +117,8 @@ function purchaserInformationRegistration(req, res, next) {
                 return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
             });
             if (findPaymentAcceptedResult === undefined
-                || findPaymentAcceptedResult.gmoInfo === undefined) {
+                || findPaymentAcceptedResult.gmoInfo === undefined
+                || findPaymentAcceptedResult.gmoInfo.shopId === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             // バリデーション

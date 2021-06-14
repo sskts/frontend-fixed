@@ -79,9 +79,9 @@ function getInquiryData(req, res) {
                     branchCode: { $eq: req.body.theaterCode }
                 });
                 inquiryModel.seller = searchResult.data[0];
-                if (inquiryModel.seller === undefined
-                    || inquiryModel.seller.location === undefined
-                    || inquiryModel.seller.location.branchCode === undefined) {
+                if (inquiryModel.seller === undefined ||
+                    inquiryModel.seller.location === undefined ||
+                    inquiryModel.seller.location.branchCode === undefined) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 inquiryModel.login = {
@@ -93,7 +93,9 @@ function getInquiryData(req, res) {
                     confirmationNumber: inquiryModel.login.reserveNum,
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
-                inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
+                inquiryModel.order = Array.isArray(findResult)
+                    ? findResult[0]
+                    : findResult;
                 log('オーダーOut', inquiryModel.order);
                 if (inquiryModel.order === undefined)
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
@@ -119,35 +121,40 @@ exports.getInquiryData = getInquiryData;
  * @returns {IReservation[]}
  */
 function createPrintReservations(inquiryModel) {
-    if (inquiryModel.order === undefined
-        || inquiryModel.seller === undefined
-        || inquiryModel.seller.location === undefined) {
+    if (inquiryModel.order === undefined ||
+        inquiryModel.seller === undefined ||
+        inquiryModel.seller.location === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
     }
-    const theaterName = (typeof inquiryModel.seller.location.name === 'string')
+    const theaterName = typeof inquiryModel.seller.location.name === 'string'
         ? inquiryModel.seller.location.name
-        : (inquiryModel.seller.location.name === undefined
-            || inquiryModel.seller.location.name.ja === undefined)
+        : inquiryModel.seller.location.name === undefined ||
+            inquiryModel.seller.location.name.ja === undefined
             ? ''
             : inquiryModel.seller.location.name.ja;
     return inquiryModel.order.acceptedOffers.map((offer) => {
         const itemOffered = offer.itemOffered;
-        if (itemOffered.typeOf !== cinerinoService.factory.chevre.reservationType.EventReservation
-            || itemOffered.reservationFor.workPerformed === undefined
-            || itemOffered.reservationFor.location === undefined
-            || itemOffered.reservationFor.location.name === undefined
-            || itemOffered.reservedTicket.ticketToken === undefined
-            || itemOffered.reservedTicket.coaTicketInfo === undefined
-            || itemOffered.reservationFor.coaInfo === undefined)
+        if (itemOffered.typeOf !==
+            cinerinoService.factory.chevre.reservationType
+                .EventReservation ||
+            itemOffered.reservationFor.workPerformed === undefined ||
+            itemOffered.reservationFor.location === undefined ||
+            itemOffered.reservationFor.location.name === undefined ||
+            itemOffered.reservedTicket.ticketToken === undefined ||
+            itemOffered.reservedTicket.coaTicketInfo === undefined ||
+            itemOffered.reservationFor.coaInfo === undefined)
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
         return {
             reserveNo: itemOffered.reservationNumber,
-            filmNameJa: itemOffered.reservationFor.workPerformed.name,
+            filmNameJa: itemOffered.reservationFor.name.ja === undefined
+                ? ''
+                : itemOffered.reservationFor.name.ja,
             filmNameEn: '',
             theaterName: theaterName,
-            screenName: (itemOffered.reservationFor.location.name === undefined
-                || itemOffered.reservationFor.location.name.ja === undefined)
-                ? '' : itemOffered.reservationFor.location.name.ja,
+            screenName: itemOffered.reservationFor.location.name === undefined ||
+                itemOffered.reservationFor.location.name.ja === undefined
+                ? ''
+                : itemOffered.reservationFor.location.name.ja,
             performanceDay: moment(itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
             performanceStartTime: functions_1.timeFormat(moment(itemOffered.reservationFor.startDate).toDate(), itemOffered.reservationFor.coaInfo.dateJouei),
             seatCode: itemOffered.reservedTicket.coaTicketInfo.seatNum,

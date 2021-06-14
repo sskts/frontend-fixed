@@ -55,7 +55,8 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
         });
         if (findPaymentAcceptedResult === undefined
-            || findPaymentAcceptedResult.gmoInfo === undefined) {
+            || (<any>findPaymentAcceptedResult).gmoInfo === undefined
+            || (<any>findPaymentAcceptedResult).gmoInfo.shopId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
 
@@ -63,7 +64,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.locals.gmoError = undefined;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
         res.locals.purchaseModel = purchaseModel;
-        res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+        res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
         res.locals.step = PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
@@ -103,7 +104,8 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
         });
         if (findPaymentAcceptedResult === undefined
-            || findPaymentAcceptedResult.gmoInfo === undefined) {
+            || (<any>findPaymentAcceptedResult).gmoInfo === undefined
+            || (<any>findPaymentAcceptedResult).gmoInfo.shopId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         // バリデーション
@@ -114,7 +116,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -131,7 +133,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -161,7 +163,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.locals.gmoError = err.message;
