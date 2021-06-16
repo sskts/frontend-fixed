@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.9.0 - 2021-06-16
+### Changed
+ - cinerino/sdk>=3.2.0で再実装
+
 ## 2.8.3 - 2021-04-30
 ### Added
  - エントランスへのリクエストに「sellerId」、「redirectUrl」を追加
