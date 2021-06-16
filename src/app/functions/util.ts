@@ -183,7 +183,7 @@ export enum Env {
  * デフォルト値3000ms
  */
 export async function sleep(time: number = 3000) {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
         setTimeout(() => { resolve(); }, time);
     });
 }

@@ -6,7 +6,7 @@ import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
-import { getApiOption } from '../../functions';
+import { formatTelephone, getApiOption } from '../../functions';
 import { inquiryLoginForm } from '../../functions/forms';
 import { AppError, ErrorType, InquiryModel } from '../../models';
 const log = debug('SSKTS:InquiryModule');
@@ -83,8 +83,13 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 reserveNum: req.body.reserveNum,
                 telephone: req.body.telephone
             };
+            log('照会情報', {
+                telephone: formatTelephone(inquiryModel.login.telephone),
+                confirmationNumber: inquiryModel.login.reserveNum,
+                theaterCode: inquiryModel.seller.location.branchCode
+            });
             const findResult = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
-                telephone: inquiryModel.login.telephone,
+                telephone: formatTelephone(inquiryModel.login.telephone),
                 confirmationNumber: inquiryModel.login.reserveNum,
                 theaterCode: inquiryModel.seller.location.branchCode
             });

@@ -1,5 +1,4 @@
 "use strict";
-const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const express = require("express");
 // tslint:disable-next-line:no-require-imports
@@ -31,8 +30,8 @@ app.set('view engine', 'ejs');
 app.use(expressLayouts);
 app.set('layout', 'layouts/layout');
 app.use(locales.setLocale); // 言語
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 /**
  * タイムゾーン設定
  */

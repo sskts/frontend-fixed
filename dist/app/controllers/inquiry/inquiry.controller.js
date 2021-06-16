@@ -96,8 +96,13 @@ function inquiryAuth(req, res, next) {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone
                 };
+                log('照会情報', {
+                    telephone: functions_1.formatTelephone(inquiryModel.login.telephone),
+                    confirmationNumber: inquiryModel.login.reserveNum,
+                    theaterCode: inquiryModel.seller.location.branchCode
+                });
                 const findResult = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
-                    telephone: inquiryModel.login.telephone,
+                    telephone: functions_1.formatTelephone(inquiryModel.login.telephone),
                     confirmationNumber: inquiryModel.login.reserveNum,
                     theaterCode: inquiryModel.seller.location.branchCode
                 });
