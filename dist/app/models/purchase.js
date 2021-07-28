@@ -31,6 +31,7 @@ class PurchaseModel {
         this.checkMovieTicketAction = session.checkMovieTicketAction;
         this.mvtkAuthorization = session.mvtkAuthorization;
         this.expired = session.expired;
+        this.providerCredentials = session.providerCredentials;
     }
     /**
      * セッションへ保存
@@ -55,7 +56,8 @@ class PurchaseModel {
             mvtk: this.mvtk,
             checkMovieTicketAction: this.checkMovieTicketAction,
             mvtkAuthorization: this.mvtkAuthorization,
-            expired: this.expired
+            expired: this.expired,
+            providerCredentials: this.providerCredentials
         };
         session.purchase = purchaseSession;
     }

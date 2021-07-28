@@ -31,6 +31,7 @@ const log = debug('SSKTS:Purchase.InputModule');
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 function render(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -41,6 +42,9 @@ function render(req, res, next) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
             if (!purchaseModel.accessAuth(models_1.PurchaseModel.INPUT_STATE)) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
+            }
+            if (purchaseModel.seller === undefined || purchaseModel.seller.id === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             //購入者情報入力表示
             if (purchaseModel.profile !== undefined) {
@@ -56,24 +60,42 @@ function render(req, res, next) {
                 };
                 purchaseModel.profile = defaultProfile;
             }
-            purchaseModel.save(req.session);
-            if (purchaseModel.seller === undefined
-                || purchaseModel.seller.paymentAccepted === undefined) {
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            }
-            const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-                return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
+            const products = yield searchProduct(req, {
+                typeOf: {
+                    $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .CreditCard
+                }
             });
-            if (findPaymentAcceptedResult === undefined
-                || findPaymentAcceptedResult.gmoInfo === undefined
-                || findPaymentAcceptedResult.gmoInfo.shopId === undefined) {
+            const paymentServices = [];
+            products.forEach((p) => {
+                if (p.typeOf !==
+                    cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .CreditCard ||
+                    p.provider === undefined) {
+                    return;
+                }
+                const findResult = p.provider.find((provider) => purchaseModel.seller !== undefined && provider.id === purchaseModel.seller.id);
+                if (findResult === undefined) {
+                    return;
+                }
+                paymentServices.push(p);
+            });
+            const paymentService = paymentServices[0];
+            const providerCredentials = yield getProviderCredentials({
+                paymentService: paymentService,
+                seller: purchaseModel.seller
+            });
+            purchaseModel.providerCredentials = providerCredentials;
+            purchaseModel.save(req.session);
+            if (purchaseModel.providerCredentials === undefined ||
+                purchaseModel.providerCredentials.shopId === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             res.locals.error = undefined;
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
             res.locals.purchaseModel = purchaseModel;
-            res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+            res.locals.shopId = purchaseModel.providerCredentials.shopId;
             res.locals.step = models_1.PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
         }
@@ -104,21 +126,13 @@ function purchaserInformationRegistration(req, res, next) {
         try {
             if (purchaseModel.isExpired())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Expire);
-            if (purchaseModel.transaction === undefined
-                || purchaseModel.seller === undefined
-                || purchaseModel.seller.paymentAccepted === undefined
-                || purchaseModel.reserveTickets === undefined)
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            //取引id確認
-            if (req.body.transactionId !== purchaseModel.transaction.id) {
-                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            }
-            const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-                return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
-            });
-            if (findPaymentAcceptedResult === undefined
-                || findPaymentAcceptedResult.gmoInfo === undefined
-                || findPaymentAcceptedResult.gmoInfo.shopId === undefined) {
+            if (purchaseModel.transaction === undefined ||
+                purchaseModel.seller === undefined ||
+                purchaseModel.seller.paymentAccepted === undefined ||
+                purchaseModel.reserveTickets === undefined ||
+                req.body.transactionId !== purchaseModel.transaction.id ||
+                purchaseModel.providerCredentials === undefined ||
+                purchaseModel.providerCredentials.shopId === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
             // バリデーション
@@ -129,7 +143,7 @@ function purchaserInformationRegistration(req, res, next) {
                 res.locals.error = validationResult.mapped();
                 res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+                res.locals.shopId = purchaseModel.providerCredentials.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -145,7 +159,7 @@ function purchaserInformationRegistration(req, res, next) {
                 };
                 res.locals.gmoError = undefined;
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+                res.locals.shopId = purchaseModel.providerCredentials.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -175,7 +189,7 @@ function purchaserInformationRegistration(req, res, next) {
                 };
                 res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
                 res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-                res.locals.shopId = findPaymentAcceptedResult.gmoInfo.shopId;
+                res.locals.shopId = purchaseModel.providerCredentials.shopId;
                 res.locals.purchaseModel = purchaseModel;
                 res.locals.step = models_1.PurchaseModel.INPUT_STATE;
                 res.locals.gmoError = err.message;
@@ -254,5 +268,56 @@ function creditCardProsess(req, purchaseModel) {
             });
             log('GMOオーソリ追加');
         }
+    });
+}
+/**
+ * プロバイダーの資格情報取得
+ */
+function getProviderCredentials(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { paymentService, seller } = params;
+        if (paymentService.provider === undefined) {
+            throw new Error('paymentService.provider undefined');
+        }
+        const findResult = paymentService.provider.find((provider) => provider.id === seller.id);
+        if (findResult === undefined) {
+            throw new Error('findResult undefined');
+        }
+        const credentials = findResult.credentials;
+        let tokenizationCode;
+        let paymentUrl;
+        if (credentials !== undefined) {
+            tokenizationCode = credentials.tokenizationCode;
+            paymentUrl = credentials.paymentUrl;
+        }
+        return Object.assign(Object.assign({}, credentials), { paymentUrl: typeof paymentUrl === 'string' && paymentUrl.length > 0
+                ? paymentUrl
+                : undefined, tokenizationCode: typeof tokenizationCode === 'string' && tokenizationCode.length > 0
+                ? tokenizationCode
+                : undefined });
+    });
+}
+/**
+ * プロダクト検索
+ */
+function searchProduct(req, params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const limit = 100;
+        let page = 1;
+        let roop = true;
+        let result = [];
+        const options = functions_1.getApiOption(req);
+        while (roop) {
+            const searchResult = yield new cinerinoService.service.Product(options).search(Object.assign({ page,
+                limit }, params));
+            result = [...result, ...searchResult.data];
+            page = page + 1;
+            roop = searchResult.data.length === limit;
+            if (roop) {
+                const time = 500;
+                yield functions_1.sleep(time);
+            }
+        }
+        return result;
     });
 }

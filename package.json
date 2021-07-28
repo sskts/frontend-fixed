@@ -21,7 +21,7 @@
     "nyc": "nyc mocha --no-timeouts --recursive"
   },
   "dependencies": {
-    "@cinerino/sdk": "3.2.0",
+    "@cinerino/sdk": "^3.13.0",
     "@motionpicture/coa-service": "^6.0.1",
     "@motionpicture/gmo-service": "^4.3.0",
     "@motionpicture/mvtk-reserve-service": "^1.2.1",
