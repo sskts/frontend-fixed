@@ -9,7 +9,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { PhoneNumberUtil } from 'google-libphonenumber';
 import * as HTTPStatus from 'http-status';
-import { formatTelephone, getApiOption } from '../../functions';
+import { formatTelephone, getApiOption, sleep } from '../../functions';
 import { purchaseInputForm } from '../../functions/forms';
 import { AppError, ErrorType, IGMO, PurchaseModel } from '../../models';
 const log = debug('SSKTS:Purchase.InputModule');
@@ -23,6 +23,7 @@ const log = debug('SSKTS:Purchase.InputModule');
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
+// tslint:disable-next-line:max-func-body-length
 export async function render(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
@@ -32,7 +33,9 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         if (!purchaseModel.accessAuth(PurchaseModel.INPUT_STATE)) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
         }
-
+        if (purchaseModel.seller === undefined || purchaseModel.seller.id === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         //購入者情報入力表示
         if (purchaseModel.profile !== undefined) {
             res.locals.input = purchaseModel.profile;
@@ -46,17 +49,40 @@ export async function render(req: Request, res: Response, next: NextFunction): P
             };
             purchaseModel.profile = defaultProfile;
         }
-        purchaseModel.save(req.session);
-        if (purchaseModel.seller === undefined
-            || purchaseModel.seller.paymentAccepted === undefined) {
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        }
-        const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-            return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
+        const products = await searchProduct(req, {
+            typeOf: {
+                $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                    .CreditCard
+            }
         });
-        if (findPaymentAcceptedResult === undefined
-            || (<any>findPaymentAcceptedResult).gmoInfo === undefined
-            || (<any>findPaymentAcceptedResult).gmoInfo.shopId === undefined) {
+        const paymentServices: cinerinoService.factory.service.paymentService.IService[] = [];
+        products.forEach((p) => {
+            if (
+                p.typeOf !==
+                    cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .CreditCard ||
+                p.provider === undefined
+            ) {
+                return;
+            }
+            const findResult = p.provider.find(
+                (provider) => purchaseModel.seller !== undefined && provider.id === purchaseModel.seller.id
+            );
+            if (findResult === undefined) {
+                return;
+            }
+            paymentServices.push(p);
+        });
+        const paymentService = paymentServices[0];
+        const providerCredentials =
+            await getProviderCredentials({
+                paymentService: paymentService,
+                seller: purchaseModel.seller
+            });
+        purchaseModel.providerCredentials = providerCredentials;
+        purchaseModel.save(req.session);
+        if (purchaseModel.providerCredentials === undefined ||
+            purchaseModel.providerCredentials.shopId === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
 
@@ -64,7 +90,7 @@ export async function render(req: Request, res: Response, next: NextFunction): P
         res.locals.gmoError = undefined;
         res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
         res.locals.purchaseModel = purchaseModel;
-        res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
+        res.locals.shopId = purchaseModel.providerCredentials.shopId;
         res.locals.step = PurchaseModel.INPUT_STATE;
         res.render('purchase/input', { layout: 'layouts/purchase/layout' });
     } catch (err) {
@@ -92,22 +118,16 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
     const purchaseModel = new PurchaseModel(req.session.purchase);
     try {
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
-        if (purchaseModel.transaction === undefined
-            || purchaseModel.seller === undefined
-            || purchaseModel.seller.paymentAccepted === undefined
-            || purchaseModel.reserveTickets === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) {
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        }
-        const findPaymentAcceptedResult = purchaseModel.seller.paymentAccepted.find((paymentAccepted) => {
-            return (paymentAccepted.paymentMethodType === cinerinoService.factory.paymentMethodType.CreditCard);
-        });
-        if (findPaymentAcceptedResult === undefined
-            || (<any>findPaymentAcceptedResult).gmoInfo === undefined
-            || (<any>findPaymentAcceptedResult).gmoInfo.shopId === undefined) {
-            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
-        }
+        if (purchaseModel.transaction === undefined ||
+            purchaseModel.seller === undefined ||
+            purchaseModel.seller.paymentAccepted === undefined ||
+            purchaseModel.reserveTickets === undefined ||
+            req.body.transactionId !== purchaseModel.transaction.id ||
+            purchaseModel.providerCredentials === undefined ||
+            purchaseModel.providerCredentials.shopId === undefined) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
+
         // バリデーション
         purchaseInputForm(req);
         const validationResult = await req.getValidationResult();
@@ -116,7 +136,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             res.locals.error = validationResult.mapped();
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = purchaseModel.providerCredentials.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -133,7 +153,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.gmoError = undefined;
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = purchaseModel.providerCredentials.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.render('purchase/input', { layout: 'layouts/purchase/layout' });
@@ -163,7 +183,7 @@ export async function purchaserInformationRegistration(req: Request, res: Respon
             };
             res.locals.error = { gmo: { parm: 'gmo', msg: req.__('common.error.gmo'), value: '' } };
             res.locals.GMO_ENDPOINT = process.env.GMO_ENDPOINT;
-            res.locals.shopId = (<any>findPaymentAcceptedResult).gmoInfo.shopId;
+            res.locals.shopId = purchaseModel.providerCredentials.shopId;
             res.locals.purchaseModel = purchaseModel;
             res.locals.step = PurchaseModel.INPUT_STATE;
             res.locals.gmoError = err.message;
@@ -245,4 +265,75 @@ async function creditCardProsess(
         });
         log('GMOオーソリ追加');
     }
+}
+
+/**
+ * プロバイダーの資格情報取得
+ */
+async function getProviderCredentials(params: {
+    paymentService: cinerinoService.factory.service.paymentService.IService;
+    seller: cinerinoService.factory.chevre.seller.ISeller;
+}) {
+    const { paymentService, seller } = params;
+    if (paymentService.provider === undefined) {
+        throw new Error('paymentService.provider undefined');
+    }
+    const findResult = paymentService.provider.find(
+        (provider) => provider.id === seller.id
+    );
+    if (findResult === undefined) {
+        throw new Error('findResult undefined');
+    }
+    const credentials = findResult.credentials;
+    let tokenizationCode;
+    let paymentUrl;
+    if (credentials !== undefined) {
+        tokenizationCode = credentials.tokenizationCode;
+        paymentUrl = credentials.paymentUrl;
+    }
+
+    return {
+        ...credentials,
+        paymentUrl:
+            typeof paymentUrl === 'string' && paymentUrl.length > 0
+                ? paymentUrl
+                : undefined,
+        tokenizationCode:
+            typeof tokenizationCode === 'string' && tokenizationCode.length > 0
+                ? tokenizationCode
+                : undefined
+    };
+}
+
+/**
+ * プロダクト検索
+ */
+async function searchProduct(
+    req: Request,
+    params: cinerinoService.factory.product.ISearchConditions
+) {
+    const limit = 100;
+    let page = 1;
+    let roop = true;
+    let result: (
+        | cinerinoService.factory.product.IProduct
+        | cinerinoService.factory.service.paymentService.IService
+    )[] = [];
+    const options = getApiOption(req);
+    while (roop) {
+        const searchResult = await new cinerinoService.service.Product(options).search({
+            page,
+            limit,
+            ...params
+        });
+        result = [...result, ...searchResult.data];
+        page = page + 1;
+        roop = searchResult.data.length === limit;
+        if (roop) {
+            const time = 500;
+            await sleep(time);
+        }
+    }
+
+    return result;
 }

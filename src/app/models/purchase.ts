@@ -323,6 +323,10 @@ export interface IPurchaseSession {
      * 有効期限
      */
     expired: Date;
+    /**
+     * プロバイダーの資格情報取得
+     */
+    providerCredentials?: factory.service.paymentService.IProviderCredentials;
 }
 
 /**
@@ -401,6 +405,10 @@ export class PurchaseModel {
      * 有効期限
      */
     public expired: Date;
+    /**
+     * プロバイダーの資格情報取得
+     */
+     public providerCredentials?: factory.service.paymentService.IProviderCredentials;
 
     /**
      * @constructor
@@ -425,6 +433,7 @@ export class PurchaseModel {
         this.checkMovieTicketAction = session.checkMovieTicketAction;
         this.mvtkAuthorization = session.mvtkAuthorization;
         this.expired = session.expired;
+        this.providerCredentials = session.providerCredentials;
     }
 
     /**
@@ -450,7 +459,8 @@ export class PurchaseModel {
             mvtk: this.mvtk,
             checkMovieTicketAction: this.checkMovieTicketAction,
             mvtkAuthorization: this.mvtkAuthorization,
-            expired: this.expired
+            expired: this.expired,
+            providerCredentials: this.providerCredentials
         };
         session.purchase = purchaseSession;
     }

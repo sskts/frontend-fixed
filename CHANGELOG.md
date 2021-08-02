@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.10.0 - 2021-08-02
+### Changed
+ - 販売者のgmoInfoへの依存を排除
+
 ## 2.9.0 - 2021-06-16
 ### Changed
  - cinerino/sdk>=3.2.0で再実装
