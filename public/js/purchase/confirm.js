@@ -260,6 +260,8 @@ function showComplete(result) {
         $('.purchase-confirm').remove();
         printDom.show();
         $(window).scrollTop(0);
+        var reservationNumber = result.order.order.acceptedOffers[0].itemOffered.reservationNumber;
+        $('input[name="reserveNum"]').val(reservationNumber);
         printTicket(0, function () {
             //step変更
             $('.steps li').removeClass('active');

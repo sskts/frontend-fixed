@@ -41,9 +41,9 @@
             </li>
             <% } %>
             <% } else { %>
-                <% for (let seat of purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve) { %>
-            <li data-section="<%= seat.seatSection %>"
-                data-seat-code="<%= seat.seatNum %>"
+                <% for (let offer of purchaseModel.seatReservationAuthorization.object.acceptedOffer) { %>
+            <li data-section="<%= offer.seatSection %>"
+                data-seat-code="<%= offer.seatNumber %>"
                 data-ticket-code=""
                 data-ticket-name=""
                 data-sale-price=""
@@ -51,7 +51,7 @@
                 data-add-price-glasses=""
                 data-glasses="">
                 <dl>
-                    <dt class="text-center mb-small"><strong><%= seat.seatNum %></strong></dt>
+                    <dt class="text-center mb-small"><strong><%= offer.seatNumber %></strong></dt>
                     <dd data-ticket="">
                         <a href="#" data-modal="ticketType" class="icon-select"><%- __('purchase.ticket.ticket_select') %></a>
                     </dd>

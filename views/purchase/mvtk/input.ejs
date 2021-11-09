@@ -9,11 +9,11 @@
     <p class="read"><%- __('purchase.mvtk.input.read') %></p>
 
     <div class="mb-x-large white-box center">
-        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length) %></strong>
+        <%- __('purchase.mvtk.input.select_seat') %> <strong><%- __n('%s seat', purchaseModel.seatReservationAuthorization.object.acceptedOffer.length) %></strong>
     </div>
 
     <div class="ticket-list mb-small">
-        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length; i++) { %>
+        <% for (let i = 0; i < purchaseModel.seatReservationAuthorization.object.acceptedOffer.length; i++) { %>
         <% if (mvtkInfo[i] !== undefined) { %>
         <div class="mvtk-box form-layout center mb-x-large active">
             <div class="mvtk-box-inner">
@@ -66,7 +66,7 @@
         <% } %>
         <% } %>
     </div>   
-    <% if (purchaseModel.seatReservationAuthorization.result.updTmpReserveSeatResult.listTmpReserve.length > 1) { %>
+    <% if (purchaseModel.seatReservationAuthorization.object.acceptedOffer.length > 1) { %>
     <div class="button middle-button gray-button add-button mb-large">
         <a class="center icon-add-white" href="#"><%- __('purchase.mvtk.input.add') %></a>
     </div>
