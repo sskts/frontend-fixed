@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.11.0 - 2021-11-09
+### Changed
+ - サービスアップデート互換対応
+
 ## 2.10.0 - 2021-08-02
 ### Changed
  - 販売者のgmoInfoへの依存を排除
