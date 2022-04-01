@@ -82,7 +82,7 @@ function render(req, res, next) {
             });
             const paymentService = paymentServices[0];
             const providerCredentials = yield getProviderCredentials({
-                paymentService: paymentService,
+                paymentService,
                 seller: purchaseModel.seller
             });
             purchaseModel.providerCredentials = providerCredentials;
@@ -228,13 +228,17 @@ exports.purchaserInformationRegistration = purchaserInformationRegistration;
 function creditCardProsess(req, purchaseModel) {
     return __awaiter(this, void 0, void 0, function* () {
         const options = functions_1.getApiOption(req);
-        if (purchaseModel.transaction === undefined)
+        const { seller } = purchaseModel;
+        if (purchaseModel.transaction === undefined ||
+            seller === undefined ||
+            seller.id === undefined) {
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+        }
         if (purchaseModel.creditCardAuthorization !== undefined) {
             yield new cinerinoService.service.Payment(options).voidTransaction({
                 id: purchaseModel.creditCardAuthorization.id,
                 object: {
-                    typeOf: cinerinoService.factory.paymentMethodType.CreditCard
+                    typeOf: cinerinoService.factory.service.paymentService.PaymentServiceType.CreditCard
                 },
                 purpose: {
                     id: purchaseModel.transaction.id,
@@ -253,13 +257,34 @@ function creditCardProsess(req, purchaseModel) {
             const creditCard = {
                 token: purchaseModel.gmo.token
             };
+            const paymentServices = (yield new cinerinoService.service.Product(options).search({
+                typeOf: {
+                    $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .CreditCard
+                }
+            })).data;
+            const paymentService = paymentServices.filter((p) => {
+                if (p.provider === undefined) {
+                    return false;
+                }
+                const findResult = p.provider.find((provider) => provider.id === seller.id);
+                return findResult !== undefined;
+            })[0];
+            if (paymentService === undefined ||
+                paymentService.serviceType === undefined ||
+                paymentService.id === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+            }
             purchaseModel.creditCardAuthorization = yield new cinerinoService.service.Payment(options).authorizeCreditCard({
                 object: {
                     typeOf: cinerinoService.factory.action.authorize.paymentMethod.any.ResultType.Payment,
                     amount: purchaseModel.getReserveAmount(),
                     method: GMO.utils.util.Method.Lump,
                     creditCard,
-                    paymentMethod: cinerinoService.factory.chevre.paymentMethodType.CreditCard
+                    paymentMethod: paymentService.serviceType.codeValue,
+                    issuedThrough: {
+                        id: paymentService.id
+                    }
                 },
                 purpose: {
                     id: purchaseModel.transaction.id,
@@ -285,14 +310,10 @@ function getProviderCredentials(params) {
         }
         const credentials = findResult.credentials;
         let tokenizationCode;
-        let paymentUrl;
         if (credentials !== undefined) {
             tokenizationCode = credentials.tokenizationCode;
-            paymentUrl = credentials.paymentUrl;
         }
-        return Object.assign(Object.assign({}, credentials), { paymentUrl: typeof paymentUrl === 'string' && paymentUrl.length > 0
-                ? paymentUrl
-                : undefined, tokenizationCode: typeof tokenizationCode === 'string' && tokenizationCode.length > 0
+        return Object.assign(Object.assign({}, credentials), { tokenizationCode: typeof tokenizationCode === 'string' && tokenizationCode.length > 0
                 ? tokenizationCode
                 : undefined });
     });

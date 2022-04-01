@@ -102,14 +102,16 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
     try {
         if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.transaction === undefined
-            || purchaseModel.screeningEvent === undefined
-            || purchaseModel.screeningEvent.coaInfo === undefined) {
+        const { seller, screeningEvent, transaction } = purchaseModel;
+        if (transaction === undefined
+            || screeningEvent === undefined
+            || screeningEvent.coaInfo === undefined
+            || seller === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
         if (purchaseModel.isExpired()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Expire);
         //取引id確認
-        if (req.body.transactionId !== purchaseModel.transaction.id) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.body.transactionId !== transaction.id) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         const options = getApiOption(req);
         //バリデーション
         purchaseSeatSelectForm(req);
@@ -131,8 +133,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
                 .cancelSeatReservationAuthorization({
                     id: purchaseModel.seatReservationAuthorization.id,
                     purpose: {
-                        id: purchaseModel.transaction.id,
-                        typeOf: purchaseModel.transaction.typeOf
+                        id: transaction.id,
+                        typeOf: transaction.typeOf
                     }
                 });
             purchaseModel.seatReservationAuthorization = undefined;
@@ -143,11 +145,11 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
         if (purchaseModel.salesTickets === undefined) {
             //コアAPI券種取得
             const salesTicketResult = await COA.services.reserve.salesTicket({
-                theaterCode: purchaseModel.screeningEvent.coaInfo.theaterCode,
-                dateJouei: purchaseModel.screeningEvent.coaInfo.dateJouei,
-                titleCode: purchaseModel.screeningEvent.coaInfo.titleCode,
-                titleBranchNum: purchaseModel.screeningEvent.coaInfo.titleBranchNum,
-                timeBegin: purchaseModel.screeningEvent.coaInfo.timeBegin
+                theaterCode: screeningEvent.coaInfo.theaterCode,
+                dateJouei: screeningEvent.coaInfo.dateJouei,
+                titleCode: screeningEvent.coaInfo.titleCode,
+                titleBranchNum: screeningEvent.coaInfo.titleBranchNum,
+                timeBegin: screeningEvent.coaInfo.timeBegin
             });
             purchaseModel.salesTickets = salesTicketResult;
             log('コアAPI券種取得');
@@ -158,7 +160,7 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
             .createSeatReservationAuthorization({
                 object: {
                     event: {
-                        id: purchaseModel.screeningEvent.id
+                        id: screeningEvent.id
                     },
                     acceptedOffer: selectSeats.map((seat) => {
                         const salesTicket = purchaseModel.salesTickets[0];
@@ -182,8 +184,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
                     })
                 },
                 purpose: {
-                    id: purchaseModel.transaction.id,
-                    typeOf: purchaseModel.transaction.typeOf
+                    id: transaction.id,
+                    typeOf: transaction.typeOf
                 }
             });
         log('SSKTSオーソリ追加');
@@ -201,6 +203,8 @@ export async function seatSelect(req: Request, res: Response, next: NextFunction
 
         return;
     } catch (err) {
+        // tslint:disable-next-line:no-console
+        console.error(err);
         if (err.hasOwnProperty('errors')
             && (Number(err.code) === HTTPStatus.CONFLICT || Number(err.code) === HTTPStatus.SERVICE_UNAVAILABLE)) {
             const purchaseModel = new PurchaseModel((<Express.Session>req.session).purchase);
