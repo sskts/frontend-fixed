@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend-fixed",
-  "version": "2.11.0",
+  "version": "2.12.0",
   "private": true,
   "scripts": {
     "dev": "node dist/ssl",
@@ -13,7 +13,7 @@
     "build": "tsc --project ./src --locale ja-jp",
     "test": "npm run lint",
     "test:ui": "node ./test/uiTest.js",
-    "preversion": "npm run clean && npm run build && npm run scss && npm test",
+    "preversion": "npm run clean && npm run build && npm test",
     "version": "git add -A",
     "postversion": "git push origin --tags",
     "nyc": "nyc mocha --no-timeouts --recursive"

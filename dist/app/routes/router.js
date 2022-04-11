@@ -2,6 +2,15 @@
 /**
  * ルーティング
  */
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const moment = require("moment");
@@ -31,9 +40,9 @@ exports.default = (app) => {
     app.use('/method', method_1.default); // 方法
     app.use('/screen', screen_1.default); // スクリーン
     //エラー
-    router.get('/error', (req, res, next) => {
-        error_controller_1.errorRender(new Error(), req, res, next);
-    });
+    router.get('/error', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        yield error_controller_1.errorRender(new Error(), req, res, next);
+    }));
     app.use(error_controller_1.notFoundRender); // 404
     app.use(error_controller_1.errorRender); // error handlers
 };
