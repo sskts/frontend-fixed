@@ -33,8 +33,8 @@ export default (app: express.Application) => {
     app.use('/screen', screenRouter); // スクリーン
 
     //エラー
-    router.get('/error', (req, res, next) => {
-        errorRender(new Error(), req, res, next);
+    router.get('/error', async (req, res, next) => {
+        await errorRender(new Error(), req, res, next);
     });
     app.use(notFoundRender); // 404
     app.use(errorRender); // error handlers
