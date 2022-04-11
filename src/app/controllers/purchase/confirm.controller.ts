@@ -71,7 +71,7 @@ export function createMovieTicketsFromAuthorizeSeatReservation(params: {
             return;
         }
         results.push({
-            typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+            typeOf: findReservation.typeOf,
             identifier: findReservation.identifier,
             accessCode: findReservation.accessCode,
             serviceType: findReservation.serviceType,
@@ -162,14 +162,41 @@ export async function purchase(req: Request, res: Response): Promise<void> {
                 }
                 identifiers.push(m.identifier);
             });
-            const paymentService = new cinerinoService.service.Payment(options);
+            const paymentServices = <
+                    cinerinoService.factory.service.paymentService.IService[]
+                >(await new cinerinoService.service.Product(options).search({
+                    typeOf: {
+                        $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .MovieTicket
+                    }
+                })).data;
+            const paymentService = paymentServices.filter((p) => {
+                if (p.provider === undefined) {
+                    return false;
+                }
+                const findResult = p.provider.find(
+                    (provider) => provider.id === seller.id
+                );
+
+                return findResult !== undefined;
+            })[0];
+            if (
+                paymentService === undefined ||
+                paymentService.serviceType === undefined ||
+                paymentService.id === undefined
+            ) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
             for (const identifier of identifiers) {
-                await paymentService.authorizeMovieTicket({
+                await new cinerinoService.service.Payment(options).authorizeMovieTicket({
                     object: {
                         typeOf: cinerinoService.factory.action.authorize.paymentMethod.any.ResultType.Payment,
                         amount: 0,
                         movieTickets: movieTickets.filter((m) => m.identifier === identifier),
-                        paymentMethod: movieTickets[0].typeOf
+                        paymentMethod: movieTickets[0].typeOf,
+                        issuedThrough: {
+                            id: paymentService.id
+                        }
                     },
                     purpose: transaction
                 });

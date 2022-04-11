@@ -8,14 +8,11 @@
         <h1 class="page-ttl"><%- __('purchase.ticket.page_ttl') %></h1>
         <p class="read"><%- __('purchase.ticket.read') %></p>
 
-        <% if (purchaseModel.isUsedMvtk()) { %>
-        <% if (purchaseModel.mvtk.length === 0) { %>
-        <!--<p class="read mb-small"><%- __('purchase.ticket.mvtk.read') %></p>-->
+        <% if (purchaseModel.isUsedMvtk() && purchaseModel.mvtk.length === 0) { %>
         <div class="box mb-middle mvtk center">
             <div class="mvtk-text small-text"><%- __('purchase.ticket.mvtk.read') %></div>
             <div class="button mvtk-button white-button"><a class="icon-triangle-gray" href="/purchase/mvtk"><img src="/images/default/common/mvtk_logo.svg" alt=""></a></div>
         </div>
-        <% } %>
         <% } %>
 
         <ul class="mb-small seats">
