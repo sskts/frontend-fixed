@@ -84,7 +84,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         log('ムビチケ券検証');
         const movieTickets = inputInfoList.map((i) => {
             return {
-                typeOf: <cinerinoService.factory.paymentMethodType.MovieTicket>cinerinoService.factory.paymentMethodType.MovieTicket,
+                typeOf: process.env.MOVIETICKET_CODE === undefined
+                    ? 'MovieTicket'
+                    : process.env.MOVIETICKET_CODE,
                 project: seller.project,
                 identifier: i.code, // 購入管理番号
                 accessCode: i.password // PINコード
@@ -93,7 +95,9 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const options = getApiOption(req);
         const paymentService = new cinerinoService.service.Payment(options);
         const checkMovieTicketAction = await paymentService.checkMovieTicket({
-            typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+            typeOf: process.env.MOVIETICKET_CODE === undefined
+                ? 'MovieTicket'
+                : process.env.MOVIETICKET_CODE,
             movieTickets: movieTickets.map((movieTicket) => {
                 return {
                     ...movieTicket,

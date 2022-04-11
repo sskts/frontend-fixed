@@ -97,7 +97,9 @@ function auth(req, res, next) {
             log('ムビチケ券検証');
             const movieTickets = inputInfoList.map((i) => {
                 return {
-                    typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+                    typeOf: process.env.MOVIETICKET_CODE === undefined
+                        ? 'MovieTicket'
+                        : process.env.MOVIETICKET_CODE,
                     project: seller.project,
                     identifier: i.code,
                     accessCode: i.password // PINコード
@@ -106,7 +108,9 @@ function auth(req, res, next) {
             const options = functions_1.getApiOption(req);
             const paymentService = new cinerinoService.service.Payment(options);
             const checkMovieTicketAction = yield paymentService.checkMovieTicket({
-                typeOf: cinerinoService.factory.paymentMethodType.MovieTicket,
+                typeOf: process.env.MOVIETICKET_CODE === undefined
+                    ? 'MovieTicket'
+                    : process.env.MOVIETICKET_CODE,
                 movieTickets: movieTickets.map((movieTicket) => {
                     return Object.assign(Object.assign({}, movieTicket), { serviceType: '', serviceOutput: {
                             reservationFor: {

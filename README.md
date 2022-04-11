@@ -4,25 +4,24 @@
 
 * set environment variables - For example,
 
-```shell
-set NODE_ENV=**********環境名**********
-set NPM_TOKEN=**********npm motionpicture トークン**********
-set SSKTS_API_ENDPOINT=**********mp apiのエンドポイント**********
-set REDIS_HOST=**********REDISホスト**********
-set REDIS_PORT=**********REDISポート**********
-set REDIS_KEY=**********REDISキー**********
-set GMO_CLIENT_MODULE=**********GMOCLIENTモージュールURL=**********
-set GMO_ENDPOINT=**********gmo apiのエンドポイント**********
-set COA_ENDPOINT=**********coa apiのエンドポイント**********
-set COA_REFRESH_TOKEN=**********coa apiのリフレッシュトークン**********
-set MVTK_RESERVE_ENDPOINT=**********ムビチケMvtkReserveService apiのエンドポイント**********
-set PORTAL_SITE_URL=**********ポータルサイトURL**********
-set CLIENT_ID=**********クライアントID**********
-set CLIENT_SECRET=**********クライアント鍵**********
-set AUTHORIZE_SERVER_DOMAIN=**********認証サーバードメイン**********
-set RESOURCE_SERVER_URL=**********リソースサーバーURL**********
-set ENTRANCE_SERVER_URL=**********エントランスサーバーURL**********
-```
+| Name                      | Required | Value | Purpose                 |
+| ------------------------- | -------- | ----- | ----------------------- |
+| `NODE_ENV`                | true     |       | NODE ENV                |
+| `NPM_TOKEN`               | false    |       | NPM TOKEN               |
+| `SSKTS_API_ENDPOINT`      | true     |       | SSKTS API ENDPOINT      |
+| `REDIS_HOST`              | true     |       | REDIS HOST              |
+| `REDIS_PORT`              | true     |       | REDIS PORT              |
+| `REDIS_KEY`               | true     |       | REDIS KEY               |
+| `GMO_ENDPOINT`            | true     |       | GMO ENDPOINT            |
+| `COA_ENDPOINT`            | true     |       | COA ENDPOINT            |
+| `COA_REFRESH_TOKEN`       | true     |       | COA REFRESH TOKEN       |
+| `CLIENT_ID`               | true     |       | CLIENT ID               |
+| `CLIENT_SECRET`           | true     |       | CLIENT SECRET           |
+| `AUTHORIZE_SERVER_DOMAIN` | true     |       | AUTHORIZE SERVER DOMAIN |
+| `RESOURCE_SERVER_URL`     | true     |       | RESOURCE SERVER URL     |
+| `ENTRANCE_SERVER_URL`     | true     |       | ENTRANCE SERVER URL     |
+| `MOVIETICKET_CODE`        | false    |       | MOVIETICKET CODE        |
+
 
 only on Aure WebApps
 

@@ -292,9 +292,9 @@ export interface IPurchaseSession {
      */
     orderCount: number;
     /**
-     * GMOオーソリ
+     * 決済情報（クレジット）
      */
-    creditCardAuthorization?: factory.action.authorize.paymentMethod.any.IAction;
+    creditCardAuthorization?: { id: string };
     /**
      * プロフィール
      */
@@ -374,9 +374,9 @@ export class PurchaseModel {
      */
     public orderCount: number;
     /**
-     * GMOオーソリ
+     * 決済情報（クレジット）
      */
-    public creditCardAuthorization?: factory.action.authorize.paymentMethod.any.IAction;
+    public creditCardAuthorization?: { id: string };
     /**
      * プロフィール
      */
