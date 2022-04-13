@@ -109,6 +109,21 @@ export interface IValidTicketResult {
 }
 
 /**
+ * 予約座席
+ * @interface IReserveSeat
+ */
+export interface IReserveSeat {
+    /**
+     * セクション
+     */
+    seatSection: string;
+    /**
+     * 座席コード
+     */
+    seatNumber: string;
+}
+
+/**
  * 予約チケット
  * @interface IReserveTicket
  */
@@ -276,6 +291,10 @@ export interface IPurchaseSession {
      */
     salesTickets?: COA.services.reserve.ISalesTicketResult[];
     /**
+     * 予約座席
+     */
+     reserveSeats: IReserveSeat[];
+    /**
      * 予約チケット
      */
     reserveTickets: IReserveTicket[];
@@ -358,6 +377,10 @@ export class PurchaseModel {
      */
     public salesTickets: COA.services.reserve.ISalesTicketResult[];
     /**
+     * 予約座席
+     */
+     public reserveSeats: IReserveSeat[];
+    /**
      * 予約チケット
      */
     public reserveTickets: IReserveTicket[];
@@ -421,6 +444,7 @@ export class PurchaseModel {
         this.seller = session.seller;
         this.transaction = session.transaction;
         this.salesTickets = session.salesTickets;
+        this.reserveSeats = (session.reserveSeats !== undefined) ? session.reserveSeats : [];
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
         this.seatReservationAuthorization = session.seatReservationAuthorization;
         this.orderId = session.orderId;
@@ -448,6 +472,7 @@ export class PurchaseModel {
             seller: this.seller,
             transaction: this.transaction,
             salesTickets: this.salesTickets,
+            reserveSeats: this.reserveSeats,
             reserveTickets: this.reserveTickets,
             seatReservationAuthorization: this.seatReservationAuthorization,
             orderId: this.orderId,
