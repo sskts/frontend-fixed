@@ -24,6 +24,7 @@ app.use(basicAuth_1.default); // ベーシック認証
 app.use(helmet()); //セキュリティー対策
 app.use(whiteList_1.default); // 許可設定
 app.use(benchmarks_1.default); // ベンチマーク的な
+app.set('trust proxy', 1);
 app.use(session_1.default); // セッション
 app.set('views', `${__dirname}/../../views`);
 app.set('view engine', 'ejs');

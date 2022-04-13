@@ -21,3 +21,5 @@ npm-debug*
 bin/env/
 coverage/
 .nyc_output/
+certificate/
+*.gcp.yaml
