@@ -164,7 +164,7 @@ export function createPrintReservations(
             itemOffered.typeOf !==
                 cinerinoService.factory.chevre.reservationType
                     .EventReservation ||
-            itemOffered.reservationFor.workPerformed === undefined ||
+            itemOffered.reservationFor.superEvent.workPerformed === undefined ||
             itemOffered.reservationFor.location === undefined ||
             itemOffered.reservationFor.location.name === undefined ||
             itemOffered.reservedTicket.ticketToken === undefined ||

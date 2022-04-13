@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend-fixed",
-  "version": "2.12.0",
+  "version": "2.13.0",
   "private": true,
   "scripts": {
     "dev": "node dist/ssl",
@@ -16,7 +16,10 @@
     "preversion": "npm run clean && npm run build && npm test",
     "version": "git add -A",
     "postversion": "git push origin --tags",
-    "nyc": "nyc mocha --no-timeouts --recursive"
+    "nyc": "nyc mocha --no-timeouts --recursive",
+    "deploy:development": "gcloud app deploy ./app.development.gcp.yaml --project sskts-dev",
+    "deploy:test": "gcloud app deploy ./app.test.gcp.yaml --project sskts-test",
+    "deploy:production": "gcloud app deploy ./app.production.gcp.yaml --project sskts-prod-frontend-fixed --no-promote --version staging"
   },
   "dependencies": {
     "@cinerino/sdk": "^3.47.0",
@@ -98,10 +101,6 @@
     }
   ],
   "license": "UNLICENSED",
-  "engines": {
-    "node": ">=6.9.1",
-    "npm": ">=3.10.8"
-  },
   "description": "",
   "nyc": {
     "check-coverage": true,

@@ -100,7 +100,7 @@ function purchase() {
                         id: Number(data.result.order.orderNumber.replace(/\-/g, '')), // ID
                         title: '鑑賞時間が近づいています。', // タイトル
                         text: '劇場 / スクリーン: ' + reservationFor.superEvent.location.name.ja + '/' + reservationFor.location.name.ja + '\n' +
-                            '作品名: ' + reservationFor.workPerformed.name + '\n' +
+                            '作品名: ' + reservationFor.superEvent.workPerformed.name + '\n' +
                             '上映開始: ' + moment(reservationFor.startDate).format('YYYY/MM/DD HH:mm'), // テキスト
                         trigger: {
                             at: moment(reservationFor.startDate).subtract(30, 'minutes').toISOString() // 通知を送る時間（ISO）
