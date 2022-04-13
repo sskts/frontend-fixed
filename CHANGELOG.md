@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.13.0 - 2022-04-13
+### Changed
+ - GCP対応
+ - 注文&予約の作品情報への依存状態を推奨属性に統一
+
 ## 2.12.0 - 2022-04-11
 ### Changed
  - 決済承認&publishPaymentUrl時に決済サービスIDを明示的に指定する
