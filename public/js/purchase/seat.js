@@ -277,17 +277,17 @@ function screenStateChange(state) {
     //席状態変更
     $('.seat a').addClass('disabled');
 
-    var purchaseSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
+    var reserveSeats = ($('input[name=seats]').val()) ? JSON.parse($('input[name=seats]').val()) : '';
     
-    if (purchaseSeats) {
+    if (reserveSeats) {
         //予約している席設定
-        for (var i = 0, len = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve.length; i < len; i++) {
-            var purchaseSeat = purchaseSeats.result.updTmpReserveSeatResult.listTmpReserve[i];
-            var seatNum = purchaseSeat.seatNum;
-            var seat = $('.seat a[data-seat-code=' + seatNum + ']');
+        for (var i = 0, len = reserveSeats.length; i < len; i++) {
+            var seatNumber = reserveSeats[i].seatNumber;
+            var seatSection = reserveSeats[i].seatSection;
+            var seat = $('.seat a[data-seat-code=' + seatNumber + ']');
             seat.attr({
-                'data-seat-code':  seatNum,
-                'data-seat-section': purchaseSeat.seatSection
+                'data-seat-code':  seatNumber,
+                'data-seat-section': seatSection
             })
             seat.removeClass('disabled');
             seat.addClass('active');
