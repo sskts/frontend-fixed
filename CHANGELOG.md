@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.13.1 - 2022-04-13
+### Fixed
+ - 座席選択修正
+
 ## 2.13.0 - 2022-04-13
 ### Changed
  - GCP対応

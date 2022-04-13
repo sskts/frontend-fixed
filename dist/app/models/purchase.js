@@ -19,6 +19,7 @@ class PurchaseModel {
         this.seller = session.seller;
         this.transaction = session.transaction;
         this.salesTickets = session.salesTickets;
+        this.reserveSeats = (session.reserveSeats !== undefined) ? session.reserveSeats : [];
         this.reserveTickets = (session.reserveTickets !== undefined) ? session.reserveTickets : [];
         this.seatReservationAuthorization = session.seatReservationAuthorization;
         this.orderId = session.orderId;
@@ -45,6 +46,7 @@ class PurchaseModel {
             seller: this.seller,
             transaction: this.transaction,
             salesTickets: this.salesTickets,
+            reserveSeats: this.reserveSeats,
             reserveTickets: this.reserveTickets,
             seatReservationAuthorization: this.seatReservationAuthorization,
             orderId: this.orderId,

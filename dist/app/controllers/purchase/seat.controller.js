@@ -42,9 +42,7 @@ function render(req, res, next) {
             if (!purchaseModel.accessAuth(models_1.PurchaseModel.SEAT_STATE)) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
             }
-            res.locals.reserveSeats = (purchaseModel.seatReservationAuthorization !== undefined)
-                ? JSON.stringify(purchaseModel.seatReservationAuthorization) //仮予約中
-                : undefined;
+            res.locals.reserveSeats = JSON.stringify(purchaseModel.reserveSeats);
             res.locals.error = undefined;
             res.locals.reserveError = undefined;
             res.locals.purchaseModel = purchaseModel;
@@ -195,6 +193,12 @@ function seatSelect(req, res, next) {
                     id: transaction.id,
                     typeOf: transaction.typeOf
                 }
+            });
+            purchaseModel.reserveSeats = selectSeats.map((seat) => {
+                return {
+                    seatSection: seat.seatSection,
+                    seatNumber: seat.seatNum
+                };
             });
             log('SSKTSオーソリ追加');
             purchaseModel.orderCount = 0;
