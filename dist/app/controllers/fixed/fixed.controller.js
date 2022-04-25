@@ -132,7 +132,8 @@ function createPrintReservations(inquiryModel) {
             inquiryModel.seller.location.name.ja === undefined
             ? ''
             : inquiryModel.seller.location.name.ja;
-    return inquiryModel.order.acceptedOffers.map((offer) => {
+    const acceptedOffers = inquiryModel.order.acceptedOffers === undefined ? [] : inquiryModel.order.acceptedOffers;
+    return acceptedOffers.map((offer) => {
         const itemOffered = offer.itemOffered;
         if (itemOffered.typeOf !==
             cinerinoService.factory.chevre.reservationType

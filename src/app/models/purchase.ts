@@ -51,10 +51,19 @@ export interface IGMO {
 }
 
 /**
- * ムビチケ
- * @interface IMvtk
+ * ムビチケ認証情報
+ * @interface ICheckMovieTicket
  */
-export interface IMvtk {
+export interface ICheckMovieTicket {
+    purchaseNumberAuthResult: factory.action.check.paymentMethod.movieTicket.IPurchaseNumberAuthResult;
+    movieTickets: factory.action.check.paymentMethod.movieTicket.IMovieTicketResult[];
+}
+
+/**
+ * ムビチケ
+ * @interface IMovieTicket
+ */
+export interface IMovieTicket {
     /**
      * 購入管理番号
      */
@@ -329,11 +338,11 @@ export interface IPurchaseSession {
     /**
      * ムビチケ
      */
-    mvtk: IMvtk[];
+    mvtk: IMovieTicket[];
     /**
      * ムビチケ使用情報
      */
-    checkMovieTicketAction?: factory.action.check.paymentMethod.movieTicket.IAction;
+    checkMovieTicketAction?: ICheckMovieTicket;
     /**
      * ムビチケオーソリ
      */
@@ -415,11 +424,11 @@ export class PurchaseModel {
     /**
      * ムビチケ
      */
-    public mvtk: IMvtk[];
+    public mvtk: IMovieTicket[];
     /**
      * ムビチケ使用情報
      */
-    public checkMovieTicketAction?: factory.action.check.paymentMethod.movieTicket.IAction;
+    public checkMovieTicketAction?: ICheckMovieTicket;
     /**
      * ムビチケオーソリ
      */

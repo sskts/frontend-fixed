@@ -45,12 +45,12 @@ exports.render = render;
  * 購入番号リスト生成
  * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function creatPurchaseNoList
- * @param {PurchaseSession.Mvtk[]} mvtk
+ * @param {PurchaseSession.IMovieTicket[]} movieTicket
  * @returns {string[]}
  */
-function creatPurchaseNoList(mvtk) {
+function creatPurchaseNoList(movieTickets) {
     const result = [];
-    for (const target of mvtk) {
+    for (const target of movieTickets) {
         const purchaseNo = result.find((value) => {
             return (value === target.code);
         });

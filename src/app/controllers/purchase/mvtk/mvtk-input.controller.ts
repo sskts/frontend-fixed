@@ -11,7 +11,7 @@ import * as HTTPStatus from 'http-status';
 import { bace64Encode, getApiOption } from '../../../functions';
 import { purchaseMvtkInputForm } from '../../../functions/forms';
 import logger from '../../../middlewares/logger';
-import { AppError, ErrorType, IMvtk, PurchaseModel } from '../../../models';
+import { AppError, ErrorType, IMovieTicket, PurchaseModel } from '../../../models';
 const log = debug('SSKTS:Purchase.Mvtk.MvtkInputModule');
 
 /**
@@ -79,10 +79,10 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         purchaseMvtkInputForm(req);
         const validationResult = await req.getValidationResult();
         if (!validationResult.isEmpty()) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Access);
-        const inputInfoList: IInputInfo[] = JSON.parse(req.body.mvtk);
-        mvtkValidation(inputInfoList);
+        const inputs: IMovieTicketInput[] = JSON.parse(req.body.mvtk);
+        mvtkValidation(inputs);
         log('ムビチケ券検証');
-        const movieTickets = inputInfoList.map((i) => {
+        const movieTickets = inputs.map((i) => {
             return {
                 typeOf: process.env.MOVIETICKET_CODE === undefined
                     ? 'MovieTicket'
@@ -92,43 +92,59 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                 accessCode: i.password // PINコード
             };
         });
+        const codeValue = process.env.MOVIETICKET_CODE === undefined
+            ? 'MovieTicket'
+            : process.env.MOVIETICKET_CODE;
         const options = getApiOption(req);
-        const paymentService = new cinerinoService.service.Payment(options);
-        const checkMovieTicketAction = await paymentService.checkMovieTicket({
-            typeOf: process.env.MOVIETICKET_CODE === undefined
-                ? 'MovieTicket'
-                : process.env.MOVIETICKET_CODE,
-            movieTickets: movieTickets.map((movieTicket) => {
-                return {
-                    ...movieTicket,
-                    serviceType: '', // 情報空でよし
-                    serviceOutput: {
-                        reservationFor: {
-                            typeOf: screeningEvent.typeOf,
-                            id: screeningEvent.id
-                        },
-                        reservedTicket: {
-                            ticketedSeat: {
-                                typeOf: cinerinoService.factory.chevre.placeType.Seat,
-                                seatingType: <any>'', // 情報空でよし
-                                seatNumber: '', // 情報空でよし
-                                seatRow: '', // 情報空でよし
-                                seatSection: '' // 情報空でよし
-                            }
-                        }
-                    }
-                };
-            }),
-            seller: {
-                typeOf: seller.typeOf,
-                id: seller.id
+        const paymentServices = (await new cinerinoService.service.Product(options).search({
+            typeOf: {
+                $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                    .MovieTicket
             }
+        })).data;
+        const paymentService = paymentServices.find((p) => {
+            return p.serviceType !== undefined && p.serviceType.codeValue === codeValue;
         });
-        if (checkMovieTicketAction.result === undefined) {
-            throw new Error('checkMovieTicketAction error');
+        if (paymentService === undefined ||
+            paymentService.id === undefined ||
+            paymentService.serviceType === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
+        const checkMovieTicketAction =
+            await new cinerinoService.service.Payment(options).checkMovieTicket({
+                object: {
+                    id: paymentService.id,
+                    paymentMethod: {
+                        typeOf: paymentService.serviceType.codeValue
+                    },
+                    movieTickets: movieTickets.map((movieTicket) => {
+                        return {
+                            ...movieTicket,
+                            serviceType: '', // 情報空でよし
+                            serviceOutput: {
+                                reservationFor: {
+                                    typeOf: screeningEvent.typeOf,
+                                    id: screeningEvent.id
+                                },
+                                reservedTicket: {
+                                    ticketedSeat: {
+                                        typeOf: cinerinoService.factory.chevre.placeType.Seat,
+                                        seatingType: <any>'', // 情報空でよし
+                                        seatNumber: '', // 情報空でよし
+                                        seatRow: '', // 情報空でよし
+                                        seatSection: '' // 情報空でよし
+                                    }
+                                }
+                            }
+                        };
+                    }),
+                    seller: {
+                        id: seller.id
+                    }
+                }
+        });
         const success = 'N000';
-        const purchaseNumberAuthResult = checkMovieTicketAction.result.purchaseNumberAuthResult;
+        const purchaseNumberAuthResult = checkMovieTicketAction.purchaseNumberAuthResult;
         if (purchaseNumberAuthResult.resultInfo.status !== success
             || purchaseNumberAuthResult.ykknmiNumSum === null
             || purchaseNumberAuthResult.ykknmiNumSum === 0
@@ -139,12 +155,12 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
         const validationList: string[] = [];
 
         // ムビチケセッション作成
-        const mvtkList: IMvtk[] = [];
+        const movieTicketList: IMovieTicket[] = [];
         for (const purchaseNumberInfo of purchaseNumberAuthResult.knyknrNoInfoOut) {
             if (purchaseNumberInfo.ykknInfo === null) continue;
             for (const info of purchaseNumberInfo.ykknInfo) {
-                const input = inputInfoList.find((value) => {
-                    return (value.code === purchaseNumberInfo.knyknrNo);
+                const input = inputs.find((i) => {
+                    return (i.code === purchaseNumberInfo.knyknrNo);
                 });
                 if (input === undefined) continue;
                 // ムビチケチケットコード取得
@@ -170,7 +186,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
                     dnshKmTyp: purchaseNumberInfo.dnshKmTyp, // 電子券区分
                     znkkkytsknGkjknTyp: purchaseNumberInfo.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
                 };
-                mvtkList.push({
+                movieTicketList.push({
                     code: purchaseNumberInfo.knyknrNo,
                     password: bace64Encode(input.password),
                     ykknInfo: validTicket,
@@ -193,7 +209,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
 
             return;
         }
-        req.session.mvtk = mvtkList;
+        req.session.mvtk = movieTicketList;
         purchaseModel.checkMovieTicketAction = checkMovieTicketAction;
         purchaseModel.save(req.session);
         res.redirect('/purchase/mvtk/confirm');
@@ -207,7 +223,7 @@ export async function auth(req: Request, res: Response, next: NextFunction): Pro
  * @function mvtkValidation
  * @param {InputInfo[]} inputInfoList
  */
-function mvtkValidation(inputInfoList: IInputInfo[]): void {
+function mvtkValidation(inputInfoList: IMovieTicketInput[]): void {
     const codeList = inputInfoList.map((inputInfo) => {
         return inputInfo.code;
     });
@@ -221,9 +237,9 @@ function mvtkValidation(inputInfoList: IInputInfo[]): void {
 
 /**
  * 入力情報
- * InputInfo
+ * IMovieTicketInput
  */
-interface IInputInfo {
+interface IMovieTicketInput {
     /**
      * 購入管理番号
      */

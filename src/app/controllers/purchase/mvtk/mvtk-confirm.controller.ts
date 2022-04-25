@@ -5,7 +5,7 @@
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
-import { AppError, ErrorType, IMvtk, PurchaseModel } from '../../../models';
+import { AppError, ErrorType, IMovieTicket, PurchaseModel } from '../../../models';
 
 const log = debug('SSKTS:Purchase.Mvtk.MvtkConfirmModule');
 
@@ -45,12 +45,12 @@ export function render(req: Request, res: Response, next: NextFunction): void {
  * 購入番号リスト生成
  * @memberof Purchase.Mvtk.MvtkConfirmModule
  * @function creatPurchaseNoList
- * @param {PurchaseSession.Mvtk[]} mvtk
+ * @param {PurchaseSession.IMovieTicket[]} movieTicket
  * @returns {string[]}
  */
-function creatPurchaseNoList(mvtk: IMvtk[]) {
+function creatPurchaseNoList(movieTickets: IMovieTicket[]) {
     const result: string[] = [];
-    for (const target of mvtk) {
+    for (const target of movieTickets) {
         const purchaseNo = result.find((value) => {
             return (value === target.code);
         });

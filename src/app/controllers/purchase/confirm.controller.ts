@@ -8,7 +8,7 @@ import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
 import { getApiOption } from '../../functions';
-import { AppError, ErrorType, PurchaseModel } from '../../models';
+import { AppError, ErrorType, ICheckMovieTicket, PurchaseModel } from '../../models';
 
 const log = debug('SSKTS:Purchase.ConfirmModule');
 
@@ -50,22 +50,20 @@ export function createMovieTicketsFromAuthorizeSeatReservation(params: {
     authorizeSeatReservation: cinerinoService.factory.action.authorize.offer.seatReservation.IAction<
         cinerinoService.factory.service.webAPI.Identifier.COA
     >;
-    checkMovieTicketAction: cinerinoService.factory.action.check.paymentMethod.movieTicket.IAction;
+    checkMovieTicketAction: ICheckMovieTicket;
     seller: cinerinoService.factory.chevre.seller.ISeller;
 }) {
     const results: cinerinoService.factory.chevre.paymentMethod.paymentCard.movieTicket.IMovieTicket[] = [];
     const authorizeSeatReservation = params.authorizeSeatReservation;
     const checkMovieTicketAction = params.checkMovieTicketAction;
     const seller = params.seller;
-    if (checkMovieTicketAction.result === undefined) {
-        return [];
-    }
-    const movieTickets = checkMovieTicketAction.result.movieTickets;
+    const movieTickets = checkMovieTicketAction.movieTickets;
 
     authorizeSeatReservation.object.acceptedOffer.forEach((o) => {
         const findReservation =
             movieTickets.find((m) => {
-                return m.identifier === o.ticketInfo.mvtkNum && m.serviceType === o.ticketInfo.mvtkKbnKensyu;
+                return m.identifier === o.ticketInfo.mvtkNum &&
+                m.serviceType === o.ticketInfo.mvtkKbnKensyu;
             });
         if (findReservation === undefined) {
             return;
