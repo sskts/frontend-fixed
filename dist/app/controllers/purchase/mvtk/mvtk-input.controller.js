@@ -92,10 +92,10 @@ function auth(req, res, next) {
             const validationResult = yield req.getValidationResult();
             if (!validationResult.isEmpty())
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Access);
-            const inputInfoList = JSON.parse(req.body.mvtk);
-            mvtkValidation(inputInfoList);
+            const inputs = JSON.parse(req.body.mvtk);
+            mvtkValidation(inputs);
             log('ムビチケ券検証');
-            const movieTickets = inputInfoList.map((i) => {
+            const movieTickets = inputs.map((i) => {
                 return {
                     typeOf: process.env.MOVIETICKET_CODE === undefined
                         ? 'MovieTicket'
@@ -105,39 +105,54 @@ function auth(req, res, next) {
                     accessCode: i.password // PINコード
                 };
             });
+            const codeValue = process.env.MOVIETICKET_CODE === undefined
+                ? 'MovieTicket'
+                : process.env.MOVIETICKET_CODE;
             const options = functions_1.getApiOption(req);
-            const paymentService = new cinerinoService.service.Payment(options);
-            const checkMovieTicketAction = yield paymentService.checkMovieTicket({
-                typeOf: process.env.MOVIETICKET_CODE === undefined
-                    ? 'MovieTicket'
-                    : process.env.MOVIETICKET_CODE,
-                movieTickets: movieTickets.map((movieTicket) => {
-                    return Object.assign(Object.assign({}, movieTicket), { serviceType: '', serviceOutput: {
-                            reservationFor: {
-                                typeOf: screeningEvent.typeOf,
-                                id: screeningEvent.id
-                            },
-                            reservedTicket: {
-                                ticketedSeat: {
-                                    typeOf: cinerinoService.factory.chevre.placeType.Seat,
-                                    seatingType: '',
-                                    seatNumber: '',
-                                    seatRow: '',
-                                    seatSection: '' // 情報空でよし
+            const paymentServices = (yield new cinerinoService.service.Product(options).search({
+                typeOf: {
+                    $eq: cinerinoService.factory.service.paymentService.PaymentServiceType
+                        .MovieTicket
+                }
+            })).data;
+            const paymentService = paymentServices.find((p) => {
+                return p.serviceType !== undefined && p.serviceType.codeValue === codeValue;
+            });
+            if (paymentService === undefined ||
+                paymentService.id === undefined ||
+                paymentService.serviceType === undefined) {
+                throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+            }
+            const checkMovieTicketAction = yield new cinerinoService.service.Payment(options).checkMovieTicket({
+                object: {
+                    id: paymentService.id,
+                    paymentMethod: {
+                        typeOf: paymentService.serviceType.codeValue
+                    },
+                    movieTickets: movieTickets.map((movieTicket) => {
+                        return Object.assign(Object.assign({}, movieTicket), { serviceType: '', serviceOutput: {
+                                reservationFor: {
+                                    typeOf: screeningEvent.typeOf,
+                                    id: screeningEvent.id
+                                },
+                                reservedTicket: {
+                                    ticketedSeat: {
+                                        typeOf: cinerinoService.factory.chevre.placeType.Seat,
+                                        seatingType: '',
+                                        seatNumber: '',
+                                        seatRow: '',
+                                        seatSection: '' // 情報空でよし
+                                    }
                                 }
-                            }
-                        } });
-                }),
-                seller: {
-                    typeOf: seller.typeOf,
-                    id: seller.id
+                            } });
+                    }),
+                    seller: {
+                        id: seller.id
+                    }
                 }
             });
-            if (checkMovieTicketAction.result === undefined) {
-                throw new Error('checkMovieTicketAction error');
-            }
             const success = 'N000';
-            const purchaseNumberAuthResult = checkMovieTicketAction.result.purchaseNumberAuthResult;
+            const purchaseNumberAuthResult = checkMovieTicketAction.purchaseNumberAuthResult;
             if (purchaseNumberAuthResult.resultInfo.status !== success
                 || purchaseNumberAuthResult.ykknmiNumSum === null
                 || purchaseNumberAuthResult.ykknmiNumSum === 0
@@ -147,13 +162,13 @@ function auth(req, res, next) {
             log('ムビチケ認証', purchaseNumberAuthResult);
             const validationList = [];
             // ムビチケセッション作成
-            const mvtkList = [];
+            const movieTicketList = [];
             for (const purchaseNumberInfo of purchaseNumberAuthResult.knyknrNoInfoOut) {
                 if (purchaseNumberInfo.ykknInfo === null)
                     continue;
                 for (const info of purchaseNumberInfo.ykknInfo) {
-                    const input = inputInfoList.find((value) => {
-                        return (value.code === purchaseNumberInfo.knyknrNo);
+                    const input = inputs.find((i) => {
+                        return (i.code === purchaseNumberInfo.knyknrNo);
                     });
                     if (input === undefined)
                         continue;
@@ -180,7 +195,7 @@ function auth(req, res, next) {
                         dnshKmTyp: purchaseNumberInfo.dnshKmTyp,
                         znkkkytsknGkjknTyp: purchaseNumberInfo.znkkkytsknGkjknTyp // 全国共通券・劇場券区分
                     };
-                    mvtkList.push({
+                    movieTicketList.push({
                         code: purchaseNumberInfo.knyknrNo,
                         password: functions_1.bace64Encode(input.password),
                         ykknInfo: validTicket,
@@ -202,7 +217,7 @@ function auth(req, res, next) {
                 res.render('purchase/mvtk/input', { layout: 'layouts/purchase/layout' });
                 return;
             }
-            req.session.mvtk = mvtkList;
+            req.session.mvtk = movieTicketList;
             purchaseModel.checkMovieTicketAction = checkMovieTicketAction;
             purchaseModel.save(req.session);
             res.redirect('/purchase/mvtk/confirm');
