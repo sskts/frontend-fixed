@@ -62,13 +62,11 @@ function createMovieTicketsFromAuthorizeSeatReservation(params) {
     const authorizeSeatReservation = params.authorizeSeatReservation;
     const checkMovieTicketAction = params.checkMovieTicketAction;
     const seller = params.seller;
-    if (checkMovieTicketAction.result === undefined) {
-        return [];
-    }
-    const movieTickets = checkMovieTicketAction.result.movieTickets;
+    const movieTickets = checkMovieTicketAction.movieTickets;
     authorizeSeatReservation.object.acceptedOffer.forEach((o) => {
         const findReservation = movieTickets.find((m) => {
-            return m.identifier === o.ticketInfo.mvtkNum && m.serviceType === o.ticketInfo.mvtkKbnKensyu;
+            return m.identifier === o.ticketInfo.mvtkNum &&
+                m.serviceType === o.ticketInfo.mvtkKbnKensyu;
         });
         if (findReservation === undefined) {
             return;

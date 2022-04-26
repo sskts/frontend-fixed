@@ -155,8 +155,10 @@ export function createPrintReservations(
               inquiryModel.seller.location.name.ja === undefined
             ? ''
             : inquiryModel.seller.location.name.ja;
+    const acceptedOffers =
+        inquiryModel.order.acceptedOffers === undefined ? [] : inquiryModel.order.acceptedOffers;
 
-    return inquiryModel.order.acceptedOffers.map((offer) => {
+    return acceptedOffers.map((offer) => {
         const itemOffered = <
             cinerinoService.factory.chevre.reservation.IReservation<cinerinoService.factory.chevre.reservationType.EventReservation>
         >offer.itemOffered;

@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend-fixed",
-  "version": "2.13.1",
+  "version": "2.14.0",
   "private": true,
   "scripts": {
     "dev": "node dist/ssl",
@@ -22,7 +22,7 @@
     "deploy:production": "gcloud app deploy ./app.production.gcp.yaml --project sskts-prod-frontend-fixed --no-promote --version staging"
   },
   "dependencies": {
-    "@cinerino/sdk": "^3.47.0",
+    "@cinerino/sdk": "^3.54.0",
     "@motionpicture/coa-service": "^6.0.1",
     "@motionpicture/gmo-service": "^4.3.0",
     "@motionpicture/mvtk-reserve-service": "^1.2.1",
