@@ -166,3 +166,13 @@ function createPrintReservations(inquiryModel) {
     });
 }
 exports.createPrintReservations = createPrintReservations;
+// tslint:disable-next-line:variable-name
+function topRender(_req, res, next) {
+    try {
+        res.render('index/index');
+    }
+    catch (err) {
+        next(err);
+    }
+}
+exports.topRender = topRender;
