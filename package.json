@@ -1,6 +1,6 @@
 {
   "name": "sskts-frontend-fixed",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "private": true,
   "scripts": {
     "dev": "node dist/ssl",
