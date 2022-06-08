@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.15.0 - 2022-06-08
+### Changed
+-  発券機能のみに変更
+
 ## 2.14.0 - 2022-04-26
 ### Changed
  - ムビチケ認証時に決済サービスIDを明示的に指定する
