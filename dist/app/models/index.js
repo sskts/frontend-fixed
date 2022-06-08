@@ -8,5 +8,4 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./auth"));
 __export(require("./inquiry"));
-__export(require("./purchase"));
 __export(require("./error"));

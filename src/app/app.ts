@@ -46,7 +46,6 @@ moment.locale('ja');
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../../public`)); // staticDir設定
 app.use(maintenance); // メンテナンスページ
-app.use(express.static(`${__dirname}/../../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
 
 router(app); // ルーティング

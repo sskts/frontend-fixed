@@ -23,9 +23,6 @@
   },
   "dependencies": {
     "@cinerino/sdk": "^3.54.0",
-    "@motionpicture/coa-service": "^6.0.1",
-    "@motionpicture/gmo-service": "^4.3.0",
-    "@motionpicture/mvtk-reserve-service": "^1.2.1",
     "basic-auth": "^1.1.0",
     "connect-redis": "^3.3.2",
     "cookie-parser": "^1.4.3",
@@ -64,6 +61,8 @@
     "@types/mocha": "^2.2.44",
     "@types/moment-timezone": "^0.5.12",
     "@types/redis": "^2.8.1",
+    "@types/request": "^2.48.8",
+    "@types/request-promise-native": "^1.0.18",
     "@types/selenium-webdriver": "^2.53.43",
     "@types/sinon": "^7.5.1",
     "@types/supertest": "^2.0.4",

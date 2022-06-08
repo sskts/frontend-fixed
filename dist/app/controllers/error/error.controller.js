@@ -9,14 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * エラー
- * @namespace ErrorModule
- */
-const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
-const functions_1 = require("../../functions");
 const logger_1 = require("../../middlewares/logger");
 const models_1 = require("../../models");
 const log = debug('SSKTS:Error.ErrorModule');
@@ -84,20 +78,6 @@ function errorRender(err, req, res, _) {
             status = HTTPStatus.INTERNAL_SERVER_ERROR;
             msg = req.__('common.error.internalServerError');
             logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
-        }
-        if (req.session !== undefined
-            && req.session.purchase !== undefined) {
-            const purchaseModel = new models_1.PurchaseModel(req.session.purchase);
-            if (purchaseModel.transaction !== undefined) {
-                const options = functions_1.getApiOption(req);
-                const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
-                try {
-                    yield transactionService.cancel({ id: purchaseModel.transaction.id });
-                }
-                catch (error) {
-                    logger_1.default.error('SSKTS-APP:ErrorModule', 'cancel', status, error.message, error);
-                }
-            }
         }
         deleteSession(req.session);
         /**
