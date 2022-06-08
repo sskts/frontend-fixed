@@ -900,12 +900,24 @@ a {
   animation: animationPtint 1s steps(9) 0s infinite; }
 
 .index {
-  width: 1050px;
-  margin: 0 auto; }
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+  .index .index-inner {
+    width: 1050px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center; }
+  .index .read {
+    margin-bottom: 60px; }
   .index .buttons {
     margin: 0 0 40px;
     display: flex;
-    justify-content: space-between; }
+    justify-content: center; }
   .index .purchase-button a, .index .inquiry-button a {
     padding: 80px 0 0; }
   .index .qr-code {

@@ -8,29 +8,19 @@
 </style>
 <%- contentFor('body') %>
 <div class="index">
-    <h1 class="page-ttl"><%- __('index.page_ttl') %></h1>
-    <p class="read"><%- __('index.read') %></p>
-    <div class="buttons">
-        <div class="button large-button purchase-button">
-            <a href="/purchase/performances" class="icon-triangle-white">
-                <div class="small-text mb-small"><%- __('index.purchase-read') %></div>
-                <div class="large-x-text mb-large"><%- __('index.purchase') %></div>
-                <div><img src="/images/fixed/card.svg" alt="" width="240" height="170"></div>
-            </a>
+    <div class="index-inner">
+        <div class="index-contents">
+            <h1 class="page-ttl"><%- __('index.page_ttl') %></h1>
+            <p class="read"><%- __('index.read') %></p>
+            <div class="buttons">
+                <div class="button large-button inquiry-button">
+                    <a href="/inquiry/login" class="icon-triangle-white">
+                        <div class="small-text mb-small"><%- __('index.inquiry-read') %></div>
+                        <div class="large-x-text mb-large"><%- __('index.inquiry') %></div>
+                        <div><img src="/images/fixed/ticket.svg" alt="" width="243" height="175"></div>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="button large-button inquiry-button">
-            <a href="/inquiry/login" class="icon-triangle-white">
-                <div class="small-text mb-small"><%- __('index.inquiry-read') %></div>
-                <div class="large-x-text mb-large"><%- __('index.inquiry') %></div>
-                <div><img src="/images/fixed/ticket.svg" alt="" width="243" height="175"></div>
-            </a>
-        </div>
-    </div>
-    <div class="box">
-        <p class="small-x-text"><%- __('index.qr_read') %></p>
-        <div class="qr-code"></div>
     </div>
 </div>
-<input type="hidden" name="ticketingSite" value="<%= ticketingSite %>">
-<%- contentFor('modals') %>
-<%- include('../purchase/modals/print') %>

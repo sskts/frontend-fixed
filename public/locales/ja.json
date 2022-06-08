@@ -21,8 +21,8 @@
 	},
 	"noscript": "javascrptの設定を有効にしてご覧ください",
 	"index": {
-		"page_ttl": "チケット券売/発券機",
-		"read": "ご利用内容を押してください。",
+		"page_ttl": "チケット発券機",
+		"read": " ",
 		"purchase-read": "クレジットカード専用",
 		"purchase": "チケット購入",
 		"inquiry-read": "既にチケット購入済みの方",

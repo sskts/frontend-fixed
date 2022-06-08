@@ -202,3 +202,12 @@ export function createPrintReservations(
         };
     });
 }
+
+// tslint:disable-next-line:variable-name
+export function topRender(_req: Request, res: Response, next: NextFunction) {
+    try {
+        res.render('index/index');
+    } catch (err) {
+        next(err);
+    }
+}
