@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.deleteSession = exports.errorRender = exports.notFoundRender = void 0;
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const logger_1 = require("../../middlewares/logger");
@@ -74,7 +75,7 @@ function errorRender(err, req, res, _) {
             status = err.code;
         }
         else {
-            log('Error');
+            log('Error', err);
             status = HTTPStatus.INTERNAL_SERVER_ERROR;
             msg = req.__('common.error.internalServerError');
             logger_1.default.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);

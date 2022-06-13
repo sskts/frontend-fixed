@@ -26,7 +26,7 @@ export default (app: express.Application) => {
     app.use('', fixedRouter); // 券売機
     app.use('/inquiry', inquiryRouter); // 照会
 
-    //エラー
+    // エラー
     router.get('/error', async (req, res, next) => {
         await errorRender(new Error(), req, res, next);
     });

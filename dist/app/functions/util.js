@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatTelephone = exports.sleep = exports.Env = exports.View = exports.Digits = exports.getEmailTemplate = exports.base64Decode = exports.bace64Encode = exports.formatPrice = exports.escapeHtml = exports.timeFormat = exports.isApp = exports.getApiOption = void 0;
 const libphonenumber = require("google-libphonenumber");
 const moment = require("moment");
 const models_1 = require("../models");
@@ -16,8 +17,9 @@ const models_1 = require("../models");
  * API設定取得
  */
 function getApiOption(req) {
-    if (req.session === undefined)
+    if (req.session === undefined) {
         throw new models_1.AppError(httpStatus.BAD_REQUEST, models_1.ErrorType.Property);
+    }
     const authModel = new models_1.AuthModel(req.session.auth);
     return {
         endpoint: process.env.SSKTS_API_ENDPOINT,

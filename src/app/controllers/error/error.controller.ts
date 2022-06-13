@@ -74,7 +74,7 @@ export async function errorRender(
         }
         status = (<cinerinoService.transporters.RequestError | AppError>err).code;
     } else {
-        log('Error');
+        log('Error', err);
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
         logger.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);

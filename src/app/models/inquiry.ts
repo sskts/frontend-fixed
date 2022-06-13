@@ -21,13 +21,20 @@ export interface ILogin {
  */
 export interface IInquirySession {
     /**
-     * 劇場ショップ
+     * 販売者
      */
     seller?: factory.chevre.seller.ISeller;
     /**
-     * 照会情報
+     * 注文情報
      */
-    order?: factory.order.IOrder;
+    order?: Omit<
+        factory.order.IOrder,
+        'acceptedOffers' | 'discounts' | 'identifier' | 'isGift' | 'url'
+    >;
+    /**
+     * 予約オファー
+     */
+    acceptedOffers?: factory.order.IAcceptedOffer<factory.order.IItemOffered>[];
     /**
      * login情報
      */
@@ -40,13 +47,20 @@ export interface IInquirySession {
  */
 export class InquiryModel {
     /**
-     * 劇場ショップ
+     * 販売者
      */
     public seller?: factory.chevre.seller.ISeller;
     /**
-     * 照会情報
+     * 注文情報
      */
-    public order?: factory.order.IOrder;
+    public order?: Omit<
+        factory.order.IOrder,
+        'acceptedOffers' | 'discounts' | 'identifier' | 'isGift' | 'url'
+    >;
+    /**
+     * 予約オファー
+     */
+    public acceptedOffers?: factory.order.IAcceptedOffer<factory.order.IItemOffered>[];
     /**
      * login情報
      */
@@ -54,25 +68,25 @@ export class InquiryModel {
 
     /**
      * @constructor
-     * @param {any} session
      */
-    constructor(session: any = {}) {
-        this.seller = session.seller;
-        this.order = session.order;
-        this.login = session.login;
+    constructor(session?: IInquirySession) {
+        this.seller = session?.seller;
+        this.order = session?.order;
+        this.acceptedOffers = session?.acceptedOffers;
+        this.login = session?.login;
     }
 
     /**
      * セッションへ保存
      * @memberof InquiryModel
      * @method toSession
-     * @returns {Object}
      */
-    public save(session: any): void {
+    public save(session: Express.Session): void {
         const inquirySession: IInquirySession = {
             seller: this.seller,
             order: this.order,
-            login: this.login
+            acceptedOffers: this.acceptedOffers,
+            login: this.login,
         };
         session.inquiry = inquirySession;
     }

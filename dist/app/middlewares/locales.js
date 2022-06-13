@@ -3,6 +3,7 @@
  * 多言語
  */
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.setLocale = void 0;
 const i18n = require("i18n");
 const directory = `${__dirname}/../../../public/locales`;
 i18n.configure({

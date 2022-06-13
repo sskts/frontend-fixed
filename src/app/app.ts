@@ -23,7 +23,7 @@ const app = express();
 
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
-app.use(helmet()); //セキュリティー対策
+app.use(helmet()); // セキュリティー対策
 app.use(whiteList); // 許可設定
 app.use(benchmarks); // ベンチマーク的な
 app.set('trust proxy', 1);

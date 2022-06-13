@@ -33,9 +33,9 @@ exports.default = (app) => {
     });
     app.use('', fixed_1.default); // 券売機
     app.use('/inquiry', inquiry_1.default); // 照会
-    //エラー
+    // エラー
     router.get('/error', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        yield error_controller_1.errorRender(new Error(), req, res, next);
+        yield (0, error_controller_1.errorRender)(new Error(), req, res, next);
     }));
     app.use(error_controller_1.notFoundRender); // 404
     app.use(error_controller_1.errorRender); // error handlers

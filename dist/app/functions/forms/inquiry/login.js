@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.inquiryLoginForm = void 0;
 const minLength = 9;
 /**
  * 購入者情報入力フォーム

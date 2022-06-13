@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppError = exports.ErrorType = void 0;
 /**
  * エラー共通
  * @namespace Util.ErrorUtilModule

@@ -22,7 +22,7 @@
     "deploy:production": "gcloud app deploy ./app.production.gcp.yaml --project sskts-prod-frontend-fixed --no-promote --version staging"
   },
   "dependencies": {
-    "@cinerino/sdk": "^3.54.0",
+    "@cinerino/sdk": "^3.102.0",
     "basic-auth": "^1.1.0",
     "connect-redis": "^3.3.2",
     "cookie-parser": "^1.4.3",
@@ -83,7 +83,7 @@
     "supertest": "^3.0.0",
     "tslint": "^5.20.1",
     "tslint-microsoft-contrib": "^6.2.0",
-    "typescript": "^3.6.4"
+    "typescript": "^4.7.3"
   },
   "repository": {},
   "author": {

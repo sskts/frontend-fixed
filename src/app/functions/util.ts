@@ -10,7 +10,9 @@ import { AppError, AuthModel, ErrorType } from '../models';
  * API設定取得
  */
 export function getApiOption(req: Request) {
-    if (req.session === undefined) throw new AppError(httpStatus.BAD_REQUEST, ErrorType.Property);
+    if (req.session === undefined) {
+        throw new AppError(httpStatus.BAD_REQUEST, ErrorType.Property);
+    }
     const authModel = new AuthModel(req.session.auth);
 
     return {

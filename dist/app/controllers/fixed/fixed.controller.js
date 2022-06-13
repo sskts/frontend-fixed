@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.topRender = exports.createPrintReservations = exports.getInquiryData = exports.stopRender = exports.settingRender = void 0;
 /**
  * 照会
  * @namespace Fixed.FixedModule
@@ -31,9 +32,10 @@ const log = debug('SSKTS:Fixed.FixedModule');
 function settingRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session === undefined)
+            if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            const options = functions_1.getApiOption(req);
+            }
+            const options = (0, functions_1.getApiOption)(req);
             const searchResult = yield new cinerinoService.service.Seller(options).search({});
             const sellers = searchResult.data;
             log('sellers: ', sellers);
@@ -68,15 +70,16 @@ exports.stopRender = stopRender;
 function getInquiryData(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            if (req.session === undefined)
+            if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
-            const options = functions_1.getApiOption(req);
-            forms_1.inquiryLoginForm(req);
+            }
+            const options = (0, functions_1.getApiOption)(req);
+            (0, forms_1.inquiryLoginForm)(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
                 const searchResult = yield new cinerinoService.service.Seller(options).search({
-                    branchCode: { $eq: req.body.theaterCode }
+                    branchCode: { $eq: req.body.theaterCode },
                 });
                 inquiryModel.seller = searchResult.data[0];
                 if (inquiryModel.seller === undefined ||
@@ -86,19 +89,30 @@ function getInquiryData(req, res) {
                 }
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
-                    telephone: req.body.telephone
+                    telephone: req.body.telephone,
                 };
-                const findResult = yield new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
+                const orderService = new cinerinoService.service.Order(options);
+                const findByOrderInquiryKey4ssktsResult = yield orderService.findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: inquiryModel.login.reserveNum,
-                    theaterCode: inquiryModel.seller.location.branchCode
+                    theaterCode: inquiryModel.seller.location.branchCode,
                 });
-                inquiryModel.order = Array.isArray(findResult)
-                    ? findResult[0]
-                    : findResult;
-                log('オーダーOut', inquiryModel.order);
-                if (inquiryModel.order === undefined)
+                const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
+                    ? findByOrderInquiryKey4ssktsResult[0]
+                    : findByOrderInquiryKey4ssktsResult;
+                const acceptedOffers = yield orderService.searchAcceptedOffersByConfirmationNumber({
+                    confirmationNumber: order.confirmationNumber,
+                    orderNumber: order.orderNumber,
+                });
+                if (acceptedOffers.length === 0) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+                }
+                inquiryModel.order = order;
+                inquiryModel.acceptedOffers = acceptedOffers;
+                log('オーダーOut', inquiryModel.order);
+                if (inquiryModel.order === undefined) {
+                    throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+                }
                 // 印刷用
                 const reservations = createPrintReservations(inquiryModel);
                 res.json({ result: reservations });
@@ -122,6 +136,8 @@ exports.getInquiryData = getInquiryData;
  */
 function createPrintReservations(inquiryModel) {
     if (inquiryModel.order === undefined ||
+        inquiryModel.acceptedOffers === undefined ||
+        inquiryModel.acceptedOffers.length === 0 ||
         inquiryModel.seller === undefined ||
         inquiryModel.seller.location === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
@@ -132,7 +148,7 @@ function createPrintReservations(inquiryModel) {
             inquiryModel.seller.location.name.ja === undefined
             ? ''
             : inquiryModel.seller.location.name.ja;
-    const acceptedOffers = inquiryModel.order.acceptedOffers === undefined ? [] : inquiryModel.order.acceptedOffers;
+    const acceptedOffers = inquiryModel.acceptedOffers;
     return acceptedOffers.map((offer) => {
         const itemOffered = offer.itemOffered;
         if (itemOffered.typeOf !==
@@ -143,8 +159,9 @@ function createPrintReservations(inquiryModel) {
             itemOffered.reservationFor.location.name === undefined ||
             itemOffered.reservedTicket.ticketToken === undefined ||
             itemOffered.reservedTicket.coaTicketInfo === undefined ||
-            itemOffered.reservationFor.coaInfo === undefined)
+            itemOffered.reservationFor.coaInfo === undefined) {
             throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
+        }
         return {
             reserveNo: itemOffered.reservationNumber,
             filmNameJa: itemOffered.reservationFor.name.ja === undefined
@@ -157,11 +174,11 @@ function createPrintReservations(inquiryModel) {
                 ? ''
                 : itemOffered.reservationFor.location.name.ja,
             performanceDay: moment(itemOffered.reservationFor.startDate).format('YYYY/MM/DD'),
-            performanceStartTime: functions_1.timeFormat(moment(itemOffered.reservationFor.startDate).toDate(), itemOffered.reservationFor.coaInfo.dateJouei),
+            performanceStartTime: (0, functions_1.timeFormat)(moment(itemOffered.reservationFor.startDate).toDate(), itemOffered.reservationFor.coaInfo.dateJouei),
             seatCode: itemOffered.reservedTicket.coaTicketInfo.seatNum,
             ticketName: itemOffered.reservedTicket.coaTicketInfo.ticketName,
             ticketSalePrice: itemOffered.reservedTicket.coaTicketInfo.salePrice,
-            qrStr: itemOffered.reservedTicket.ticketToken
+            qrStr: itemOffered.reservedTicket.ticketToken,
         };
     });
 }
