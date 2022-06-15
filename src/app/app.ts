@@ -23,7 +23,7 @@ const app = express();
 
 app.use(ipFilter); // IP制限
 app.use(basicAuth); // ベーシック認証
-app.use(helmet()); //セキュリティー対策
+app.use(helmet()); // セキュリティー対策
 app.use(whiteList); // 許可設定
 app.use(benchmarks); // ベンチマーク的な
 app.set('trust proxy', 1);
@@ -46,7 +46,6 @@ moment.locale('ja');
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../../public`)); // staticDir設定
 app.use(maintenance); // メンテナンスページ
-app.use(express.static(`${__dirname}/../../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
 
 router(app); // ルーティング

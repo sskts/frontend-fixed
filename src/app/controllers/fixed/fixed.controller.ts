@@ -25,8 +25,9 @@ export async function settingRender(
     next: NextFunction
 ): Promise<void> {
     try {
-        if (req.session === undefined)
+        if (req.session === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         const options = getApiOption(req);
         const searchResult = await new cinerinoService.service.Seller(
             options
@@ -64,8 +65,9 @@ export async function getInquiryData(
     res: Response
 ): Promise<void> {
     try {
-        if (req.session === undefined)
+        if (req.session === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         const options = getApiOption(req);
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
@@ -74,7 +76,7 @@ export async function getInquiryData(
             const searchResult = await new cinerinoService.service.Seller(
                 options
             ).search({
-                branchCode: { $eq: req.body.theaterCode }
+                branchCode: { $eq: req.body.theaterCode },
             });
             inquiryModel.seller = searchResult.data[0];
             if (
@@ -86,23 +88,34 @@ export async function getInquiryData(
             }
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
-                telephone: req.body.telephone
+                telephone: req.body.telephone,
             };
-            const findResult = await new cinerinoService.service.Order(
-                options
-            ).findByOrderInquiryKey4sskts({
-                telephone: inquiryModel.login.telephone,
-                confirmationNumber: inquiryModel.login.reserveNum,
-                theaterCode: inquiryModel.seller.location.branchCode
-            });
-            inquiryModel.order = Array.isArray(findResult)
-                ? findResult[0]
-                : findResult;
+            const orderService = new cinerinoService.service.Order(options);
+            const findByOrderInquiryKey4ssktsResult =
+                await orderService.findByOrderInquiryKey4sskts({
+                    telephone: inquiryModel.login.telephone,
+                    confirmationNumber: inquiryModel.login.reserveNum,
+                    theaterCode: inquiryModel.seller.location.branchCode,
+                });
+            const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
+                ? findByOrderInquiryKey4ssktsResult[0]
+                : findByOrderInquiryKey4ssktsResult;
+            const acceptedOffers =
+                await orderService.searchAcceptedOffersByConfirmationNumber({
+                    confirmationNumber: order.confirmationNumber,
+                    orderNumber: order.orderNumber,
+                });
+            if (acceptedOffers.length === 0) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
+            inquiryModel.order = order;
+            inquiryModel.acceptedOffers = acceptedOffers;
 
             log('オーダーOut', inquiryModel.order);
 
-            if (inquiryModel.order === undefined)
+            if (inquiryModel.order === undefined) {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
 
             // 印刷用
             const reservations = createPrintReservations(inquiryModel);
@@ -143,6 +156,8 @@ export function createPrintReservations(
 ): IReservation[] {
     if (
         inquiryModel.order === undefined ||
+        inquiryModel.acceptedOffers === undefined ||
+        inquiryModel.acceptedOffers.length === 0 ||
         inquiryModel.seller === undefined ||
         inquiryModel.seller.location === undefined
     ) {
@@ -155,13 +170,10 @@ export function createPrintReservations(
               inquiryModel.seller.location.name.ja === undefined
             ? ''
             : inquiryModel.seller.location.name.ja;
-    const acceptedOffers =
-        inquiryModel.order.acceptedOffers === undefined ? [] : inquiryModel.order.acceptedOffers;
+    const acceptedOffers = inquiryModel.acceptedOffers;
 
     return acceptedOffers.map((offer) => {
-        const itemOffered = <
-            cinerinoService.factory.chevre.reservation.IReservation<cinerinoService.factory.chevre.reservationType.EventReservation>
-        >offer.itemOffered;
+        const itemOffered = offer.itemOffered;
         if (
             itemOffered.typeOf !==
                 cinerinoService.factory.chevre.reservationType
@@ -172,8 +184,9 @@ export function createPrintReservations(
             itemOffered.reservedTicket.ticketToken === undefined ||
             itemOffered.reservedTicket.coaTicketInfo === undefined ||
             itemOffered.reservationFor.coaInfo === undefined
-        )
+        ) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
 
         return {
             reserveNo: itemOffered.reservationNumber,
@@ -198,7 +211,7 @@ export function createPrintReservations(
             seatCode: itemOffered.reservedTicket.coaTicketInfo.seatNum,
             ticketName: itemOffered.reservedTicket.coaTicketInfo.ticketName,
             ticketSalePrice: itemOffered.reservedTicket.coaTicketInfo.salePrice,
-            qrStr: itemOffered.reservedTicket.ticketToken
+            qrStr: itemOffered.reservedTicket.ticketToken,
         };
     });
 }

@@ -18,9 +18,6 @@ const error_controller_1 = require("../controllers/error/error.controller");
 const functions_1 = require("../functions");
 const fixed_1 = require("./fixed");
 const inquiry_1 = require("./inquiry");
-const method_1 = require("./method");
-const purchase_1 = require("./purchase");
-const screen_1 = require("./screen");
 const router = express.Router();
 exports.default = (app) => {
     // tslint:disable-next-line:variable-name
@@ -35,13 +32,10 @@ exports.default = (app) => {
         next();
     });
     app.use('', fixed_1.default); // 券売機
-    app.use('/purchase', purchase_1.default); // 購入
     app.use('/inquiry', inquiry_1.default); // 照会
-    app.use('/method', method_1.default); // 方法
-    app.use('/screen', screen_1.default); // スクリーン
-    //エラー
+    // エラー
     router.get('/error', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-        yield error_controller_1.errorRender(new Error(), req, res, next);
+        yield (0, error_controller_1.errorRender)(new Error(), req, res, next);
     }));
     app.use(error_controller_1.notFoundRender); // 404
     app.use(error_controller_1.errorRender); // error handlers

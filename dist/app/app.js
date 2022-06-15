@@ -21,7 +21,7 @@ const expressLayouts = require('express-ejs-layouts');
 const app = express();
 app.use(ipFilter_1.default); // IP制限
 app.use(basicAuth_1.default); // ベーシック認証
-app.use(helmet()); //セキュリティー対策
+app.use(helmet()); // セキュリティー対策
 app.use(whiteList_1.default); // 許可設定
 app.use(benchmarks_1.default); // ベンチマーク的な
 app.set('trust proxy', 1);
@@ -41,7 +41,6 @@ moment.locale('ja');
 app.use(cookieParser());
 app.use(express.static(`${__dirname}/../../public`)); // staticDir設定
 app.use(maintenance_1.default); // メンテナンスページ
-app.use(express.static(`${__dirname}/../../static`)); // staticDir設定
 app.use(expressValidator()); // バリデーション
-router_1.default(app); // ルーティング
+(0, router_1.default)(app); // ルーティング
 module.exports = app;

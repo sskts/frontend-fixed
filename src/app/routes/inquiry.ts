@@ -7,13 +7,13 @@ import { confirmRender, inquiryAuth, loginRender } from '../controllers/inquiry/
 
 const inquiryRouter = express.Router();
 
-//チケット照会ログイン
+// チケット照会ログイン
 inquiryRouter.get('/login', loginRender);
 
-//チケット照会ログイン（認証）
+// チケット照会ログイン（認証）
 inquiryRouter.post('/login', inquiryAuth);
 
-//チケット照会
+// チケット照会
 inquiryRouter.get('/:orderNumber/', confirmRender);
 
 export default inquiryRouter;

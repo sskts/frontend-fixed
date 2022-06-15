@@ -12,6 +12,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.16.0 - 2022-06-08
+### Changed
+-  注文詳細表示(注文照会)をacceptedOffersに非依存で再実装
+### Removed
+-  購入機能削除
+
 ## 2.15.0 - 2022-06-08
 ### Changed
 -  発券機能のみに変更

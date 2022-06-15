@@ -6,9 +6,8 @@ import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
-import { getApiOption } from '../../functions';
 import logger from '../../middlewares/logger';
-import { AppError, ErrorType, PurchaseModel } from '../../models';
+import { AppError, ErrorType } from '../../models';
 
 const log = debug('SSKTS:Error.ErrorModule');
 
@@ -75,23 +74,10 @@ export async function errorRender(
         }
         status = (<cinerinoService.transporters.RequestError | AppError>err).code;
     } else {
-        log('Error');
+        log('Error', err);
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
         logger.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
-    }
-    if (req.session !== undefined
-        && req.session.purchase !== undefined) {
-        const purchaseModel = new PurchaseModel(req.session.purchase);
-        if (purchaseModel.transaction !== undefined) {
-            const options = getApiOption(req);
-            const transactionService = new cinerinoService.service.transaction.PlaceOrder(options);
-            try {
-                await transactionService.cancel({ id: purchaseModel.transaction.id });
-            } catch (error) {
-                logger.error('SSKTS-APP:ErrorModule', 'cancel', status, error.message, error);
-            }
-        }
     }
     deleteSession(req.session);
     /**

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.purchaseMvtkInputForm = void 0;
 /**
  * ムビチケ認証
  */

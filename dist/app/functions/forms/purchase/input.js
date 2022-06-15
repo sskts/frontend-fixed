@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.purchaseInputForm = void 0;
 const NAME_MAX_LENGTH = 12;
 const MAIL_MAX_LENGTH = 50;
 /**

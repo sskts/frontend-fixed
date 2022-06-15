@@ -20,7 +20,11 @@ const log = debug('SSKTS:InquiryModule');
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function loginRender(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function loginRender(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
     const theaterCode = req.query.theater;
     if (theaterCode === undefined) {
         const status = 404;
@@ -29,18 +33,23 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
         return;
     }
     try {
-        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         const options = getApiOption(req);
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
-        const searchResult = await new cinerinoService.service.Seller(options).search({
-            branchCode: { $eq: theaterCode }
+        const searchResult = await new cinerinoService.service.Seller(
+            options
+        ).search({
+            branchCode: { $eq: theaterCode },
         });
         inquiryModel.seller = searchResult.data[0];
         log('劇場のショップを検索', inquiryModel.seller);
         inquiryModel.login = {
-            reserveNum: (req.query.reserve !== undefined) ? req.query.reserve : '',
-            telephone: ''
+            reserveNum:
+                req.query.reserve !== undefined ? req.query.reserve : '',
+            telephone: '',
         };
         res.locals.inquiryModel = inquiryModel;
         res.locals.error = undefined;
@@ -61,39 +70,63 @@ export async function loginRender(req: Request, res: Response, next: NextFunctio
  * @param {NextFunction} next
  * @returns {Promise<void>}
  */
-export async function inquiryAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function inquiryAuth(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): Promise<void> {
     try {
-        if (req.session === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         const options = getApiOption(req);
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new cinerinoService.service.Seller(options).search({
-                branchCode: { $eq: req.body.theaterCode }
+            const searchResult = await new cinerinoService.service.Seller(
+                options
+            ).search({
+                branchCode: { $eq: req.body.theaterCode },
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (inquiryModel.seller === undefined
-                || inquiryModel.seller.location === undefined
-                || inquiryModel.seller.location.branchCode === undefined) {
+            if (
+                inquiryModel.seller === undefined ||
+                inquiryModel.seller.location === undefined ||
+                inquiryModel.seller.location.branchCode === undefined
+            ) {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             }
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
-                telephone: req.body.telephone
+                telephone: req.body.telephone,
             };
             log('照会情報', {
                 telephone: formatTelephone(inquiryModel.login.telephone),
                 confirmationNumber: inquiryModel.login.reserveNum,
-                theaterCode: inquiryModel.seller.location.branchCode
+                theaterCode: inquiryModel.seller.location.branchCode,
             });
-            const findResult = await new cinerinoService.service.Order(options).findByOrderInquiryKey4sskts({
-                telephone: formatTelephone(inquiryModel.login.telephone),
-                confirmationNumber: inquiryModel.login.reserveNum,
-                theaterCode: inquiryModel.seller.location.branchCode
-            });
-            inquiryModel.order = (Array.isArray(findResult)) ? findResult[0] : findResult;
+            const orderService = new cinerinoService.service.Order(options);
+            const findByOrderInquiryKey4ssktsResult =
+                await orderService.findByOrderInquiryKey4sskts({
+                    telephone: formatTelephone(inquiryModel.login.telephone),
+                    confirmationNumber: inquiryModel.login.reserveNum,
+                    theaterCode: inquiryModel.seller.location.branchCode,
+                });
+            const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
+                ? findByOrderInquiryKey4ssktsResult[0]
+                : findByOrderInquiryKey4ssktsResult;
+            const acceptedOffers =
+                await orderService.searchAcceptedOffersByConfirmationNumber({
+                    confirmationNumber: order.confirmationNumber,
+                    orderNumber: order.orderNumber,
+                });
+            if (acceptedOffers.length === 0) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
+            inquiryModel.order = order;
+            inquiryModel.acceptedOffers = acceptedOffers;
             log('照会情報');
             if (inquiryModel.order === undefined) {
                 res.locals.inquiryModel = inquiryModel;
@@ -103,7 +136,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
                 return;
             }
             inquiryModel.save(req.session);
-            //購入者内容確認へ
+            // 購入者内容確認へ
             res.redirect(
                 `/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.seller.location.branchCode}`
             );
@@ -111,15 +144,19 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             return;
         } else {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new cinerinoService.service.Seller(options).search({
-                branchCode: { $eq: req.body.theaterCode }
+            const searchResult = await new cinerinoService.service.Seller(
+                options
+            ).search({
+                branchCode: { $eq: req.body.theaterCode },
             });
             inquiryModel.seller = searchResult.data[0];
             log('劇場のショップを検索');
-            if (inquiryModel.seller === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            if (inquiryModel.seller === undefined) {
+                throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+            }
             inquiryModel.login = {
                 reserveNum: req.body.reserveNum,
-                telephone: req.body.telephone
+                telephone: req.body.telephone,
             };
             res.locals.inquiryModel = inquiryModel;
             res.locals.error = validationResult.mapped();
@@ -128,6 +165,7 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
             return;
         }
     } catch (err) {
+        console.error(err);
         next(err);
     }
 }
@@ -142,11 +180,19 @@ export async function inquiryAuth(req: Request, res: Response, next: NextFunctio
 function getInquiryError(req: Request) {
     return {
         reserveNum: {
-            parm: 'reserveNum', msg: `${req.__('common.purchase_number')}${req.__('common.validation.inquiry')}`, value: ''
+            parm: 'reserveNum',
+            msg: `${req.__('common.purchase_number')}${req.__(
+                'common.validation.inquiry'
+            )}`,
+            value: '',
         },
         telephone: {
-            parm: 'telephone', msg: `${req.__('common.tel_num')}${req.__('common.validation.inquiry')}`, value: ''
-        }
+            parm: 'telephone',
+            msg: `${req.__('common.tel_num')}${req.__(
+                'common.validation.inquiry'
+            )}`,
+            value: '',
+        },
     };
 }
 
@@ -159,12 +205,19 @@ function getInquiryError(req: Request) {
  * @param {NextFunction} next
  * @returns {void}
  */
-export function confirmRender(req: Request, res: Response, next: NextFunction): void {
+export function confirmRender(
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void {
     try {
-        if (req.session === undefined
-            || req.query.theater === undefined) throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        if (req.session === undefined || req.query.theater === undefined) {
+            throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
+        }
         if (req.session.inquiry === undefined) {
-            res.redirect(`/inquiry/login?orderNumber=${req.params.orderNumber}&theater=${req.query.theater}`);
+            res.redirect(
+                `/inquiry/login?orderNumber=${req.params.orderNumber}&theater=${req.query.theater}`
+            );
 
             return;
         }

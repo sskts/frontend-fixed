@@ -8,9 +8,6 @@ import { errorRender, notFoundRender } from '../controllers/error/error.controll
 import { escapeHtml, formatPrice, timeFormat } from '../functions';
 import fixedRouter from './fixed';
 import inquiryRouter from './inquiry';
-import methodRouter from './method';
-import purchaseRouter from './purchase';
-import screenRouter from './screen';
 
 const router = express.Router();
 
@@ -27,12 +24,9 @@ export default (app: express.Application) => {
         next();
     });
     app.use('', fixedRouter); // 券売機
-    app.use('/purchase', purchaseRouter); // 購入
     app.use('/inquiry', inquiryRouter); // 照会
-    app.use('/method', methodRouter); // 方法
-    app.use('/screen', screenRouter); // スクリーン
 
-    //エラー
+    // エラー
     router.get('/error', async (req, res, next) => {
         await errorRender(new Error(), req, res, next);
     });
