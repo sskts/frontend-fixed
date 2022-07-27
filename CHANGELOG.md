@@ -12,6 +12,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## 2.16.1 - 2022-07-27
+### Fixed
+-  コンテンツ名称取得修正
+
 ## 2.16.0 - 2022-06-08
 ### Changed
 -  注文詳細表示(注文照会)をacceptedOffersに非依存で再実装

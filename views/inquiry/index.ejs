@@ -26,7 +26,8 @@
         <dl>
             <dt><%- __('common.film_title') %></dt>
             <dd>
-                <%= inquiryModel.acceptedOffers[0].itemOffered.reservationFor.superEvent.workPerformed.name %>
+                <% const workPerformed = inquiryModel.acceptedOffers[0].itemOffered.reservationFor.superEvent.workPerformed %>
+                <%= typeof workPerformed.name === 'string' ? workPerformed.name : workPerformed.name.ja %>
             </dd>
         </dl>
         <dl>
