@@ -33,7 +33,7 @@
         <dl>
             <dt><%- __('common.appreciation_date') %></dt>
             <dd>
-                <%= moment(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).format('YYYY年MM月DD日 (ddd)') %> %>) <%= timeFormat(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.startDate, inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %> - <%= timeFormat(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.endDate, inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %>
+                <%= moment(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei).format('YYYY年MM月DD日 (ddd)') %> <%= timeFormat(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.startDate, inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %> - <%= timeFormat(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.endDate, inquiryModel.acceptedOffers[0].itemOffered.reservationFor.coaInfo.dateJouei) %>
             </dd>
         </dl>
         <dl>
