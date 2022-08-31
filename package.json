@@ -38,7 +38,7 @@
     "http-status": "^1.0.1",
     "i18n": "^0.8.3",
     "moment": "^2.19.3",
-    "moment-timezone": "^0.5.25",
+    "moment-timezone": "^0.5.35",
     "redis": "^2.8.0",
     "sinon": "^7.5.0",
     "uuid": "^3.1.0",
