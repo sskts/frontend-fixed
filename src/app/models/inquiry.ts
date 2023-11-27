@@ -1,4 +1,5 @@
 import { factory } from '@cinerino/sdk';
+import { Session, SessionData } from 'express-session';
 
 /**
  * ログイン情報
@@ -23,7 +24,10 @@ export interface IInquirySession {
     /**
      * 販売者
      */
-    seller?: factory.chevre.seller.ISeller;
+    seller?: Omit<
+        factory.seller.ISeller,
+        'project' | 'hasMerchantReturnPolicy' | 'makesOffer' | 'paymentAccepted'
+    >;
     /**
      * 注文情報
      */
@@ -49,7 +53,10 @@ export class InquiryModel {
     /**
      * 販売者
      */
-    public seller?: factory.chevre.seller.ISeller;
+    public seller?: Omit<
+        factory.seller.ISeller,
+        'project' | 'hasMerchantReturnPolicy' | 'makesOffer' | 'paymentAccepted'
+    >;
     /**
      * 注文情報
      */
@@ -81,7 +88,7 @@ export class InquiryModel {
      * @memberof InquiryModel
      * @method toSession
      */
-    public save(session: Express.Session): void {
+    public save(session: Session & Partial<SessionData>): void {
         const inquirySession: IInquirySession = {
             seller: this.seller,
             order: this.order,

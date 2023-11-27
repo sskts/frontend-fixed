@@ -35,8 +35,8 @@ function settingRender(req, res, next) {
             if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            const options = (0, functions_1.getApiOption)(req);
-            const searchResult = yield new cinerinoService.service.Seller(options).search({});
+            const options = yield (0, functions_1.getApiOption)(req);
+            const searchResult = yield new req.cinerino.service.Seller(options).search({});
             const sellers = searchResult.data;
             log('sellers: ', sellers);
             res.locals.sellers = sellers;
@@ -61,41 +61,37 @@ function stopRender(_, res) {
 exports.stopRender = stopRender;
 /**
  * 照会情報取得
- * @memberof Fixed.FixedModule
- * @function getInquiryData
- * @param {Request} req
- * @param {Response} res
- * @returns {Promise<void>}
  */
 function getInquiryData(req, res) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            const options = (0, functions_1.getApiOption)(req);
+            const options = yield (0, functions_1.getApiOption)(req);
             (0, forms_1.inquiryLoginForm)(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new cinerinoService.service.Seller(options).search({
+                const searchResult = yield new req.cinerino.service.Seller(options).search({
                     branchCode: { $eq: req.body.theaterCode },
                 });
-                inquiryModel.seller = searchResult.data[0];
-                if (inquiryModel.seller === undefined ||
-                    inquiryModel.seller.location === undefined ||
-                    inquiryModel.seller.location.branchCode === undefined) {
+                const seller = searchResult.data[0];
+                inquiryModel.seller = seller;
+                if ((seller === null || seller === void 0 ? void 0 : seller.id) === undefined ||
+                    ((_a = seller === null || seller === void 0 ? void 0 : seller.location) === null || _a === void 0 ? void 0 : _a.branchCode) === undefined) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 inquiryModel.login = {
                     reserveNum: req.body.reserveNum,
                     telephone: req.body.telephone,
                 };
-                const orderService = new cinerinoService.service.Order(options);
+                const orderService = new req.cinerino.service.Order(Object.assign(Object.assign({}, options), { seller: { id: seller.id } }));
                 const findByOrderInquiryKey4ssktsResult = yield orderService.findByOrderInquiryKey4sskts({
                     telephone: inquiryModel.login.telephone,
                     confirmationNumber: inquiryModel.login.reserveNum,
-                    theaterCode: inquiryModel.seller.location.branchCode,
+                    theaterCode: seller.location.branchCode,
                 });
                 const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
                     ? findByOrderInquiryKey4ssktsResult[0]
@@ -135,25 +131,23 @@ exports.getInquiryData = getInquiryData;
  * @returns {IReservation[]}
  */
 function createPrintReservations(inquiryModel) {
-    if (inquiryModel.order === undefined ||
-        inquiryModel.acceptedOffers === undefined ||
-        inquiryModel.acceptedOffers.length === 0 ||
-        inquiryModel.seller === undefined ||
-        inquiryModel.seller.location === undefined) {
+    const { seller, order, acceptedOffers } = inquiryModel;
+    if (order === undefined ||
+        acceptedOffers === undefined ||
+        acceptedOffers.length === 0 ||
+        (seller === null || seller === void 0 ? void 0 : seller.location) === undefined) {
         throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
     }
-    const theaterName = typeof inquiryModel.seller.location.name === 'string'
-        ? inquiryModel.seller.location.name
-        : inquiryModel.seller.location.name === undefined ||
-            inquiryModel.seller.location.name.ja === undefined
+    const theaterName = typeof seller.location.name === 'string'
+        ? seller.location.name
+        : seller.location.name === undefined ||
+            seller.location.name.ja === undefined
             ? ''
-            : inquiryModel.seller.location.name.ja;
-    const acceptedOffers = inquiryModel.acceptedOffers;
+            : seller.location.name.ja;
     return acceptedOffers.map((offer) => {
         const itemOffered = offer.itemOffered;
         if (itemOffered.typeOf !==
-            cinerinoService.factory.chevre.reservationType
-                .EventReservation ||
+            cinerinoService.factory.reservationType.EventReservation ||
             itemOffered.reservationFor.superEvent.workPerformed === undefined ||
             itemOffered.reservationFor.location === undefined ||
             itemOffered.reservationFor.location.name === undefined ||

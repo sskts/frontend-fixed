@@ -43,7 +43,7 @@ exports.notFoundRender = notFoundRender;
  * @param {NextFunction} next
  * @returns {void}
  */
-function errorRender(err, req, res, _) {
+function errorRender(err, req, res, _next) {
     return __awaiter(this, void 0, void 0, function* () {
         let status = HTTPStatus.INTERNAL_SERVER_ERROR;
         let msg = err.message;
@@ -69,10 +69,12 @@ function errorRender(err, req, res, _) {
                     msg = req.__('common.error.internalServerError');
                     logger_1.default.error('SSKTS-APP:ErrorModule', status, err.message, err);
             }
-            if (err.errorType !== undefined && err.errorType === models_1.ErrorType.Expire) {
+            if (err.errorType !== undefined &&
+                err.errorType === models_1.ErrorType.Expire) {
                 msg = req.__('common.error.expire');
             }
-            status = err.code;
+            status = err
+                .code;
         }
         else {
             log('Error', err);
@@ -104,13 +106,9 @@ exports.errorRender = errorRender;
 /**
  * セッション削除
  * @function deleteSession
- * @param {Express.Session | undefined} session
  */
 function deleteSession(session) {
     if (session !== undefined) {
-        delete session.purchase;
-        delete session.mvtk;
-        delete session.complete;
         delete session.auth;
     }
 }

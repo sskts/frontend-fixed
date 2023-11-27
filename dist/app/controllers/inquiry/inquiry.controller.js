@@ -12,9 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.confirmRender = exports.inquiryAuth = exports.loginRender = void 0;
 /**
  * 照会
- * @namespace InquiryModule
  */
-const cinerinoService = require("@cinerino/sdk");
 const debug = require("debug");
 const HTTPStatus = require("http-status");
 const functions_1 = require("../../functions");
@@ -23,12 +21,6 @@ const models_1 = require("../../models");
 const log = debug('SSKTS:InquiryModule');
 /**
  * 照会認証ページ表示
- * @memberof InquiryModule
- * @function loginRender
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise<void>}
  */
 function loginRender(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -42,13 +34,14 @@ function loginRender(req, res, next) {
             if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            const options = (0, functions_1.getApiOption)(req);
+            const options = yield (0, functions_1.getApiOption)(req);
             const inquiryModel = new models_1.InquiryModel();
             // 劇場のショップを検索
-            const searchResult = yield new cinerinoService.service.Seller(options).search({
+            const searchResult = yield new req.cinerino.service.Seller(options).search({
                 branchCode: { $eq: theaterCode },
             });
-            inquiryModel.seller = searchResult.data[0];
+            const seller = searchResult.data[0];
+            inquiryModel.seller = seller;
             log('劇場のショップを検索', inquiryModel.seller);
             inquiryModel.login = {
                 reserveNum: req.query.reserve !== undefined ? req.query.reserve : '',
@@ -75,24 +68,25 @@ exports.loginRender = loginRender;
  * @returns {Promise<void>}
  */
 function inquiryAuth(req, res, next) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             if (req.session === undefined) {
                 throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
             }
-            const options = (0, functions_1.getApiOption)(req);
+            const options = yield (0, functions_1.getApiOption)(req);
             (0, forms_1.inquiryLoginForm)(req);
             const validationResult = yield req.getValidationResult();
             if (validationResult.isEmpty()) {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new cinerinoService.service.Seller(options).search({
+                const searchResult = yield new req.cinerino.service.Seller(options).search({
                     branchCode: { $eq: req.body.theaterCode },
                 });
-                inquiryModel.seller = searchResult.data[0];
+                const seller = searchResult.data[0];
+                inquiryModel.seller = seller;
                 log('劇場のショップを検索');
-                if (inquiryModel.seller === undefined ||
-                    inquiryModel.seller.location === undefined ||
-                    inquiryModel.seller.location.branchCode === undefined) {
+                if ((seller === null || seller === void 0 ? void 0 : seller.id) === undefined ||
+                    ((_a = seller === null || seller === void 0 ? void 0 : seller.location) === null || _a === void 0 ? void 0 : _a.branchCode) === undefined) {
                     throw new models_1.AppError(HTTPStatus.BAD_REQUEST, models_1.ErrorType.Property);
                 }
                 inquiryModel.login = {
@@ -102,13 +96,13 @@ function inquiryAuth(req, res, next) {
                 log('照会情報', {
                     telephone: (0, functions_1.formatTelephone)(inquiryModel.login.telephone),
                     confirmationNumber: inquiryModel.login.reserveNum,
-                    theaterCode: inquiryModel.seller.location.branchCode,
+                    theaterCode: seller.location.branchCode,
                 });
-                const orderService = new cinerinoService.service.Order(options);
+                const orderService = new req.cinerino.service.Order(Object.assign(Object.assign({}, options), { seller: { id: seller.id } }));
                 const findByOrderInquiryKey4ssktsResult = yield orderService.findByOrderInquiryKey4sskts({
                     telephone: (0, functions_1.formatTelephone)(inquiryModel.login.telephone),
                     confirmationNumber: inquiryModel.login.reserveNum,
-                    theaterCode: inquiryModel.seller.location.branchCode,
+                    theaterCode: seller.location.branchCode,
                 });
                 const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
                     ? findByOrderInquiryKey4ssktsResult[0]
@@ -131,12 +125,12 @@ function inquiryAuth(req, res, next) {
                 }
                 inquiryModel.save(req.session);
                 // 購入者内容確認へ
-                res.redirect(`/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.seller.location.branchCode}`);
+                res.redirect(`/inquiry/${inquiryModel.order.orderNumber}/?theater=${seller.location.branchCode}`);
                 return;
             }
             else {
                 const inquiryModel = new models_1.InquiryModel();
-                const searchResult = yield new cinerinoService.service.Seller(options).search({
+                const searchResult = yield new req.cinerino.service.Seller(options).search({
                     branchCode: { $eq: req.body.theaterCode },
                 });
                 inquiryModel.seller = searchResult.data[0];
