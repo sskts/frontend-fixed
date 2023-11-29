@@ -4,14 +4,19 @@
 
 import * as express from 'express';
 import * as moment from 'moment';
-import { errorRender, notFoundRender } from '../controllers/error/error.controller';
+import {
+    errorRender,
+    notFoundRender,
+} from '../controllers/error/error.controller';
 import { escapeHtml, formatPrice, timeFormat } from '../functions';
+import { requireSDK } from '../middlewares/requireSDK';
 import fixedRouter from './fixed';
 import inquiryRouter from './inquiry';
 
 const router = express.Router();
 
 export default (app: express.Application) => {
+    app.use(requireSDK as express.RequestHandler);
     // tslint:disable-next-line:variable-name
     app.use((_req, res, next) => {
         res.locals.escapeHtml = escapeHtml;

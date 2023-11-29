@@ -3,7 +3,11 @@
  */
 
 import * as express from 'express';
-import { confirmRender, inquiryAuth, loginRender } from '../controllers/inquiry/inquiry.controller';
+import {
+    confirmRender,
+    inquiryAuth,
+    loginRender,
+} from '../controllers/inquiry/inquiry.controller';
 
 const inquiryRouter = express.Router();
 

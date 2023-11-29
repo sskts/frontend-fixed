@@ -16,10 +16,10 @@ import * as app from './app/app';
 const port = normalizePort(process.env.PORT || '443');
 app.set('port', port);
 
-const privateKey  = fs.readFileSync('certificate/server.key', 'utf8');
-const certificate = fs.readFileSync('certificate/server.crt', 'utf8');
+const privateKey = fs.readFileSync('ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
 
-const credentials = {key: privateKey, cert: certificate};
+const credentials = { key: privateKey, cert: certificate };
 
 /**
  * Create HTTPS server.
@@ -63,9 +63,7 @@ function onError(error: any) {
         throw error;
     }
 
-    const bind = typeof port === 'string'
-        ? 'Pipe ' + port
-        : 'Port ' + port;
+    const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {
@@ -86,8 +84,7 @@ function onError(error: any) {
 
 function onListening() {
     const addr = server.address();
-    const bind = typeof addr === 'string'
-        ? 'pipe ' + addr
-        : 'port ' + addr.port;
+    const bind =
+        typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port;
     bind;
 }

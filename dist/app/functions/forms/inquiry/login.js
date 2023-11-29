@@ -13,7 +13,7 @@ function inquiryLoginForm(req) {
     req.checkBody('telephone', `${req.__('common.tel_num')}${req.__('common.validation.required')}`).notEmpty();
     req.checkBody('telephone', `${req.__('common.tel_num')}${req.__('common.validation.is_number')}`).matches(/^[0-9]+$/);
     req.checkBody('telephone', `${req.__('common.tel_num')}${req.__('common.validation.minlength %s', String(minLength))}`).isLength({
-        min: minLength
+        min: minLength,
     });
 }
 exports.inquiryLoginForm = inquiryLoginForm;

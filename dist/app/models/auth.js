@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemberType = exports.AuthModel = void 0;
 const cinerinoService = require("@cinerino/sdk");
@@ -13,7 +22,7 @@ class AuthModel {
      * @param {any} session
      */
     constructor(session = {}) {
-        this.state = (session.state !== undefined) ? session.state : uuid.v1();
+        this.state = session.state !== undefined ? session.state : uuid.v1();
         // this.scopes = (session.scopes !== undefined) ? session.scopes : [
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/events.read-only`,
@@ -22,23 +31,25 @@ class AuthModel {
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/places.read-only`
         // ];
         this.scopes = [];
-        this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
+        this.memberType =
+            session.memberType !== undefined
+                ? session.memberType
+                : MemberType.NonMember;
         this.credentials = session.credentials;
         this.codeVerifier = session.codeVerifier;
     }
     /**
      * 認証クラス作成
-     * @memberof AuthModel
-     * @method create
-     * @returns {cinerinoService.auth.ClientCredentials}
      */
     create() {
-        return new cinerinoService.auth.ClientCredentials({
-            domain: process.env.AUTHORIZE_SERVER_DOMAIN,
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-            state: this.state,
-            scopes: this.scopes
+        return __awaiter(this, void 0, void 0, function* () {
+            return cinerinoService.auth.ClientCredentials.createInstance({
+                domain: process.env.AUTHORIZE_SERVER_DOMAIN || '',
+                clientId: process.env.CLIENT_ID || '',
+                clientSecret: process.env.CLIENT_SECRET || '',
+                state: this.state,
+                scopes: this.scopes,
+            });
         });
     }
     /**
@@ -53,7 +64,7 @@ class AuthModel {
             scopes: this.scopes,
             memberType: this.memberType,
             credentials: this.credentials,
-            codeVerifier: this.codeVerifier
+            codeVerifier: this.codeVerifier,
         };
         session.auth = authSession;
     }
@@ -63,7 +74,7 @@ class AuthModel {
      * @returns {boolean}
      */
     isMember() {
-        return (this.memberType === MemberType.Member);
+        return this.memberType === MemberType.Member;
     }
 }
 exports.AuthModel = AuthModel;

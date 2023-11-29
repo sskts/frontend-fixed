@@ -2,20 +2,18 @@
     "compilerOptions": {
         "allowUnreachableCode": false,
         "allowUnusedLabels": false,
-        "charset": "utf8",
         // "declaration": false,
         // "declarationDir": "./types",
         "diagnostics": false,
         "disableSizeLimit": false,
         "emitDecoratorMetadata": true,
-        "experimentalDecorators":true,
+        "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "inlineSourceMap": false,
         "inlineSources": false,
         "isolatedModules": false,
         "listEmittedFiles": false,
         "listFiles": false,
-        "locale": "en-us",
         "module": "commonjs",
         "newLine": "CRLF",
         "noImplicitAny": true,
@@ -36,11 +34,8 @@
         "suppressImplicitAnyIndexErrors": false,
         "target": "es6",
         "watch": false,
-        "outDir": "../dist"
+        "outDir": "../dist",
+        "skipLibCheck": true
     },
-    "exclude": [
-        "docs",
-        "node_modules",
-        "definitions"
-    ]
+    "exclude": ["docs", "node_modules", "definitions"]
 }
