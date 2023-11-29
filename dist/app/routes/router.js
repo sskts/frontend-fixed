@@ -16,10 +16,12 @@ const express = require("express");
 const moment = require("moment");
 const error_controller_1 = require("../controllers/error/error.controller");
 const functions_1 = require("../functions");
+const requireSDK_1 = require("../middlewares/requireSDK");
 const fixed_1 = require("./fixed");
 const inquiry_1 = require("./inquiry");
 const router = express.Router();
 exports.default = (app) => {
+    app.use(requireSDK_1.requireSDK);
     // tslint:disable-next-line:variable-name
     app.use((_req, res, next) => {
         res.locals.escapeHtml = functions_1.escapeHtml;

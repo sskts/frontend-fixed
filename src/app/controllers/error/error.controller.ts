@@ -5,6 +5,7 @@
 import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+import { Session, SessionData } from 'express-session';
 import * as HTTPStatus from 'http-status';
 import logger from '../../middlewares/logger';
 import { AppError, ErrorType } from '../../models';
@@ -19,7 +20,11 @@ const log = debug('SSKTS:Error.ErrorModule');
  * @param {Response} res
  * @returns {void}
  */
-export function notFoundRender(req: Request, res: Response, _: NextFunction): void {
+export function notFoundRender(
+    req: Request,
+    res: Response,
+    _: NextFunction
+): void {
     const status = HTTPStatus.NOT_FOUND;
     if (req.xhr) {
         res.status(status).send({ error: 'Not Found.' });
@@ -43,12 +48,14 @@ export async function errorRender(
     err: Error | AppError | cinerinoService.transporters.RequestError,
     req: Request,
     res: Response,
-    _: NextFunction
+    _next: NextFunction
 ) {
     let status = HTTPStatus.INTERNAL_SERVER_ERROR;
     let msg = err.message;
     if (err.hasOwnProperty('errors')) {
-        switch ((<cinerinoService.transporters.RequestError | AppError>err).code) {
+        switch (
+            (<cinerinoService.transporters.RequestError | AppError>err).code
+        ) {
             case HTTPStatus.BAD_REQUEST:
                 msg = req.__('common.error.badRequest');
                 break;
@@ -69,15 +76,25 @@ export async function errorRender(
                 msg = req.__('common.error.internalServerError');
                 logger.error('SSKTS-APP:ErrorModule', status, err.message, err);
         }
-        if ((<AppError>err).errorType !== undefined && (<AppError>err).errorType === ErrorType.Expire) {
+        if (
+            (<AppError>err).errorType !== undefined &&
+            (<AppError>err).errorType === ErrorType.Expire
+        ) {
             msg = req.__('common.error.expire');
         }
-        status = (<cinerinoService.transporters.RequestError | AppError>err).code;
+        status = (<cinerinoService.transporters.RequestError | AppError>err)
+            .code;
     } else {
         log('Error', err);
         status = HTTPStatus.INTERNAL_SERVER_ERROR;
         msg = req.__('common.error.internalServerError');
-        logger.error('SSKTS-APP:ErrorModule', 'Error', status, err.message, err);
+        logger.error(
+            'SSKTS-APP:ErrorModule',
+            'Error',
+            status,
+            err.message,
+            err
+        );
     }
     deleteSession(req.session);
     /**
@@ -102,13 +119,9 @@ export async function errorRender(
 /**
  * セッション削除
  * @function deleteSession
- * @param {Express.Session | undefined} session
  */
-export function deleteSession(session: Express.Session | undefined): void {
+export function deleteSession(session?: Session & Partial<SessionData>): void {
     if (session !== undefined) {
-        delete session.purchase;
-        delete session.mvtk;
-        delete session.complete;
         delete session.auth;
     }
 }

@@ -59,8 +59,7 @@ export class AuthModel {
      * @param {any} session
      */
     constructor(session: any = {}) {
-
-        this.state = (session.state !== undefined) ? session.state : uuid.v1();
+        this.state = session.state !== undefined ? session.state : uuid.v1();
         // this.scopes = (session.scopes !== undefined) ? session.scopes : [
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/transactions`,
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/events.read-only`,
@@ -69,24 +68,24 @@ export class AuthModel {
         //     `${(<string>process.env.RESOURCE_SERVER_URL)}/places.read-only`
         // ];
         this.scopes = [];
-        this.memberType = (session.memberType !== undefined) ? session.memberType : MemberType.NonMember;
+        this.memberType =
+            session.memberType !== undefined
+                ? session.memberType
+                : MemberType.NonMember;
         this.credentials = session.credentials;
         this.codeVerifier = session.codeVerifier;
     }
 
     /**
      * 認証クラス作成
-     * @memberof AuthModel
-     * @method create
-     * @returns {cinerinoService.auth.ClientCredentials}
      */
-    public create(): cinerinoService.auth.ClientCredentials {
-        return new cinerinoService.auth.ClientCredentials({
-            domain: (<string>process.env.AUTHORIZE_SERVER_DOMAIN),
-            clientId: (<string>process.env.CLIENT_ID),
-            clientSecret: (<string>process.env.CLIENT_SECRET),
+    public async create() {
+        return cinerinoService.auth.ClientCredentials.createInstance({
+            domain: process.env.AUTHORIZE_SERVER_DOMAIN || '',
+            clientId: process.env.CLIENT_ID || '',
+            clientSecret: process.env.CLIENT_SECRET || '',
             state: this.state,
-            scopes: this.scopes
+            scopes: this.scopes,
         });
     }
 
@@ -102,7 +101,7 @@ export class AuthModel {
             scopes: this.scopes,
             memberType: this.memberType,
             credentials: this.credentials,
-            codeVerifier: this.codeVerifier
+            codeVerifier: this.codeVerifier,
         };
         session.auth = authSession;
     }
@@ -113,7 +112,7 @@ export class AuthModel {
      * @returns {boolean}
      */
     public isMember(): boolean {
-        return (this.memberType === MemberType.Member);
+        return this.memberType === MemberType.Member;
     }
 }
 
@@ -129,5 +128,5 @@ export enum MemberType {
     /**
      * 会員
      */
-    Member = 1
+    Member = 1,
 }

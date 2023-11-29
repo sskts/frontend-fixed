@@ -42,12 +42,18 @@ var ErrorType;
 class AppError extends Error {
     constructor(code, errorType, message) {
         if (message === undefined) {
-            const customMessage = (errorType === ErrorType.Property) ? 'Property Error'
-                : (errorType === ErrorType.Access) ? 'Access Error'
-                    : (errorType === ErrorType.Timeout) ? 'Timeout Error'
-                        : (errorType === ErrorType.Validation) ? 'Validation Error'
-                            : (errorType === ErrorType.Expire) ? 'Expire Error'
-                                : (errorType === ErrorType.ExternalModule) ? 'Expire ExternalModule'
+            const customMessage = errorType === ErrorType.Property
+                ? 'Property Error'
+                : errorType === ErrorType.Access
+                    ? 'Access Error'
+                    : errorType === ErrorType.Timeout
+                        ? 'Timeout Error'
+                        : errorType === ErrorType.Validation
+                            ? 'Validation Error'
+                            : errorType === ErrorType.Expire
+                                ? 'Expire Error'
+                                : errorType === ErrorType.ExternalModule
+                                    ? 'Expire ExternalModule'
                                     : undefined;
             super(customMessage);
         }
@@ -57,7 +63,11 @@ class AppError extends Error {
         this.code = code;
         this.errorType = errorType;
         this.errors = [
-            { name: 'SSKTSApplicationError', reason: HTTPStatus[code], message: message }
+            {
+                name: 'SSKTSApplicationError',
+                reason: HTTPStatus[code],
+                message: message,
+            },
         ];
     }
 }

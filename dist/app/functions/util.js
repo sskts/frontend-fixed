@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatTelephone = exports.sleep = exports.Env = exports.View = exports.Digits = exports.getEmailTemplate = exports.base64Decode = exports.bace64Encode = exports.formatPrice = exports.escapeHtml = exports.timeFormat = exports.isApp = exports.getApiOption = void 0;
+exports.formatTelephone = exports.sleep = exports.Env = exports.View = exports.Digits = exports.getEmailTemplate = exports.formatPrice = exports.escapeHtml = exports.timeFormat = exports.getApiOption = void 0;
 const libphonenumber = require("google-libphonenumber");
 const moment = require("moment");
 const models_1 = require("../models");
@@ -17,62 +17,45 @@ const models_1 = require("../models");
  * API設定取得
  */
 function getApiOption(req) {
-    if (req.session === undefined) {
-        throw new models_1.AppError(httpStatus.BAD_REQUEST, models_1.ErrorType.Property);
-    }
-    const authModel = new models_1.AuthModel(req.session.auth);
-    return {
-        endpoint: process.env.SSKTS_API_ENDPOINT,
-        auth: authModel.create(),
-        project: {
-            id: process.env.PROJECT_ID
+    return __awaiter(this, void 0, void 0, function* () {
+        if (req.session === undefined) {
+            throw new models_1.AppError(httpStatus.BAD_REQUEST, models_1.ErrorType.Property);
         }
-    };
+        const authModel = new models_1.AuthModel(req.session.auth);
+        return {
+            endpoint: process.env.SSKTS_API_ENDPOINT,
+            auth: yield authModel.create(),
+            project: {
+                id: process.env.PROJECT_ID,
+            },
+        };
+    });
 }
 exports.getApiOption = getApiOption;
 /**
- * アプリ判定
- * @memberof Util.UtilModule
- * @function isApp
- * @param {Request} req
- * @returns {boolean}
- */
-function isApp(req) {
-    return (req.session !== undefined && req.session.awsCognitoIdentityId !== undefined);
-}
-exports.isApp = isApp;
-/**
  * 時間フォーマット
- * @memberof Util.UtilModule
- * @function timeFormat
- * @param {string} referenceDate 基準日
- * @param {Date} screeningTime 時間
- * @returns {string}
  */
 function timeFormat(screeningTime, referenceDate) {
     const HOUR = 60;
     const diff = moment(screeningTime).diff(moment(referenceDate), 'minutes');
-    const hour = (`00${Math.floor(diff / HOUR)}`).slice(Digits['02']);
+    const hour = `00${Math.floor(diff / HOUR)}`.slice(Digits['02']);
     const minutes = moment(screeningTime).format('mm');
     return `${hour}:${minutes}`;
 }
 exports.timeFormat = timeFormat;
 /**
  * HTMLエスケープ
- * @memberof Util.UtilModule
- * @function escapeHtml
- * @param {string} str
- * @returns {string}
  */
 function escapeHtml(str) {
     const change = (match) => {
         const changeList = {
             '&': '&amp;',
-            '\'': '&#x27;',
+            // tslint:disable-next-line:quotemark
+            "'": '&#x27;',
             '`': '&#x60;',
             '"': '&quot;',
             '<': '&lt;',
-            '>': '&gt;'
+            '>': '&gt;',
         };
         return changeList[match];
     };
@@ -90,28 +73,6 @@ function formatPrice(price) {
     return String(price).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
 }
 exports.formatPrice = formatPrice;
-/**
- * ベース64エンコード
- * @memberof Util.UtilModule
- * @function bace64Encode
- * @param {string} str
- * @returns {string}
- */
-function bace64Encode(str) {
-    return new Buffer(str).toString('base64');
-}
-exports.bace64Encode = bace64Encode;
-/**
- * ベース64デコード
- * @memberof Util.UtilModule
- * @function base64Decode
- * @param {string} str
- * @returns {string}
- */
-function base64Decode(str) {
-    return new Buffer(str, 'base64').toString();
-}
-exports.base64Decode = base64Decode;
 /**
  * メール内容取得
  * @memberof Util.UtilModule
@@ -190,7 +151,9 @@ var Env;
 function sleep(time = 3000) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve) => {
-            setTimeout(() => { resolve(); }, time);
+            setTimeout(() => {
+                resolve();
+            }, time);
         });
     });
 }
@@ -204,7 +167,9 @@ function formatTelephone(telephone, format) {
     }
     const phoneUtil = libphonenumber.PhoneNumberUtil.getInstance();
     const phoneNumber = phoneUtil.parseAndKeepRawInput(telephone, 'JP');
-    const phoneFormat = (format === undefined) ? libphonenumber.PhoneNumberFormat.INTERNATIONAL : format;
+    const phoneFormat = format === undefined
+        ? libphonenumber.PhoneNumberFormat.INTERNATIONAL
+        : format;
     return phoneUtil.format(phoneNumber, phoneFormat).replace(/\s/g, '');
 }
 exports.formatTelephone = formatTelephone;

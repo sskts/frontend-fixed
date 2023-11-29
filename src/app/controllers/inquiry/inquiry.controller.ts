@@ -1,8 +1,6 @@
 /**
  * 照会
- * @namespace InquiryModule
  */
-import * as cinerinoService from '@cinerino/sdk';
 import * as debug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import * as HTTPStatus from 'http-status';
@@ -13,15 +11,14 @@ const log = debug('SSKTS:InquiryModule');
 
 /**
  * 照会認証ページ表示
- * @memberof InquiryModule
- * @function loginRender
- * @param {Request} req
- * @param {Response} res
- * @param {NextFunction} next
- * @returns {Promise<void>}
  */
 export async function loginRender(
-    req: Request,
+    req: Request<
+        undefined,
+        undefined,
+        undefined,
+        { theater: string; reserve: string }
+    >,
     res: Response,
     next: NextFunction
 ): Promise<void> {
@@ -36,15 +33,16 @@ export async function loginRender(
         if (req.session === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-        const options = getApiOption(req);
+        const options = await getApiOption(req);
         const inquiryModel = new InquiryModel();
         // 劇場のショップを検索
-        const searchResult = await new cinerinoService.service.Seller(
+        const searchResult = await new req.cinerino.service.Seller(
             options
         ).search({
             branchCode: { $eq: theaterCode },
         });
-        inquiryModel.seller = searchResult.data[0];
+        const seller = searchResult.data[0];
+        inquiryModel.seller = seller;
         log('劇場のショップを検索', inquiryModel.seller);
         inquiryModel.login = {
             reserveNum:
@@ -71,7 +69,15 @@ export async function loginRender(
  * @returns {Promise<void>}
  */
 export async function inquiryAuth(
-    req: Request,
+    req: Request<
+        undefined,
+        undefined,
+        {
+            theaterCode: string;
+            reserveNum: string;
+            telephone: string;
+        }
+    >,
     res: Response,
     next: NextFunction
 ): Promise<void> {
@@ -79,22 +85,22 @@ export async function inquiryAuth(
         if (req.session === undefined) {
             throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
         }
-        const options = getApiOption(req);
+        const options = await getApiOption(req);
         inquiryLoginForm(req);
         const validationResult = await req.getValidationResult();
         if (validationResult.isEmpty()) {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new cinerinoService.service.Seller(
+            const searchResult = await new req.cinerino.service.Seller(
                 options
             ).search({
                 branchCode: { $eq: req.body.theaterCode },
             });
-            inquiryModel.seller = searchResult.data[0];
+            const seller = searchResult.data[0];
+            inquiryModel.seller = seller;
             log('劇場のショップを検索');
             if (
-                inquiryModel.seller === undefined ||
-                inquiryModel.seller.location === undefined ||
-                inquiryModel.seller.location.branchCode === undefined
+                seller?.id === undefined ||
+                seller?.location?.branchCode === undefined
             ) {
                 throw new AppError(HTTPStatus.BAD_REQUEST, ErrorType.Property);
             }
@@ -105,14 +111,17 @@ export async function inquiryAuth(
             log('照会情報', {
                 telephone: formatTelephone(inquiryModel.login.telephone),
                 confirmationNumber: inquiryModel.login.reserveNum,
-                theaterCode: inquiryModel.seller.location.branchCode,
+                theaterCode: seller.location.branchCode,
             });
-            const orderService = new cinerinoService.service.Order(options);
+            const orderService = new req.cinerino.service.Order({
+                ...options,
+                seller: { id: seller.id },
+            });
             const findByOrderInquiryKey4ssktsResult =
                 await orderService.findByOrderInquiryKey4sskts({
                     telephone: formatTelephone(inquiryModel.login.telephone),
                     confirmationNumber: inquiryModel.login.reserveNum,
-                    theaterCode: inquiryModel.seller.location.branchCode,
+                    theaterCode: seller.location.branchCode,
                 });
             const order = Array.isArray(findByOrderInquiryKey4ssktsResult)
                 ? findByOrderInquiryKey4ssktsResult[0]
@@ -138,13 +147,13 @@ export async function inquiryAuth(
             inquiryModel.save(req.session);
             // 購入者内容確認へ
             res.redirect(
-                `/inquiry/${inquiryModel.order.orderNumber}/?theater=${inquiryModel.seller.location.branchCode}`
+                `/inquiry/${inquiryModel.order.orderNumber}/?theater=${seller.location.branchCode}`
             );
 
             return;
         } else {
             const inquiryModel = new InquiryModel();
-            const searchResult = await new cinerinoService.service.Seller(
+            const searchResult = await new req.cinerino.service.Seller(
                 options
             ).search({
                 branchCode: { $eq: req.body.theaterCode },
@@ -177,7 +186,7 @@ export async function inquiryAuth(
  * @param {Request} req
  * @returns {any}
  */
-function getInquiryError(req: Request) {
+function getInquiryError(req: Request<undefined, undefined, any>) {
     return {
         reserveNum: {
             parm: 'reserveNum',
