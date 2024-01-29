@@ -51,7 +51,7 @@
     <% } else if (moment(inquiryModel.acceptedOffers[0].itemOffered.reservationFor.startDate).subtract(24, 'hours').unix() > moment().unix()) { %>
     <p class="text-center"><%- __('inquiry.confirm.before') %></p>
     <% } else { %>
-    <div class="button middle-button print-button blue-button"><a class="center icon-triangle-white" href="/inquiry/complete"><%- __('inquiry.confirm.next') %></a></div>
+    <div class="button middle-button print-button blue-button"><a class="center icon-triangle-white" href="#"><%- __('inquiry.confirm.next') %></a></div>
     <% } %>
 </div>
 <input type="hidden" name="ticketLength" value="<%= inquiryModel.acceptedOffers.length %>">
